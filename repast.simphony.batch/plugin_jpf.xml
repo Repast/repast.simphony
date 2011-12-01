@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.batch" version="">
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.runtime" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader" reverse-lookup="false"/>
+    	<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.essentials" reverse-lookup="false"/>
+    	<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.groovy" reverse-lookup="false"/>
+    	<import exported="false" match="compatible" optional="false" plugin-id="libs.bsf" reverse-lookup="false"/>
+  </requires>
+
+	<runtime>
+		<library id="out" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+		
+    <library id="groovy_batch" path="./lib/batch_groovy.jar" type="code"/>
+    <library id="bindings" path="./lib/binding-2.0.6.jar" type="code"/>
+    <library id="forms" path="./lib/forms-1.0.5.jar" type="code"/>
+  </runtime>
+</plugin>

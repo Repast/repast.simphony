@@ -1,0 +1,16 @@
+group parameters;
+
+//Need to use the $$ delimiters to account for the brackets
+parameters_file(parameters) ::= <<
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+
+	<parameter name="randomSeed" displayName="Default Random Seed" type="int" defaultValue="__NULL__" />
+	$parameters$
+</parameters>
+
+>>
+
+parameter(name,displayName,type,defaultValue) ::= <<
+<parameter name=$name$ displayName=$displayName$ type=$type$ defaultValue=$defaultValue$ />
+>>

@@ -1,0 +1,6 @@
+
+stepper = builder.addStepper("int_param", 3, 5, 1);
+String[] list = new String[] {"cormac", "nicola"};
+builder.addListSetter(stepper, "a_list", list);
+
+

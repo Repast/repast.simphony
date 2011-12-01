@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<sweep runs="1">
+	<parameter name="RandomSeed" type="number" start="1" end="4" step="1"/>
+</sweep>

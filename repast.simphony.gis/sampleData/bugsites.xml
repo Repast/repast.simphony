@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sld:NamedLayer xmlns:sld="http://www.opengis.net/sld"
+	xmlns:ogc="http://www.opengis.net/ogc"
+	xmlns:gml="http://www.opengis.net/gml">
+	<sld:UserStyle>
+		<sld:Name>Bug Sites</sld:Name>
+		<sld:Title>Bug Sites</sld:Title>
+		<sld:Abstract></sld:Abstract>
+		<sld:FeatureTypeStyle>
+			<sld:FeatureTypeName>bugSites</sld:FeatureTypeName>
+			<sld:Rule>
+				<sld:Name>
+				</sld:Name>
+				<sld:Abstract>Abstract</sld:Abstract>
+				<sld:Title>
+				</sld:Title>
+				<sld:PointSymbolizer>
+					<sld:Graphic>
+						<sld:Size>
+							<ogc:Literal>7</ogc:Literal>
+						</sld:Size>
+						<sld:Opacity>
+							<ogc:Literal>1.0</ogc:Literal>
+						</sld:Opacity>
+						<sld:Rotation>
+							<ogc:Literal>0.0</ogc:Literal>
+						</sld:Rotation>
+						<sld:Mark>
+							<sld:WellKnownName>
+								<ogc:Literal>circle</ogc:Literal>
+							</sld:WellKnownName>
+							<sld:Fill>
+								<sld:CssParameter name="fill">
+									<ogc:Literal>#FF0000</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="fill-opacity">
+									<ogc:Literal>1.0</ogc:Literal>
+								</sld:CssParameter>
+							</sld:Fill>
+							<sld:Stroke>
+								<sld:CssParameter name="stroke">
+									<ogc:Literal>#000000</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="stroke-linecap">
+									<ogc:Literal>butt</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="stroke-linejoin">
+									<ogc:Literal>miter</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="stroke-opacity">
+									<ogc:Literal>1</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="stroke-width">
+									<ogc:Literal>0.5</ogc:Literal>
+								</sld:CssParameter>
+								<sld:CssParameter name="stroke-dashoffset">
+									<ogc:Literal>0.0</ogc:Literal>
+								</sld:CssParameter>
+							</sld:Stroke>
+						</sld:Mark>
+					</sld:Graphic>
+				</sld:PointSymbolizer>
+			</sld:Rule>
+		</sld:FeatureTypeStyle>
+	</sld:UserStyle>
+</sld:NamedLayer>

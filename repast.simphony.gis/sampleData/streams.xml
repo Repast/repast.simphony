@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sld:UserStyle xmlns:sld="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+	<sld:Name>Streams</sld:Name>
+	<sld:Title>Streams</sld:Title>
+	<sld:Abstract></sld:Abstract>
+	<sld:FeatureTypeStyle>
+		<sld:Name>name</sld:Name>
+		<sld:Title>title</sld:Title>
+		<sld:Abstract>abstract</sld:Abstract>
+		<sld:FeatureTypeName>Streams</sld:FeatureTypeName>
+		<sld:SemanticTypeIdentifier>generic:geometry</sld:SemanticTypeIdentifier>
+		<sld:Rule>
+			<sld:Name>name</sld:Name>
+			<sld:Abstract>Abstract</sld:Abstract>
+			<sld:Title>
+			</sld:Title>
+			<sld:LineSymbolizer>
+				<sld:Stroke>
+					<sld:CssParameter name="stroke">
+						<ogc:Literal>#0000FF</ogc:Literal>
+					</sld:CssParameter>
+					<sld:CssParameter name="stroke-linecap">
+						<ogc:Literal>butt</ogc:Literal>
+					</sld:CssParameter>
+					<sld:CssParameter name="stroke-linejoin">
+						<ogc:Literal>miter</ogc:Literal>
+					</sld:CssParameter>
+					<sld:CssParameter name="stroke-opacity">
+						<ogc:Literal>1.0</ogc:Literal>
+					</sld:CssParameter>
+					<sld:CssParameter name="stroke-width">
+						<ogc:Literal>2.0</ogc:Literal>
+					</sld:CssParameter>
+					<sld:CssParameter name="stroke-dashoffset">
+						<ogc:Literal>0.0</ogc:Literal>
+					</sld:CssParameter>
+				</sld:Stroke>
+			</sld:LineSymbolizer>
+		</sld:Rule>
+	</sld:FeatureTypeStyle>
+</sld:UserStyle>

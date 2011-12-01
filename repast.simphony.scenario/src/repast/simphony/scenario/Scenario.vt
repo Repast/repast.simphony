@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scenario>
+#foreach($entry in $entries)
+<$entry.getRegistryID() context="$entry.getContextID()" file="$entry.getFileName()" />
+#end
+#if ($modelInit)
+<model.initializer class="$modelInit" />
+#end
+#if ($modelPlugin)
+<model.plugin_jpf file="plugin_jpf.xml" />
+#end
+</Scenario>

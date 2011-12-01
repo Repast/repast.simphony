@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.visualization" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gis" reverse-lookup="false"/>
+
+		
+	</requires>
+
+	<runtime>
+    <library id="icons" path="icons/" type="resources"/>
+		
+    <library id="viz.bin" path="bin/" type="code">
+			<export prefix="*"/>
+    </library>
+    
+   <library id="batik" path="lib/batik.jar" type="code">
+			<export prefix="*"/>
+    </library>
+    
+    <library id="xml-apis" path="lib/xml-apis-ext.jar" type="code">
+			<export prefix="*"/>
+    </library>
+
+		<library id="ms3dloader" path="lib/MS3DLoader-1.0.8.jar" type="code">
+      <export prefix="*"/>
+    </library>
+		<library id="phoebe" path="lib/phoebe.jar" type="code">
+      <export prefix="*"/>
+    </library>
+		<library id="jung_vis" path="lib/jung-visualization-2.0-beta1.jar" type="code">
+      <export prefix="*"/>
+    </library>
+		<library id="worldwind" path="lib/worldwind.jar" type="code">
+      <export prefix="*"/>
+    </library>
+	</runtime>
+
+	<extension-point extension-multiplicity="any" id="stylebuilder.wizard.options" parent-plugin-id="repast.simphony.plugin.util" parent-point-id="wizard.options">
+	</extension-point>
+	
+   <extension-point extension-multiplicity="any" id="network.wizard.options" parent-plugin-id="repast.simphony.plugin.util" parent-point-id="wizard.options">
+	</extension-point>
+	
+	
+	<extension id="network" plugin-id="repast.simphony.visualization" point-id="network.wizard.options">
+		<parameter id="class" value="repast.simphony.visualization.jung.statistics.visualization.JungStatToolsButton"/>
+	</extension>
+	
+	<!--<extension plugin-id="repast.simphony.visualization" point-id="stylebuilder.wizard.options" id="modelaction">
+			<parameter id="class" value="repast.simphony.visualization.gui.styleBuilder.ModelFileStyleBuilderOption"/>
+	</extension>
+	
+	<extension plugin-id="repast.simphony.visualization" point-id="stylebuilder.wizard.options" id="colorshape2d">
+			<parameter id="class" value="repast.simphony.visualization.gui.styleBuilder.ColorAndShapeStyleBuilderOption2D"/>
+	</extension>
+	
+	<extension plugin-id="repast.simphony.visualization" point-id="stylebuilder.wizard.options" id="colorshape3d">
+			<parameter id="class" value="repast.simphony.visualization.gui.styleBuilder.ColorAndShapeStyleBuilderOption3D"/>
+	</extension>-->
+	
+	<extension id="viz.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+		<parameter id="creatorClass" value="repast.simphony.visualization.engine.DisplayCompositeActionCreator"/>
+		<parameter id="label" value="Displays"/>
+	</extension>
+
+	<extension id="viz.component.action" plugin-id="repast.simphony.gui" point-id="component.action">
+		<parameter id="actionIO" value="repast.simphony.visualization.engine.DisplayControllerActionIO"/>
+		<parameter id="editorCreator" value="repast.simphony.visualization.gui.DisplayActionEditorCreator"/>
+		<parameter id="parentMenuItem" value="repast.simphony.visualization.gui.DefaultDisplayMenuItem"/>
+		<parameter id="parentID" value="repast.controller.action.viz"/>
+	</extension>
+</plugin>

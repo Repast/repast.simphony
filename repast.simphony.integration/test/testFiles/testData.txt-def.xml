@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- the newlineType only applies to translating \n and so forth in delimiters and patterns -->
+<fileDef newlineType="system">
+	<data target="title" type="String"/>	<!-- no delimiter so assume delimiter="\n"-->
+	
+	<data target="date" type="String"/>
+	<data target="null" type="String"/>		<!-- swallow a new line -->
+	
+	<data target="null" type="String" pattern="number: "/>
+	<data target="number-9" type="int" delimiter="\n"/>
+	
+	<record target="table1" count="2">
+		<data target="col-8.5" type="double" delimiter=","/>	
+		<data target="col-9.6" type="double" delimiter=","/>
+		<data target="col-10.7" type="double" delimiter=","/>
+		<data target="col-11.8" type="double" delimiter="\n"/>
+	</record>
+		
+	<data target="intString" type="String"/>
+
+	<data target="number-8.553-E-01" type="double" length="9"/>
+	<branch>
+		<!-- need the initial \n because we used a length on number-8.5.. -->
+		<data target="null" type="String" pattern="\nbranch1: "/>
+		<data target="branch1" type="String" delimiter="\n"/>
+		<data target="branch1Dbl123" type="double" delimiter="\n"/>
+	</branch>
+	<branch>
+		<!-- need the initial \r\n because we used a length on number-8.5.. -->
+		<data target="null" type="String" pattern="\nbranch2: "/>
+		<data target="branch2" type="String" delimiter="\n"/>
+	</branch>
+	<data target="int1" type="int" delimiter="\n"/>
+</fileDef>

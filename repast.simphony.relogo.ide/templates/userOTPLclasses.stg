@@ -1,0 +1,138 @@
+group userOTPLclasses;
+
+userObserver(packageName,bodyCode) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BaseObserver;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+
+class UserObserver extends BaseObserver{
+
+	/**
+	 * Add observer methods here. For example:
+
+		def setup(){
+			clearAll()
+			createTurtles(10){
+				forward(random(10))
+			}
+		}
+		
+	 *
+	 * or
+	 * 	
+	
+		def go(){
+			ask(turtles()){
+				left(random(90))
+				right(random(90))
+				forward(random(10))
+			}
+		}
+
+	 */
+
+	<bodyCode>
+}
+>>
+
+userTurtle(packageName,turtleVars,bodyCode) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BaseTurtle;
+import repast.simphony.relogo.BasePatch;
+import repast.simphony.relogo.Plural;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+
+class UserTurtle extends BaseTurtle{
+
+	<turtleVars>
+	<bodyCode>
+}
+>>
+
+customTurtle(packageName,pluralAnnotation,turtleClassName,turtleVars) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BaseTurtle;
+import repast.simphony.relogo.BasePatch;
+import repast.simphony.relogo.Plural;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+
+<pluralAnnotation>
+class <turtleClassName> extends UserTurtle{
+	
+	<turtleVars>
+}
+>>
+
+userPatch(packageName,patchVars,bodyCode) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BasePatch;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.ast.Diffusible;
+
+class UserPatch extends BasePatch{
+
+	<patchVars>
+	<bodyCode>
+}
+>>
+
+userLink(packageName,linkVars,bodyCode) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BaseLink;
+import repast.simphony.relogo.Directed;
+import repast.simphony.relogo.Plural;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Undirected;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+
+class UserLink extends BaseLink	{
+
+	<linkVars>
+	<bodyCode>
+}
+>>
+
+customLink(packageName,linkClassName,directedAnnotation,pluralAnnotation,linkVars) ::= <<
+package <packageName>.relogo
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import repast.simphony.relogo.BaseLink;
+import repast.simphony.relogo.Directed;
+import repast.simphony.relogo.Plural;
+import repast.simphony.relogo.Stop;
+import repast.simphony.relogo.Undirected;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
+
+<directedAnnotation>
+<pluralAnnotation>
+class <linkClassName> extends BaseLink	{
+
+	<linkVars>
+}
+>>

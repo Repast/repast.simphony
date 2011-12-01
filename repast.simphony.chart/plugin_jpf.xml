@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.chart" version="">
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+	  <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
+	  
+		
+	</requires>
+
+	<runtime>
+		<library id="chart.bin" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+
+		
+		<library id="jfreechart" path="lib/jfreechart-1.0.13.jar" type="code">
+		  <export prefix="*" />
+		</library>
+		<library id="jcommon" path="lib/jcommon-1.0.16.jar" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+
+
+	<extension plugin-id="repast.simphony.gui" point-id="composite.action" id="chart.composite.action">
+        <parameter id="creatorClass" value="repast.simphony.chart2.engine.ChartActionCreator"/>
+        <parameter id="label" value="Charts"/>
+    </extension>
+
+    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="time.series.component.action">
+        <parameter id="actionIO" value="repast.simphony.chart2.engine.TimeSeriesControllerActionIO"/>
+        <parameter id="editorCreator" value="repast.simphony.chart2.gui.TimeSeriesActionEditorCreator"/>
+        <parameter id="parentMenuItem" value="repast.simphony.chart2.gui.TimeSeriesChartMenuItem"/>
+        <!-- this value is from core repast.plugins.ControllerActionConstants -->
+        <parameter id="parentID" value="repast.controller.action.charts"/>
+    </extension>
+
+    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="histogram.component.action">
+        <parameter id="actionIO" value="repast.simphony.chart2.engine.HistogramControllerActionIO"/>
+        <parameter id="editorCreator" value="repast.simphony.chart2.gui.HistogramChartActionEditorCreator"/>
+        <parameter id="parentMenuItem" value="repast.simphony.chart2.gui.HistogramMenuItem"/>
+        <!-- this value is from core repast.plugins.ControllerActionConstants -->
+        <parameter id="parentID" value="repast.controller.action.charts"/>
+    </extension>
+	
+</plugin>

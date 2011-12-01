@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: repast.simphony.plugin.util
+Bundle-Version: 2.0.1
+Bundle-ClassPath: .,
+ lib/wizard-0.1.12.jar
+Bundle-Localization: plugin
+Export-Package: org.jdesktop.swingx.autocomplete,
+ repast.simphony.util.wizard
+Require-Bundle: repast.simphony.runtime,
+ repast.simphony.scenario,
+ saf.core.ui,
+ repast.simphony.core
+Bundle-Vendor: %providerName

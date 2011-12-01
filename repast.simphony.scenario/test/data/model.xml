@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="Test Model">
+	<!-- these attributes are "," separated, so each dir, etc. attribute 
+	can contain mult. values -->
+	<classpath>
+		<entry path="../../bin,/model/groovy-bin"/>
+		<entry path="./lib/foo.jar,../../lib/bar.jar" annotations="true" />
+		<entry path="/foo.jar"/>
+		
+		<agents path="/lib/agent.jar" />
+		<agents path="/lib/more.jar" filter="foo.bar.*,baz.bar.*" />
+	</classpath>
+</model>

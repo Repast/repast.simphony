@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<fileDef newlineType="unix">
+	<data target="/fileDef/name" type="String"/>	<!-- no delimiter so assume delimiter="\n"-->
+	<data target="/fileDef/value" type="double"/>
+</fileDef>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="model">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="classpath" type="classpathType" />
+            </xs:sequence>
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="classpathType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="entry" type="entryType"  />
+            <xs:element name="agents" type="agentsType"  />
+            <xs:element name="builtin" type="builtinType"  />
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="entryType">
+        <xs:attribute name="path" use="required" />
+        <xs:attribute name="annotations" type="xs:boolean" />
+    </xs:complexType>
+    
+    <xs:complexType name="agentsType">
+        <xs:attribute name="path" use="required" />
+        <xs:attribute name="filter" />
+    </xs:complexType>
+    
+    <xs:complexType name="builtinType">
+        <xs:attribute name="fullname" use="required" />
+    </xs:complexType>
+</xs:schema>

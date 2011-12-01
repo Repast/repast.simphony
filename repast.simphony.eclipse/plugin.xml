@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.3"?>
+<plugin>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Variables                                                -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.variables.valueVariables">
+      <variable name="REPAST_FILE_EXTENSION_AGENT" initialValue="agent">
+      </variable>
+      <variable name="REPAST_VERSION" initialValue="2.0.1">
+      </variable>
+   </extension>
+   
+<!-- =================================================================================== -->
+<!-- Extensions: Repast Simphony Classpath Containers                                     -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+         id="REPAST_SIMPHONY_SUPPORT"
+         class="repast.simphony.agents.designer.core.RepastProjectClasspathContainer"/>
+      <classpathContainerInitializer 
+         id="REPAST_SIMPHONY_LAUNCHER"
+         class="repast.simphony.agents.designer.core.RepastLauncherClasspathContainer"/>
+   </extension>
+    
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Nature                                                   -->
+<!-- =================================================================================== -->
+   <extension
+         id="repast_simphony_nature"
+         name="RepastSimphonyNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="repast.simphony.agents.designer.core.AgentBuilderProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.projectNatureImages">
+      <image
+            icon="icons/full/ovr16/project_overlay.gif"
+            natureId="repast.simphony.eclipse.repast_simphony_nature"
+            id="repast.simphony.eclipse.repast_simphony_natureImage">
+      </image>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Agent File Type                                          -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="agent">
+      </fileTypes>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Wizards                                                  -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Repast Simphony"
+            id="repast.eclipse.ide.wizards">
+      </category>
+      <wizard
+            name="Repast Simphony Project"
+            icon="icons/full/ctool16/newprj_wiz.gif"
+            category="repast.eclipse.ide.wizards"
+            class="repast.simphony.agents.designer.ui.wizards.NewProjectCreationWizard"
+            project="true"
+            id="repast.simphony.agents.new_rs_project_creation_wizard">
+         <description>
+            Creates a New Repast Simphony Project
+         </description>
+      </wizard>
+      <wizard
+            name="Agent"
+            icon="icons/full/ctool16/newmodel_wiz.gif"
+            category="repast.eclipse.ide.wizards"
+            class="repast.simphony.agents.designer.ui.wizards.NewAgentCreationWizard"
+            id="repast.simphony.agents.new_rs_flow_creation_wizard">
+         <description>
+            Creates a New Repast Simphony Agent
+         </description>
+      </wizard>
+      <wizard
+            name="Agent Using Pure Groovy"
+            icon="icons/full/ctool16/newmodel_wiz.gif"
+            category="repast.eclipse.ide.wizards"
+            class="org.codehaus.groovy.eclipse.wizards.NewClassWizard"
+            id="repast.simphony.agents.new_rs_groovy_creation_wizard">
+         <description>
+            Creates a New Repast Simphony Using Pure Groovy Agent
+         </description>
+      </wizard>
+      <wizard
+            name="Agent Using Pure Java"
+            icon="icons/full/ctool16/newmodel_wiz.gif"
+            category="repast.eclipse.ide.wizards"
+            class="org.eclipse.jdt.internal.ui.wizards.NewClassCreationWizard"
+            id="repast.simphony.agents.new_rs_java_creation_wizard">
+         <description>
+            Creates a New Repast Simphony Agent Using Pure Java
+         </description>
+      </wizard>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Editors                                                  -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="repast.simphony.agents.designer.ui.editors.AgentEditor"
+            contributorClass="repast.simphony.agents.designer.ui.actions.AgentBuilderActionBarContributor"
+            default="true"
+            extensions="agent"
+            icon="icons/full/obj16/obj.gif"
+            id="repast.simphony.agents.rs_flow_editor"
+            name="Repast Simphony Agent Editor">
+      </editor>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Agent Builder                                            -->
+<!-- =================================================================================== -->
+   <extension
+         id="repast_simphony_builder"
+         name="Repast Simphony Agent Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="repast.simphony.agents.designer.builder.AgentBuilderBuilder">
+         </run>
+      </builder>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Popup Menus                                              -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            id="repast.simphony.agents.rs_modelContribution_main">
+         <menu
+               label="Repast Simphony"
+               path="additions"
+               id="rs_model">
+            <separator
+                  name="modelGroup">
+            </separator>
+         </menu>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="repast.simphony.agents.rs_projectContribution_main">
+         <menu
+               label="Repast Simphony"
+               path="additions"
+               id="rs_main">
+            <separator
+                  name="natureGroup">
+            </separator>
+         </menu>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.agents.rs_projectContribution_add">
+         <visibility>
+            <not>
+               <objectState
+                     name="nature"
+                     value="repast.simphony.eclipse.repast_simphony_nature">
+               </objectState>
+            </not>
+         </visibility>
+         <action
+               label="Add Repast Simphony to this Project"
+               icon="icons/full/ctool16/add.gif"
+               class="repast.simphony.agents.designer.ui.actions.AddAgentBuilderNatureAction"
+               menubarPath="rs_main/natureGroup"
+               id="addAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.agents.rs_projectContribution_remove">
+         <filter
+               name="projectNature"
+               value="repast.simphony.eclipse.repast_simphony_nature">
+         </filter>
+         <action
+               label="Remove Repast Simphony from this Project"
+               icon="icons/full/ctool16/remove.gif"
+               class="repast.simphony.agents.designer.ui.actions.RemoveAgentBuilderNatureAction"
+               menubarPath="rs_main/natureGroup"
+               id="removeAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="repast.simphony.eclipse.ScenarioConverter"
+            nameFilter="*.rs"
+            objectClass="org.eclipse.core.resources.IFolder">
+         <action
+               class="repast.simphony.conversion.ScenarioConverterAction"
+               enablesFor="1"
+               id="repast.simphony.eclipse.converter_action"
+               label="Convert Scenario">
+         </action>
+      </objectContribution>
+   </extension>
+   
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Perspective                                              -->
+<!-- =================================================================================== -->
+   <extension
+         id="repast.simphony.agents.sse_adapter"
+         name="Repast Simphony Agents SSE Adapter"
+         point="org.eclipse.wst.sse.ui.adapterFactoryDescription">
+     
+         <adapterFactoryDescription class="repast.simphony.agents.scenario.ui.editors.ScenarioOutlineViewer"/>
+     
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            class="repast.simphony.agents.designer.ui.wizards.ImportSampleModelsWizard"
+            id="repast.simphony.eclipse.modelswizard"
+            name="Import Sample Model">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="repast.simphony.eclipse.insertcode"
+            label="Insert Repast Code"
+            visible="true">
+           <action
+              class="repast.simphony.agents.designer.ui.actions.RepastCodeWizardAction"
+              id="repast.simphony.eclipse.insertrepastcode"
+              label="Insert Repast Code"
+              toolbarPath="Normal/repastSimphony"
+              icon="icons/insertcode.png"
+              tooltip="Insert Repast Code"
+              style="push">
+          </action>
+      </actionSet>
+      <actionSet
+            id="repast.simphony.eclipse.samplemodelsactionSet"
+            label="Sample Models"
+            visible="true">
+         <action
+               class="repast.simphony.agents.designer.ui.wizards.ImportSampleModelsAction"
+               id="repast.simphony.eclipse.importsamplemodelsaction"
+               label="Import Repast Examples"
+               menubarPath="file/fileStart"
+               style="push">
+         </action>
+      </actionSet>
+   </extension>
+   
+   
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Classpath Variable                                       -->
+<!-- =================================================================================== -->
+   <!-- <extension point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+          id="GROOVY_SUPPORT"
+          class="org.codehaus.groovy.eclipse.core.builder.GroovyClasspathContainerInitializer"/>
+   </extension> -->
+
+</plugin>

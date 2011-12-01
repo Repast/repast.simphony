@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT agent (behaviorsteps, tasksteps, decisionsteps, joinsteps, agentproperties, endsteps, connections)>
+<!ATTLIST agent
+          version CDATA #IMPLIED
+          agentcomment CDATA #IMPLIED
+          agentclassname CDATA #IMPLIED
+          agentparentclassname CDATA #IMPLIED
+          agentinterfaces CDATA #IMPLIED
+          agentimports CDATA #IMPLIED>
+<!ELEMENT behaviorsteps (behaviorstep)>
+<!ELEMENT behaviorstep (label)>
+<!ATTLIST behaviorstep
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+          scheduleannotationstart CDATA #REQUIRED
+          scheduleannotationpick CDATA #REQUIRED
+          scheduleannotationinterval CDATA #REQUIRED
+          scheduleannotationpriority CDATA #REQUIRED
+          scheduleannotationduration CDATA #REQUIRED
+          scheduleannotationshuffle CDATA #REQUIRED
+          watchannotationid CDATA #REQUIRED
+          watchannotationquery CDATA #REQUIRED
+          watchannotationtargetclassname CDATA #REQUIRED
+          watchannotationtargetfieldnames CDATA #REQUIRED
+          watchannotationtriggercondition CDATA #REQUIRED
+          watchannotationtriggerschedule CDATA #REQUIRED
+          watchannotationtriggerdelta CDATA #REQUIRED
+          watchannotationtriggerpriority CDATA #REQUIRED
+          watchannotationpick CDATA #REQUIRED
+          comment CDATA #REQUIRED
+          visibility CDATA #REQUIRED
+          returntype CDATA #REQUIRED
+          compiledname CDATA #REQUIRED
+          parameters CDATA #REQUIRED
+          exceptions CDATA #REQUIRED>
+<!ELEMENT label EMPTY>
+<!ATTLIST label
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+          text CDATA #REQUIRED>
+<!ELEMENT tasksteps (taskstep+)>
+<!ELEMENT taskstep (label)>
+<!ATTLIST taskstep
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+          comment CDATA #REQUIRED
+          command1 CDATA #REQUIRED
+          command2 CDATA #REQUIRED
+          command3 CDATA #REQUIRED
+          command4 CDATA #REQUIRED
+          command5 CDATA #REQUIRED>
+<!ELEMENT decisionsteps (decisionstep+)>
+<!ELEMENT decisionstep (label)>
+<!ATTLIST decisionstep
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+          comment CDATA #REQUIRED
+          criteria CDATA #REQUIRED
+          branchType CDATA #REQUIRED>
+<!ELEMENT joinsteps (joinstep)>
+<!ELEMENT joinstep EMPTY>
+<!ATTLIST joinstep
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED>
+<!ELEMENT agentproperties (agentproperty)>
+<!ELEMENT agentproperty (label)>
+<!ATTLIST agentproperty
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED
+          comment CDATA #REQUIRED
+          visibility CDATA #REQUIRED
+          compiledname CDATA #REQUIRED
+          type CDATA #REQUIRED
+          defaultvalue CDATA #REQUIRED>
+<!ELEMENT endsteps (endstep)>
+<!ELEMENT endstep EMPTY>
+<!ATTLIST endstep
+          x CDATA #REQUIRED
+          y CDATA #REQUIRED>
+<!ELEMENT connections (transitions, booleantransitions)>
+<!ELEMENT transitions (transition+)>
+<!ELEMENT transition (transitionsource, transitiontarget, bendpoints)>
+<!ELEMENT transitionsource EMPTY>
+<!ATTLIST transitionsource
+          type CDATA #REQUIRED
+          index CDATA #REQUIRED
+          anchor CDATA #REQUIRED>
+<!ELEMENT transitiontarget EMPTY>
+<!ATTLIST transitiontarget
+          type CDATA #REQUIRED
+          index CDATA #REQUIRED
+          anchor CDATA #REQUIRED>
+<!ELEMENT bendpoints EMPTY>
+<!ELEMENT booleantransitions (booleantransition+)>
+<!ELEMENT booleantransition (transitionsource, transitiontarget, bendpoints)>
+<!ATTLIST booleantransition
+          value CDATA #REQUIRED>

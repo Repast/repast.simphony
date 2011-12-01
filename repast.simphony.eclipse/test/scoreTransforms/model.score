@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:act="http://scoreabm.org/score.act" xmlns:score="http://scoreabm.org/score" label="VizTest" ID="vizTest" pluralLabel="VizTests">
+  <implementation package="repast.simphony.test" className="" basePath="../repast.test.models" mode="AUTO" binDir="../nick,/Users/nick/jars/my.jar"/>
+  
+  <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="STRING" defaultValue="hello"/>
+
+  <agents label="Test Agent" ID="TestAgent" pluralLabel="Test Agents">
+    <implementation className="TestAgent" mode="LOAD"/>
+    <!-- <attributes label="Initial Count" sType="INTEGER" ID="initialCount" defaultValue="40" /> -->
+    <attributes label="Shapefile Source" sType="STRING" ID="shpFile" defaultValue="./test/data/another.shp" />
+  </agents>
+  
+  <agents label="Test Agent3" ID="TestAgent3" pluralLabel="Test Agents3">
+    <implementation className="TestAgent3" basePath="../repast.foo" mode="LOAD"/>
+  </agents>
+  
+  <agents xsi:type="score:SContext" label="SugarSpace" ID="sugarSpace" pluralLabel="SugarSpaces">
+  	<implementation className="bar.foo.Foo" />
+  	
+  	<agents label="TA2">
+   <implementation className="TestAgent2" package="repast.foo.bar" mode="LOAD"/>
+   </agents>
+  </agents>
+
+  <projections xsi:type="score:SGrid" label="Grid 3D Bouncy" ID="grid3DB" pluralLabel="Grid 3Ds" dimensionality="3" borderRule="BOUNCY">
+    <attributes xsi:type="score:SAttributeArray" label="Dimensions" ID="dimensions" pluralLabel="Dimensionss" description="The size of each dimension." sType="INTEGER" size="3"/>
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="20"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="30"/>
+  </projections>
+
+  <projections xsi:type="score:SGrid" label="Grid 3D Sticky" ID="grid3DSt" pluralLabel="Grid 3Ds" dimensionality="3" borderRule="STICKY">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="30"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="20"/>
+  </projections>
+
+  <projections xsi:type="score:SGrid" label="Grid 3D Strict" ID="grid3DStr" pluralLabel="Grid 3Ds" dimensionality="3" borderRule="STRICT" multiOccupant="true">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="70"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="30"/>
+  </projections>
+
+  <projections xsi:type="score:SGrid" label="Grid 3D Periodic" ID="grid3DP" pluralLabel="Grid 3Ds" dimensionality="3" borderRule="PERIODIC">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="20"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="100"/>
+  </projections>
+
+  <projections xsi:type="score:SGrid" label="Grid 2D Periodic" ID="grid2DP" dimensionality="2" borderRule="PERIODIC" multiOccupant="true">
+    <attributes label="Width" ID="width" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Height" ID="height" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="20"/>
+  </projections>
+
+  <projections xsi:type="score:SContinuousSpace" label="ContinuousSpace 3D Bouncy" ID="space3DB" pluralLabel="ContinuousSpace 3Ds" dimensionality="3" borderRule="BOUNCY">
+    <attributes xsi:type="score:SAttributeArray" label="Dimensions" ID="dimensions" pluralLabel="Dimensionss" description="The size of each dimension." sType="INTEGER" size="3"/>
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="20"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="30"/>
+  </projections>
+
+  <projections xsi:type="score:SContinuousSpace" label="ContinuousSpace 3D Sticky" ID="space3DSt" pluralLabel="ContinuousSpace 3Ds" dimensionality="3" borderRule="STICKY">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="30"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="20"/>
+  </projections>
+
+  <projections xsi:type="score:SContinuousSpace" label="ContinuousSpace 3D Strict" ID="space3DStr" pluralLabel="ContinuousSpace 3Ds" dimensionality="3" borderRule="STRICT">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="70"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="30"/>
+  </projections>
+
+  <projections xsi:type="score:SContinuousSpace" label="ContinuousSpace 3D Periodic" ID="space3DP" pluralLabel="ContinuousSpace 3Ds" dimensionality="3" borderRule="PERIODIC">
+    <attributes label="X Extent" ID="xExtent" pluralLabel="X Extents" description="The horizontal extent of the space." sType="FLOAT" defaultValue="10"/>
+    <attributes label="Y Extent" ID="yExtent" pluralLabel="Y Extents" description="The vertical extent of the space." sType="FLOAT" defaultValue="20"/>
+    <attributes label="Z Extent" ID="zExtent" pluralLabel="Z Extents" description="The depth extent of the space." sType="INTEGER" defaultValue="100"/>
+  </projections>
+
+  <projections xsi:type="score:SContinuousSpace" label="ContinuousSpace 2D Periodic" ID="space2DP" dimensionality="2" borderRule="PERIODIC" >
+    <attributes label="Width" ID="width" pluralLabel="X Extents" description="The horizontal extent of the space." sType="INTEGER" defaultValue="10"/>
+    <attributes label="Height" ID="height" pluralLabel="Y Extents" description="The vertical extent of the space." sType="INTEGER" defaultValue="20"/>
+  </projections>
+  
+  <projections xsi:type="score:SNetwork" label="Directed Network" ID="directedNet" directed="true" />
+  <projections xsi:type="score:SNetwork" label="Undirected Network" ID="undirectedNet" directed="false" />
+  <projections xsi:type="score:SGeography" label="Geography" ID="geography" />
+  
+  <agents xsi:type="score:SContext" label="SugarSpace" ID="sugarSpace" pluralLabel="SugarSpaces">
+    <projections xsi:type="score:SGrid" label="Grid" ID="grid" pluralLabel="Grids"/>
+    <valueLayers label="CurrentSugar" ID="currentSugar" pluralLabel="CurrentSugars"/>
+    <valueLayers label="MaxSugar" ID="maxSugar" pluralLabel="MaxSugars"/>
+  </agents>
+
+</score:SContext>

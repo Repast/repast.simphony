@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.essentials" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.integration" reverse-lookup="false"/>
+	</requires>
+
+	<runtime>
+		<library id="essential_bin" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="sql" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="josql" path="lib/JoSQL-1.9.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="gentlyWEB" path="lib/gentlyWEB-utils-1.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+</plugin>

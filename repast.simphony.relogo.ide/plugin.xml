@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="relogo import"
+            class="repast.simphony.relogo.ide.wizards.NetlogoImportWizard"
+            icon="icons/rlnew_wiz2.gif"
+            id="relogo.wizards.NetlogoImportWizard"
+            name="NetLogo Model">
+      </wizard>
+      <category
+            id="relogo import"
+            name="ReLogo">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="relogo"
+            class="repast.simphony.relogo.ide.wizards.NewRelogoProjectWizard"
+            hasPages="true"
+            icon="icons/rlnew_wiz2.gif"
+            id="repast.simphony.relogo.ide.new_project_wizard"
+            name="ReLogo Project"
+            preferredPerspectives="repast.simphony.relogo.ide.relogoperspective"
+            project="true">
+      </wizard>
+      <category
+            id="relogo"
+            name="ReLogo">
+      </category>
+      <wizard
+            category="relogo"
+            class="repast.simphony.relogo.ide.wizards.NewTurtleWizard"
+            icon="icons/newturtle.gif"
+            id="repast.simphony.relogo.ide.new_turtle_wizard"
+            name="Turtle">
+      </wizard>
+      <wizard
+            category="relogo"
+            class="repast.simphony.relogo.ide.wizards.NewPatchWizard"
+            icon="icons/newpatch.gif"
+            id="repast.simphony.relogo.ide.new_patch_wizard"
+            name="Patch">
+      </wizard>
+      <wizard
+            category="relogo"
+            class="repast.simphony.relogo.ide.wizards.NewLinkWizard"
+            icon="icons/newlink.gif"
+            id="repast.simphony.relogo.ide.new_link_wizard"
+            name="Link">
+      </wizard>
+      <wizard
+            category="relogo"
+            class="repast.simphony.relogo.ide.wizards.NewObserverWizard"
+            icon="icons/newobserver.gif"
+            id="repast.simphony.relogo.ide.new_observer_wizard"
+            name="Observer">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="repast.simphony.relogo.ide.plugin.Startup"></startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="repast.simphony.relogo.ide.ReLogoPerspectiveFactory"
+            icon="icons/rlpersp3.gif"
+            id="repast.simphony.relogo.ide.relogoperspective"
+            name="ReLogo">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            class="repast.simphony.relogo.ide.ReLogoFilter"
+            description="Filters out non-core ReLogo resources from Package Explorer."
+            enabled="false"
+            id="repast.simphony.relogo.ide.relogoResourceFilter"
+            name="ReLogo Resource Filter"
+            targetId="org.eclipse.jdt.ui.PackageExplorer">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="ReLogo Actions"
+            id="repast.simphony.relogo.ide.ReLogoActionSet"
+            label="relogoactionset"
+            visible="true">
+         <action
+               class="repast.simphony.relogo.ide.NewObserverWizardAction"
+               icon="icons/newobserver.gif"
+               id="repast.simphony.relogo.ide.newobserverwizardaction"
+               label="newobserverwizard"
+               style="push"
+               toolbarPath="relogo"
+               tooltip="New Observer">
+         </action>
+         <action
+               class="repast.simphony.relogo.ide.NewPatchWizardAction"
+               icon="icons/newpatch.gif"
+               id="repast.simphony.relogo.ide.newpatchwizardaction"
+               label="newpatchwizard"
+               style="push"
+               toolbarPath="relogo"
+               tooltip="New Patch">
+         </action>
+         <action
+               class="repast.simphony.relogo.ide.NewLinkWizardAction"
+               icon="icons/newlink.gif"
+               id="repast.simphony.relogo.ide.newlinkwizardaction"
+               label="newlinkwizard"
+               style="push"
+               toolbarPath="relogo"
+               tooltip="New Link">
+         </action>
+         <action
+               class="repast.simphony.relogo.ide.NewTurtleWizardAction"
+               icon="icons/newturtle.gif"
+               id="repast.simphony.relogo.ide.newturtlewizardaction"
+               label="newturtlewizard"
+               style="push"
+               toolbarPath="relogo"
+               tooltip="New Turtle">
+         </action>
+         <action
+               class="repast.simphony.relogo.ide.NewReLogoProjectWizardAction"
+               icon="icons/rlnew_wiz2.gif"
+               id="repast.simphony.relogo.ide.newrelogoprojectwizardaction"
+               label="newrelogoprojectwizard"
+               style="push"
+               toolbarPath="relogo"
+               tooltip="New ReLogo Project">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="repast.simphony.relogo.ide.relogoperspective">
+         <hiddenToolBarItem
+               id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.jdt.ui.JavaElementCreationActionSet">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.search.searchActionSet">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.workbench.navigate">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="repast.simphony.eclipse.insertrepastcode">
+         </hiddenToolBarItem>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <perspectiveShortcut
+               id="repast.simphony.relogo.ide.relogoperspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            delegate="repast.simphony.relogo.ide.ReLogoLaunchConfigurationDelegate"
+            delegateDescription="Cleans the project prior to launching."
+            id="repast.simphony.relogo.ide.relogoLaunchDelegate"
+            modes="run,debug,profile"
+            name="ReLogo Launch Delegate"
+            type="org.eclipse.jdt.launching.localJavaApplication">
+      </launchDelegate>
+   </extension>
+
+</plugin>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.dataloader.ui" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+  <requires>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
+  </requires>
+
+  <runtime>
+    <library id="dataloader.ui.bin" path="bin/" type="code">
+      <export prefix="*"/>
+    </library>
+  </runtime>
+
+  <extension-point extension-multiplicity="any" id="wizard.options" parent-plugin-id="repast.simphony.plugin.util" parent-point-id="wizard.options">
+  </extension-point>
+
+
+  <extension id="dl.ui.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+    <parameter id="creatorClass" value="repast.simphony.dataLoader.engine.DataLoaderCompositeActionCreator"/>
+    <parameter id="label" value="Data Loaders"/>
+  </extension>
+
+
+  <extension id="wizard.options.classOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.dataLoader.ui.wizard.SpecificClassOption"/>
+  </extension>
+
+  <extension id="wizard.options.delimitedOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.dataLoader.ui.wizard.DelimitedFileDataLoaderOption"/>
+  </extension>
+
+  <extension id="wizard.options.contextXMLOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.dataLoader.ui.wizard.ContextXMLDataLoaderOption"/>
+  </extension>
+  
+  <extension id="wizard.options.miContextXMLOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.dataLoader.ui.wizard.MIContextXMLDataLoaderOption"/>
+  </extension>
+
+  <extension id="wizard.options.xmlOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.dataLoader.ui.wizard.XMLLoaderOption"/>
+  </extension>
+
+  <extension id="dl.ui.component.action.1" plugin-id="repast.simphony.gui" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.CNDataLoaderControllerActionIO"/>
+    <parameter id="editorCreator" value="repast.simphony.dataLoader.ui.CNDataLoaderActionEditorCreator"/>
+    <parameter id="parentMenuItem" value="repast.simphony.dataLoader.ui.DefaultDataLoaderMenuItem"/>
+    <!-- this is the id that the composite parent action is registered with controller with  -->
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="dl.ui.component.action.delimited" plugin-id="repast.simphony.gui" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.DFDataLoaderControllerActionIO"/>
+    <parameter id="editorCreator" value="repast.simphony.dataLoader.ui.DFDataLoaderActionEditorCreator"/>
+    <!-- this is the id that the composite parent action is registered with controller with  -->
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="dl.ui.component.action.score" plugin-id="repast.simphony.gui" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.ContextXMLDataLoaderControllerActionIO"/>
+    <parameter id="editorCreator" value="repast.simphony.dataLoader.ui.ContextXMLLoaderActionEditorCreator"/>
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+  
+  <extension id="dl.ui.component.action.mi_xml" plugin-id="repast.simphony.gui" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.MIContextXMLDataLoaderControllerActionIO"/>
+    <parameter id="editorCreator" value="repast.simphony.dataLoader.ui.MIContextXMLLoaderActionEditorCreator"/>
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+</plugin>

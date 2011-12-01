@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.integration" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+	</requires>
+
+	<runtime>
+		<!-- <library type="resources" path="icons/" id="icons"/> -->
+		<library id="rsIntegration" path="bin/" type="code"/>
+
+		<library id="commons-jxpath-1.2" path="lib/commons-jxpath-1.2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jaxen-core-1.0.FCS" path="lib/jaxen-core-1.0-FCS.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jaxen-jdom-1.0" path="lib/jaxen-jdom-1.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jdom-1.0" path="lib/jdom-1.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="saxpath-1.0-FCS" path="lib/saxpath-1.0-FCS.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="exec-1.0-FCS" path="lib/exec-1.0-SNAPSHOT.jar" type="code"/>		
+	</runtime>
+
+<!--
+	<extension plugin-id="saf.core.ui" point-id="ui.Actions" id="r.actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.R.runR"/>
+			<parameter id="label" value="&amp;Run R"/>
+			<parameter id="class" value="repast.simphony.R.RunRModel"/>
+			<parameter id="icon" value="calc.png" />
+			<parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+			<parameter id="groupID" value="stats" />
+			<parameter id="tooltip" value="Run R" />
+		</parameter>
+	</extension>
+-->
+</plugin>

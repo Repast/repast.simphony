@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.freezedry" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+  <requires>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="true"/>
+
+  </requires>
+
+  <runtime>
+    <library id="freezedrybin" path="bin/" type="code">
+      <export prefix="*"/>
+    </library>
+    <library id="icons" path="icons/" type="resources"/>
+  </runtime>
+
+
+  <extension-point extension-multiplicity="any" id="wizard.options" parent-plugin-id="repast.simphony.plugin.util" parent-point-id="wizard.options">
+  </extension-point>
+
+  <extension id="delimitedFreezeOption" plugin-id="repast.simphony.freezedry" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.freezedry.wizard.DelimitedFileOption"/>
+  </extension>
+
+
+  <extension id="xmlFreezeOption" plugin-id="repast.simphony.freezedry" point-id="wizard.options">
+    <parameter id="class" value="repast.simphony.freezedry.wizard.XMLFileOption"/>
+  </extension>
+
+  <extension id="zfreezeDry.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.freezedry.freezedry"/>
+      <parameter id="label" value="Freeze Dry"/>
+      <parameter id="class" value="repast.simphony.freezedry.wizard.FreezeDryButtonModel"/>
+      <parameter id="icon" value="db.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+      <parameter id="groupID" value="file"/>
+      <parameter id="tooltip" value="Freeze dry current data"/>
+    </parameter>
+  </extension>
+
+
+  <extension id="freezedry.dffreezedryaction" plugin-id="repast.simphony.gui" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.freezedry.engine.DelimitedFileFreezerActionIO"/>
+    <parameter id="editorCreator" value="repast.simphony.freezedry.gui.DFFreezerActionEditorCreator"/>
+    <parameter id="parentMenuItem" value="repast.simphony.freezedry.gui.FreezerMenuItem"/>
+    <!-- this value is from core repast.plugins.ControllerActionConstants -->
+    <parameter id="parentID" value="repast.controller.action.misc"/>
+  </extension>
+
+</plugin>

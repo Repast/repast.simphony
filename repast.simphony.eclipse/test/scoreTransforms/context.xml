@@ -1,0 +1,86 @@
+<context id="VizTest">
+  
+  
+  <attribute id="zExtent" display_name="Z Extent" value="hello" type="string"/>
+
+  
+  
+  
+  
+  <context id="SugarSpace">
+  	
+  	
+  	
+  </context>
+
+  <projection id="grid3DB" type="grid"><attribute id="border rule" value="BOUNCY" type="string"/>
+    
+    <attribute id="xExtent" display_name="X Extent" value="10" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="20" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="30" type="int"/>
+  </projection>
+
+  <projection id="grid3DSt" type="grid"><attribute id="border rule" value="STICKY" type="string"/>
+    <attribute id="xExtent" display_name="X Extent" value="30" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="10" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="20" type="int"/>
+  </projection>
+
+  <projection id="grid3DStr" type="grid"><attribute id="border rule" value="STRICT" type="string"/><attribute id="allows multi" value="true" type="boolean"/>
+    <attribute id="xExtent" display_name="X Extent" value="10" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="70" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="30" type="int"/>
+  </projection>
+
+  <projection id="grid3DP" type="grid"><attribute id="border rule" value="PERIODIC" type="string"/>
+    <attribute id="xExtent" display_name="X Extent" value="10" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="20" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="100" type="int"/>
+  </projection>
+
+  <projection id="grid2DP" type="grid"><attribute id="border rule" value="PERIODIC" type="string"/><attribute id="allows multi" value="true" type="boolean"/>
+    <attribute id="width" display_name="Width" value="10" type="int"/>
+    <attribute id="height" display_name="Height" value="20" type="int"/>
+  </projection>
+
+  <projection id="space3DB" type="continuous space"><attribute id="border rule" value="BOUNCY" type="string"/>
+    
+    <attribute id="xExtent" display_name="X Extent" value="10" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="20" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="30" type="int"/>
+  </projection>
+
+  <projection id="space3DSt" type="continuous space"><attribute id="border rule" value="STICKY" type="string"/>
+    <attribute id="xExtent" display_name="X Extent" value="30" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="10" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="20" type="int"/>
+  </projection>
+
+  <projection id="space3DStr" type="continuous space"><attribute id="border rule" value="STRICT" type="string"/>
+    <attribute id="xExtent" display_name="X Extent" value="10" type="int"/>
+    <attribute id="yExtent" display_name="Y Extent" value="70" type="int"/>
+    <attribute id="zExtent" display_name="Z Extent" value="30" type="int"/>
+  </projection>
+
+  <projection id="space3DP" type="continuous space"><attribute id="border rule" value="PERIODIC" type="string"/>
+    <attribute id="xExtent" display_name="X Extent" value="10" type="double"/>
+    <attribute id="yExtent" display_name="Y Extent" value="20" type="double"/>
+    <attribute id="zExtent" display_name="Z Extent" value="100" type="int"/>
+  </projection>
+
+  <projection id="space2DP" type="continuous space"><attribute id="border rule" value="PERIODIC" type="string"/>
+    <attribute id="width" display_name="Width" value="10" type="int"/>
+    <attribute id="height" display_name="Height" value="20" type="int"/>
+  </projection>
+  
+  <projection id="directedNet" type="network"><attribute id="directed" value="true" type="boolean"/></projection>
+  <projection id="undirectedNet" type="network"><attribute id="directed" value="false" type="boolean"/></projection>
+  <projection id="geography" type="geography"/>
+  
+  <context id="SugarSpace">
+    <projection id="grid" type="grid"/>
+    <projection id="currentSugar" type="value layer"/>
+    <projection id="maxSugar" type="value layer"/>
+  </context>
+
+</context>

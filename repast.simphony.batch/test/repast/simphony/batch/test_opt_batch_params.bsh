@@ -1,0 +1,4 @@
+builder.setRunCount(1);
+root = builder.getRootSetter();
+builder.addStepper(root, "x", 0, 40, 1);
+builder.addStepper(root, "y", 0, 40, 1);

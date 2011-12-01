@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE iReportProperties PUBLIC "-//iReport/DTD iReport Configuration//EN" "http://ireport.sourceforge.net/dtds/iReportProperties.dtd">
+<iReportProperties>
+	<iReportConnection name="ribo" connectionClass="it.businesslogic.ireport.connection.JRCSVDataSourceConnection">
+		<connectionParameter name="COLUMN_0"><![CDATA[Tick]]></connectionParameter>
+		<connectionParameter name="COLUMN_1"><![CDATA[flab]]></connectionParameter>
+		<connectionParameter name="fieldDelimiter"><![CDATA[,]]></connectionParameter>
+		<connectionParameter name="useFirstRowAsHeader"><![CDATA[true]]></connectionParameter>
+		<connectionParameter name="Filename"><![CDATA[C:\sugar.csv]]></connectionParameter>
+		 <connectionParameter name="recordDelimiter"><![CDATA[
+]]></connectionParameter>
+
+	</iReportConnection>
+</iReportProperties>

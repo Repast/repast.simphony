@@ -1,0 +1,29 @@
+<score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:act="http://scoreabm.org/score.act" xmlns:score="http://scoreabm.org/score" label="SugarScape" ID="sugarScape" pluralLabel="SugarScapes">
+  <attributes label="Max Metabolism" ID="maxMetabolism" pluralLabel="Max Metabolisms" sType="INTEGER" defaultValue="4"/>
+  <attributes label="Max Vision" ID="maxVision" pluralLabel="Max Visions" sType="INTEGER" defaultValue="6"/>
+  <attributes label="Max Initial Sugar" ID="maxInitialSugar" pluralLabel="Max Initial Sugars" sType="INTEGER" defaultValue="25"/>
+  <attributes label="Min Initial Sugar" ID="minInitialSugar" pluralLabel="Min Initial Sugars" sType="INTEGER" defaultValue="5"/>
+  <attributes label="Min Death Age" ID="minDeathAge" pluralLabel="Min Death Ages" sType="INTEGER" defaultValue="60"/>
+  <attributes label="Max Death Age" ID="maxDeathAge" pluralLabel="Max Death Ages" sType="INTEGER" defaultValue="100"/>
+  <attributes label="Initial Num Agents" ID="initialNumAgents" pluralLabel="Initial Num Agentss" sType="INTEGER" defaultValue="400"/>
+  <attributes label="Sugar Grow Rate" ID="sugarGrowRate" pluralLabel="Sugar Grow Rates" sType="INTEGER" defaultValue="1"/>
+  <attributes label="World Height" ID="worldHeight" pluralLabel="World Heights" sType="INTEGER" defaultValue="50"/>
+  <attributes label="World Width" ID="worldWidth" pluralLabel="World Widths" sType="INTEGER" defaultValue="50"/>
+  <implementation package="repast.simphony.demo.sugarscape" className="SugarScape" basePath="../repast.simphony.demos"/>
+  <rootActivity xsi:type="act:AGroup" label="Root Acts" ID="rootActs" pluralLabel="Root Act Groups" description="Group of all Context Acts"/>
+  <agents xsi:type="score:SContext" label="SugarSpace" ID="sugarSpace" pluralLabel="SugarSpaces">
+    <implementation className="SugarSpace"/>
+    <agents label="SugarAgent" ID="sugarAgent" pluralLabel="SugarAgents">
+      <implementation className="SugarAgent"/>
+      <styles xsi:type="score:SStyle2D" label="SugarAgent Style 2D" ID="sugarAgentStyle2D">
+        <implementation className="SugarAgentStyle2D"/>
+      </styles>
+      <styles xsi:type="score:SStyle3D" label="SugarAgent Style 3D" ID="sugarAgentStyle3D">
+        <implementation className="SugarAgentStyle"/>
+      </styles>
+    </agents>
+    <projections xsi:type="score:SGrid" label="Grid" ID="grid" pluralLabel="Grids"/>
+    <valueLayers label="CurrentSugar" ID="currentSugar" pluralLabel="CurrentSugars"/>
+    <valueLayers label="MaxSugar" ID="maxSugar" pluralLabel="MaxSugars"/>
+  </agents>
+</score:SContext>

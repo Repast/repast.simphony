@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters>
+	#set ($schema = $parameters.getSchema())
+		#foreach($name in $schema.parameterNames())
+		#set ($details = $schema.getDetails($name))
+		<parameter name="$name" displayName="$parameters.getDisplayName($name)" type="$details.getType().getName()" 
+			#if($details.getDefaultValue().equals($NULL))
+			defaultValue="__NULL__"
+			#else
+			defaultValue="$details.toString($details.getDefaultValue())" 
+			#end
+			isReadOnly="$parameters.isReadOnly($name)" 
+			#if ($details.getConverter() && !$details.getConverter().getClass().getName().contains("DefaultParameterSchema"))
+			converter="$details.getConverter().getClass().getName()"
+			#end
+			#set ($constraint = $details.getConstraintString()) 
+			#if (($constraint) && !($constraint == "")) 
+			values="$constraint"
+			#end
+			
+		/>
+		#end
+</parameters>
+
+

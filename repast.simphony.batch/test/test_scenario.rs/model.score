@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score:SContext xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:score="http://scoreabm.org/score" label="Batch Test Context 3" ID="BatchTest">
+  <implementation className="BatchTestContextCreator" package="repast.simphony.batch" basePath="../repast.simphony.batch" mode="LOAD"/>
+  <attributes label="A String Parameter" ID="StringParam" sType="STRING" defaultValue="Cormac"/>
+  <attributes label="An Int Parameter" ID="IntParam" sType="INTEGER" defaultValue="8"/>
+  <agents label="Batch Test Agent 3" ID="batchTestAgent3" pluralLabel="Batch Test Agent 3s">
+    <implementation className="BatchTestAgent3" mode="LOAD"/>
+	  <attributes label="fire" ID="fire" sType="BOOLEAN" defaultValue="" />
+  </agents>
+</score:SContext>

@@ -1,0 +1,168 @@
+group catchAll;
+
+modelLauncher_file(Model) ::= <<
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/$Model$"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER&quot; path=&quot;2&quot; type=&quot;4&quot;/&gt;&#10;"/>
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;REPAST_SIMPHONY_LAUNCHER&quot; path=&quot;3&quot; type=&quot;4&quot;/&gt;&#10;"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="repast.simphony.runtime.RepastMain"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;\${workspace_loc:$Model$}/$Model$.rs&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="$Model$"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xss10M -Xmx400M"/>
+</launchConfiguration>
+>>
+
+dataLoader_file(Model) ::= <<
+<string>$Model$.context.SimBuilder</string>
+>>
+
+userPanel_file(Model) ::= <<
+<repast.simphony.userpanel.ui.DefaultUserPanelDescriptor>
+  <name>Custom Panel</name>
+  <userPanelCreator>$Model$.factories.ReLogoPanelCreator</userPanelCreator>
+</repast.simphony.userpanel.ui.DefaultUserPanelDescriptor>
+>>
+
+scenario_file(Model) ::= <<
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scenario>
+<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="$Model$" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
+<repast.simphony.userpanel.ui.DefaultUserPanelDescriptorAction context="$Model$" file="repast.simphony.userpanel.ui.DefaultUserPanelDescriptorAction_1.xml" />
+<repast.simphony.action.display context="default_observer_context" file="repast.simphony.action.display_relogoDefault.xml" />
+<model.initializer class="repast.simphony.relogo.ReLogoInitializer" />
+</Scenario>
+>>
+
+
+directedLinksStyle_file() ::= <<
+<repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+  <lineStyle>SOLID</lineStyle>
+  <size>1.0</size>
+  <sizeMax>1.0</sizeMax>
+  <sizeMin>0.0</sizeMin>
+  <sizeScale>1.0</sizeScale>
+  <color>
+    <float>0.0</float>
+    <float>0.0</float>
+    <float>1.0</float>
+  </color>
+  <colorMax>
+    <float>10.0</float>
+    <float>10.0</float>
+    <float>10.0</float>
+  </colorMax>
+  <colorMin>
+    <float>0.0</float>
+    <float>0.0</float>
+    <float>0.0</float>
+  </colorMin>
+  <colorScale>
+    <float>1.0</float>
+    <float>1.0</float>
+    <float>1.0</float>
+  </colorScale>
+</repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+>>
+
+undirectedLinksStyle_file() ::= <<
+<repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+  <lineStyle>SOLID</lineStyle>
+  <size>1.0</size>
+  <sizeMax>1.0</sizeMax>
+  <sizeMin>0.0</sizeMin>
+  <sizeScale>1.0</sizeScale>
+  <color>
+    <float>1.0</float>
+    <float>0.0</float>
+    <float>0.2</float>
+  </color>
+  <colorMax>
+    <float>10.0</float>
+    <float>10.0</float>
+    <float>10.0</float>
+  </colorMax>
+  <colorMin>
+    <float>0.0</float>
+    <float>0.0</float>
+    <float>0.0</float>
+  </colorMin>
+  <colorScale>
+    <float>1.0</float>
+    <float>1.0</float>
+    <float>1.0</float>
+  </colorScale>
+</repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+>>
+
+trackingNetworkStyle_file() ::= <<
+<repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+  <lineStyle>SOLID</lineStyle>
+  <size>1.0</size>
+  <sizeMax>1.0</sizeMax>
+  <sizeMin>0.0</sizeMin>
+  <sizeScale>1.0</sizeScale>
+  <color>
+    <float>0.6</float>
+    <float>0.6</float>
+    <float>0.6</float>
+  </color>
+  <colorMax>
+    <float>10.0</float>
+    <float>10.0</float>
+    <float>10.0</float>
+  </colorMax>
+  <colorMin>
+    <float>0.0</float>
+    <float>0.0</float>
+    <float>0.0</float>
+  </colorMin>
+  <colorScale>
+    <float>1.0</float>
+    <float>1.0</float>
+    <float>1.0</float>
+  </colorScale>
+</repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+>>
+
+additionalNetworksStyle_file(number) ::= <<
+<repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+  <lineStyle>SOLID</lineStyle>
+  <size>1.0</size>
+  <sizeMax>1.0</sizeMax>
+  <sizeMin>0.0</sizeMin>
+  <sizeScale>1.0</sizeScale>
+  <color>
+    <float>$number$</float>
+    <float>$number$</float>
+    <float>$number$</float>
+  </color>
+  <colorMax>
+    <float>10.0</float>
+    <float>10.0</float>
+    <float>10.0</float>
+  </colorMax>
+  <colorMin>
+    <float>0.0</float>
+    <float>0.0</float>
+    <float>0.0</float>
+  </colorMin>
+  <colorScale>
+    <float>1.0</float>
+    <float>1.0</float>
+    <float>1.0</float>
+  </colorScale>
+</repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData>
+>>

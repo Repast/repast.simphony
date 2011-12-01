@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.dataloader" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+  <requires>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
+  </requires>
+
+  <runtime>
+    <library id="icons" path="icons/" type="resources"/>
+    <library id="dataloader.bin" path="bin/" type="code">
+      <export prefix="*"/>
+    </library>
+  </runtime>
+
+  <extension id="dl.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
+    <parameter id="creatorClass" value="repast.simphony.dataLoader.engine.DataLoaderCompositeActionCreator"/>
+  </extension>
+
+  <extension id="dl.component.action.1" plugin-id="repast.simphony.core" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.CNDataLoaderControllerActionIO"/>
+    <!-- this is the id that the composite parent action is registered with controller with  -->
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="dl.component.action.delimited" plugin-id="repast.simphony.core" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.DFDataLoaderControllerActionIO"/>
+    <!-- this is the id that the composite parent action is registered with controller with  -->
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="dl.component.action.score" plugin-id="repast.simphony.core" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.ContextXMLDataLoaderControllerActionIO"/>
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+  
+  <extension id="dl.component.action.mi_xml" plugin-id="repast.simphony.core" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.MIContextXMLDataLoaderControllerActionIO"/>
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="dl.component.action.xml" plugin-id="repast.simphony.core" point-id="component.action">
+    <parameter id="actionIO" value="repast.simphony.dataLoader.engine.XMLDataLoaderControllerActionIO"/>
+    <!-- this is the id that the composite parent action is registered with controller with  -->
+    <parameter id="parentID" value="repast.controller.action.data_loaders"/>
+  </extension>
+
+  <extension id="data.loader.extension" plugin-id="repast.simphony.scenario" point-id="scenario.creator.extension">
+    <parameter id="className" value="repast.simphony.dataLoader.DataLoaderScenarioCreatorExtension"/>
+  </extension>
+
+</plugin>

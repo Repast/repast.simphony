@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<agent version="1" agentcomment="This is a model initializer." agentclassname="ModelInitializer" agentparentclassname="" agentinterfaces="" agentimports="">
+  <behaviorsteps>
+    <behaviorstep x="101" y="86" scheduleannotationstart="" scheduleannotationpick="" scheduleannotationinterval="" scheduleannotationpriority="" scheduleannotationduration="" scheduleannotationshuffle="0" watchannotationid="" watchannotationquery="" watchannotationtargetclassname="" watchannotationtargetfieldnames="" watchannotationtriggercondition="" watchannotationtriggerschedule="0" watchannotationtriggerdelta="" watchannotationtriggerpriority="" watchannotationpick="" comment="This is the user model builder" visibility="0" returntype="def" compiledname="initializeModel" parameters="" exceptions="">
+      <label x="92" y="70" text="Initialize Model"/>
+    </behaviorstep>
+  </behaviorsteps>
+  <tasksteps/>
+  <decisionsteps/>
+  <joinsteps/>
+  <agentproperties/>
+  <endsteps>
+    <endstep x="107" y="226"/>
+  </endsteps>
+  <connections>
+    <transitions>
+      <transition>
+        <transitionsource type="behavior" index="0" anchor="0"/>
+        <transitiontarget type="end" index="0" anchor="0"/>
+        <bendpoints/>
+      </transition>
+    </transitions>
+    <booleantransitions/>
+  </connections>
+</agent>

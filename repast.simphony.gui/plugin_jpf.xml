@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin class="repast.simphony.ui.RSUIPlugin" id="repast.simphony.gui" version="">
+
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+	
+  <requires>
+    <import exported="false" match="compatible" optional="false" plugin-id="saf.core.runtime" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.essentials" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.groovy" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.distributedBatch" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
+  </requires>
+
+  <runtime>
+    <library id="rsg" path="bin/" type="code">
+      <export prefix="*"/>
+    </library>
+    <library id="icons" path="icons/" type="resources">
+      <export prefix="*"/>
+    </library>
+    <!--
+      <library type="resources" path="help/" id="help"/>
+      -->
+    <library id="binding-1.1.1" path="lib/binding-1.1.1.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="jide-oss" path="lib/jide-oss-2.7.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="spark" path="lib/spark-1.2.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="jmf" path="lib/jmf.jar" type="code">
+    	<export prefix="*"/>
+    </library>
+    
+  </runtime>
+
+  <!--
+   Extension point for setting the class that formats the text in the tick count label. The class must implement the
+   interface TickCountFormatter. If the value of the class is "none" then the no tick count label will be shown.
+   If no extension of this point is found then the default label will be used.
+   -->
+  <extension-point extension-multiplicity="any" id="tick.label.formatter">
+    <parameter-def id="class" multiplicity="one" type="string"/>
+  </extension-point>
+
+  <!-- Extension point that provides a label for a parent / composite action. The actual action itself
+   is defined in the parent of this extension point: repast.simphony.core.composite.action. See the
+   docs for that extension point for now.
+   -->
+  <extension-point extension-multiplicity="any" id="composite.action" parent-plugin-id="repast.simphony.core" parent-point-id="composite.action">
+    <parameter-def id="label" multiplicity="one" type="string"/>
+  </extension-point>
+
+  <!-- Extension point for child / component actions. Parameters:
+    editorCreator - the name of a class that implements the repast.ui.plugin.ActionEditorCreator interface.
+    The "editor" will be used to edit the child action.
+
+    parentMenuItem - the name of the class that implements EditorMenuItem. The best way to do this is to
+    extend the AbstractEditorMenuItem class. This menu item will be added to the popup menu for the parent
+    action. The menuItem is the entry point to the creation of the child action.
+
+    parentID - the id of the parent action that this action should be added to.
+   -->
+  <extension-point extension-multiplicity="any" id="component.action" parent-plugin-id="repast.simphony.core" parent-point-id="component.action">
+    <parameter-def id="editorCreator" multiplicity="one" type="string"/>
+    <parameter-def id="parentMenuItem" multiplicity="none-or-one" type="string"/>
+  </extension-point>
+
+  <extension id="RepastSimApp" plugin-id="saf.core.runtime" point-id="IApplicationRunnable">
+    <parameter id="class" value="repast.simphony.ui.RSUIPlugin"/>
+    <parameter id="name" value="RS App"/>
+    <parameter id="description" value="RS Application"/>
+  </extension>
+
+
+  <extension id="rs.perspectives" plugin-id="saf.core.ui" point-id="ui.Perspectives">
+
+    <parameter id="perspective">
+      <parameter id="perspectiveID" value="repast.simphony.ui.perspective.default"/>
+      <parameter id="name" value="Default"/>
+
+      <parameter id="viewGroup">
+        <parameter id="groupID" value="repast.simphony.ui.view.viz"/>
+      </parameter>
+
+      <parameter id="viewGroup">
+        <parameter id="groupID" value="repast.simphony.ui.view.tree"/>
+        <parameter id="location" value="west"/>
+        <parameter id="parent" value="repast.simphony.ui.view.viz"/>
+        <parameter id="fillPercentage" value=".25"/>
+      </parameter>
+
+      <parameter id="viewGroup">
+        <parameter id="groupID" value="repast.simphony.ui.view.probe"/>
+        <parameter id="location" value="south"/>
+        <parameter id="parent" value="repast.simphony.ui.view.tree"/>
+        <parameter id="fillPercentage" value=".5"/>
+      </parameter>
+
+      <parameter id="viewGroup">
+        <parameter id="groupID" value="repast.simphony.ui.view.log"/>
+        <parameter id="location" value="south"/>
+        <parameter id="parent" value="repast.simphony.ui.view.viz"/>
+        <parameter id="fillPercentage" value=".25"/>
+      </parameter>
+
+    </parameter>
+  </extension>
+
+  <!--
+   String FILE_MENU_ID = "repast.simphony.ui.file_menu";
+   String RUN_MENU_ID = "repast.simphony.ui.run_menu";
+   -->
+
+  <extension id="ui.menus" plugin-id="saf.core.ui" point-id="ui.Menus">
+
+    <parameter id="menuSpec">
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+      <parameter id="label" value="&amp;File"/>
+    </parameter>
+
+    <parameter id="menuSpec">
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="label" value="&amp;Run"/>
+    </parameter>
+
+    <parameter id="menuSpec">
+      <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+      <parameter id="label" value="&amp;Tools"/>
+    </parameter>
+    
+    <parameter id="menuSpec">
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+      <parameter id="label" value="&amp;Window"/>
+    </parameter>
+    
+    <!-- We shadow the default saf view menu here. In RSGUI.init() we remove this menu
+    and add it to the one above it. We DONT do this with a parentID here because we need
+    greater control over the order -->
+    <parameter id="menuSpec">
+      <parameter id="menuID" value="saf.core.ui.view.WindowMenuId"/>
+      <parameter id="label" value="Show &amp;View"/>
+    </parameter>
+    
+  </extension>
+
+  <!--
+   <extension plugin-id="saf.core.ui" point-id="ui.Help" id="bwicHelp">
+     <parameter id="helpSet" value="bwic.hs"/>
+   </extension>
+   -->
+
+  <!--
+   String START_ID = "repast.simphony.ui.action.start";
+   String PAUSE_ID = "repast.simphony.ui.action.pause";
+   String STEP_ID = "repast.simphony.ui.action.step";
+   String OPEN_ID = "repast.simphony.ui.action.open";
+   String SAVE_ID = "repast.simphony.ui.action.save";
+   String STOP_ID = "repast.simphony.ui.action.stop";
+   String RESET_ID = "repast.simphony.ui.action.reset";
+   String INIT_ID = "repast.simphony.ui.action.init";
+   -->
+
+  <extension id="rs.ctions" plugin-id="saf.core.ui" point-id="ui.Actions">
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.NewScenario"/>
+      <parameter id="label" value="&amp;New"/>
+      <parameter id="class" value="repast.simphony.ui.action.NewScenario"/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.open"/>
+      <parameter id="label" value="&amp;Open"/>
+      <parameter id="class" value="repast.simphony.ui.action.OpenScenario"/>
+      <parameter id="icon" value="fileopen.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+      <parameter id="groupID" value="file"/>
+      <parameter id="tooltip" value="Open Model"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.save"/>
+      <parameter id="label" value="&amp;Save"/>
+      <parameter id="class" value="repast.simphony.ui.action.SaveModel"/>
+      <parameter id="icon" value="filesave.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+      <parameter id="groupID" value="file"/>
+      <parameter id="tooltip" value="Save Model"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.saveas"/>
+      <parameter id="label" value="Save &amp;As"/>
+      <parameter id="class" value="repast.simphony.ui.action.SaveAsModel"/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+      <parameter id="tooltip" value="Save Model As"/>
+    </parameter>
+
+    <parameter id="separator">
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="saf.core.ui.actions.exit"/>
+      <parameter id="class" value=""/>
+      <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.init"/>
+      <parameter id="label" value="&amp;Init"/>
+      <parameter id="class" value="repast.simphony.ui.action.InitRun"/>
+      <parameter id="icon" value="shutdown.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="groupID" value="run"/>
+      <parameter id="tooltip" value="Initialize Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.start"/>
+      <parameter id="label" value="&amp;Start"/>
+      <parameter id="class" value="repast.simphony.ui.action.StartRun"/>
+      <parameter id="icon" value="player_play.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="groupID" value="run"/>
+      <parameter id="tooltip" value="Start Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.step"/>
+      <parameter id="label" value="S&amp;tep"/>
+      <parameter id="class" value="repast.simphony.ui.action.StepRun"/>
+      <parameter id="icon" value="player_step.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="groupID" value="run"/>
+      <parameter id="tooltip" value="Step Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.pause"/>
+      <parameter id="label" value="&amp;Pause"/>
+      <parameter id="class" value="repast.simphony.ui.action.PauseRun"/>
+      <parameter id="icon" value="player_pause.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="tooltip" value="Pause Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.stop"/>
+      <parameter id="label" value="St&amp;op"/>
+      <parameter id="class" value="repast.simphony.ui.action.StopRun"/>
+      <parameter id="icon" value="player_stop.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="groupID" value="run"/>
+      <parameter id="tooltip" value="Stop Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.reset"/>
+      <parameter id="label" value="&amp;Reset"/>
+      <parameter id="class" value="repast.simphony.ui.action.ResetRun"/>
+      <parameter id="icon" value="reload.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.run_menu"/>
+      <parameter id="groupID" value="run"/>
+      <parameter id="tooltip" value="Reset Run"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.saveParams"/>
+      <parameter id="label" value="&amp;Save Current Parameters"/>
+      <parameter id="class" value="repast.simphony.ui.action.SaveCurrentParams"/>
+      <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.gis.ShowExportDialog"/>
+      <parameter id="label" value="&amp;Export Geography Layers"/>
+      <parameter id="class" value="repast.simphony.ui.gis.ShowExportDialog"/>
+      <parameter id="icon" value="nfs_mount.png"/>
+      <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+      <parameter id="groupID" value="runTools"/>
+      <parameter id="tooltip" value="Export geography layers to a shapefile"/>
+    </parameter>
+
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.ErrorLogAction"/>
+      <parameter id="label" value="Show &amp;Error Log"/>
+      <parameter id="class" value="repast.simphony.ui.action.ErrorLogAction"/>
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+   
+    <parameter id="separator">
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+    
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.ResetLayout"/>
+      <parameter id="label" value="Reset View Layout"/>
+      <parameter id="class" value="repast.simphony.ui.action.ResetLayout"/>
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+    
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.SaveAsDefaultLayout"/>
+      <parameter id="label" value="Save View Layout As Default"/>
+      <parameter id="class" value="repast.simphony.ui.action.SaveAsDefaultLayout"/>
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+    
+    <!--
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.SaveLayout"/>
+      <parameter id="label" value="Save Window Layout..."/>
+      <parameter id="class" value="repast.simphony.ui.action.SaveLayout"/>
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+    
+    <parameter id="actionSpec">
+      <parameter id="actionID" value="repast.simphony.ui.action.LoadLayout"/>
+      <parameter id="label" value="Load Window Layout..."/>
+      <parameter id="class" value="repast.simphony.ui.action.LoadLayout"/>
+      <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
+    </parameter>
+    -->
+
+  </extension>
+
+  <extension id="bar" plugin-id="saf.core.ui" point-id="ui.StatusBar">
+    <parameter id="StatusField">
+      <parameter id="name" value="repast.simphony.ui.statusbar.main"/>
+      <parameter id="fillPercentage" value=".75"/>
+    </parameter>
+
+    <parameter id="StatusField">
+      <parameter id="name" value="repast.simphony.ui.statusbar.viz"/>
+      <parameter id="fillPercentage" value=".2"/>
+    </parameter>
+
+    <parameter id="StatusField">
+      <parameter id="name" value="repast.simphony.ui.statusbar.warn"/>
+      <parameter id="fillPercentage" value=".05"/>
+    </parameter>
+  </extension>
+
+  <extension id="schedule.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+    <parameter id="creatorClass" value="repast.simphony.plugin.ScheduledActionsCreator"/>
+    <parameter id="label" value="Model Initialization"/>
+  </extension>
+
+  <extension id="random.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+    <parameter id="creatorClass" value="repast.simphony.plugin.RandomCompositeActionCreator"/>
+    <parameter id="label" value="Random Streams"/>
+  </extension>
+
+  <extension id="misc.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+    <parameter id="creatorClass" value="repast.simphony.plugin.MiscCompositeActionCreator"/>
+    <parameter id="label" value="Miscellaneous Actions"/>
+  </extension>
+
+</plugin>

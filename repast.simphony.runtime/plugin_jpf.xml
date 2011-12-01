@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin class="saf.core.runtime.CorePlugin" id="saf.core.runtime" version="">
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+	
+	<runtime>
+    <library id="core.jar" path="lib/saf.core.runtime.jar" type="code">
+          <export prefix="*"/>
+     </library>
+    <!--
+		<library id="runtime" path="classes/" type="code">
+    -->
+			<!--
+			<doc caption="API documentation">
+				<doc-ref path="api/index.html" caption="javadoc"/>
+			</doc>
+      <export prefix="*"/>
+      </library>
+			-->
+	</runtime>
+	<extension-point extension-multiplicity="any" id="IApplicationRunnable">
+		<parameter-def id="class" multiplicity="one" type="string"/>
+		<parameter-def id="name" multiplicity="one" type="string"/>
+		<parameter-def id="description" multiplicity="none-or-one" type="string"/>
+	</extension-point>
+</plugin>

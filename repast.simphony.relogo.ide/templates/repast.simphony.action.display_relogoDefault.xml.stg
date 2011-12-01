@@ -1,0 +1,206 @@
+group display;
+
+netStylesEntry(networkName,packageName) ::= <<
+<entry>
+	<string>$networkName$</string>
+    <string>$packageName$.style.LinkStyle</string>
+</entry>
+>>
+
+editedNetStylesEntry(networkName) ::= <<
+<entry>
+	<string>$networkName$</string>
+    <null/>
+</entry>
+>>
+
+repastSimphonyScoreProjectionData(networkName) ::= <<
+<repast.simphony.scenario.data.ProjectionData>
+  	<id>$networkName$</id>
+  	<attributes/>
+  	<type>NETWORK</type>
+</repast.simphony.scenario.data.ProjectionData>
+>>
+
+projectionDescriptorsEntry(networkName,number) ::= <<
+<entry>
+  <string>$networkName$</string>
+  <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[$number$]"/>
+    <props/>
+  </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+</entry>
+>>
+
+display_file(packageName,additionalNetStyles,additionalEditedNetStylesEntries,additionalRepastSimphonyScoreProjectionDatas,additionalProjectionDescriptorsEntries) ::= <<
+<repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+  <name>ReLogo Default Display</name>
+  <type>TWO_D</type>
+  <styles>
+  	<entry>
+      <string>repast.simphony.relogo.WayPoint</string>
+      <string>$packageName$.style.WayPointStyle</string>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BaseTurtle</string>
+      <string>$packageName$.style.TurtleStyle</string>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BasePatch</string>
+      <string>$packageName$.style.PatchStyle</string>
+    </entry>
+  </styles>
+  <editedStyles>
+  	<entry>
+      <string>repast.simphony.relogo.WayPoint</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BaseTurtle</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BasePatch</string>
+      <null/>
+    </entry>
+  </editedStyles>
+  <netStyles>
+    <entry>
+      <string>DirectedLinks</string>
+      <string>$packageName$.style.LinkStyle</string>
+    </entry>
+    <entry>
+      <string>UndirectedLinks</string>
+      <string>$packageName$.style.LinkStyle</string>
+    </entry>
+    <entry>
+      <string>Tracking Network</string>
+      <string>$packageName$.style.TrackingLinkStyle</string>
+    </entry>
+    $additionalNetStylesEntries$
+  </netStyles>
+  <editedNetStyles>
+    <entry>
+      <string>DirectedLinks</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>UndirectedLinks</string>
+      <null/>
+    </entry>
+    <entry>
+      <string>Tracking Network</string>
+      <null/>
+    </entry>
+    $additionalEditedNetStylesEntries$
+  </editedNetStyles>
+  <frequency>ON_MOVE</frequency>
+  <schedParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </schedParams>
+  <layoutClassName>foo.bar.baz</layoutClassName>
+  <layoutProjection>Space2d</layoutProjection>
+  <layoutInterval>0</layoutInterval>
+  <layerOrder>
+  	<entry>
+      <string>repast.simphony.relogo.WayPoint</string>
+      <int>0</int>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BasePatch</string>
+      <int>1</int>
+    </entry>
+    <entry>
+      <string>repast.simphony.relogo.BaseTurtle</string>
+      <int>2</int>
+    </entry>
+  </layerOrder>
+  <projections>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>Space2d</id>
+      <attributes/>
+      <type>CONTINUOUS_SPACE</type>
+    </repast.simphony.scenario.data.ProjectionData>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>DirectedLinks</id>
+      <attributes/>
+      <type>NETWORK</type>
+    </repast.simphony.scenario.data.ProjectionData>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>UndirectedLinks</id>
+      <attributes/>
+      <type>NETWORK</type>
+    </repast.simphony.scenario.data.ProjectionData>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>Tracking Network</id>
+      <attributes/>
+      <type>NETWORK</type>
+    </repast.simphony.scenario.data.ProjectionData>
+    $additionalRepastSimphonyScoreProjectionDatas$
+  </projections>
+  <valueLayers/>
+  <visualizationProperties class="repast.simphony.visualization.UnitSizeLayoutProperties">
+    <unitSize>15.0</unitSize>
+  </visualizationProperties>
+  <projectionDescriptors>
+    <entry>
+      <string>DirectedLinks</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
+    <entry>
+      <string>UndirectedLinks</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[3]"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
+    <entry>
+      <string>Tracking Network</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[4]"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
+    $additionalProjectionDescriptorsEntries$
+    <entry>
+      <string>Space2d</string>
+      <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData"/>
+        <props>
+          <entry>
+            <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
+            <map>
+              <entry>
+                <string>UNIT_SIZE</string>
+                <float>15.0</float>
+              </entry>
+              <entry>
+                <string>SHOW</string>
+                <boolean>false</boolean>
+              </entry>
+              <entry>
+                <string>COLOR</string>
+                <int>-16777216</int>
+              </entry>
+            </map>
+          </entry>
+        </props>
+      </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+    </entry>
+  </projectionDescriptors>
+  <props/>
+  <backgroundColor>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
+    <alpha>255</alpha>
+  </backgroundColor>
+</repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+>>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scenario>
+<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="All Traps" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
+<repast.simphony.action.display context="All Traps" file="repast.action.display_3.xml" />
+<repast.simphony.action.display context="All Traps" file="repast.action.display_4.xml" />
+<model.initializer class="repast.simphony.demo.mousetrap.TrapInitializer" />
+</Scenario>

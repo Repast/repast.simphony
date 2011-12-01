@@ -1,0 +1,18 @@
+group context;
+
+context_file(modelName,additionalProjections) ::= <<
+<context id="$modelName$" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
+
+	<context id="default_observer_context" >
+	
+		<projection id="Grid2d" type="grid" />
+		<projection id="Space2d" type="continuous space" />
+		<projection id="DirectedLinks" type="network" />
+		<projection id="UndirectedLinks" type="network" />
+		<projection id="Tracking Network" type="network" />
+		$additionalProjections$
+  	</context>
+  	
+</context>
+
+>>

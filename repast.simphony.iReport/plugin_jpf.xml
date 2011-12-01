@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.iReport" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data.ui" reverse-lookup="false"/>
+	</requires>
+
+	<runtime>
+		<library id="icons" path="icons/" type="resources"/>
+		<library id="rsiReport" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+
+	<extension id="ireport.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.iReport.runiReport"/>
+			<parameter id="label" value="Run iReport"/>
+			<parameter id="class" value="repast.simphony.iReport.RunIReportModel"/>
+			<parameter id="icon" value="knewsticker.png"/>
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+			<parameter id="groupID" value="runTools"/>
+			<parameter id="tooltip" value="Run iReport"/>
+		</parameter>
+
+	</extension>
+
+</plugin>

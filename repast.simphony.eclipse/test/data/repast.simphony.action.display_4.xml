@@ -1,0 +1,78 @@
+<repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+  <type>THREE_D</type>
+  <styles>
+    <entry>
+      <string>repast.simphony.demo.simple.SimpleHappyAgent</string>
+      <string>repast.simphony.demo.simple.SimpleHappyNodeStyle</string>
+    </entry>
+    <entry>
+      <string>repast.simphony.demo.simple.SimpleHappyContextCreator</string>
+      <string>repast.simphony.visualization.visualization3D.style.DefaultStyle3D</string>
+    </entry>
+  </styles>
+  <netStyles>
+    <entry>
+      <string>A Network</string>
+      <string>repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D</string>
+    </entry>
+  </netStyles>
+  <frequency>ON_MOVE</frequency>
+  <schedParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </schedParams>
+  <layoutClassName>foo.bar.baz</layoutClassName>
+  <layoutProjection>Continuous Space</layoutProjection>
+  <layoutInterval>0</layoutInterval>
+  <projections>
+    <repast.score.impl.SNetworkImpl>
+      <name>A Network</name>
+    </repast.score.impl.SNetworkImpl>
+    <repast.score.impl.SContinuousSpaceImpl>
+      <name>Continuous Space</name>
+    </repast.score.impl.SContinuousSpaceImpl>
+  </projections>
+  <valueLayers/>
+  <visualizationProperties class="repast.simphony.visualization.UnitSizeLayoutProperties">
+    <unitSize>0.06</unitSize>
+  </visualizationProperties>
+  <projectionDescriptors>
+    <entry>
+      <string>A Network</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj class="repast.score.impl.SNetworkImpl" reference="../../../../projections/repast.score.impl.SNetworkImpl"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
+    <entry>
+      <string>Continuous Space</string>
+      <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+        <proj class="repast.score.impl.SContinuousSpaceImpl" reference="../../../../projections/repast.score.impl.SContinuousSpaceImpl"/>
+        <props>
+          <entry>
+            <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
+            <map>
+              <entry>
+                <string>SHOW</string>
+                <boolean>true</boolean>
+              </entry>
+              <entry>
+                <string>UNIT_SIZE</string>
+                <float>0.06</float>
+              </entry>
+              <entry>
+                <string>COLOR</string>
+                <int>-1</int>
+              </entry>
+            </map>
+          </entry>
+        </props>
+      </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+    </entry>
+  </projectionDescriptors>
+  <props/>
+  <name>3D Net &amp; Continuous</name>
+</repast.simphony.visualization.engine.DefaultDisplayDescriptor>

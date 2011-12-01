@@ -1,0 +1,11 @@
+NAME=5
+WS=8
+NEWLINE=4
+SECT=7
+NUMBER=6
+'true'=9
+'false'=10
+'Rectangle'=13
+'Line'=11
+'Circle'=12
+'Polygon'=14

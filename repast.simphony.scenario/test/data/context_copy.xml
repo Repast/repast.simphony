@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context id="root">
+<projection id="p_1" type="network" />
+<projection id="p_2" type="grid" />
+<attribute id="a1" value="Hello" display_name="a1" type="String" />
+<attribute id="a2" value="Foo" display_name="attribute 2" type="repast.simphony.score.TestAttributeType" converter="repast.simphony.score.TestConverter" />
+<context id="child">
+<projection id="p_3" type="network" />
+<projection id="p_4" type="grid" >
+<attribute id="p_4_height" value="30" display_name="p_4_height" type="int" />
+</projection>
+</context>
+<context id="child2" class="anl.gov.MyContext">
+<projection id="p_5" type="network" />
+<projection id="p_6" type="grid" />
+<projection id="p_7" type="continuous space" />
+<projection id="p_8" type="geography" />
+<context id="grand_child">
+<projection id="p_9" type="network" />
+<projection id="p_10" type="grid" />
+<projection id="p_11" type="continuous space" />
+<projection id="p_12" type="geography" />
+</context>
+</context>
+</context>

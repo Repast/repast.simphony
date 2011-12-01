@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Clean Project" default="touchAndRefresh" basedir=".">
+
+	<property name="baseDir" value="${arg1}"/>
+	
+	<target name = "afterClean">
+	</target>
+	
+    <target name="touchAndRefresh">
+    	<touch>
+    	    <fileset dir="${baseDir}/src"
+    	    	includes="**/relogo/**,**/context/**"
+    	    />
+    	</touch>
+    	<eclipse.refreshLocal resource="${arg2}" depth="infinite"/>
+    
+    </target>
+    
+</project>

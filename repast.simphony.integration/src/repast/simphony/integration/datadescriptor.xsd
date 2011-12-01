@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!-- The root of the document -->
+	<xs:element name="fileDef" type="FileDefType"/>
+
+	<!-- probably have to set the attributes to keep white space (assuming they don't by default) -->
+	<xs:simpleType name="newLineTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="windows"/>
+			<xs:enumeration value="unix"/>
+			<xs:enumeration value="system"/>
+			<xs:enumeration value="none"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="dataType">
+		<!-- default maybe should be null -->
+		<xs:attribute name="target" type="xs:string" />
+		<xs:attribute name="type" type="dataTypeType" default="String" />
+		<xs:attribute name="length" type="xs:integer" use="optional" />
+		<xs:attribute name="delimiter" type="xs:string" use="optional" />
+		<xs:attribute name="pattern" type="xs:string" use="optional" />
+	</xs:complexType>
+	
+	
+	<xs:simpleType name="dataTypeType">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="String"/>
+					<xs:enumeration value="int"/>
+					<xs:enumeration value="double"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base='xs:string'/>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+
+	 
+	<!-- This can be defined by XPath so we have to accept all strings -->
+	<xs:simpleType name="countType">
+		<xs:restriction base="xs:string"/>
+		<!-- This is what it would be if we didn't allow XPath
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1"/>
+		</xs:restriction>
+		-->
+	</xs:simpleType>
+	
+	<xs:complexType name="recordType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="data" type="dataType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="record" type="recordType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="branch" type="branchType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="target" type="xs:string" />
+		<xs:attribute name="count" type="countType" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="tableType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:element name="columns" type="columnsType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="rows" type="xs:string" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="columnsType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="data" type="dataType" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="arrayType">
+		<xs:attribute name="target" type="xs:string" />
+		<xs:attribute name="type" type="xs:string" />
+		<xs:attribute name="rows" type="xs:string" use="optional" />
+		<xs:attribute name="cols" type="countType"/>
+		<xs:attribute name="colDelimiter" type="countType"/>
+		<xs:attribute name="rowDelimiter" type="countType"/>
+	</xs:complexType>
+
+	<xs:complexType name="branchType">
+		<!-- <xs:attribute name="atomic" type="xsd:boolean"/> -->
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="data" type="dataType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="record" type="recordType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="branch" type="branchType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="FileDefType">
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="data" type="dataType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="record" type="recordType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="branch" type="branchType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="array" type="arrayType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="table" type="tableType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="newlineType" type="newLineTypeType" default="none" />
+	</xs:complexType>
+</xs:schema>

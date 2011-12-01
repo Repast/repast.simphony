@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.userpanel.ui" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
+  </requires>
+
+	<runtime>
+		<library id="userpanel.ui.bin" path="bin/" type="code">
+			<export prefix="*"/>
+	  </library>
+	</runtime>
+
+	<!--<extension-point id="wizard.options" parent-plugin-id="repast.simphony.plugin.util" 
+											parent-point-id="wizard.options">
+	</extension-point>
+	-->
+
+  <!--
+  <extension plugin-id="repast.simphony.userpanel.ui" point-id="wizard.options" id="repast.simphony.userpanel.options">
+		<parameter id="class" value="repast.simphony.data.gui.formula.FormulaScriptOption"/>
+	</extension>
+	-->
+
+
+	<extension id="userpanel.ui.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
+		<parameter id="creatorClass" value="repast.simphony.userpanel.ui.UserPanelCompositeControllerActionCreator"/>
+		<parameter id="label" value="User Panel"/>
+	</extension>
+
+	<extension id="userpanel.ui.component.action" plugin-id="repast.simphony.gui" point-id="component.action">
+		<parameter id="actionIO" value="repast.simphony.userpanel.ui.UserPanelControllerActionIO"/>
+		<parameter id="editorCreator" value="repast.simphony.userpanel.ui.UserPanelActionEditorCreator"/>
+		<parameter id="parentMenuItem" value="repast.simphony.userpanel.ui.UserPanelMenuItem"/>
+		<!-- this value is from core repast.simphony.engine.controller.ControllerActionConstants -->
+		<parameter id="parentID" value="repast.controller.action.user_panel"/>
+	</extension>
+
+
+</plugin>

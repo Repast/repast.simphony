@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<fileDef newlineType="windows">
+	<data target="/fileDef/title" type="String"/>	<!-- no delimiter so assume delimiter="\n"-->
+	<data target="/fileDef/date" type="String"/>
+	
+	<data target="null" type="String"/>		<!-- swallow a new line -->
+	
+	<data target="spectrometerType" type="int" delimiter="\n"/>
+	<record target="/fileDef/spectralData" count="5">
+		<data target="col1" type="double" delimiter=","/>
+		<data target="/fileDef/spectralData[last()]/col2" type="double" delimiter=","/>
+		<data target="col3" type="double" delimiter=","/>
+		<data target="/fileDef/spectralData[last()]/col4" type="double" delimiter="\n"/>
+	</record>
+
+	<data target="null" type="String"/>		<!-- swallow a new line -->
+		
+	<data target="/fileDef/xaxisType" type="String"/>
+	<data target="/fileDef/numXCols" type="int" delimiter="\n"/>
+	<array target="/fileDef/xdata" cols="/fileDef/numXCols" type="/fileDef/xaxisType" colDelimiter="," rowDelimiter="\n" />
+
+	<data target="null" type="String"/>		<!-- swallow a new line -->
+	<data target="/fileDef/numCalibrationRuns" type="int" delimiter="\n"/>
+	<table rows="/fileDef/numCalibrationRuns">
+		<columns>
+			<!-- For now don't handle absolute paths in target for cols	-->
+			<data target="col1" type="int" delimiter=","/>	
+			<data target="col2" type="String" delimiter=","/>
+			<data target="col3" type="double" delimiter=","/>
+			<data target="col4" type="double" delimiter=","/>
+			<data target="col5" type="double" delimiter="\n"/>
+			<!-- probably want to autobuild columns in some cases, such as here...	-->
+		</columns>
+	</table>
+
+</fileDef>

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: repast.simphony.dataLoader.ui
+Bundle-Version: 2.0.1
+Export-Package: repast.simphony.dataLoader.ui,
+ repast.simphony.dataLoader.ui.wizard,
+ repast.simphony.dataLoader.ui.wizard.builder
+Require-Bundle: repast.simphony.dataLoader,
+ repast.simphony.gui,
+ saf.core.ui,
+ repast.simphony.plugin.util,
+ repast.simphony.runtime,
+ repast.simphony.scenario,
+ repast.simphony.core,
+ repast.simphony.freezedry

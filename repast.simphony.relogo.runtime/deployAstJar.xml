@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Deploy Ast Jar" default="Deploy" basedir=".">
+
+	<property name="destDir" value="/Volumes/Passport/JarAndSourceFiles" />
+	<property name="baseDir" value="/Volumes/Passport/Eclipse_Folder/SimphonyFiles/CurrentSimphonyFromSF_SVN/repast.simphony.relogo.runtime/bin"/>
+	
+	<target name="Deploy">
+
+		<echo>Beginning relogoAst jar deployment.</echo>
+		<delete file="${destDir}/relogoAst.jar" />
+		<jar destfile="${destDir}/relogoAst.jar"
+		       basedir="${baseDir}"
+		       includes="repast/simphony/relogo/ast/**"
+		  />
+		<echo>relogoAst jar successfully deployed to: ${destDir}/relogoAst.jar.</echo>
+
+	</target>
+
+</project>

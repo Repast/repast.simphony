@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<fileDef newlineType="system">
+	<data target="/fileDef/sinInput" type="double" delimiter="\n"/>
+	<data target="/fileDef/tanInput" type="double"/>
+</fileDef>

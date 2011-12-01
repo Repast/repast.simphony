@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<model_spec>
+
+	<watchee>
+		<prepare class="repast.simphony.engine.watcher.Generator">
+			<field name="counter" type="set"/>
+			<field name="dVal" type="set"/>
+			<field name="lVal" type="set"/>
+			<field name="byVal" type="set"/>
+			<field name="bVal" type="set"/>
+			<field name="sVal" type="set"/>
+			<field name="cVal" type="set"/>
+			<field name="fVal" type="set"/>
+		</prepare>
+		<prepare class="repast.simphony.engine.watcher.Watchee">
+			<field name="counter" type="set"/>
+		</prepare>
+	</watchee>
+
+	<context id="foo" class="repast.simphony.context.DefaultContext">
+		<agent class="repast.simphony.engine.watcher.MyWatcher" />
+		<agent class="repast.simphony.engine.watcher.Watcher2"/>
+	</context>
+
+</model_spec>

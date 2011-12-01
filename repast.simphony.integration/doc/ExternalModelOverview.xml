@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<article>
+  <title>Working with External Models in Simphony</title>
+
+  <section>
+    <title>Overview</title>
+
+    <para>Repast Simphony comes with support for working with external models.
+    Provided are classes that will take in data, feed it to a model, run the
+    model, and gather more data back. Currently, the primary way to transfer
+    data to the external model and in from the external model is through
+    files. This support is provided through the <link linkend="???">Data
+    File</link> utilities which use a xml based descriptor file to specify the
+    format data should be input from or output to.</para>
+
+    <para> </para>
+  </section>
+</article>

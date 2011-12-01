@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<project name="OSX Specific Classes" basedir="." default="dist">
+
+  <property name="src" value="./osx"/>
+  <property name="bin" value="./bin"/>
+  <property name="lib" value="./lib"/>
+
+  <target name="build">
+    <javac srcdir="${src}" destdir="${bin}"/>
+  </target>
+
+  <target name="dist">
+    <jar destfile="${lib}/osx.jar" basedir="${bin}" />
+  </target>
+</project>

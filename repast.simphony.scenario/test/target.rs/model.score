@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score:SContext xmlns:score="http://repast.org/score" xmlns:act="http://repast.org/score.act" xmlns:function="http://repast.org/score.function" label="All Traps" ID="mouseTraps">
+  <implementation package="repast.dataLoader" className="ContextCreator" basePath="./plugins/repast.simphony.dataLoader" mode="LOAD"/>
+  <attributes label="width" ID="width" sType="INTEGER" default="20"/>
+  <attributes label="height" ID="height" sType="INTEGER" default="20"/>
+  <projections label="Gym Floor" ID="gymFloor"/>
+  <agents label="Mouse Trap" ID="mouseTrap">
+    <implementation className="MouseTrap" mode="LOAD"/>
+  </agents>
+	<agents xsi:type="score:SContext" label="SubContext" ID="subContext">
+    <implementation className="SubContextCreator" mode="EXTERNAL"/>
+    <agents>
+      <implementation className="SubAgent" mode="LOAD"/>
+    </agents>
+  </agents>
+  <valueLayers label="TrapValues" ID="trapValues"/>
+</score:SContext>
+ 

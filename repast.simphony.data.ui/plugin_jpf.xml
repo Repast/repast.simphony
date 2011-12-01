@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.data.ui" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
+    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="false"/>
+  </requires>
+
+	<runtime>
+		<library id="data.ui.bin" path="bin/" type="code">
+			<export prefix="*"/>
+	  </library>
+	</runtime>
+	
+	<extension plugin-id="repast.simphony.gui" point-id="composite.action" id="data.ui.composite.action">
+        <parameter id="creatorClass" value="repast.simphony.data2.engine.DataSetsActionCreator" />
+        <parameter id="label" value="Data Sets" />
+    </extension>
+    
+    <extension plugin-id="repast.simphony.gui" point-id="composite.action" id="data.init.ui.composite.action">
+        <parameter id="creatorClass" value="repast.simphony.data2.engine.DataInitActionCreator" />
+        <parameter id="label" value="Data Collection Initialization" />
+    </extension>
+
+    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="data.ui.component.action">
+        <parameter id="actionIO" value="repast.simphony.data2.engine.DataSetControllerActionIO" />
+        <parameter id="editorCreator" value="repast.simphony.data2.gui.DataSetActionEditorCreator" />
+        <parameter id="parentMenuItem" value="repast.simphony.data2.gui.DataSetMenuItem" />
+        <!-- this value is from core repast.plugins.ControllerActionConstants -->
+        <parameter id="parentID" value="repast.controller.action.data_sets" />
+    </extension>
+
+
+    <extension plugin-id="repast.simphony.gui" point-id="composite.action" id="outputter.ui.composite.action">
+        <parameter id="creatorClass" value="repast.simphony.data2.engine.TextSinkActionCreator" />
+        <parameter id="label" value="Text Sinks" />
+    </extension>
+
+
+    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="outputter.ui.component.action">
+        <parameter id="actionIO" value="repast.simphony.data2.engine.FileSinkControllerActionIO" />
+        <parameter id="editorCreator" value="repast.simphony.data2.gui.FileSinkActionEditorCreator" />
+        <parameter id="parentMenuItem" value="repast.simphony.data2.gui.FileSinkMenuItem" />
+        <!-- this value is from core repast.plugins.ControllerActionConstants -->
+        <parameter id="parentID" value="repast.controller.action.outputters" />
+    </extension>
+    
+    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="console.ui.component.action">
+        <parameter id="actionIO" value="repast.simphony.data2.engine.ConsoleSinkControllerActionIO" />
+        <parameter id="editorCreator" value="repast.simphony.data2.gui.ConsoleSinkActionEditorCreator" />
+        <parameter id="parentMenuItem" value="repast.simphony.data2.gui.ConsoleSinkMenuItem" />
+        <!-- this value is from core repast.plugins.ControllerActionConstants -->
+        <parameter id="parentID" value="repast.controller.action.outputters" />
+    </extension>
+</plugin>

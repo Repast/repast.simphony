@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<registry>
+	<pack name="Model">
+		<key
+			keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME\Base"  
+			root="HKLM" />
+		<value name="Path" 
+			keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME"  
+			root="HKLM" 
+			string="$INSTALL_PATH"/>
+		<value name="DWORD" 
+			keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME"  
+			root="HKLM" 
+			dword="42"/>
+		<value name="BIN" 
+			keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME"  
+			root="HKLM" >
+			<bin data="42, 49, 4e, 20, 54, 45, 53, 54" />
+			<bin data="42, 49, 4e, 20, 54, 45, 53, 54" />
+		</value>
+		<value name="MULTI" 
+			keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME"  
+			root="HKLM" >
+			<multi data="Element 1" />
+			<multi data="Element 2"/>
+			<multi data="Element 3"/>
+		</value>
+	</pack>
+	<pack name="Base">
+			<key keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME\Base" root="HKLM"/>
+	</pack>
+	<pack name="Documentation">
+			<key keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME\Documentation" root="HKLM"/>
+	</pack>
+	<pack name="Sources">
+			<key keypath="SOFTWARE\%PROJECT_NAME%\$UNINSTALL_NAME\Sources" root="HKLM"/>
+	</pack>
+</registry>
+

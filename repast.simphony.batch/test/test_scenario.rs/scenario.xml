@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scenario>
+<repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="Batch Test Context 3" file="repast.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
+	<model.initializer class="repast.simphony.batch.TestModelInitializer" />
+</Scenario>

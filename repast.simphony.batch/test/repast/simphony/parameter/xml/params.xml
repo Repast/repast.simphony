@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<sweep runs="2">
+
+	<parameter name="const_1" type="constant" constant_type="number" value=".3f"/>
+	<parameter name="const_2" type="constant" constant_type="number" value=".2"/>
+	<parameter name="const_3" type="constant" constant_type="number" value="11"/>
+	<parameter name="const_4" type="constant" constant_type="number" value="11L"/>
+	<parameter name="const_5" type="constant" constant_type="string" value="hello cormac"/>
+	<parameter name="const_6" type="constant" constant_type="boolean" value="false"/>
+
+
+	<parameter name="num_1" type="number" start="1L" end="4" step="1">
+		<parameter name="num_2" type="number" start=".3f" end="1.0f" step=".1f">
+			<parameter name="list_val" type="list" value_type="String" values="foo bar baz"/>
+		</parameter>
+		<parameter name="num_3" type="number" start=".9" end="1.0" step=".1"/>
+
+		<parameter name="num_4" type="number" start="2" end="3" step="1"/>
+	</parameter>
+</sweep>

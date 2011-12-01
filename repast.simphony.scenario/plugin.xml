@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution
+            id="repast.simphont.scenario.schema_context">
+         <uri
+               name="http://repast.org/scenario/context"
+               uri="platform:/plugin/repast.simphony.scenario/schemas/context.xsd">
+         </uri>
+      </catalogContribution>
+   </extension>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution
+            id="repast.simphont.scenario.schema_user_path">
+         <uri
+               name="http://repast.org/scenario/user_path"
+               uri="platform:/plugin/repast.simphony.scenario/schemas/user_path.xsd">
+         </uri>
+      </catalogContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="repast.eclipse.ide.wizards"
+            name="Repast Simphony">
+      </category>
+      <wizard
+            category="repast.eclipse.ide.wizards"
+            class="repast.simphony.scenario.eclipse.NewContextFileWizard"
+            icon="icons/txt.png"
+            id="repast.simphony.scenario.contextwizard"
+            name="Context File">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="repast.eclipse.ide.wizards"
+            name="Repast Simphony">
+      </category>
+      <wizard
+            category="repast.eclipse.ide.wizards"
+            class="repast.simphony.scenario.eclipse.NewUserPathtFileWizard"
+            icon="icons/txt.png"
+            id="repast.simphony.scenario.pathwizard"
+            name="User Path File">
+      </wizard>
+   </extension>
+
+</plugin>

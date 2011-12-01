@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="libs.bsf" version="">
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<runtime>
+    	<library id="bsf" path="lib/bsf.jar" type="code">
+    		<export prefix="*"/>
+    	</library>
+		<library id="bsh" path="lib/bsh-2.0b4.jar" type="code">
+			<export prefix="*"/>
+		</library>
+  </runtime>
+</plugin>

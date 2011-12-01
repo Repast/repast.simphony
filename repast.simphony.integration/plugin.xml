@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.3"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="repast.eclipse.ide.wizards"
+            name="Repast Simphony">
+      </category>
+      <wizard
+            category="repast.eclipse.ide.wizards"
+            class="repast.simphony.integration.eclipse.NewDataDescriptorFileWizard"
+            icon="icons/txt.png"
+            id="repast.simphony.integration.wizard"
+            name="Data Descriptor File">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution>
+         <uri
+               name="http://repast.org/integration/datadescriptor"
+               uri="platform:/plugin/repast.simphony.integration/models/datadescriptor.xsd">
+         </uri>
+      </catalogContribution>
+   </extension>
+
+</plugin>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<antlib>
+	<typedef name="pluginList" classname="repast.simphony.ant.PluginList"/>
+	<typedef name="buildPluginClasspath"
+		classname="repast.simphony.ant.BuildPluginClasspath"/>
+</antlib>

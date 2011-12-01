@@ -1,0 +1,29 @@
+Copyright Notification and Disclaimer:
+COPYRIGHT (c) 2001-2008 Kathleen M. Carley - Center for Computational Analysis
+of Social and Organizational Systems (CASOS), Institute for Software Research
+International (ISRI), School of Computer Science, Carnegie Mellon University,
+5000 Forbes Avenue - Pittsburgh, PA 15213-3890 - ALL RIGHTS RESERVED.
+
+By downloading the files provided herein you indicate your agreement with this
+copyright notice and disclaimer. Permission to use, copy and modify this version
+of the software or any parts of it and its documentation is hereby granted for
+RESEARCH ONLY purposes and provided that the above copyright notice and this
+permission notice appear intact in all copies of the software, that you do not
+sell the software, nor include the software in a commercial package.
+
+The release of this software into the public domain does not imply any obligation
+on the part of the authors to release future versions into the public domain. The
+authors are free to make upgraded or improved versions of the software available
+for a fee or commercially only. Commercial licensing of the software is available
+by contacting Dr. Kathleen M. Carley (Kathleen.Carley@cs.cmu.edu) . The software
+is provided "as is" and without warranty of any kind, express, implied or otherwise,
+including without limitation, any warranty of merchantability or fitness for a
+particular purpose. The software is experimental only and has not been designed
+for, tested or approved for hazardous use. The use of the software is at the user's
+own risk. Any conclusions you may draw based on the software or its use are your
+own. We expressly disclaim any responsibility or liability for any and all
+adverse effects, including personal, bodily, property or business injury, and for
+damages or loss of any kind whatsoever, resulting directly or indirectly, whether
+from negligence, intent or otherwise, from the use or disuse of the software, from
+errors in the software, or from misunderstandings arising from the software itself,
+its us or its documentation. 

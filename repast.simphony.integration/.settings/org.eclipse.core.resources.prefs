@@ -1,0 +1,5 @@
+#Mon Sep 17 17:48:45 CDT 2007
+eclipse.preferences.version=1
+encoding//models/dataDescriptor.xsd=UTF8
+encoding//models/datadescriptor.xsd=UTF8
+instance/org.eclipse.core.net/org.eclipse.core.net.hasMigrated=true

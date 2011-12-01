@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-nop-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commonj-twm-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jericho-html-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tim-tclib-1.0.5-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
+		<accessrules>
+			<accessrule kind="accessible" pattern="repast/simphony/terracotta/opendatagrid/**"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Library"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

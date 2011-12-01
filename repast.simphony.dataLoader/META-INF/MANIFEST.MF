@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: repast.simphony.dataLoader
+Bundle-Version: 2.0.1
+Bundle-Localization: plugin
+Require-Bundle: repast.simphony.core,
+ repast.simphony.plugin.util,
+ repast.simphony.scenario,
+ repast.simphony.runtime,
+ org.junit4
+Export-Package: repast.simphony.dataLoader,
+ repast.simphony.dataLoader.engine,
+ repast.simphony.dataLoader.util
+Bundle-Vendor: %providerName

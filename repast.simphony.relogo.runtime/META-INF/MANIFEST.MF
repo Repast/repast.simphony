@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ReLogo Runtime
+Bundle-SymbolicName: repast.simphony.relogo.runtime
+Bundle-Version: 2.0.1
+Export-Package: repast.simphony.relogo,
+ repast.simphony.relogo.factories,
+ repast.simphony.relogo.styles
+Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
+ repast.simphony.core;bundle-version="2.0.0",
+ repast.simphony.relogo.ide;bundle-version="2.0.0",
+ libs.bsf;bundle-version="2.0.0",
+ libs.piccolo;bundle-version="2.0.0",
+ repast.simphony.userpanel.ui;bundle-version="2.0.0",
+ repast.simphony.runtime;bundle-version="2.0.0",
+ repast.simphony.essentials;bundle-version="2.0.0",
+ repast.simphony.gui;bundle-version="2.0.0",
+ repast.simphony.scenario;bundle-version="2.0.0",
+ repast.simphony.integration;bundle-version="2.0.0",
+ saf.core.ui;bundle-version="2.0.0"
+Bundle-ClassPath: lib/asm-3.2.jar,
+ lib/poi-ooxml-3.6-20091214.jar

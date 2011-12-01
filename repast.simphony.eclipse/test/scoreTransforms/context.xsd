@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="context" type="contextType"/>
+    
+    <xs:complexType name="contextType">
+        <xs:choice  minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="attribute" type="attributeType"  />
+            <xs:element name="projection" type="projectionType"  />
+            <xs:element name="context" type="contextType" />
+        </xs:choice>
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="class" use="optional"/>
+    </xs:complexType>
+    
+    <xs:complexType name="attributeType">
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="value" use="required"/>
+        <xs:attribute name="type" use="required" />
+        <xs:attribute name="display_name"/>
+        <xs:attribute name="converter"/>
+    </xs:complexType>
+    
+    <xs:complexType name="projectionType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="attribute" type="attributeType" />
+        </xs:sequence>
+        <xs:attribute name="id" use="required"/>
+        <xs:attribute name="type" use="required" type="ptype" />
+    </xs:complexType>
+    
+    <xs:simpleType name="ptype">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="network"/>
+            <xs:enumeration value="grid" />
+            <xs:enumeration value="continuous space"/>
+            <xs:enumeration value="geography" />
+            <xs:enumeration value="value layer" />
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

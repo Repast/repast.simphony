@@ -1,0 +1,176 @@
+
+options {
+  MULTI=true;
+  NODE_DEFAULT_VOID=true;
+  STATIC = false;
+}
+
+PARSER_BEGIN(QueryParser)
+
+package repast.simphony.engine.watcher.query;
+
+public class QueryParser {
+  public static void main(String args[]) {
+    System.out.println("Reading from standard input...");
+    QueryParser t = new QueryParser(System.in);
+    try {
+      ASTStart n = t.Start();
+      n.dump("");
+      System.out.println("Thank you.");
+    } catch (Exception e) {
+      System.out.println("Oops.");
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+    }
+  }
+}
+
+PARSER_END(QueryParser)
+
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">
+}
+
+TOKEN : /* literals */
+{
+    < DECNUMBER:
+      ["1"-"9"] (["0"-"9"])*
+      | "0"
+      >
+|
+    < FLOAT:
+       (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)?
+      | "." (["0"-"9"])+ (<EXPONENT>)?
+      | (["0"-"9"])+ <EXPONENT>
+      >
+|   < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|   < #DIGIT: ["0" - "9"] >
+|   <NAME: "'" (["0"-"9", "A"-"Z", "a"-"z", " ", "-", ".", "!", "$", "*", "+", "_"])* "'">
+}
+
+
+TOKEN : /* keywords */
+{
+	<AND: "and"> |
+	<OR: "or"> |
+	<LINKED: "linked"> |
+	<LINKED_FROM: "linked_from"> |
+	<LINKED_TO: "linked_to"> |
+	<COLOCATED: "colocated"> |
+	<WITHIN: "within"> |
+	<WITHIN_VN: "within_vn"> |
+	<WITHIN_MOORE: "within_moore"> |
+	<NOT: "not">
+}
+
+ASTStart Start() #Start : {}
+{
+  BooleanExpression() ";"
+  { return jjtThis; }
+}
+
+void BooleanExpression() : {}
+{
+    QueryExpression()
+    (
+      <AND> QueryExpression() #AndExpression(2)
+    |
+      <OR> QueryExpression() #OrExpression(2)
+    )*
+}
+
+void QueryExpression() : {}
+{
+		("(" BooleanExpression() ")" | Command())
+	|
+		<NOT> QueryExpression() #Not()
+
+}
+
+void Command() : {}
+{
+		Linked()
+	|
+		<COLOCATED> #Colocated
+	|
+		Within()
+}
+
+void Within() : {} {
+		LOOKAHEAD(3)
+		<WITHIN> Number() Name() #Within(2)
+	|
+		<WITHIN> Number() #Within
+	|
+		LOOKAHEAD(3)
+		<WITHIN_VN> Number() Name() #WithinVN(2)
+	|
+		<WITHIN_VN> Number() #WithinVN
+	|
+		LOOKAHEAD(3)
+		<WITHIN_MOORE> Number() Name() #WithinMoore(2)
+	|
+		<WITHIN_MOORE> Number() #WithinMoore
+}
+
+void Linked() : {} {
+
+		<LINKED> (Name())? #Linked
+	|
+		<LINKED_TO> (Name())? #LinkedTo
+	|
+		<LINKED_FROM> (Name())? #LinkedFrom
+}
+
+void Number() #Number :
+{
+	Token t;
+}
+{
+	(t=<DECNUMBER>
+	{
+		jjtThis.setNumber(t.image);
+	}
+	)
+	|
+	(t=<FLOAT>
+	{
+		jjtThis.setNumber(t.image);
+	}
+	)
+
+}
+
+
+void Name() #Name :
+{
+	Token t;
+}
+{
+	t=<NAME>
+	{
+		jjtThis.setName(t.image.substring(1, t.image.length() - 1));
+	}
+}
+
+/*
+void Identifier() :
+{
+  Token t;
+}
+{
+  t=<IDENTIFIER>
+  {
+    jjtThis.setName(t.image);
+  }
+}
+*/
+
+

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bin_and_src Plug-in
+Bundle-SymbolicName: repast.simphony.bin_and_src
+Bundle-Version: 2.0.1
+Bundle-Vendor: Argonne National Laboratory

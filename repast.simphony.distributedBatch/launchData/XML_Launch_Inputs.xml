@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLInputData>
+  <numberOfRuns>4</numberOfRuns>  <!-- how many runs -->
+  <name>repast.simphony.demo.predatorprey</name> <!-- name of the user project folder -->
+  <mainScenario>/Applications/RepastUserEnvironment11/workspace/repast.simphony.demo.predatorprey/predator_prey_continuous_batch.rs</mainScenario> <!-- local scenario rs file -->
+  <projectPath>/Applications/RepastUserEnvironment11/workspace/repast.simphony.demo.predatorprey</projectPath>  <!-- path to the project on the local node -->
+  <batchXMLPath>/Applications/RepastUserEnvironment11/workspace/repast.simphony.demo.predatorprey/predator_prey_batch/batch_params.xml</batchXMLPath> <!-- path to the batch xml file in the user's project -->
+  <remoteBatchXML>/Applications/gridgain-2.1.1/bin/predator_prey_batch/batch_params.xml</remoteBatchXML> <!-- path to the remote batch xml file-->
+  <scenario>/Applications/gridgain-2.1.1/bin/predator_prey_continuous_batch.rs</scenario>  <!-- path to the scenario folder on remote node -->
+  <delayTime>100</delayTime> <!-- time delayed in milliseconds on nodes so that data can be written and retrieved -->
+  <removeFiles>true</removeFiles> <!-- remove output files or not from remote nodes after simulation runs-->‹‹
+  <createJar>false</createJar>  <!-- flag to automatically create a user project jar, using build.xml, to transfer to nodes for each set of simulation runs-->
+</XMLInputData>

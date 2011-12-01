@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<fileDef newlineType="windows">
+	<data target="null" pattern="Header\n"/>
+	<data target="x" type="String" delimiter=","/>
+	<data target="y" type="String" pattern="%s\n"/>
+	
+	<record target="recordA">
+		<data target="col1" type="String" delimiter=","/>
+		<data target="col2" type="String" pattern="%s\n"/>
+	</record>
+</fileDef>

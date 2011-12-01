@@ -1,0 +1,3 @@
+Pajek License
+
+Pajek runs on Windows and is free for noncommercial use.

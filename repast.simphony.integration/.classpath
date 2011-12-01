@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="bin/"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-jxpath-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxen-core-1.0-FCS.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxen-jdom-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/saxpath-1.0-FCS.jar"/>
+	<classpathentry kind="lib" path="lib/exec-1.0-SNAPSHOT.jar" sourcepath="C:/repo/exec/src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

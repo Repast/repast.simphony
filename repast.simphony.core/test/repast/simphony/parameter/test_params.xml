@@ -1,0 +1,10 @@
+<parameters>
+  <parameter name="int" type="int" defaultValue="3"/>
+  <parameter name="float" type="float" defaultValue="3.14f"/>
+  <parameter name="long" type="long" defaultValue="334L"/>
+  <parameter name="double" type="double" defaultValue="3.2343"/>
+  <parameter name="string" type="string" defaultValue="Cormac" values="'Cormac' 'George' 'Smith' 'Bob' 'Nick Collier'"/>
+  <parameter name="bool" type="boolean" defaultValue="true"/>
+  <parameter name="conv" type="repast.simphony.parameter.Name" defaultValue="Nick Collier"
+             converter="repast.simphony.parameter.NameConverter" />
+</parameters>

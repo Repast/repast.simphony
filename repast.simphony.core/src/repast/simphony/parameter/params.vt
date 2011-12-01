@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameters type="valuesOnly">
+	#set ($schema = $parameters.getSchema())
+		#foreach($name in $schema.parameterNames())
+		<parameter name="$name" value="$parameters.getValueAsString($name)"/>
+		#end
+</parameters>
+
+

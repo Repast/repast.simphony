@@ -1,0 +1,10 @@
+../repast.simphony.distributedBatch/bin/
+../repast.simphony.distributedBatch/lib/jtidy-4aug2000r7-dev.jar
+../repast.simphony.distributedBatch/lib/gridgain-2.1.1.jar
+../repast.simphony.distributedBatch/lib/commons-io-1.4.jar
+../repast.simphony.distributedBatch/lib/commons-net-2.0.jar
+../repast.simphony.distributedBatch/lib/commons-net-ftp-2.0.jar
+../repast.simphony.distributedBatch/lib/commons-cli-1.0.jar
+../repast.simphony.distributedBatch/lib/spring-2.5.6.jar
+../repast.simphony.distributedBatch/transferFiles/repast.simphony.batch.jar
+../repast.simphony.distributedBatch/bin/jboss-serialization-1.0.3.GA.jar

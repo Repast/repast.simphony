@@ -1,0 +1,59 @@
+BUILDING AN UPDATE SITE
+
+1. Make new workspace (not strictly necessary but easier), clean check out
+of the plugins from eclipse. 
+
+2. If repast.simphony.demos and repast.simphony.demo.predatorprey projects 
+are in the workspace, remove them. They need to be removed from the workspace
+directory entirely so they are not picked up by the deploy.xml.
+
+3. Check out the repast.simphony.updatesite project. That needs to be located
+in a directory other than the one that contains the various r.s.* projects.
+
+4. In r.s.eclipse, change the REPAST_VERSION to the new version number. If using the
+plugin editor, this is in the plugin.xml tab.
+
+5. In repast.simphony.agents.designer.core.AgentBuilderPlugin.java in r.s.eclipse,
+change the AGENT_BUILDER_PLUGIN_VERSION to the new version number.
+
+6. Update the plugin_jpf.xmls to the new version number: use the update_jpf_plugins.xml 
+in r.s.deployment. FIRST change the rs.version number in this file. Note that this
+requires the xmltask.jar in antlib so run it accordingly.
+
+7. Update the plugin.restrict.simphony property in boot.properties in r.s.runtime/ 
+with the new version number.
+
+8. Update the feature version in feature.xml in r.s.feature in the overview tab.
+In the plugins tab, click the versions button and select force feature version into
+plugin. The listed plugins should now be updated to the correct version number.
+
+9. Run deploy.xml to create the bin and src jar. If there is not
+an existing bin_and_src.jar when this is run, it will need to be run twice in
+order to get the bin_and_src.jar itself into the "RawClasspath".
+
+10. Make sure the r.s.updatesite project contains two empty folders (features and plugins) 
+and only the site.xml file.
+
+11. Open the site.xml file. If the feature listed is a previous one, remove it and 
+add the new one. Click "Build All" to create the site.
+
+TROUBLESHOOTING:
+
+1. You may see this error:
+
+error while reading original manifest in file:
+/Users/nick/Documents/workspace/rs_dist_clean/repast.simphony.bin_and_src/repast.simphony.bin_and_src.jar
+error in opening zip file
+
+when running deploy.xml. It can be ignored, just run deploy.xml again.
+
+2. If after upgrading simphony using the update site, you see an error like:
+
+The container 'Repast Simphony Development Libraries' references non existing library 
+'/Applications/Repast-Simphony-2.0.0-beta copy/eclipse/plugins/
+repast.simphony.core_2.0.1/test/watcher_test.jar'
+
+Add the non-existing library to the set of those excluded in deploy.xml in the
+"BinAndSrcJAR" target. Note that the relevant part here is the reference to 
+the non-existent library, not the watcher_test.jar in particular. 
+

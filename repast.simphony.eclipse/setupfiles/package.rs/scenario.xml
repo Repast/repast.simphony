@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scenario>
+ <repast.simphony.dataLoader.engine.MIContextXMLDataLoaderAction context="%MODEL_NAME%" file="repast.simphony.dataLoader.engine.MIContextXMLDataLoaderAction_0.xml" />
+</Scenario>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.grass" version="1.0">
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
+	</requires>
+
+	<runtime>
+		<library id="icons" path="icons/" type="resources"/>
+		<library id="grass.bin" path="bin/" type="code">
+			<export prefix="*"/>
+		
+	  </library>
+		
+	</runtime>
+	
+	<extension id="grass.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.grass.wizard.GrassWizard"/>
+			<parameter id="label" value="&amp;Run Grass"/>
+			<parameter id="class" value="repast.simphony.grass.wizard.GrassWizard"/>
+			<parameter id="icon" value="grassgis.png"/>
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+			<parameter id="groupID" value="runTools"/>
+			<parameter id="tooltip" value="Run Grass"/>
+		</parameter>
+	</extension>
+</plugin>

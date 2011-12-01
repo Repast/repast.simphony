@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<article>
+  <title>Working with External Models in Simphony</title>
+
+  <section>
+    <title>Overview</title>
+
+    <para>Included with Repast Simphony is support for sending data out to
+    files and reading data in from files based on an xml description of the
+    files' contents. These xml descriptor files are designed to specify any
+    text files, as long as they have some logical data specification. With
+    this it is possible to have data in a <link linkend="???">Java Bean</link>
+    </para>
+
+    <para>The data file specification uses a small set of four xml tags.
+    Through the nesting of this small set of tags, arbitrarily complex file
+    formats can be specified. The tags and their uses are specified in Table
+    1.</para>
+
+    <para><table>
+        <title>Table 1: Supported Data File tags</title>
+
+        <tgroup cols="2">
+          <tbody>
+            <row>
+              <entry>Tag</entry>
+
+              <entry>Description</entry>
+            </row>
+
+            <row>
+              <entry></entry>
+
+              <entry></entry>
+            </row>
+
+            <row>
+              <entry></entry>
+
+              <entry></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table></para>
+  </section>
+</article>

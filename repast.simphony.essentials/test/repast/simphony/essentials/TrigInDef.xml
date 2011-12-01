@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<fileDef newlineType="system">
+	<data target="/fileDef/sinVal" type="double" delimiter="\n"/>
+	<data target="/fileDef/tanVal" type="double"/>
+</fileDef>

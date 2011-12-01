@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+
+  <skipIfNotSupported/>
+  
+  <programGroup defaultName="%MODEL_NAME%" location="StartMenu"/>
+  
+  <shortcut
+     name="%MODEL_NAME%"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$INSTALL_PATH\start_model.bat"
+     commandLine=""
+     workingDirectory="$INSTALL_PATH"
+     description="Model"
+     iconFile="$INSTALL_PATH\%PROJECT_NAME%\icons\model.bmp"
+     iconIndex="0"
+     initialState="noShow">
+     <createForPack name="Model"/>
+  </shortcut>
+  
+  <shortcut
+     name="Documentation"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$INSTALL_PATH\%PROJECT_NAME%\docs\index.html"
+     commandLine=""
+	 iconFile="%SystemRoot%\system32\SHELL32.dll"
+     iconIndex="23" 
+     workingDirectory="$INSTALL_PATH\docs"
+     description="Model Documentation">
+     <createForPack name="Documentation" />
+  </shortcut>
+  
+  <shortcut
+     name="%MODEL_NAME% Uninstaller"
+     programGroup="yes"
+     desktop="no"
+     applications="no"
+     startMenu="no"
+     startup="no"
+     target="$INSTALL_PATH\Uninstaller\uninstaller.jar"     
+     commandLine=""
+     workingDirectory="$INSTALL_PATH\Uninstaller"
+	 iconFile="%SystemRoot%\system32\SHELL32.dll"
+     iconIndex="31" 
+     description="This Removes the Model">
+     <createForPack name="Model" />
+   </shortcut>
+   
+</shortcuts>

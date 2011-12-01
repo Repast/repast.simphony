@@ -1,0 +1,11 @@
+builder.setRunCount(2);
+builder.addConstant("double_const", 4.0);
+builder.addConstant("long_const", 11L);
+builder.addConstant("string_const", "hello cormac");
+builder.addConstant("boolean_const", false);
+
+builder.addStepper("long_param", 1L, 3L, 1L);
+builder.addStepper("float_param", .8f, 1.0f, .1f);
+builder.addListSetter("string_param", new String[]{"foo", "bar"});
+vals = new Integer[]{1, 2};
+builder.addListSetter("randomSeed", vals);

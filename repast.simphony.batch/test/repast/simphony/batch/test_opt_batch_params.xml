@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<sweep runs="1">
+	<parameter name="x" type="number" start="0" end="40" step="1"/>
+	<parameter name="y" type="number" start="0" end="40" step="1"/>
+</sweep>

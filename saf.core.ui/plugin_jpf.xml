@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.4" "http://jpf.sourceforge.net/plugin_0_4.dtd">
+<plugin class="saf.core.ui.UIPlugin" id="saf.core.ui" version="">
+  
+  <attributes>
+    <attribute id="simphony" value="2.0.1"/>
+  </attributes>
+	
+  <requires>
+    <import exported="false" match="compatible" optional="false" plugin-id="saf.core.runtime"/>
+  </requires>
+  <runtime>
+
+    <library id="ui.jar" path="./saf.core.ui.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="v3d.jar" path="./saf.core.v3d.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="osx.jar" path="lib/osx.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="docking" path="lib/dockingFrames-1.0.8p3a-saf.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="wizard-0.1.12" path="lib/wizard-0.1.12.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="l2f-common" path="lib/l2fprod-common-all.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="jgoodies" path="lib/forms-1.0.5.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="javaHelp" path="lib/jh.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="TableLayout" path="lib/TableLayout.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="icons" path="icons/" type="resources"/>
+  </runtime>
+
+  <extension-point extension-multiplicity="any" id="ui.Perspectives">
+    <parameter-def id="perspective" multiplicity="one-or-more" type="null">
+      <parameter-def id="perspectiveID" multiplicity="one" type="string"/>
+      <parameter-def id="name" multiplicity="one" type="string"/>
+      <parameter-def id="viewGroup" multiplicity="one-or-more" type="null">
+        <parameter-def id="groupID" multiplicity="one" type="string"/>
+        <!-- one of north, south, east, west -->
+        <parameter-def id="location" multiplicity="none-or-one" type="string"/>
+        <!-- parent is the groupID of the parent of this group -->
+        <parameter-def id="parent" multiplicity="none-or-one" type="string"/>
+        <!-- defaults to .5 -->
+        <parameter-def id="fillPercentage" multiplicity="none-or-one" type="number"/>
+      </parameter-def>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point extension-multiplicity="any" id="ui.Menus">
+    <parameter-def id="menuSpec" multiplicity="one-or-more" type="null">
+      <parameter-def id="menuID" multiplicity="one" type="string"/>
+      <parameter-def id="label" multiplicity="one" type="string"/>
+      <parameter-def id="parentID" multiplicity="none-or-one" type="string"/>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point extension-multiplicity="any" id="ui.Actions">
+
+    <parameter-def id="actionSpec" multiplicity="one-or-more" type="null">
+      <parameter-def id="actionID" multiplicity="one" type="string"/>
+      <parameter-def id="label" multiplicity="none-or-one" type="string"/>
+      <!-- an optional action command for the button / menu item -->
+      <parameter-def id="command" multiplicity="none-or-one" type="string"/>
+      <parameter-def id="icon" multiplicity="none-or-one" type="string"/>
+      <!-- todo add parameters for the other sorts of icons - disabled etc. -->
+      <parameter-def id="menuID" multiplicity="none-or-one" type="string"/>
+      <parameter-def id="groupID" multiplicity="none-or-one" type="string"/>
+      <parameter-def id="tooltip" multiplicity="none-or-one" type="string"/>
+      <parameter-def id="class" multiplicity="one" type="string"/>
+    </parameter-def>
+
+    <parameter-def id="separator" multiplicity="any" type="null">
+      <parameter-def id="menuID" multiplicity="none-or-one" type="string"/>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point extension-multiplicity="any" id="ui.Help">
+    <parameter-def id="helpSet" multiplicity="one" type="string"/>
+  </extension-point>
+
+  <!--
+     A named status bar. User can provide X number of these each
+     taking up some percentage of the status area of the screen.
+   -->
+  <extension-point extension-multiplicity="any" id="ui.StatusBar">
+    <parameter-def id="StatusField" multiplicity="one-or-more" type="null">
+      <parameter-def id="name" multiplicity="one" type="string"/>
+      <parameter-def id="fillPercentage" multiplicity="one" type="number"/>
+    </parameter-def>
+  </extension-point>
+</plugin>

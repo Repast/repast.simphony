@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.jdbcfreezedryer" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.0.1"/>
+     </attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader.ui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.freezedry" reverse-lookup="false"/>
+		
+	</requires>
+
+	<runtime>
+		<library id="data.bin" path="bin/" type="code">
+			<export prefix="*"/>
+	    </library>
+		<library id="commons-dbcp-1.2.1" path="lib/commons-dbcp-1.2.1.jar" type="code"/>
+		<library id="commons-pool-1.3" path="lib/commons-pool-1.3.jar" type="code"/>
+		<library id="mysql-connector-1.3" path="lib/mysql-connector-java-3.1.12-bin.jar" type="code"/>
+	</runtime>
+
+	<extension id="repast.simphony.jdbcfreezedryer.jdbcLoadOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
+		<parameter id="class" value="repast.simphony.dataLoader.wizard.JDBCDataLoaderOption"/>
+	</extension>
+
+	<extension id="jdbcFreezeOption" plugin-id="repast.simphony.freezedry" point-id="wizard.options">
+		<parameter id="class" value="repast.simphony.freezedry.wizard.JDBCFreezerOption"/>
+	</extension>
+
+	<extension id="dl.component.action.delimited" plugin-id="repast.simphony.gui" point-id="component.action">
+		<parameter id="actionIO" value="repast.simphony.dataLoader.engine.JDBCDataLoaderControllerActionIO"/>
+		<parameter id="editorCreator" value="repast.simphony.dataLoader.gui.JDBCDataLoaderActionEditorCreator"/>
+		<!-- this is the id that the composite parent action is registered with controller with  -->
+		<parameter id="parentID" value="repast.controller.action.data_loaders"/>
+	</extension>
+
+	<extension id="df.component.action.delimited" plugin-id="repast.simphony.gui" point-id="component.action">
+		<parameter id="actionIO" value="repast.simphony.freezedry.engine.JDBCFreezerActionIO"/>
+		<parameter id="editorCreator" value="repast.simphony.freezedry.gui.JDBCFreezerActionEditorCreator"/>
+		<!-- this is the id that the composite parent action is registered with controller with  -->
+		<parameter id="parentID" value="repast.controller.action.misc"/>
+	</extension>
+	
+</plugin>

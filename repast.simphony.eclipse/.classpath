@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="bin/"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/apache_xml_serializer.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-awt-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-bridge.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-css.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-dom.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-ext.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-gvt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-parser.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-script.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-svg-dom.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-svggen.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-transcoder.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik-xml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bsf-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/fop.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/JavaStyle.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/pdf-transcoder.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xdoclet-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xdoclet-flow4j-module-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xdoclet-xdoclet-module-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xjavadoc-1.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlParserAPIs.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
