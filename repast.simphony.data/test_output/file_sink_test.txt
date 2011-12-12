@@ -1,0 +1,3 @@
+"double","object","int"
+3.14,"hello",1000
+2.14,"bug",103

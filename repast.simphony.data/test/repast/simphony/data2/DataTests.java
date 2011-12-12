@@ -1,6 +1,5 @@
 package repast.simphony.data2;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -32,6 +31,7 @@ import repast.simphony.data2.engine.FileSinkDescriptor;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.DefaultGUIRegistry;
 import repast.simphony.engine.environment.DefaultScheduleRegistry;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunInfo;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.DefaultScheduleFactory;
@@ -41,8 +41,20 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.DefaultParameters;
 import repast.simphony.parameter.ParameterConstants;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.parameter.ParametersCreator;
 
 public class DataTests {
+
+  private static SizedIterable<Object> NULL_SIZED_ITERABLE = new SizedIterable<Object>() {
+
+    public int size() {
+      return 0;
+    }
+
+    public Iterator<Object> iterator() {
+      return null;
+    }
+  };
 
   class Sink implements DataSink {
 
@@ -67,9 +79,9 @@ public class DataTests {
     @Override
     public void rowEnded() {
     }
-    
+
     public void flush() {
-      
+
     }
 
     @Override
@@ -77,22 +89,68 @@ public class DataTests {
       closed = true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see repast.simphony.data2.DataSink#recordEnded()
      */
     @Override
-    public void recordEnded() {}
+    public void recordEnded() {
+    }
   }
-  
-  
+
+  class FormattingSink implements DataSink {
+
+    TabularFormatter formatter;
+    List<String> items = new ArrayList<String>();
+
+    public FormattingSink(List<? extends DataSource> sources) {
+      formatter = new TabularFormatter(sources, ",");
+    }
+
+    @Override
+    public void open(List<String> ids) {
+
+    }
+
+    @Override
+    public void rowStarted() {
+    }
+
+    @Override
+    public void append(String key, Object value) {
+      formatter.addData(key, value);
+    }
+
+    @Override
+    public void rowEnded() {
+      items.add(formatter.formatData());
+    }
+
+    public void flush() {
+
+    }
+
+    @Override
+    public void close() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see repast.simphony.data2.DataSink#recordEnded()
+     */
+    @Override
+    public void recordEnded() {
+    }
+  }
+
   private int[][] data = { { 234, 23, 14 }, { 53, 31, 100 }, { 12, 0, -2 } };
-  
 
   @Test
   public void testMethodDS() {
     ObjectA a = new ObjectA();
-    MethodDataSource source = new MethodDataSource("double", ObjectA.class,
-        "getDouble");
+    MethodDataSource source = new MethodDataSource("double", ObjectA.class, "getDouble");
     assertEquals(a.getDouble(), source.get(a));
 
     ObjectB b = new ObjectB();
@@ -108,8 +166,7 @@ public class DataTests {
     } catch (DataException ex) {
     }
 
-    MethodDataSource osource = new MethodDataSource("object", ObjectB.class,
-        "object");
+    MethodDataSource osource = new MethodDataSource("object", ObjectB.class, "object");
     assertEquals(b.object(), osource.get(b));
 
     try {
@@ -118,12 +175,12 @@ public class DataTests {
     } catch (DataException ex) {
     }
   }
-  
+
   @SuppressWarnings("rawtypes")
   private Map<Class<?>, SizedIterable<?>> createRecordMap(final List<?> list, Class<?> clazz) {
     Map<Class<?>, SizedIterable<?>> map = new HashMap<Class<?>, SizedIterable<?>>();
     map.put(clazz, new SizedIterable() {
-      
+
       @Override
       public Iterator iterator() {
         return list.iterator();
@@ -134,7 +191,7 @@ public class DataTests {
         return list.size();
       }
     });
-    
+
     return map;
   }
 
@@ -182,7 +239,7 @@ public class DataTests {
       }
     }
   }
-  
+
   @Test
   public void testAggregateDSBoolObj() {
     List<ObjectC> objs = new ArrayList<ObjectC>();
@@ -191,26 +248,26 @@ public class DataTests {
     objs.add(obj);
     objs.add(new ObjectC());
     objs.add(new ObjectC());
-    
-    AggregateDSCreator creator = new AggregateDSCreator(new MethodDataSource("obj", ObjectC.class, "getObj"));
+
+    AggregateDSCreator creator = new AggregateDSCreator(new MethodDataSource("obj", ObjectC.class,
+        "getObj"));
     AggregateDataSource ds = creator.createSumSource("sum");
     ds.reset();
-    Double val = (Double)ds.get(objs, objs.size());
+    Double val = (Double) ds.get(objs, objs.size());
     assertEquals(9, val, 0);
-    
+
     creator = new AggregateDSCreator(new MethodDataSource("bool", ObjectC.class, "getBool"));
     ds = creator.createSumSource("sum");
-    val = (Double)ds.get(objs, objs.size());
+    val = (Double) ds.get(objs, objs.size());
     assertEquals(1.0, val, 0);
-    
+
     /*
-    creator = new AggregateDSCreator(new MethodDataSource("hello", ObjectC.class, "getString"));
-    ds = creator.createSumSource("sum");
-    try {
-      val = (Double)ds.get(objs, objs.size());
-      fail("Should have thrown class cast exception");
-    } catch (ClassCastException ex) {}
-    */
+     * creator = new AggregateDSCreator(new MethodDataSource("hello",
+     * ObjectC.class, "getString")); ds = creator.createSumSource("sum"); try {
+     * val = (Double)ds.get(objs, objs.size());
+     * fail("Should have thrown class cast exception"); } catch
+     * (ClassCastException ex) {}
+     */
   }
 
   @Test
@@ -255,7 +312,7 @@ public class DataTests {
       objs.get(1).setInt(data[i][1]);
       objs.get(2).setInt(data[i][2]);
 
-      dataSet.record(createRecordMap(objs,  ObjectB.class));
+      dataSet.record(createRecordMap(objs, ObjectB.class));
       expected[i] = new double[] { stats.getSum(), stats.getMean(), stats.getMin(), stats.getMax() };
     }
     dataSet.close();
@@ -393,62 +450,68 @@ public class DataTests {
     objs.add(new ObjectB("C"));
     return objs;
   }
-  
+
   @Test
   public void testAction() throws IOException {
-    DataSetDescriptor descriptor = new DataSetDescriptor("ds1", DataSetType.NON_AGGREGATE);
-    descriptor.setIncludeRandomSeed(true);
-    descriptor.setIncludeTick(true);
-    descriptor.addMethodDataSource("double", ObjectB.class.getName(), "getDouble");
-    descriptor.addMethodDataSource("object", ObjectB.class.getName(), "object");
-    descriptor.addMethodDataSource("int", ObjectB.class.getName(), "getInt");
-    descriptor.setScheduleParameters(ScheduleParameters.createRepeating(1, 1));
-    descriptor.setSourceType(Object.class.getName());
-    
-    DataSetComponentControllerAction dsAction = new DataSetComponentControllerAction(descriptor);
-    
-    FileSinkDescriptor fdesc = new FileSinkDescriptor("ds1");
-    String filename = "./test_output/sr_manager_test.txt";
-    fdesc.setFileName(filename);
-    fdesc.setAddTimeStamp(false);
-    fdesc.setFormat(FormatType.TABULAR);
-    fdesc.setDelimiter(",");
-    
-    FileSinkComponentControllerAction fsAction = new FileSinkComponentControllerAction(fdesc);
-    List<ObjectB> objs = createObjs();
-    Context<ObjectB> context = new DefaultContext<ObjectB>("root");
-    context.addAll(objs);
-    RunState runState = createRunState(1, null);
-    runState.setMasterContext(context);
-    ISchedule schedule = runState.getScheduleRegistry().getModelSchedule();
-    
-    DataSetsActionCreator dsCreator = new DataSetsActionCreator();
-    DataInitActionCreator dsInit = new DataInitActionCreator();
-    
-    dsCreator.createControllerAction().batchInitialize(runState, "root");
-    dsAction.batchInitialize(runState, "root");
-    fsAction.batchInitialize(runState, "root");
-    ControllerAction initAction = dsInit.createControllerAction();
-    initAction.batchInitialize(runState, "root");
-    initAction.runInitialize(runState, "root", createParameters());
-    
-    for (int i = 0; i < 3; i++) {
-      schedule.execute();
-      for (ObjectB objB : objs) {
-        objB.setInt(i);
-      }
-    }
+    try {
+      DataSetDescriptor descriptor = new DataSetDescriptor("ds1", DataSetType.NON_AGGREGATE);
+      descriptor.setIncludeRandomSeed(true);
+      descriptor.setIncludeTick(true);
+      descriptor.addMethodDataSource("double", ObjectB.class.getName(), "getDouble");
+      descriptor.addMethodDataSource("object", ObjectB.class.getName(), "object");
+      descriptor.addMethodDataSource("int", ObjectB.class.getName(), "getInt");
+      descriptor.setScheduleParameters(ScheduleParameters.createRepeating(1, 1));
+      descriptor.setSourceType(Object.class.getName());
 
-    initAction.runCleanup(runState, "root");
-    initAction.batchCleanup(runState, "root");
-    
-    testSRFileOutput(filename);
+      DataSetComponentControllerAction dsAction = new DataSetComponentControllerAction(descriptor);
+
+      FileSinkDescriptor fdesc = new FileSinkDescriptor("fs1");
+      fdesc.setDataSet("ds1");
+      String filename = "./test_output/sr_manager_test.txt";
+      fdesc.setFileName(filename);
+      fdesc.setAddTimeStamp(false);
+      fdesc.setFormat(FormatType.TABULAR);
+      fdesc.setDelimiter(",");
+
+      FileSinkComponentControllerAction fsAction = new FileSinkComponentControllerAction(fdesc);
+      List<ObjectB> objs = createObjs();
+      Context<ObjectB> context = new DefaultContext<ObjectB>("root");
+      context.addAll(objs);
+      RunState runState = createRunState(1, null);
+      runState.setMasterContext(context);
+      ISchedule schedule = runState.getScheduleRegistry().getModelSchedule();
+
+      DataSetsActionCreator dsCreator = new DataSetsActionCreator();
+      DataInitActionCreator dsInit = new DataInitActionCreator();
+
+      dsCreator.createControllerAction().batchInitialize(runState, "root");
+      dsAction.batchInitialize(runState, "root");
+      fsAction.batchInitialize(runState, "root");
+      ControllerAction initAction = dsInit.createControllerAction();
+      initAction.batchInitialize(runState, "root");
+      initAction.runInitialize(runState, "root", createParameters());
+
+      for (int i = 0; i < 3; i++) {
+        schedule.execute();
+        for (ObjectB objB : objs) {
+          objB.setInt(i);
+        }
+      }
+
+      initAction.runCleanup(runState, "root");
+      initAction.batchCleanup(runState, "root");
+
+      testSRFileOutput(filename);
+    } catch (NullPointerException ex) {
+      ex.printStackTrace();
+      fail();
+    }
   }
 
   @Test
   public void testSRDataManager() throws IOException {
     SingleRunDataSetManager manager = new SingleRunDataSetManager();
-   
+
     List<NonAggregateDataSource> sources = new ArrayList<NonAggregateDataSource>();
     sources.add(manager.getTickCountDataSource());
     sources.add(new MethodDataSource("double", ObjectB.class, "getDouble"));
@@ -482,7 +545,7 @@ public class DataTests {
     ISchedule schedule = runState.getScheduleRegistry().getModelSchedule();
     manager.batchStarted();
     manager.runStarted(runState, "root", createParameters());
-   
+
     assertEquals(manager.getRandomSeedDataSource().get(null), (Integer.valueOf(1)));
     assertEquals(manager.getRandomSeedDataSource().get(new ArrayList<Object>()),
         (Integer.valueOf(1)));
@@ -499,8 +562,6 @@ public class DataTests {
 
     testSRSinks(filename, sink1, sink2);
   }
-  
-  
 
   private List<String> readLines(String filename) throws IOException {
     List<String> lines = new ArrayList<String>();
@@ -512,18 +573,18 @@ public class DataTests {
     reader.close();
     return lines;
   }
-  
-  private  void testSRFileOutput(String fileName) throws IOException {
+
+  private void testSRFileOutput(String fileName) throws IOException {
     List<String> found = readLines(fileName);
     List<String> expectedLines = readLines("./test_output/sr_expected.txt");
 
     assertEquals(found.size(), (expectedLines.size()));
     for (int i = 0; i < found.size(); i++) {
-      //System.out.println(found.get(i));
-      //System.out.println(expectedLines.get(i));
+      // System.out.println(found.get(i));
+      // System.out.println(expectedLines.get(i));
       assertEquals(found.get(i), (expectedLines.get(i)));
     }
-    
+
   }
 
   private void testSRSinks(String fileName, Sink sink1, Sink sink2) throws IOException {
@@ -656,6 +717,59 @@ public class DataTests {
           assertEquals(data.get(key), (exp.get(key)));
         }
       }
+    }
+  }
+
+  @Test
+  public void testParameterSource() {
+    ParametersCreator creator = new ParametersCreator();
+    creator.addParameter("intP", int.class, 3, false);
+    creator.addParameter("stringP", String.class, "hello", true);
+    Parameters params = creator.createParameters();
+
+    RunEnvironment.init(null, null, params, true);
+
+    List<AggregateDataSource> sources = new ArrayList<AggregateDataSource>();
+    sources.add(new ParameterDataSource("intP"));
+    sources.add(new ParameterDataSource("stringP"));
+
+    List<Sink> sinks = new ArrayList<Sink>();
+    sinks.add(new Sink());
+
+    AggregateDataSet set1 = new AggregateDataSet("ds1", sources, sinks);
+    Map<Class<?>, SizedIterable<?>> objs = new HashMap<Class<?>, SizedIterable<?>>();
+    objs.put(void.class, NULL_SIZED_ITERABLE);
+    set1.init();
+    set1.record(objs);
+    set1.record(objs);
+    set1.close();
+
+    Sink sink = sinks.get(0);
+    for (Map<String, Object> items : sink.items) {
+      assertEquals(new Integer(3), items.get("intP"));
+      assertEquals("hello", items.get("stringP"));
+    }
+
+    List<NonAggregateDataSource> naSources = new ArrayList<NonAggregateDataSource>();
+    naSources.add(new ParameterDataSource("intP"));
+    naSources.add(new ParameterDataSource("stringP"));
+    naSources.add(new MethodDataSource("int", ObjectB.class, "getInt"));
+
+    List<FormattingSink> fSinks = new ArrayList<FormattingSink>();
+    fSinks.add(new FormattingSink(naSources));
+    NonAggregateDataSet set2 = new NonAggregateDataSet("ds1", naSources, fSinks);
+    List<ObjectB> agents = new ArrayList<ObjectB>();
+    agents.add(new ObjectB());
+    set2.init();
+    set2.record(createRecordMap(agents, ObjectB.class));
+    set2.record(createRecordMap(agents, ObjectB.class));
+    set2.close();
+
+    FormattingSink fSink = fSinks.get(0);
+    assertEquals(2, fSink.items.size());
+    for (String item : fSink.items) {
+      assertEquals("3,\"hello\",3", item);
+      assertEquals("3,\"hello\",3", item);
     }
   }
 }

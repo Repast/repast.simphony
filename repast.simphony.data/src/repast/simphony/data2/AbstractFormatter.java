@@ -27,6 +27,30 @@ public abstract class AbstractFormatter implements Formatter {
       data[index] = obj.toString();
     }
   }
+  
+  protected static class RuntimeTestFormatter extends ItemFormatter {
+    
+    Map<String, ItemFormatter> keyMap;
+    String id;
+    
+    public RuntimeTestFormatter(Map<String, ItemFormatter> keyMap, String id, int index) {
+      super(index);
+      this.keyMap = keyMap;
+      this.id = id;
+    }
+    
+    public void format(Object obj, String[] data) {
+      ItemFormatter formatter;
+      if (Number.class.isAssignableFrom(obj.getClass())) {
+        formatter = new ItemFormatter(index);
+      } else {
+        formatter = new StringFormatter(index);
+      }
+      
+      formatter.format(obj, data);
+      keyMap.put(id, formatter);
+    }
+  }
 
   protected static class StringFormatter extends ItemFormatter {
 
@@ -57,7 +81,10 @@ public abstract class AbstractFormatter implements Formatter {
     int i = 0;
     for (DataSource source : sources) {
 
-      if (Number.class.isAssignableFrom(source.getDataType())) {
+      if (source.getDataType().equals(Object.class)) {
+        // ReLogo data types can be plain objects.
+        keyMap.put(source.getId(), new RuntimeTestFormatter(keyMap, source.getId(), i));
+      } else if (Number.class.isAssignableFrom(source.getDataType())) {
         keyMap.put(source.getId(), new ItemFormatter(i));
       } else {
         keyMap.put(source.getId(), new StringFormatter(i));
