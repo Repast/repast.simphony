@@ -21,6 +21,19 @@ import repast.simphony.parameter.Parameters;
  * @author Nick Collier
  */
 public class BatchParamMapFileWriter implements DataSink {
+  
+  private class Updater {
+   
+    public void update() {}
+  }
+  
+  private class OneTimeUpdater extends Updater {
+    
+    public void update() {
+      write();
+      updater = new Updater();
+    }
+  }
 
   private Formatter formatter;
   private BufferedWriter writer;
@@ -29,6 +42,7 @@ public class BatchParamMapFileWriter implements DataSink {
   private FormatType formatType;
   private AggregateDataSource batchRunDS;
   private List<AggregateDataSource> sources;
+  private Updater updater = new Updater();
 
   public BatchParamMapFileWriter(BatchRunDataSource source, FileNameFormatter fnFormatter,
       String delimiter, FormatType formatType) {
@@ -93,10 +107,14 @@ public class BatchParamMapFileWriter implements DataSink {
   }
 
   /**
-   * Notifies this BatchParamMapFileWriter that another batch run has ended, so we
+   * Notifies this BatchParamMapFileWriter that another batch run has started, so we
    * write the current parameter values to a file.
    */
-  public void runEnded() {
+  public void runStarted() {
+    updater = new OneTimeUpdater();
+  }
+  
+  private void write() {
     if (formatter == null) init();
     for (AggregateDataSource source : sources) {
       formatter.addData(source.getId(), source.get(null, 0));
@@ -136,6 +154,7 @@ public class BatchParamMapFileWriter implements DataSink {
    */
   @Override
   public final void rowEnded() {
+    updater.update();
   }
 
   /*

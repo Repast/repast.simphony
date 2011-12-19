@@ -16,6 +16,7 @@ import repast.simphony.data2.builder.FileNameFormatter;
 import repast.simphony.engine.controller.DescriptorControllerAction;
 import repast.simphony.engine.environment.DefaultControllerAction;
 import repast.simphony.engine.environment.RunState;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -51,12 +52,12 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
   
 
   /* (non-Javadoc)
-   * @see repast.simphony.engine.environment.DefaultControllerAction#runCleanup(repast.simphony.engine.environment.RunState, java.lang.Object)
+   * @see repast.simphony.engine.environment.DefaultControllerAction#runInitialize(repast.simphony.engine.environment.RunState, java.lang.Object)
    */
   @Override
-  public void runCleanup(RunState runState, Object contextId) {
+  public void runInitialize(RunState runState, Object contextId, Parameters params) {
     for (BatchParamMapFileWriter writer : writers) {
-      writer.runEnded();
+      writer.runStarted();
     }
   }
 
