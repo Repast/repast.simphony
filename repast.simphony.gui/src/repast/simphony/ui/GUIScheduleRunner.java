@@ -14,23 +14,22 @@ import repast.simphony.render.RendererManager;
 import simphony.util.messages.MessageCenter;
 
 /**
- * This class executes the model schedule found in the RunState's ScheduleRegistry.
- *
+ * This class executes the model schedule found in the RunState's
+ * ScheduleRegistry.
+ * 
  * @author Jerry Vos
  */
 public class GUIScheduleRunner extends AbstractRunner {
+
   private static final MessageCenter msgCenter = MessageCenter
-          .getMessageCenter(GUIScheduleRunner.class);
+      .getMessageCenter(GUIScheduleRunner.class);
 
   private EventQueue eventQueue;
-
   private final Object monitor = new Object();
-
   private boolean step = false;
-
   private RendererManager rendererManager = new RendererManager();
-
   private TickListener tickListener = null;
+  private Thread executingThread;
 
   class ScheduleLoopRunnable implements Runnable {
 
@@ -64,12 +63,13 @@ public class GUIScheduleRunner extends AbstractRunner {
         schedule.executeEndActions();
       } catch (RuntimeException ex) {
         rendererManager.clear();
-        msgCenter.fatal("RunTimeException when running the schedule\n"
-                + "Current tick ("
-                + (schedule != null ? String.valueOf(schedule.getTickCount())
-                : "unavailable") + ")", ex);
+        msgCenter.fatal("RunTimeException when running the schedule\n" + "Current tick ("
+            + (schedule != null ? String.valueOf(schedule.getTickCount()) : "unavailable") + ")",
+            ex);
       }
-      // this will stop the j3d thread from executing a tight, resource hogging loop.
+
+      // this will stop the j3d thread from executing a tight, resource hogging
+      // loop.
       // so stop and pause will not use much if any cpu resources
       rendererManager.setPause(true);
       rendererManager.clear();
@@ -86,17 +86,19 @@ public class GUIScheduleRunner extends AbstractRunner {
   }
 
   /**
-   * This executes the given RunState object's schedule. It will continue executing the schedule
-   * until there are no more actions schedule or the run manager tells it to stop.
-   *
-   * @param toExecuteOn the RunState to execute on
+   * This executes the given RunState object's schedule. It will continue
+   * executing the schedule until there are no more actions schedule or the run
+   * manager tells it to stop.
+   * 
+   * @param toExecuteOn
+   *          the RunState to execute on
    */
   public void execute(RunState toExecuteOn) {
     eventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
     ISchedule schedule = getSchedule(toExecuteOn);
     Runnable runnable = new ScheduleLoopRunnable(schedule);
-    Thread thread = new Thread(runnable);
-    thread.start();
+    executingThread = new Thread(runnable);
+    executingThread.start();
   }
 
   private void notifyMonitor() {
@@ -104,45 +106,18 @@ public class GUIScheduleRunner extends AbstractRunner {
       monitor.notify();
     }
   }
-  
+
   public long lastSleepTime = 0;
+
   /**
    * @return true if the runner should keep going
    */
   @Override
   public boolean go() {
+    int delay = RunEnvironment.getInstance().getScheduleTickDelay();
 
-    // process gui events like mouse clicks etc.
-//    try {
-//      while (eventQueue.peekEvent() != null && !stop) {
-//        Thread.sleep(5);
-//      }
-//    } catch (InterruptedException ex4) {
-//      // TODO: decide if we have to stop in this condition
-//      stop = true;
-//      pause = false;
-//    }
-  	
-//  	long currentSleepTime = System.currentTimeMillis();
-//  	int sleepInterval = 500;  // increase to speed up
-//		if (currentSleepTime - lastSleepTime > sleepInterval ){
-//			// process gui events like mouse clicks etc.
-//			try {
-//				while (eventQueue.peekEvent() != null && !stop) {
-//					Thread.sleep(1);
-//				}
-//			} catch (InterruptedException ex4) {
-//				// TODO: decide if we have to stop in this condition
-//				stop = true;
-//				pause = false;
-//			}
-//			lastSleepTime = currentSleepTime;
-//		}
-  	
-  	int delay = RunEnvironment.getInstance().getScheduleTickDelay();
-  	
-  	if (delay > 0){
-  		try {
+    if (delay > 0) {
+      try {
         while (eventQueue.peekEvent() != null && !stop) {
           Thread.sleep(delay * 5);
         }
@@ -151,8 +126,8 @@ public class GUIScheduleRunner extends AbstractRunner {
         stop = true;
         pause = false;
       }
-  	}
-  	
+    }
+
     // check for and pause if necessary
     synchronized (monitor) {
       while (pause) {
@@ -161,8 +136,7 @@ public class GUIScheduleRunner extends AbstractRunner {
         try {
           monitor.wait();
         } catch (InterruptedException e) {
-          msgCenter.warn(
-                  "Caught InterruptedException when running simulation, unpausing.", e);
+          msgCenter.warn("Caught InterruptedException when running simulation, unpausing.", e);
           rendererManager.setPause(false);
           fireRestartedMessage();
           // I think we need to break otherwise
@@ -203,10 +177,18 @@ public class GUIScheduleRunner extends AbstractRunner {
       notifyMonitor();
     }
 
-    // insurance against the thread blocking on a wait somewhere
-    //if (thread.getState() == Thread.State.WAITING) {
-    //	thread.interrupt();
-    //}
+    try {
+      if (executingThread != null) {
+        // wait at most 20 seconds.
+        executingThread.join(20000);
+        
+        if (executingThread.isAlive())
+          executingThread.interrupt();
+      }
+    } catch (InterruptedException ex) {
+      msgCenter.warn("Error while waiting for sim thread to stop", ex);
+    }
+
   }
 
   public TickListener getTickListener() {
@@ -219,6 +201,6 @@ public class GUIScheduleRunner extends AbstractRunner {
 
   protected ISchedule getSchedule(RunState toExecuteOn) {
     return toExecuteOn.getScheduleRegistry().getModelSchedule();
-	}
+  }
 
 }

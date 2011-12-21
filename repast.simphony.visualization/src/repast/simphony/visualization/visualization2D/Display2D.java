@@ -97,7 +97,6 @@ public class Display2D extends AbstractDisplay implements WindowListener {
         valueDisplayLayer.applyUpdates();
       
       doRender = false;                  // reset the render flag
-      support.fireRenderFinished(this);  // fire render finished
     }
   }
 
@@ -552,9 +551,6 @@ public class Display2D extends AbstractDisplay implements WindowListener {
   	if (doRender && canvas.isShowing()) synchronized (lock) {
         ThreadUtilities.runInEventThread(renderer);
       }
-    
-  	else
-  	  support.fireRenderFinished(this);
   }
   
   /**

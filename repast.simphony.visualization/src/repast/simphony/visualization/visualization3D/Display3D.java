@@ -391,17 +391,14 @@ public class Display3D extends AbstractDisplay3D {
       updater.setTriggered(true);
       lastRenderTS = System.currentTimeMillis();
       firstRender = false;
-      support.fireRenderFinished(this);
     } else if (iconified || !canvas.isShowing()) {
       updatedLastRender = false;
-      support.fireRenderFinished(this);
     } else {
       long ts = System.currentTimeMillis();
       if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
         updater.setTriggered(true);
         lastRenderTS = ts;
       } 
-      support.fireRenderFinished(this);
     }
   }
 
@@ -442,7 +439,6 @@ public class Display3D extends AbstractDisplay3D {
     iconified = true;
     // fire this because the renderer may be waiting for this
     // when iconified is called.
-    support.fireRenderFinished(this);
   }
 
   /**
@@ -471,7 +467,6 @@ public class Display3D extends AbstractDisplay3D {
     universe.removeAllLocales();
     universe.cleanup();
     EditorFactory.getInstance().reset();
-    support = null;
     probeSupport = null;
     dlSupport = null;
   }
@@ -532,12 +527,6 @@ public class Display3D extends AbstractDisplay3D {
       }
 
       this.wakeupOn(wakeup);
-
-      // this is insurance for the rare case when the frame is iconfied
-      // after render() has been called and before the render itself is finished.
-      if (iconified) {
-        support.fireRenderFinished(Display3D.this);
-      }
     }
   }
 

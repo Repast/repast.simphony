@@ -62,9 +62,10 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   private Layout layout;
   private LayoutUpdater layoutUpdater;
   protected DisplayData<?> initData;
-//	private Styler styler = new Styler();
-//	private java.util.List<FeatureSource> featureSources = new ArrayList<FeatureSource>();
-  //	private Map<Integer, Object> layerOrder = new HashMap<Integer, Object>();
+  // private Styler styler = new Styler();
+  // private java.util.List<FeatureSource> featureSources = new
+  // ArrayList<FeatureSource>();
+  // private Map<Integer, Object> layerOrder = new HashMap<Integer, Object>();
   private Geography geog;
   private Model model;
 
@@ -76,7 +77,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   private LayerPanel layerPanel;
 
   private boolean doRender = true;
-  
+
   public DisplayGIS3D(DisplayData<?> data, Layout layout) {
     classStyleMap = new LinkedHashMap<Class, AbstractDisplayLayerGIS3D>();
     objectStyleMap = new HashMap<Object, AbstractDisplayLayerGIS3D>();
@@ -85,17 +86,18 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     this.layoutUpdater = new UpdateLayoutUpdater(layout);
 
     Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
-            AnaglyphSceneController.class.getName());
+        AnaglyphSceneController.class.getName());
 
     // TODO explore "flat world"
-//    Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
-//    Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
-    
+    // Configuration.setValue(AVKey.GLOBE_CLASS_NAME,
+    // EarthFlat.class.getName());
+    // Configuration.setValue(AVKey.VIEW_CLASS_NAME,
+    // FlatOrbitView.class.getName());
+
     model = new BasicModel();
-//    model.getLayers().add(new WorldBordersMetacartaLayer());
+    // model.getLayers().add(new WorldBordersMetacartaLayer());
     wwglCanvas = new WorldWindowGLCanvas();
     wwglCanvas.setModel(model);
-    
 
     AnaglyphSceneController asc = (AnaglyphSceneController) wwglCanvas.getSceneController();
     asc.setDisplayMode(this.displayMode);
@@ -106,18 +108,19 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
   /**
    * Gets the data used to initialize this display.
-   *
+   * 
    * @return the data used to initialize this display.
    */
   public DisplayData getInitData() {
     return initData;
   }
-  
-//	public void registerAgentStyle(String agentName, Style style, Integer order) {
-//	styler.registerStyle(agentName, style);
-//	layerOrder.put(order, agentName);
 
-//	}
+  // public void registerAgentStyle(String agentName, Style style, Integer
+  // order) {
+  // styler.registerStyle(agentName, style);
+  // layerOrder.put(order, agentName);
+
+  // }
 
   /**
    * Create the select listener.
@@ -147,7 +150,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   }
 
   public void registerStyle(Class clazz, StyleGIS3D style) {
-  	AbstractDisplayLayerGIS3D layer = classStyleMap.get(clazz);
+    AbstractDisplayLayerGIS3D layer = classStyleMap.get(clazz);
     if (layer == null) {
       layer = new StyledMapLayer3D(clazz.getSimpleName(), style, wwglCanvas);
       classStyleMap.put(clazz, layer);
@@ -170,8 +173,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     panel = new JPanel();
     panel.addHierarchyListener(new HierarchyListener() {
       public void hierarchyChanged(HierarchyEvent e) {
-        if (e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED
-                && addWindowListener) {
+        if (e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED && addWindowListener) {
           Window window = SwingUtilities.getWindowAncestor(panel);
           window.addWindowListener(DisplayGIS3D.this);
           addWindowListener = false;
@@ -207,11 +209,11 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     return panel;
   }
 
-
   /**
    * Finds the object for which the specified PNode is the representation.
-   *
-   * @param node the representational PNode
+   * 
+   * @param node
+   *          the representational PNode
    * @return the object for which the specified PNode is the representation or
    *         null if the object is not found.
    */
@@ -233,17 +235,16 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     return null;
   }
 
-
   public void init() {
 
     for (Object obj : initData.objects()) {
       addObject(obj);
     }
 
-    for (Projection proj : initData.getProjections()){
-    	if (proj instanceof Geography){
-    		geog = (Geography)proj;
-    	}
+    for (Projection proj : initData.getProjections()) {
+      if (proj instanceof Geography) {
+        geog = (Geography) proj;
+      }
     }
 
     geog.addProjectionListener(this);
@@ -258,33 +259,30 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
       layer.setModel(model);
       model.getLayers().add(layer);
     }
-    
+
     update();
     render();
   }
 
   public synchronized void render() {
-    
-  	if (doRender && wwglCanvas.isVisible()){
-  	
-  		for (AbstractDisplayLayerGIS3D layer : classStyleMap.values()) {
-  			layer.applyUpdates();
-  		}
-  		for (AbstractDisplayLayerGIS3D layer : objectStyleMap.values()) {
-  			layer.applyUpdates();
-  		}
 
-  		// Performance improvement. Null pick point skips the doPick() method on
-  		// the RenderableLayer.  Set pick point to null for our rendering
-  		// since worldwind will update it on mouse input anyway.
-  		wwglCanvas.getSceneController().setPickPoint(null);
-  		
-  		wwglCanvas.redraw();
-  		doRender = false;  
-  		support.fireRenderFinished(this);
-  	}
-  	else
-  	  support.fireRenderFinished(this);
+    if (doRender && wwglCanvas.isVisible()) {
+
+      for (AbstractDisplayLayerGIS3D layer : classStyleMap.values()) {
+        layer.applyUpdates();
+      }
+      for (AbstractDisplayLayerGIS3D layer : objectStyleMap.values()) {
+        layer.applyUpdates();
+      }
+
+      // Performance improvement. Null pick point skips the doPick() method on
+      // the RenderableLayer. Set pick point to null for our rendering
+      // since worldwind will update it on mouse input anyway.
+      wwglCanvas.getSceneController().setPickPoint(null);
+
+      wwglCanvas.redraw();
+      doRender = false;
+    }
   }
 
   public void destroy() {
@@ -294,18 +292,19 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     }
     initData = null;
     Window window = SwingUtilities.getWindowAncestor(panel);
-    if (window != null) window.removeWindowListener(this);
+    if (window != null)
+      window.removeWindowListener(this);
     EditorFactory.getInstance().reset();
-    
-  	WorldWind.shutDown();
+
+    WorldWind.shutDown();
   }
 
   @Override
   protected void addObject(Object o) {
-  	AbstractDisplayLayerGIS3D layer = classStyleMap.get(o.getClass());
-    if (layer != null){
-    	layer.addObject(o);
-    	layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.ADDED);
+    AbstractDisplayLayerGIS3D layer = classStyleMap.get(o.getClass());
+    if (layer != null) {
+      layer.addObject(o);
+      layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.ADDED);
     }
   }
 
@@ -329,8 +328,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     layoutUpdater.setLayout(layout);
   }
 
-  public void setLayoutFrequency(IDisplay.LayoutFrequency frequency,
-                                 int interval) {
+  public void setLayoutFrequency(IDisplay.LayoutFrequency frequency, int interval) {
     if (frequency == LayoutFrequency.AT_UPDATE) {
       layoutUpdater = new UpdateLayoutUpdater(layout);
 
@@ -344,16 +342,16 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     }
   }
 
-  public synchronized void update() {  	
-  	layoutUpdater.update();
+  public synchronized void update() {
+    layoutUpdater.update();
 
-      for (AbstractDisplayLayerGIS3D layer : classStyleMap.values()) 
-        layer.update(layoutUpdater);
-      
-      for (AbstractDisplayLayerGIS3D layer : objectStyleMap.values()) 
-        layer.update(layoutUpdater);
-      
-      doRender = true;
+    for (AbstractDisplayLayerGIS3D layer : classStyleMap.values())
+      layer.update(layoutUpdater);
+
+    for (AbstractDisplayLayerGIS3D layer : objectStyleMap.values())
+      layer.update(layoutUpdater);
+
+    doRender = true;
   }
 
   public Renderable getVisualItem(Object o) {
@@ -368,53 +366,54 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
       // try the net layer
       for (AbstractDisplayLayerGIS3D netLayer : objectStyleMap.values()) {
         pNode = netLayer.getVisualItem(o);
-        if (pNode != null) break;
+        if (pNode != null)
+          break;
       }
     }
     return pNode;
   }
 
   public void windowActivated(WindowEvent arg0) {
-//  	System.out.println("Window Activated");
+    // System.out.println("Window Activated");
   }
 
   public void windowClosed(WindowEvent arg0) {
-//  	System.out.println("Window Closed");
+    // System.out.println("Window Closed");
   }
 
   public void windowClosing(WindowEvent arg0) {
-//  	System.out.println("Window Closing");
+    // System.out.println("Window Closing");
   }
 
   public void windowDeactivated(WindowEvent arg0) {
-//  	System.out.println("Window Deactivated");
+    // System.out.println("Window Deactivated");
   }
 
   public void windowDeiconified(WindowEvent e) {
-//  	System.out.println("Window Deiconified");
+    // System.out.println("Window Deiconified");
   }
 
   public void windowIconified(WindowEvent e) {
-//  	System.out.println("Window Iconified");
+    // System.out.println("Window Iconified");
   }
 
   public void windowOpened(WindowEvent arg0) {
-//  	System.out.println("Window Opened");
+    // System.out.println("Window Opened");
   }
 
   public void setPause(boolean pause) {
   }
 
   public void iconified() {
-  	System.out.println("Iconified");
+    System.out.println("Iconified");
   }
 
   public void closed() {
-  	System.out.println("Closed");
+    System.out.println("Closed");
   }
 
   public void deIconified() {
-  	System.out.println("Deiconified");
+    System.out.println("Deiconified");
   }
 
   public Layout getLayout() {
@@ -431,15 +430,17 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
   public void resetHomeView() {
 
-//  	BasicOrbitView homeView = (BasicOrbitView) WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME);
-//
-//
-//  	wwglCanvas.getView().stopStateIterators();
-//  	wwglCanvas.getView().setOrientation(homeView.getEyePosition(), homeView.getCenterPosition());
-  	
-//  	wwglCanvas.getView().setEyePosition(homeView.getEyePosition());
-  	
-  	 }
+    // BasicOrbitView homeView = (BasicOrbitView)
+    // WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME);
+    //
+    //
+    // wwglCanvas.getView().stopStateIterators();
+    // wwglCanvas.getView().setOrientation(homeView.getEyePosition(),
+    // homeView.getCenterPosition());
+
+    // wwglCanvas.getView().setEyePosition(homeView.getEyePosition());
+
+  }
 
   public void toggleAnaglyphStereo() {
     if (displayMode == AnaglyphSceneController.DISPLAY_MODE_MONO)
@@ -483,29 +484,29 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
     // Add a Gazetter
     try {
-			bar.add(new GazetteerPanel(wwglCanvas, null));
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+      bar.add(new GazetteerPanel(wwglCanvas, null));
+    } catch (IllegalAccessException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (InstantiationException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (ClassNotFoundException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
   }
 
-	public void toggleInfoProbe() {
-		// TODO Auto-generated method stub
-		
-	}
+  public void toggleInfoProbe() {
+    // TODO Auto-generated method stub
 
-	public Map<Class, AbstractDisplayLayerGIS3D> getClassStyleMap() {
-		return this.classStyleMap;
-	}
+  }
 
-	public WorldWindowGLCanvas getWwglCanvas() {
-		return this.wwglCanvas;
-	}
+  public Map<Class, AbstractDisplayLayerGIS3D> getClassStyleMap() {
+    return this.classStyleMap;
+  }
+
+  public WorldWindowGLCanvas getWwglCanvas() {
+    return this.wwglCanvas;
+  }
 }

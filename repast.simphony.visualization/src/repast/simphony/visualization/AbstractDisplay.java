@@ -10,8 +10,6 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JToolBar;
 
-import repast.simphony.render.RenderListener;
-import repast.simphony.render.RendererListenerSupport;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionListener;
 
@@ -25,9 +23,6 @@ public abstract class AbstractDisplay implements IDisplay, ProjectionListener {
 
   protected static final Cursor INFO_CURSOR = createInfoCursor();
 
-  // used to more easily support notification, adding, removing renderer
-  // listeners.
-  protected RendererListenerSupport support = new RendererListenerSupport();
   protected ProbeListenerSupport probeSupport = new ProbeListenerSupport();
   protected DisplayListenerSupport dlSupport = new DisplayListenerSupport();
   
@@ -51,10 +46,6 @@ public abstract class AbstractDisplay implements IDisplay, ProjectionListener {
       * removeEdge((RepastEdge)evt.getSubject(), (Network)evt.getProjection());
       * }
       */
-  }
-
-  public void addRenderListener(RenderListener listener) {
-    support.addListener(listener);
   }
 
   protected abstract void addObject(Object o);
