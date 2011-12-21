@@ -24,7 +24,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -57,7 +56,6 @@ import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.DisplayEditorLifecycle;
 import repast.simphony.visualization.DisplayEvent;
 import repast.simphony.visualization.Layout;
-import repast.simphony.visualization.editor.EditorFactory;
 import repast.simphony.visualization.editor.gis.SelectionDecorator;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -75,7 +73,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  * 
  * @author Nick Collier
  * @author Eric Tatara
- *
+ * 
  */
 public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
@@ -97,7 +95,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   private boolean doRender = true;
   private Runnable myRenderer;
   private Runnable myUpdater;
-  
+
   private SelectionDecorator decorator;
 
   public DisplayGIS(DisplayData<?> data) {
@@ -106,14 +104,16 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Gets the geography this display displays.
-   *
+   * 
    * @return the geography this display displays.
    */
   public Geography getGeography() {
-    if (geog != null) return geog;
+    if (geog != null)
+      return geog;
     // should only be a single geog
     for (Projection proj : initData.getProjections()) {
-      if (proj instanceof Geography) return (Geography) proj;
+      if (proj instanceof Geography)
+        return (Geography) proj;
     }
     return null;
   }
@@ -126,28 +126,29 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    * procedure where the edges are added to the network).
    */
   public void projectionEventOccurred(ProjectionEvent evt) {
-  	if (evt.getType() == ProjectionEvent.OBJECT_ADDED || 
-  			evt.getType() == ProjectionEvent.EDGE_ADDED) {
-  		Object obj = evt.getSubject();
-  		addObject(obj);
-  	} 
-  	else if (evt.getType() == ProjectionEvent.OBJECT_REMOVED || 
-  	         evt.getType() == ProjectionEvent.EDGE_REMOVED) {
-  		Object obj = evt.getSubject();
-  		removeObject(obj);
-  	} 
-  	else if (evt.getType() == ProjectionEvent.OBJECT_MOVED) {
-  		Object obj = evt.getSubject();
-  		moveObject(obj);
-  	} 
+    if (evt.getType() == ProjectionEvent.OBJECT_ADDED
+        || evt.getType() == ProjectionEvent.EDGE_ADDED) {
+      Object obj = evt.getSubject();
+      addObject(obj);
+    } else if (evt.getType() == ProjectionEvent.OBJECT_REMOVED
+        || evt.getType() == ProjectionEvent.EDGE_REMOVED) {
+      Object obj = evt.getSubject();
+      removeObject(obj);
+    } else if (evt.getType() == ProjectionEvent.OBJECT_MOVED) {
+      Object obj = evt.getSubject();
+      moveObject(obj);
+    }
   }
-  
+
   /**
    * Registers a style for the specified agent.
-   *
-   * @param agentName the name of the agent
-   * @param style     the style
-   * @param order     the layer order
+   * 
+   * @param agentName
+   *          the name of the agent
+   * @param style
+   *          the style
+   * @param order
+   *          the layer order
    */
   public void registerAgentStyle(String agentName, Style style, Integer order) {
     classNames.add(agentName);
@@ -157,7 +158,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Gets a list of the agent classes registered with this display.
-   *
+   * 
    * @return a list of the agent classes registered with this display.
    */
   public java.util.List<Class> getRegisteredClasses() {
@@ -174,10 +175,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Registers a style for the specified feature source.
-   *
-   * @param source the feature source
-   * @param style  the style
-   * @param order  the layer order
+   * 
+   * @param source
+   *          the feature source
+   * @param style
+   *          the style
+   * @param order
+   *          the layer order
    */
   public void registerFeatureSource(FeatureSource source, Style style, Integer order) {
     featureSources.add(source);
@@ -204,7 +208,8 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     }
     initData = null;
     Window window = SwingUtilities.getWindowAncestor(panel);
-    if (window != null) window.removeWindowListener(this);
+    if (window != null)
+      window.removeWindowListener(this);
   }
 
   public Layout getLayout() {
@@ -216,13 +221,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    */
   public void init() {
     for (Projection proj : initData.getProjections()) {
-      if (proj instanceof Geography) 
-      	geog = (Geography) proj;
-   
+      if (proj instanceof Geography)
+        geog = (Geography) proj;
+
       // add network listeners to the display, unlike with other displays which
       // have network layers that do the listening.
-      else if (proj instanceof Network) 
-      	proj.addProjectionListener(this);
+      else if (proj instanceof Network)
+        proj.addProjectionListener(this);
     }
     mapContext = new DefaultMapContext(geog.getCRS());
     geog.addProjectionListener(this);
@@ -230,9 +235,9 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     for (Class clazz : getRegisteredClasses()) {
       decorator.initClass(clazz);
     }
-    
+
     updater = new Updater(mapContext, geog, styler, featureSources, layerOrder);
-    
+
     myRenderer = new MyRenderer();
     myUpdater = new MyUpdater();
 
@@ -245,9 +250,11 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     java.util.List<Object> objs = new ArrayList<Object>();
     for (Object obj : geog.queryInexact(env)) {
       Geometry geom = geog.getGeometry(obj);
-      if (geom.intersects(gEnv)) objs.add(obj);
+      if (geom.intersects(gEnv))
+        objs.add(obj);
     }
-    if (objs.size() > 0) probeSupport.fireProbeEvent(this, objs);
+    if (objs.size() > 0)
+      probeSupport.fireProbeEvent(this, objs);
   }
 
   public void setLayout(Layout layout) {
@@ -258,45 +265,48 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   public void update() {
     synchronized (lock) {
-  	  doRender = true;
-  	  ThreadUtilities.runInEventThread(myUpdater);
+      doRender = true;
+      ThreadUtilities.runInEventThread(myUpdater);
     }
   }
 
   public void render() {
-  	if (doRender && panel.getCanvas().isShowing()) synchronized (lock) {
-  		ThreadUtilities.runInEventThread(myRenderer);
-  	}
-
-  	else
-  		support.fireRenderFinished(this);
+    long ts = System.currentTimeMillis();
+    if (doRender && panel.getCanvas().isShowing()) {
+      synchronized (lock) {
+        if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+        ThreadUtilities.runInEventThread(myRenderer);
+        lastRenderTS = ts;
+        }
+      }
+    }
   }
-  
+
   /**
-   * Need to render displays when the sim is paused and initialized, because the 
-   *   display won't render with DisplayGIS.render() if it is hidden.
+   * Need to render displays when the sim is paused and initialized, because the
+   * display won't render with DisplayGIS.render() if it is hidden.
    */
-  public void forceRender(){
-  	synchronized (lock) {
+  public void forceRender() {
+    synchronized (lock) {
       ThreadUtilities.runInEventThread(myRenderer);
     }
   }
 
-  private class MyUpdater implements Runnable{
-		public void run() {
-			updater.update();	
-		}
+  private class MyUpdater implements Runnable {
+    public void run() {
+      updater.update();
+    }
   }
-  
-  private class MyRenderer implements Runnable{
-		public void run() {
-			updater.render(mapContext);
-			
-			doRender = false;                  // reset the render flag
-      support.fireRenderFinished(this);  // fire render finished
-		}
+
+  private class MyRenderer implements Runnable {
+    public void run() {
+      updater.render(mapContext);
+
+      doRender = false; // reset the render flag
+      support.fireRenderFinished(this); // fire render finished
+    }
   }
-  
+
   public void setPause(boolean pause) {
   }
 
@@ -312,11 +322,11 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
         FeatureSource fs = layer.getFeatureSource();
         if (!fs.getFeatures().isEmpty()) {
           CoordinateReferenceSystem sourceCrs = fs.getSchema().getDefaultGeometry()
-                  .getCoordinateSystem();
+              .getCoordinateSystem();
           ReferencedEnvelope env = new ReferencedEnvelope(fs.getBounds(), sourceCrs);
 
           if ((sourceCrs != null) && (crs != null)
-                  && !CRSUtilities.equalsIgnoreMetadata(sourceCrs, crs)) {
+              && !CRSUtilities.equalsIgnoreMetadata(sourceCrs, crs)) {
             env = env.transform(crs, true);
           }
 
@@ -353,8 +363,8 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       mapContext.setAreaOfInterest(aoe);
       PGISCanvas canvas = panel.getCanvas();
       PBounds bounds = canvas.getCamera().getViewBounds();
-      Envelope env = new Envelope(bounds.getMinX(), bounds.getMaxX(), bounds
-              .getMinY(), bounds.getMaxY());
+      Envelope env = new Envelope(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(),
+          bounds.getMaxY());
       mapContext.setAreaOfInterest(env, canvas.getCRS());
     }
   }
@@ -391,10 +401,9 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   private double mousePositionX;
   private double mousePositionY;
 
-
   /**
    * Zoom control with mouse wheel
-   *
+   * 
    * @author tatara
    */
   public class RepastPiccoloMouseWheelListener implements MouseWheelListener {
@@ -423,13 +432,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       camera.scaleViewAboutPoint(scaleDelta, point.getX(), point.getY());
       PBounds viewBounds = camera.getViewBounds();
       canvas.setAreaOfInterest(new ReferencedEnvelope(viewBounds.getMinX(), viewBounds.getMaxX(),
-              viewBounds.getMinY(), viewBounds.getMaxY(), canvas.getCRS()));
+          viewBounds.getMinY(), viewBounds.getMaxY(), canvas.getCRS()));
     }
   }
 
   /**
    * Assists mouse wheel zoom control by updating the center coord
-   *
+   * 
    * @author tatara
    */
   public class RepastPiccoloMouseMotionListener implements MouseMotionListener {
@@ -445,7 +454,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Gets the data used to initialize this display.
-   *
+   * 
    * @return the data used to initialize this display.
    */
   public DisplayData getInitData() {
@@ -454,8 +463,9 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Gets the style for the specified agent type.
-   *
-   * @param agentClassName the type whose style we want
+   * 
+   * @param agentClassName
+   *          the type whose style we want
    * @return the style for the specified agent type.
    */
   public Style getStyleFor(String agentClassName) {
@@ -464,19 +474,20 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   /**
    * Creates an DisplayEditor appropriate for editing this display.
-   *
+   * 
    * @param panel
    * @return an DisplayEditor appropriate for editing this display or null if
    *         this display cannot be edited.
    */
   public DisplayEditorLifecycle createEditor(JPanel panel) {
-//    return EditorFactory.getInstance().createGISEditor(this, this.panel.getCanvas(), panel);
+    // return EditorFactory.getInstance().createGISEditor(this,
+    // this.panel.getCanvas(), panel);
     return null;
   }
 
   /**
    * Gets a panel that contains the actual gui for visualization.
-   *
+   * 
    * @return a panel that contains the actual gui for visualization.
    */
   public JPanel getPanel() {
@@ -488,10 +499,11 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   }
 
   /**
-   * Registers the specified toolbar with this IDisplay. This IDisplay
-   * can then put buttons etc. are on this toolbar.
-   *
-   * @param bar the bar to register
+   * Registers the specified toolbar with this IDisplay. This IDisplay can then
+   * put buttons etc. are on this toolbar.
+   * 
+   * @param bar
+   *          the bar to register
    */
   @Override
   public void registerToolBar(JToolBar bar) {
@@ -526,16 +538,14 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   }
 
   /**
-   * Gets the decorator used to decorate selected
-   * gis features.
-   *
-   * @return the decorator used to decorate selected
-   *         gis features.
+   * Gets the decorator used to decorate selected gis features.
+   * 
+   * @return the decorator used to decorate selected gis features.
    */
   public SelectionDecorator getDecorator() {
     return decorator;
   }
-  
+
   public void createPanel() {
     panel = new PiccoloMapPanel(mapContext);
 
@@ -597,7 +607,6 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     };
     panel.addTool(new DistanceTool(mapContext, SI.METER, setter), toolParams);
 
-
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
     imageFile = DistanceTool.class.getResource("inform-icon.png");
@@ -611,8 +620,8 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
       public void setLocation(double lon, double lat) {
         Coordinate coordinate = new Coordinate(lon, lat);
-        dlSupport.fireInfoMessage(DisplayGIS.this, format.format(coordinate.x) + ", "
-                + format.format(coordinate.y));
+        dlSupport.fireInfoMessage(DisplayGIS.this,
+            format.format(coordinate.x) + ", " + format.format(coordinate.y));
       }
 
       public void unsetLocation() {
@@ -621,13 +630,11 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     };
 
     panel.getCanvas().addInputEventListener(
-            new PositionTool(mapContext.getCoordinateReferenceSystem(),
-                    locationSetter));
+        new PositionTool(mapContext.getCoordinateReferenceSystem(), locationSetter));
 
     panel.addHierarchyListener(new HierarchyListener() {
       public void hierarchyChanged(HierarchyEvent e) {
-        if (e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED
-                && addWindowListener) {
+        if (e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED && addWindowListener) {
           Window window = SwingUtilities.getWindowAncestor(panel);
           window.addWindowListener(DisplayGIS.this);
           addWindowListener = false;
@@ -640,8 +647,8 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     panel.getCanvas().addMouseMotionListener(new RepastPiccoloMouseMotionListener());
   }
 
-	public void toggleInfoProbe() {
-		// TODO Auto-generated method stub
-		
-	}
+  public void toggleInfoProbe() {
+    // TODO Auto-generated method stub
+
+  }
 }
