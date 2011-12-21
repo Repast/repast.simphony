@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="saf.core.v3d.jar" sourcepath="/saf.ui.v3d/src"/>
+	<classpathentry exported="true" kind="lib" path="saf.core.v3d.jar" sourcepath="/Users/nick/Documents/repos/simphony.app.framework/v3d/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/osx.jar"/>
 	<classpathentry exported="true" kind="lib" path="saf.core.ui.jar" sourcepath="/Users/nick/Documents/workspace/saf/ui/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/wizard-0.1.12.jar"/>
