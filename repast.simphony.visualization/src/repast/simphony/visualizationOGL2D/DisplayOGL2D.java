@@ -421,7 +421,6 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
       }
       doRender = false;
     }
-    support.fireRenderFinished(this);
   }
 
   public void registerDecorator(ProjectionDecorator2D<?> decorator) {

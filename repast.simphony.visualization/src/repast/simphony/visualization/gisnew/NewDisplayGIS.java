@@ -282,10 +282,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
   		
   		wwglCanvas.redraw();
   		doRender = false;  
-  		support.fireRenderFinished(this);
   	}
-  	else
-  	  support.fireRenderFinished(this);
   }
 
   public void destroy() {

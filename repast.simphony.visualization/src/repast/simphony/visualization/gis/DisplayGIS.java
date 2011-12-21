@@ -301,9 +301,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   private class MyRenderer implements Runnable {
     public void run() {
       updater.render(mapContext);
-
       doRender = false; // reset the render flag
-      support.fireRenderFinished(this); // fire render finished
     }
   }
 
