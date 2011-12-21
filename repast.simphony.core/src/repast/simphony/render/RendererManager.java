@@ -4,75 +4,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Manages a collection of Renderers, allowing client code to call update and
+ * pause them collectively.
+ * 
  * @author Nick Collier
  * @version $Revision: 1.1 $ $Date: 2005/12/21 22:25:35 $
  */
-public class RendererManager implements RenderListener {
+public class RendererManager  {
 
-	private List<Renderer> renderers = new ArrayList<Renderer>();
-	private Object monitor = new Object();
-	private int count;
+  private List<Renderer> renderers = new ArrayList<Renderer>();
+  
+  /**
+   * Adds a Renderer to this RendererManager.
+   * 
+   * @param renderer the renderer to add
+   */
+  public void addRenderer(Renderer renderer) {
+    synchronized (renderers) {
+      renderers.add(renderer);
+    }
+  }
 
-	private void notifyMonitor() {
-		synchronized (monitor) {
-			monitor.notify();
-		}
-	}
+  /**
+   * Calls render on each Renderer contained in this RendererManager.
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  public void render() {
+    List<Renderer> workingList;
+    synchronized (renderers) {
+      workingList = (List<Renderer>) ((ArrayList) renderers).clone();
+    }
 
-	public void addRenderer(Renderer renderer) {
-		synchronized (renderers) {
-			renderers.add(renderer);
-			renderer.addRenderListener(this);
-		}
-	}
+    for (Renderer renderer : workingList) {
+      renderer.render();
+    }
+  }
 
-	public void render() {
-		synchronized (monitor) {
-			List<Renderer> workingList;
-			synchronized (renderers) {
-				count = renderers.size();
-				workingList = (List<Renderer>) ((ArrayList) renderers).clone();
-			}
+  /**
+   * Calls setPause on each Renderer contained in this RendererManager.
+   */
+  public void setPause(boolean pause) {
+    synchronized (renderers) {
+      for (Renderer renderer : renderers) {
+        renderer.setPause(pause);
+      }
+    }
+  }
 
-			for (Renderer renderer : workingList) {
-				renderer.render();
-			}
-
-			while (count > 0) {
-				try {
-					monitor.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					// I think we need to break otherwise
-					// we will be stuck in the loop
-					break;
-				}
-			}
-		}
-	}
-
-	public void setPause(boolean pause) {
-		synchronized (renderers) {
-			for (Renderer renderer : renderers) {
-				renderer.setPause(pause);
-			}
-		}
-
-	}
-
-	// this is synchronized so that two threads don't touch at
-	// the same time screwing up the count decrement and check.
-	public synchronized void renderFinished(RenderEvent evt) {
-		// I don't think this needs to be synchronized as
-		// operations on ints are atomic?
-
-		count--;
-		if (count == 0) {
-			notifyMonitor();
-		}
-	}
-
-	public void clear() {
-		renderers.clear();
-	}
+  /**
+   * Clears the list of Renderers contained by this RendererManager.
+   */
+  public void clear() {
+    renderers.clear();
+  }
 }
