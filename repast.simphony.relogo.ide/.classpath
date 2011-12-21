@@ -8,5 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/antlrworks-1.1.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="lib" path="libs/groovy-all-1.8.2.jar"/>
+	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
