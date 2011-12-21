@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="repast/logging/output/|repast/logging/mock/|repast/engine/RunStateTest.java|repast/engine/watcher/ExpressionCreatorTest.java" kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.16.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
