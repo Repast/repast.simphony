@@ -188,18 +188,6 @@
 				<include name="**/*.class" />
 			</fileset>
 
-			<fileset dir="../repast.simphony.data.bsf/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.data.bsf/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.data.bsf/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
 			<fileset dir="../repast.simphony.dataLoader/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -396,10 +384,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			<fileset dir="../repast.simphony.R/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
+			
 			<fileset dir="../repast.simphony.R/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
