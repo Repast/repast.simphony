@@ -17,7 +17,7 @@ import simphony.util.messages.MessageCenter;
  * This class executes the model schedule found in the RunState's
  * ScheduleRegistry.
  * 
- * @author Jerry Vos
+ * @author Nick Collier
  */
 public class GUIScheduleRunner extends AbstractRunner {
 
@@ -178,7 +178,7 @@ public class GUIScheduleRunner extends AbstractRunner {
     }
 
     try {
-      if (executingThread != null) {
+      if (executingThread != null && !Thread.currentThread().equals(executingThread)) {
         // wait at most 20 seconds.
         executingThread.join(20000);
         
