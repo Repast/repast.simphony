@@ -36,6 +36,7 @@ import java.util.Arrays;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.statistics.SimpleHistogramBin;
 
+import cern.colt.list.DoubleArrayList;
 
 /**
  * Static histogram dataset for use with JFreeChart histograms.
@@ -110,14 +111,15 @@ public class StaticHistogramDataset extends AbstractHistogramDataset {
   }
 
   @Override
-  public void addValue(double val) {
-    synchronized (buffer) {
+  protected void addValues(DoubleArrayList vals) {
+    for (int i = 0, n = vals.size(); i < n; i++) {
+      double val = vals.getQuick(i);
       if (val < min)
         underFlow++;
       else if (val > max)
         overFlow++;
       else
-        super.addValue(val);
+        buffer.add(val);
     }
   }
 
@@ -130,26 +132,24 @@ public class StaticHistogramDataset extends AbstractHistogramDataset {
   public double getYValue(int series, int item) {
     return yHandler.getY(series, item);
   }
-  
+
   public int getOverflow() {
     return overFlow;
   }
-  
+
   public int getUnderflow() {
     return underFlow;
   }
 
   @Override
   protected void doUpdate() {
-    synchronized (buffer) {
-      notifyListeners = false;
-      clearObservations();
-      for (int i = 0, n = buffer.size(); i < n; i++) {
-        addObservation(buffer.getQuick(i), false);
-      }
-      notifyListeners = true;
-      this.notifyListeners(new DatasetChangeEvent(this, this));
-      underFlow = overFlow = 0;
+    notifyListeners = false;
+    clearObservations();
+    for (int i = 0, n = buffer.size(); i < n; i++) {
+      addObservation(buffer.getQuick(i), false);
     }
+    notifyListeners = true;
+    this.notifyListeners(new DatasetChangeEvent(this, this));
+    underFlow = overFlow = 0;
   }
 }

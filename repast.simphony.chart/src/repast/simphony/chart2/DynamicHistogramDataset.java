@@ -34,6 +34,8 @@ package repast.simphony.chart2;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.statistics.SimpleHistogramBin;
 
+import cern.colt.list.DoubleArrayList;
+
 /**
  * Dynamic histogram whose bin limits change as new data is added.
  * 
@@ -53,60 +55,58 @@ public class DynamicHistogramDataset extends AbstractHistogramDataset {
   }
 
   @Override
-  public void addValue(double val) {
-    synchronized (buffer) {
+  protected void addValues(DoubleArrayList vals) {
+    for (int i = 0, n = vals.size(); i < n; i++) {
+      double val = vals.getQuick(i);
       min = Math.min(min, val);
       max = Math.max(max, val);
-      super.addValue(val);
+      buffer.add(val);
     }
   }
 
   @Override
   protected void doUpdate() {
-
-    synchronized (buffer) {
-      notifyListeners = false;
-      if (buffer.size() > 0) {
-        double curMin = 0, curMax = 0;
-        int itemCount = getItemCount(0);
-        if (itemCount > 0) {
-          curMin = getStartXValue(0, 0);
-          curMax = getEndXValue(0, itemCount - 1);
-        }
-
-        if (curMin != min || curMax != max) {
-          removeAllBins();
-
-          if (max == min) {
-            addBin(new SimpleHistogramBin(min, min + 1, true, true));
-          } else {
-
-            double interval = (max - min) / numBins;
-            double start = min;
-            for (int i = 0, n = numBins - 1; i < n; i++) {
-              double end = start + interval;
-              addBin(new SimpleHistogramBin(start, end, true, false));
-              start = end;
-            }
-
-            // add the last bin
-            addBin(new SimpleHistogramBin(start, max, true, true));
-          }
-        }
-
-        clearObservations();
-        for (int i = 0, n = buffer.size(); i < n; i++) {
-          addObservation(buffer.getQuick(i), false);
-        }
-       
-      } else {
-        clearObservations();
+    notifyListeners = false;
+    if (buffer.size() > 0) {
+      double curMin = 0, curMax = 0;
+      int itemCount = getItemCount(0);
+      if (itemCount > 0) {
+        curMin = getStartXValue(0, 0);
+        curMax = getEndXValue(0, itemCount - 1);
       }
-      notifyListeners = true;
-      this.notifyListeners(new DatasetChangeEvent(this, this));
-      
-      min = Double.POSITIVE_INFINITY;
-      max = Double.NEGATIVE_INFINITY;
+
+      if (curMin != min || curMax != max) {
+        removeAllBins();
+
+        if (max == min) {
+          addBin(new SimpleHistogramBin(min, min + 1, true, true));
+        } else {
+
+          double interval = (max - min) / numBins;
+          double start = min;
+          for (int i = 0, n = numBins - 1; i < n; i++) {
+            double end = start + interval;
+            addBin(new SimpleHistogramBin(start, end, true, false));
+            start = end;
+          }
+
+          // add the last bin
+          addBin(new SimpleHistogramBin(start, max, true, true));
+        }
+      }
+
+      clearObservations();
+      for (int i = 0, n = buffer.size(); i < n; i++) {
+        addObservation(buffer.getQuick(i), false);
+      }
+
+    } else {
+      clearObservations();
     }
+    notifyListeners = true;
+    this.notifyListeners(new DatasetChangeEvent(this, this));
+
+    min = Double.POSITIVE_INFINITY;
+    max = Double.NEGATIVE_INFINITY;
   }
 }
