@@ -159,6 +159,14 @@ public class ReLogoModel implements RunListener{
 	public void setActiveButtons(int activeButtons) {
 		this.activeButtons = activeButtons;
 	}
+	
+	public void incrementActiveButtons(){
+		this.activeButtons++;
+	}
+	
+	public void decrementActiveButtons(){
+		this.activeButtons--;
+	}
 
 	public boolean isPaused() {
 		return paused;
@@ -305,6 +313,7 @@ public class ReLogoModel implements RunListener{
 	@Override
 	public void stopped() {
 		setPaused(true);
+		setTicks(0);
 		
 	}
 

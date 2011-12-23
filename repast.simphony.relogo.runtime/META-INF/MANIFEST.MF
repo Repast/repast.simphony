@@ -17,6 +17,7 @@ Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  repast.simphony.gui;bundle-version="2.0.0",
  repast.simphony.scenario;bundle-version="2.0.0",
  repast.simphony.integration;bundle-version="2.0.0",
- saf.core.ui;bundle-version="2.0.0"
+ saf.core.ui;bundle-version="2.0.0",
+ repast.simphony.data;bundle-version="2.0.1"
 Bundle-ClassPath: lib/asm-3.2.jar,
  lib/poi-ooxml-3.6-20091214.jar

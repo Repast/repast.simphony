@@ -60,7 +60,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	    	double dTime = RepastEssentials.GetTickCount()
 	   		RepastEssentials.ScheduleAction(observer,dTime+1.0,methodName, parameters)
 	   		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule()
-	   		def action = [execute: { -> Utility.checkToPause()}]  as IAction
+	   		def action = [execute: { -> Utility.flushFileSinks(); Utility.checkToPause()}]  as IAction
 	   		schedule.schedule(ScheduleParameters.createOneTime(dTime+1.0,ScheduleParameters.LAST_PRIORITY), action)
 	   		Utility.resumeReLogo()
 		}
@@ -132,6 +132,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	    	double dTime = RepastEssentials.GetTickCount()
 	    	ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule()
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				
 				model.setModelParam(actionName,false)
 				shouldContinue.booleanValue = false
 				def pauseFlag = model.isPaused()
@@ -145,8 +146,8 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 			  	def remAction = [execute: executeClosure] as IAction
 			  	schedule.schedule(ScheduleParameters.createOneTime(dTime+0.5),remAction)
 	
-			  	model.setActiveButtons(model.getActiveButtons() - 1)
-			  		    		   	
+			  	model.decrementActiveButtons()
+				Utility.flushFileSinks()
 				if (!pauseFlag && model.getActiveButtons() > 0){
 			   		Utility.resumeReLogo()
 			   	}
@@ -161,7 +162,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 				ISchedulableAction newAction = schedule.schedule(ScheduleParameters.createRepeating(dTime+1.0, 1.0), new StopEnabledCallBackAction(shouldContinue,observer,methodName,parameters));
 		      	
 		      	model.addAction(actionName,newAction)
-		      	model.setActiveButtons(model.getActiveButtons() + 1)
+		      	model.incrementActiveButtons()
 		      	
 		      	Utility.resumeReLogo() 
 			}
@@ -287,7 +288,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	public static JPanel createTickDisplay(){
-		def model = ReLogoModel.getInstance()
+		ReLogoModel model = ReLogoModel.getInstance()
 		model.setTicks(0.0d);
 		SwingBuilder swing = new SwingBuilder()
 		def result = swing.panel(alignmentX:Component.LEFT_ALIGNMENT) {

@@ -9,6 +9,7 @@
 	<requires>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.relogo.ide" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="true"/>
   </requires>
 
 	<runtime>
