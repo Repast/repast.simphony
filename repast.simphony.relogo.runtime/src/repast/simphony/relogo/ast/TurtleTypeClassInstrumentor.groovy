@@ -149,21 +149,14 @@ class TurtleTypeClassInstrumentor {
 		}
 	}
 	
-	protected MethodNode observerCreateTypesMethod(){
-		Parameter[] parameters = [new Parameter(ClassHelper.int_TYPE,'number'),new Parameter(ClassHelper.CLOSURE_TYPE,'closure',ConstantExpression.NULL)]
-		ExpressionStatement es = new ExpressionStatement(
-				new MethodCallExpression(
-				new VariableExpression('this'),
-				'crt',
-				new ArgumentListExpression(
-				new VariableExpression('number'),
-				new VariableExpression('closure'),
-				new ConstantExpression(pluralString)
-				)
-				)
-				)
-		BlockStatement block = new BlockStatement([es],new VariableScope())
-		return( new MethodNode('create' + capitalize(pluralString), Opcodes.ACC_PUBLIC, ClassHelper.VOID_TYPE, parameters, [] as ClassNode[], block) );
+	protected MethodNode observerCreateTypesMethod(){		
+		String methodName = 'create' + capitalize(pluralString)
+		String methodString = """
+					public void ${methodName}(int number, Closure closure = null){
+						this.crt(number,closure,'${pluralString}')
+					}
+					"""
+		return createMethodFromString(methodName,methodString)
 	}
 	
 	protected MethodNode observerCreateOrderedTypesMethod(){
@@ -428,20 +421,13 @@ class TurtleTypeClassInstrumentor {
 	}
 	
 	protected MethodNode createMethodFromString(String methodName, String methodString){
-//		log("    in createMethodFromString: $methodName")
-		def result
+		List<ASTNode> result
 		try {
 		result = buildFromString(CompilePhase.SEMANTIC_ANALYSIS,false,methodString)
 		}
 		catch(Exception e){
-//			log("    exception is $e")
-//			log(e.printStackTrace())
 		}
-//		log("    ${className} in createMethodFromString, after building: $methodName")
 		if (result){
-			result[1].getMethods().each{
-//				log("method : " + it)
-			}
 			return( result[1].getMethods().find({ it.name.equals(methodName) }))
 		}
 		return null

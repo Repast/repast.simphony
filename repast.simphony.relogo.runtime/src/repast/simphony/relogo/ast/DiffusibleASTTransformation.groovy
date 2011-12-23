@@ -66,11 +66,11 @@ class DiffusibleASTTransformation implements ASTTransformation {
 			owner.addMethod(createPatchVarSetterMethod(originalFieldNodeName, type))
 
 			// Add a static 'getDiffusiblePatchVars' method (if it doesn't exist yet):
-			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod('getDiffusiblePatchVars', [] as Parameter[])
+			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod('getDiffusiblePatchVars', new Parameter[0])
 			if (! getDiffusiblePatchVarsMethodNode ) {
 				BlockStatement block = new BlockStatement()
 				block.addStatement(new ReturnStatement(new ListExpression()))
-				getDiffusiblePatchVarsMethodNode = new MethodNode('getDiffusiblePatchVars', Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC , ClassHelper.make(List), [] as Parameter[], [] as ClassNode[], block)
+				getDiffusiblePatchVarsMethodNode = new MethodNode('getDiffusiblePatchVars', Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC , ClassHelper.make(List), new Parameter[0], new ClassNode[0], block)
 				owner.addMethod(getDiffusiblePatchVarsMethodNode)
 			}
 			// Add the originalFieldNodeName to the array returned by 'getDiffusiblePatchVars' 
