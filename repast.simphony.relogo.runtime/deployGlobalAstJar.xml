@@ -2,7 +2,7 @@
 <project name="Deploy Global Ast Jar" default="Deploy" basedir=".">
 
 	<property name="destDir" value="/Volumes/PassportT/JarAndSourceFiles" />
-	<property name="baseDir" value="/Volumes/PassportT/Eclipse_Folder/SimphonyFiles/CurrentSimphonyFromSF_SVN/repast.simphony.relogo.runtime/bin"/>
+	<property name="baseDir" value="/Volumes/PassportT/GitRepositories/repast/repast.simphony/repast.simphony.relogo.runtime/bin"/>
 	
 	
 	<target name="Deploy">

@@ -28,11 +28,11 @@ class TurtleTypeClassInstrumentor {
 	private List<ClassNode> listOfUserClasses;
 	private String singularString;
 	private String pluralString;
-	private String className;
 	private List<ClassNode> listOfUserTurtleClasses;
 	private List<ClassNode> listOfUserPatchClasses;
 	private List<ClassNode> listOfUserLinkClasses;
 	private List<ClassNode> listOfUserObserverClasses;
+	private MethodFromStringCreator mfsc
 	
 	public TurtleTypeClassInstrumentor(ClassNode turtleClass, List<ClassNode> listOfUserClasses, List<ClassNode> listOfUserTurtleClasses, 
 			List<ClassNode> listOfUserPatchClasses, List<ClassNode> listOfUserLinkClasses, List<ClassNode> listOfUserObserverClasses,  
@@ -45,7 +45,7 @@ class TurtleTypeClassInstrumentor {
 		this.listOfUserObserverClasses = listOfUserObserverClasses;
 		this.singularString = singularString;
 		this.pluralString = pluralString;
-		this.className = turtleClass.getName()
+		this.mfsc = new MethodFromStringCreator(turtleClass.getName())
 	}
 	
 	public instrument(){
@@ -149,21 +149,14 @@ class TurtleTypeClassInstrumentor {
 		}
 	}
 	
-	protected MethodNode observerCreateTypesMethod(){
-		Parameter[] parameters = [new Parameter(ClassHelper.int_TYPE,'number'),new Parameter(ClassHelper.CLOSURE_TYPE,'closure',ConstantExpression.NULL)]
-		ExpressionStatement es = new ExpressionStatement(
-				new MethodCallExpression(
-				new VariableExpression('this'),
-				'crt',
-				new ArgumentListExpression(
-				new VariableExpression('number'),
-				new VariableExpression('closure'),
-				new ConstantExpression(pluralString)
-				)
-				)
-				)
-		BlockStatement block = new BlockStatement([es],new VariableScope())
-		return( new MethodNode('create' + capitalize(pluralString), Opcodes.ACC_PUBLIC, ClassHelper.VOID_TYPE, parameters, [] as ClassNode[], block) );
+	protected MethodNode observerCreateTypesMethod(){		
+		String methodName = 'create' + capitalize(pluralString)
+		String methodString = """
+					public void ${methodName}(int number, Closure closure = null){
+						this.crt(number,closure,'${pluralString}')
+					}
+					"""
+		return createMethodFromString(methodName,methodString)
 	}
 	
 	protected MethodNode observerCreateOrderedTypesMethod(){
@@ -428,49 +421,9 @@ class TurtleTypeClassInstrumentor {
 	}
 	
 	protected MethodNode createMethodFromString(String methodName, String methodString){
-//		log("    in createMethodFromString: $methodName")
-		def result
-		try {
-		result = buildFromString(CompilePhase.SEMANTIC_ANALYSIS,false,methodString)
-		}
-		catch(Exception e){
-//			log("    exception is $e")
-//			log(e.printStackTrace())
-		}
-//		log("    ${className} in createMethodFromString, after building: $methodName")
-		if (result){
-			result[1].getMethods().each{
-//				log("method : " + it)
-			}
-			return( result[1].getMethods().find({ it.name.equals(methodName) }))
-		}
-		return null
+		return (mfsc.createMethodFromString(methodName, methodString))
 	}
-	
-	private List<ASTNode> buildFromString(CompilePhase phase = CompilePhase.CLASS_GENERATION, boolean statementsOnly = true, String source) {
-		if (!source || "" == source.trim()) throw new IllegalArgumentException("A source must be specified")
-		return compile(source, phase, statementsOnly);
-	}
-	
-	private List<ASTNode> compile(String script, CompilePhase compilePhase, boolean statementsOnly) {
-		def scriptClassName = "script" + className + System.currentTimeMillis()
-		GroovyClassLoader classLoader = new GroovyClassLoader(this.getClass().getClassLoader())
-		GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptClassName + ".groovy", "/groovy/script")
-		CompilationUnit cu = new CompilationUnit(CompilerConfiguration.DEFAULT, codeSource.codeSource, classLoader)
-		cu.addSource(codeSource.getName(), script);
-		cu.compile(compilePhase.getPhaseNumber())
-		// collect all the ASTNodes into the result, possibly ignoring the script body if desired
-		return cu.ast.modules.inject([]) {List acc, ModuleNode node ->
-			if (node.statementBlock) acc.add(node.statementBlock)
-			node.classes?.each {
-				if (!(it.name == scriptClassName && statementsOnly)) {
-					acc << it
-				}
-			}
-			acc
-		}
-	}
-	
+		
 	//Utility for capitalizing the first character of a string 
 	private String capitalize(String s){
 		String result = ''

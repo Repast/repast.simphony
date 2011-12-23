@@ -66,14 +66,20 @@ class DiffusibleASTTransformation implements ASTTransformation {
 			owner.addMethod(createPatchVarSetterMethod(originalFieldNodeName, type))
 
 			// Add a static 'getDiffusiblePatchVars' method (if it doesn't exist yet):
-			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod('getDiffusiblePatchVars', [] as Parameter[])
+			String gDPVName = 'getDiffusiblePatchVars'
+			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod(gDPVName, new Parameter[0])
 			if (! getDiffusiblePatchVarsMethodNode ) {
-				BlockStatement block = new BlockStatement()
-				block.addStatement(new ReturnStatement(new ListExpression()))
-				getDiffusiblePatchVarsMethodNode = new MethodNode('getDiffusiblePatchVars', Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC , ClassHelper.make(List), [] as Parameter[], [] as ClassNode[], block)
+				MethodFromStringCreator mfsc = new MethodFromStringCreator(owner.getName())
+				String methodString = """
+					import repast.simphony.relogo.*
+					public static List<String> ${gDPVName}(){
+						return []
+					}
+					"""
+				getDiffusiblePatchVarsMethodNode = mfsc.createMethodFromString(gDPVName,methodString) 
 				owner.addMethod(getDiffusiblePatchVarsMethodNode)
 			}
-			// Add the originalFieldNodeName to the array returned by 'getDiffusiblePatchVars' 
+			// Add the originalFieldNodeName to the list returned by 'getDiffusiblePatchVars' 
 			BlockStatement block =  (BlockStatement) getDiffusiblePatchVarsMethodNode.getCode();
 			List<Statement> stmts = block.getStatements()
 			Statement stmt = stmts?.get(0)
