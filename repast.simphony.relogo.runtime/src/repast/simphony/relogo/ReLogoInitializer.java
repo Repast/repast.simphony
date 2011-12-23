@@ -9,6 +9,7 @@ public class ReLogoInitializer implements ModelInitializer {
 	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(ReLogoInitializer.class);
 
 	public void initialize(Scenario scen, RunEnvironmentBuilder builder) {
+		builder.getScheduleRunner().addRunListener(ReLogoModel.getInstance());
 		ReLogoModel.getInstance().checkEMCEnabledGlobally();
 		// adding the "of" method to the Closure class
 		UtilityG.dressClosure();

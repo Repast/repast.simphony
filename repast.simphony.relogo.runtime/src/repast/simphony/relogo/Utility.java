@@ -113,7 +113,6 @@ public class Utility {
 
 		if (!RSApplication.getRSApplicationInstance().isStartSim()) {
 			RunEnvironment.getInstance().pauseRun();
-			ReLogoModel.getInstance().setPaused(true);
 		}
 
 	}
@@ -135,7 +134,6 @@ public class Utility {
 			worker.execute();
 
 		}
-		ReLogoModel.getInstance().setPaused(false);
 	}
 
 	public static void checkToPause() {
