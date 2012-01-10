@@ -51,6 +51,8 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	public static JPanel createButton(String observerID, String methodName, String elementLabel, Object... parameters){
+		if (isBatch()) return null;
+		
 		Closure closure = { event ->    
 	    	ReLogoModel model = ReLogoModel.getInstance()
 	    	if (!model.isPaused()){
@@ -74,7 +76,8 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	public static JPanel createMonitor(String observerID, String reporterName, String elementLabel, double interval){
-//		Observer observer = Utility.getObserverByID(observerID);
+		if (isBatch()) return null;
+
 		ReLogoModel model = ReLogoModel.getInstance();
 		model.monitorsMap[reporterName] = ""
 		//TODO: possibly change the start time to 0.0
@@ -111,7 +114,12 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 		return fixMaximumSize(result)
 	}
 	
+	private static boolean isBatch(){
+		return RunEnvironment.instance.isBatch();
+	}
+	
 	public static JPanel createToggleButton(String observerID, String methodName, String elementLabel, Object... parameters){
+		if (isBatch()) return null;
 		
 		String actionName = observerID + "_" + methodName
 		createModelParam(actionName,false)
@@ -181,23 +189,24 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 		return fixMaximumSize(panel)
 	}
 	
+	private static int multiplier(List list){
+		List tempList = new ArrayList(list)
+		int multiplier = 1
+		while(true){
+			tempList = tempList*.multiply(multiplier)
+			if (tempList.every({ (it as BigDecimal).remainder(1 as BigDecimal) == 0 })){
+				break;
+			}
+			multiplier*=10
+		}
+		return multiplier
+	}
+	
 	public static JPanel createSlider(String varName, String elementLabel, Number minVal, Number increment, Number maxVal, Number val, String units){
 		createModelParam(varName,val)
+		if (isBatch()) return null;
 		
-		def findMultiplier = {def list ->
-			def tempList = list.clone()
-			def multiplier = 1
-			while(true){
-				tempList = tempList*.multiply(multiplier)
-				if (tempList.every({ (it as BigDecimal).remainder(1 as BigDecimal) == 0 })){
-					break;
-				}
-				multiplier*=10
-			}
-			multiplier
-		}
-		
-		int multiplier = findMultiplier([minVal, increment, maxVal])
+		int multiplier = multiplier([minVal, increment, maxVal])
 		
 		msgCenter.debug("creating a slider for the model parameter $varName with value $val")
 		def modelParams = ReLogoModel.getInstance().getModelParams()
@@ -224,7 +233,10 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	public static JPanel createSwitch(def varName, String elementLabel, boolean selected){
+		
 		createModelParam(varName, selected)
+		
+		if (isBatch()) return null;
 		msgCenter.debug("creating the model parameter $varName with value ${selected}")
 		def modelParams = ReLogoModel.getInstance().getModelParams()
 		SwingBuilder swing = new SwingBuilder()
@@ -238,6 +250,9 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	
 	public static JPanel createChooser(String varName, String elementLabel, List choices, int index){
 		createModelParam(varName, choices[index])
+		
+		if (isBatch()) return null;
+		
 		msgCenter.debug("creating the model parameter $varName with value ${choices[index]}")
 		def modelParams = ReLogoModel.getInstance().getModelParams()
 		SwingBuilder swing = new SwingBuilder()
@@ -261,6 +276,9 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	
 	public static JPanel createInput(String varName, def value){
 		createModelParam(varName, value)
+		
+		if (isBatch()) return null;
+		
 		msgCenter.debug("creating the model parameter defined by the input $varName with value ${value}")
 		def modelParams = ReLogoModel.getInstance().getModelParams()
 		SwingBuilder swing = new SwingBuilder()
@@ -288,6 +306,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	public static JPanel createTickDisplay(){
+		if (isBatch()) return null;
 		ReLogoModel model = ReLogoModel.getInstance()
 		model.setTicks(0.0d);
 		SwingBuilder swing = new SwingBuilder()
