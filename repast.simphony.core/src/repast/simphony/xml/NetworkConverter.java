@@ -27,7 +27,8 @@ public class NetworkConverter extends AbstractConverter {
   public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mContext) {
     Network network = (Network) o;
     writeString("name", network.getName(), writer);
-    writeString("edgeCreator", network.getEdgeCreator().getClass().getName(), writer);
+//    writeString("edgeCreator", network.getEdgeCreator().getClass().getName(), writer);
+    writeObject("edgeCreator", network.getEdgeCreator(), writer, mContext);
     writeString("isDirected", String.valueOf(network.isDirected()), writer);
     writeString("edgeCount", String.valueOf(network.getDegree()), writer);
     for (RepastEdge edge : (Iterable<RepastEdge>) network.getEdges()) {
@@ -40,9 +41,10 @@ public class NetworkConverter extends AbstractConverter {
     try {
       Context context = (Context) umContext.get(Keys.CONTEXT);
       String name = readNextString(reader);
-      String edgeCreator = readNextString(reader);
+//      String edgeCreator = readNextString(reader);
+      EdgeCreator creator = (EdgeCreator)readNextObject(umContext.currentObject(), reader, umContext);
       boolean isDirected = Boolean.parseBoolean(readNextString(reader));
-      EdgeCreator creator = (EdgeCreator) Class.forName(edgeCreator).newInstance();
+//      EdgeCreator creator = (EdgeCreator) Class.forName(edgeCreator).newInstance();
       Network network = NetworkFactoryFinder.createNetworkFactory(null).createNetwork(name, context,
               isDirected, creator);
 
