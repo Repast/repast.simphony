@@ -348,7 +348,12 @@ class TurtleTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getMyObserver().getTurtleFactory().getTurtleTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -360,7 +365,12 @@ class TurtleTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getTurtleFactory().getTurtleTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -382,9 +392,9 @@ class TurtleTypeClassInstrumentor {
 		String methodString = """
 					import repast.simphony.relogo.*
 					public Turtle ${methodName}(int num){
-						Turtle turtle = Utility.turtle(num,this.getMyObserver())
+						Turtle turtle = Utility.turtleU(num,this.getMyObserver())
 						Class clazz = getMyObserver().getTurtleFactory().getTurtleTypeClass('$singularString')
-						if (clazz.isAssignableFrom(turtle)) {
+						if (turtle != null && clazz.isAssignableFrom(turtle.getClass())) {
 							return turtle
 						}
 						return null
@@ -409,9 +419,9 @@ class TurtleTypeClassInstrumentor {
 		String methodString = """
 					import repast.simphony.relogo.*
 					public Turtle ${methodName}(int num){
-						Turtle turtle = Utility.turtle(num,this)
+						Turtle turtle = Utility.turtleU(num,this)
 						Class clazz = getTurtleFactory().getTurtleTypeClass('$singularString')
-						if (clazz.isAssignableFrom(turtle)) {
+						if (turtle != null && clazz.isAssignableFrom(turtle.getClass())) {
 							return turtle
 						}
 						return null
