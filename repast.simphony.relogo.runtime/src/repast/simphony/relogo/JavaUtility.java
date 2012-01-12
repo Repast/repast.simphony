@@ -193,13 +193,21 @@ public class JavaUtility {
 
 	public static void edgeDiffuse(DoubleMatrix2D ddm, DoubleMatrix2D ddm2, int[][] neighbors, int rowMin, int rowMax, int colMin, int colMax, double diffusionCoeff, boolean isMoore){
 		int totalPossibleNeighbors = isMoore ? 8 : 4;
+		int maxRow = ddm.rows() - 1;
+		int maxCol = ddm.columns() - 1 ;
 		for (int row = rowMin; row <= rowMax; row++){
 			for (int col = colMin; col <= colMax; col++){
 				double neighborTally = 0.0;
+				int numNeighbors = 0;
 				for (int neighbor = 0 ; neighbor < neighbors.length; neighbor++){
-					neighborTally += ddm.getQuick(neighbors[neighbor][0] + row, neighbors[neighbor][1] + col);
+					int rowIndex = neighbors[neighbor][0] + row;
+					int colIndex = neighbors[neighbor][1] + col;
+					if (rowIndex >= 0 && rowIndex <= maxRow && colIndex >= 0 && colIndex <= maxCol){
+						neighborTally += ddm.getQuick(rowIndex,colIndex);
+						numNeighbors++;
+					}
 				}
-				ddm2.setQuick(row, col , ddm.getQuick(row,col)*(1-diffusionCoeff*neighbors.length/totalPossibleNeighbors) + neighborTally*diffusionCoeff/totalPossibleNeighbors);
+				ddm2.setQuick(row, col , ddm.getQuick(row,col)*(1-diffusionCoeff*numNeighbors/totalPossibleNeighbors) + neighborTally*diffusionCoeff/totalPossibleNeighbors);
 			}
 		}
 	}

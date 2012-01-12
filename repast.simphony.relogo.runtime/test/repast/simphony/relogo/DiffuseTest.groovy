@@ -80,6 +80,72 @@ public class DiffuseTest extends GroovyTestCase{
 			assertEquals(expected,ddm2)
 			assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
 		}
+		
+		/**
+		* Simple test 4 with isMoore T, isPeriodic F. unequal dimensions
+		*
+		*/
+		public void testDiffuseTF4(){
+			double [][] sd = [[1, 1], [0, 0], [0, 0]]
+			ddm = new DenseDoubleMatrix2D(sd)
+			ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+			double diffusionCoeff = 0.3
+			JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, false)
+	
+			double [][] sde = [
+				[0.925, 0.925],
+				[0.075, 0.075],
+				[0, 0]
+			]
+			DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+			assertEquals(expected,ddm2)
+			assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+		}
+		
+		/**
+		* Simple test 5 with isMoore T, isPeriodic F. unequal dimensions smaller
+		*
+		*/
+		public void testDiffuseTF5(){
+			double [][] sd = [[1], [0], [ 0]]
+			ddm = new DenseDoubleMatrix2D(sd)
+			ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+			double diffusionCoeff = 0.3
+			JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, false)
+	
+			double [][] sde = [
+				[0.9625],
+				[0.0375],
+				[0]
+			]
+			DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+			assertEquals(expected,ddm2)
+			assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+		}
+		
+		/**
+		* Simple test 6 with isMoore T, isPeriodic F. unequal dimensions larger
+		*
+		*/
+		public void testDiffuseTF6(){
+			double [][] sd = [[1,1,1], [0,0,0], [0,0,0],[0,0,0]]
+			ddm = new DenseDoubleMatrix2D(sd)
+			ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+			double diffusionCoeff = 0.3
+			JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, false)
+	
+			double [][] sde = [
+				[0.925, 0.8875, 0.925],
+				[0.075, 0.1125, 0.075],
+				[0, 0, 0],
+				[0, 0, 0]
+			]
+			DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+			assertEquals(expected,ddm2)
+			assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+		}
+		
+		
 			
 		/**
 		* Simple test with isMoore F, isPeriodic F.
@@ -170,6 +236,70 @@ public class DiffuseTest extends GroovyTestCase{
 	  }
 	  
 	  /**
+	  * Simple test 4 with isMoore T, isPeriodic T. unequal dimensions
+	  *
+	  */
+	  public void testDiffuseTT4(){
+		  double [][] sd = [[1, 1], [0, 0], [0, 0]]
+		  ddm = new DenseDoubleMatrix2D(sd)
+		  ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+		  double diffusionCoeff = 0.3
+		  JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, true)
+  
+		  double [][] sde = [
+			  [0.775, 0.775],
+			  [0.1125, 0.1125],
+			  [0.1125, 0.1125]
+		  ]
+		  DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+		  assertEquals(expected,ddm2)
+		  assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+	  }
+	  
+	  /**
+	  * Simple test 5 with isMoore T, isPeriodic T. unequal dimensions smaller
+	  *
+	  */
+	  public void testDiffuseTT5(){
+		  double [][] sd = [[1], [0], [ 0]]
+		  ddm = new DenseDoubleMatrix2D(sd)
+		  ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+		  double diffusionCoeff = 0.3
+		  JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, true)
+  
+		  double [][] sde = [
+			  [0.775],
+			  [0.1125],
+			  [0.1125]
+		  ]
+		  DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+		  assertEquals(expected,ddm2)
+		  assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+	  }
+	  
+	  /**
+	  * Simple test 6 with isMoore T, isPeriodic T. unequal dimensions larger
+	  *
+	  */
+	  public void testDiffuseTT6(){
+		  double [][] sd = [[1,1,1], [0,0,0], [0,0,0],[0,0,0]]
+		  ddm = new DenseDoubleMatrix2D(sd)
+		  ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+		  double diffusionCoeff = 0.3
+		  JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, true, true)
+  
+		  double [][] sde = [
+			  [0.775, 0.775, 0.775],
+			  [0.1125, 0.1125, 0.1125],
+			  [0, 0, 0],
+			  [0.1125, 0.1125, 0.1125]
+		  ]
+		  DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+		  assertEquals(expected,ddm2)
+		  assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+	  }
+	  
+	  /**
 	  * Simple test with isMoore F, isPeriodic T.
 	  */
 	 public void testDiffuseFT1(){
@@ -220,6 +350,28 @@ public class DiffuseTest extends GroovyTestCase{
 		 JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, false, true)
 		 
 		 double [][] sde = [[0.85,  0.85,  0.85],[0.075, 0.075, 0.075],[0.075, 0.075, 0.075]]
+		 DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
+		 assertEquals(expected,ddm2)
+		 assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
+	 }
+	 
+	 /**
+	 * Simple test 6 with isMoore F, isPeriodic T. unequal dimensions larger
+	 *
+	 */
+	 public void testDiffuseFT6(){
+		 double [][] sd = [[1,1,1], [0,0,0], [0,0,0],[0,0,0]]
+		 ddm = new DenseDoubleMatrix2D(sd)
+		 ddm2 = new DenseDoubleMatrix2D(ddm.rows(),ddm.columns());
+		 double diffusionCoeff = 0.3
+		 JavaUtility.diffuse(ddm, ddm2, diffusionCoeff, false, true)
+ 
+		 double [][] sde = [
+			 [0.85, 0.85, 0.85],
+			 [0.075,0.075,0.075],
+			 [0, 0, 0],
+			 [0.075,0.075,0.075]
+		 ]
 		 DoubleMatrix2D expected = new DenseDoubleMatrix2D(sde)
 		 assertEquals(expected,ddm2)
 		 assertEquals(ddm.zSum(),ddm2.zSum(),0.001)
