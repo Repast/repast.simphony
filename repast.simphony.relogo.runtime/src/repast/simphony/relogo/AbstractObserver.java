@@ -836,13 +836,17 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	private void diff(String patchVariable, double number, boolean isMoore) {
-		int possibleNumberOfNeighbors = isMoore ? 8 : 4;
+//		int possibleNumberOfNeighbors = isMoore ? 8 : 4;
 		// String neighborsString = isMoore ? "neighbors" : "neighbors4"
 		DenseDoubleMatrix2D ddm = getPatchVarMatrix(patchVariable);
 		DenseDoubleMatrix2D ddm2 = new DenseDoubleMatrix2D(ddm.rows(),
 				ddm.columns());
-		JavaUtility.diffuse(ddm, ddm2, number, worldWidth(), worldHeight());
-		setPatchVarMatrix(patchVariable, ddm2);
+		Grid grid = getGrid();
+		if (grid != null){
+			boolean isPeriodic = grid.isPeriodic();
+			JavaUtility.diffuse(ddm, ddm2, number, isMoore, isPeriodic);
+			setPatchVarMatrix(patchVariable, ddm2);
+		}
 	}
 
 	/**
