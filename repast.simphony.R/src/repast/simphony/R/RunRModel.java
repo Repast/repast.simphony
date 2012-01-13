@@ -18,7 +18,7 @@ public class RunRModel extends AnalysisPluginRunner  {
     if (SystemUtils.IS_OS_MAC)
     	path = "/Applications/R.app";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files\\R\\R-2.8.0\\";
+    	path = "C:\\Program Files\\R\\R-2.14.1\\bin\\i386"; 
     else
     	path = "/usr/bin/R";
   }

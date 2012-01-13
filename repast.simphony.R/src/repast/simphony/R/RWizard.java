@@ -72,7 +72,7 @@ public class RWizard extends AnalysisPluginWizard {
         logFileBuilder.append(delimiter).append("\"");
       }
 
-      commands.add(getInstallHome() + "bin" + SystemConstants.DIR_SEPARATOR + "RGui.exe"
+      commands.add(getInstallHome() + SystemConstants.DIR_SEPARATOR + "RGui.exe"
           + " --sdi HOME=\"" + prepFileNameForR(getRHome()) + "\""
           + prepFileNameForR(logFileBuilder.toString()));
     } else if (SystemUtils.IS_OS_MAC) {
