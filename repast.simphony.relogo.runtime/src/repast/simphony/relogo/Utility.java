@@ -1442,8 +1442,22 @@ public class Utility {
 	 *            an observer
 	 * @return agentset of all links
 	 */
-	public static AgentSet<Link> linksU(Observer observer) {
+	public static AgentSet<Link> allLinksU(Observer observer) {
 		return getAgentSetOfClass(Link.class, observer);
+	}
+	
+	/**
+	 * Returns the agentset of all generic links.
+	 * 
+	 * @param observer
+	 *            an observer
+	 * @return agentset of all links
+	 */
+	public static AgentSet<Link> linksU(Observer observer) {
+		AgentSet a = agentSetFromIterable(observer.getNetwork("UndirectedLinks").getEdges());
+		AgentSet d = agentSetFromIterable(observer.getNetwork("DirectedLinks").getEdges());
+		a.addAll(d);
+		return a;
 	}
 
 	public static AgentSet getAgentSetOfClass(Class E, Observer observer) {

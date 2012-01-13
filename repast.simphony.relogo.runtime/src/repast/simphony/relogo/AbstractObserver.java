@@ -316,20 +316,26 @@ public abstract class AbstractObserver implements Observer {
 	 * Removes all links.
 	 */
 	public void clearLinks() {
-		AgentSet<Link> ls = links();
+		AgentSet<Link> ls = allLinks();
 		for (Link l : ls) {
 			l.die();
 		}
 	}
 
 	/**
-	 * Returns the agentset of all links.
-	 * 
-	 * @return agentset of all links
+	 * {@inheritDoc}
 	 */
 	public AgentSet links() {
 		return Utility.linksU(this);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public AgentSet allLinks() {
+		return Utility.allLinksU(this);
+	}
+
 
 	/**
 	 * Sets all patch variables to their default values.
