@@ -600,11 +600,18 @@ public interface Observer extends ProjectionListener {
 	public Link link(Turtle oneEnd, Turtle otherEnd);
 
 	/**
+	 * Returns the agentset of all generic links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public AgentSet<Link> links();
+	
+	/**
 	 * Returns the agentset of all links.
 	 * 
 	 * @return agentset of all links
 	 */
-	public AgentSet links();
+	public AgentSet<Link> allLinks();
 
 	/**
 	 * Returns a random x coordinate for patches.

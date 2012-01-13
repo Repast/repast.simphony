@@ -138,9 +138,14 @@ public abstract class AbstractLink<T> extends Link<T> {
 	}
 
 	/**
-	 * Returns the agentset of all links.
-	 * 
-	 * @return agentset of all links
+	 * {@inheritDoc}
+	 */
+	public AgentSet<Link> allLinks() {
+		return Utility.allLinksU(getMyObserver());
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 */
 	public AgentSet<Link> links() {
 		return Utility.linksU(getMyObserver());

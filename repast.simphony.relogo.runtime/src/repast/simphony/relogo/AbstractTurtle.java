@@ -1957,11 +1957,9 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns an agentset of directed links from other turtles to the caller.
-	 * 
-	 * @return agentset of directed links from other turtles to the caller
+	 * {@inheritDoc}
 	 */
-	public AgentSet myInLinks() {
+	public AgentSet allMyInLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getDirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -1971,13 +1969,19 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return new AgentSet(list);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public AgentSet myInLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks").getInEdges(this));
+	}
+
 
 	/**
-	 * Returns an agentset of directed links from the caller to other turtles.
-	 * 
-	 * @return agentset of directed links from the caller to other turtles
+	 * {@inheritDoc}
 	 */
-	public AgentSet myOutLinks() {
+	public AgentSet allMyOutLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getDirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -1987,13 +1991,19 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return new AgentSet(list);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public AgentSet myOutLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks").getOutEdges(this));
+	}
+
 
 	/**
-	 * Returns an agentset of the caller’s undirected links.
-	 * 
-	 * @return agentset of the caller’s undirected links
+	 * {@inheritDoc}
 	 */
-	public AgentSet myLinks() {
+	public AgentSet allMyLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getUndirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -2002,6 +2012,13 @@ public abstract class AbstractTurtle implements Turtle {
 			}
 		}
 		return new AgentSet(list);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public AgentSet myLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("UndirectedLinks").getEdges(this));
 	}
 
 	/**
@@ -2157,9 +2174,14 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the agentset of all links.
-	 * 
-	 * @return agentset of all links
+	 * {@inheritDoc}
+	 */
+	public AgentSet<Link> allLinks() {
+		return Utility.allLinksU(getMyObserver());
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 */
 	public AgentSet<Link> links() {
 		return Utility.linksU(getMyObserver());

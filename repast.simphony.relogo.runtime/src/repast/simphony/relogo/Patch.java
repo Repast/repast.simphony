@@ -19,12 +19,19 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	public String toString();
 
 	/**
-	 * Returns the agentset of all links.
+	 * Returns the agentset of all generic links.
 	 * 
 	 * @return agentset of all links
 	 */
 	public AgentSet<Link> links();
 
+	/**
+	 * Returns the agentset of all links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public AgentSet<Link> allLinks();
+	
 	/**
 	 * The agent that initiated the asking.
 	 * 

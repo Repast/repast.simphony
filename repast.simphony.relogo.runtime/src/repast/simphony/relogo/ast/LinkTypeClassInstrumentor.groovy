@@ -622,7 +622,12 @@ class LinkTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getMyObserver().getLinkFactory().getLinkTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -634,7 +639,12 @@ class LinkTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getLinkFactory().getLinkTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)

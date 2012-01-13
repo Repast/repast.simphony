@@ -1058,11 +1058,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public boolean linkNeighborQ(Turtle t);
 
 	/**
-	 * Returns the agentset of all links.
+	 * Returns the agentset of all generic links.
 	 * 
 	 * @return agentset of all links
 	 */
 	public AgentSet<Link> links();
+	
+	/**
+	 * Returns the agentset of all links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public AgentSet<Link> allLinks();
 
 	/**
 	 * Returns the agentset with directed links to the caller.
@@ -1109,25 +1116,46 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public Link linkWith(Turtle t);
 
 	/**
-	 * Returns an agentset of directed links from other turtles to the caller.
+	 * Returns an agentset of generic directed links from other turtles to the caller.
 	 * 
 	 * @return agentset of directed links from other turtles to the caller
 	 */
 	public AgentSet myInLinks();
+	
+	/**
+	 * Returns an agentset of all directed links from other turtles to the caller.
+	 * 
+	 * @return agentset of directed links from other turtles to the caller
+	 */
+	public AgentSet allMyInLinks();
 
 	/**
-	 * Returns an agentset of directed links from the caller to other turtles.
+	 * Returns an agentset of generic directed links from the caller to other turtles.
 	 * 
 	 * @return agentset of directed links from the caller to other turtles
 	 */
 	public AgentSet myOutLinks();
+	
+	/**
+	 * Returns an agentset of all directed links from the caller to other turtles.
+	 * 
+	 * @return agentset of directed links from the caller to other turtles
+	 */
+	public AgentSet allMyOutLinks();
 
 	/**
-	 * Returns an agentset of the caller’s undirected links.
+	 * Returns an agentset of the caller’s generic undirected links.
 	 * 
 	 * @return agentset of the caller’s undirected links
 	 */
 	public AgentSet myLinks();
+	
+	/**
+	 * Returns an agentset of all the caller’s undirected links.
+	 * 
+	 * @return agentset of the caller’s undirected links
+	 */
+	public AgentSet allMyLinks();
 
 	/**
 	 * Returns the turtle opposite the asking link.
