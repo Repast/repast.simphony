@@ -243,8 +243,7 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             id="repast.simphony.eclipse.insertcode"
-            label="Insert Repast Code"
-            visible="true">
+            label="Insert Repast Code">
            <action
               class="repast.simphony.agents.designer.ui.actions.RepastCodeWizardAction"
               id="repast.simphony.eclipse.insertrepastcode"
@@ -257,8 +256,7 @@
       </actionSet>
       <actionSet
             id="repast.simphony.eclipse.samplemodelsactionSet"
-            label="Sample Models"
-            visible="true">
+            label="Sample Models">
          <action
                class="repast.simphony.agents.designer.ui.wizards.ImportSampleModelsAction"
                id="repast.simphony.eclipse.importsamplemodelsaction"
@@ -267,6 +265,24 @@
                style="push">
          </action>
       </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <actionSet
+               id="repast.simphony.eclipse.insertcode">
+         </actionSet>
+         <actionSet
+               id="repast.simphony.eclipse.samplemodelsactionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="repast.simphony.relogo.ide.relogoperspective">
+         <actionSet
+               id="repast.simphony.eclipse.samplemodelsactionSet">
+         </actionSet>
+      </perspectiveExtension>
    </extension>
    
    
