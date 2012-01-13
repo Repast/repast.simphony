@@ -19,8 +19,6 @@ import saf.core.ui.actions.ISAFAction;
 import simphony.settings.SettingsRegistry;
 import simphony.util.messages.MessageCenter;
 
-import simphony.util.messages.MessageCenter;
-
 /**
  * The AnalysisPluginRunner is a helper class that should be extended by simple
  * plugin runner classes for running command line applications from the gui
@@ -117,8 +115,9 @@ public class AnalysisPluginRunner extends AbstractAction implements
 	}
 
 	public void run(AnalysisPluginWizard wizard) {
+		String[] command = null;
 		try {
-			String[] command = wizard.getExecutionCommand();
+			command = wizard.getExecutionCommand();
 			Map<String, String> envVars = wizard.getEnvVars();
 
 			if (command == null) {
@@ -171,9 +170,20 @@ public class AnalysisPluginRunner extends AbstractAction implements
 
 		} catch (Exception e) {
 
-			LOG.error("Wizard.run: Error executing " + name
-					+ ".  Command is: '" + wizard.getExecutionCommand() + "'",
-					e);
+			System.out.println(e);
+			
+//			LOG.error("Wizard.run: Error executing " + name
+//					+ ".  Command is: '" + arrayToString(command) + "'",
+//					e);
 		}
 	}
+
+  public static String arrayToString(String[] input){
+  	StringBuffer buf = new StringBuffer();
+  	
+  	for (String s : input)
+  		buf.append(s);
+
+  	return buf.toString();
+  }
 }
