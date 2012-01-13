@@ -89,7 +89,12 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
       try {
         IDisplay display = creator.createDisplay();
         display.init();
-        runState.getGUIRegistry().addDisplay(contextId.toString()+":"+descriptor.getName(), GUIRegistryType.DISPLAY, display);
+        String contextName = contextId.toString();
+        // Change to shorten the display name for "default_observer_context" displays
+        if (contextName.equals("default_observer_context")){
+        	contextName = "ReLogo";
+        }
+        runState.getGUIRegistry().addDisplay(contextName+": "+descriptor.getName(), GUIRegistryType.DISPLAY, display);
         DisplayUpdater updater = new DisplayUpdater(display);
         displayUpdate = runState.getScheduleRegistry().getModelSchedule().schedule(descriptor.getScheduleParameters(),
                 updater);
