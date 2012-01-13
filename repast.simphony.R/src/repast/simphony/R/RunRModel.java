@@ -6,7 +6,7 @@ import repast.simphony.data.analysis.AnalysisPluginRunner;
 /**
  * A wizard for executing R on a file outputter's output.
  * 
- * @author Eric Tatara
+ * @author Eric Tatara test
  * @author Jerry Vos
  */
 
