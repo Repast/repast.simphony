@@ -53,6 +53,10 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	Map<String, DenseDoubleMatrix2D> patchesVarsMap = new ConcurrentHashMap<String, DenseDoubleMatrix2D>();
+	
+	private Set<String> getPatchVarNames(){
+		return patchesVarsMap.keySet();
+	}
 
 	public DenseDoubleMatrix2D getPatchVarMatrix(String varName) {
 		return patchesVarsMap.get(varName);
@@ -355,7 +359,15 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @see #clearPatches()
 	 */
-	public abstract void cp();
+	public void cp(){
+		AgentSet<Patch> a = patches();
+		for (Patch p : a){
+			p.setToDefault();
+		}
+		for (String var : getPatchVarNames()){
+			getPatchVarMatrix(var).assign(0.0);
+		}
+	}
 
 	/**
 	 * Makes a number of randomly oriented turtles.
