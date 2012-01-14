@@ -429,14 +429,14 @@ public interface Observer extends ProjectionListener {
 	public void clearLinks();
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 * 
 	 * @see #clearPatches()
 	 */
 	public void cp();
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 */
 	public void clearPatches();
 

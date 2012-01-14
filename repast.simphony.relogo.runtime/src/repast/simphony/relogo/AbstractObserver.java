@@ -342,7 +342,7 @@ public abstract class AbstractObserver implements Observer {
 
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 */
 	public void clearPatches() {
 		cp();
@@ -355,7 +355,7 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 * 
 	 * @see #clearPatches()
 	 */

@@ -396,6 +396,11 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 */
 	public void show(Object value);
 
+	/**
+	 * Sets the standard patch variables to their default values.
+	 * Called by clearPatches() and cp().
+	 * Override and call super.setToDefault() to reset other variables.
+	 */
 	public void setToDefault();
 	
 	/**

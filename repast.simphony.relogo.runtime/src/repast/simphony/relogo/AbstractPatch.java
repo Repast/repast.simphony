@@ -68,6 +68,10 @@ public abstract class AbstractPatch implements Patch {
 		return myselfObject;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setToDefault() {
 		pcolor = Utility.black();
 		plabel = null;
