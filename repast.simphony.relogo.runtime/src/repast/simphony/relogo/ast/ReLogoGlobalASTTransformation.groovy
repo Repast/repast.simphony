@@ -270,18 +270,23 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 
 					// Patch fields
 					if (classNode.isDerivedFrom(basePatch)){
-						List<FieldNode> publicFieldsAndProperties = [];
-						classNode.fields.each {p ->
-							if (!p.isPublic()){
-								if (classNode.getProperty(p.name)){
+						ClassNode tempClassNode = classNode
+						while (!tempClassNode.equals(basePatch)){
+							List<FieldNode> publicFieldsAndProperties = [];
+							tempClassNode.fields.each {p ->
+								if (!p.isPublic()){
+									if (tempClassNode.getProperty(p.name)){
+										publicFieldsAndProperties.add(p)
+									}
+								}
+								else {
 									publicFieldsAndProperties.add(p)
 								}
-							}
-							else {
-								publicFieldsAndProperties.add(p)
-							}
+							}						
+							mapOfPatchTypesAndFieldNames.put(tempClassNode, publicFieldsAndProperties)
+							// Collect inherited properties as well
+							tempClassNode = tempClassNode.getSuperClass()
 						}
-						mapOfPatchTypesAndFieldNames.put(classNode, publicFieldsAndProperties)
 					}
 				}
 			}
@@ -428,23 +433,6 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 		List candidateDisplayFiles = []
 		new File(directoryString).eachFileMatch(~/repast.simphony.action.display_.+\.xml/){ candidateDisplayFiles << it }
 		return candidateDisplayFiles
-	}
-
-	String fileLocation = 'outRLGlobals.txt'
-	File file = new File(fileLocation)
-	boolean localLog = false
-
-	private void log(def o){
-		if (!localLog){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss SSS");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file.append(timeStamp)
-			file.append('\n')
-			localLog = true
-		}
-		file.append(o)
-		file.append('\n')
 	}
 
 	private boolean isInReLogoPackage(ClassNode cn){

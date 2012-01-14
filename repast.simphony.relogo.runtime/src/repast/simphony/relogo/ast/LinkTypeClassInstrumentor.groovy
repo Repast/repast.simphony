@@ -714,23 +714,7 @@ class LinkTypeClassInstrumentor {
 		return result
 	}
 	
-	
-	File file
-	String fileLocation = 'outLinkTypes.txt'
-	
-	private void log(def o){
-		if (!file){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file = new File(fileLocation)
-			file.write(timeStamp)
-			file.append('\n')
-		}
-		file.append(o)
-		file.append('\n')
-	}
-	
+		
 	private MethodNode createGlobalVarGetterMethod(String fieldName, ClassNode type){
 		//create method node
 		//		MethodNode n = new MethodNode('get'+ MetaClassHelper.capitalize(fieldName), Opcodes.ACC_PUBLIC, returnType, parameters, exceptions, code)

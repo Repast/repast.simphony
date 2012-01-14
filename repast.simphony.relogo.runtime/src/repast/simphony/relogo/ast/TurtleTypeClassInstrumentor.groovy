@@ -448,21 +448,5 @@ class TurtleTypeClassInstrumentor {
 		return result
 	}
 	
-	File file
-	String fileLocation = 'outTurtleTypes.txt'
-	
-	private void log(def o){
-		if (!file){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss SSS");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file = new File(fileLocation)
-			file.append('\n')
-			file.append(timeStamp)
-			file.append('\n')
-		}
-		file.append(o)
-		file.append('\n')
-	}
 
 }

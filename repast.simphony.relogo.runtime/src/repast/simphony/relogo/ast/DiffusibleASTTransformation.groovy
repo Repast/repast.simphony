@@ -91,24 +91,7 @@ class DiffusibleASTTransformation implements ASTTransformation {
 			}
 		}
 	}
-	
-	
-	File file
-	String fileLocation = 'diffusibleOut.txt'
-	
-	private void log(def o){
-		if (!file){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss SSS");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file = new File(fileLocation)
-			file.write(timeStamp)
-			file.append('\n')
-		}
-		file.append(o)
-		file.append('\n')
-	}
-	
+		
 	private MethodNode createPatchVarGetterMethod(String fieldName, ClassNode type){
 		//create method node
 		//		MethodNode n = new MethodNode('get'+ MetaClassHelper.capitalize(fieldName), Opcodes.ACC_PUBLIC, returnType, parameters, exceptions, code)

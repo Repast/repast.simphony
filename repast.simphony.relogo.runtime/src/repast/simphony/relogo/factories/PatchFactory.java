@@ -35,8 +35,8 @@ public class PatchFactory {
 		
 		try {
 			Class pType = patchType;
+			List<String> createdVars = new ArrayList<String>();
 			while(true){
-				List<String> createdVars = new ArrayList<String>();
 				Method getDiffusiblePatchVarsMethod = pType.getMethod("getDiffusiblePatchVars");
 				Object result = getDiffusiblePatchVarsMethod.invoke(null);
 				if (result != null && result instanceof List<?>){
