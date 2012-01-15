@@ -2,6 +2,7 @@ package repast.simphony.relogo;
 
 import groovy.lang.Closure;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -53,26 +54,27 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	Map<String, DenseDoubleMatrix2D> patchesVarsMap = new ConcurrentHashMap<String, DenseDoubleMatrix2D>();
+	Set<DiffusiblePatchVariable> dpvs = new HashSet<DiffusiblePatchVariable>();
 	
-	private Set<String> getPatchVarNames(){
-		return patchesVarsMap.keySet();
+	private Set<DiffusiblePatchVariable> getPatchVars(){
+		return dpvs;
 	}
 
 	public DenseDoubleMatrix2D getPatchVarMatrix(String varName) {
 		return patchesVarsMap.get(varName);
 	}
 
-	public void createPatchVar(String var) {
-
+	public void createPatchVar(DiffusiblePatchVariable var) {
+		dpvs.add(var);
 		int xdim = this.worldWidth();
 		int ydim = this.worldHeight();
 		DenseDoubleMatrix2D ddm = new DenseDoubleMatrix2D(ydim, xdim);
 		for (int x = 0; x < xdim; x++) {
 			for (int y = 0; y < ydim; y++) {
-				ddm.setQuick(y, x, 0.0);
+				ddm.setQuick(y, x, var.getDefaultValue());
 			}
 		}
-		this.setPatchVarMatrix(var, ddm);
+		this.setPatchVarMatrix(var.getName(), ddm);
 	}
 
 	public void setPatchVarMatrix(String varName, DenseDoubleMatrix2D mat) {
@@ -364,8 +366,8 @@ public abstract class AbstractObserver implements Observer {
 		for (Patch p : a){
 			p.setToDefault();
 		}
-		for (String var : getPatchVarNames()){
-			getPatchVarMatrix(var).assign(0.0);
+		for (DiffusiblePatchVariable var : getPatchVars()){
+			getPatchVarMatrix(var.getName()).assign(var.getDefaultValue());
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import repast.simphony.relogo.BasePatch;
+import repast.simphony.relogo.DiffusiblePatchVariable;
 import repast.simphony.relogo.Observer;
 import repast.simphony.relogo.Patch;
 import simphony.util.messages.MessageCenter;
@@ -35,15 +36,15 @@ public class PatchFactory {
 		
 		try {
 			Class pType = patchType;
-			List<String> createdVars = new ArrayList<String>();
+			List<DiffusiblePatchVariable> createdVars = new ArrayList<DiffusiblePatchVariable>();
 			while(true){
 				Method getDiffusiblePatchVarsMethod = pType.getMethod("getDiffusiblePatchVars");
 				Object result = getDiffusiblePatchVarsMethod.invoke(null);
 				if (result != null && result instanceof List<?>){
 					List<?> patchVars = (List<?>) result;
 					for (Object var : patchVars){
-						if (var instanceof String){
-							String svar = (String)var;
+						if (var instanceof DiffusiblePatchVariable){
+							DiffusiblePatchVariable svar = (DiffusiblePatchVariable)var;
 							if (!createdVars.contains(svar)){
 								observer.createPatchVar(svar);
 								createdVars.add(svar);

@@ -34,7 +34,7 @@ public interface Observer extends ProjectionListener {
 
 	public RLWorldDimensions getRLDimensions();
 
-	public void createPatchVar(String var);
+	public void createPatchVar(DiffusiblePatchVariable var);
 
 	/**
 	 * Diffuses to the eight neighboring patches a fraction number of the patch
