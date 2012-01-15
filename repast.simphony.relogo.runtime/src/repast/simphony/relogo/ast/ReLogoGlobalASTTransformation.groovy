@@ -273,19 +273,24 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 						ClassNode tempClassNode = classNode
 						while (!tempClassNode.equals(basePatch)){
 							List<FieldNode> publicFieldsAndProperties = [];
-							tempClassNode.fields.each {p ->
-								if (!p.isPublic()){
-									if (tempClassNode.getProperty(p.name)){
+							try{
+								tempClassNode.fields.each {p ->
+									if (!p.isPublic()){
+										if (tempClassNode.getProperty(p.name)){
+											publicFieldsAndProperties.add(p)
+										}
+									}
+									else {
 										publicFieldsAndProperties.add(p)
 									}
-								}
-								else {
-									publicFieldsAndProperties.add(p)
-								}
-							}						
-							mapOfPatchTypesAndFieldNames.put(tempClassNode, publicFieldsAndProperties)
-							// Collect inherited properties as well
-							tempClassNode = tempClassNode.getSuperClass()
+								}						
+								mapOfPatchTypesAndFieldNames.put(tempClassNode, publicFieldsAndProperties)
+								// Collect inherited properties as well
+								tempClassNode = tempClassNode.getSuperClass()
+							}
+							catch(Exception e){
+								break;
+							}
 						}
 					}
 				}
