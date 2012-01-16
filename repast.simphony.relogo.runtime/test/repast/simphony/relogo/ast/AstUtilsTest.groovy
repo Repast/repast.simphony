@@ -114,6 +114,26 @@ class AstUtilsTest extends GroovyTestCase {
 	}
 	
 	/**
+	* Tests to see that non default_observer_context contexts are not mistakenly modified.
+	*/
+   public void testSubContextNotFound(){
+	   String projectPath = "testdata"
+	   String projectName = "testdata8"
+	   String className = "Infection"
+	   String basePackageName = "hello"
+	   String sep = File.separator
+	   String contextFilePath = projectPath + sep + "${projectName}.rs" + sep +"context.xml"
+	   
+	   trans.checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
+	   String result = new File(contextFilePath).text
+	   String expected = '''<?xml version="1.0" encoding="UTF-8"?>
+<context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Zombies_Demo" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context" xmlns="">
+</context>
+'''
+	   assertEquals(expected,result)
+   }
+	
+	/**
 	 * context.xml here does not contain TestLink3 but the display file does
 	 * This test checks to see that additional TestLink3 entries are not added to the display file.
 	 */
@@ -202,6 +222,8 @@ class AstUtilsTest extends GroovyTestCase {
 		}
 		assertTrue(result3.size() == 1)
 
+		def result4 = root2.a.b.c.d
+		assertTrue(result4.isEmpty())
 	}
 	
 	public void tearDown(){
