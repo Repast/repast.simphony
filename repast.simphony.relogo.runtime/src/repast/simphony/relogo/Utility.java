@@ -255,11 +255,11 @@ public class Utility {
 	 */
 	public static int[] ndPointToIntArray(NdPoint loc) {
 		int[] gridLocation = new int[loc.dimensionCount()];
-
+		
 		if (!(loc == null)) {
 			for (int i = 0; i < loc.dimensionCount(); i++) {
 				double coord = loc.getCoord(i);
-				gridLocation[i] = (int) (coord > 0 ? coord + 0.5 : coord - 0.5);
+				gridLocation[i] = (int)Math.round(coord);
 			}
 		}
 		return gridLocation;
