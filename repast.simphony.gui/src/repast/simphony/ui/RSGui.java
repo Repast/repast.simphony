@@ -588,6 +588,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 	  if (customPanelContent != null){
 		  customPanel.remove(customPanelContent);
 	  }
+	  customPanel.revalidate();
+	  customPanel.repaint();
 	  customPanelContent = null;
 	  hasCustomUserPanelDefined = false;
   }

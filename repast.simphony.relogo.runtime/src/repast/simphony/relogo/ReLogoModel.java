@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.schedule.IAction;
+import repast.simphony.ui.RSApplication;
 import simphony.util.messages.MessageCenter;
 
 /*
@@ -314,6 +316,15 @@ public class ReLogoModel implements RunListener{
 	public void stopped() {
 		setPaused(true);
 		setTicks(0);
+		// Remove user panel if stopped
+		if (!RunEnvironment.getInstance().isBatch()){
+			RSApplication rsApp = RSApplication.getRSApplicationInstance();
+			if (rsApp != null){
+				if(rsApp.hasCustomUserPanelDefined()){
+					rsApp.removeCustomUserPanel();
+				}
+			}
+		}
 		
 	}
 
