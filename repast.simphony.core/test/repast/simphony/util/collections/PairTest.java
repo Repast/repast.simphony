@@ -48,14 +48,6 @@ public class PairTest extends TestCase {
 	Pair pair;
 
 	/*
-	 * Test method for 'repast.simphony.util.collections.Pair.hashCode()'
-	 */
-	public void testHashCode() {
-		// just test it against the javadoc
-		assertEquals(first.hashCode() ^ second.hashCode(), pair.hashCode());
-	}
-
-	/*
 	 * Test method for 'repast.simphony.util.collections.Pair.Pair(X, Y)'
 	 */
 	public void testPair() throws NoSuchFieldException {
