@@ -20,7 +20,7 @@ CP=$CP:$REPAST_SIMPHONY_LIB/jpf-boot.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/log4j-1.2.16.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/xpp3_min-1.1.4c.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/xstream-1.3.jar
-CP=$CP:$REPAST_SIMPHONY_LIB/commons-cli-1.0.jar
+CP=$CP:$REPAST_SIMPHONY_LIB/commons-cli-1.2.jar
 CP=$CP:$PWD/groovylib/$Groovy_All_Jar
 
 # Change to the Default Repast Simphony Directory
