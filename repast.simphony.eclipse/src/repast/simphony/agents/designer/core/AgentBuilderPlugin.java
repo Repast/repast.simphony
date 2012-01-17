@@ -164,7 +164,7 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/saf.core.runtime.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-					+ "/lib/commons-logging-1.0.4.jar",
+					+ "/lib/commons-logging-1.1.1.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/javassist-3.15.0.GA.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION

@@ -13,7 +13,7 @@ REPAST_SIMPHONY_LIB=$REPAST_SIMPHONY_ROOT/lib
 # Define the Core Repast Simphony Directories and JARs
 CP=$CP:$REPAST_SIMPHONY_ROOT/bin
 CP=$CP:$REPAST_SIMPHONY_LIB/saf.core.runtime.jar
-CP=$CP:$REPAST_SIMPHONY_LIB/commons-logging-1.0.4.jar
+CP=$CP:$REPAST_SIMPHONY_LIB/commons-logging-1.1.1.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/javassist-3.15.0.GA.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/jpf.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/jpf-boot.jar

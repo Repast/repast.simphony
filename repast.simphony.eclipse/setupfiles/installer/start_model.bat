@@ -16,7 +16,7 @@ set REPAST_SIMPHONY_LIB=%REPAST_SIMPHONY_ROOT%lib/
 REM Define the Core Repast Simphony Directories and JARs
 SET CP=%CP%;%REPAST_SIMPHONY_ROOT%bin
 SET CP=%CP%;%REPAST_SIMPHONY_LIB%saf.core.runtime.jar
-SET CP=%CP%;%REPAST_SIMPHONY_LIB%commons-logging-1.0.4.jar
+SET CP=%CP%;%REPAST_SIMPHONY_LIB%commons-logging-1.1.1.jar
 SET CP=%CP%;%REPAST_SIMPHONY_LIB%javassist-3.15.0.GA.jar
 SET CP=%CP%;%REPAST_SIMPHONY_LIB%jpf.jar
 SET CP=%CP%;%REPAST_SIMPHONY_LIB%jpf-boot.jar
