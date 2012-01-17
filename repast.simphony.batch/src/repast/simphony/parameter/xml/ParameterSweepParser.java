@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -54,7 +53,17 @@ public class ParameterSweepParser extends DefaultHandler2 {
 		this.paramsURL = paramsURL;
 		creators.put("number", new NumberSetterCreator());
 		creators.put("list", new ListSetterCreator());
-
+		creators.put("java.lang.String",new ConstantStringSetterCreator());
+		creators.put("java.lang.Integer",new ConstantNumberSetterCreator("java.lang.Integer"));
+		creators.put("java.lang.Double",new ConstantNumberSetterCreator("java.lang.Double"));
+		creators.put("java.lang.Float",new ConstantNumberSetterCreator("java.lang.Float"));
+		creators.put("java.lang.Long",new ConstantNumberSetterCreator("java.lang.Long"));
+		creators.put("java.lang.Short",new ConstantNumberSetterCreator("java.lang.Short"));
+		creators.put("java.lang.Byte",new ConstantNumberSetterCreator("java.lang.Byte"));
+//		creators.put("java.lang.BigDecimal",new ConstantNumberSetterCreator());
+//		creators.put("java.lang.BigInteger",new ConstantNumberSetterCreator());
+		creators.put("java.lang.Boolean", new ConstantBooleanSetterCreator());
+		
 //		constantCreators.put("number", new ConstantNumberSetterCreator());
 		constantCreators.put("string", new ConstantStringSetterCreator());
 		constantCreators.put("String", new ConstantStringSetterCreator());
@@ -75,6 +84,11 @@ public class ParameterSweepParser extends DefaultHandler2 {
 		constantCreators.put("short",new ConstantNumberSetterCreator("java.lang.Short"));
 		constantCreators.put("byte",new ConstantNumberSetterCreator("java.lang.Byte"));
 		
+//		constantCreators.put("java.lang.BigDecimal",new ConstantNumberSetterCreator());
+//		constantCreators.put("java.lang.BigInteger",new ConstantNumberSetterCreator());
+		
+		
+
 	}
 
 	/**
@@ -187,14 +201,7 @@ public class ParameterSweepParser extends DefaultHandler2 {
 				String type = attributes.getValue("type");
 				ParameterSetterCreator setterCreator = null;
 				if (type.equals(SetterConstants.CONSTANT_ID)) {
-					String cType = attributes.getValue(SetterConstants.CONSTANT_TYPE_NAME); 
-					
-					// for backward compatibility:
-					if (cType.equals("number")) {
-						// need to infer the data type by the specified values
-						cType = inferDataTypeForConstant(attributes);
-					}
-					
+					String cType = attributes.getValue(SetterConstants.CONSTANT_TYPE_NAME);
 					setterCreator = constantCreators.get(cType);
 				} else {
 					setterCreator = creators.get(type);
@@ -228,52 +235,6 @@ public class ParameterSweepParser extends DefaultHandler2 {
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equals(PARAMETER_NAME)) stack.pop();
 	}
-	
-	private String inferDataTypeForConstant(Attributes attributes) {
-		
-		String value = attributes.getValue("value");
-		return inferDataType(value);
-	}
-	
-	
-	
-	private String inferDataType(String value) {
-		
-		// allowable data types: long, double, float, integer
-		// rules:
-		// long terminates with L
-		// float terminates with f
-		// double contains "." and one or more digits
-		// int otherwise
-		
-		if (isLong(value))
-			return "long";
-		else if (isFloat(value))
-			return "float";
-		else if (isDouble(value))
-			return "double";
-		else
-			return "int";
-	}
-	
-	  protected boolean isDouble(String val) {
-		    return Pattern.matches("\\d*\\.0+", val);
-		  }
-
-		  protected boolean isLong(String val) {
-				String end = val.substring(val.length() - 1, val.length());
-				return end.equalsIgnoreCase("l");
-			}
-
-			protected boolean isFloat(String val) {
-				String end = val.substring(val.length() - 1, val.length());
-				return end.equalsIgnoreCase("f");
-			}
-
-			protected boolean isInt(Double value) {
-				return  Math.rint(value) == value;
-			}
-
 
 
 	private String attributesToString(Attributes attributes) {
