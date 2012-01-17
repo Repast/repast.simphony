@@ -41,14 +41,8 @@ public class AbstractDataSetBuilder {
    * @param addTimeStamp
    * @param sourceIds
    */
-  public void defineFileDataSink(String name, String fileName, String delimiter, FormatType formatType,
-      boolean addTimeStamp, Collection<String> sourceIds) {
-    FileDataSinkBuilder sinkBuilder = new FileDataSinkBuilder(name, fileName, delimiter, formatType,
-        addTimeStamp);
-    for (String id : sourceIds) {
-      sinkBuilder.addSource(id);
-    }
-    sinkBuilders.add(sinkBuilder);
+  public void addFileDataSinkBuilder(FileDataSinkBuilder builder) {
+    sinkBuilders.add(builder);
   }
 
   /**

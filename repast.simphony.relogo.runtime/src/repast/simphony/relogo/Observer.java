@@ -34,7 +34,7 @@ public interface Observer extends ProjectionListener {
 
 	public RLWorldDimensions getRLDimensions();
 
-	public void createPatchVar(String var);
+	public void createPatchVar(DiffusiblePatchVariable var);
 
 	/**
 	 * Diffuses to the eight neighboring patches a fraction number of the patch
@@ -429,14 +429,14 @@ public interface Observer extends ProjectionListener {
 	public void clearLinks();
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 * 
 	 * @see #clearPatches()
 	 */
 	public void cp();
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 */
 	public void clearPatches();
 
@@ -600,11 +600,18 @@ public interface Observer extends ProjectionListener {
 	public Link link(Turtle oneEnd, Turtle otherEnd);
 
 	/**
+	 * Returns the agentset of all generic links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public AgentSet<Link> links();
+	
+	/**
 	 * Returns the agentset of all links.
 	 * 
 	 * @return agentset of all links
 	 */
-	public AgentSet links();
+	public AgentSet<Link> allLinks();
 
 	/**
 	 * Returns a random x coordinate for patches.

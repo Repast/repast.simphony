@@ -3,6 +3,7 @@
  */
 package repast.simphony.data2.util;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,5 +97,35 @@ public class DataUtilities {
     return false;
 
   }
+  
+  /**
+   * Rename any existing file with the specified filename. This will append
+   * an incremented number to the filename until it won't clobber any existing
+   * files.
+   * 
+   * @param filename the filename to rename if it exists
+   */
+  public static void renameFileIfExists(String filename) {
+    File originalFile = new File(filename);
+    if (!originalFile.exists()) {
+      return;
+    }
+
+    File movedFileName = new File(originalFile.getAbsolutePath());
+    
+    long i = 0;
+    while (movedFileName.exists()) {
+      int index = filename.lastIndexOf(".");
+      if (index != -1) {
+        movedFileName = new File(filename.substring(0, index) + "." + i + filename.substring(index, filename.length()));
+      } else {
+        filename = filename + "." + i;
+      }
+      i++;
+    }
+
+    originalFile.renameTo(movedFileName);
+  }
+
 
 }

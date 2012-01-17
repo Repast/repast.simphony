@@ -3,6 +3,7 @@ package repast.simphony.relogo;
 import groovy.lang.Closure;
 
 import java.awt.Color;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ import org.apache.commons.collections15.functors.InstanceofPredicate;
 import org.apache.commons.collections15.functors.NotPredicate;
 
 import repast.simphony.context.Context;
+import repast.simphony.data2.DataConstants;
+import repast.simphony.data2.DataSetRegistry;
+import repast.simphony.data2.FileDataSink;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.query.PropertyEquals;
@@ -113,7 +117,6 @@ public class Utility {
 
 		if (!RSApplication.getRSApplicationInstance().isStartSim()) {
 			RunEnvironment.getInstance().pauseRun();
-			ReLogoModel.getInstance().setPaused(true);
 		}
 
 	}
@@ -135,18 +138,23 @@ public class Utility {
 			worker.execute();
 
 		}
-		ReLogoModel.getInstance().setPaused(false);
 	}
 
 	public static void checkToPause() {
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (ReLogoModel.getInstance().getActiveButtons() == 0) {
-					pauseReLogo();
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					if (ReLogoModel.getInstance().getActiveButtons() == 0) {
+						pauseReLogo();
+					}
 				}
-			}
-		});
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -247,11 +255,11 @@ public class Utility {
 	 */
 	public static int[] ndPointToIntArray(NdPoint loc) {
 		int[] gridLocation = new int[loc.dimensionCount()];
-
+		
 		if (!(loc == null)) {
 			for (int i = 0; i < loc.dimensionCount(); i++) {
 				double coord = loc.getCoord(i);
-				gridLocation[i] = (int) (coord > 0 ? coord + 0.5 : coord - 0.5);
+				gridLocation[i] = (int)Math.round(coord);
 			}
 		}
 		return gridLocation;
@@ -1434,8 +1442,22 @@ public class Utility {
 	 *            an observer
 	 * @return agentset of all links
 	 */
-	public static AgentSet<Link> linksU(Observer observer) {
+	public static AgentSet<Link> allLinksU(Observer observer) {
 		return getAgentSetOfClass(Link.class, observer);
+	}
+	
+	/**
+	 * Returns the agentset of all generic links.
+	 * 
+	 * @param observer
+	 *            an observer
+	 * @return agentset of all links
+	 */
+	public static AgentSet<Link> linksU(Observer observer) {
+		AgentSet a = agentSetFromIterable(observer.getNetwork("UndirectedLinks").getEdges());
+		AgentSet d = agentSetFromIterable(observer.getNetwork("DirectedLinks").getEdges());
+		a.addAll(d);
+		return a;
 	}
 
 	public static AgentSet getAgentSetOfClass(Class E, Observer observer) {
@@ -2840,5 +2862,17 @@ public class Utility {
 	 * Does nothing, included for translation compatibility.
 	 */
 	public static void resetPerspective() {
+	}
+	
+	
+	/**
+	 * Flush file data sinks.
+	 */
+	public static void flushFileSinks(){
+		
+		DataSetRegistry registry = (DataSetRegistry) RunState.getInstance().getFromRegistry(DataConstants.REGISTRY_KEY);
+		for ( FileDataSink fds : registry.fileSinks()){
+			fds.flush();
+		}
 	}
 }

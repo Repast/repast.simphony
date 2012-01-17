@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.schedule.IAction;
+import repast.simphony.ui.RSApplication;
 import simphony.util.messages.MessageCenter;
 
 /*
@@ -24,7 +27,7 @@ import simphony.util.messages.MessageCenter;
  * - Current file and directory information.
  */
 @SuppressWarnings("unchecked")
-public class ReLogoModel {
+public class ReLogoModel implements RunListener{
 	
 	public static final Color DEFAULT_TURTLE_COLOR = Color.white;
 	public static final Double MONITOR_PRIORITY = -100.0;
@@ -158,12 +161,20 @@ public class ReLogoModel {
 	public void setActiveButtons(int activeButtons) {
 		this.activeButtons = activeButtons;
 	}
+	
+	public void incrementActiveButtons(){
+		this.activeButtons++;
+	}
+	
+	public void decrementActiveButtons(){
+		this.activeButtons--;
+	}
 
 	public boolean isPaused() {
 		return paused;
 	}
 
-	public void setPaused(boolean paused) {
+	private void setPaused(boolean paused) {
 		this.paused = paused;
 	}
 	
@@ -299,6 +310,40 @@ public class ReLogoModel {
 	
 	public void setFileInfoList(ArrayList<FileInfo> fileInfoList) {
 		this.fileInfoList = fileInfoList;
+	}
+
+	@Override
+	public void stopped() {
+		setPaused(true);
+		setTicks(0);
+		// Remove user panel if stopped
+		if (!RunEnvironment.getInstance().isBatch()){
+			RSApplication rsApp = RSApplication.getRSApplicationInstance();
+			if (rsApp != null){
+				if(rsApp.hasCustomUserPanelDefined()){
+					rsApp.removeCustomUserPanel();
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void paused() {
+		setPaused(true);
+		
+	}
+
+	@Override
+	public void started() {
+		setPaused(false);
+		
+	}
+
+	@Override
+	public void restarted() {
+		setPaused(false);
+		
 	}
 
 }

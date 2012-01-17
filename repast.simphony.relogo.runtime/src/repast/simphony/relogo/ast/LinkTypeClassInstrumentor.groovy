@@ -37,6 +37,7 @@ class LinkTypeClassInstrumentor {
 	private List<ClassNode> listOfUserPatchClasses;
 	private List<ClassNode> listOfUserLinkClasses;
 	private List<ClassNode> listOfUserObserverClasses;
+	private MethodFromStringCreator mfsc
 	
 	public LinkTypeClassInstrumentor(ClassNode linkClass, boolean directed, List<ClassNode> listOfUserClasses, List<ClassNode> listOfUserTurtleClasses, 
 			List<ClassNode> listOfUserPatchClasses, List<ClassNode> listOfUserLinkClasses, List<ClassNode> listOfUserObserverClasses,  
@@ -51,6 +52,7 @@ class LinkTypeClassInstrumentor {
 		this.singularString = singularString;
 		this.pluralString = pluralString;
 		this.className = linkClass.getNameWithoutPackage()
+		this.mfsc = new MethodFromStringCreator(this.className)
 	}
 	
 	public instrument(){
@@ -620,7 +622,12 @@ class LinkTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getMyObserver().getLinkFactory().getLinkTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -632,7 +639,12 @@ class LinkTypeClassInstrumentor {
 					import repast.simphony.relogo.*
 					public boolean ${methodName}(Object o){
 						Class clazz = getLinkFactory().getLinkTypeClass('$singularString')
-						return (clazz.isAssignableFrom(o))
+						if (o != null){
+							return (clazz.isAssignableFrom(o.getClass()))
+						}
+						else {
+							return false
+						}
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -685,44 +697,7 @@ class LinkTypeClassInstrumentor {
 	}
 	
 	protected MethodNode createMethodFromString(String methodName, String methodString){
-//		log("    in createMethodFromString: $methodName")
-		def result
-		try {
-			result = buildFromString(CompilePhase.SEMANTIC_ANALYSIS,false,methodString)
-		}
-		catch(Exception e){
-//			log("    exception is $e")
-//			log(e.printStackTrace())
-		}
-		//log("    in createMethodFromString, after building: $methodName")
-		if (result){
-			return( result[1].getMethods().find({ it.name.equals(methodName) }))
-		}
-		return null
-	}
-	
-	private List<ASTNode> buildFromString(CompilePhase phase = CompilePhase.CLASS_GENERATION, boolean statementsOnly = true, String source) {
-		if (!source || "" == source.trim()) throw new IllegalArgumentException("A source must be specified")
-		return compile(source, phase, statementsOnly);
-	}
-	
-	private List<ASTNode> compile(String script, CompilePhase compilePhase, boolean statementsOnly) {
-		def scriptClassName = "script" + System.currentTimeMillis()
-		GroovyClassLoader classLoader = new GroovyClassLoader(this.getClass().getClassLoader())
-		GroovyCodeSource codeSource = new GroovyCodeSource(script, scriptClassName + ".groovy", "/groovy/script")
-		CompilationUnit cu = new CompilationUnit(CompilerConfiguration.DEFAULT, codeSource.codeSource, classLoader)
-		cu.addSource(codeSource.getName(), script);
-		cu.compile(compilePhase.getPhaseNumber())
-		// collect all the ASTNodes into the result, possibly ignoring the script body if desired
-		return cu.ast.modules.inject([]) {List acc, ModuleNode node ->
-			if (node.statementBlock) acc.add(node.statementBlock)
-			node.classes?.each {
-				if (!(it.name == scriptClassName && statementsOnly)) {
-					acc << it
-				}
-			}
-			acc
-		}
+		return (mfsc.createMethodFromString(methodName, methodString))
 	}
 	
 	//Utility for capitalizing the first character of a string 
@@ -739,23 +714,7 @@ class LinkTypeClassInstrumentor {
 		return result
 	}
 	
-	
-	File file
-	String fileLocation = 'outLinkTypes.txt'
-	
-	private void log(def o){
-		if (!file){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file = new File(fileLocation)
-			file.write(timeStamp)
-			file.append('\n')
-		}
-		file.append(o)
-		file.append('\n')
-	}
-	
+		
 	private MethodNode createGlobalVarGetterMethod(String fieldName, ClassNode type){
 		//create method node
 		//		MethodNode n = new MethodNode('get'+ MetaClassHelper.capitalize(fieldName), Opcodes.ACC_PUBLIC, returnType, parameters, exceptions, code)

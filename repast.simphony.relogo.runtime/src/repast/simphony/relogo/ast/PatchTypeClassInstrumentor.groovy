@@ -31,15 +31,18 @@ class PatchTypeClassInstrumentor {
 		for (ClassNode cn : listOfUserTurtleClasses ){
 			for (FieldNode fn in listOfPublicFieldsAndProperties){
 				if (fn){
-					cn.addMethod(createTurtleVarGetterMethod(fn.getName(),fn.getType()))
-					cn.addMethod(createTurtleVarSetterMethod(fn.getName(),fn.getType()))
-
+					addGetterAndSetterMethods(cn,fn)
 				}
 			}
 		}
 	}
 	
-	private void addMethod(ClassNode cn, MethodNode mn){
+	private void addGetterAndSetterMethods(ClassNode cn, FieldNode fn){
+		addMethodSafe(cn, createTurtleVarGetterMethod(fn.getName(),fn.getType()))
+		addMethodSafe(cn, createTurtleVarSetterMethod(fn.getName(),fn.getType()))
+	}
+	
+	private void addMethodSafe(ClassNode cn, MethodNode mn){
 		if (!cn.getMethod(mn.getName(), mn.getParameters())){
 			cn.addMethod(mn)
 		}

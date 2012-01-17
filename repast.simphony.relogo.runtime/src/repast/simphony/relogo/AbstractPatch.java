@@ -68,6 +68,10 @@ public abstract class AbstractPatch implements Patch {
 		return myselfObject;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setToDefault() {
 		pcolor = Utility.black();
 		plabel = null;
@@ -263,9 +267,14 @@ public abstract class AbstractPatch implements Patch {
 	}
 
 	/**
-	 * Returns the agentset of all links.
-	 * 
-	 * @return agentset of all links
+	 * {@inheritDoc}
+	 */
+	public AgentSet<Link> allLinks() {
+		return Utility.allLinksU(getMyObserver());
+	}
+	
+	/**
+	 * {@inheritDoc}
 	 */
 	public AgentSet<Link> links() {
 		return Utility.linksU(getMyObserver());

@@ -62,14 +62,13 @@ public abstract class AbstractHistogramDataset extends SimpleHistogramDataset {
    * 
    * @param val
    */
-  public void addValue(double val) {
-    buffer.add(val);
-  }
+  protected abstract void addValues(DoubleArrayList vals);
 
   /**
    * Updates the histogram with the values in the buffer.
    */
-  public void update() {
+  public void update(DoubleArrayList vals) {
+    addValues(vals);
     doUpdate();
     buffer.clear();
   }
@@ -79,8 +78,12 @@ public abstract class AbstractHistogramDataset extends SimpleHistogramDataset {
    */
   protected abstract void doUpdate();
 
-  /* (non-Javadoc)
-   * @see org.jfree.data.general.AbstractDataset#notifyListeners(org.jfree.data.general.DatasetChangeEvent)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.jfree.data.general.AbstractDataset#notifyListeners(org.jfree.data.general
+   * .DatasetChangeEvent)
    */
   @Override
   protected void notifyListeners(DatasetChangeEvent arg0) {

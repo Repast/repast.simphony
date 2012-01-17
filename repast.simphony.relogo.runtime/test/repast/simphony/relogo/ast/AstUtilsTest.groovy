@@ -84,11 +84,165 @@ class AstUtilsTest extends GroovyTestCase {
 		assertEquals(expectedFileContent,destFileContent)
 	}
 	
+	/**
+	 * Tests to see that non default_observer_context contexts are not mistakenly modified.
+	 */
+	public void testDefaultObserverContextNotFound(){
+		String projectPath = "testdata"
+		String projectName = "testdata6"
+		String className = "Infection"
+		String basePackageName = "hello"
+		String sep = File.separator
+		String contextFilePath = projectPath + sep + "${projectName}.rs" + sep +"context.xml"
+		
+		trans.checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
+		String result = new File(contextFilePath).text
+		String expected = '''<?xml version="1.0" encoding="UTF-8"?>
+<context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Zombies_Demo" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context" xmlns="">
+  <context id="not_default_observer_context">
+    <projection id="Grid2d" type="grid"/>
+    <projection id="Space2d" type="continuous space"/>
+    <projection id="DirectedLinks" type="network"/>
+    <projection id="UndirectedLinks" type="network"/>
+    <projection id="Tracking Network" type="network"/>
+    <projection id="UserLink" type="network"/>
+    <projection id="Infection" type="network"/>
+  </context>
+</context>
+'''
+		assertEquals(expected,result)
+	}
+	
+	/**
+	* Tests to see that non default_observer_context contexts are not mistakenly modified.
+	*/
+   public void testSubContextNotFound(){
+	   String projectPath = "testdata"
+	   String projectName = "testdata8"
+	   String className = "Infection"
+	   String basePackageName = "hello"
+	   String sep = File.separator
+	   String contextFilePath = projectPath + sep + "${projectName}.rs" + sep +"context.xml"
+	   
+	   trans.checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
+	   String result = new File(contextFilePath).text
+	   String expected = '''<?xml version="1.0" encoding="UTF-8"?>
+<context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Zombies_Demo" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context" xmlns="">
+</context>
+'''
+	   assertEquals(expected,result)
+   }
+	
+	/**
+	 * context.xml here does not contain TestLink3 but the display file does
+	 * This test checks to see that additional TestLink3 entries are not added to the display file.
+	 */
+	public void testAvoidDuplicationInDisplayFile(){
+
+		// testdata7a.rs is empty to begin with (see tearDown)
+		// testdata7.rs has the initial file and the expected file which are used but not modified there
+		String projectPath = "testdata"
+		String projectNameSource = "testdata7"
+		String projectName = "testdata7a"
+		String className = "TestLink3"
+		String basePackageName = "hello"
+		String sep = File.separator
+		
+		// destination context file path
+		String destinationContextFilePath = projectPath + sep + projectName + ".rs" + sep +"context.xml"
+		// source context file path
+		String contextFilePathSource = projectPath + sep + projectNameSource + ".rs" + sep + "context.xml"
+		String fileNameBaseExpected = "repast.simphony.action.display_relogoDefault_expected.xml"
+		String fileNameBase = "repast.simphony.action.display_relogoDefault.xml"
+		
+		// source display file path
+		String sourceDisplayFilePath = projectPath + File.separator + projectNameSource + ".rs" + File.separator + fileNameBase
+		// expected display file path
+		String expectedDisplayFilePath = projectPath + File.separator + projectNameSource + ".rs" + File.separator + fileNameBaseExpected
+		// destination display file path (the modifiable file)
+		String destinationDisplayFilePath = projectPath + File.separator + projectName + ".rs" + File.separator + fileNameBase
+		
+		
+		File destinationDisplayFile = new File(destinationDisplayFilePath)
+		File destinationContextFile = new File(destinationContextFilePath)
+		assertTrue(!(destinationDisplayFile.exists() || destinationContextFile.exists()))
+		try {
+			FileUtils.getFileUtils().copyFile(sourceDisplayFilePath, destinationDisplayFilePath)
+			FileUtils.getFileUtils().copyFile(contextFilePathSource, destinationContextFilePath)
+		}
+		catch (Exception e){
+			e.printStackTrace()
+		}
+		assertTrue(destinationDisplayFile.exists() && destinationContextFile.exists())
+		trans.checkToModifyContextFile(projectPath, projectName, className, basePackageName, destinationContextFilePath)
+		
+		
+		String destFileContent = destinationDisplayFile.text
+		String expectedFileContent = new File(expectedDisplayFilePath).text
+		assertEquals(expectedFileContent,destFileContent)
+		
+	}
+	
+	public void testXmlSlurping(){
+		String str = '''<?xml version="1.0" encoding="UTF-8"?>
+		<context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Zombies_Demo" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context" xmlns="">
+		  <context id="not_default_observer_context">
+		    <projection id="Grid2d" type="grid"/>
+		    <projection id="Space2d" type="continuous space"/>
+		    <projection id="DirectedLinks" type="network"/>
+		    <projection id="UndirectedLinks" type="network"/>
+		    <projection id="Tracking Network" type="network"/>
+		    <projection id="UserLink" type="network"/>
+		    <projection id="Infection" type="network"/>
+		  </context>
+		</context>
+		'''
+		def root = new XmlSlurper().parseText(str)
+		def listOfDefaultReLogoContexts = root.context.findAll({it.@id.equals("default_observer_context")})
+		assertTrue(listOfDefaultReLogoContexts.isEmpty())
+		
+		String str2 = '''
+<root2>
+<a>
+<b>Hello</b>
+<b>There</b>
+</a>
+<a>
+<b>Hello2</b>
+<b>There2</b>
+</a>
+</root2>
+'''
+		def root2 = new XmlSlurper().parseText(str2)
+		def result2 = root2.a.b
+		assertTrue(result2.size() == 4)
+		def list = ["Hello","There","Hello2","There2"]
+		def result3 = result2.findAll{
+			it.text().equals("Hello2")
+		}
+		assertTrue(result3.size() == 1)
+
+		def result4 = root2.a.b.c.d
+		assertTrue(result4.isEmpty())
+	}
+	
 	public void tearDown(){
+		// testdata4.rs clearing
 		File file = new File("testdata/testdata4.rs/repast.simphony.action.display_5.xml")
 		if (file.exists()){
 			file.delete()
 		}
+		
+		// testdata7a.rs clearing
+		file = new File("testdata/testdata7a.rs/context.xml")
+		if (file.exists()){
+			file.delete()
+		}
+		file = new File("testdata/testdata7a.rs/repast.simphony.action.display_relogoDefault.xml")
+		if (file.exists()){
+			file.delete()
+		}
+		
 	}
 	
 	

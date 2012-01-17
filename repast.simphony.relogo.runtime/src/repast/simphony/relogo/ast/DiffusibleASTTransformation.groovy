@@ -1,5 +1,7 @@
 package repast.simphony.relogo.ast;
 
+import groovy.util.logging.Log;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -23,6 +25,7 @@ import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.ArrayExpression;
 import org.codehaus.groovy.ast.expr.CastExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression 
+import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
 import org.codehaus.groovy.ast.expr.DeclarationExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.ListExpression;
@@ -38,10 +41,14 @@ import org.codehaus.groovy.transform.ASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation 
 import org.objectweb.asm.Opcodes;
 
+import repast.simphony.relogo.DiffusiblePatchVariable;
+
 import cern.colt.matrix.DoubleMatrix2D;
 
+@Log
 @GroovyASTTransformation(phase=CompilePhase.SEMANTIC_ANALYSIS)
 class DiffusibleASTTransformation implements ASTTransformation {
+	private final ClassNode diffusiblePatchVariable = ClassHelper.make('repast.simphony.relogo.DiffusiblePatchVariable')
 
 	public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
 		
@@ -52,6 +59,17 @@ class DiffusibleASTTransformation implements ASTTransformation {
 			final ClassNode type = fieldNode.getType();
 			final ClassNode owner = fieldNode.getOwner();
 			List<FieldNode> fieldNodes = owner.getFields()
+			double defaultValue = 0.0
+			if (fieldNode.hasInitialExpression()){
+				Expression exp1 = fieldNode.getInitialExpression()
+				if (exp1 instanceof ConstantExpression){
+					ConstantExpression exp2 = (ConstantExpression) exp1;
+					def expVal = exp2.getValue()
+					if (expVal instanceof Number){
+						defaultValue = ((Number)expVal).doubleValue()
+					}
+				}
+			}
 			
 			List<PropertyNode> propertyNodes = owner.getProperties()
 			String originalFieldNodeName = fieldNode.getName()
@@ -66,43 +84,36 @@ class DiffusibleASTTransformation implements ASTTransformation {
 			owner.addMethod(createPatchVarSetterMethod(originalFieldNodeName, type))
 
 			// Add a static 'getDiffusiblePatchVars' method (if it doesn't exist yet):
-			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod('getDiffusiblePatchVars', [] as Parameter[])
+			String gDPVName = 'getDiffusiblePatchVars'
+			MethodNode getDiffusiblePatchVarsMethodNode = owner.getDeclaredMethod(gDPVName, new Parameter[0])
 			if (! getDiffusiblePatchVarsMethodNode ) {
-				BlockStatement block = new BlockStatement()
-				block.addStatement(new ReturnStatement(new ListExpression()))
-				getDiffusiblePatchVarsMethodNode = new MethodNode('getDiffusiblePatchVars', Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC , ClassHelper.make(List), [] as Parameter[], [] as ClassNode[], block)
+				MethodFromStringCreator mfsc = new MethodFromStringCreator(owner.getName())
+				String methodString = """
+					import repast.simphony.relogo.*
+					public static List<DiffusiblePatchVariable> ${gDPVName}(){
+						return []
+					}
+					"""
+				getDiffusiblePatchVarsMethodNode = mfsc.createMethodFromString(gDPVName,methodString) 
 				owner.addMethod(getDiffusiblePatchVarsMethodNode)
 			}
-			// Add the originalFieldNodeName to the array returned by 'getDiffusiblePatchVars' 
+			// Add the originalFieldNodeName to the list returned by 'getDiffusiblePatchVars' 
+			DiffusiblePatchVariable dpv = new DiffusiblePatchVariable(originalFieldNodeName,defaultValue)
 			BlockStatement block =  (BlockStatement) getDiffusiblePatchVarsMethodNode.getCode();
 			List<Statement> stmts = block.getStatements()
 			Statement stmt = stmts?.get(0)
 			if (stmt && stmt instanceof ReturnStatement){
 				Expression expr = ((ReturnStatement)stmt).getExpression()
 				if (expr && expr instanceof ListExpression){
-					((ListExpression)expr).addExpression(new ConstantExpression(originalFieldNodeName))
+					ConstantExpression ceName = new ConstantExpression(dpv.getName());
+					ConstantExpression ceValue = new ConstantExpression(dpv.getDefaultValue());
+					ArgumentListExpression ale = new ArgumentListExpression(ceName,ceValue);
+					((ListExpression)expr).addExpression(new ConstructorCallExpression(diffusiblePatchVariable,ale))
 				}
 			}
 		}
 	}
-	
-	
-	File file
-	String fileLocation = 'diffusibleOut.txt'
-	
-	private void log(def o){
-		if (!file){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss SSS");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file = new File(fileLocation)
-			file.write(timeStamp)
-			file.append('\n')
-		}
-		file.append(o)
-		file.append('\n')
-	}
-	
+		
 	private MethodNode createPatchVarGetterMethod(String fieldName, ClassNode type){
 		//create method node
 		//		MethodNode n = new MethodNode('get'+ MetaClassHelper.capitalize(fieldName), Opcodes.ACC_PUBLIC, returnType, parameters, exceptions, code)

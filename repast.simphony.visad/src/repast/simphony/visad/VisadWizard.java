@@ -40,12 +40,16 @@ public class VisadWizard extends AnalysisPluginWizard {
 
 	private String createVisadFile(String fileName) throws FileNotFoundException,IOException{
 		/*
-		 * This file passed to VisAD need to have a specific header added.  The file from
+		 * This file passed to VisAD need to have a specific header map added.  The file from
 		 * the Repast outputter is copied to a new file with a ".visad" extension.
 		 * 
-		 * The headers are created as follows:
+		 * NOTE!!  visad column headers CANNOT contain spaces!  We replace spaces in
+		 *         column headers from repast data sets with an underscore
+		 * 
+		 * The headers map is created as follows:
 		 * 
 		 *  (CN[0]->(CN[1],CN[2],...CN[n]))
+		 *  CN[0],CN[1],CN[2],...CN[n]
 		 *  
 		 *  where CH[i] is the ith column name in the Repast output file
 		 */
@@ -53,31 +57,38 @@ public class VisadWizard extends AnalysisPluginWizard {
 		ArrayList<String> columnNames = new ArrayList<String>();
 
 		String visadFile = fileName + ".visad";
-
+		
 		BufferedReader buf  = new BufferedReader(new FileReader(fileName));
 
-		// Grab the column names from the first line and remove string quotes
-		String firstLine = buf.readLine().replace('"', ' ');
+		System.out.println("Created: " + visadFile);
+		
+		// Grab the column names from the first line and remove string quotes and
+		// replace spaces with underscore
+		String firstLine = buf.readLine();
 		StringTokenizer st = new StringTokenizer(firstLine,","); 
 
 		while (st.hasMoreTokens())
-			columnNames.add(st.nextToken());
-
+		  columnNames.add(trimQuotes(st.nextToken()).replace(' ', '_'));
+		
 		StringBuilder headerBuilder = new StringBuilder();
+		StringBuilder columnNameBuilder = new StringBuilder();
 
 		headerBuilder.append("(").append(columnNames.get(0)).append("->(");
-
+		columnNameBuilder.append(columnNames.get(0)).append(",");
+		
 		for (int i=1; i < columnNames.size(); i++){
 			headerBuilder.append(columnNames.get(i));
-			if (i < columnNames.size()-1)
+			columnNameBuilder.append(columnNames.get(i));
+			if (i < columnNames.size()-1){
 				headerBuilder.append(",");
-
+				columnNameBuilder.append(",");
+			}
 		}
 		headerBuilder.append("))");
 
 		BufferedWriter out = new BufferedWriter(new FileWriter(visadFile));
-		out.write(headerBuilder.toString()+"\n");  // write visad header
-		out.write(firstLine+"\n");                 // write repast.simphony. column name header
+		out.write(headerBuilder.toString()+"\n");  // write visad header map
+		out.write(columnNameBuilder.toString()+"\n"); // write visad column name header
 
 		String line;
 		while((line = buf.readLine()) != null)     // copy data into new file			
@@ -99,6 +110,8 @@ public class VisadWizard extends AnalysisPluginWizard {
 		 * java -cp C:/Program Files/visad/visad.jar visad.ss.SpreadSheet -file datafile.txt;
 		 */
 
+		System.getProperty("java.Home");
+		
 	  List<String> commands = new ArrayList<String>();
     commands.add("java");
     commands.add("-Xmx400M");
@@ -139,5 +152,15 @@ public class VisadWizard extends AnalysisPluginWizard {
     if (!home.endsWith(File.separator)) home += File.separator;
     return home + "visad.jar";
 	}
-}
 
+	public static String trimQuotes(String value){
+    if (value == null)
+      return value;
+
+    value = value.trim();
+    if (value.startsWith("\"") && value.endsWith("\""))
+      return value.substring(1, value.length() - 1);
+   
+    return value;
+  }
+}

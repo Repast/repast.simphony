@@ -2,6 +2,7 @@ package repast.simphony.relogo;
 
 import groovy.lang.Closure;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -53,22 +54,27 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	Map<String, DenseDoubleMatrix2D> patchesVarsMap = new ConcurrentHashMap<String, DenseDoubleMatrix2D>();
+	Set<DiffusiblePatchVariable> dpvs = new HashSet<DiffusiblePatchVariable>();
+	
+	private Set<DiffusiblePatchVariable> getPatchVars(){
+		return dpvs;
+	}
 
 	public DenseDoubleMatrix2D getPatchVarMatrix(String varName) {
 		return patchesVarsMap.get(varName);
 	}
 
-	public void createPatchVar(String var) {
-
+	public void createPatchVar(DiffusiblePatchVariable var) {
+		dpvs.add(var);
 		int xdim = this.worldWidth();
 		int ydim = this.worldHeight();
 		DenseDoubleMatrix2D ddm = new DenseDoubleMatrix2D(ydim, xdim);
 		for (int x = 0; x < xdim; x++) {
 			for (int y = 0; y < ydim; y++) {
-				ddm.setQuick(y, x, 0.0);
+				ddm.setQuick(y, x, var.getDefaultValue());
 			}
 		}
-		this.setPatchVarMatrix(var, ddm);
+		this.setPatchVarMatrix(var.getName(), ddm);
 	}
 
 	public void setPatchVarMatrix(String varName, DenseDoubleMatrix2D mat) {
@@ -316,23 +322,29 @@ public abstract class AbstractObserver implements Observer {
 	 * Removes all links.
 	 */
 	public void clearLinks() {
-		AgentSet<Link> ls = links();
+		AgentSet<Link> ls = allLinks();
 		for (Link l : ls) {
 			l.die();
 		}
 	}
 
 	/**
-	 * Returns the agentset of all links.
-	 * 
-	 * @return agentset of all links
+	 * {@inheritDoc}
 	 */
 	public AgentSet links() {
 		return Utility.linksU(this);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public AgentSet allLinks() {
+		return Utility.allLinksU(this);
+	}
+
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 */
 	public void clearPatches() {
 		cp();
@@ -345,11 +357,19 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	/**
-	 * Sets all patch variables to their default values.
+	 * Sets all standard and diffusible patch variables to their default values.
 	 * 
 	 * @see #clearPatches()
 	 */
-	public abstract void cp();
+	public void cp(){
+		AgentSet<Patch> a = patches();
+		for (Patch p : a){
+			p.setToDefault();
+		}
+		for (DiffusiblePatchVariable var : getPatchVars()){
+			getPatchVarMatrix(var.getName()).assign(var.getDefaultValue());
+		}
+	}
 
 	/**
 	 * Makes a number of randomly oriented turtles.
@@ -836,13 +856,17 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	private void diff(String patchVariable, double number, boolean isMoore) {
-		int possibleNumberOfNeighbors = isMoore ? 8 : 4;
+//		int possibleNumberOfNeighbors = isMoore ? 8 : 4;
 		// String neighborsString = isMoore ? "neighbors" : "neighbors4"
 		DenseDoubleMatrix2D ddm = getPatchVarMatrix(patchVariable);
 		DenseDoubleMatrix2D ddm2 = new DenseDoubleMatrix2D(ddm.rows(),
 				ddm.columns());
-		JavaUtility.diffuse(ddm, ddm2, number, worldWidth(), worldHeight());
-		setPatchVarMatrix(patchVariable, ddm2);
+		Grid grid = getGrid();
+		if (grid != null){
+			boolean isPeriodic = grid.isPeriodic();
+			JavaUtility.diffuse(ddm, ddm2, number, isMoore, isPeriodic);
+			setPatchVarMatrix(patchVariable, ddm2);
+		}
 	}
 
 	/**

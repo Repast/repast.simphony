@@ -23,13 +23,15 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	}
 	
 	private void addToParent(JPanel child){
-		if(hasChild){
-			panel.add(Box.createRigidArea(new Dimension(0, 5)));
+		if (child != null){
+			if(hasChild){
+				panel.add(Box.createRigidArea(new Dimension(0, 5)));
+			}
+			else {
+				hasChild = true
+			}
+			panel.add(child);
 		}
-		else {
-			hasChild = true
-		}
-		panel.add(child);
 	}
 	
 	public void addPanel(Closure cl){

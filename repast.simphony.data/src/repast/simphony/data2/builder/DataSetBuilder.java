@@ -66,15 +66,12 @@ public interface DataSetBuilder<T extends DataSource> {
   public ScheduleParameters getScheduleParameters(); 
   
   /**
-   * Defines a FileDataSink for this DataSet. The data retrieved from the
+   * Adds a FileDataSink for this DataSet. The data retrieved from the
    * defined data sources will be written to the defined DataSink.
    * 
-   * @param fileName
-   * @param delimiter
-   * @param formatType
-   * @param addTimeStamp if true a time stamp will be appended to the file name
+   * @param builder the FileDataSinkBuilder to add
    */
-  void defineFileDataSink(String name, String fileName, String delimiter, FormatType formatType, boolean addTimeStamp, Collection<String> sourceIds);
+  void addFileDataSinkBuilder(FileDataSinkBuilder builder);
   
   /**
    * Defines a ConsoleDataSink for this DataSet. The data retrieved from the

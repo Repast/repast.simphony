@@ -5,6 +5,8 @@ package repast.simphony.chart2;
 
 import java.util.List;
 
+import cern.colt.list.DoubleArrayList;
+
 import repast.simphony.data2.DataSink;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -19,9 +21,16 @@ public class HistogramDataSink implements DataSink {
   private static MessageCenter msg = MessageCenter.getMessageCenter(HistogramDataSink.class);
 
   private class Updater implements Runnable {
+    
+    private DoubleArrayList values;
+    
+    public Updater(DoubleArrayList values) {
+      this.values = new DoubleArrayList();
+      this.values.addAllOf(values);
+    }
 
     public void run() {
-      histData.update();
+      histData.update(values);
     }
   }
 
@@ -47,6 +56,7 @@ public class HistogramDataSink implements DataSink {
   private AbstractHistogramDataset histData;
   private String sourceId;
   private DataConverter converter = new InitDataConverter();
+  private DoubleArrayList data = new DoubleArrayList();
 
   /**
    * Creates a HistogramDataSink that will update the specified histogram
@@ -88,7 +98,7 @@ public class HistogramDataSink implements DataSink {
   public void append(String key, Object value) {
     if (key.equals(sourceId)) {
       double val = converter.convert(value);
-      histData.addValue(val);
+      data.add(val);
     }
   }
 
@@ -108,7 +118,9 @@ public class HistogramDataSink implements DataSink {
    */
   @Override
   public void recordEnded() {
-    ThreadUtilities.runInEventThread(new Updater());
+    Updater updater = new Updater(data);
+    data.clear();
+    ThreadUtilities.runInEventThread(updater);
   }
 
   /*

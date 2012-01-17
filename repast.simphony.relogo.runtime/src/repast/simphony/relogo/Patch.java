@@ -19,12 +19,19 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	public String toString();
 
 	/**
-	 * Returns the agentset of all links.
+	 * Returns the agentset of all generic links.
 	 * 
 	 * @return agentset of all links
 	 */
 	public AgentSet<Link> links();
 
+	/**
+	 * Returns the agentset of all links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public AgentSet<Link> allLinks();
+	
 	/**
 	 * The agent that initiated the asking.
 	 * 
@@ -389,6 +396,11 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 */
 	public void show(Object value);
 
+	/**
+	 * Sets the standard patch variables to their default values.
+	 * Called by clearPatches() and cp().
+	 * Override and call super.setToDefault() to reset other variables.
+	 */
 	public void setToDefault();
 	
 	/**

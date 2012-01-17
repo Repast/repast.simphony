@@ -30,7 +30,7 @@ import repast.simphony.util.SystemConstants;
 public class RWizard extends AnalysisPluginWizard {
 
   private static final String R_HOME = "./RHome/";
-  
+
   private Map<String, String> envVars = new HashMap<String, String>();
 
   public RWizard() {
@@ -43,23 +43,23 @@ public class RWizard extends AnalysisPluginWizard {
     super(loggingRegistry, showCopyright, browseForRHome, name, installHome, defaultLocation,
         licenseFileName);
   }
-  
+
   // this must be called after getExecutionCommand
   public Map<String, String> getEnvVars() {
     return envVars;
   }
- 
+
   public String[] getExecutionCommand() {
-    
 
     List<String> commands = new ArrayList<String>();
-   
+
     if (SystemUtils.IS_OS_WINDOWS) {
       StringBuilder logFileBuilder = new StringBuilder();
       List<FileDataSink> outputters = fileStep.getChosenOutputters();
       for (int i = 0; i < outputters.size(); i++) {
         logFileBuilder.append(" LOG_FILE").append(i).append("=\"");
-        logFileBuilder.append(prepFileNameFor(outputters.get(i).getFile().getAbsolutePath())).append("\"");
+        logFileBuilder.append(prepFileNameFor(outputters.get(i).getFile().getAbsolutePath()))
+            .append("\"");
 
         logFileBuilder.append(" DELIMITER").append(i).append("=\"");
         Formatter formatter = outputters.get(i).getFormatter();
@@ -71,8 +71,8 @@ public class RWizard extends AnalysisPluginWizard {
         String delimiter = formatter.getDelimiter();
         logFileBuilder.append(delimiter).append("\"");
       }
-      
-      commands.add(getInstallHome() + "bin" + SystemConstants.DIR_SEPARATOR + "RGui.exe"
+
+      commands.add(getInstallHome() + SystemConstants.DIR_SEPARATOR + "RGui.exe"
           + " --sdi HOME=\"" + prepFileNameForR(getRHome()) + "\""
           + prepFileNameForR(logFileBuilder.toString()));
     } else if (SystemUtils.IS_OS_MAC) {
@@ -90,19 +90,23 @@ public class RWizard extends AnalysisPluginWizard {
         delims.add(formatter.getDelimiter());
         String fileName = outputters.get(i).getFile().getAbsolutePath();
         File f = new File(fileName);
-        if (f.exists()) {
-          files.add("./" + fileName);
+        if (fileName.startsWith("/")) {
+          files.add(fileName);
         } else {
-          // assume its relative to the current working directory
-          files.add(cwd + "/" + fileName);
+          if (f.exists()) {
+            files.add("./" + fileName);
+          } else {
+            // assume its relative to the current working directory
+            files.add(cwd + "/" + fileName);
+          }
         }
       }
-      
+
       for (int i = 0; i < files.size(); i++) {
         envVars.put("LOG_FILE" + i, files.get(i));
         envVars.put("DELIMITER" + i, delims.get(i));
       }
-      
+
       // this should ceate the .RProfile file
       getRHome();
       envVars.put("R_PROFILE_USER", cwd + "/RHome/.RProfile");
@@ -110,7 +114,7 @@ public class RWizard extends AnalysisPluginWizard {
       commands.add("-a");
       commands.add("R.app");
       commands.add(cwd);
-     
+
     } else {
       // linux command
     }
@@ -143,8 +147,8 @@ public class RWizard extends AnalysisPluginWizard {
 
       // if /RHome/.Rprofile doesnt exist make a new one from Rprofile.txt
       try {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(RWizard.class
-            .getResourceAsStream("Rprofile.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+            RWizard.class.getResourceAsStream("Rprofile.txt")));
 
         FileWriter writer = new FileWriter(R_HOME + ".Rprofile");
 

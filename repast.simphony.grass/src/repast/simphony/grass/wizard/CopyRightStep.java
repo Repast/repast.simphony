@@ -6,8 +6,9 @@ package repast.simphony.grass.wizard;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -34,7 +35,7 @@ public class CopyRightStep extends PanelWizardStep{
 	 */
 	public CopyRightStep() {
 		super("Grass 6.3 Wizard for Repast Simphony",
-				"This plugin wizard will only work if you have Grass 6.3 installed");
+				"This plugin wizard will only work if you have Grass 6.3 / 6.4 installed");
 		
 		setupPanel();
 	}
@@ -76,26 +77,13 @@ public class CopyRightStep extends PanelWizardStep{
 	 * @return a string text file
 	 */
 	private String getLicenseText() {
+	  InputStream stream = this.getClass().getResourceAsStream("License.txt");
 		StringBuffer buffer = new StringBuffer();
 		
 		try {
-			String path = "..//repast.simphony.grass//license//License.txt";
 			
-			if(path.contains("%20")) {
-				String split[]=path.split("%20");
-				path="";	
-					for (int i=0; i < split.length; i++) {
-						
-						if(i==0) {
-							path=path+split[0];
-						}
-						else {
-							path=path+" "+split[i];
-						}
-					}
-			}
 			
-			BufferedReader reader = new BufferedReader(new FileReader(path));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 			String line = reader.readLine();
 
 			while (line != null) {

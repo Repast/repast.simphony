@@ -3,13 +3,20 @@
  */
 package repast.simphony.data2.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import repast.simphony.data2.BatchParamMapFileWriter;
 import repast.simphony.data2.DataConstants;
 import repast.simphony.data2.DataSetManager;
 import repast.simphony.data2.DataSetRegistry;
 import repast.simphony.data2.builder.DataSetBuilder;
+import repast.simphony.data2.builder.FileDataSinkBuilder;
+import repast.simphony.data2.builder.FileNameFormatter;
 import repast.simphony.engine.controller.DescriptorControllerAction;
 import repast.simphony.engine.environment.DefaultControllerAction;
 import repast.simphony.engine.environment.RunState;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -24,6 +31,7 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
       .getMessageCenter(FileSinkComponentControllerAction.class);
 
   private FileSinkDescriptor descriptor;
+  private List<BatchParamMapFileWriter> writers = new ArrayList<BatchParamMapFileWriter>();
 
   public FileSinkComponentControllerAction(FileSinkDescriptor descriptor) {
     this.descriptor = descriptor;
@@ -39,6 +47,26 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
   @Override
   public FileSinkDescriptor getDescriptor() {
     return descriptor;
+  }
+  
+  
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.DefaultControllerAction#runInitialize(repast.simphony.engine.environment.RunState, java.lang.Object)
+   */
+  @Override
+  public void runInitialize(RunState runState, Object contextId, Parameters params) {
+    for (BatchParamMapFileWriter writer : writers) {
+      writer.runStarted();
+    }
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.DefaultControllerAction#batchCleanup(repast.simphony.engine.environment.RunState, java.lang.Object)
+   */
+  @Override
+  public void batchCleanup(RunState runState, Object contextId) {
+    writers.clear();
   }
 
   /*
@@ -60,8 +88,22 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
       msgCenter.error("Error while creating FileOutputter. DataSet '" + descriptor.getDataSet()
           + "' not found", new NullPointerException());
     } else {
-      builder.defineFileDataSink(descriptor.getName(), descriptor.getFileName(), descriptor.getDelimiter(),
-          descriptor.getFormat(), descriptor.isAddTimeStamp(), descriptor.getSourceIds());
+      
+      FileNameFormatter fnFormatter = new FileNameFormatter(descriptor.getFileName(), descriptor.isAddTimeStamp());
+      FileDataSinkBuilder sinkBuilder = new FileDataSinkBuilder(descriptor.getName(), fnFormatter, descriptor.getDelimiter(),
+          descriptor.getFormat());
+      for (String sourceId : descriptor.getSourceIds()) {
+        sinkBuilder.addSource(sourceId);
+      }
+      
+      builder.addFileDataSinkBuilder(sinkBuilder);
+      
+      if (runState.getRunInfo().isBatch()) {
+        BatchParamMapFileWriter writer = new BatchParamMapFileWriter(manager.getBatchRunDataSource(), fnFormatter, 
+            descriptor.getDelimiter(), descriptor.getFormat());
+        builder.addDataSink(writer);
+        writers.add(writer);
+      }
     }
   }
 }

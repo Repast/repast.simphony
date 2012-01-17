@@ -43,30 +43,7 @@ public class BaseObserver extends AbstractObserver{
 	 * 
 	 */
 	protected static final long serialVersionUID = 1L;
-	   
-	  
-		
-		
-	/**
-	 * Sets all patch variables to their default values.
-	 * @see #clearPatches()
-	 */
-	public void cp(){
-		AgentSet<Patch> a = patches();
-		for (Patch p : a){
-			p.setToDefault();
-		}
-		if (a.size() > 0){
-			def p0 = a.getAt(0)
-			if (p0.getMetaClass().respondsTo(p0,'getDiffusiblePatchVars')){
-				List patchVars = p0.getDiffusiblePatchVars()
-				for (String var in patchVars){
-					getPatchVarMatrix(var).assign(0.0)
-				}
-			}
-		}
-	}
-	
+
 	/**
 	 * 
 	 * This method provides a human-readable name for the agent.

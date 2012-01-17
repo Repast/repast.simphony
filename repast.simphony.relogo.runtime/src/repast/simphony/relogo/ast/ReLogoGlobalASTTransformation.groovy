@@ -231,57 +231,34 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 						String stylePackagePath = lastIndex > 0 ? packageName.substring(0,lastIndex) + '/style' : 'style';
 						stylePackagePath = stylePackagePath.replace('.', '/')
 
-						// Fixed SIM-483 by obtaining the URI (not the URL) of the resource
-						URI resource = this.getClass().getResource("/$stylePackagePath")?.toURI()
-						if (resource){
-							//log("packageName is: $stylePackagePath")
-							//log("URL is: $resource")
-
-							String fullLinkClassPath = resource.getPath()
-							int projectPathIndex = fullLinkClassPath.indexOf("/bin/$stylePackagePath")
-							String projectPath = fullLinkClassPath.substring(0, projectPathIndex)
-							int projectNameIndex = projectPath.lastIndexOf('/')
-							String projectName = projectPath.substring(projectNameIndex)
-							String sep = File.separator
-							String contextFilePath = projectPath + sep + "${projectName}.rs" + sep +"context.xml"
-							File contextFile = new File(contextFilePath)
-							//log("contextFile is: $contextFile")
-							if (contextFile.exists()){
-								def root = new XmlSlurper().parse(contextFile)
-								def listOfNetworks = root.context.findAll({it.@id.equals("default_observer_context")})[0].projection.findAll({it.@type.equals("network") && it.@id.equals(className)})
-								if (!listOfNetworks.isEmpty()){
-									//log("found: $listOfNetworks so no addition made")
-								}
-								else {
-									//log("none found: $listOfNetworks, will add $className to context.xml")
-									root.context.leftShift{
-										projection(id:className, type:'network')
-									}
-
-									contextFile.write(prettyPrint(root))
-
-									//Add to the display's projection info
-									modifyDisplayFile(projectPath, projectName, className, basePackageName)
-
-								}
-							}
-						}
+						checkContextFile(className, basePackageName, stylePackagePath)
+						
 					}
 
 					// Patch fields
 					if (classNode.isDerivedFrom(basePatch)){
-						List<FieldNode> publicFieldsAndProperties = [];
-						classNode.fields.each {p ->
-							if (!p.isPublic()){
-								if (classNode.getProperty(p.name)){
-									publicFieldsAndProperties.add(p)
-								}
+						ClassNode tempClassNode = classNode
+						while (!tempClassNode.equals(basePatch)){
+							List<FieldNode> publicFieldsAndProperties = [];
+							try{
+								tempClassNode.fields.each {p ->
+									if (!p.isPublic()){
+										if (tempClassNode.getProperty(p.name)){
+											publicFieldsAndProperties.add(p)
+										}
+									}
+									else {
+										publicFieldsAndProperties.add(p)
+									}
+								}						
+								mapOfPatchTypesAndFieldNames.put(tempClassNode, publicFieldsAndProperties)
+								// Collect inherited properties as well
+								tempClassNode = tempClassNode.getSuperClass()
 							}
-							else {
-								publicFieldsAndProperties.add(p)
+							catch(Exception e){
+								break;
 							}
 						}
-						mapOfPatchTypesAndFieldNames.put(classNode, publicFieldsAndProperties)
 					}
 				}
 			}
@@ -360,46 +337,100 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 			}
 		}
 	}
+	
+	protected void checkContextFile(String className, String basePackageName, String stylePackagePath){
+		// Fixed SIM-483 by obtaining the URI (not the URL) of the resource
+		URI resource = this.getClass().getResource("/$stylePackagePath")?.toURI()
+		if (resource){
+			//log("packageName is: $stylePackagePath")
+			//log("URL is: $resource")
 
+			String fullLinkClassPath = resource.getPath()
+			int projectPathIndex = fullLinkClassPath.indexOf("/bin/$stylePackagePath")
+			String projectPath = fullLinkClassPath.substring(0, projectPathIndex)
+			int projectNameIndex = projectPath.lastIndexOf('/')
+			String projectName = projectPath.substring(projectNameIndex)
+			String sep = File.separator
+			String contextFilePath = projectPath + sep + "${projectName}.rs" + sep +"context.xml"
+			checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
+			
+		}
+	}
+
+	protected void checkToModifyContextFile(String projectPath, String projectName, String className, String basePackageName, String contextFilePath){
+		File contextFile = new File(contextFilePath)
+		if (contextFile.exists()){
+			def root = new XmlSlurper().parse(contextFile)
+			GPathResult listOfDefaultReLogoContexts = root.context.findAll({it.@id.equals("default_observer_context")})
+			// If the default_observer_context exists
+			if (listOfDefaultReLogoContexts.size() == 1){
+				GPathResult defaultReLogoContext = listOfDefaultReLogoContexts[0]
+				GPathResult classNameNetworks = defaultReLogoContext.projection.findAll {
+					it.@type.equals("network") && it.@id.equals(className)
+				}
+				// If no networks corresponding to the className exist
+				if (classNameNetworks.isEmpty()){
+					// Add the network entry to the 
+					defaultReLogoContext.leftShift{
+						projection(id:className, type:'network')
+					}
+	
+					contextFile.write(prettyPrint(root))
+	
+					//Add to the display's projection info
+					modifyDisplayFile(projectPath, projectName, className, basePackageName)
+				}
+			}
+		}
+	}
+	
 	protected void modifyDisplayFile(String projectPath, String projectName, String className, String basePackageName){
 
 		DefDisplayReturner result = findDefaultReLogoDisplayFile(projectPath, projectName)
 		if (result != null && result.displayFile.exists()){
+			
 			GPathResult displayRoot = result.root
-			displayRoot.netStyles.leftShift{
-				entry {
-					string(className)
-					string(basePackageName + ".style.LinkStyle")
-				}
+			// Check to see if network is already there (to avoid accidental duplication)
+			GPathResult classNameInDisplay = displayRoot.netStyles.entry.string.findAll{
+				it.text().equals(className)
 			}
-
-			displayRoot.editedNetStyles.leftShift{
-				entry {
-					string(className)
-					'null'()
-				}
-			}
-
-			displayRoot.projections.leftShift{
-				'repast.simphony.scenario.data.ProjectionData' {
-					id(className)
-					attributes()
-					type('NETWORK')
-				}
-			}
-
-			// The modifications made to displayRoot are not observable until the xml is generated, hence the '+ 1'
-			int numberOfProjections = 1 + displayRoot.projections.children().size()
-			displayRoot.projectionDescriptors.leftShift{
-				entry{
-					string(className)
-					'repast.simphony.visualization.engine.DefaultProjectionDescriptor'{
-						proj(reference:"../../../../projections/repast.simphony.scenario.data.ProjectionData[$numberOfProjections]")
-						props()
+			if (classNameInDisplay.isEmpty()){
+			
+				displayRoot.netStyles.leftShift{
+					entry {
+						string(className)
+						string(basePackageName + ".style.LinkStyle")
 					}
 				}
+	
+				displayRoot.editedNetStyles.leftShift{
+					entry {
+						string(className)
+						'null'()
+					}
+				}
+	
+				displayRoot.projections.leftShift{
+					'repast.simphony.scenario.data.ProjectionData' {
+						id(className)
+						attributes()
+						type('NETWORK')
+					}
+				}
+	
+				// The modifications made to displayRoot are not observable until the xml is generated, hence the '+ 1'
+				int numberOfProjections = 1 + displayRoot.projections.children().size()
+				displayRoot.projectionDescriptors.leftShift{
+					entry{
+						string(className)
+						'repast.simphony.visualization.engine.DefaultProjectionDescriptor'{
+							proj(reference:"../../../../projections/repast.simphony.scenario.data.ProjectionData[$numberOfProjections]")
+							props()
+						}
+					}
+				}
+				result.displayFile.write(plainPrettyPrint(displayRoot))
 			}
-			result.displayFile.write(plainPrettyPrint(displayRoot))
 		}
 	}
 
@@ -428,23 +459,6 @@ class ReLogoGlobalASTTransformation implements ASTTransformation {
 		List candidateDisplayFiles = []
 		new File(directoryString).eachFileMatch(~/repast.simphony.action.display_.+\.xml/){ candidateDisplayFiles << it }
 		return candidateDisplayFiles
-	}
-
-	String fileLocation = 'outRLGlobals.txt'
-	File file = new File(fileLocation)
-	boolean localLog = false
-
-	private void log(def o){
-		if (!localLog){
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss SSS");
-			Date date = new Date();
-			def timeStamp = dateFormat.format(date);
-			file.append(timeStamp)
-			file.append('\n')
-			localLog = true
-		}
-		file.append(o)
-		file.append('\n')
 	}
 
 	private boolean isInReLogoPackage(ClassNode cn){

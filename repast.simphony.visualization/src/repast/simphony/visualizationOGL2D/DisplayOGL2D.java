@@ -18,6 +18,7 @@ import java.util.concurrent.locks.Lock;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3f;
@@ -35,9 +36,7 @@ import repast.simphony.visualization.IntervalLayoutUpdater;
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.MovedLayoutUpdater;
-import repast.simphony.visualization.UnitSizeLayoutProperties;
 import repast.simphony.visualization.UpdateLayoutUpdater;
-import repast.simphony.visualization.VisualizationProperties;
 import repast.simphony.visualization.decorator.ProjectionDecorator2D;
 import saf.v3d.Canvas2D;
 import saf.v3d.CanvasListener;
@@ -46,6 +45,7 @@ import saf.v3d.picking.PickListener;
 import saf.v3d.scene.VLayer;
 import saf.v3d.scene.VRoot;
 import saf.v3d.scene.VSpatial;
+import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -59,6 +59,12 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     // this seems to fix jogl canvas flicker issues on windows
     System.setProperty("sun.awt.noerasebackground", "true");
   }
+  
+  private Runnable updater = new Runnable() {
+    public void run() {
+      canvas.update();
+    }
+  };
 
   private Layout<?, ?> layout;
   private Canvas2D canvas;
@@ -249,7 +255,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   public void resetHomeView() {
     canvas.resetCamera();
     canvas.centerScene();
-    canvas.update();
+    ThreadUtilities.runInEventThread(updater);
   }
 
   /*
@@ -371,7 +377,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
       update();
       render();
     }
-    canvas.update();
+    ThreadUtilities.runInEventThread(updater);
   }
 
   /*
@@ -397,6 +403,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
       }
       doRender = true;
       canvas.getRenderLock().unlock();
+      
     }
   }
 
@@ -409,12 +416,11 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     long ts = System.currentTimeMillis();
     if (doRender && !iconified) {
       if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
-        canvas.update();
+        ThreadUtilities.runInEventThread(updater);
         lastRenderTS = ts;
       }
       doRender = false;
     }
-    support.fireRenderFinished(this);
   }
 
   public void registerDecorator(ProjectionDecorator2D<?> decorator) {

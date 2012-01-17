@@ -18,11 +18,19 @@ public abstract class Link<T> extends RepastEdge<T> implements
 		Comparable<Link>, ReLogoAgent {
 
 	/**
-	 * Returns the agentset of all links.
+	 * Returns the agentset of all generic links.
 	 * 
 	 * @return agentset of all links
 	 */
 	public abstract AgentSet<Link> links();
+	
+
+	/**
+	 * Returns the agentset of all links.
+	 * 
+	 * @return agentset of all links
+	 */
+	public abstract AgentSet<Link> allLinks();
 
 	// The default constructor is included for LinkFactory use.
 	protected Link() {

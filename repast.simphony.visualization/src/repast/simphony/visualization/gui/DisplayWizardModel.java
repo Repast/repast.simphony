@@ -45,22 +45,37 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   public ProjectionDescriptor getTypeDescriptor(ProjectionType type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
       if (type == proj.getType()) {
-	return getDescriptor().getProjectionDescriptor(proj.getId());
+        return getDescriptor().getProjectionDescriptor(proj.getId());
       }
     }
     return null;
   }
 
+  public String getDefaultStyle() {
+    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
+      return descriptor.getDefaultStyles3D()[0].getName();
+    
+    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
+      return descriptor.getDefaultStylesGIS3D()[0].getName();
+    
+    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
+      return descriptor.getDefaultStyles2D()[0].getName();
+    
+    // return null for 2D GIS as there is no default style class for that
+    return null;
+  }
+
   /**
    * 
-   * @param type the type of projection (e.g. Network)
+   * @param type
+   *          the type of projection (e.g. Network)
    * @return true if this contains only projections of the specified type
    *         otherwise false
    */
   public boolean contextContainsOnlyProjectionType(ProjectionType type) {
     for (ProjectionData proj : context.projections()) {
       if (type != proj.getType()) {
-	return false;
+        return false;
       }
     }
     return true;
@@ -75,7 +90,7 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   public boolean contextContainsProjectionType(ProjectionType type) {
     for (ProjectionData proj : context.projections()) {
       if (type == proj.getType()) {
-	return true;
+        return true;
       }
     }
     return false;
@@ -91,7 +106,7 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   public boolean containsOnlyProjectionType(ProjectionType type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
       if (type != proj.getType()) {
-	return false;
+        return false;
       }
     }
     return true;
@@ -106,7 +121,7 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   public boolean containsProjectionType(ProjectionType type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
       if (type == proj.getType()) {
-	return true;
+        return true;
       }
     }
     return false;

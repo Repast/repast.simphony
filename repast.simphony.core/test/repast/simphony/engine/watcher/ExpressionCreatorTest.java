@@ -165,27 +165,6 @@ public class ExpressionCreatorTest extends TestCase {
     }
   }
 
-  public void testAnnotations() throws IOException, ClassNotFoundException {
-    BufferedInputStream stream = new BufferedInputStream(new FileInputStream(
-        "../repast.simphony.demos/bin/repast/simphony/demo/simple/SimpleHappyAgent.class"));
-    ClassPool pool = ClassPool.getDefault();
-    CtClass ctClass = pool.makeClass(stream);
-    stream.close();
-    CtMethod[] methods = ctClass.getDeclaredMethods();
-    for (CtMethod method : methods) {
-      MethodInfo info = method.getMethodInfo();
-      AnnotationsAttribute attr = (AnnotationsAttribute) info
-          .getAttribute(AnnotationsAttribute.visibleTag);
-      if (attr != null) {
-        Annotation an = attr.getAnnotation("repast.simphony.engine.watcher.Watch");
-        if (an != null) {
-          String s = ((StringMemberValue) an.getMemberValue("watcheeClassName")).getValue();
-          System.out.println("@Watch(name=" + s + ")");
-        }
-      }
-    }
-  }
-
   public static junit.framework.Test suite() {
     return new TestSuite(repast.simphony.engine.watcher.ExpressionCreatorTest.class);
   }

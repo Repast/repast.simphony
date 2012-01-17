@@ -166,19 +166,19 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/commons-logging-1.0.4.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-					+ "/lib/javassist-3.7.0.GA.jar",
+					+ "/lib/javassist-3.15.0.GA.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/jpf.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/jpf-boot.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-					+ "/lib/log4j-1.2.13.jar",
+					+ "/lib/log4j-1.2.16.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/xpp3_min-1.1.4c.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/xstream-1.3.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-                                        + "/lib/commons-cli-1.0.jar"};
+                                        + "/lib/commons-cli-1.2.jar"};
 
 	public static final String[] oldJARFileList = {
 			RepastProjectClasspathContainer.JAR_CLASSPATH_DEFAULT,

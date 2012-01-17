@@ -10,7 +10,7 @@ public class RunSpreadsheetModel extends AnalysisPluginRunner  {
 	
 	static {
 	    if (SystemUtils.IS_OS_MAC)
-	    	path = "/Applications/Microsoft Office 2008/Microsoft Excel.app";
+	    	path = "/Applications/Microsoft Office 2011/Microsoft Excel.app";
 	    else if (SystemUtils.IS_OS_WINDOWS)
 	    	path = "C:\\Program Files\\Microsoft Office\\OFFICE11\\Excel.exe";
 	    else
