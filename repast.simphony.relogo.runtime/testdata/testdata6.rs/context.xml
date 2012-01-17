@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Zombies_Demo" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context" xmlns="">
+  <context id="not_default_observer_context">
+    <projection id="Grid2d" type="grid"/>
+    <projection id="Space2d" type="continuous space"/>
+    <projection id="DirectedLinks" type="network"/>
+    <projection id="UndirectedLinks" type="network"/>
+    <projection id="Tracking Network" type="network"/>
+    <projection id="UserLink" type="network"/>
+    <projection id="Infection" type="network"/>
+  </context>
+</context>
