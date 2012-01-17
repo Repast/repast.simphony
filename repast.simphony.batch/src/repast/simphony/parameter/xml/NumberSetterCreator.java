@@ -77,19 +77,6 @@ public class NumberSetterCreator extends AbstractNumberSetterCreator {
 		
 		String numberType = attributes.getValue(NUMBERTYPE);
 		
-		// for backward compatibility
-		if (numberType == null) {
-			if (isFloat(start) || isFloat(end) || isFloat(step)) {
-				numberType = "float";
-			} else if (isLong(start) || isLong(end) || isLong(step)) {
-				numberType = "long";
-			} else if (isDouble(start) || isDouble(end) || isDouble(step)) {
-				numberType = "double";
-			} else {
-				numberType = "int";
-			}
-		}
-		
 		if (numberType.equals("long") || numberType.equals("java.lang.Long")) {
 			type = Type.LONG;
 		} else if (numberType.equals("int") || numberType.equals("java.lang.Integer")) {
@@ -104,27 +91,13 @@ public class NumberSetterCreator extends AbstractNumberSetterCreator {
 			type = Type.BYTE;
 		}
 		
-		
-
-	}
-	
-	private String inferDataType(String value) {
-		
-		// allowable data types: long, double, float, integer
-		// rules:
-		// long terminates with L
-		// float terminates with f
-		// double contains "." and one or more digits
-		// int otherwise
-		
-		if (value.endsWith("L"))
-			return "long";
-		else if (value.endsWith("f"))
-			return "float";
-		else if (value.contains(".") && value.length() > 1)
-			return "double";
-		else
-			return "int";
+//		if (isFloat(start) || isFloat(end) || isFloat(step)) {
+//			type = Type.FLOAT;
+//		} else if (isLong(start) || isLong(end) || isLong(step)) {
+//			type = Type.LONG;
+//		} else {
+//			type = Type.DOUBLE;
+//		}
 	}
 
 	/**
