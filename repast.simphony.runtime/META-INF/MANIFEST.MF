@@ -40,8 +40,8 @@ Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  lib/ant-testutil.jar,
  lib/ant-trax.jar,
  lib/ant-weblogic.jar,
- lib/javassist-3.7.0.GA.jar,
- lib/commons-cli-1.0.jar
+ lib/commons-cli-1.0.jar,
+ lib/javassist-3.15.0.GA.jar
 Bundle-Localization: plugin
 Export-Package: 
  com.thoughtworks.xstream,

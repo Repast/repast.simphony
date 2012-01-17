@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="buildtools"/>
-	<classpathentry exported="true" kind="lib" path="lib/javassist-3.7.0.GA.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-antlr.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-apache-bcel.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-apache-bsf.jar"/>
@@ -42,5 +41,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javassist-3.15.0.GA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
