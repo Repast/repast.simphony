@@ -1,0 +1,5 @@
+<model name="Batch Test Context 3">
+    <classpath>
+        <agents path="../../bin" />
+    </classpath>
+</model>

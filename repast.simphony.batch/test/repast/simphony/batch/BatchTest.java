@@ -1,15 +1,18 @@
 package repast.simphony.batch;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.log4j.BasicConfigurator;
-
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.log4j.BasicConfigurator;
+
+import repast.simphony.runtime.RepastBatchMain;
 
 /**
  * @author Nick Collier
@@ -43,7 +46,7 @@ public class BatchTest extends TestCase {
   // and that each agent executes correctly during
   // those runs
   public void testSimpleBatch() throws Exception {
-    BatchMain.main(new String[] { "-params", paramsPath,
+    RepastBatchMain.main(new String[] { "-params", paramsPath,
         "repast.simphony.batch.BatchTestScenarioCreator" });
     // loop for each run, for now the number of runs is hard-coded at 2
     for (int i = 1; i < 3; i++) {
@@ -89,7 +92,7 @@ public class BatchTest extends TestCase {
 
   public void testBatchFromFile() throws Exception {
     // expects "." to be the repast.simphony.batch directory
-    BatchMain.main(new String[] { "-params", paramsPath, "./test/test_scenario.rs" });
+    RepastBatchMain.main(new String[] { "-params", paramsPath, "./test/test_scenario.rs" });
     for (int i = 1; i < 3; i++) {
       for (int j = 0; j < NUM_AGENTS; j++) {
         String key = j + ":" + i + ":" + (j + 1.0);
@@ -103,7 +106,7 @@ public class BatchTest extends TestCase {
     URL url = this.getClass().getResource("test_batch_params2.xml");
     File f = new File(url.getFile());
     paramsPath = f.getAbsolutePath();
-    BatchMain.main(new String[] { "-params", paramsPath,
+    RepastBatchMain.main(new String[] { "-params", paramsPath,
         "repast.simphony.batch.BatchTestScenarioCreator4" });
     doParamsResultTest();
   }
