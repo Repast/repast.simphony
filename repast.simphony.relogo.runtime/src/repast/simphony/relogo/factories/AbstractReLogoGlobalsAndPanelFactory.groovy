@@ -17,6 +17,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	
 	private JPanel panel;
 	private boolean hasChild = false;
+	private static final String DEFAULT_OBSERVER_NAME = "default_observer";
 	
 	public void initialize(JPanel panel){
 		this.panel = panel;
@@ -53,7 +54,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	 * @param elementLabel label
 	 */
 	public void addButtonWL(String methodName, String elementLabel){
-		addButtonWL("default_observer",methodName,elementLabel);
+		addButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel);
 	}
 	
 	/**
@@ -67,12 +68,33 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	}
 	
 	/**
+	 * Adds a state change button with a label to the user panel.
+	 * State change buttons do not advance the simulation schedule.
+	 * @param methodName default observer method name
+	 * @param elementLabel label
+	 */
+   public void addStateChangeButtonWL(String methodName, String elementLabel){
+	   addStateChangeButtonWL(DEFAULT_OBSERVER_NAME, methodName, elementLabel);
+   }
+   
+	/**
+	* Adds a state change button with a label to the user panel, specifying an observer.
+	* State change buttons do not advance the simulation schedule.
+	* @param observerID the observer name
+	* @param methodName observer's method name
+	* @param elementLabel label
+	*/
+   public void addStateChangeButtonWL(String observerID, String methodName, String elementLabel){
+	   addToParent(ReLogoGlobalsAndPanelComponentsFactory.createStateChangeButton(observerID,methodName,elementLabel));
+   }
+	
+	/**
 	* Creates a button with a label. To be used with the widget method in Swing Builder.
 	* @param methodName default observer method name
 	* @param elementLabel label
 	*/
 	public JPanel buttonWL(String methodName, String elementLabel){
-		return(buttonWL("default_observer",methodName,elementLabel));
+		return(buttonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel));
 	}
 	
 	/**
@@ -83,6 +105,25 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	*/
 	public JPanel buttonWL(String observerID, String methodName, String elementLabel){
 		return(ReLogoGlobalsAndPanelComponentsFactory.createButton(observerID,methodName,elementLabel));
+	}
+	
+	/**
+	* Creates a state change button with a label. To be used with the widget method in Swing Builder.
+	* @param methodName default observer method name
+	* @param elementLabel label
+	*/
+	public JPanel stateChangeButtonWL(String methodName, String elementLabel){
+		return(stateChangeButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel));
+	}
+	
+	/**
+	* Creates a state change button with a label, specifying an observer. To be used with the widget method in Swing Builder.
+	* @param observerID the observer name
+	* @param methodName observer's method name
+	* @param elementLabel label
+	*/
+	public JPanel stateChangeButtonWL(String observerID, String methodName, String elementLabel){
+		return(ReLogoGlobalsAndPanelComponentsFactory.createStateChangeButton(observerID,methodName,elementLabel));
 	}
 	
 	/**
@@ -99,7 +140,24 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param methodName default observer method name
 	*/
 	public void addButton(String methodName){
-		addButton("default_observer",methodName);
+		addButton(DEFAULT_OBSERVER_NAME,methodName);
+	}
+	
+	/**
+	* Adds a state change button to the user panel, specifying an observer.
+	* @param observerID the observer name
+	* @param methodName observer's method name
+	*/
+	public void addStateChangeButton(String observerID, String methodName){
+		addToParent(ReLogoGlobalsAndPanelComponentsFactory.createStateChangeButton(observerID,methodName,methodName));
+	}
+	
+	/**
+	* Adds a state change button to the user panel.
+	* @param methodName default observer method name
+	*/
+	public void addStateChangeButton(String methodName){
+		addStateChangeButton(DEFAULT_OBSERVER_NAME,methodName);
 	}
 	
 	/**
@@ -116,7 +174,24 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param methodName default observer method name
 	*/
 	public JPanel button(String methodName){
-		return(button("default_observer",methodName));
+		return(button(DEFAULT_OBSERVER_NAME,methodName));
+	}
+	
+	/**
+	* Creates a state change button, specifying an observer. To be used with the widget method in Swing Builder.
+	* @param observerID the observer name
+	* @param methodName observer's method name
+	*/
+	public JPanel stateChangeButton(String observerID, String methodName){
+		return(ReLogoGlobalsAndPanelComponentsFactory.createStateChangeButton(observerID,methodName,methodName));
+	}
+	
+	/**
+	* Creates a state change button. To be used with the widget method in Swing Builder.
+	* @param methodName default observer method name
+	*/
+	public JPanel stateChangeButton(String methodName){
+		return(stateChangeButton(DEFAULT_OBSERVER_NAME,methodName));
 	}
 	
 	/**
@@ -133,7 +208,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param methodName default observer method name
 	*/
 	public void addToggleButton(String methodName){
-		addToggleButton("default_observer",methodName);
+		addToggleButton(DEFAULT_OBSERVER_NAME,methodName);
 	}
 	
 	/**
@@ -150,7 +225,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param methodName default observer method name
 	*/
 	public JPanel toggleButton(String methodName){
-		return(toggleButton("default_observer",methodName));
+		return(toggleButton(DEFAULT_OBSERVER_NAME,methodName));
 	}
 	
 	/**
@@ -169,7 +244,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param elementLabel label
 	*/
 	public void addToggleButtonWL(String methodName, String elementLabel){
-		addToggleButtonWL("default_observer",methodName,elementLabel);
+		addToggleButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel);
 	}
 	
 	/**
@@ -188,7 +263,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param elementLabel label
 	*/
 	public JPanel toggleButtonWL(String methodName, String elementLabel){
-		return(toggleButtonWL("default_observer",methodName,elementLabel));
+		return(toggleButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel));
 	}
 	
 	/**
@@ -515,7 +590,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param interval update interval
 	*/
 	public void addMonitor(String methodName, double interval){
-		addMonitor("default_observer", methodName, interval);
+		addMonitor(DEFAULT_OBSERVER_NAME, methodName, interval);
 	}
 	
 	/**
@@ -534,7 +609,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param interval update interval
 	*/
 	public JPanel monitor(String methodName, double interval){
-		return(monitor("default_observer", methodName, interval));
+		return(monitor(DEFAULT_OBSERVER_NAME, methodName, interval));
 	}
 	
 	/**
@@ -555,7 +630,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param interval update interval
 	*/
 	public void addMonitorWL(String methodName, String elementLabel, double interval){
-		addMonitorWL("default_observer", methodName, elementLabel, interval);
+		addMonitorWL(DEFAULT_OBSERVER_NAME, methodName, elementLabel, interval);
 	}
 	
 	/**
@@ -576,7 +651,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param interval update interval
 	*/
 	public JPanel monitorWL(String methodName, String elementLabel, double interval){
-		return(monitorWL("default_observer", methodName, elementLabel, interval));
+		return(monitorWL(DEFAULT_OBSERVER_NAME, methodName, elementLabel, interval));
 	}
 	
 	/**

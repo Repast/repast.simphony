@@ -1,9 +1,13 @@
 package repast.simphony.relogo;
 
 import groovy.lang.Closure;
+import groovy.util.ObservableMap;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1040,4 +1044,23 @@ public abstract class AbstractObserver implements Observer {
 		return UtilityG.runresultU(string, this);
 	}
 
+	private Map<String,PropertyChangeListener> modelParamsListenersMap = new HashMap<String,PropertyChangeListener>();
+	
+	public void registerModelParameterListener(String varName, final Closure closure){
+		ObservableMap oMap = (ObservableMap)ReLogoModel.getInstance().getModelParams();
+		PropertyChangeListener pcl = modelParamsListenersMap.get(varName);
+		if (pcl != null){
+			oMap.removePropertyChangeListener(pcl);
+		}
+		pcl = new PropertyChangeListener(){
+
+			public void propertyChange(PropertyChangeEvent evt) {
+				closure.call();
+				
+			}
+			
+		};		
+		oMap.addPropertyChangeListener(varName, pcl);
+		
+	}
 }

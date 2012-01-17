@@ -75,6 +75,24 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 		
 	}
 	
+	public static JPanel createStateChangeButton(String observerID, String methodName, String elementLabel, Object... parameters){
+		if (isBatch()) return null;
+		
+		Closure closure = { event ->
+			
+			Observer observer = Utility.getObserverByID(observerID);
+			observer.invokeMethod(methodName, parameters)
+			ReLogoModel.getInstance().updateDisplay()
+		}
+		SwingBuilder swing = new SwingBuilder()
+		def result = swing.panel(alignmentX: Component.LEFT_ALIGNMENT){
+				borderLayout()
+				button(text: elementLabel, actionPerformed: closure, icon: new RegularButtonIcon(), font: new Font(Font.DIALOG, Font.PLAIN, 13), alignmentX: Component.LEFT_ALIGNMENT)
+			}
+		return fixMaximumSize(result)
+		
+	}
+	
 	public static JPanel createMonitor(String observerID, String reporterName, String elementLabel, double interval){
 		if (isBatch()) return null;
 
@@ -223,7 +241,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
         	}
         	panel(alignmentX: Component.LEFT_ALIGNMENT /*, border: lineBorder(color: Color.BLUE)*/){
         		def sliderRef = slider(snapToTicks: true, value: bind(source: modelParams, sourceProperty: varName, converter: {it*multiplier as int} ), minimum: (minVal * multiplier) as int , maximum: (maxVal * multiplier) as int, minorTickSpacing: (increment * multiplier) as int, extent: 0)
-        		sliderRef.addChangeListener([stateChanged: {e-> modelParams[varName] = (multiplier == 1 ? e.source.value : e.source.value/multiplier)}] as ChangeListener)
+        		sliderRef.addChangeListener([stateChanged: {e-> modelParams[varName] = (multiplier == 1 ? e.source.value : e.source.value/multiplier); ReLogoModel.getInstance().updateDisplay()}] as ChangeListener)
         		sliderRef.getModel().setValue((val * multiplier) as int)
         	}
         }
@@ -243,7 +261,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 		JPanel result = swing.panel(alignmentX:Component.LEFT_ALIGNMENT) {
 			//lineBorder(color: Color.CYAN, parent: true)
 			borderLayout()
-			checkBox(constraints: BorderLayout.WEST, text: elementLabel, selected: bind(source: modelParams, sourceProperty: varName), itemStateChanged: {e -> modelParams[varName] = e.source.selected})
+			checkBox(constraints: BorderLayout.WEST, text: elementLabel, selected: bind(source: modelParams, sourceProperty: varName), itemStateChanged: {e -> modelParams[varName] = e.source.selected; ReLogoModel.getInstance().updateDisplay()})
 		}
 		return fixMaximumSize(result)
 	}
@@ -265,7 +283,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
         	}
 			panel(alignmentX: Component.LEFT_ALIGNMENT/*, border: lineBorder(color: Color.BLUE)*/){
 				borderLayout()
-				comboBox(items: choices, selectedIndex: index, selectedItem: bind(source: modelParams, sourceProperty: varName), actionPerformed: {e -> modelParams[varName] = e.source.selectedItem})
+				comboBox(items: choices, selectedIndex: index, selectedItem: bind(source: modelParams, sourceProperty: varName), actionPerformed: {e -> modelParams[varName] = e.source.selectedItem; ReLogoModel.getInstance().updateDisplay()})
         	}
 			
 		}
@@ -299,6 +317,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 						else {
 						  modelParams[varName] = t
 						}
+						ReLogoModel.getInstance().updateDisplay()
 					})
         	}
 		}
