@@ -150,7 +150,7 @@ public class BatchScenario extends Scenario {
   public <T extends ContextBuilder> void addDataLoader(Object contextTypeID, T loader) {
     // if we create the BatchScenario from a score file then
     // we have valid ContextData, otherwise we want to pass null
-    ContextData context = usingScoreFile ? this.getContext() : null;
+    ContextData context = this.getContext();
     DataLoaderControllerAction<T> action = new DataLoaderControllerAction<T>("Data loader for "
         + contextTypeID, loader, context);
     ActionData actionData = new ActionData(action, contextTypeID,

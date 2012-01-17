@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class FastMethodConvertor implements Converter {
 
-  private JavaMethodConverter jConverter = new JavaMethodConverter();
+  private JavaMethodConverter jConverter = new JavaMethodConverter(JavaMethodConverter.class.getClassLoader());
   private XStream xstream;
 
   public FastMethodConvertor(XStream xstream) {

@@ -176,9 +176,11 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
 					+ "/lib/xpp3_min-1.1.4c.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-					+ "/lib/xstream-1.3.jar",
+					+ "/lib/xstream-1.4.2.jar",
 			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
-                                        + "/lib/commons-cli-1.2.jar"};
+					+ "/lib/xmlpull-1.1.3.1.jar",
+			"/repast.simphony.runtime_" + AGENT_BUILDER_PLUGIN_VERSION
+          + "/lib/commons-cli-1.2.jar"};
 
 	public static final String[] oldJARFileList = {
 			RepastProjectClasspathContainer.JAR_CLASSPATH_DEFAULT,
