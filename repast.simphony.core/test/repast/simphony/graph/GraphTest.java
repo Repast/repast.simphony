@@ -1328,7 +1328,7 @@ public class GraphTest extends TestCase {
   public void testNetworkDLLoader() throws IOException {
     Context<NodeAgent> context = new DefaultContext<NodeAgent>();
     NetworkBuilder builder = new NetworkBuilder("Network", context, true);
-    builder.load("./repast.simphony.core/test/repast/simphony/graph/double_matrix.dl", NetworkFileFormat.DL,
+    builder.load("./test/repast/simphony/graph/double_matrix.dl", NetworkFileFormat.DL,
             new NodeCreator() {
               public Object createNode(String label) {
                 return new NodeAgent(label);
@@ -1384,7 +1384,7 @@ public class GraphTest extends TestCase {
   public void testNetworkExcelLoader1() throws IOException {
     Context<NodeAgent> context = new DefaultContext<NodeAgent>();
     NetworkBuilder builder = new NetworkBuilder("Network", context, true);
-    builder.load("./repast.simphony.core/test/repast/simphony/graph/matrices.xls", NetworkFileFormat.EXCEL,
+    builder.load("./test/repast/simphony/graph/matrices.xls", NetworkFileFormat.EXCEL,
             new NodeCreator() {
               public Object createNode(String label) {
                 return new NodeAgent(label);
@@ -1437,7 +1437,7 @@ public class GraphTest extends TestCase {
   public void testNetworkExcelLoader2() throws IOException {
     Context<NodeAgent> context = new DefaultContext<NodeAgent>();
     NetworkBuilder builder = new NetworkBuilder("Network", context, true);
-    builder.load("./repast.simphony.core/test/repast/simphony/graph/matrices.xls", NetworkFileFormat.EXCEL,
+    builder.load("./test/repast/simphony/graph/matrices.xls", NetworkFileFormat.EXCEL,
             new NodeCreator() {
               public Object createNode(String label) {
                 return new NodeAgent(label);
