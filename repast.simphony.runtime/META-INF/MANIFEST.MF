@@ -9,7 +9,6 @@ Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  testlib/junit-addons-1.4.jar,
  lib/xpp3_min-1.1.4c.jar,
  lib/xstream-1.3.jar,
- lib/log4j-1.2.13.jar,
  lib/commons-logging-1.0.4.jar,
  lib/saf.core.runtime.jar,
  lib/ant.jar,
@@ -41,7 +40,8 @@ Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  lib/ant-trax.jar,
  lib/ant-weblogic.jar,
  lib/commons-cli-1.0.jar,
- lib/javassist-3.15.0.GA.jar
+ lib/javassist-3.15.0.GA.jar,
+ lib/log4j-1.2.16.jar
 Bundle-Localization: plugin
 Export-Package: 
  com.thoughtworks.xstream,

@@ -23,9 +23,6 @@
 		<library id="jericho-html-2.5" path="lib/jericho-html-2.5.jar" type="code">
 			<export prefix="*"/>
 		</library>
-		<library id="log4j-1.2.15" path="lib/log4j-1.2.15.jar" type="code">
-			<export prefix="*"/>
-		</library>
 		<library id="slf4j-api-1.5.2" path="lib/slf4j-api-1.5.2.jar" type="code">
 			<export prefix="*"/>
 		</library>
