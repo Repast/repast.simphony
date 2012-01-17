@@ -28,7 +28,6 @@ Export-Package: org.terracotta.jmx.events,
  repast.simphony.terracotta.datagrid
 Bundle-ClassPath: 
  lib/jericho-html-2.5.jar,
- lib/log4j-1.2.15.jar,
  lib/slf4j-api-1.5.2.jar,
  lib/tim-tclib-1.0.5-SNAPSHOT.jar,
  lib/commonj-twm-1.1.jar,
