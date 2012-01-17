@@ -15,6 +15,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.schedule.IAction;
 import repast.simphony.ui.RSApplication;
+import repast.simphony.visualization.IDisplay;
 import simphony.util.messages.MessageCenter;
 
 /*
@@ -311,6 +312,25 @@ public class ReLogoModel implements RunListener{
 	public void setFileInfoList(ArrayList<FileInfo> fileInfoList) {
 		this.fileInfoList = fileInfoList;
 	}
+	
+	private IDisplay defaultDisplay;
+
+	public IDisplay getDefaultDisplay() {
+		return defaultDisplay;
+	}
+
+	public void setDefaultDisplay(IDisplay defaultDisplay) {
+		this.defaultDisplay = defaultDisplay;
+	}
+	
+	public void updateDisplay(){
+		if (defaultDisplay != null){
+			if (isPaused()){
+				defaultDisplay.update();
+				defaultDisplay.render();
+			}
+		}
+	}
 
 	@Override
 	public void stopped() {
@@ -345,5 +365,6 @@ public class ReLogoModel implements RunListener{
 		setPaused(false);
 		
 	}
+	
 
 }
