@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generate groovyDocs
+    run from command line using: ant -lib $GROOVY_HOME/lib/ -buildfile buildGroovyDocs.xml
+    
+    Specify the variables below:
+    - specifiedDocsDir (e.g., ~/temp/docsLocation)
+    - VERSION (e.g., 2.0 Final)
+    - FOOTER CONTENT (e.g., ReLogo ${title})
+    - sourceDir (e.g., src)
+    
+-->
+<project default="generate">
+    <property name="docsDirectory" value="specifiedDocsDir"/>
+    <property name="version" value="VERSION"/>
+    <property name="title" value="API V${version}"/>
+    <property name="docFooter" value="FOOTER CONTENT"/>
+    <property name="mainSourceDirectory" value="sourceDir"/>
+    <taskdef name="groovydoc"
+        classname="org.codehaus.groovy.ant.Groovydoc"
+        />
+    <target name="generate">
+        <echo>Generating groovy doc</echo>
+        <groovydoc
+            destdir="${docsDirectory}"
+            sourcepath="${mainSourceDirectory}"
+            packagenames="**.*"
+            use="true"
+            windowtitle="${title}"
+            doctitle="${title}"
+            header="${title}"
+            footer="${docFooter}"
+            private="false">
+            <link packages="java.,org.xml.,javax.,org.xml." href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
+            <link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
+            <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/"/>
+        </groovydoc>
+    </target>
+</project>
