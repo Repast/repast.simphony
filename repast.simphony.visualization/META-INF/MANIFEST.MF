@@ -6,10 +6,10 @@ Bundle-Version: 2.0.1
 Bundle-ClassPath: lib/cytoscape-graph-layout.jar,
  lib/MS3DLoader-1.0.8.jar,
  lib/worldwind.jar,
- lib/jung-visualization-2.0-beta1.jar,
  lib/phoebe.jar,
  lib/batik.jar,
- lib/xml-apis-ext.jar
+ lib/xml-apis-ext.jar,
+ lib/jung-visualization-2.0.1.jar
 Bundle-Localization: plugin
 Export-Package: com.glyphein.j3d.loaders.milkshape,
  com.glyphein.j3d.loaders.milkshape.CVS,

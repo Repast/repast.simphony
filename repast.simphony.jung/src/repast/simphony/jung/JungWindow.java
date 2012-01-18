@@ -56,12 +56,7 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
-import edu.uci.ics.jung.algorithms.importance.BaryCenter;
 import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
-import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
-import edu.uci.ics.jung.algorithms.importance.HITS;
-import edu.uci.ics.jung.algorithms.importance.PageRank;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
@@ -146,11 +141,13 @@ public class JungWindow extends JPanel {
 									graph));
 				} else if (this.algorithmChoiceComboBox.getSelectedItem() == null) {
 					this.resultsTable.setModel(new NullTableModel());
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
-						.equals("Bary Center")) {
-					this.resultsTable.setModel(new RankingTableModel(
-							new BaryCenter(network.getGraph())));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
+				} 
+//				else if (this.algorithmChoiceComboBox.getSelectedItem()
+//						.equals("Bary Center")) {
+//					this.resultsTable.setModel(new RankingTableModel(
+//							new BaryCenter(network.getGraph())));
+//				} 
+				else if (this.algorithmChoiceComboBox.getSelectedItem()
 						.equals("Betweenness Centrality for Edges")) {
 					this.resultsTable.setModel(new RankingTableModel(
 							new BetweennessCentrality(network.getGraph(),
@@ -176,21 +173,25 @@ public class JungWindow extends JPanel {
 					this.resultsTable
 							.setModel(new WeightedConnectivityMatrixTableModel(
 									graph));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
-						.equals("Degree Distribution with Indegree")) {
-					this.resultsTable.setModel(new RankingTableModel(
-							new DegreeDistributionRanker(network.getGraph(),
-									true)));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
-						.equals("Degree Distribution with Outdegree")) {
-					this.resultsTable.setModel(new RankingTableModel(
-							new DegreeDistributionRanker(network.getGraph(),
-									false)));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
-						.equals("\"Hubs-and-Authorities\" Importance Measure")) {
-					this.resultsTable.setModel(new RankingTableModel(new HITS(
-							network.getGraph())));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
+				} 
+//				else if (this.algorithmChoiceComboBox.getSelectedItem()
+//						.equals("Degree Distribution with Indegree")) {
+//					this.resultsTable.setModel(new RankingTableModel(
+//							new DegreeDistributionRanker(network.getGraph(),
+//									true)));
+//				} 
+//				else if (this.algorithmChoiceComboBox.getSelectedItem()
+//						.equals("Degree Distribution with Outdegree")) {
+//					this.resultsTable.setModel(new RankingTableModel(
+//							new DegreeDistributionRanker(network.getGraph(),
+//									false)));
+//				} 
+//				else if (this.algorithmChoiceComboBox.getSelectedItem()
+//						.equals("\"Hubs-and-Authorities\" Importance Measure")) {
+//					this.resultsTable.setModel(new RankingTableModel(new HITS(
+//							network.getGraph())));
+//				} 
+				else if (this.algorithmChoiceComboBox.getSelectedItem()
 						.equals("Node Undirected Degree Diagonal Matrix")) {
 					Graph graph = network.getGraph();
 					this.resultsTable
@@ -211,41 +212,43 @@ public class JungWindow extends JPanel {
 					Graph graph = network.getGraph();
 					this.resultsTable.setModel(new NodeDegreeTableModel(graph,
 							NodeDegreeTableModel.Type.OUT));
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
-						.equals("Page Rank for Directed Graphs")) {
-					if (network.isDirected()) {
-						String biasString = JOptionPane
-								.showInputDialog("Please input a bias coefficient from 0.0 to 1.0:");
-						if (biasString != null) {
-							double biasDouble;
-							try {
-								biasDouble = Double.parseDouble(biasString);
-							} catch (NumberFormatException e1) {
-								JOptionPane
-										.showMessageDialog(
-												null,
-												"The input value (\""
-														+ biasString
-														+ "\") could not be read. Zero will be used for the bias.",
-												"Warning",
-												JOptionPane.INFORMATION_MESSAGE);
-								biasDouble = 0.0;
-								this.resultsTable
-										.setModel(new NullTableModel());
-							}
-							this.resultsTable.setModel(new RankingTableModel(
-									new PageRank((DirectedGraph) network
-											.getGraph(), biasDouble)));
-						} else {
-							this.resultsTable.setModel(new NullTableModel());
-						}
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"The network is not directed.", "Warning",
-								JOptionPane.INFORMATION_MESSAGE);
-						this.resultsTable.setModel(new NullTableModel());
-					}
-				} else if (this.algorithmChoiceComboBox.getSelectedItem()
+				}
+//				else if (this.algorithmChoiceComboBox.getSelectedItem()
+//						.equals("Page Rank for Directed Graphs")) {
+//					if (network.isDirected()) {
+//						String biasString = JOptionPane
+//								.showInputDialog("Please input a bias coefficient from 0.0 to 1.0:");
+//						if (biasString != null) {
+//							double biasDouble;
+//							try {
+//								biasDouble = Double.parseDouble(biasString);
+//							} catch (NumberFormatException e1) {
+//								JOptionPane
+//										.showMessageDialog(
+//												null,
+//												"The input value (\""
+//														+ biasString
+//														+ "\") could not be read. Zero will be used for the bias.",
+//												"Warning",
+//												JOptionPane.INFORMATION_MESSAGE);
+//								biasDouble = 0.0;
+//								this.resultsTable
+//										.setModel(new NullTableModel());
+//							}
+//							this.resultsTable.setModel(new RankingTableModel(
+//									new PageRank((DirectedGraph) network
+//											.getGraph(), biasDouble)));
+//						} else {
+//							this.resultsTable.setModel(new NullTableModel());
+//						}
+//					} else {
+//						JOptionPane.showMessageDialog(null,
+//								"The network is not directed.", "Warning",
+//								JOptionPane.INFORMATION_MESSAGE);
+//						this.resultsTable.setModel(new NullTableModel());
+//					}
+//				} 
+				else if (this.algorithmChoiceComboBox.getSelectedItem()
 						.equals("Shortest Paths")) {
 					Graph graph = network.getGraph();
 					this.resultsTable.setModel(new DijkstraDistanceTableModel(
@@ -415,20 +418,20 @@ public class JungWindow extends JPanel {
 		algorithmChoiceComboBox.setModel(new DefaultComboBoxModel(new String[] {
 			"Average Unweighted Distance",
 			"Average Weighted Distance",
-			"Bary Center",
+//			"Bary Center",
 			"Betweenness Centrality for Edges",
 			"Betweenness Centrality for Nodes",
 			"Clustering Coefficients",
 			"Connectivity Matrix",
 			"Connectivity Matrix with Edge Weights",
-			"Degree Distribution with Indegree",
-			"Degree Distribution with Outdegree",
-			"\"Hubs-and-Authorities\" Importance Measure",
+//			"Degree Distribution with Indegree",
+//			"Degree Distribution with Outdegree",
+//			"\"Hubs-and-Authorities\" Importance Measure",
 			"Node Undirected Degree Diagonal Matrix",
 			"Node Undirected Degree List",
 			"Node Indegree List",
 			"Node Outdegree List",
-			"Page Rank for Directed Graphs",
+//			"Page Rank for Directed Graphs",
 			"Shortest Paths"
 		}));
 		add(algorithmChoiceComboBox, cc.xy(3, 3));

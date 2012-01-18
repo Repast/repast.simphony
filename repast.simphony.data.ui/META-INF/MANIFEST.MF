@@ -10,9 +10,7 @@ Require-Bundle: saf.core.ui,
  repast.simphony.core,
  repast.simphony.runtime,
  repast.simphony.scenario
-Export-Package: edu.uci.ics.jung.io,
- repast.simphony.data.analysis,
+Export-Package: repast.simphony.data.analysis,
  repast.simphony.data2.gui,
  repast.simphony.data2.wizard
-Bundle-ClassPath: .,
- lib/jung-io-2.0-alpha3.jar
+Bundle-ClassPath: .

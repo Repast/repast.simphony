@@ -36,7 +36,7 @@
 		<library id="phoebe" path="lib/phoebe.jar" type="code">
       <export prefix="*"/>
     </library>
-		<library id="jung_vis" path="lib/jung-visualization-2.0-beta1.jar" type="code">
+		<library id="jung_vis" path="lib/jung-visualization-2.0.1.jar" type="code">
       <export prefix="*"/>
     </library>
 		<library id="worldwind" path="lib/worldwind.jar" type="code">

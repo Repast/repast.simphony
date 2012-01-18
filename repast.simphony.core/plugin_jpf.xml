@@ -117,10 +117,10 @@
     </library>
 
 
-    <library id="jung-api" path="lib/jung-api-2.0-beta1.jar" type="code"/>
-    <library id="jung-graph" path="lib/jung-graph-impl-2.0-beta1.jar" type="code"/>
-    <library id="jung-algorithms" path="lib/jung-algorithms-2.0-beta1.jar" type="code"/>
-		<library id="jung-io" path="lib/jung-io-2.0-beta1.jar" type="code"/>
+    <library id="jung-api" path="lib/jung-api-2.0.1.jar" type="code"/>
+    <library id="jung-graph" path="lib/jung-graph-impl-2.0.1.jar" type="code"/>
+    <library id="jung-algorithms" path="lib/jung-algorithms-2.0.1.jar" type="code"/>
+	<library id="jung-io" path="lib/jung-io-2.0.1.jar" type="code"/>
 
     <library id="jooneeditor" path="lib/joone-editor.jar" type="code"/>
     <library id="jooneengine" path="lib/joone-engine.jar" type="code"/>

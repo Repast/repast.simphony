@@ -4,10 +4,6 @@
 	<classpathentry kind="src" output="test_bin" path="test"/>
 	<classpathentry exported="true" kind="lib" path="lib/colt-1.2.0-no_hep.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jbullet.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.0-beta1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-algorithms-2.0-beta1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-api-2.0-beta1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.0-beta1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joone-editor.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joone-engine.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jscience.jar"/>
@@ -38,5 +34,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt2-shapefile-2.3.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/imageioext-asciigrid-1.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.6-20091214.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-algorithms-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-api-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
