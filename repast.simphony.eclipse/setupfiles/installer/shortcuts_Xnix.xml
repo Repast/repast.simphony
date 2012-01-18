@@ -24,7 +24,7 @@
      KdeSubstUID="false"
      initialState="normal">   
      <createForPack name="Model"/>
-  </shortcut -->
+  </shortcut>
 
   <shortcut
      name="Documentation"

@@ -11,7 +11,7 @@
     files and reading data in from files based on an xml description of the
     files' contents. These xml descriptor files are designed to specify any
     text files, as long as they have some logical data specification. With
-    this it is possible to have data in a <link linkend="???">Java Bean</link>
+    this it is possible to have data in a Java Bean
     </para>
 
     <para>The data file specification uses a small set of four xml tags.
