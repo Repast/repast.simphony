@@ -692,4 +692,12 @@ public interface Observer extends ProjectionListener {
 	 * @return width of the world
 	 */
 	public int worldWidth();
+	
+	/**
+	 * Registers a model parameter listener to execute the provided closure.
+	 * 
+	 * @param varName model parameter variable name
+	 * @param closure the closure to execute (the closure input parameter is a java.beans.PropertyChangeEvent)
+	 */
+	public void registerModelParameterListener(String varName, final Closure closure);
 }

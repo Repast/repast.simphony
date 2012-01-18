@@ -1046,6 +1046,9 @@ public abstract class AbstractObserver implements Observer {
 
 	private Map<String,PropertyChangeListener> modelParamsListenersMap = new HashMap<String,PropertyChangeListener>();
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public void registerModelParameterListener(String varName, final Closure closure){
 		ObservableMap oMap = (ObservableMap)ReLogoModel.getInstance().getModelParams();
 		PropertyChangeListener pcl = modelParamsListenersMap.get(varName);
@@ -1055,7 +1058,7 @@ public abstract class AbstractObserver implements Observer {
 		pcl = new PropertyChangeListener(){
 
 			public void propertyChange(PropertyChangeEvent evt) {
-				closure.call();
+				closure.call(evt);
 				
 			}
 			
