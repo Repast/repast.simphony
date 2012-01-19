@@ -3,18 +3,19 @@
     run from command line using: ant -lib $GROOVY_HOME/lib/ -buildfile buildGroovyDocs.xml
     
     Specify the variables below:
-    - specifiedDocsDir (e.g., ~/temp/docsLocation)
-    - VERSION (e.g., 2.0 Final)
-    - FOOTER CONTENT (e.g., ReLogo ${title})
-    - sourceDir (e.g., src)
+    - docsDirectory (e.g., ${user.home}/temp/docsLocation)
+    - version (e.g., 2.0 Final)
+    - docFooter (e.g., ReLogo ${title})
+    - mainSourceDirectory (e.g., src)
     
 -->
 <project default="generate">
-    <property name="docsDirectory" value="specifiedDocsDir"/>
-    <property name="version" value="VERSION"/>
+    <property name="docsDirectory" value="${user.home}/temp/ReLogo API"/>
+	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
+    <property name="version" value="2.0 Final"/>
     <property name="title" value="API V${version}"/>
-    <property name="docFooter" value="FOOTER CONTENT"/>
-    <property name="mainSourceDirectory" value="sourceDir"/>
+    <property name="docFooter" value="ReLogo ${title}"/>
+    <property name="mainSourceDirectory" value="src"/>
     <taskdef name="groovydoc"
         classname="org.codehaus.groovy.ant.Groovydoc"
         />
@@ -30,10 +31,52 @@
             header="${title}"
             footer="${docFooter}"
             private="false">
-            <link packages="java.,org.xml.,javax.,org.xml." href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link packages="java.,org.xml.,javax.,org.xml." href="http://docs.oracle.com/javase/6/docs/api/"/>
             <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
             <link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
-            <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/"/>
+            <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/gapi/"/>
+        	<link href="http://repast.sourceforge.net/docs/api/repastjava/"/>
         </groovydoc>
+    	<javadoc
+    		classpath="../repast.simphony.core/bin:../repast.simphony.userpanel.ui/bin:../repast.simphony.runtime/bin:../repast.simphony.essentials/bin:../repast.simphony.gui/bin:../repast.simphony.integration/bin:../repast.simphony.data/bin:../saf.core.ui/saf.core.ui.jar:../saf.core.ui/saf.core.v3d.jar:../repast.simphony.relogo.ide/bin:../libs.piccolo/lib/piccolo.jar:../libs.piccolo/lib/piccolox.jar:../repast.simphony.visualization/bin:../repast.simphony.scenario/bin:./bin:/Applications/groovy-1.8.5/embeddable/groovy-all-1.8.5.jar:../repast.simphony.core/lib/collections-generic-4.01.jar:../repast.simphony.core/lib/colt-1.2.0-no_hep.jar"
+    		access="public"
+    		author="true"
+			destdir="${javaDocsDirectory}"
+			nodeprecated="false"
+			nodeprecatedlist="false"
+			noindex="false"
+			nonavbar="false"
+			notree="false"
+			packagenames="**.*"
+    		source="1.6"
+    		sourcepath="src"
+			splitindex="true"
+			use="true"
+			version="true"
+    		windowtitle="${title}"
+			doctitle="${title}"
+    		header="${title}"
+    		footer="${docFooter}"
+    		>
+    		<link href="http://docs.oracle.com/javase/6/docs/api/"/>
+    		<link href="http://www.dpml.net/api/ant/1.7.0"/>
+    		<link href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
+    		<link href="http://groovy.codehaus.org/gapi/"/>
+    		<link href="../${docsDirectory}" offline="true" packagelistloc="../${docsDirectory}"/>
+    		<link href="http://repast.sourceforge.net/docs/api/repastjava/"/>
+    	</javadoc>
+    	<!--<copy todir="${docsDirectory}/repast" overwrite="true">
+			<fileset dir="${javaDocsDirectory}/repast" casesensitive="no">
+    			<exclude name="**/package-*" />
+			</fileset>
+    	</copy>
+    	<mkdir dir="${docsDirectory}/resources"/>
+    	<copy todir="${docsDirectory}/resources" overwrite="true">
+    				<fileset dir="${javaDocsDirectory}/resources" casesensitive="no"/>
+    	</copy>
+    	<delete includeemptydirs="true">
+    		<fileset dir="${javaDocsDirectory}" casesensitive="no">
+    		</fileset>
+    	</delete>-->
     </target>
 </project>
