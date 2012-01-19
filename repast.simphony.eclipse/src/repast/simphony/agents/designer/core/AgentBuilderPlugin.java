@@ -47,7 +47,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.acm.seguin.util.FileSettings;
+//import org.acm.seguin.util.FileSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
 import org.eclipse.core.resources.ICommand;
@@ -151,7 +151,7 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 	private static AgentBuilderPlugin plugin;
 	// Resource bundle.
 	private ResourceBundle resourceBundle;
-	private static FileSettings prettySettings;
+//	private static FileSettings prettySettings;
 	private static IType agentBaseType; // Peter Friese
 
 	private static String[] finalJarClassPathList = null;
@@ -1464,9 +1464,9 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 	 * 
 	 * @return the pretty printer Settings
 	 */
-	public static FileSettings getPrettySettings() {
-		return prettySettings;
-	}
+//	public static FileSettings getPrettySettings() {
+//		return prettySettings;
+//	}
 
 	public void setResourceBundle(ResourceBundle resourceBundle) {
 		this.resourceBundle = resourceBundle;
