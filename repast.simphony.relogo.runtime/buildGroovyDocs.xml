@@ -24,7 +24,7 @@
         <groovydoc 
             destdir="${docsDirectory}"
             sourcepath="${mainSourceDirectory}"
-            packagenames="repast.simphony.relogo,repast.simphony.relogo.factories,repast.simphony.relogo.styles"
+            packagenames="**.*"
             use="true"
             windowtitle="${title}"
             doctitle="${title}"
