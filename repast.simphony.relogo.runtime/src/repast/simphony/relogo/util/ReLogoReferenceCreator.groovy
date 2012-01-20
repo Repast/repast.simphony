@@ -1,6 +1,10 @@
 package repast.simphony.relogo.util
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+
 import org.apache.poi.ss.util.CellReference 
 import java.util.List; 
 import java.util.regex.Pattern;
@@ -12,6 +16,13 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory 
 
 import org.apache.poi.ss.usermodel.Sheet;
+
+import repast.simphony.relogo.Link;
+import repast.simphony.relogo.Observer;
+import repast.simphony.relogo.Patch;
+import repast.simphony.relogo.Turtle;
+import repast.simphony.relogo.Utility;
+import repast.simphony.relogo.UtilityG;
 import sun.net.www.protocol.file.FileURLConnection;
 
 //import org.apache.poi.ss.usermodel.*; 
@@ -21,6 +32,8 @@ class ReLogoReferenceCreator {
 	static final String filename = "data/ReLogoPrimitives.xls"
 	static final String docLocation = "docs/ReLogo API/repast/simphony/relogo/"
 	static final String refURLbase = "repast/simphony/relogo/"
+	private Map<String,List<String>> mapOfTPLOPublicMethods = [:]
+	private Map<String,List<String>> mapOfPrimitives = [:]
 	List<SheetInfo> workbookSheetsInfo = []
 	Workbook wb
 	
@@ -29,6 +42,26 @@ class ReLogoReferenceCreator {
 		ReLogoReferenceCreator rrc = new ReLogoReferenceCreator()
 		rrc.readInPrimitivesExcelFile()
 		rrc.createPrimitivesDocument()
+		rrc.checkWhichPublicMethodsAreMissing()
+	}
+	
+	public void checkWhichPublicMethodsAreMissing(){
+		println "missing methods (Note: Not necessarily a bad thing)"
+		List<Class> classes = [Turtle,Patch,Observer,Link,Utility,UtilityG]
+		for (Class c in classes){
+			String primSheetName = c.getSimpleName()
+			if (primSheetName.equals("Utility") || primSheetName.equals("UtilityG")){
+				primSheetName = "Utilities"
+			}
+			for (String methodName in getPublicMethods(c)){
+				if (mapOfPrimitives.get(primSheetName).contains(methodName)){
+					
+				}
+				else {
+					println "${primSheetName}: $methodName"
+				}
+			}
+		}
 	}
 	private final static String RSR = "repast.simphony.relogo"
 	private final static String JL = "java.lang"
@@ -133,6 +166,36 @@ class ReLogoReferenceCreator {
 		return result
 	}
 	
+	protected String getTypeName(Type type){
+		if (type instanceof Class){
+			Class c = (Class)type
+			return c.getName().replaceAll(/<.+>/,"").replaceAll(/cern\.colt\.function\./,"").replaceAll(/\[L(.+);/,{it[1]})
+		}
+		return type.toString().replaceAll(/<.+>/,"")
+	}
+	
+	protected List<String> getPublicMethods(Class c){
+		List<String> pm = []
+		Method [] ms = c.getDeclaredMethods()
+		for (Method mm in ms){
+			if (Modifier.isPublic(mm.getModifiers())){
+				StringBuilder sb = new StringBuilder()
+				sb.append(mm.getName() + "(")
+				boolean first = true
+				for (Type t in mm.getGenericParameterTypes()){
+					if(!first){
+						sb.append(", ")
+					}
+					first = false
+					sb.append(getTypeName(t))
+				}
+				sb.append(")")
+				pm.add(sb.toString())
+			}
+		}
+		return pm
+	}
+	
 	
 	public void readInPrimitivesExcelFile(){
 		wb = WorkbookFactory.create(new FileInputStream(filename))
@@ -144,6 +207,7 @@ class ReLogoReferenceCreator {
 	public SheetInfo getSheetInfo(int index){
 		Sheet sheet = wb.getSheetAt(index);
 		String sheetName = sheet.getSheetName()
+		mapOfPrimitives.put(sheetName,[])
 //		sheetClassName = sheetClassName.equals("Utilities") ? "Utility" : sheetClassName
 		def list = [];
 		PrimitiveCategory currentCategory = null
@@ -168,6 +232,8 @@ class ReLogoReferenceCreator {
 						String fullURL = getFullURL(sheetName,methodRefString)
 						if (fullURL){
 							currentCategory.addMethodAndRef(firstCellString, fullURL)
+							mapOfPrimitives.get(sheetName).add(methodRefString)
+//							println "adding ${sheetName}: $methodRefString"
 						}
 						else {
 							throw new RuntimeException("the methodRefString $methodRefString for class $sheetName on line ${row.rowNum} is not valid")

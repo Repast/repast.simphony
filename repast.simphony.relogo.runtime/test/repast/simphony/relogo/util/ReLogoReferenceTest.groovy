@@ -2,11 +2,14 @@ package repast.simphony.relogo.util;
 
 import groovy.util.GroovyTestCase
 
-import java.util.regex.Pattern
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 
 import org.codehaus.groovy.ast.builder.*
 
-import sun.net.www.protocol.file.FileURLConnection;
+import repast.simphony.relogo.Turtle
+import repast.simphony.relogo.Utility;
 
 class ReLogoReferenceTest extends GroovyTestCase {
 	
@@ -56,6 +59,12 @@ class ReLogoReferenceTest extends GroovyTestCase {
 		assertEquals("UtilityG",rrc.getClassNameForValidURL("Utilities", methodName))
 		methodName = "nonfilter(groovy.lang.Closure, java.util.Collection)"
 		assertNull(rrc.getClassNameForValidURL("Utilities", methodName))
+	}
+	
+	public void testGetPublicMethods(){
+		for (String st in rrc.getPublicMethods(Utility)){
+			println st
+		}
 	}
 	
 	public void tearDown(){
