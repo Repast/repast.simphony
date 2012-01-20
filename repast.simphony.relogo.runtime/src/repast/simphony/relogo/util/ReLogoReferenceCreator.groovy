@@ -3,6 +3,8 @@ package repast.simphony.relogo.util
 import java.io.File;
 import org.apache.poi.ss.util.CellReference 
 import java.util.List; 
+import java.util.regex.Pattern;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row 
 import org.apache.poi.ss.usermodel.Workbook 
@@ -24,6 +26,50 @@ class ReLogoReferenceCreator {
 		rrc.readInPrimitivesExcelFile()
 		rrc.createPrimitivesDocument()
 	}
+	private final static String RSR = "repast.simphony.relogo"
+	private final static String JL = "java.lang"
+	
+	private final static Map<String,String> keywordMap = [
+		"Collection":"java.util",
+		"Closure":"groovy.lang",
+		"String":JL,
+		"Class":JL,
+		"Number":JL,
+		"Object":JL,
+		"Iterable":JL,
+		"Iterator":"java.util",
+		"List":"java.util",
+		"AgentSet":RSR,
+		"Turtle":RSR,
+		"Patch":RSR,
+		"Link":RSR,
+		"Observer":RSR,
+		"DiffusiblePatchVariable":RSR,
+		"BigDecimal":"java.math",
+		"OutOfContextSubject":RSR
+		]
+	 
+	
+	protected String transformMethodString(String input){
+		String result = input
+		// remove all generics greedily
+		result = result.replaceAll(/<.+>/,"")
+		
+		// replace keywords
+		Pattern word = Pattern.compile(/\b\w+/)
+		def closure = {
+			String res = keywordMap.get(it)
+			if (res){
+				return res + "." + it
+			}
+			return it
+		}
+		result = result.replaceAll(word,closure)
+		// replace whitespace
+		result = result.replaceAll(" ","%20")
+		return result
+	}
+	
 	
 	public void readInPrimitivesExcelFile(){
 		wb = WorkbookFactory.create(new FileInputStream(filename))
