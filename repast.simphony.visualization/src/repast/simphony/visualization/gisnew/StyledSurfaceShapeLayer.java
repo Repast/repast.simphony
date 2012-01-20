@@ -63,7 +63,7 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
 	protected GeoShape createVisualItem(Object o) {
 		GeoShape shape = style.getShape(o);
 
-		System.out.print("Creating visual item for " + o + " ");
+//		System.out.print("Creating visual item for " + o + " ");
 		
 		Renderable renderable = shape.getRenderable();
 		
