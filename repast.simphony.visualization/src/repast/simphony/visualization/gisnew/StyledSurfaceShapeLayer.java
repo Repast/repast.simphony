@@ -2,6 +2,7 @@ package repast.simphony.visualization.gisnew;
 
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
@@ -91,6 +92,9 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
 
 		ShapeAttributes attrs = s.getAttributes();
 
+		if (attrs == null)
+      attrs = new BasicShapeAttributes();
+		
 		attrs.setInteriorMaterial(new Material(style.getFillColor(o)));
 		attrs.setInteriorOpacity(style.getFillOpacity(o));
 		attrs.setOutlineMaterial(new Material(style.getBorderColor(o)));

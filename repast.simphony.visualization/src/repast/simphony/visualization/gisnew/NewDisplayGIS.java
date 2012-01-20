@@ -1,9 +1,11 @@
 package repast.simphony.visualization.gisnew;
 
-import gov.nasa.worldwind.AnaglyphSceneController;
+import static repast.simphony.ui.RSGUIConstants.CAMERA_ICON;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.StereoOptionSceneController;
+import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -11,6 +13,7 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -36,7 +39,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import repast.simphony.space.gis.Geography;
-import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.AddedRemovedLayoutUpdater;
@@ -73,7 +75,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
   private Map<Object, AbstractSurfaceLayer> objectStyleMap;
 
   private WorldWindowGLCanvas wwglCanvas;
-  private String displayMode = AnaglyphSceneController.DISPLAY_MODE_MONO;
+  private String displayMode = AVKey.STEREO_MODE_NONE;
   private LayerPanel layerPanel;
 
   private boolean doRender = true;
@@ -86,7 +88,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     this.layoutUpdater = new UpdateLayoutUpdater(layout);
 
     Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
-            AnaglyphSceneController.class.getName());
+    		StereoOptionSceneController.class.getName());
 
     // TODO explore "flat world"
 //    Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
@@ -98,8 +100,8 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     wwglCanvas.setModel(model);
     
 
-    AnaglyphSceneController asc = (AnaglyphSceneController) wwglCanvas.getSceneController();
-    asc.setDisplayMode(this.displayMode);
+    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
+    asc.setStereoMode(this.displayMode);
 
     initListener();
 
@@ -440,20 +442,28 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
   	 }
 
   public void toggleAnaglyphStereo() {
-    if (displayMode == AnaglyphSceneController.DISPLAY_MODE_MONO)
-      displayMode = AnaglyphSceneController.DISPLAY_MODE_STEREO;
+    if (displayMode == AVKey.STEREO_MODE_NONE)
+      displayMode = AVKey.STEREO_MODE_RED_BLUE;
     else
-      displayMode = AnaglyphSceneController.DISPLAY_MODE_MONO;
+      displayMode = AVKey.STEREO_MODE_NONE;
 
-    AnaglyphSceneController asc = (AnaglyphSceneController) wwglCanvas.getSceneController();
-    asc.setDisplayMode(this.displayMode);
+    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
+    asc.setStereoMode(this.displayMode);
 
     wwglCanvas.redraw();
   }
 
   @Override
   public void registerToolBar(JToolBar bar) {
-    bar.addSeparator();
+  	// Assume first component is the default camera button...
+  	// replace its screenshot action with the WWJ Screenshot action
+  	JButton cameraButton = (JButton)bar.getComponent(0);
+  	
+  	cameraButton.setAction(new ScreenShotAction(wwglCanvas));
+  	cameraButton.setIcon(CAMERA_ICON);
+  	cameraButton.setText("");
+  	
+  	bar.addSeparator();
 
     // Add the Anaglyph stereo button
     JButton anaglyphButton = new JButton(new AbstractAction() {

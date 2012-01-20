@@ -3,7 +3,7 @@ package repast.simphony.visualization.gisnew;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.layers.SurfaceShapeLayer;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import repast.simphony.visualization.LayoutUpdater;
  * @author Eric Tatara
  *
  */
-public abstract class AbstractSurfaceLayer extends SurfaceShapeLayer {
+public abstract class AbstractSurfaceLayer extends RenderableLayer {
 
 	protected Map<Object, GeoShape> visualItemMap;
 	protected Map<Renderable, Object> renderableToObjectMap;

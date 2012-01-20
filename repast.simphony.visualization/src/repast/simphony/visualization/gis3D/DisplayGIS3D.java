@@ -1,9 +1,10 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.AnaglyphSceneController;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.StereoOptionSceneController;
+import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -73,7 +74,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   private Map<Object, AbstractDisplayLayerGIS3D> objectStyleMap;
 
   private WorldWindowGLCanvas wwglCanvas;
-  private String displayMode = AnaglyphSceneController.DISPLAY_MODE_MONO;
+  private String displayMode = AVKey.STEREO_MODE_NONE;
   private LayerPanel layerPanel;
 
   private boolean doRender = true;
@@ -86,7 +87,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     this.layoutUpdater = new UpdateLayoutUpdater(layout);
 
     Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
-        AnaglyphSceneController.class.getName());
+    		StereoOptionSceneController.class.getName());
 
     // TODO explore "flat world"
     // Configuration.setValue(AVKey.GLOBE_CLASS_NAME,
@@ -99,8 +100,8 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     wwglCanvas = new WorldWindowGLCanvas();
     wwglCanvas.setModel(model);
 
-    AnaglyphSceneController asc = (AnaglyphSceneController) wwglCanvas.getSceneController();
-    asc.setDisplayMode(this.displayMode);
+    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
+    asc.setStereoMode(this.displayMode);
 
     initListener();
 
@@ -443,13 +444,13 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   }
 
   public void toggleAnaglyphStereo() {
-    if (displayMode == AnaglyphSceneController.DISPLAY_MODE_MONO)
-      displayMode = AnaglyphSceneController.DISPLAY_MODE_STEREO;
+    if (displayMode == AVKey.STEREO_MODE_NONE)
+      displayMode = AVKey.STEREO_MODE_DEVICE;
     else
-      displayMode = AnaglyphSceneController.DISPLAY_MODE_MONO;
+      displayMode = AVKey.STEREO_MODE_NONE;
 
-    AnaglyphSceneController asc = (AnaglyphSceneController) wwglCanvas.getSceneController();
-    asc.setDisplayMode(this.displayMode);
+    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
+    asc.setStereoMode(this.displayMode);
 
     wwglCanvas.redraw();
   }
