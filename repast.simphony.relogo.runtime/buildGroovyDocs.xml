@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generate groovyDocs
+    run from command line using: ant -lib $GROOVY_HOME/lib/ -buildfile buildGroovyDocs.xml
+    
+    Specify the variables below:
+    - docsDirectory (e.g., ${user.home}/temp/docsLocation)
+    - version (e.g., 2.0 Final)
+    - docFooter (e.g., ReLogo ${title})
+    - mainSourceDirectory (e.g., src)
+    
+-->
+<project default="generate">
+    <property name="docsDirectory" value="${user.home}/temp/ReLogo API"/>
+	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
+    <property name="version" value="2.0 Final"/>
+    <property name="title" value="API V${version}"/>
+    <property name="docFooter" value="ReLogo ${title}"/>
+    <property name="mainSourceDirectory" value="src"/>
+    <taskdef name="groovydoc"
+        classname="org.codehaus.groovy.ant.Groovydoc"
+        />
+    <target name="generate">
+        <echo>Generating groovy doc</echo>
+        <groovydoc 
+            destdir="${docsDirectory}"
+            sourcepath="${mainSourceDirectory}"
+            packagenames="**.*"
+            use="true"
+            windowtitle="${title}"
+            doctitle="${title}"
+            header="${title}"
+            footer="${docFooter}"
+            private="false">
+        	<!-- This line linking to the repast Java API doesn't appear to work -->
+        	<!-- <link packages="repast.simphony.space.projection." href="http://repast.sourceforge.net/docs/api/repastjava/"/>-->
+        	<link packages="java.,org.xml.,javax.,org.xml." href="http://docs.oracle.com/javase/6/docs/api/"/>
+            <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
+            <link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
+            <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/gapi/"/>
+        </groovydoc>
+    	<!-- Below was an attempt to use both groovydoc and javadoc and combine the results. It was not successful. -->
+    	<!--<javadoc
+    		classpath="../repast.simphony.core/bin:../repast.simphony.userpanel.ui/bin:../repast.simphony.runtime/bin:../repast.simphony.essentials/bin:../repast.simphony.gui/bin:../repast.simphony.integration/bin:../repast.simphony.data/bin:../saf.core.ui/saf.core.ui.jar:../saf.core.ui/saf.core.v3d.jar:../repast.simphony.relogo.ide/bin:../libs.piccolo/lib/piccolo.jar:../libs.piccolo/lib/piccolox.jar:../repast.simphony.visualization/bin:../repast.simphony.scenario/bin:./bin:/Applications/groovy-1.8.5/embeddable/groovy-all-1.8.5.jar:../repast.simphony.core/lib/collections-generic-4.01.jar:../repast.simphony.core/lib/colt-1.2.0-no_hep.jar"
+    		access="public"
+    		author="true"
+			destdir="${javaDocsDirectory}"
+			nodeprecated="false"
+			nodeprecatedlist="false"
+			noindex="false"
+			nonavbar="false"
+			notree="false"
+			packagenames="**.*"
+    		source="1.6"
+    		sourcepath="src"
+			splitindex="true"
+			use="true"
+			version="true"
+    		windowtitle="${title}"
+			doctitle="${title}"
+    		header="${title}"
+    		footer="${docFooter}"
+    		>
+    		<link href="http://docs.oracle.com/javase/6/docs/api/"/>
+    		<link href="http://www.dpml.net/api/ant/1.7.0"/>
+    		<link href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
+    		<link href="http://groovy.codehaus.org/gapi/"/>
+    		<link offline="true" href="../${docsDirectory}" packagelistloc="/Users/jozik/temp/ReLogo API/package-list" resolveLink="true"/>
+    		<link href="http://repast.sourceforge.net/docs/api/repastjava/"/>
+    	</javadoc>-->
+    	<!--<copy todir="${docsDirectory}/repast" overwrite="true">
+			<fileset dir="${javaDocsDirectory}/repast" casesensitive="no">
+    			<exclude name="**/package-*" />
+			</fileset>
+    	</copy>
+    	<mkdir dir="${docsDirectory}/resources"/>
+    	<copy todir="${docsDirectory}/resources" overwrite="true">
+    				<fileset dir="${javaDocsDirectory}/resources" casesensitive="no"/>
+    	</copy>
+    	<delete includeemptydirs="true">
+    		<fileset dir="${javaDocsDirectory}" casesensitive="no">
+    		</fileset>
+    	</delete>-->
+    </target>
+</project>
