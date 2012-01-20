@@ -6,17 +6,21 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row 
 import org.apache.poi.ss.usermodel.Workbook 
 import org.apache.poi.ss.usermodel.WorkbookFactory 
 
 import org.apache.poi.ss.usermodel.Sheet;
+import sun.net.www.protocol.file.FileURLConnection;
 
 //import org.apache.poi.ss.usermodel.*; 
 
 class ReLogoReferenceCreator {
 	
-	String filename = "data/ReLogoPrimitives.xls"
+	static final String filename = "data/ReLogoPrimitives.xls"
+	static final String docLocation = "docs/ReLogo API/repast/simphony/relogo/"
+	static final String refURLbase = "repast/simphony/relogo/"
 	List<SheetInfo> workbookSheetsInfo = []
 	Workbook wb
 	
@@ -48,7 +52,59 @@ class ReLogoReferenceCreator {
 		"BigDecimal":"java.math",
 		"OutOfContextSubject":RSR
 		]
-	 
+	
+	private Map<String,String> classNameContentMap = [:]
+	
+	protected String createBaseURLname(String className){
+			
+	}
+	
+	protected String getContentText(String className){
+		String content = classNameContentMap.get(className)
+		if (content == null){
+				String baseURLname = docLocation + className + ".html"
+				URL url = new URL("file","",baseURLname)
+				content = url.getText()
+				classNameContentMap.put(className, content)
+		}
+		return content
+	}
+	
+	protected String getFullURL(String sheetName, String methodRefString){
+		String className = getClassNameForValidURL(sheetName, methodRefString)
+		if (className){
+			return refURLbase + className + ".html#" + methodRefString
+		}
+		return null
+	}
+	
+	/**
+	 * Returns the className for which this is a valid URL or null
+	 * @param sheetName
+	 * @param methodString
+	 * @return
+	 */
+	protected String getClassNameForValidURL(String sheetName, String methodString){
+		String pat = Pattern.quote(methodString)
+		if (sheetName.equals("Utilities")){
+			String u = "Utility"
+			String content = getContentText(u)
+			if (content.find(pat)) return u
+			else {
+				String g = "UtilityG"
+				content = getContentText(g)
+				if (content.find(pat)) return g
+				else return null
+			}
+			
+		}
+		else {// sheetName is the same as className for these
+			String content = getContentText(sheetName)
+			
+			if(content.find(pat)) return sheetName
+			else return null
+		}
+	}
 	
 	protected String transformMethodString(String input){
 		String result = input
@@ -66,7 +122,14 @@ class ReLogoReferenceCreator {
 		}
 		result = result.replaceAll(word,closure)
 		// replace whitespace
-		result = result.replaceAll(" ","%20")
+		//result = result.replaceAll(" ","%20")
+		
+		// add space after comma
+		result = result.replaceAll(",",", ")
+		
+		// remove vararg ellipsis
+		result = result.replaceAll(/\.\.\./,"")
+		
 		return result
 	}
 	
@@ -80,29 +143,69 @@ class ReLogoReferenceCreator {
 	
 	public SheetInfo getSheetInfo(int index){
 		Sheet sheet = wb.getSheetAt(index);
+		String sheetName = sheet.getSheetName()
+//		sheetClassName = sheetClassName.equals("Utilities") ? "Utility" : sheetClassName
 		def list = [];
 		PrimitiveCategory currentCategory = null
 		Iterator iter = sheet.rowIterator()
+
 		for(Row row : sheet){
 			Cell firstCell = row.getCell(0)
-			Cell secondCell = row.getCell(1)
-			if (firstCell != null && firstCell.getCellType().equals(Cell.CELL_TYPE_STRING)){
-				String firstCellString = firstCell.getStringCellValue()
-				if (secondCell == null || secondCell.getCellType().equals(Cell.CELL_TYPE_BLANK)){
-					currentCategory = new PrimitiveCategory(firstCellString)
-					list.add(currentCategory)
-				}
-				else {
-					String secondCellString = secondCell.getStringCellValue()
-					currentCategory.addMethodAndRef(firstCellString, secondCellString)
+			// check that the cell is not null and string type
+			if (firstCell != null && firstCell.getCellType() == Cell.CELL_TYPE_STRING){
+				String firstCellString = firstCell.getRichStringCellValue().getString().trim()
+				
+				// check that the string cell is not a blank string cell
+				if(!firstCellString.equals("")){
+					// check if we are looking for the next category
+					if (firstCellString.startsWith("#")){
+						currentCategory = new PrimitiveCategory(firstCellString.substring(1))
+						list.add(currentCategory)
+					}
+					else {
+						// transform and check method string
+						String methodRefString = transformMethodString(firstCellString)
+						String fullURL = getFullURL(sheetName,methodRefString)
+						if (fullURL){
+							currentCategory.addMethodAndRef(firstCellString, fullURL)
+						}
+						else {
+							throw new RuntimeException("the methodRefString $methodRefString for class $sheetName on line ${row.rowNum} is not valid")
+						}
+					}
 				}
 			}
 		}
-		return new SheetInfo(sheet.getSheetName(), list)
+		return new SheetInfo(sheetName, list)
 	}
 	
+	/*private def getCellContent(Cell cell){
+		Object o = null;
+		switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_STRING:
+				o = cell.getRichStringCellValue().getString();
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					o = cell.getDateCellValue();
+				} else {
+					o = cell.getNumericCellValue();
+				}
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				o = cell.getBooleanCellValue();
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				o = cell.getCellFormula();
+				break;
+			default:
+				break;
+		}
+		return o;
+	}*/
+	
 	def createPrimitivesDocument(){
-		def writer = new FileWriter('docs/ReLogoDocs/ReLogoPrimitives.html')
+		def writer = new FileWriter('docs/ReLogo API/ReLogoPrimitives.html')
 		def html	= new groovy.xml.MarkupBuilder(writer) 
 		html.html {
 			head { title 'ReLogo Primitives' }

@@ -1,4 +1,5 @@
 package repast.simphony.relogo.util;
+
 import groovy.util.GroovyTestCase
 
 import java.util.regex.Pattern
@@ -33,11 +34,11 @@ class ReLogoReferenceTest extends GroovyTestCase {
 		inputs.add("allLinks()")
 		expecteds.add("allLinks()")
 		
-		inputs.add("allQ(Collection, Closure)")
-		expecteds.add("allQ(java.util.Collection,%20groovy.lang.Closure)")
+		inputs.add("allQ(Collection,Closure)")
+		expecteds.add("allQ(java.util.Collection, groovy.lang.Closure)")
 		
-		inputs.add("ask(AgentSet<? extends ReLogoAgent>, Closure)")
-		expecteds.add("ask(repast.simphony.relogo.AgentSet,%20groovy.lang.Closure)")
+		inputs.add("ask(AgentSet<? extends ReLogoAgent>,Closure)")
+		expecteds.add("ask(repast.simphony.relogo.AgentSet, groovy.lang.Closure)")
 		
 		for (int i = 0; i < inputs.size(); i++){
 			assertEquals("input ${inputs[i]} failed",expecteds[i],rrc.transformMethodString(inputs[i]))
@@ -45,10 +46,16 @@ class ReLogoReferenceTest extends GroovyTestCase {
 	}
 	
 	public void testURL(){
-		String methodName = "ask(repast.simphony.relogo.AgentSet,%20groovy.lang.Closure)"
-		assertEquals(true,rrc.isValidURL("Observer", methodName))
-		methodName = "hatch(java.lang.Number,%20groovy.lang.Closure,%20java.lang.String)"
-		assertEquals(true,rrc.isValidURL("Turtle", methodName))
+		String methodName = "ask(repast.simphony.relogo.AgentSet, groovy.lang.Closure)"
+		assertEquals("Observer",rrc.getClassNameForValidURL("Observer", methodName))
+		methodName = "hatch(java.lang.Number, groovy.lang.Closure, java.lang.String)"
+		assertEquals("Turtle",rrc.getClassNameForValidURL("Turtle", methodName))
+		methodName = "abs(java.lang.Number)"
+		assertEquals("Utility",rrc.getClassNameForValidURL("Utilities", methodName))
+		methodName = "filter(groovy.lang.Closure, java.util.Collection)"
+		assertEquals("UtilityG",rrc.getClassNameForValidURL("Utilities", methodName))
+		methodName = "nonfilter(groovy.lang.Closure, java.util.Collection)"
+		assertNull(rrc.getClassNameForValidURL("Utilities", methodName))
 	}
 	
 	public void tearDown(){
