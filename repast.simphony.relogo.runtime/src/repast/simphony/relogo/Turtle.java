@@ -35,8 +35,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @param number
 	 *            a number
+	 * @return 
 	 */
-	public void hatch(Number number);
+	public AgentSet hatch(Number number);
 
 	/**
 	 * Makes a number of new turtles and then executes a set of commands on the
@@ -46,8 +47,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a number
 	 * @param closure
 	 *            a set of commands
+	 * @return 
 	 */
-	public void hatch(Number number, Closure closure);
+	public AgentSet hatch(Number number, Closure closure);
 
 	/**
 	 * Makes a number of new turtles of a specific type and then executes a set
@@ -63,9 +65,10 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @param number
 	 * @param closure
 	 * @param childType
+	 * @return 
 	 * 
 	 */
-	public void hatch(Number number, Closure closure, String childType);
+	public AgentSet hatch(Number number, Closure closure, String childType);
 
 	/**
 	 * Makes a number of new turtles of a specific type and then executes a set
@@ -81,8 +84,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @param number
 	 * @param closure
 	 * @param childType
+	 * @return 
 	 */
-	public void hatch(Number number, Closure closure, Class childType);
+	public AgentSet hatch(Number number, Closure closure, Class childType);
 
 	/**
 	 * Moves the turtle to the lowest value of a patch variable of eight

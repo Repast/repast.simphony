@@ -202,8 +202,8 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param number
 	 *            a number
 	 */
-	public void hatch(Number number) {
-		hatch(number, null);
+	public AgentSet hatch(Number number) {
+		return hatch(number, null);
 	}
 
 	/**
@@ -215,7 +215,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param closure
 	 *            a set of commands
 	 */
-	public void hatch(Number number, Closure closure) {
+	public AgentSet hatch(Number number, Closure closure) {
 
 		AgentSet newTurtles = new AgentSet();
 		for (int i = 0; i < number.intValue(); i++) {
@@ -224,6 +224,7 @@ public abstract class AbstractTurtle implements Turtle {
 		if (closure != null) {
 			ask(newTurtles, closure);
 		}
+		return newTurtles;
 	}
 
 	/**
@@ -241,7 +242,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param closure
 	 * @param childType
 	 */
-	public void hatch(Number number, Closure closure, String childType) {
+	public AgentSet hatch(Number number, Closure closure, String childType) {
 
 		AgentSet newTurtles = new AgentSet();
 		for (int i = 0; i < number.intValue(); i++) {
@@ -251,6 +252,7 @@ public abstract class AbstractTurtle implements Turtle {
 		if (closure != null) {
 			ask(newTurtles, closure);
 		}
+		return newTurtles;
 	}
 
 	/**
@@ -268,8 +270,8 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param closure
 	 * @param childType
 	 */
-	public void hatch(Number number, Closure closure, Class childType) {
-		hatch(number, closure, childType.getSimpleName());
+	public AgentSet hatch(Number number, Closure closure, Class childType) {
+		return hatch(number, closure, childType.getSimpleName());
 	}
 
 	/**
