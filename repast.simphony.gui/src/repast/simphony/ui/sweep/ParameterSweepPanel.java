@@ -44,6 +44,10 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 	private final static String VALUES_PROPERTIES_FILE = "sweepValues.properties";
 	private final static String GRIDGAIN = "GRIDGAIN_HOME";
 	
+	// activate once a replacement for GridGain had been found
+	
+	private final static boolean GRID_SUPPORT = false;
+	
 	boolean gridEligible = false;
 	
 	Properties sweepProps = new Properties();
@@ -376,14 +380,23 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		localButton.setSelected(true);
 		localButton.addActionListener(this);
 		
+		if (GRID_SUPPORT) {
 		optimizedButton = new JRadioButton("Optimized Execution (Local)");
+		} else {
+			optimizedButton = new JRadioButton("Optimized Execution");
+		}
 		optimizedButton.setActionCommand("Optimized");
 		optimizedButton.setSelected(false);
 		optimizedButton.addActionListener(this);
 		
 		ButtonGroup executionButtonGroup = new ButtonGroup();
 		executionButtonGroup.add(localButton);
-		executionButtonGroup.add(gridButton);
+		
+		// are we currently supporting a grid execution?
+		
+		if (GRID_SUPPORT) {
+			executionButtonGroup.add(gridButton); 
+		}
 		executionButtonGroup.add(optimizedButton);
 		
 		c.insets = new Insets(0, 0, 7, 0);
@@ -396,7 +409,9 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		c.gridx = 1;
 		buttonPanel.add(optimizedButton,c);
 		c.gridx = 2;
-		buttonPanel.add(gridButton,c);
+		if (GRID_SUPPORT) {
+			buttonPanel.add(gridButton,c);
+		}
 		
 		//  checkbox for deleting files on remote systems
 		
@@ -420,7 +435,9 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 
 		
 		c.gridx = 3;
-		buttonPanel.add(checkPanel,c);
+		if (GRID_SUPPORT) {
+			buttonPanel.add(checkPanel,c);
+		}
 		
 		retainFilesCheckBox.setSelected(retainFiles);
 		retainFilesCheckBox.setEnabled(false);
@@ -431,7 +448,7 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		
 		executionPanel.setLayout(new GridBagLayout());
 		String note = " (NOTE: Grid Execution Requires GridGain Installation)";
-		if (gridEligible)
+		if (gridEligible || !GRID_SUPPORT)
 			note = "";
 		executionPanel.setBorder(BorderFactory.createTitledBorder("Model Execution"+note));
 		
@@ -475,17 +492,21 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		textField4 = new JTextField(tf4Local, 40);
 		c.gridx = 0;
 		c.gridy = 3;
-		gridExecutionPanel.add(labelEntry4,c);
-		c.gridx = 1;
-		gridExecutionPanel.add(textField4,c);
+		if (GRID_SUPPORT) {
+			gridExecutionPanel.add(labelEntry4,c);
+			c.gridx = 1;
+			gridExecutionPanel.add(textField4,c);
+		}
 		
 		labelEntry5 = new JLabel(localEntry5Label, JLabel.TRAILING);
 		textField5 = new JTextField(tf5Local, 40);
 		c.gridx = 0;
 		c.gridy = 4;
-		gridExecutionPanel.add(labelEntry5,c);
-		c.gridx = 1;
-		gridExecutionPanel.add(textField5,c);
+		if (GRID_SUPPORT) {
+			gridExecutionPanel.add(labelEntry5,c);
+			c.gridx = 1;
+			gridExecutionPanel.add(textField5,c);
+		}
 		
 		textField1.setEnabled(true);
 		textField1.setEditable(true);
