@@ -22,8 +22,11 @@
 		
 		<library id="jmatlink-1.0.jar" path="lib/jmatlink-1.0.jar" type="code"/>
 	</runtime>
-	
-	<extension id="matlab.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+
+<!-- The matlab plugin button is removed from the runtime, however the API calls
+     are still available. 
+-->	
+<!--  <extension id="matlab.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="repast.simphony.matlab.link.LinkMatlab"/>
 			<parameter id="label" value="&amp;Run MatLab"/>
@@ -34,4 +37,6 @@
 			<parameter id="tooltip" value="Run MatLab"/>
 		</parameter>
 	</extension>
+	
+-->
 </plugin>
