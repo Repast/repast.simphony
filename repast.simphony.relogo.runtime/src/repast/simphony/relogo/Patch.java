@@ -617,7 +617,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the caller’s patch
+	 * @return agentset of turtles from the caller's patch
 	 */
 	public AgentSet turtlesHere();
 	

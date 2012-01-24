@@ -326,22 +326,22 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public void setPenMode(Number penMode);
 
 	/**
-	 * Sets the turtle’s pen to stop drawing lines.
+	 * Sets the turtle's pen to stop drawing lines.
 	 */
 	public void pu();
 
 	/**
-	 * Sets the turtle’s pen to stop drawing lines.
+	 * Sets the turtle's pen to stop drawing lines.
 	 */
 	public void penUp();
 
 	/**
-	 * Sets the turtle’s pen to draw lines.
+	 * Sets the turtle's pen to draw lines.
 	 */
 	public void pd();
 
 	/**
-	 * Sets the turtle’s pen to draw lines.
+	 * Sets the turtle's pen to draw lines.
 	 */
 	public void penDown();
 
@@ -544,16 +544,16 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public void home();
 
 	/**
-	 * Returns the turtle’s x increment for one step.
+	 * Returns the turtle's x increment for one step.
 	 * 
-	 * @returns turtle’s x increment for one step
+	 * @returns turtle's x increment for one step
 	 */
 	public double dx();
 
 	/**
-	 * Returns the turtle’s y increment for one step.
+	 * Returns the turtle's y increment for one step.
 	 * 
-	 * @returns turtle’s y increment for one step
+	 * @returns turtle's y increment for one step
 	 */
 	public double dy();
 
@@ -681,7 +681,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the caller’s patch
+	 * @return agentset of turtles from the caller's patch
 	 */
 	public AgentSet turtlesHere();
 
@@ -1079,9 +1079,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public AgentSet inLinkNeighbors();
 
 	/**
-	 * Returns the agentset of the caller’s out link neighbor turtles.
+	 * Returns the agentset of the caller's out link neighbor turtles.
 	 * 
-	 * @return agentset of the caller’s out link neighbor turtles
+	 * @return agentset of the caller's out link neighbor turtles
 	 */
 	public AgentSet outLinkNeighbors();
 
@@ -1101,11 +1101,11 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public Link inLinkFrom(Turtle t);
 
 	/**
-	 * Returns the caller’s directed link to a turtle.
+	 * Returns the caller's directed link to a turtle.
 	 * 
 	 * @param t
 	 *            a turtle
-	 * @return the caller’s directed link to turtle t
+	 * @return the caller's directed link to turtle t
 	 */
 	public Link outLinkTo(Turtle t);
 
@@ -1144,16 +1144,16 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public AgentSet allMyOutLinks();
 
 	/**
-	 * Returns an agentset of the caller’s generic undirected links.
+	 * Returns an agentset of the caller's generic undirected links.
 	 * 
-	 * @return agentset of the caller’s undirected links
+	 * @return agentset of the caller's undirected links
 	 */
 	public AgentSet myLinks();
 	
 	/**
-	 * Returns an agentset of all the caller’s undirected links.
+	 * Returns an agentset of all the caller's undirected links.
 	 * 
-	 * @return agentset of the caller’s undirected links
+	 * @return agentset of the caller's undirected links
 	 */
 	public AgentSet allMyLinks();
 

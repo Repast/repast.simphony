@@ -3,14 +3,14 @@
     run from command line using: ant -lib $GROOVY_HOME/lib/ -buildfile buildGroovyDocs.xml
     
     Specify the variables below:
-    - docsDirectory (e.g., ${user.home}/temp/docsLocation)
+    - docsDirectory (e.g., docs/ReLogo API)
     - version (e.g., 2.0 Final)
     - docFooter (e.g., ReLogo ${title})
     - mainSourceDirectory (e.g., src)
     
 -->
 <project default="generate">
-    <property name="docsDirectory" value="${user.home}/temp/ReLogo API"/>
+    <property name="docsDirectory" value="docs/ReLogo API"/>
 	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
     <property name="version" value="2.0 Final"/>
     <property name="title" value="API V${version}"/>
