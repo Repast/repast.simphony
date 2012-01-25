@@ -380,6 +380,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @param number
 	 *            an integer
+	 * @return created turtles
 	 * @see #createTurtles()
 	 */
 	public AgentSet crt(int number) {
@@ -394,6 +395,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure)
 	 */
@@ -411,6 +413,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure, String)
 	 */
@@ -435,6 +438,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure, Class)
 	 */
@@ -452,6 +456,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure, String type) {
 		return crt(number, closure, type);
@@ -467,6 +472,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure, Class type) {
 		return crt(number, closure, type.getSimpleName());
@@ -477,6 +483,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @param number
 	 *            an integer
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number) {
 		return crt(number, null);
@@ -490,6 +497,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure) {
 		return crt(number, closure);
@@ -500,6 +508,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @param number
 	 *            an integer
+	 * @return created turtles
 	 * @see #createOrderedTurtles(int)
 	 */
 	public AgentSet cro(int number) {
@@ -514,6 +523,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 * @see #createOrderedTurtles(int, Closure)
 	 */
 	public AgentSet cro(int number, Closure closure) {
@@ -530,6 +540,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet cro(int number, Closure closure, String type) {
 		AgentSet newTurtles = new AgentSet();
@@ -554,6 +565,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure, String type) {
 		return cro(number, closure, type);
@@ -569,6 +581,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure, Class type) {
 		return cro(number, closure, type);
@@ -584,6 +597,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
+	 * @return created turtles
 	 */
 	public AgentSet cro(int number, Closure closure, Class type) {
 		return cro(number, closure, type.getSimpleName());
@@ -594,6 +608,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @param number
 	 *            an integer
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number) {
 		return cro(number, null);
@@ -607,6 +622,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure) {
 		return cro(number, closure);

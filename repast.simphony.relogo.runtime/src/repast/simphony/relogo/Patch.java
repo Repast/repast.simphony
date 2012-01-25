@@ -340,8 +340,9 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @param number
 	 *            a number
+	 * @return created turtles
 	 */
-	public void sprout(Number number);
+	public AgentSet sprout(Number number);
 
 	/**
 	 * Makes a number of random new turtles then executes a set of commands on
@@ -351,8 +352,9 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a number
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure);
+	public AgentSet sprout(Number number, Closure closure);
 
 	/**
 	 * Makes a number of random new turtles of a specific type then executes a
@@ -364,8 +366,9 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a set of commands
 	 * @param turtleType
 	 *            a turtle type
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure, String turtleType);
+	public AgentSet sprout(Number number, Closure closure, String turtleType);
 	
 	/**
 	 * Makes a number of random new turtles of a specific type then executes a
@@ -377,8 +380,9 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a set of commands
 	 * @param turtleType
 	 *            a turtle class
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure, Class turtleType);
+	public AgentSet sprout(Number number, Closure closure, Class turtleType);
 
 	/**
 	 * Prints value with agent identifier to current file with a newline.

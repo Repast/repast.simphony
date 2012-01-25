@@ -142,7 +142,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @param number
 	 *            an integer
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number);
 
@@ -154,7 +154,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure);
 
@@ -168,7 +168,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure, String type);
 
@@ -182,7 +182,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createTurtles(int number, Closure closure, Class type);
 
@@ -191,7 +191,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @param number
 	 *            an integer
-	 * @return 
+	 * @return created turtles
 	 * @see #createTurtles()
 	 */
 	public AgentSet crt(int number);
@@ -204,7 +204,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
-	 * @return 
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure)
 	 */
@@ -220,7 +220,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure, String)
 	 */
@@ -236,7 +236,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 * 
 	 * @see #createTurtles(int, Closure, Class)
 	 */
@@ -247,7 +247,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @param number
 	 *            an integer
-	 * @return 
+	 * @return created turtles
 	 * @see #createOrderedTurtles(int)
 	 */
 	public AgentSet cro(int number);
@@ -257,7 +257,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @param number
 	 *            an integer
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number);
 
@@ -269,7 +269,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
-	 * @return 
+	 * @return created turtles
 	 * @see #createOrderedTurtles(int, Closure)
 	 */
 	public AgentSet cro(int number, Closure closure);
@@ -282,7 +282,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @param closure
 	 *            a set of commands
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure);
 
@@ -296,7 +296,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet cro(int number, Closure closure, String type);
 
@@ -310,7 +310,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet cro(int number, Closure closure, Class type);
 
@@ -324,7 +324,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure, String type);
 
@@ -338,7 +338,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @param type
 	 *            a turtle type
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet createOrderedTurtles(int number, Closure closure, Class type);
 

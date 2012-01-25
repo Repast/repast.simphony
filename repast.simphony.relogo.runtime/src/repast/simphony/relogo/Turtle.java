@@ -35,7 +35,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @param number
 	 *            a number
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet hatch(Number number);
 
@@ -47,7 +47,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a number
 	 * @param closure
 	 *            a set of commands
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet hatch(Number number, Closure closure);
 
@@ -65,7 +65,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @param number
 	 * @param closure
 	 * @param childType
-	 * @return 
+	 * @return created turtles
 	 * 
 	 */
 	public AgentSet hatch(Number number, Closure closure, String childType);
@@ -84,7 +84,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @param number
 	 * @param closure
 	 * @param childType
-	 * @return 
+	 * @return created turtles
 	 */
 	public AgentSet hatch(Number number, Closure closure, Class childType);
 
@@ -894,8 +894,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkFrom(Turtle t);
+	public Link createLinkFrom(Turtle t);
 
 	/**
 	 * Makes a directed link from a turtle to the caller then executes a set of
@@ -905,16 +906,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkFrom(Turtle t, Closure closure);
+	public Link createLinkFrom(Turtle t, Closure closure);
 
 	/**
 	 * Makes a directed link from the caller to a turtle.
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkTo(Turtle t);
+	public Link createLinkTo(Turtle t);
 
 	/**
 	 * Makes a directed link from the caller to a turtle then executes a set of
@@ -924,16 +927,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkTo(Turtle t, Closure closure);
+	public Link createLinkTo(Turtle t, Closure closure);
 
 	/**
 	 * Makes a undirected link between the caller and a turtle.
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkWith(Turtle t);
+	public Link createLinkWith(Turtle t);
 
 	/**
 	 * Makes an undirected link between the caller and a turtle then executes a
@@ -943,16 +948,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkWith(Turtle t, Closure closure);
+	public Link createLinkWith(Turtle t, Closure closure);
 
 	/**
 	 * Makes directed links from a collection of agents to the caller.
 	 * 
 	 * @param a
 	 *            a collection of agents
+	 * @return created links
 	 */
-	public void createLinksFrom(Collection<? extends Turtle> a);
+	public AgentSet createLinksFrom(Collection<? extends Turtle> a);
 
 	/**
 	 * Makes directed links from an agentset to the caller then executes a set
@@ -962,8 +969,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksFrom(AgentSet<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksFrom(AgentSet<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes directed links from a collection of agents to the caller then executes a
@@ -973,16 +981,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksFrom(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksFrom(Collection<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes directed links from the caller to a collection of agents.
 	 * 
 	 * @param a
 	 *            a collection of agents
+	 * @return created links
 	 */
-	public void createLinksTo(Collection<? extends Turtle> a);
+	public AgentSet createLinksTo(Collection<? extends Turtle> a);
 
 	/**
 	 * Makes directed links from the caller to an agentset then executes a set
@@ -992,8 +1002,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksTo(AgentSet<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksTo(AgentSet<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes directed links from the caller to a collection of agents then executes a
@@ -1003,8 +1014,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksTo(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksTo(Collection<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes undirected links between the caller and an agentset then executes a
@@ -1014,8 +1026,9 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksWith(AgentSet<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksWith(AgentSet<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes undirected links between the caller and a collection of agents then
@@ -1025,16 +1038,18 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksWith(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet createLinksWith(Collection<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes undirected links between the caller and a collection of agents.
 	 * 
 	 * @param a
 	 *            an collection of agents
+	 * @return created links
 	 */
-	public void createLinksWith(Collection<? extends Turtle> a);
+	public AgentSet createLinksWith(Collection<? extends Turtle> a);
 
 	/**
 	 * Queries if there is a directed link from a turtle to the caller.
