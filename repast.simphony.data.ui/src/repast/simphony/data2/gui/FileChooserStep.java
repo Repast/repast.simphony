@@ -33,14 +33,10 @@ public class FileChooserStep extends PanelWizardStep {
 	private static final long serialVersionUID = 2818149899413910157L;
 
 	public String getFileName() {
-		System.out.println(this.getDefaultFileExtension());
-		System.out.println(this.fileNameField.getText());
 		if (this.fileNameField.getText().endsWith(
 				this.getDefaultFileExtension())) {
-			System.out.println("10");
 			return this.fileNameField.getText();
 		} else {
-			System.out.println("20");
 			return this.fileNameField.getText()
 					+ this.getDefaultFileExtension();
 		}

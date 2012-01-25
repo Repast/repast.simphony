@@ -37,23 +37,23 @@ public class ORAWizard extends NetworkAnalysisPluginWizard {
 
 	}
 
-	private String createORAFile(Network network, String baseFileName)
+	private void createORAFile(Network network, String baseFileName)
 			throws FileNotFoundException, IOException {
 
-		String preferencesFileName = null;
+//		String preferencesFileName = null;
 		ORANetWriter writer = new ORANetWriter();
 
 		if (network instanceof JungNetwork) {
 			JungNetwork jungNetwork = (JungNetwork) network;
-			preferencesFileName = writer.save(jungNetwork.getName(),
+			writer.save(jungNetwork.getName(),
 					jungNetwork.getGraph(), baseFileName);
 		} else if (network instanceof ContextJungNetwork) {
 			ContextJungNetwork contextJungNetwork = (ContextJungNetwork) network;
-			preferencesFileName = writer.save(contextJungNetwork.getName(),
+			writer.save(contextJungNetwork.getName(),
 					contextJungNetwork.getGraph(), baseFileName);
 		}
 
-		return preferencesFileName;
+//		return preferencesFileName;
 
 	}
 
@@ -66,17 +66,16 @@ public class ORAWizard extends NetworkAnalysisPluginWizard {
 		List<Network> networks = networkStep.getChosenNetworks();
 		for (int i = 0; i < networks.size(); i++) {
 			try {
-				String preferencesFileName = createORAFile(networks.get(i),
-						this.getFileName());
-				if (preferencesFileName != null) {
-					commands.add(preferencesFileName);
-				}
+				createORAFile(networks.get(i), this.getFileName());
+//				if (preferencesFileName != null) {
+//					commands.add(preferencesFileName);
+//				}
 			} catch (FileNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Error" + e.getMessage());
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Error" + e.getMessage());
 			}
-
+			commands.add(this.getFileName());
 		}
 
 		return commands.toArray(new String[commands.size()]);

@@ -16,12 +16,12 @@ public class ORANetWriter {
 	private static MessageCenter LOG = MessageCenter
 			.getMessageCenter(ORANetWriter.class);
 
-	public String save(String title, Graph network, String fileName) {
+	public void save(String title, Graph network, String fileName) {
 
-		String userHomeDirectoryName = System.getProperty("user.home")
-				+ System.getProperty("file.separator");
-		String preferencesFileName = userHomeDirectoryName + ".OraPreferences";
-		String projectFileName = userHomeDirectoryName + ".oraProject.ows";
+//		String userHomeDirectoryName = System.getProperty("user.home")
+//				+ System.getProperty("file.separator");
+//		String preferencesFileName = userHomeDirectoryName + ".OraPreferences";
+//		String projectFileName = userHomeDirectoryName + ".oraProject.ows";
 
 		try {
 
@@ -121,27 +121,27 @@ public class ORANetWriter {
 			writer.println("</DynamicNetwork>");
 			writer.close();
 
-			writer = new PrintWriter(new File(projectFileName));
-			writer.println(xmlFileName);
-			writer.close();
-			
-			writer = new PrintWriter(new File(preferencesFileName));
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<PreferencesFile>");
-			writer.println("  <preference>");
-			writer.println("    <name>Restore Workspace</name>");
-			writer.println("    <class>java.lang.String</class>");
-			writer.println("    <value>Load Previous Workspace</value>");
-			writer.println("  </preference>");
-			writer.println("</PreferencesFile>");
-			writer.close();
+//			writer = new PrintWriter(new File(projectFileName));
+//			writer.println(xmlFileName);
+//			writer.close();
+//			
+//			writer = new PrintWriter(new File(preferencesFileName));
+//			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+//			writer.println("<PreferencesFile>");
+//			writer.println("  <preference>");
+//			writer.println("    <name>Restore Workspace</name>");
+//			writer.println("    <class>java.lang.String</class>");
+//			writer.println("    <value>Load Previous Workspace</value>");
+//			writer.println("  </preference>");
+//			writer.println("</PreferencesFile>");
+//			writer.close();
 			
 		} catch (FileNotFoundException e) {
 			LOG.error("ORA export file \"" + fileName
 					+ "\" could not be written: ", e);
 		}
 
-		return preferencesFileName;
+//		return preferencesFileName;
 
 	}
 
