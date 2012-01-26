@@ -201,9 +201,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param number
 	 *            a number
+	 * @return created turtles
 	 */
-	public void hatch(Number number) {
-		hatch(number, null);
+	public AgentSet hatch(Number number) {
+		return hatch(number, null);
 	}
 
 	/**
@@ -214,8 +215,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a number
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 */
-	public void hatch(Number number, Closure closure) {
+	public AgentSet hatch(Number number, Closure closure) {
 
 		AgentSet newTurtles = new AgentSet();
 		for (int i = 0; i < number.intValue(); i++) {
@@ -224,6 +226,7 @@ public abstract class AbstractTurtle implements Turtle {
 		if (closure != null) {
 			ask(newTurtles, closure);
 		}
+		return newTurtles;
 	}
 
 	/**
@@ -240,8 +243,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param number
 	 * @param closure
 	 * @param childType
+	 * @return created turtles
+	 * 
 	 */
-	public void hatch(Number number, Closure closure, String childType) {
+	public AgentSet hatch(Number number, Closure closure, String childType) {
 
 		AgentSet newTurtles = new AgentSet();
 		for (int i = 0; i < number.intValue(); i++) {
@@ -251,6 +256,7 @@ public abstract class AbstractTurtle implements Turtle {
 		if (closure != null) {
 			ask(newTurtles, closure);
 		}
+		return newTurtles;
 	}
 
 	/**
@@ -267,9 +273,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @param number
 	 * @param closure
 	 * @param childType
+	 * @return created turtles
 	 */
-	public void hatch(Number number, Closure closure, Class childType) {
-		hatch(number, closure, childType.getSimpleName());
+	public AgentSet hatch(Number number, Closure closure, Class childType) {
+		return hatch(number, closure, childType.getSimpleName());
 	}
 
 	/**
@@ -1630,9 +1637,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkFrom(Turtle t) {
-		createLinkFrom(t, null);
+	public Link createLinkFrom(Turtle t) {
+		return createLinkFrom(t, null);
 	}
 
 	/**
@@ -1643,14 +1651,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkFrom(Turtle t, Closure closure) {
+	public Link createLinkFrom(Turtle t, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		Link link = (Link) network.addEdge(t, this);
 
 		if (closure != null) {
 			ask(link, closure);
 		}
+		return link;
 	}
 
 	/**
@@ -1658,9 +1668,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkTo(Turtle t) {
-		createLinkTo(t, null);
+	public Link createLinkTo(Turtle t) {
+		return createLinkTo(t, null);
 	}
 
 	/**
@@ -1671,14 +1682,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkTo(Turtle t, Closure closure) {
+	public Link createLinkTo(Turtle t, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		Link link = (Link) network.addEdge(this, t);
 
 		if (closure != null) {
 			ask(link, closure);
 		}
+		return link;
 
 	}
 
@@ -1687,9 +1700,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param t
 	 *            a turtle
+	 * @return created link
 	 */
-	public void createLinkWith(Turtle t) {
-		createLinkWith(t, null);
+	public Link createLinkWith(Turtle t) {
+		return createLinkWith(t, null);
 	}
 
 	/**
@@ -1700,14 +1714,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a turtle
 	 * @param closure
 	 *            a set of commands
+	 * @return created link
 	 */
-	public void createLinkWith(Turtle t, Closure closure) {
+	public Link createLinkWith(Turtle t, Closure closure) {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
 		Link link = (Link) network.addEdge(this, t);
 
 		if (closure != null) {
 			ask(link, closure);
 		}
+		return link;
 	}
 
 	/**
@@ -1715,9 +1731,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param a
 	 *            a collection of agents
+	 * @return created links
 	 */
-	public void createLinksFrom(Collection<? extends Turtle> a) {
-		createLinksFrom(a, null);
+	public AgentSet createLinksFrom(Collection<? extends Turtle> a) {
+		return createLinksFrom(a, null);
 	}
 
 	/**
@@ -1728,16 +1745,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksFrom(AgentSet<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksFrom(AgentSet<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(t, this));
 		}
 		if (closure != null) {
-			ask(new AgentSet(links), closure);
+			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**
@@ -1748,16 +1767,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksFrom(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksFrom(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(t, this));
 		}
 		if (closure != null) {
 			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**
@@ -1765,9 +1786,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param a
 	 *            a collection of agents
+	 * @return created links
 	 */
-	public void createLinksTo(Collection<? extends Turtle> a) {
-		createLinksTo(a, null);
+	public AgentSet createLinksTo(Collection<? extends Turtle> a) {
+		return createLinksTo(a, null);
 	}
 
 	/**
@@ -1778,16 +1800,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksTo(AgentSet<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksTo(AgentSet<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(this, t));
 		}
 		if (closure != null) {
-			ask(new AgentSet(links), closure);
+			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**
@@ -1798,16 +1822,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksTo(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksTo(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(this, t));
 		}
 		if (closure != null) {
 			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**
@@ -1815,9 +1841,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param a
 	 *            an collection of agents
+	 * @return created links
 	 */
-	public void createLinksWith(Collection<? extends Turtle> a) {
-		createLinksWith(a, null);
+	public AgentSet createLinksWith(Collection<? extends Turtle> a) {
+		return createLinksWith(a, null);
 	}
 
 	/**
@@ -1828,16 +1855,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            an agentset
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksWith(AgentSet<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksWith(AgentSet<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(this, t));
 		}
 		if (closure != null) {
-			ask(new AgentSet(links), closure);
+			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**
@@ -1848,16 +1877,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a collection of agents
 	 * @param closure
 	 *            a set of commands
+	 * @return created links
 	 */
-	public void createLinksWith(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksWith(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
-		List links = new ArrayList();
+		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
 			links.add(network.addEdge(this, t));
 		}
 		if (closure != null) {
 			ask(links, closure);
 		}
+		return links;
 	}
 
 	/**

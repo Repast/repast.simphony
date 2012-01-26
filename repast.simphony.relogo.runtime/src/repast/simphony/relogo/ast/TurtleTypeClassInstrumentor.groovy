@@ -152,8 +152,9 @@ class TurtleTypeClassInstrumentor {
 	protected MethodNode observerCreateTypesMethod(){		
 		String methodName = 'create' + capitalize(pluralString)
 		String methodString = """
-					public void ${methodName}(int number, Closure closure = null){
-						this.crt(number,closure,'${pluralString}')
+					import repast.simphony.relogo.*
+					public AgentSet ${methodName}(int number, Closure closure = null){
+						return this.crt(number,closure,'${pluralString}')
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -162,8 +163,9 @@ class TurtleTypeClassInstrumentor {
 	protected MethodNode observerCreateOrderedTypesMethod(){
 		String methodName = 'createOrdered' + capitalize(pluralString)
 		String methodString = """
-					public void ${methodName}(int number, Closure closure = null){
-						this.cro(number,closure,'${pluralString}')
+					import repast.simphony.relogo.*
+					public AgentSet ${methodName}(int number, Closure closure = null){
+						return this.cro(number,closure,'${pluralString}')
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -173,8 +175,9 @@ class TurtleTypeClassInstrumentor {
 		String methodName = 'hatch' + capitalize(pluralString)
 		//log("    $methodName")
 		String methodString = """
-					public void ${methodName}(int number, Closure closure = null){
-						this.hatch(number,closure,'${pluralString}')
+					import repast.simphony.relogo.*
+					public AgentSet ${methodName}(int number, Closure closure = null){
+						return this.hatch(number,closure,'${pluralString}')
 					}
 					"""
 		return createMethodFromString(methodName,methodString)
@@ -184,8 +187,9 @@ class TurtleTypeClassInstrumentor {
 		String methodName = 'sprout' + capitalize(pluralString)
 		
 		String methodString = """
-					public void ${methodName}(int number, Closure closure = null){
-						this.sprout(number,closure,'${pluralString}')
+					import repast.simphony.relogo.*
+					public AgentSet ${methodName}(int number, Closure closure = null){
+						return this.sprout(number,closure,'${pluralString}')
 					}
 					"""
 		return createMethodFromString(methodName,methodString)

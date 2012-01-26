@@ -179,11 +179,12 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'From'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				Link link = this.getMyObserver().getNetwork('${className}').addEdge(t,this)
 				if (closure){
 					this.ask(link,closure)
 				}
+				return link;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -193,8 +194,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'From'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				System.err.println('Attention: The directed link method $methodName was called on the undirected link type ${capitalize(singularString)}.')
+				return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -204,14 +206,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'From'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(AgentSet a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(AgentSet a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(t,this))
 				}
 				if (closure){
-					this.ask(new AgentSet(links),closure)
+					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -221,14 +224,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'From'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(t,this))
 				}
 				if (closure){
 					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -238,8 +242,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'From'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
 				System.err.println('Attention: The directed link method $methodName was called on the undirected link type ${capitalize(singularString)}.')
+				return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -249,11 +254,12 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'To'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				Link link = this.getMyObserver().getNetwork('${className}').addEdge(this,t)
 				if (closure){
 					this.ask(link,closure)
 				}
+				return link;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -263,8 +269,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'To'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				System.err.println('Attention: The directed link method $methodName was called on the undirected link type ${capitalize(singularString)}.')
+				return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -274,14 +281,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'To'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(AgentSet a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(AgentSet a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(this,t))
 				}
 				if (closure){
-					this.ask(new AgentSet(links),closure)
+					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -291,14 +299,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'To'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(this,t))
 				}
 				if (closure){
 					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -308,8 +317,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'To'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
 				System.err.println('Attention: The directed link method $methodName was called on the undirected link type ${capitalize(singularString)}.')
+				return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -319,11 +329,12 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'With'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				Link link = this.getMyObserver().getNetwork('${className}').addEdge(this,t)
 				if (closure){
 					this.ask(link,closure)
 				}
+				return link;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -333,8 +344,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(singularString) + 'With'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Turtle t, Closure closure = null){
+			public Link ${methodName}(Turtle t, Closure closure = null){
 				System.err.println('Attention: The undirected link method $methodName was called on the directed link type ${capitalize(singularString)}.')
+				return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -344,14 +356,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'With'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(AgentSet a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(AgentSet a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(this,t))
 				}
 				if (closure){
-					this.ask(new AgentSet(links),closure)
+					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -361,14 +374,15 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'With'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
-				List links = new ArrayList()
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
+				AgentSet links = new AgentSet()
 				for(Turtle t : a){
 					links.add(this.getMyObserver().getNetwork('${className}').addEdge(this,t))
 				}
 				if (closure){
 					this.ask(links,closure)
 				}
+				return links;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)
@@ -378,8 +392,9 @@ class LinkTypeClassInstrumentor {
 		String methodName = 'create' + capitalize(pluralString) + 'With'
 		String methodString = """
 			import repast.simphony.relogo.*
-			public void ${methodName}(Collection a, Closure closure = null){
+			public AgentSet ${methodName}(Collection a, Closure closure = null){
 					System.err.println('Attention: The undirected link method $methodName was called on the directed link type ${capitalize(singularString)}.')
+					return null;
 			}
 			"""
 		return createMethodFromString(methodName,methodString)

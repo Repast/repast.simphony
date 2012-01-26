@@ -769,9 +769,10 @@ public abstract class AbstractPatch implements Patch {
 	 * 
 	 * @param number
 	 *            a number
+	 * @return created turtles
 	 */
-	public void sprout(Number number) {
-		sprout(number, null);
+	public AgentSet sprout(Number number) {
+		return sprout(number, null);
 	}
 
 	/**
@@ -782,9 +783,10 @@ public abstract class AbstractPatch implements Patch {
 	 *            a number
 	 * @param closure
 	 *            a set of commands
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure) {
-		sprout(number, null, "default");
+	public AgentSet sprout(Number number, Closure closure) {
+		return sprout(number, null, "default");
 	}
 
 	/**
@@ -797,8 +799,9 @@ public abstract class AbstractPatch implements Patch {
 	 *            a set of commands
 	 * @param turtleType
 	 *            a turtle type
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure, String turtleType) {
+	public AgentSet sprout(Number number, Closure closure, String turtleType) {
 
 		AgentSet newTurtles = new AgentSet();
 
@@ -809,6 +812,7 @@ public abstract class AbstractPatch implements Patch {
 		if (closure != null) {
 			ask(newTurtles, closure);
 		}
+		return newTurtles;
 	}
 	
 	/**
@@ -821,9 +825,10 @@ public abstract class AbstractPatch implements Patch {
 	 *            a set of commands
 	 * @param turtleType
 	 *            a turtle class
+	 * @return created turtles
 	 */
-	public void sprout(Number number, Closure closure, Class turtleType) {
-		sprout(number, closure, turtleType.getSimpleName());
+	public AgentSet sprout(Number number, Closure closure, Class turtleType) {
+		return sprout(number, closure, turtleType.getSimpleName());
 	}
 
 	/**
