@@ -11,6 +11,8 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
@@ -54,9 +56,15 @@ import repast.simphony.visualization.editor.EditorFactory;
 import repast.simphony.visualization.gis3D.GazetteerPanel;
 import repast.simphony.visualization.gis3D.LayerPanel;
 import repast.simphony.visualization.gis3D.WMSLayerManagerFrame;
+import repast.simphony.visualization.gis3D.WWUtils;
 
 public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
 
+	 static {
+	    // this seems to fix jogl canvas flicker issues on windows
+	    System.setProperty("sun.awt.noerasebackground", "true");
+	  }
+	
   private static final String ANAGLYPH_ICON = "3d_smiley.png";
   private static final String WMS_ICON = "wms2.png";
 
@@ -99,12 +107,15 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     wwglCanvas = new WorldWindowGLCanvas();
     wwglCanvas.setModel(model);
     
+    // Create and install the view controls layer and register a controller for it with the World Window.
+    ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
+    WWUtils.insertBeforeCompass(wwglCanvas, viewControlsLayer);
+    wwglCanvas.addSelectListener(new ViewControlsSelectListener(wwglCanvas, viewControlsLayer));
 
     StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
     asc.setStereoMode(this.displayMode);
 
     initListener();
-
   }
 
   /**
