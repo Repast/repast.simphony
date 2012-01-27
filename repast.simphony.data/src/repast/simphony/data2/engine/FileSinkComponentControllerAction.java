@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import repast.simphony.data2.BatchParamMapFileWriter;
+import repast.simphony.data2.BatchRunDataSource;
 import repast.simphony.data2.DataConstants;
 import repast.simphony.data2.DataSetManager;
 import repast.simphony.data2.DataSetRegistry;
@@ -92,6 +93,15 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
       FileNameFormatter fnFormatter = new FileNameFormatter(descriptor.getFileName(), descriptor.isAddTimeStamp());
       FileDataSinkBuilder sinkBuilder = new FileDataSinkBuilder(descriptor.getName(), fnFormatter, descriptor.getDelimiter(),
           descriptor.getFormat());
+      
+      // if the file sink doesn't have the batch run data source
+      // and we are in batch mode, then add the batch run data source.
+      // Note: the BatchRunDataSource will be automatically added in the DataSetComponentControllerAction
+      // when we are in batch mode.
+      if (runState.getRunInfo().isBatch() && !descriptor.getSourceIds().contains(BatchRunDataSource.ID)) {
+        sinkBuilder.addSource(BatchRunDataSource.ID);
+      }
+      
       for (String sourceId : descriptor.getSourceIds()) {
         sinkBuilder.addSource(sourceId);
       }
