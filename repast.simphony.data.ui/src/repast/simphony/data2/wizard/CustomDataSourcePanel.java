@@ -173,6 +173,7 @@ public class CustomDataSourcePanel extends JPanel {
   }
 
   public void apply(DataSetDescriptor descriptor) {
+    descriptor.clearCustomDataSources();
     DefaultListModel model = (DefaultListModel) list.getModel();
     if (dsType == DataSetType.AGGREGATE) {
       for (int i = 0; i < model.size(); i++) {

@@ -108,6 +108,7 @@ public class AggMethodTableModel extends AbstractTableModel {
 
   public void apply(DataSetDescriptor descriptor) {
     descriptor.clearMethodDataSources();
+    descriptor.clearCountDataSources();
     for (MethodDataSourceDefinition def : items) {
       if (def.getId().trim().length() == 0) throw new IllegalArgumentException("Missing data source name. Each data source must be named.");
       if (def.getAggregateOp() == AggregateOp.COUNT) {
