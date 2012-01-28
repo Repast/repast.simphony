@@ -33,15 +33,6 @@ public class JavaUtility {
 		
 	}
 	
-	public static void askAgentSet(Closure cl, AgentSet a){
-		cl.setResolveStrategy(Closure.DELEGATE_FIRST);
-		ArrayList temp = new ArrayList(a);
-		Collections.shuffle(temp);
-		for (Object o : temp){
-			cl.setDelegate(o);
-			cl.call(o);
-		}
-	}
 	
 //	public static void diffuseMatrix(DoubleMatrix2D m2d, double num){
 //		final double number = num;
