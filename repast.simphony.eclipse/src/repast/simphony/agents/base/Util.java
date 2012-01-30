@@ -532,6 +532,12 @@ public class Util {
 			launchConfigurationWorkingCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 					"-Xss10M -Xmx400M");
+			
+			// add the ant classpath
+			launchConfigurationWorkingCopy.setAttribute(
+					IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
+					"org.eclipse.ant.ui.AntClasspathProvider");
+			
 			favoritesList = launchConfigurationWorkingCopy.getAttribute(
 					IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
 			if (favoritesList == null)
@@ -780,6 +786,12 @@ public class Util {
 			launchConfigurationWorkingCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 					"-Xss10M -Xmx400M");
+			
+		  // add the ant classpath
+			launchConfigurationWorkingCopy.setAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
+						"org.eclipse.ant.ui.AntClasspathProvider");
+			
 			favoritesList = launchConfigurationWorkingCopy.getAttribute(
 					IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
 			if (favoritesList == null)
