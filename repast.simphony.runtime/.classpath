@@ -2,37 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="buildtools"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-antlr.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-bcel.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-bsf.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-log4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-oro.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-regexp.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-apache-resolver.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-commons-logging.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-commons-net.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-jai.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-javamail.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-jdepend.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-jmf.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-jsch.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-junit.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-netrexx.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-nodeps.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-starteam.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-stylebook.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-swing.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-testutil.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-trax.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant-weblogic.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-cglib-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/junit-3.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/junit-addons-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saf.core.runtime.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf-boot.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
