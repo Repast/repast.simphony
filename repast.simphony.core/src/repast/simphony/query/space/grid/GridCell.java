@@ -39,7 +39,7 @@ public class GridCell<T> {
    */
   @SuppressWarnings("unchecked")
   void addObject(Object obj) {
-    if (obj.getClass().isAssignableFrom(clazz)) {
+    if (clazz.isAssignableFrom(obj.getClass())) {
       objs.add((T)obj);
     }
   }
