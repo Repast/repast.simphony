@@ -17,7 +17,10 @@
 		<property name="GroovyLibDirectory" value="${GroovyHomeDirectory}lib" />
 		<echo message="GroovyLibDirectory = ${GroovyLibDirectory}" />
 		<fileset dir="${GroovyLibDirectory}" id="gAll.jar">
-			<filename regex="groovy-all-[0-9]+\.[0-9]+\.[0-9]+\.jar" />
+			<filename name="groovy-all-*.jar" />
+			<not>
+				<filename name="groovy-all-*-sources.jar" />
+			</not>
 		</fileset>
 		<property name="Groovy_All_Jar" refid="gAll.jar" />
 		<echo message="Groovy_All_Jar = ${Groovy_All_Jar}" />
