@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="buildtools"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-cglib-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/junit-3.8.1.jar"/>

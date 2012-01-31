@@ -105,7 +105,6 @@ Export-Package:
  org.jmock.util,
  org.xmlpull.mxp1,
  org.xmlpull.v1,
- repast.simphony.ant,
  repast.simphony.plugin,
  repast.simphony.runtime,
  saf.core.runtime,
@@ -114,4 +113,3 @@ Export-Package:
  simphony.util.error,
  simphony.util.messages
 Bundle-Vendor: %providerName
-Require-Bundle: org.apache.ant;bundle-version="1.8.2"
