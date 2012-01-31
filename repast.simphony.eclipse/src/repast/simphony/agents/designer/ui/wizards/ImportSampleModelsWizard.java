@@ -30,6 +30,7 @@ public class ImportSampleModelsWizard extends Wizard implements IImportWizard, I
 		IPath eclipseHome = JavaCore.getClasspathVariable("ECLIPSE_HOME");
 		String eclipseHomeString = eclipseHome.toOSString();
 		this.wizard = new ExternalProjectImportWizard(eclipseHomeString + File.separator + ".." + File.separator +"models");
+		
 	}
 
 	@Override

@@ -234,9 +234,9 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard
-            class="repast.simphony.agents.designer.ui.wizards.ImportSampleModelsWizard"
+            class="repast.simphony.agents.designer.ui.wizards.ImportSampleModelsWizard2"
             id="repast.simphony.eclipse.modelswizard"
-            name="Import Sample Model">
+            name="Import Repast Example Models">
       </wizard>
    </extension>
    <extension
