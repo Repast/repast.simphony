@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import repast.simphony.random.RandomHelper;
+import repast.simphony.util.SimUtilities;
+
 public abstract class AbstractAgentSet<E extends ReLogoAgent> extends ArrayList<E> {
 	
 	/**
@@ -24,7 +27,7 @@ public abstract class AbstractAgentSet<E extends ReLogoAgent> extends ArrayList<
 	public void askAgentSet(Closure cl){
 		cl.setResolveStrategy(Closure.DELEGATE_FIRST);
 		ArrayList<ReLogoAgent> temp = new ArrayList<ReLogoAgent>(this);
-		Collections.shuffle(temp);
+		SimUtilities.shuffle(temp, RandomHelper.getUniform());
 		for (ReLogoAgent o : temp){
 			cl.setDelegate(o);
 			cl.call(o);

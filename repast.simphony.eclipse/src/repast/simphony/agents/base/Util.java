@@ -501,7 +501,7 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 			else if (SystemUtils.IS_OS_WINDOWS)
 				launchConfigurationWorkingCopy
@@ -513,7 +513,7 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${file_prompt:the Installer Output File Name:setup.jar}\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 			// for non-Windows or Mac
 			else
@@ -526,12 +526,18 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${file_prompt:the Installer Output File Name:setup.jar}\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 
 			launchConfigurationWorkingCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 					"-Xss10M -Xmx400M");
+			
+			// add the ant classpath
+			launchConfigurationWorkingCopy.setAttribute(
+					IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
+					"org.eclipse.ant.ui.AntClasspathProvider");
+			
 			favoritesList = launchConfigurationWorkingCopy.getAttribute(
 					IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
 			if (favoritesList == null)
@@ -749,7 +755,7 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 			else if (SystemUtils.IS_OS_WINDOWS)
 				launchConfigurationWorkingCopy
@@ -761,7 +767,7 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${file_prompt:the Installer Output File Name:setup.jar}\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 			// for non-Windows or Mac
 			else
@@ -774,12 +780,18 @@ public class Util {
 										+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
 										+ "${file_prompt:the Installer Output File Name:setup.jar}\" "
 										+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-										+ "-DGroovyHomeDirectory=\"${groovy_home}\""
+										+ " -DGroovyHomeDirectory=\"${groovy_home}\""
 										+ " -DREPAST_VERSION=${REPAST_VERSION}");
 
 			launchConfigurationWorkingCopy.setAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 					"-Xss10M -Xmx400M");
+			
+		  // add the ant classpath
+			launchConfigurationWorkingCopy.setAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
+						"org.eclipse.ant.ui.AntClasspathProvider");
+			
 			favoritesList = launchConfigurationWorkingCopy.getAttribute(
 					IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
 			if (favoritesList == null)

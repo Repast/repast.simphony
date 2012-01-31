@@ -18,17 +18,6 @@ public class AgentSet<E> extends AbstractAgentSet<E>{
 	public AgentSet(Collection<E> c){
 		super(c)
 	}
-
-/*	public void askAgentSet(Closure cl){
-//		JavaUtility.askAgentSet(cl, this);
-		cl.resolveStrategy = Closure.DELEGATE_FIRST
-		ArrayList temp = new ArrayList(this)
-		Collections.shuffle(temp)
-		for (Object o : temp){
-			cl.delegate = o
-			cl.call(o)
-		}
-	}*/
 	
 	/**
      * Reports a new agentset containing only those agents that have the minimum value of the given reporter.

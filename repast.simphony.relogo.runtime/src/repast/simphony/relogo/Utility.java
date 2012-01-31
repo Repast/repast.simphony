@@ -45,6 +45,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.ui.RSApplication;
+import repast.simphony.util.SimUtilities;
 import repast.simphony.util.collections.FilteredIterator;
 
 /**
@@ -924,7 +925,7 @@ public class Utility {
 	 */
 	public static ArrayList shuffle(List a) {
 		ArrayList result = new ArrayList(a);
-		java.util.Collections.shuffle(result);
+		SimUtilities.shuffle(result, RandomHelper.getUniform());
 		return result;
 	}
 
@@ -1511,7 +1512,7 @@ public class Utility {
 			System.err.println("minOneOf expects a collection of ReLogoAgents.");
 			return null;
 		}
-		Collections.shuffle(b);
+		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		if (caller != null) {
 			for (ReLogoAgent o : b) {
 				o.setMyself(caller);
@@ -1561,7 +1562,7 @@ public class Utility {
 			System.err.println("minNOf expects a collection of ReLogoAgents.");
 			return new AgentSet();
 		}
-		Collections.shuffle(b);
+		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		if (caller != null) {
 			for (ReLogoAgent o : b) {
 				o.setMyself(caller);
@@ -1611,7 +1612,7 @@ public class Utility {
 			System.err.println("maxOneOf expects a collection of ReLogoAgents.");
 			return null;
 		}
-		Collections.shuffle(b);
+		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		if (caller != null) {
 			for (ReLogoAgent o : b) {
 				o.setMyself(caller);
@@ -1661,7 +1662,7 @@ public class Utility {
 			System.err.println("maxNOf expects a collection of ReLogoAgents.");
 			return new AgentSet();
 		}
-		Collections.shuffle(b);
+		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		if (caller != null) {
 			for (ReLogoAgent o : b) {
 				o.setMyself(caller);
@@ -1913,7 +1914,7 @@ public class Utility {
 			return a;
 		}
 		AgentSet b = new AgentSet(a);
-		Collections.shuffle(b);
+		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		b.subList(number, size).clear();
 		return b;
 	}
@@ -1937,7 +1938,7 @@ public class Utility {
 		for (int i = 0; i < number; i++) {
 			indices.add(i);
 		}
-		Collections.shuffle(indices);
+		SimUtilities.shuffle(indices, RandomHelper.getUniform());
 		indices.subList(number, size).clear();
 		Collections.sort(indices);
 		ArrayList result = new ArrayList();

@@ -7,7 +7,7 @@
 ; user the modern UI
 !include "MUI.nsh"
 
-!define VERSION "2.0-beta"
+!define VERSION "2.0"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
