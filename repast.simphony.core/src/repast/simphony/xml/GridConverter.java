@@ -29,9 +29,11 @@ public class GridConverter extends AbstractConverter {
     writeString("adder", grid.getAdder().getClass().getName(), writer);
     writeString("translator", grid.getGridPointTranslator().getClass().getName(), writer);
     int[] dims = grid.getDimensions().toIntArray(null);
-    writeObject("dims", dims, writer, mContext);
+    //writeObject("dims", dims, writer, mContext);
+    writeString("dims", arrayToString(dims), writer);
     int[] origin = grid.getDimensions().originToIntArray(null);
-    writeObject("origin", origin, writer, mContext);
+    //writeObject("origin", origin, writer, mContext);
+    writeString("origin", arrayToString(origin), writer);
     
     writeString("multi", String.valueOf(grid.getCellAccessor().allowsMultiOccupancy()), writer);
 
@@ -56,8 +58,8 @@ public class GridConverter extends AbstractConverter {
       Class transClass = Class.forName(readNextString(reader));
       GridPointTranslator trans = (GridPointTranslator) transClass.newInstance();
 
-      int[] dims = (int[]) readNextObject(context, reader, umContext);      
-      int[] origin = (int[]) readNextObject(context, reader, umContext);
+      int[] dims = stringToIntArray(readNextString(reader));   //(int[]) readNextObject(context, reader, umContext);      
+      int[] origin = stringToIntArray(readNextString(reader)); //(int[]) readNextObject(context, reader, umContext);
       
       boolean multi = Boolean.valueOf(readNextString(reader));
 
@@ -69,13 +71,16 @@ public class GridConverter extends AbstractConverter {
         Pair pair = (Pair) readNextObject(grid, reader, umContext);
         GridPoint point = (GridPoint) pair.getSecond();
         if (point != null) {
+          if (!context.contains(pair.getFirst())) {
+            context.add(pair.getFirst());
+          }
           grid.moveTo(pair.getFirst(), point.toIntArray(null));
         }
       }
 
       return grid;
     } catch (Exception ex) {
-      throw new ConversionException("Error deserializing Geography", ex);
+      throw new ConversionException("Error deserializing Grid", ex);
     }
 
   }

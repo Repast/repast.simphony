@@ -82,6 +82,7 @@ public class XMLSerializer {
     xstream.registerConverter(new ContinuousValueLayerConverter());
     xstream.alias("root", Root.class);
     //xstream.registerConverter(new FastMethodConvertor(xstream));
+    xstream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
   }
 
   /**

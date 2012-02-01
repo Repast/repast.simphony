@@ -34,8 +34,9 @@ public class ContinuousValueLayerConverter extends AbstractConverter {
       writeString("name", layer.getName(), writer);
       writeString("defaultValue", String.valueOf(defVal), writer);
       double[] dims = layer.getDimensions().toDoubleArray(null);
-      writeObject("dims", dims, writer, mContext);
-
+      //writeObject("dims", dims, writer, mContext);
+      writeString("dims", arrayToString(dims), writer);
+      
       field = ContinuousValueLayer.class.getDeclaredField("locationMap");
       field.setAccessible(true);
       Map<NdPoint, Double> map = (Map<NdPoint, Double>) field.get(layer);
@@ -60,7 +61,7 @@ public class ContinuousValueLayerConverter extends AbstractConverter {
       String strVal = readNextString(reader);
       double defVal = Double.parseDouble(strVal);
 
-      double[] dims = (double[]) readNextObject(context, reader, umContext);
+      double[] dims = stringToDblArray(readNextString(reader)); //(double[]) readNextObject(context, reader, umContext);
 
       ContinuousValueLayer layer = new ContinuousValueLayer(name, defVal, true, dims);
       context.addValueLayer(layer);

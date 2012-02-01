@@ -27,9 +27,10 @@ public class NetworkConverter extends AbstractConverter {
   public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mContext) {
     Network network = (Network) o;
     writeString("name", network.getName(), writer);
-//    writeString("edgeCreator", network.getEdgeCreator().getClass().getName(), writer);
-    writeObject("edgeCreator", network.getEdgeCreator(), writer, mContext);
     writeString("isDirected", String.valueOf(network.isDirected()), writer);
+//    writeString("edgeCreator", network.getEdgeCreator().getClass().getName(), writer);
+    
+    writeObject("edgeCreator", network.getEdgeCreator(), writer, mContext);
     writeString("edgeCount", String.valueOf(network.getDegree()), writer);
     for (RepastEdge edge : (Iterable<RepastEdge>) network.getEdges()) {
       writeObject("edge", edge, writer, mContext);
@@ -41,22 +42,25 @@ public class NetworkConverter extends AbstractConverter {
     try {
       Context context = (Context) umContext.get(Keys.CONTEXT);
       String name = readNextString(reader);
-//      String edgeCreator = readNextString(reader);
-      EdgeCreator creator = (EdgeCreator)readNextObject(umContext.currentObject(), reader, umContext);
+      
       boolean isDirected = Boolean.parseBoolean(readNextString(reader));
-//      EdgeCreator creator = (EdgeCreator) Class.forName(edgeCreator).newInstance();
+      DelegatingEdgeCreator creator = new DelegatingEdgeCreator();
       Network network = NetworkFactoryFinder.createNetworkFactory(null).createNetwork(name, context,
               isDirected, creator);
+      
+      creator.initDelegate((EdgeCreator)readNextObject(network, reader, umContext));
 
       int edgeCount = Integer.valueOf(readNextString(reader));
       for (int i = 0; i < edgeCount; i++) {
         RepastEdge edge = (RepastEdge) readNextObject(network, reader, umContext);
+        if (!context.contains(edge.getSource())) context.add(edge.getSource());
+        if (!context.contains(edge.getTarget())) context.add(edge.getTarget());
         network.addEdge(edge);
       }
 
       return network;
     } catch (Exception ex) {
-      throw new ConversionException("Error reading EdgeCreator", ex);
+      throw new ConversionException("Error reading Network", ex);
     }
 
   }

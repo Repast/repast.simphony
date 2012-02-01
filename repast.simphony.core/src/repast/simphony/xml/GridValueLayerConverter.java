@@ -30,25 +30,6 @@ public class GridValueLayerConverter extends AbstractConverter {
   public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mContext) {
     try {
     	
-    /*
-     * Grid grid = (Grid) o;
-    writeString("name", grid.getName(), writer);
-    writeString("adder", grid.getAdder().getClass().getName(), writer);
-    writeString("translator", grid.getGridPointTranslator().getClass().getName(), writer);
-    int[] dims = grid.getDimensions().toIntArray(null);
-    writeObject("dims", dims, writer, mContext);
-    int[] origin = grid.getDimensions().originToIntArray(null);
-    writeObject("origin", origin, writer, mContext);
-    
-    writeString("multi", String.valueOf(grid.getCellAccessor().allowsMultiOccupancy()), writer);
-
-    writeString("item_count", String.valueOf(grid.size()), writer);
-    for (Object obj : grid.getObjects()) {
-      GridPoint point = grid.getLocation(obj);
-      Pair p = new Pair(obj, point);
-      writeObject("grid_entry", p, writer, mContext);
-    }
-    */
       GridValueLayer grid = (GridValueLayer) o;
       Field field = GridValueLayer.class.getDeclaredField("dense");
       field.setAccessible(true);
@@ -57,9 +38,11 @@ public class GridValueLayerConverter extends AbstractConverter {
       writeString("dense", dense.toString(), writer);
       writeString("translator", grid.getGridPointTranslator().getClass().getName(), writer);
       int[] dims = grid.getDimensions().toIntArray(null);
-      writeObject("dims", dims, writer, mContext);
+      //writeObject("dims", dims, writer, mContext);
+      writeString("dims", arrayToString(dims), writer);
       int[] origin = grid.getDimensions().originToIntArray(null);
-      writeObject("origin", origin, writer, mContext);
+      //writeObject("origin", origin, writer, mContext);
+      writeString("origin", arrayToString(origin), writer);
 
       int[] pt = new int[dims.length];
       pt[dims.length - 1] = -1;
@@ -123,8 +106,8 @@ public class GridValueLayerConverter extends AbstractConverter {
       Class transClass = Class.forName(readNextString(reader));
       GridPointTranslator trans = (GridPointTranslator) transClass.newInstance();
 
-      int[] dims = (int[]) readNextObject(context, reader, umContext);
-      int[] origin = (int[]) readNextObject(context, reader, umContext);
+      int[] dims = stringToIntArray(readNextString(reader));   //(int[]) readNextObject(context, reader, umContext);
+      int[] origin = stringToIntArray(readNextString(reader)); //(int[]) readNextObject(context, reader, umContext);
 
       GridValueLayer grid = new GridValueLayer(name, 0.0, dense, trans, dims, origin);
       context.addValueLayer(grid);

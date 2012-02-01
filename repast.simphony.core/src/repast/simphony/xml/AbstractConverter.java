@@ -17,7 +17,43 @@ import java.util.Map;
  */
 public abstract class AbstractConverter implements Converter {
 
-  protected Map<String, Class> classMap = new HashMap<String, Class>();
+  protected Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+  
+  protected String arrayToString(double[] vals) {
+    StringBuilder buf = new StringBuilder();
+    for (double val : vals) {
+      buf.append(val);
+      buf.append(" ");
+    }
+    return buf.toString().trim();
+  }
+  
+  protected double[] stringToDblArray(String val) {
+    String[] vals = val.split(" ");
+    double[] ret = new double[vals.length];
+    for (int i = 0; i < vals.length; i++) {
+      ret[i] = Double.parseDouble(vals[i]);
+    }
+    return ret;
+  }
+  
+  protected String arrayToString(int[] vals) {
+    StringBuilder buf = new StringBuilder();
+    for (int val : vals) {
+      buf.append(val);
+      buf.append(" ");
+    }
+    return buf.toString().trim();
+  }
+  
+  protected int[] stringToIntArray(String val) {
+    String[] vals = val.split(" ");
+    int[] ret = new int[vals.length];
+    for (int i = 0; i < vals.length; i++) {
+      ret[i] = Integer.parseInt(vals[i]);
+    }
+    return ret;
+  }
 
   /**
    * Gets the next object in the tree. The object must have
@@ -50,9 +86,9 @@ public abstract class AbstractConverter implements Converter {
     return val;
   }
 
-  private Class findClass(HierarchicalStreamReader reader) throws ClassNotFoundException {
+  private Class<?> findClass(HierarchicalStreamReader reader) throws ClassNotFoundException {
     String name = reader.getAttribute("class");
-    Class clazz = classMap.get(name);
+    Class<?> clazz = classMap.get(name);
     if (clazz == null) {
       clazz = Class.forName(name);
       classMap.put(name, clazz);

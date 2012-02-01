@@ -61,6 +61,7 @@ public class GeographyConverter extends AbstractConverter {
       for (int i = 0; i < geomCount; i++) {
         Pair pair = (Pair) readNextObject(geog, reader, umContext);
         Geometry geom = wktReader.read(pair.getSecond().toString());
+        if (!context.contains(pair.getFirst())) context.add(pair.getFirst());
         geog.move(pair.getFirst(), geom);
       }
 

@@ -126,7 +126,7 @@ public abstract class AbstractGrid<T, U> extends DefaultProjection<T> implements
     PointHolder holder = agentLocationMap.get(object);
     if (holder == null) {
       throw new SpatialException("Object '" + object +
-              "' must be added to the space's context before it can be moved");
+              "' must be added to the grid's context before it can be moved");
     }
 
     if (newLocation.length != dimensions.size()) {

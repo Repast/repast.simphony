@@ -25,6 +25,8 @@ public class SpaceConverter extends AbstractConverter {
   public boolean canConvert(Class aClass) {
     return aClass.equals(ContextSpace.class);
   }
+  
+  
 
   public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext mContext) {
     ContinuousSpace space = (ContinuousSpace) o;
@@ -32,9 +34,11 @@ public class SpaceConverter extends AbstractConverter {
     writeString("adder", space.getAdder().getClass().getName(), writer);
     writeString("translator", space.getPointTranslator().getClass().getName(), writer);
     double[] dims = space.getDimensions().toDoubleArray(null);
-    writeObject("dims", dims, writer, mContext);
+    //writeObject("dims", dims, writer, mContext);
+    writeString("dims", arrayToString(dims), writer);
     double[] origin = space.getDimensions().originToDoubleArray(null);
-    writeObject("origin", origin, writer, mContext);
+    //writeObject("origin", origin, writer, mContext);
+    writeString("origin", arrayToString(origin), writer);
     writeString("item_count", String.valueOf(space.size()), writer);
     for (Object obj : space.getObjects()) {
       NdPoint point = space.getLocation(obj);
@@ -56,24 +60,28 @@ public class SpaceConverter extends AbstractConverter {
       Class transClass = Class.forName(readNextString(reader));
       PointTranslator trans = (PointTranslator) transClass.newInstance();
 
-      double[] dims = (double[]) readNextObject(context, reader, umContext);
-      double[] origin = (double[]) readNextObject(context, reader, umContext);
-
+      double[] dims = stringToDblArray(readNextString(reader));   //(double[]) readNextObject(null, reader, umContext);
+      double[] origin = stringToDblArray(readNextString(reader)); //(double[]) readNextObject(null, reader, umContext);
+      
       ContinuousSpace space = ContinuousSpaceFactoryFinder.createContinuousSpaceFactory(null).
               createContinuousSpace(name, context, cAdder, trans, dims, origin);
-
+      
+      
       int itemCount = Integer.valueOf(readNextString(reader));
       for (int i = 0; i < itemCount; i++) {
         Pair pair = (Pair) readNextObject(space, reader, umContext);
         NdPoint point = (NdPoint) pair.getSecond();
         if (point != null) {
+          if (!context.contains(pair.getFirst())) {
+            context.add(pair.getFirst());
+          }
           space.moveTo(pair.getFirst(), point.toDoubleArray(null));
         }
       }
 
       return space;
     } catch (Exception ex) {
-      throw new ConversionException("Error deserializing Geography", ex);
+      throw new ConversionException("Error deserializing ContinuousSpace", ex);
     }
 
   }

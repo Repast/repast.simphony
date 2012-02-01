@@ -94,6 +94,7 @@ public class DefaultContextConverter extends AbstractConverter implements Conver
       Object typeID = readNextObject(context, reader, umContext);
       context.setTypeID(typeID);
 
+      umContext.put(Keys.CONTEXT, context);
       int size = Integer.parseInt(readNextString(reader));
       for (int i = 0; i < size; i++) {
         context.add(readNextObject(context, reader, umContext));
