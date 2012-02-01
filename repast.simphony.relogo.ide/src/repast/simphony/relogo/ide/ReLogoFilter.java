@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class ReLogoFilter extends ViewerFilter {
 
-	String[] filterStrings = {"*.rs","*.log","**.context","**.style","**.factories","Repast.settings","MessageCenter.log4j.properties","license.txt","model_description.txt","launchers","batch", "builders", "docs", "freezedried_data", "icons", "installer", "integration", "launchers", "lib", "misc", "repast-licenses", "output", "transferFiles"};
+	String[] filterStrings = {"*.rs","*.log","**.context","**.style","**.factories","Repast.settings","MessageCenter.log4j.properties","license.txt","model_description.txt","launchers","batch", "builders", "docs", "freezedried_data", "icons", "installer", "integration", "launchers", "lib", "misc", "repast-licenses", "output", "transferFiles","Groovy DSL Support"};
 //	String[] filterEndings = {".rs",".log"};
 	NamePatternFilter npf = new NamePatternFilter();
 	LibraryFilter lf = new LibraryFilter();
