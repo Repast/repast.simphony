@@ -96,8 +96,6 @@ public class ListSetterCreator extends AbstractParameterSetterCreator {
   private void doInit() throws ParameterFormatException {
     valueType = attributes.getValue(VALUE_TYPE);
 		String values = attributes.getValue(VALUES);
-		
-		System.out.println("doInit "+valueType+" "+values);
 
 		if (valueType.equalsIgnoreCase("String")  || valueType.equalsIgnoreCase("java.lang.String") ) {
 			 vals = ListTokenizer.parseStringValues(values);

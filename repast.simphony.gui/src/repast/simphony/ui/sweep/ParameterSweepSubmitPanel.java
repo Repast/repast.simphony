@@ -623,7 +623,26 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 				}
 			} else if (psi.getSelectedType().equals(ParameterSweepInput.LIST)) {
 				String[] lVals = psi.getValues()[0].split(" ");
+				boolean inQuote = false;
+				boolean badQuote = false;
 				for (String v : lVals) {
+					if (v.startsWith("&quot;")) {
+						if (v.endsWith("&quot;")) {
+							// we are ok and there are no state changes
+						} else {
+							if (inQuote)
+								badQuote = true;
+							inQuote = true;
+						}
+					} else if (v.endsWith("&quot;")) {
+						if (inQuote)
+							inQuote = false;
+						else
+							badQuote = true;
+
+					} else if (v.contains("&quot;")) {
+						badQuote = true;
+					}
 					try {
 						o = details.getConverter().fromString(v);
 					} catch (Exception e) {
@@ -634,6 +653,12 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 						canRun = false;
 					}
 				}
+				if (badQuote || inQuote) {
+					JOptionPane.showMessageDialog(this, "Improper use of double quotes "+psi.getDisplayName(), 
+							"Incorrect Parameter Value", JOptionPane.ERROR_MESSAGE);
+					canRun = false;
+				}
+
 			} else if (psi.getSelectedType().equals(ParameterSweepInput.NUMBER)) {
 				String[] steps = {"From", "To", "Step"};
 				for (int i = 0; i < 3; i++) {

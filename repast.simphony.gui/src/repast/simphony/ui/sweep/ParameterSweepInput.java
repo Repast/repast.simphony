@@ -74,7 +74,9 @@ public class ParameterSweepInput extends JPanel implements ItemListener {
     		values[2] = step.getText();
     	} else if (getSelectedType().equals(LIST)) {
        		values = new String[1];
-    		values[0] = list.getText();
+       	// if we have quoted strings, we need to convert " to &quot;
+    		values[0] = list.getText().replaceAll("\"", "&quot;");
+    		
     	} else if (getSelectedType().equals(CONSTANT)) {
        		values = new String[1];
     		values[0] = constant.getText();
