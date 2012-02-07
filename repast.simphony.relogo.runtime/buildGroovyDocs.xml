@@ -12,18 +12,31 @@
 <project default="generate">
     <property name="docsDirectory" value="docs/ReLogo API"/>
 	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
-    <property name="version" value="2.0 Final"/>
+    <property name="version" value="2.0"/>
     <property name="title" value="API V${version}"/>
     <property name="docFooter" value="ReLogo ${title}"/>
     <property name="mainSourceDirectory" value="src"/>
+	<path id="sourcePath">
+					<pathelement path="../repast.simphony.core/src" />
+					<pathelement path="../repast.simphony.data/src" />
+					<pathelement path="../repast.simphony.dataLoader/src" />
+					<pathelement path="../repast.simphony.essentials/src" />
+					<pathelement path="../repast.simphony.gui/src" />
+					<pathelement path="../repast.simphony.relogo.ide/src" />
+					<pathelement path="../repast.simphony.relogo.runtime/src" />
+					<pathelement path="../repast.simphony.userpanel.ui/src" />
+					<pathelement path="../repast.simphony.visualization/src" />
+				</path>
+	<property name="sp" refid="sourcePath"/>
     <taskdef name="groovydoc"
         classname="org.codehaus.groovy.ant.Groovydoc"
         />
     <target name="generate">
         <echo>Generating groovy doc</echo>
+    	<echo message="sourcePath is ${sp}" />
         <groovydoc 
             destdir="${docsDirectory}"
-            sourcepath="${mainSourceDirectory}"
+            sourcepath="${sp}"
             packagenames="**.*"
             use="true"
             windowtitle="${title}"
@@ -32,7 +45,7 @@
             footer="${docFooter}"
             private="false">
         	<!-- This line linking to the repast Java API doesn't appear to work -->
-        	<!-- <link packages="repast.simphony.space.projection." href="http://repast.sourceforge.net/docs/api/repastjava/"/>-->
+        	<link packages="repast.simphony." href="http://repast.sourceforge.net/docs/api/repastjava/"/>
         	<link packages="java.,org.xml.,javax.,org.xml." href="http://docs.oracle.com/javase/6/docs/api/"/>
             <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
             <link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
