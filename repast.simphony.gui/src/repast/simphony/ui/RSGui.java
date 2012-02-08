@@ -100,12 +100,13 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   private JFrame frame;
   private JPanel customPanel;
   private JPanel customPanelContent;
-  
+
+  private boolean running = false;
+
   // parameter sweep panel (mjb 10/12/10)
   private JPanel parameterSweepPanel;
   // (mjb 10/12/10 end)
-  
-  
+
   private Set<DockableFrame> nonTreeViews = new HashSet<DockableFrame>();
   // this needs to be a linked hashmap to work around a java3D bug in OSX
   // see addVisualization below for more info
@@ -128,8 +129,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     this.tree = tree;
     dockingManager.addDockableListener(this);
     treeView = dockingManager.createDockable(TREE_VIEW, new JScrollPane(tree),
-	MinimizeLocation.LEFT, DockingManager.MINIMIZE | DockingManager.FLOAT
-	    | DockingManager.MAXIMIZE);
+        MinimizeLocation.LEFT, DockingManager.MINIMIZE | DockingManager.FLOAT
+            | DockingManager.MAXIMIZE);
     treeView.setTitle("Scenario Tree");
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, treeView);
   }
@@ -144,10 +145,9 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, LOG_GROUP, view);
     return view;
   }
-  
+
   /**
-   * Resets the layout using a layout file that
-   * defines the initial state.
+   * Resets the layout using a layout file that defines the initial state.
    */
   public void resetLayout(InputStream stream) {
     Perspective perspective = dockingManager.getPerspective(DEFAULT_PERSPECTIVE);
@@ -157,11 +157,12 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       view.close();
     }
   }
-  
+
   /**
    * Saves the current frame layout to the specified file.
    * 
-   * @param file the file to save the layout to
+   * @param file
+   *          the file to save the layout to
    */
   public void saveLayout(File file) {
     Perspective perspective = dockingManager.getPerspective(DEFAULT_PERSPECTIVE);
@@ -230,9 +231,9 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     for (Pair<GUIRegistryType, Collection<JComponent>> pair : registry.getTypesAndComponents()) {
       List<JComponent> compList = new ArrayList<JComponent>(pair.getSecond());
       Collections.sort(compList, new Comparator<JComponent>() {
-	public int compare(JComponent o1, JComponent o2) {
-	  return registry.getName(o1).compareTo(registry.getName(o2));
-	}
+        public int compare(JComponent o1, JComponent o2) {
+          return registry.getName(o1).compareTo(registry.getName(o2));
+        }
       });
 
       comps.add(new Pair<GUIRegistryType, List<JComponent>>(pair.getFirst(), compList));
@@ -240,57 +241,57 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
     Collections.sort(comps, new Comparator<Pair<GUIRegistryType, List<JComponent>>>() {
       public int compare(Pair<GUIRegistryType, List<JComponent>> o1,
-	  Pair<GUIRegistryType, List<JComponent>> o2) {
-	GUIRegistryType type = o1.getFirst();
-	// this should work without comparison because the registry types
-	// will necessarily be different
-	return type == GUIRegistryType.DISPLAY ? -1 : type == GUIRegistryType.CHART ? 0 : 1;
+          Pair<GUIRegistryType, List<JComponent>> o2) {
+        GUIRegistryType type = o1.getFirst();
+        // this should work without comparison because the registry types
+        // will necessarily be different
+        return type == GUIRegistryType.DISPLAY ? -1 : type == GUIRegistryType.CHART ? 0 : 1;
       }
     });
 
     for (Pair<GUIRegistryType, List<JComponent>> pair : comps) {
       for (JComponent component : pair.getSecond()) {
-	DockableFrame view = addVizualization(registry.getName(component), component);
-	if (pair.getFirst().equals(GUIRegistryType.DISPLAY)) {
+        DockableFrame view = addVizualization(registry.getName(component), component);
+        if (pair.getFirst().equals(GUIRegistryType.DISPLAY)) {
 
-	  IDisplay display = registry.getDisplayForComponent(component);
-	  JToolBar bar = toolBarMap.get(component);
-	  if (bar != null) {
-	    
-	    JButton homeButton = new JButton(new VizHomeAction(display));
-	    homeButton.setText(null);
-	    homeButton.setIcon(VIZ_HOME_ICON);
-	    homeButton.setToolTipText("Reset View");
-	    bar.add(homeButton);
+          IDisplay display = registry.getDisplayForComponent(component);
+          JToolBar bar = toolBarMap.get(component);
+          if (bar != null) {
 
-	    // TODO possibly implement for other displays later.
-	    // JToggleButton infoButton = new JToggleButton();
-	    // infoButton.setAction(new VizInfoAction(display));
-	    // infoButton.setText(null);
-	    // infoButton.setIcon(VIZ_INFO_ICON);
-	    // infoButton.setToolTipText("Toggle Info Probe");
-	    // bar.add(infoButton);
+            JButton homeButton = new JButton(new VizHomeAction(display));
+            homeButton.setText(null);
+            homeButton.setIcon(VIZ_HOME_ICON);
+            homeButton.setToolTipText("Reset View");
+            bar.add(homeButton);
 
-	    display.registerToolBar(bar);
-	    display.addDisplayListener(new DisplayListener() {
-	      public void receiveInfoMessage(DisplayEvent evt) {
-		GUIBarManager barManager = dockingManager.getBarManager();
-		String message = evt.getSubject().toString();
-		// unfortunately we can't share a "distance" constant
-		// across the gis display and this without causing dependency
-		// issues
-		if (evt.getProperty(DisplayEvent.TYPE).equals("distance"))
-		  barManager.setStatusBarText(STATUS_BAR, message);
-		else
-		  barManager.setStatusBarText(STATUS_BAR_VIZ, message);
-	      }
-	    });
-	  }
-	  display.addProbeListener(probeManager);
-	  displayViewMap.put(view, display);
-	  display.update();
-	  display.render();
-	}
+            // TODO possibly implement for other displays later.
+            // JToggleButton infoButton = new JToggleButton();
+            // infoButton.setAction(new VizInfoAction(display));
+            // infoButton.setText(null);
+            // infoButton.setIcon(VIZ_INFO_ICON);
+            // infoButton.setToolTipText("Toggle Info Probe");
+            // bar.add(infoButton);
+
+            display.registerToolBar(bar);
+            display.addDisplayListener(new DisplayListener() {
+              public void receiveInfoMessage(DisplayEvent evt) {
+                GUIBarManager barManager = dockingManager.getBarManager();
+                String message = evt.getSubject().toString();
+                // unfortunately we can't share a "distance" constant
+                // across the gis display and this without causing dependency
+                // issues
+                if (evt.getProperty(DisplayEvent.TYPE).equals("distance"))
+                  barManager.setStatusBarText(STATUS_BAR, message);
+                else
+                  barManager.setStatusBarText(STATUS_BAR_VIZ, message);
+              }
+            });
+          }
+          display.addProbeListener(probeManager);
+          displayViewMap.put(view, display);
+          display.update();
+          display.render();
+        }
       }
     }
   }
@@ -309,8 +310,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   private void removeNonTreeViews() {
-    //if (treeView.isMinimized()) treeView.restore();
-    //treeView.toFront();
+    // if (treeView.isMinimized()) treeView.restore();
+    // treeView.toFront();
     // we need to do the cop y because calling view.close()
     // ends up calling nonTreeViews.remove(view) and the copy
     // avoids the concurrent modification exception
@@ -353,7 +354,6 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
   }
 
-
   private class LoadParams extends ProbeAction {
 
     private Parameters params;
@@ -366,42 +366,32 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     public void actionPerformed(ActionEvent e) {
       File file = FileChooserUtilities.getOpenFile(frame, paramDir);
       if (file != null) {
-	try {
-	  ParametersValuesLoader loader = new ParametersValuesLoader(file);
-	  loader.loadValues(params);
-	  getProbe().update();
-	  paramDir = file.getParentFile();
-	} catch (Exception ex) {
-	  msg.warn("Error loading parameters", ex);
-	}
+        try {
+          ParametersValuesLoader loader = new ParametersValuesLoader(file);
+          loader.loadValues(params);
+          getProbe().update();
+          paramDir = file.getParentFile();
+        } catch (Exception ex) {
+          msg.warn("Error loading parameters", ex);
+        }
       }
     }
   }
 
-/*
-  private class SaveParams extends AbstractAction {
-
-    private Parameters params;
-
-    public SaveParams(Parameters params) {
-      super("Save Parameters");
-      this.params = params;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      File file = FileChooserUtilities.getSaveFile(frame, paramDir);
-      if (file != null) {
-	ParametersWriter writer = new ParametersWriter();
-	try {
-	  writer.writeValuesToFile(params, file);
-	  paramDir = file.getParentFile();
-	} catch (IOException ex) {
-	  msg.warn("Error writing parameters", ex);
-	}
-      }
-    }
-  }
-  */
+  /*
+   * private class SaveParams extends AbstractAction {
+   * 
+   * private Parameters params;
+   * 
+   * public SaveParams(Parameters params) { super("Save Parameters");
+   * this.params = params; }
+   * 
+   * public void actionPerformed(ActionEvent e) { File file =
+   * FileChooserUtilities.getSaveFile(frame, paramDir); if (file != null) {
+   * ParametersWriter writer = new ParametersWriter(); try {
+   * writer.writeValuesToFile(params, file); paramDir = file.getParentFile(); }
+   * catch (IOException ex) { msg.warn("Error writing parameters", ex); } } } }
+   */
 
   @SuppressWarnings("serial")
   private class DefaultParams extends AbstractAction {
@@ -428,7 +418,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     private RSApplication rsApp;
 
     public ModifyParameterAction(String name, MutableParameters params, Probe probe,
-	RSApplication rsApp) {
+        RSApplication rsApp) {
       super(name, probe);
       this.params = params;
       this.rsApp = rsApp;
@@ -441,24 +431,24 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     public void actionPerformed(ActionEvent e) {
 
       if (showParamModificationDialog(params)) {
-	Probe np = updateProbePanel(getProbe(), params);
-	if (np == null) {
-	  JOptionPane.showMessageDialog(frame, "Error re-creating parameters view",
-	      "Internal Error", JOptionPane.ERROR_MESSAGE);
-	} else {
-	  if (rsApp != null) {
-	    rsApp.updateGuiParamsManager(params, np);
-	  }
-	  setProbe(np);
-	  if (probeActions != null) {
-	    for (ProbeAction pa : probeActions) {
-	      pa.setProbe(np);
-	    }
-	  }
-	  
-	  // save the parameters
-	  rsApp.saveCurrentParameters();
-	}
+        Probe np = updateProbePanel(getProbe(), params);
+        if (np == null) {
+          JOptionPane.showMessageDialog(frame, "Error re-creating parameters view",
+              "Internal Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+          if (rsApp != null) {
+            rsApp.updateGuiParamsManager(params, np);
+          }
+          setProbe(np);
+          if (probeActions != null) {
+            for (ProbeAction pa : probeActions) {
+              pa.setProbe(np);
+            }
+          }
+
+          // save the parameters
+          rsApp.saveCurrentParameters();
+        }
       }
     }
 
@@ -472,37 +462,38 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     Probe nProbe = creator.getProbe("Simulation Parameters", false);
     parent.removeAll();
     parent.add(nProbe.getPanel(), BorderLayout.CENTER);
-    //msg.info("After add new Probe panel to docking frame its parent is: "
-	//+ nProbe.getPanel().getParent());
+    // msg.info("After add new Probe panel to docking frame its parent is: "
+    // + nProbe.getPanel().getParent());
     // also reset the PROBE_KEY for the Parameter dockable frame
     for (DockableFrame view : parameterViews) {
       Probe p = (Probe) view.getClientProperty(PROBE_KEY);
       if (p != null && p.equals(probe)) {
-	view.putClientProperty(PROBE_KEY, nProbe);
+        view.putClientProperty(PROBE_KEY, nProbe);
       }
     }
     return nProbe;
   }
-  
-//parameter sweep (mjb 10/12/10)
+
+  // parameter sweep (mjb 10/12/10)
   private class ParameterSweep extends ModifyParameterAction {
 
-	    public ParameterSweep(MutableParameters params, Probe probe, RSApplication rsApp) {
-	      super("Parameter Sweep", params, probe, rsApp);
-	    }
+    public ParameterSweep(MutableParameters params, Probe probe, RSApplication rsApp) {
+      super("Parameter Sweep", params, probe, rsApp);
+    }
 
-	    @Override
-	    public boolean showParamModificationDialog(MutableParameters parameters) {
-	      ParameterSweepDialog dialog = new ParameterSweepDialog(frame);
-	      dialog.init(parameters);
-	      dialog.pack();
-	      dialog.setVisible(true);
-//	      return true;
-	      return false;
-	    }
+    @Override
+    public boolean showParamModificationDialog(MutableParameters parameters) {
+      ParameterSweepDialog dialog = new ParameterSweepDialog(frame);
+      dialog.init(parameters);
+      dialog.pack();
+      dialog.setVisible(true);
+      // return true;
+      return false;
+    }
 
-	  }
-// (mjb 10/12/10 end)
+  }
+
+  // (mjb 10/12/10 end)
 
   private class AddParameter extends ModifyParameterAction {
 
@@ -538,35 +529,36 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
   public void addPlaceHolderUserPanel() {
     customPanel = new JPanel(new BorderLayout());
-    DockableFrame view = dockingManager.createDockable("__custom.user__", new JScrollPane(customPanel),
-	MinimizeLocation.BOTTOM, DockingManager.FLOAT | DockingManager.MINIMIZE
-	    | DockingManager.MAXIMIZE);
+    DockableFrame view = dockingManager.createDockable("__custom.user__", new JScrollPane(
+        customPanel), MinimizeLocation.BOTTOM, DockingManager.FLOAT | DockingManager.MINIMIZE
+        | DockingManager.MAXIMIZE);
     view.setTitle("User Panel");
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
     dockingManager.dock(view, treeView);
     treeView.toFront();
   }
-  
+
   // parameter sweep (mjb 10/12/10)
   public void addParameterSweepPanel(Parameters params) {
-	  ProbePanelCreator creator = new ProbePanelCreator(params);
-	  parameterSweepPanel = new ParameterSweepPanel(params, null);
-	    DockableFrame view = dockingManager.createDockable("__ParameterSweep__", new JScrollPane(parameterSweepPanel),
-		MinimizeLocation.BOTTOM, DockingManager.FLOAT | DockingManager.MINIMIZE
-		    | DockingManager.MAXIMIZE);
-	    view.setTitle("Parameter Sweep");
-	    dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
-	    dockingManager.dock(view, treeView);
-	    treeView.toFront();
-	  }
-// (mjb 10/12/10 end)
+    ProbePanelCreator creator = new ProbePanelCreator(params);
+    parameterSweepPanel = new ParameterSweepPanel(params, null);
+    DockableFrame view = dockingManager.createDockable("__ParameterSweep__", new JScrollPane(
+        parameterSweepPanel), MinimizeLocation.BOTTOM, DockingManager.FLOAT
+        | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
+    view.setTitle("Parameter Sweep");
+    dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
+    dockingManager.dock(view, treeView);
+    treeView.toFront();
+  }
+
+  // (mjb 10/12/10 end)
 
   private boolean hasCustomUserPanelDefined = false;
-  
+
   public void addCustomUserPanel(JPanel panel) {
-	  customPanelContent = panel;
-	  customPanel.add(panel);
-	  hasCustomUserPanelDefined = true;
+    customPanelContent = panel;
+    customPanel.add(panel);
+    hasCustomUserPanelDefined = true;
     // DockableFrame view = dockingManager.createDockable("__custom.user__",
     // panel, MinimizeLocation.BOTTOM,
     // DockingManager.FLOAT | DockingManager.MINIMIZE |
@@ -574,20 +566,19 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     // view.setTitle(name);
     // dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
   }
-  
-  public boolean hasCustomUserPanelDefined(){
-	  return hasCustomUserPanelDefined;
+
+  public boolean hasCustomUserPanelDefined() {
+    return hasCustomUserPanelDefined;
   }
 
-  
   public void removeCustomUserPanel() {
-	  if (customPanelContent != null){
-		  customPanel.remove(customPanelContent);
-	  }
-	  customPanel.revalidate();
-	  customPanel.repaint();
-	  customPanelContent = null;
-	  hasCustomUserPanelDefined = false;
+    if (customPanelContent != null) {
+      customPanel.remove(customPanelContent);
+    }
+    customPanel.revalidate();
+    customPanel.repaint();
+    customPanelContent = null;
+    hasCustomUserPanelDefined = false;
   }
 
   public void addRunOptionsView(RunOptionsModel model) {
@@ -595,8 +586,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     panel.init(model);
 
     DockableFrame view = dockingManager.createDockable("__run.options__", panel,
-	MinimizeLocation.BOTTOM, DockingManager.FLOAT | DockingManager.MINIMIZE
-	    | DockingManager.MAXIMIZE);
+        MinimizeLocation.BOTTOM, DockingManager.FLOAT | DockingManager.MINIMIZE
+            | DockingManager.MAXIMIZE);
     view.setTitle("Run Options");
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
     treeView.toFront();
@@ -613,8 +604,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     panel.add(bar, BorderLayout.NORTH);
     JMenu tools = new JMenu("Tools");
     LoadParams lp = new LoadParams(params, probe);
-    //tools.add(lp).setMnemonic('l');
-    //tools.add(new SaveParams(params)).setMnemonic('s');
+    // tools.add(lp).setMnemonic('l');
+    // tools.add(new SaveParams(params)).setMnemonic('s');
     tools.add(new DefaultParams(params)).setMnemonic('d');
     tools.setMnemonic('t');
     bar.add(tools);
@@ -627,28 +618,28 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       tbar.setFloatable(false);
       AddParameter add = new AddParameter((MutableParameters) params, probe, rsApp);
       RemoveParameter rem = new RemoveParameter((MutableParameters) params, probe, rsApp);
-      
+
       // parameter sweep (mjb 10/12/10)
       ParameterSweep sweep = new ParameterSweep((MutableParameters) params, probe, rsApp);
       // (mjb 10/12/10 end)
-      
+
       add.setProbeActions(new ProbeAction[] { lp, rem });
       rem.setProbeActions(new ProbeAction[] { lp, add });
-      
+
       // parameter sweep (mjb 10/12/10)
       sweep.setProbeActions(new ProbeAction[] { lp, sweep });
       // (mjb 10/12/10 end)
-      
+
       tbar.add(add);
       tbar.add(rem);
-      
+
       // Parameter sweep (mjb 10/12/10)
       tbar.add(sweep);
-   // (mjb 10/12/10 end)
+      // (mjb 10/12/10 end)
     }
 
     DockableFrame view = dockingManager.createDockable(id, panel, MinimizeLocation.BOTTOM,
-	DockingManager.FLOAT | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
+        DockingManager.FLOAT | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
     view.setTitle("Parameters");
     view.putClientProperty(PROBE_KEY, probe);
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
@@ -658,6 +649,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   public void setGUIForStarted() {
+    running = true;
     buttonCoordinator.setGUIForStarted(dockingManager.getBarManager());
     for (JComponent comp : compsToDisable) {
       comp.setEnabled(false);
@@ -669,6 +661,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   public void setGUIForPaused() {
+    running = false;
     buttonCoordinator.setGUIForPaused(dockingManager.getBarManager());
     for (JComponent comp : compsToDisable) {
       comp.setEnabled(true);
@@ -676,6 +669,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   public void setGUIForStopped() {
+    running = false;
     buttonCoordinator.setGUIForStopped(dockingManager.getBarManager());
     tree.setEnabled(true);
     for (JComponent comp : compsToDisable) {
@@ -712,15 +706,15 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     warnRotator = new IconRotator(warnButton, (ImageIcon) warnButton.getIcon());
     warnButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-	warnRotator.setEnabled(false);
-	log.show();
+        warnRotator.setEnabled(false);
+        log.show();
       }
     });
     warnPanel.add(warnButton);
-    
+
     // remove the View menu and make it part of the windows menu
     // saf.core.ui.view.WindowMenuId
-   
+
     JMenu viewMenu = barManager.getMenu("saf.core.ui.view.WindowMenuId");
     barManager.getMenuBar().remove(viewMenu);
     JMenu windowMenu = barManager.getMenu(RSGUIConstants.WINDOW_MENU_ID);
@@ -861,7 +855,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
   public DockableFrame addProbeView(String id, String title, JPanel panel) {
     DockableFrame view = dockingManager.createDockable(id, new JScrollPane(panel),
-	MinimizeLocation.BOTTOM);
+        MinimizeLocation.BOTTOM);
     view.setTitle(title);
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, PROBE_GROUP, view);
     nonTreeViews.add(view);
@@ -877,9 +871,11 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
    */
 
   public void propertyChange(PropertyChangeEvent evt) {
-    for (IDisplay display : displayViewMap.values()) {
-      display.update();
-      display.render();
+    if (!running) {
+      for (IDisplay display : displayViewMap.values()) {
+        display.update();
+        display.render();
+      }
     }
   }
 
