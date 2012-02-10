@@ -15,7 +15,12 @@ import org.jfree.data.xy.XYSeriesCollection;
 @SuppressWarnings("serial")
 public class BatchUpdateXYSeries extends XYSeriesCollection {
   
+  private static long UPDATE_INTERVAL = 17;
+  
   private boolean update = true;
+  private long lastUpdate = 0;
+  
+  private volatile boolean running = false;;
   
   public void setUpdate(boolean update) {
     this.update = update;
@@ -34,6 +39,26 @@ public class BatchUpdateXYSeries extends XYSeriesCollection {
    * Notifies listeners that 
    */
   public void update() {
-    super.notifyListeners(new DatasetChangeEvent(this, this));
+    long ts = System.currentTimeMillis();
+    if (!running || ts - lastUpdate > UPDATE_INTERVAL) {
+      super.notifyListeners(new DatasetChangeEvent(this, this));
+      lastUpdate = ts;
+    }
+  }
+
+  /**
+   * @return the running
+   */
+  public boolean isRunning() {
+    return running;
+  }
+
+  /**
+   * Tells this BatchUpdateXYSeries whether the sim is running or not.
+   * 
+   * @param running
+   */
+  public void setRunning(boolean running) {
+    this.running = running;
   }
 }
