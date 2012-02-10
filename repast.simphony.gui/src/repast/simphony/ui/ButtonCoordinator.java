@@ -20,6 +20,7 @@ public class ButtonCoordinator {
 
   private long lastTLUpdate = 0;
   private JLabel tickCountLabel;
+  private String lastTick = "";
 
   private class TLUpdater implements Runnable {
     private String text;
@@ -197,10 +198,15 @@ public class ButtonCoordinator {
     ActionFactory.getInstance().getAction(RSGUIConstants.SAVE_DEFAULT_LAYOUT_ACTION)
         .setEnabled(false);
   }
+  
+  public void updateTickCountLabel() {
+    if (lastTick.length() > 0) ThreadUtilities.runInEventThread(new TLUpdater(lastTick));
+  }
 
   public void updateTickCountLabel(String val) {
     // only update every Xth of a second so we don't flood
     // the event queue
+    lastTick = val;
     long ts = System.currentTimeMillis();
     if (ts - lastTLUpdate > TICK_LABEL_UPDATE_INTERVAL) {
       ThreadUtilities.runInEventThread(new TLUpdater(val));
