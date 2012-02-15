@@ -156,6 +156,7 @@ public class AgentSelectionStep extends PanelWizardStep {
           unorderedTarget.add(new AgentData(className));
       }
     }
+    
     Collections.sort(orders);
     for (int i : orders)
       target.add(i, orderedMap.get(i));
@@ -164,6 +165,8 @@ public class AgentSelectionStep extends PanelWizardStep {
     // lists should be displayed with the foreground at index 0, so it needs
     // to be reversed.
     Collections.reverse(target);
+    
+    target.addAll(unorderedTarget);
 
     // append the unordered layers to the end of the ordered list.
     // target.addAll(unorderedTarget);
