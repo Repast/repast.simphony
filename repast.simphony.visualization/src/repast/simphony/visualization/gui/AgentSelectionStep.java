@@ -165,11 +165,9 @@ public class AgentSelectionStep extends PanelWizardStep {
     // lists should be displayed with the foreground at index 0, so it needs
     // to be reversed.
     Collections.reverse(target);
-    
-    target.addAll(unorderedTarget);
 
     // append the unordered layers to the end of the ordered list.
-    // target.addAll(unorderedTarget);
+    target.addAll(unorderedTarget);
 
     // the list of all agents available to the runtime.
     List<AgentData> source = model.getContext().getAgentData(true);
