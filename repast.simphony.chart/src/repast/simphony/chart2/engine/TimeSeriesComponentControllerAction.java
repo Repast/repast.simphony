@@ -16,6 +16,7 @@ import repast.simphony.data2.builder.DataSetBuilder;
 import repast.simphony.engine.controller.DescriptorControllerAction;
 import repast.simphony.engine.environment.DefaultControllerAction;
 import repast.simphony.engine.environment.GUIRegistryType;
+import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.environment.RunState;
 import simphony.util.messages.MessageCenter;
 
@@ -25,13 +26,15 @@ import simphony.util.messages.MessageCenter;
  * @author Nick Collier
  */
 public class TimeSeriesComponentControllerAction extends DefaultControllerAction implements
-    DescriptorControllerAction<TimeSeriesChartDescriptor> {
+    DescriptorControllerAction<TimeSeriesChartDescriptor>, RunListener {
 
   private static MessageCenter msgCenter = MessageCenter
       .getMessageCenter(TimeSeriesComponentControllerAction.class);
 
   private TimeSeriesChartDescriptor descriptor;
   private LineChartCreator chartCreator;
+  private BatchUpdateXYSeries chartData;
+  private boolean added = false;
 
   public TimeSeriesComponentControllerAction(TimeSeriesChartDescriptor descriptor) {
     this.descriptor = descriptor;
@@ -69,7 +72,7 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
     }
 
     // create a chart data sink to feed data from the dataset to the chart.
-    BatchUpdateXYSeries chartData = new BatchUpdateXYSeries();
+    chartData = new BatchUpdateXYSeries();
     List<String> sourceIds = descriptor.getSeriesIds();
     if (builder.isAggregate()) {
       XYDataSinkSourceSeries sink = new XYDataSinkSourceSeries(chartData, sourceIds);
@@ -86,6 +89,10 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
       builder.addDataSink(sink);
     }
 
+    if (!added) {
+      runState.getScheduleRegistry().getScheduleRunner().addRunListener(this);
+      added = true;
+    }
     chartCreator = new LineChartCreator(chartData);
     runState.getGUIRegistry().addComponent(chartCreator.createChartComponent(descriptor),
         GUIRegistryType.CHART, descriptor.getChartTitle());
@@ -101,5 +108,38 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
   @Override
   public void runCleanup(RunState runState, Object contextId) {
     chartCreator.reset();
+    chartData = null;
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#stopped()
+   */
+  @Override
+  public void stopped() {
+    if (chartData != null) chartData.setRunning(false);
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#paused()
+   */
+  @Override
+  public void paused() {
+    if (chartData != null) chartData.setRunning(false);
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#started()
+   */
+  @Override
+  public void started() {
+    if (chartData != null) chartData.setRunning(true);
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#restarted()
+   */
+  @Override
+  public void restarted() {
+    if (chartData != null) chartData.setRunning(true);
   }
 }

@@ -20,9 +20,8 @@ OutFile "Repast-Simphony-${VERSION}-win.exe"
 ; changed to avoid user permissions problems with $PROGRAMFILES
 InstallDir C:\RepastSimphony-${VERSION}
 
-
 ; Request application privileges for Windows Vista
-;RequestExecutionLevel admin
+RequestExecutionLevel admin
 
 ;--------------------------------
 
@@ -56,7 +55,7 @@ Section "Repast Simphony"
   
   ; Store the files.
   File /r "*.*"
-  
+
   ; Write the installation path into the registry
   WriteRegStr HKLM Software\RepastSimphony-${VERSION} "Install_Dir" "$INSTDIR"
   
@@ -80,10 +79,10 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Flowchart Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Java API.lnk" "$INSTDIR\docs\RepastJavaAPI\index.html" "" "$INSTDIR\docs\RepastJavaAPI\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo API.lnk" "$INSTDIR\docs\ReLogoDocs\index.html" "" "$INSTDIR\docs\ReLogoDocs\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" "" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast FAQ.lnk" "$INSTDIR\docs\RepastFAQ.pdf" "" "$INSTDIR\docs\RepastFAQ.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastJavaAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastJavaAPI\ReLogoPrimitives.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Parameter Sweeps Getting Started.lnk" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" "" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
   
 SectionEnd
@@ -97,6 +96,9 @@ Section "Uninstall"
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}"
   DeleteRegKey HKLM SOFTWARE\RepastSimphony-${VERSION}
+
+  ; Remove shortcuts, if any
+  Delete "$SMPROGRAMS\RepastSimphony-${VERSION}\*.*"
 
   ; Remove program group dir
   RMDir /r "$SMPROGRAMS\RepastSimphony-${VERSION}"

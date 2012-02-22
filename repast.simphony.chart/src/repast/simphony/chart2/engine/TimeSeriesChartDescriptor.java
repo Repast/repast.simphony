@@ -126,9 +126,11 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
    * 
    * @param seriesId
    * 
-   * @return the color of the specified series.
+   * @return the color of the specified series, or null if there
+   * is no color.
    */
   public Color getSeriesColor(String seriesId) {
-    return seriesIds.get(seriesId).color;
+    SeriesData data = seriesIds.get(seriesId);
+    return data == null ? null : data.color;
   }
 }
