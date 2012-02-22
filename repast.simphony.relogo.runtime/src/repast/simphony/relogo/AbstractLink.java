@@ -499,23 +499,23 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 * Removes the link.
 	 */
 	public void die() {
-		   myObserver.getContext().remove(this);
-		   Network n1 = myObserver.getNetwork(getLinkType());
-		   if (n1.containsEdge(this)){
-			   n1.removeEdge(this);
-		   }
-		   else {
-			   List<Network> networks = new ArrayList<Network>();
-			   networks.add(myObserver.getNetwork("DirectedLinks"));
-			   networks.add(myObserver.getNetwork("UnDirectedLinks"));
-			   for (Network n : networks){
-				   if (n.containsEdge(this)){
-					   n.removeEdge(this);
-					   break;
-				   }
+	   myObserver.getContext().remove(this);
+	   Network n1 = myObserver.getNetwork(getLinkType());
+	   if (n1.containsEdge(this)){
+		   n1.removeEdge(this);
+	   }
+	   else {
+		   List<Network> networks = new ArrayList<Network>();
+		   networks.add(myObserver.getNetwork("DirectedLinks"));
+		   networks.add(myObserver.getNetwork("UnDirectedLinks"));
+		   for (Network n : networks){
+			   if (n.containsEdge(this)){
+				   n.removeEdge(this);
+				   break;
 			   }
 		   }
 	   }
+   }
 
 	/**
 	 * Returns the heading of a link.
