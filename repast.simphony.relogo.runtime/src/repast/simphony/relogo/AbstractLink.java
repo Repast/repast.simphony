@@ -507,7 +507,7 @@ public abstract class AbstractLink<T> extends Link<T> {
 	   else {
 		   List<Network> networks = new ArrayList<Network>();
 		   networks.add(myObserver.getNetwork("DirectedLinks"));
-		   networks.add(myObserver.getNetwork("UnDirectedLinks"));
+		   networks.add(myObserver.getNetwork("UndirectedLinks"));
 		   for (Network n : networks){
 			   if (n.containsEdge(this)){
 				   n.removeEdge(this);
