@@ -662,6 +662,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
   public void setGUIForPaused() {
     running = false;
+    buttonCoordinator.updateTickCountLabel();
     buttonCoordinator.setGUIForPaused(dockingManager.getBarManager());
     for (JComponent comp : compsToDisable) {
       comp.setEnabled(true);
@@ -670,6 +671,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
   public void setGUIForStopped() {
     running = false;
+    buttonCoordinator.updateTickCountLabel();
     buttonCoordinator.setGUIForStopped(dockingManager.getBarManager());
     tree.setEnabled(true);
     for (JComponent comp : compsToDisable) {

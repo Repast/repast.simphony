@@ -11,6 +11,7 @@ import java.util.Set;
 import repast.simphony.context.Context;
 import repast.simphony.relogo.factories.LinkFactory;
 import repast.simphony.space.continuous.NdPoint;
+import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.ui.probe.ProbeID;
 
@@ -498,9 +499,23 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 * Removes the link.
 	 */
 	public void die() {
-		myObserver.getContext().remove(this);
-		myObserver.getNetwork(getLinkType()).removeEdge(this);
-	}
+	   myObserver.getContext().remove(this);
+	   Network n1 = myObserver.getNetwork(getLinkType());
+	   if (n1.containsEdge(this)){
+		   n1.removeEdge(this);
+	   }
+	   else {
+		   List<Network> networks = new ArrayList<Network>();
+		   networks.add(myObserver.getNetwork("DirectedLinks"));
+		   networks.add(myObserver.getNetwork("UndirectedLinks"));
+		   for (Network n : networks){
+			   if (n.containsEdge(this)){
+				   n.removeEdge(this);
+				   break;
+			   }
+		   }
+	   }
+   }
 
 	/**
 	 * Returns the heading of a link.

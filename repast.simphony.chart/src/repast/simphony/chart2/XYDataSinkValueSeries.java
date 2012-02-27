@@ -3,6 +3,7 @@
  */
 package repast.simphony.chart2;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,32 +56,30 @@ public class XYDataSinkValueSeries extends AbstractXYSeriesDataSink {
 
   private class Updater implements Runnable {
 
-    private SeriesData data = new SeriesData();
+    private List<SeriesData> data = new ArrayList<SeriesData>();
 
-    public Updater(SeriesData other) {
-      data.key = other.key;
-      data.val = other.val;
-      data.tick = other.tick;
-      data.addSeries = other.addSeries;
+    public Updater(List<SeriesData> data) {
+      this.data.addAll(data);
     }
 
     public void run() {
       xydata.setUpdate(false);
-      if (data.addSeries) {
-        xydata.addSeries(new XYSeries(data.key));
+      for (SeriesData datum : data) {
+        if (datum.addSeries) {
+          xydata.addSeries(new XYSeries(datum.key));
+        }
+        xydata.getSeries(datum.key).add(datum.tick, datum.val);
       }
-      xydata.getSeries(data.key).add(data.tick, data.val);
+
+      
       xydata.setUpdate(true);
       xydata.update();
-
-      // System.out.printf("key: %s, val: %f, tick: %f%n", data.key, data.val,
-      // data.tick);
     }
-
   }
 
   private String dsSeriesKey, dataValueSourceId;
-  private SeriesData data = new SeriesData();
+  private List<SeriesData> allData = new ArrayList<SeriesData>();
+  private SeriesData data;
   private Set<String> addedSeries = new HashSet<String>();
   private DataConverter converter = new InitDataConverter();
 
@@ -119,6 +118,8 @@ public class XYDataSinkValueSeries extends AbstractXYSeriesDataSink {
    */
   @Override
   public void rowStarted() {
+    data = new SeriesData();
+    allData.add(data);
   }
 
   /*
@@ -145,18 +146,27 @@ public class XYDataSinkValueSeries extends AbstractXYSeriesDataSink {
   /*
    * (non-Javadoc)
    * 
+   * @see projz.data.DataSink#recordEnded()
+   */
+  @Override
+  public void recordEnded() {
+    // we need to update on the AWT thread.
+    if (SwingUtilities.isEventDispatchThread())
+      new Updater(allData).run();
+    else
+      // this makes a copy of the row, so
+      // it is OK to clear it
+      SwingUtilities.invokeLater(new Updater(allData));
+    allData.clear();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see projz.data.DataSink#rowEnded()
    */
   @Override
   public void rowEnded() {
-    // we need to update on the AWT thread.
-    if (SwingUtilities.isEventDispatchThread())
-      new Updater(data).run();
-    else
-      // this makes a copy of the row, so
-      // it is OK to clear it
-      SwingUtilities.invokeLater(new Updater(data));
-    data.addSeries = false;
   }
 
   @Override
