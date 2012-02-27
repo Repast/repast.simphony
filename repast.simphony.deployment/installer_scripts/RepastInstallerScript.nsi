@@ -21,7 +21,7 @@ OutFile "Repast-Simphony-${VERSION}-win.exe"
 InstallDir C:\RepastSimphony-${VERSION}
 
 ; Request application privileges for Windows Vista
-RequestExecutionLevel admin
+RequestExecutionLevel user
 
 ;--------------------------------
 
