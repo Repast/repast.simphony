@@ -35,7 +35,7 @@ public class IDLayer {
 				.getDefaultGeometry().getCoordinateSystem();
 		if (!viewCrs.equals(sourceCrs)) {
 
-			MathTransform transform = CRS.transform(viewCrs, sourceCrs, true);
+			MathTransform transform = CRS.findMathTransform(viewCrs, sourceCrs, true);
 			point = (Point) JTS.transform(point, transform);
 		}
 		center.info(point);

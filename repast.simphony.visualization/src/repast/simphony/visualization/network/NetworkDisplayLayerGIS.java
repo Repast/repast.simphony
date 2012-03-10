@@ -10,10 +10,10 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureCollections;
 import org.geotools.styling.Style;
+import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.space.gis.Geography;
@@ -36,7 +36,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class NetworkDisplayLayerGIS extends RepastMapLayer implements ProjectionListener {
 
 	private Geography geography;
-	private Map <RepastEdge<?>,Feature> featureMap;
+	private Map <RepastEdge<?>,SimpleFeature> featureMap;
 	Set<RepastEdge> edgesToAdd;
 	private Network<?> net;
 	private FeatureCollection fc;
@@ -59,7 +59,7 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 		this.net = net;
 		
 		edgesToAdd = new HashSet<RepastEdge>();
-		featureMap = new HashMap<RepastEdge<?>,Feature>();
+		featureMap = new HashMap<RepastEdge<?>,SimpleFeature>();
 	}
 	
 	public void update() {

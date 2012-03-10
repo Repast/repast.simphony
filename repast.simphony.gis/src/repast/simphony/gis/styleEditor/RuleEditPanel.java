@@ -15,7 +15,7 @@ import org.geotools.filter.parser.ParseException;
 import org.geotools.map.MapLayer;
 import org.geotools.styling.*;
 import org.geotools.styling.Stroke;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import repast.simphony.gis.display.SquareIcon;
 import simphony.util.messages.MessageCenter;
 
@@ -61,7 +61,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 
 	public void setMapLayer(MapLayer layer) {
 		Style style = layer.getStyle();
-		DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
 						.createFilterFactory());
 		dsv.visit(style.getFeatureTypeStyles()[0].getRules()[0]);
@@ -70,7 +70,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	public void init(FeatureType type, Rule rule) {
-		DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
 						.createFilterFactory());
 		dsv.visit(rule);

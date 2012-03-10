@@ -15,31 +15,73 @@
  */
 package org.geotools.renderer.style;
 
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.feature.Feature;
-import org.geotools.filter.Expression;
-import org.geotools.renderer.lite.CustomGlyphRenderer;
-import org.geotools.renderer.lite.GlyphRenderer;
-import org.geotools.renderer.lite.SVGGlyphRenderer;
-import org.geotools.styling.*;
-import org.geotools.styling.Font;
-
-import javax.imageio.ImageIO;
-import javax.media.jai.util.Range;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.FontFormatException;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.MediaTracker;
+import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+import javax.media.jai.util.Range;
+
+import org.geotools.filter.Expression;
+import org.geotools.renderer.lite.CustomGlyphRenderer;
+import org.geotools.renderer.lite.GlyphRenderer;
+import org.geotools.renderer.lite.ImageLoader;
+import org.geotools.renderer.lite.Java2DMark;
+import org.geotools.styling.ExternalGraphic;
+import org.geotools.styling.Fill;
+import org.geotools.styling.Font;
+import org.geotools.styling.Graphic;
+import org.geotools.styling.Halo;
+import org.geotools.styling.LabelPlacement;
+import org.geotools.styling.LinePlacement;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointPlacement;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.StyleAttributeExtractorTruncated;
+import org.geotools.styling.StyleFactoryFinder;
+import org.geotools.styling.Symbol;
+import org.geotools.styling.Symbolizer;
+import org.geotools.styling.TextMark;
+import org.geotools.styling.TextSymbolizer;
+import org.geotools.styling.TextSymbolizer2;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Factory object that converts SLD style into rendered styles.
@@ -235,7 +277,7 @@ public class SLDStyleFactory {
 	 * 
 	 * @return A rendered style equivalent to the symbolizer
 	 */
-	public Style2D createStyle(Feature f, Symbolizer symbolizer,
+	public Style2D createStyle(SimpleFeature f, Symbolizer symbolizer,
 			Range scaleRange) {
 		Style2D style = null;
 
@@ -293,7 +335,7 @@ public class SLDStyleFactory {
 	 * 
 	 * @return DOCUMENT ME!
 	 */
-	private Style2D createStyleInternal(Feature f, Symbolizer symbolizer,
+	private Style2D createStyleInternal(SimpleFeature f, Symbolizer symbolizer,
 			Range scaleRange) {
 		Style2D style = null;
 
@@ -328,7 +370,7 @@ public class SLDStyleFactory {
 	 * @throws UnsupportedOperationException
 	 *             if an unknown symbolizer is passed to this method
 	 */
-	public Style2D createDynamicStyle(Feature f, Symbolizer symbolizer,
+	public Style2D createDynamicStyle(SimpleFeature f, Symbolizer symbolizer,
 			Range scaleRange) {
 		Style2D style = null;
 
@@ -346,7 +388,7 @@ public class SLDStyleFactory {
 		return style;
 	}
 
-	Style2D createPolygonStyle(Feature feature, PolygonSymbolizer symbolizer,
+	Style2D createPolygonStyle(SimpleFeature feature, PolygonSymbolizer symbolizer,
 			Range scaleRange) {
 		PolygonStyle2D style = new PolygonStyle2D();
 
@@ -364,7 +406,7 @@ public class SLDStyleFactory {
 		return style;
 	}
 
-	Style2D createDynamicPolygonStyle(Feature feature,
+	Style2D createDynamicPolygonStyle(SimpleFeature feature,
 			PolygonSymbolizer symbolizer, Range scaleRange) {
 		PolygonStyle2D style = new DynamicPolygonStyle2D(feature, symbolizer);
 
@@ -375,7 +417,7 @@ public class SLDStyleFactory {
 		return style;
 	}
 
-	Style2D createLineStyle(Feature feature, LineSymbolizer symbolizer,
+	Style2D createLineStyle(SimpleFeature feature, LineSymbolizer symbolizer,
 			Range scaleRange) {
 		LineStyle2D style = new LineStyle2D();
 		setScaleRange(style, scaleRange);
@@ -390,7 +432,7 @@ public class SLDStyleFactory {
 		return style;
 	}
 
-	Style2D createDynamicLineStyle(Feature feature, LineSymbolizer symbolizer,
+	Style2D createDynamicLineStyle(SimpleFeature feature, LineSymbolizer symbolizer,
 			Range scaleRange) {
 		LineStyle2D style = new DynamicLineStyle2D(feature, symbolizer);
 		setScaleRange(style, scaleRange);
@@ -399,7 +441,7 @@ public class SLDStyleFactory {
 		return style;
 	}
 
-	Style2D createPointStyle(Feature feature, PointSymbolizer symbolizer,
+	Style2D createPointStyle(SimpleFeature feature, PointSymbolizer symbolizer,
 			Range scaleRange) {
 
 		Style2D retval = null;
@@ -576,7 +618,7 @@ public class SLDStyleFactory {
 		return retval;
 	}
 
-	Style2D createTextStyle(Feature feature, TextSymbolizer symbolizer,
+	Style2D createTextStyle(SimpleFeature feature, TextSymbolizer symbolizer,
 			Range scaleRange) {
 		TextStyle2D ts2d = new TextStyle2D();
 		setScaleRange(ts2d, scaleRange);
@@ -730,7 +772,7 @@ public class SLDStyleFactory {
 	 * @return The geometry extracted from feature or null if this proved
 	 *         impossible.
 	 */
-	private Geometry findGeometry(final Feature feature, final String geomName) {
+	private Geometry findGeometry(final SimpleFeature feature, final String geomName) {
 		Geometry geom = null;
 
 		if (geomName == null) {
@@ -755,7 +797,7 @@ public class SLDStyleFactory {
 	 * @return The first of the specified fonts found on this machine or null if
 	 *         none found
 	 */
-	private java.awt.Font getFont(Feature feature, Font[] fonts) {
+	private java.awt.Font getFont(SimpleFeature feature, Font[] fonts) {
 		if (fontFamilies == null) {
 			GraphicsEnvironment ge = GraphicsEnvironment
 					.getLocalGraphicsEnvironment();
@@ -942,7 +984,7 @@ public class SLDStyleFactory {
 	// scaling will
 	// be needed during rendering
 	private BufferedImage getGraphicStroke(org.geotools.styling.Stroke stroke,
-			Feature feature) {
+			SimpleFeature feature) {
 		if ((stroke == null) || (stroke.getGraphicStroke() == null)) {
 			return null;
 		}
@@ -1004,7 +1046,7 @@ public class SLDStyleFactory {
 		return image;
 	}
 
-	private Stroke getStroke(org.geotools.styling.Stroke stroke, Feature feature) {
+	private Stroke getStroke(org.geotools.styling.Stroke stroke, SimpleFeature feature) {
 		if (stroke == null) {
 			return null;
 		}
@@ -1059,7 +1101,7 @@ public class SLDStyleFactory {
 	}
 
 	private Paint getStrokePaint(org.geotools.styling.Stroke stroke,
-			Feature feature) {
+			SimpleFeature feature) {
 		if (stroke == null) {
 			return null;
 		}
@@ -1079,7 +1121,7 @@ public class SLDStyleFactory {
 	}
 
 	private Composite getStrokeComposite(org.geotools.styling.Stroke stroke,
-			Feature feature) {
+			SimpleFeature feature) {
 		if (stroke == null) {
 			return null;
 		}
@@ -1092,7 +1134,7 @@ public class SLDStyleFactory {
 		return composite;
 	}
 
-	protected Paint getPaint(Fill fill, Feature feature) {
+	protected Paint getPaint(Fill fill, SimpleFeature feature) {
 		if (fill == null) {
 			return null;
 		}
@@ -1126,7 +1168,7 @@ public class SLDStyleFactory {
 	 * @param feature
 	 * 
 	 */
-	protected Composite getComposite(Fill fill, Feature feature) {
+	protected Composite getComposite(Fill fill, SimpleFeature feature) {
 		if (fill == null) {
 			return null;
 		}
@@ -1150,7 +1192,7 @@ public class SLDStyleFactory {
 	 * @return DOCUMENT ME!
 	 */
 	public TexturePaint getTexturePaint(org.geotools.styling.Graphic gr,
-			Feature feature) {
+			SimpleFeature feature) {
 		BufferedImage image = getExternalGraphic(gr);
 
 		if (image != null) {
@@ -1266,7 +1308,7 @@ public class SLDStyleFactory {
 		return null;
 	}
 
-	private Mark getMark(Graphic graphic, Feature feature) {
+	private Mark getMark(Graphic graphic, SimpleFeature feature) {
 		Mark[] marks = graphic.getMarks();
 		Mark mark;
 
@@ -1287,7 +1329,7 @@ public class SLDStyleFactory {
 	}
 
 	private void fillDrawMark(Graphics2D graphic, double tx, double ty,
-			Mark mark, int size, double rotation, Feature feature) {
+			Mark mark, int size, double rotation, SimpleFeature feature) {
 		AffineTransform temp = graphic.getTransform();
 		AffineTransform markAT = new AffineTransform();
 		String markName = mark.getWellKnownName().evaluate((Object) feature)
@@ -1356,7 +1398,7 @@ public class SLDStyleFactory {
 	 * @param defaultValue
 	 * 
 	 */
-	private String evaluateExpression(Expression e, Feature feature,
+	private String evaluateExpression(Expression e, SimpleFeature feature,
 			String defaultValue) {
 		String result = defaultValue;
 
@@ -1474,7 +1516,7 @@ public class SLDStyleFactory {
 		}
 	}
 
-	private float evalToFloat(Expression exp, Feature f, float fallback) {
+	private float evalToFloat(Expression exp, SimpleFeature f, float fallback) {
 		// if (exp == null || exp.evaluate(f) == null
 		// || !(exp instanceof LiteralExpression)) {
 		// return fallback;
@@ -1491,7 +1533,7 @@ public class SLDStyleFactory {
 		}
 	}
 
-	private double evalToDouble(Expression exp, Feature f, double fallback) {
+	private double evalToDouble(Expression exp, SimpleFeature f, double fallback) {
 		// if (exp == null || exp.evaluate(f) == null
 		// || !(exp instanceof LiteralExpression)) {
 		// return fallback;
@@ -1507,7 +1549,7 @@ public class SLDStyleFactory {
 		}
 	}
 
-	private Color evalToColor(Expression exp, Feature f, Color fallback) {
+	private Color evalToColor(Expression exp, SimpleFeature f, Color fallback) {
 		if (exp == null) {
 			return fallback;
 		}
@@ -1518,7 +1560,7 @@ public class SLDStyleFactory {
 		}
 	}
 
-	private float evalOpacity(Expression e, Feature f) {
+	private float evalOpacity(Expression e, SimpleFeature f) {
 		return evalToFloat(e, f, 1);
 	}
 

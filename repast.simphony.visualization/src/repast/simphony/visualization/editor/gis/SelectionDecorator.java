@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
-import org.geotools.feature.FeatureType;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.filter.*;
 import org.geotools.map.MapContext;
@@ -13,6 +12,8 @@ import org.geotools.map.event.MapLayerListEvent;
 import org.geotools.map.event.MapLayerListListener;
 import org.geotools.styling.*;
 import org.geotools.styling.Stroke;
+import org.opengis.feature.simple.SimpleFeatureType;
+
 import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.FeatureAttributeAdapter;
@@ -110,7 +111,7 @@ public class SelectionDecorator implements MapLayerListListener {
   public void addHighightRules() {
     for (MapLayer layer : layers) {
       Style style = layer.getStyle();
-      FeatureType type = layer.getFeatureSource().getSchema();
+      SimpleFeatureType type = layer.getFeatureSource().getSchema();
       Class geomType = type.getDefaultGeometry().getType();
       if (geomType.equals(com.vividsolutions.jts.geom.Polygon.class)
               || geomType.equals(MultiPolygon.class)) {

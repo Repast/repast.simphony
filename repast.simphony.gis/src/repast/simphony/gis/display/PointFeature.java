@@ -4,7 +4,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import org.apache.commons.lang.SystemUtils;
-import org.geotools.feature.Feature;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.map.MapContext;
 import org.geotools.referencing.CRS;
@@ -12,6 +11,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.renderer.style.Java2DMark;
 import org.geotools.styling.*;
 import org.geotools.styling.Stroke;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.FactoryException;
@@ -32,7 +32,7 @@ public class PointFeature extends PScaleFreeNode {
 
   private static final long serialVersionUID = -8649781994092211080L;
 
-  Feature feature;
+  SimpleFeature feature;
 
   List<PPath> children = new ArrayList<PPath>();
 
@@ -58,7 +58,7 @@ public class PointFeature extends PScaleFreeNode {
 
   private boolean drawStroke = !SystemUtils.IS_OS_MAC_OSX;
 
-  public PointFeature(MapContext context, Feature feature,
+  public PointFeature(MapContext context, SimpleFeature feature,
                       FeatureTypeStyle style) {
     this.feature = feature;
     this.style = style;

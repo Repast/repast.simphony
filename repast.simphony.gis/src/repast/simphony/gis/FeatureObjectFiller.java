@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.AttributeType;
 
 public class FeatureObjectFiller {
 
@@ -36,7 +36,7 @@ public class FeatureObjectFiller {
 		}
 	}
 
-	public void fillObject(Feature feature, Object o) throws Exception {
+	public void fillObject(SimpleFeature feature, Object o) throws Exception {
 		for (Entry<AttributeType, Field> entry : fieldMap.entrySet()) {
 			try {
 				if (Number.class.isAssignableFrom(entry.getKey().getType())) {

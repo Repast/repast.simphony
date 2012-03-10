@@ -19,7 +19,7 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.Symbolizer;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import simphony.util.messages.MessageCenter;
 
 import javax.swing.*;
@@ -286,7 +286,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 			for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
-				DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
+				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
 							.createFilterFactory());
 				dsv.visit(rule);

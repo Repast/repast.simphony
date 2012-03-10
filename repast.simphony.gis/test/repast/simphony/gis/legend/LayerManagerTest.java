@@ -74,8 +74,12 @@ public class LayerManagerTest extends TestCase {
 
 	}
 
-	static class TestMapLayer implements MapLayer {
+	static class TestMapLayer extends MapLayer {
 
+		public TestMapLayer(){
+			super(null);
+		}
+		
 		public void addMapLayerListener(MapLayerListener arg0) {
 			// TODO Auto-generated method stub
 

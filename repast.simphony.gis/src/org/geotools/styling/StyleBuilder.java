@@ -15,14 +15,21 @@
  */
 package org.geotools.styling;
 
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-import org.geotools.filter.*;
-
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.AbstractFilter;
+import org.geotools.filter.AttributeExpression;
+import org.geotools.filter.BetweenFilter;
+import org.geotools.filter.CompareFilter;
+import org.geotools.filter.Expression;
+import org.geotools.filter.FilterFactory;
+import org.geotools.filter.FilterFactoryFinder;
+import org.geotools.filter.IllegalFilterException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * An utility class designed to ease style building by convinience methods.
@@ -1892,7 +1899,7 @@ public class StyleBuilder {
 	 *             DOCUMENT ME!
 	 */
 	public Style buildClassifiedStyle(FeatureCollection fc, String name,
-			String[] colors, FeatureType schema) throws IllegalFilterException {
+			String[] colors, SimpleFeatureType schema) throws IllegalFilterException {
 		// grab attribute col
 		AttributeExpression value = ff.createAttributeExpression(name);
 		String geomName = schema.getDefaultGeometry().getName();
@@ -1902,7 +1909,7 @@ public class StyleBuilder {
 		int count = 0;
 
 		while (it.hasNext()) {
-			Feature f = (Feature) it.next();
+			SimpleFeature f = (SimpleFeature) it.next();
 			values[count++] = ((Number) f.getAttribute(name)).doubleValue();
 		}
 

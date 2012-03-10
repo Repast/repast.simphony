@@ -23,7 +23,7 @@ public class IdTableDialog extends JDialog {
 
 	public IdTableDialog(Frame owner, FeatureTableModel idModel) {
 		super(owner);
-		setTitle(idModel.getFeatureType().getTypeName());
+		setTitle(idModel.getFeatureType().getName().getLocalPart());
 		this.idModel = idModel;
 		initComponents();
 		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

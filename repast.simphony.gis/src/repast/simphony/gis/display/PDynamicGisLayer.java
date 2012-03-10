@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
@@ -15,6 +14,7 @@ import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Style;
+import org.opengis.feature.simple.SimpleFeature;
 
 import simphony.util.messages.MessageCenter;
 import edu.umd.cs.piccolo.PCamera;
@@ -56,7 +56,7 @@ public class PDynamicGisLayer extends PLayer implements MapLayerListener,
 		try {
 			it = layer.getFeatureSource().getFeatures().features();
 			while (it.hasNext()) {
-				Feature feature = it.next();
+				SimpleFeature feature = it.next();
 				PointFeature node = new PointFeature(context, feature, layer
 						.getStyle().getFeatureTypeStyles()[0]);
 				addChild(node);

@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotools.feature.*;
 
-import repast.simphony.space.gis.FeatureAgent2;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.util.ClassUtilities;
 import simphony.util.messages.MessageCenter;
 
@@ -298,11 +298,11 @@ public class HollowFeature implements Feature {
 			return true;
 		}
 
-		if (!(obj instanceof FeatureAgent2)) {
+		if (!(obj instanceof FeatureAgent)) {
 			return false;
 		}
 
-		FeatureAgent2 other = (FeatureAgent2) obj;
+		FeatureAgent other = (FeatureAgent) obj;
 		if (!other.getFeatureType().equals(schema)) {
 			return false;
 		}

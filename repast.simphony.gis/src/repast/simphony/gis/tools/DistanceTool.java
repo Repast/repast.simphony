@@ -13,13 +13,13 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.operation.TransformException;
 import repast.simphony.gis.display.PiccoloMapPanel;
 import simphony.util.messages.MessageCenter;
-
-import javax.units.Converter;
-import javax.units.NonSI;
-import javax.units.SI;
-import javax.units.Unit;
 import java.awt.*;
 import java.awt.geom.Point2D;
+
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 public class DistanceTool extends PBasicInputEventHandler implements MapTool, MapBoundsListener {
 
@@ -129,11 +129,11 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
         if (unit == SI.METER) {
           distance = calculator.getOrthodromicDistance();
         } else {
-          Converter converter = SI.METER.getConverterTo(unit);
+          UnitConverter converter = SI.METER.getConverterTo(unit);
           distance = converter.convert(calculator.getOrthodromicDistance());
         }
       } else if (!unit.equals(calculator.getEllipsoid().getAxisUnit())) {
-        Converter converter = calculator.getEllipsoid().getAxisUnit()
+        UnitConverter converter = calculator.getEllipsoid().getAxisUnit()
                 .getConverterTo(unit);
         distance = converter.convert(calculator
                 .getOrthodromicDistance());

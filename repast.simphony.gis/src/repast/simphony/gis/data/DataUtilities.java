@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import simphony.util.messages.MessageCenter;
 
@@ -27,7 +28,7 @@ public class DataUtilities {
 	 * @param type the feature type
 	 * @return the created FeatureSource
 	 */
-	public static FeatureSource createFeatureSource(FeatureCollection collection, FeatureType type) {
+	public static FeatureSource createFeatureSource(SimpleFeatureCollection collection, SimpleFeatureType type) {
 
 		DataStore store = new FeatureCollectionDataStore(collection, type);
 
@@ -46,7 +47,7 @@ public class DataUtilities {
 	 * @param collection the collection to adapt.
 	 * @return the created FeatureSource
 	 */
-	public static FeatureSource createFeatureSource(FeatureCollection collection) {
+	public static FeatureSource createFeatureSource(SimpleFeatureCollection collection) {
 
 		DataStore store = new FeatureCollectionDataStore(collection);
 

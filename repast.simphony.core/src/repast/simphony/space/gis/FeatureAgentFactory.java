@@ -1,187 +1,222 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.feature.*;
-import org.geotools.feature.type.GeometricAttributeType;
-import org.geotools.filter.Filter;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.geotools.feature.AttributeTypeBuilder;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Abstract factory for adapting agents to features. This
- * creates a FeatureType given an agent class.
- *
+ * Abstract factory for adapting agents to features. This creates a FeatureType
+ * given an agent class.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.4 $ $Date: 2006/06/09 19:08:02 $
  */
 public abstract class FeatureAgentFactory {
 
-  private Map<Class, FeatureType> types = new HashMap<Class, FeatureType>();
+	private Map<Class, SimpleFeatureType> types = new HashMap<Class, SimpleFeatureType>();
 
-  private Map<Class, Class> primitiveMap = new HashMap<Class, Class>();
-  private Set<Class> legalShapefileAttribs = new HashSet<Class>();
+	private Map<Class, Class> primitiveMap = new HashMap<Class, Class>();
 
-  public FeatureAgentFactory() {
-    primitiveMap.put(double.class, Double.class);
-    primitiveMap.put(int.class, Integer.class);
-    primitiveMap.put(float.class, Float.class);
-    primitiveMap.put(long.class, Long.class);
-    primitiveMap.put(short.class, Short.class);
-    primitiveMap.put(byte.class, Byte.class);
-    primitiveMap.put(boolean.class, Boolean.class);
+	private Set<Class> legalShapefileAttribs = new HashSet<Class>();
 
-    legalShapefileAttribs = new HashSet<Class>();
-    legalShapefileAttribs.addAll(primitiveMap.keySet());
-    legalShapefileAttribs.addAll(primitiveMap.values());
-    legalShapefileAttribs.add(String.class);
-  }
+	public FeatureAgentFactory() {
+		primitiveMap.put(double.class, Double.class);
+		primitiveMap.put(int.class, Integer.class);
+		primitiveMap.put(float.class, Float.class);
+		primitiveMap.put(long.class, Long.class);
+		primitiveMap.put(short.class, Short.class);
+		primitiveMap.put(byte.class, Byte.class);
+		primitiveMap.put(boolean.class, Boolean.class);
 
-  /**
-   * Gets a feature type appropriate for writing to shapefile.
-   *
-   * @param agentClass
-   * @param coordRefSystem
-   * @param geomClass
-   * @return
-   * @throws IntrospectionException
-   * @throws SchemaException
-   */
-  protected FeatureType getShapefileFeatureType(Class agentClass,
-                                                CoordinateReferenceSystem coordRefSystem,
-                                                Class<? extends Geometry> geomClass) throws IntrospectionException,
-          SchemaException {
-    return getShapefileFeatureType(agentClass, coordRefSystem, geomClass, new ArrayList());
-  }
+		legalShapefileAttribs = new HashSet<Class>();
+		legalShapefileAttribs.addAll(primitiveMap.keySet());
+		legalShapefileAttribs.addAll(primitiveMap.values());
+		legalShapefileAttribs.add(String.class);
+	}
 
-  // returns true if the types list contains an attribute with the
-  // specified name.
-  private boolean containsTypeName(List<AttributeType> types, String name) {
-    for (AttributeType type : types) {
-      if (type.getName().equals(name)) return true;
-    }
+	/**
+	 * Gets a feature type appropriate for writing to shapefile.
+	 * 
+	 * @param agentClass
+	 * @param coordRefSystem
+	 * @param geomClass
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws SchemaException
+	 */
+	protected SimpleFeatureType getShapefileFeatureType(Class agentClass,
+			CoordinateReferenceSystem coordRefSystem,
+			Class<? extends Geometry> geomClass) throws IntrospectionException,
+			SchemaException {
+		return getShapefileFeatureType(agentClass, coordRefSystem, geomClass,
+				new ArrayList());
+	}
 
-    return false;
-  }
+	// returns true if the types list contains an attribute with the
+	// specified name.
+	private boolean containsTypeName(List<AttributeType> types, String name) {
+		for (AttributeType type : types) {
+			if (type.getName().equals(name))
+				return true;
+		}
 
-  /**
-   * Gets a feature type appropriate for writing to shapefile.
-   *
-   * @param agentClass
-   * @param coordRefSystem
-   * @param geomClass
-   * @return
-   * @throws IntrospectionException
-   * @throws SchemaException
-   */
-  protected FeatureType getShapefileFeatureType(Class agentClass,
-                                                CoordinateReferenceSystem coordRefSystem,
-                                                Class<? extends Geometry> geomClass,
-                                                List<FeatureAttributeAdapter> adapters) throws IntrospectionException,
-          SchemaException {
-    BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
-    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-    List<AttributeType> types = new ArrayList<AttributeType>();
+		return false;
+	}
 
+	/**
+	 * Gets a feature type appropriate for writing to shapefile.
+	 * 
+	 * @param agentClass
+	 * @param coordRefSystem
+	 * @param geomClass
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws SchemaException
+	 */
+	protected SimpleFeatureType getShapefileFeatureType(Class agentClass,
+			CoordinateReferenceSystem coordRefSystem,
+			Class<? extends Geometry> geomClass,
+			List<FeatureAttributeAdapter> adapters) throws IntrospectionException,
+			SchemaException {
+		BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
+		PropertyDescriptor[] pds = info.getPropertyDescriptors();
+		List<AttributeType> types = new ArrayList<AttributeType>();
 
-    for (int i = 0; i < pds.length; i++) {
-      String featureName = pds[i].getName();
+		AttributeTypeBuilder builder = new AttributeTypeBuilder();
+		for (int i = 0; i < pds.length; i++) {
+			String featureName = pds[i].getName();
 
-      Method method = pds[i].getReadMethod();
-      if (method != null) {
-        Class<?> returnType = method.getReturnType();
-        Class retType = primitiveMap.get(returnType);
-        if (retType == null) retType = returnType;
-        if (legalShapefileAttribs.contains(retType)) {
-          types.add(AttributeTypeFactory.newAttributeType(featureName,
-                  retType, true));
-        }
-      }
-    }
+			Method method = pds[i].getReadMethod();
+			if (method != null) {
+				Class<?> returnType = method.getReturnType();
+				Class retType = primitiveMap.get(returnType);
+				if (retType == null)
+					retType = returnType;
+				if (legalShapefileAttribs.contains(retType)) {
+					builder.setName(featureName);
+					builder.setBinding(retType);
+					builder.setNillable(true);
+					types.add(builder.buildType());
+				}
+			}
+		}
 
-    for (FeatureAttributeAdapter adapter : adapters) {
-      Class<?> returnType = adapter.getAttributeType();
-      Class retType = primitiveMap.get(returnType);
-      if (retType == null) retType = returnType;
-      if (legalShapefileAttribs.contains(retType)) {
-        types.add(AttributeTypeFactory.newAttributeType(adapter.getAttributeName(),
-                retType, true));
-      }
-    }
+		for (FeatureAttributeAdapter adapter : adapters) {
+			Class<?> returnType = adapter.getAttributeType();
+			Class retType = primitiveMap.get(returnType);
+			if (retType == null)
+				retType = returnType;
+			if (legalShapefileAttribs.contains(retType)) {
+				builder.setName(adapter.getAttributeName());
+				builder.setBinding(retType);
+				builder.setNillable(true);
+				types.add(builder.buildType());
+			}
+		}
+			
+		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
+		String featureTypeName = agentClass.getName() + ".FeatureType";
+		ftBuilder.setName(featureTypeName);
+		ftBuilder.setCRS(coordRefSystem);
+		
+//		builder.setName("the_geom");
+//		builder.setBinding(geomClass);
+//		ftBuilder.addBinding(builder.buildType());
+//		ftBuilder.setDefaultGeometry("the_geom");
+		
+		// The FeatureType Geometry class is the first attribute added
+		ftBuilder.add(featureTypeName, geomClass);
+		
+		for (AttributeType type : types){
+		  ftBuilder.addBinding(type);
+		}
+				
+		return ftBuilder.buildFeatureType();
+	}
 
+	protected SimpleFeatureType getFeatureType(Class agentClass,
+			CoordinateReferenceSystem coordRefSystem,
+			Class<? extends Geometry> geomClass) throws IntrospectionException,
+			SchemaException {
+		return getFeatureType(agentClass, coordRefSystem, geomClass,
+				new ArrayList());
+	}
 
-    GeometricAttributeType geomType = new GeometricAttributeType("the_geom", geomClass,
-            true, null, coordRefSystem, Filter.NONE);
-    types.add(geomType);
-    AttributeType[] ats = types.toArray(new AttributeType[types.size()]);
-    FeatureTypeBuilder builder = FeatureTypeFactory.newInstance(agentClass.getName()
-            + ".FeatureType");
-    builder.addTypes(ats);
-    builder.setDefaultGeometry(geomType);
-    return builder.getFeatureType();
-  }
+	protected SimpleFeatureType getFeatureType(Class agentClass,
+			CoordinateReferenceSystem coordRefSystem,
+			Class<? extends Geometry> geomClass,
+			List<FeatureAttributeAdapter> adapters) throws IntrospectionException,
+			SchemaException {
+		SimpleFeatureType type = types.get(agentClass);
+		if (type != null)
+			return type;
 
-  protected FeatureType getFeatureType(Class agentClass,
-                                       CoordinateReferenceSystem coordRefSystem,
-                                       Class<? extends Geometry> geomClass) throws IntrospectionException,
-          SchemaException {
-    return getFeatureType(agentClass, coordRefSystem, geomClass, new ArrayList());
-  }
+		// if get here then we need to create our own type
+		BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
+		PropertyDescriptor[] pds = info.getPropertyDescriptors();
+		List<AttributeType> ats = new ArrayList<AttributeType>();
+		AttributeTypeBuilder builder = new AttributeTypeBuilder();
 
-  protected FeatureType getFeatureType(Class agentClass,
-                                       CoordinateReferenceSystem coordRefSystem,
-                                       Class<? extends Geometry> geomClass, List<FeatureAttributeAdapter> adapters) throws IntrospectionException,
-          SchemaException {
-    FeatureType type = types.get(agentClass);
-    if (type != null)
-      return type;
+		for (int i = 0; i < pds.length; i++) {
+			String featureName = pds[i].getName();
 
-    // if get here then we need to create our own type
-    BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
-    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-    List<AttributeType> ats = new ArrayList<AttributeType>();
-    //AttributeType[] ats = new AttributeType[pds.length + 1];
+			Method method = pds[i].getReadMethod();
+			if (method != null) {
 
-    for (int i = 0; i < pds.length; i++) {
-      String featureName = pds[i].getName();
+				Class<?> returnType = method.getReturnType();
+				Class retType = primitiveMap.get(returnType);
+				if (retType == null)
+					retType = returnType;
+				builder.setName(featureName);
+				builder.setBinding(retType);
+				builder.setNillable(true);
+				ats.add(builder.buildType());
+			}
+		}
 
-      Method method = pds[i].getReadMethod();
-      if (method != null) {
+		for (FeatureAttributeAdapter adapter : adapters) {
+			Class<?> returnType = adapter.getAttributeType();
+			Class retType = primitiveMap.get(returnType);
+			if (retType == null)
+				retType = returnType;
+			builder.setName(adapter.getAttributeName());
+			builder.setBinding(retType);
+			builder.setNillable(true);
+			ats.add(builder.buildType());
+		}
 
-
-        Class<?> returnType = method.getReturnType();
-        Class retType = primitiveMap.get(returnType);
-        if (retType == null)
-          retType = returnType;
-        ats.add(AttributeTypeFactory.newAttributeType(featureName,
-                retType, true));
-      }
-    }
-
-    for (FeatureAttributeAdapter adapter : adapters) {
-      Class<?> returnType = adapter.getAttributeType();
-      Class retType = primitiveMap.get(returnType);
-      if (retType == null) retType = returnType;
-      ats.add(AttributeTypeFactory.newAttributeType(adapter.getAttributeName(),
-              retType, true));
-    }
-
-    GeometricAttributeType geomType = new GeometricAttributeType("the_geom", geomClass,
-            true, null, coordRefSystem, Filter.NONE);
-    ats.add(geomType);
-    FeatureTypeBuilder builder = FeatureTypeFactory.newInstance(agentClass.getName()
-            + ".FeatureType");
-    builder.addTypes(ats.toArray(new AttributeType[ats.size()]));
-    builder.setDefaultGeometry(geomType);
-    //type = FeatureTypeBuilder.newFeatureType(ats.toArray(new AttributeType[ats.size()]), agentClass.getName()
-    //       + ".FeatureType");
-    type = builder.getFeatureType();
-    types.put(agentClass, type);
-    return type;
-  }
+		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
+		ftBuilder.setName(agentClass.getName() + ".FeatureType");
+		
+		builder.setName("the_geom");
+		builder.setBinding(geomClass);
+		builder.setCRS(coordRefSystem);
+		ftBuilder.addBinding(builder.buildType());
+		ftBuilder.setDefaultGeometry("the_geom");
+		
+		for (AttributeType at : ats){
+		  ftBuilder.addBinding(at);
+		}
+	  
+	  type = ftBuilder.buildFeatureType();
+		types.put(agentClass, type);
+		
+		return type;
+	}
 }

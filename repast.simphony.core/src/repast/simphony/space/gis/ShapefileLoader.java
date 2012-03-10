@@ -1,17 +1,5 @@
 package repast.simphony.space.gis;
 
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.*;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.FactoryFinder;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.referencing.operation.TransformException;
-import repast.simphony.context.Context;
-import simphony.util.messages.MessageCenter;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -23,6 +11,26 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.type.GeometryTypeImpl;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.ReferencingFactoryFinder;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationNotFoundException;
+import org.opengis.referencing.operation.TransformException;
+
+import com.vividsolutions.jts.geom.Geometry;
+
+import repast.simphony.context.Context;
+import simphony.util.messages.MessageCenter;
 
 /**
  * Creates and sets agents properties from a features in shapefile.
@@ -49,7 +57,7 @@ public class ShapefileLoader<T> {
   private Context context;
   private Map<String, Method> attributeMethodMap = new HashMap<String, Method>();
   private Class agentClass;
-  private FeatureIterator iter;
+  private SimpleFeatureIterator iter;
 
   /**
    * Creates a shapefile loader for agents of the specified
@@ -79,18 +87,22 @@ public class ShapefileLoader<T> {
       }
 
       ShapefileDataStore store = new ShapefileDataStore(shapefile);
-      FeatureType schema = store.getSchema(store.getTypeNames()[0]);
-      for (int i = 0, n = schema.getAttributeCount(); i < n; i++) {
-        AttributeType type = schema.getAttributeType(i);
-        String name = type.getName();
-        if (name.equals("the_geom")) {
-          initTransform(geography, type);
-        } else {
-          Method method = methodMap.get(name.toLowerCase());
-          if (method == null) method = methodMap.get(name.replace("_", "").toLowerCase());
-          if (method != null && isCompatible(method.getParameterTypes()[0], (type.getType()))) {
-            attributeMethodMap.put(name, method);
-          }
+      SimpleFeatureType schema = store.getSchema(store.getTypeNames()[0]);
+      
+      // First attribute at index 0 is always the Geometry
+      AttributeType type = schema.getType(0);
+      String name = type.getName().getLocalPart();
+      initTransform(geography, type);
+      
+      // Loop over remaining type attributes
+      for (int i = 1, n = schema.getAttributeCount(); i < n; i++) {
+        type = schema.getType(i);
+        name = type.getName().getLocalPart();
+        
+        Method method = methodMap.get(name.toLowerCase());
+        if (method == null) method = methodMap.get(name.replace("_", "").toLowerCase());
+        if (method != null && isCompatible(method.getParameterTypes()[0], (type.getBinding()))) {
+            attributeMethodMap.put(name, method);  
         }
       }
       iter = store.getFeatureSource().getFeatures().features();
@@ -111,14 +123,18 @@ public class ShapefileLoader<T> {
   }
 
   private void initTransform(Geography geography, AttributeType type) throws FactoryException {
-    GeometryAttributeType gType = (GeometryAttributeType) type;
+    GeometryType gType = (GeometryType) type;
     if (geography != null) {
       try {
-        transform = FactoryFinder.getCoordinateOperationFactory(null).createOperation(gType.getCoordinateSystem(),
-                geography.getCRS()).getMathTransform();
+        transform = ReferencingFactoryFinder.getCoordinateOperationFactory(null).createOperation(
+        		gType.getCoordinateReferenceSystem(),geography.getCRS()).getMathTransform();
+        
+        System.out.println("Transform: " + transform);
+        
       } catch (OperationNotFoundException ex) {
         // bursa wolf params may be missing so try lenient.
-        transform = CRS.transform(gType.getCoordinateSystem(), geography.getCRS(), true);
+        transform = CRS.findMathTransform(gType.getCoordinateReferenceSystem(), 
+        		geography.getCRS(), true);
       }
     }
   }
@@ -155,10 +171,11 @@ public class ShapefileLoader<T> {
 
   private T processNext(T obj) {
     try {
-      Feature feature = iter.next();
+      SimpleFeature feature = iter.next();
       obj = fillAgent(feature, obj);
       if (!context.contains(obj)) context.add(obj);
-      if (geography != null) geography.move(obj, JTS.transform(feature.getDefaultGeometry(), transform));
+      if (geography != null) geography.move(obj, 
+      		JTS.transform(((Geometry)feature.getDefaultGeometry()), transform));
       return obj;
     } catch (IllegalAccessException e) {
       msg.error("Error setting agent property from feature attribute", e);
@@ -246,7 +263,7 @@ public class ShapefileLoader<T> {
     return iter.hasNext();
   }
 
-  private T fillAgent(Feature feature, T agent) throws IllegalAccessException, InvocationTargetException {
+  private T fillAgent(SimpleFeature feature, T agent) throws IllegalAccessException, InvocationTargetException {
     for (String attribName : attributeMethodMap.keySet()) {
       Object val = feature.getAttribute(attribName);
       Method write = attributeMethodMap.get(attribName);

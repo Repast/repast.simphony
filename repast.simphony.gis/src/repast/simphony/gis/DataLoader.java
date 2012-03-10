@@ -7,10 +7,11 @@ import java.util.Map;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -51,7 +52,7 @@ public class DataLoader {
 			FeatureCollection collection = source.getFeatures();
 			Iterator iter = collection.iterator();
 			while (iter.hasNext()) {
-				Feature feature = (Feature) iter.next();
+				SimpleFeature feature = (SimpleFeature) iter.next();
 				T o = clazz.newInstance();
 				test.fillObject(feature, o);
 				map.put(o, feature.getDefaultGeometry());

@@ -8,14 +8,16 @@ import org.geotools.data.Query;
 import org.geotools.data.SchemaNotFoundException;
 import org.geotools.data.Transaction;
 import org.geotools.data.collection.DelegateFeatureReader;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.CollectionEvent;
 import org.geotools.feature.CollectionListener;
-import org.geotools.feature.DefaultFeatureType;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.FeatureType;
+import org.geotools.feature.FeatureTypes;
 import org.geotools.filter.Filter;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -28,21 +30,21 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class FeatureCollectionDataStore extends AbstractDataStore {
 
-	protected FeatureType featureType;
-	protected FeatureCollection collection;
+	protected SimpleFeatureType featureType;
+	protected SimpleFeatureCollection collection;
 
 	/**
 	 * Builds a data store wrapper on top of a feature collection
 	 *
 	 * @param collection
 	 */
-	public FeatureCollectionDataStore(FeatureCollection collection) {
+	public FeatureCollectionDataStore(SimpleFeatureCollection collection) {
 		this.collection = collection;
 
 		if (collection.size() == 0) {
-			this.featureType = DefaultFeatureType.EMPTY;
+			this.featureType = FeatureTypes.EMPTY;
 		} else {
-			this.featureType = ((Feature) collection.iterator().next()).getFeatureType();
+			this.featureType = ((SimpleFeature) collection.iterator().next()).getFeatureType();
 		}
 
 		collection.addListener(new FeatureCollectionListener());
@@ -54,7 +56,7 @@ public class FeatureCollectionDataStore extends AbstractDataStore {
 	 * @param collection
 	 * @param type
 	 */
-	public FeatureCollectionDataStore(FeatureCollection collection, FeatureType type) {
+	public FeatureCollectionDataStore(SimpleFeatureCollection collection, SimpleFeatureType type) {
 		this.collection = collection;
 		this.featureType = type;
 		collection.addListener(new FeatureCollectionListener());
@@ -72,7 +74,7 @@ public class FeatureCollectionDataStore extends AbstractDataStore {
 	/**
 	 * @see org.geotools.data.DataStore#getSchema(java.lang.String)
 	 */
-	public FeatureType getSchema(String typeName) throws IOException {
+	public SimpleFeatureType getSchema(String typeName) throws IOException {
 		if ((typeName != null) && typeName.equals(featureType.getTypeName())) {
 			return featureType;
 		}
@@ -122,7 +124,7 @@ public class FeatureCollectionDataStore extends AbstractDataStore {
 	 * @param query
 	 */
 	protected Envelope getBoundsInternal(Query query) {
-		FeatureIterator iterator = collection.features();
+		SimpleFeatureIterator iterator = collection.features();
 		Envelope envelope = null;
 
 		if (iterator.hasNext()) {
@@ -131,7 +133,7 @@ public class FeatureCollectionDataStore extends AbstractDataStore {
 			envelope = new Envelope(iterator.next().getDefaultGeometry().getEnvelopeInternal());
 
 			while (iterator.hasNext() && (count < query.getMaxFeatures())) {
-				Feature feature = iterator.next();
+				SimpleFeature feature = iterator.next();
 
 				if (filter.contains(feature)) {
 					count++;

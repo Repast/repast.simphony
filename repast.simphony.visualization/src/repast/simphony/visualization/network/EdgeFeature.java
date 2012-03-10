@@ -4,27 +4,26 @@ import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.FeatureTypeBuilder;
-import org.geotools.feature.FeatureTypeFactory;
+
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.feature.SchemaException;
-import org.geotools.feature.type.GeometricAttributeType;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.filter.Filter;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 
-public class EdgeFeature implements Feature {
+public class EdgeFeature implements SimpleFeature {
 
-	private FeatureCollection parent;
+	private SimpleFeatureCollection parent;
 	private Geometry geom;
-	private FeatureType type;
+	private SimpleFeatureType type;
 	private String id;
 
 	public EdgeFeature(Class<?> agentClass, Geometry geom, CoordinateReferenceSystem coordRefSystem){
@@ -39,7 +38,7 @@ public class EdgeFeature implements Feature {
 		GeometricAttributeType geomType = new GeometricAttributeType("the_geom", geomClass,
 				true, null, coordRefSystem, Filter.NONE);
 		ats.add(geomType);
-		FeatureTypeBuilder builder = FeatureTypeFactory.newInstance(agentClass.getName()
+		SimpleFeatureTypeBuilder builder = FeatureTypeFactory.newInstance(agentClass.getName()
 				+ ".FeatureType");
 		builder.addTypes(ats.toArray(new AttributeType[ats.size()]));
 		builder.setDefaultGeometry(geomType);
@@ -57,7 +56,7 @@ public class EdgeFeature implements Feature {
 		return geom;
 	}
 
-	public FeatureType getFeatureType() {
+	public SimpleFeatureType getFeatureType() {
 		
 		System.out.println(" ~~ someone tried to get FeatureType: " + type);
 		
@@ -72,11 +71,11 @@ public class EdgeFeature implements Feature {
 		 return geom.getEnvelopeInternal();
 	}
 	
-	public void setParent(FeatureCollection parent) {
+	public void setParent(SimpleFeatureCollection parent) {
 		this.parent = parent;
 	}
 	
-	public FeatureCollection getParent() {
+	public SimpleFeatureCollection getParent() {
 		return parent;
 	}
 	

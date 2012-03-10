@@ -1,27 +1,34 @@
 package repast.simphony.visualization.gis;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.map.DefaultMapLayer;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
 import org.geotools.map.event.MapLayerEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
-import repast.simphony.space.gis.FeatureAgent2;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.Geography;
 import simphony.util.ThreadUtilities;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Handles the updating of a DisplayGIS w/r to agent adding, moving and removal.
@@ -36,15 +43,16 @@ public class Updater {
   private Lock updateLock = new ReentrantLock();
 
   private Geography geog;
-  private Map<Class, FeatureCollection> featureMap = new HashMap<Class, FeatureCollection>();
-  private Map<Object, FeatureAgent2> agentMap = new HashMap<Object, FeatureAgent2>();
+  private Map<Class, SimpleFeatureCollection> featureMap = 
+  		new HashMap<Class, SimpleFeatureCollection>();
+  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
 
   private Set<Object> agentsToAdd = new HashSet<Object>();
   private Set<Object> agentsToRemove = new HashSet<Object>();
   private Map<Class, DefaultFeatureAgentFactory> factoryMap;
   private Map<Class, DefaultFeatureAgentFactory> renderMap;
   private Map<String, RepastMapLayer> layerMap = new HashMap<String, RepastMapLayer>();
-  private Map<FeatureSource, DefaultMapLayer> featureLayerMap = new HashMap<FeatureSource, DefaultMapLayer>();
+  private Map<FeatureSource, MapLayer> featureLayerMap = new HashMap<FeatureSource, MapLayer>();
   private Set<Class> updateClasses = new HashSet<Class>();
   private Map<Integer, Object> layerOrder;
   // maps the original geometry of a object to
@@ -79,7 +87,7 @@ public class Updater {
 
   private void addBackgrounds(List<FeatureSource> sources) throws IOException {
     for (FeatureSource source : sources) {
-      DefaultMapLayer layer = new DefaultMapLayer(source, styler.getStyle(source));
+      MapLayer layer = new MapLayer(source, styler.getStyle(source));
       featureLayerMap.put(source, layer);
       reorder = true;
     }
@@ -103,7 +111,7 @@ public class Updater {
         factoryMap.put(clazz, fac);
       }
       renderMap.put(clazz, fac);
-      FeatureAgent2 fa = fac.getFeature(obj, geog);
+      FeatureAgent fa = fac.getFeature(obj, geog);
       agentMap.put(obj, fa);
       origGeomMap.put(obj, fa.getDefaultGeometry());
     }
@@ -121,12 +129,12 @@ public class Updater {
     if (addRender) {
       for (Class clazz : renderMap.keySet()) {
         DefaultFeatureAgentFactory fac = renderMap.get(clazz);
-        FeatureCollection newAgents = fac.getFeatures();
-        FeatureCollection currentAgents = featureMap.get(clazz);
+        SimpleFeatureCollection newAgents = fac.getFeatures();
+        SimpleFeatureCollection currentAgents = featureMap.get(clazz);
         if (currentAgents == null) {
           featureMap.put(clazz, newAgents);
           FeatureSource source = DataUtilities.createFeatureSource(newAgents);
-          FeatureAgent2 agent = (FeatureAgent2) newAgents.iterator().next();
+          FeatureAgent agent = (FeatureAgent) newAgents.iterator().next();
           RepastMapLayer layer = new RepastMapLayer(source, styler.getStyle(clazz.getName(), agent
               .getDefaultGeometry().getClass()));
           layer.setDynamic(true);
@@ -179,8 +187,7 @@ public class Updater {
       addFeaturesLock.lock();
       for (Object obj : agentsToRemove) {
         origGeomMap.remove(obj);
-        FeatureAgent2 fa = agentMap.remove(obj);
-        fa.getParent().remove(fa);
+        FeatureAgent fa = agentMap.remove(obj);
         updateClasses.add(obj.getClass());
       }
       

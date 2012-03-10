@@ -2,31 +2,33 @@ package repast.simphony.gis.id;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.FeatureType;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.filter.AttributeExpression;
 import org.geotools.filter.FilterFactory;
 import org.geotools.filter.FilterFactoryFinder;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
 
 public class FeatureTableModel extends AbstractTableModel {
-	Feature[] features;
+	SimpleFeature[] features;
 
-	FeatureType type;
+	SimpleFeatureType type;
 
 	AttributeExpression[] exprs;
 
 	FilterFactory fac = FilterFactoryFinder.createFilterFactory();
 
-	public FeatureTableModel(FeatureCollection collection, FeatureType type) {
-		features = new Feature[collection.size()];
-		FeatureIterator iter = collection.features();
+	public FeatureTableModel(SimpleFeatureCollection collection, SimpleFeatureType type) {
+		features = new SimpleFeature[collection.size()];
+		SimpleFeatureIterator iter = collection.features();
 		try {
 			int i = 0;
 			while (iter.hasNext()) {
-				Feature feature = iter.next();
+				SimpleFeature feature = iter.next();
 				features[i++] = feature;
 			}
 		} finally {

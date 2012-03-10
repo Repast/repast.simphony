@@ -4,7 +4,6 @@ import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.AttributeExpression;
 import org.geotools.filter.FilterFactory;
@@ -12,7 +11,9 @@ import org.geotools.filter.FilterFactoryFinder;
 import org.geotools.filter.function.ClassificationFunction;
 import org.geotools.filter.function.CustomClassifierFunction;
 import org.geotools.styling.*;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.simple.SimpleFeature;
+
 import repast.simphony.gis.GeometryUtil;
 
 import javax.swing.*;
@@ -54,9 +55,9 @@ public class ByRangePanelMediator {
 		//cTypeModel.addElement(new QuantileItemType());
 
 		try {
-			Feature feature = (Feature) source.getFeatures().iterator().next();
+			SimpleFeature feature = (SimpleFeature) source.getFeatures().iterator().next();
 			type = GeometryUtil.findGeometryType(feature);
-			DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
+			DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
 							.createFilterFactory());
 			dsv.visit(rule);

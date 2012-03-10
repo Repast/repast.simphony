@@ -1,13 +1,13 @@
 package repast.simphony.gis.display;
 
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 public class ShapefileDescriptor {
 
@@ -68,11 +68,11 @@ public class ShapefileDescriptor {
 		return ds;
 	}
 
-	public FeatureCollection getFeatures() throws IOException {
+	public SimpleFeatureCollection getFeatures() throws IOException {
 		return getDS().getFeatureSource().getFeatures();
 	}
 
-	public FeatureType getFeatureType() throws IOException {
+	public SimpleFeatureType getFeatureType() throws IOException {
 		return getDS().getFeatureSource().getSchema();
 	}
 
