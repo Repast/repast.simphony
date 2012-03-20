@@ -95,4 +95,28 @@ public class GisDisplayMediator2 implements MapLayerListener,
 
   public void componentShown(ComponentEvent e) {
   }
+
+	@Override
+	public void layerPreDispose(MapLayerListEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void layerDeselected(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void layerPreDispose(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void layerSelected(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

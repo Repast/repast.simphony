@@ -8,6 +8,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.*;
 import org.geotools.map.MapLayer;
+import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 
@@ -37,16 +38,19 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 	public void setMapLayer(MapLayer layer) {
 		this.layer = layer;
 		ruleEditPanel1.setMapLayer(layer);
-		if (layer.getStyle().getFeatureTypeStyles()[0].getTitle().equals(
-				"title")) {
+		
+		FeatureTypeStyle[] fts = 
+				layer.getStyle().featureTypeStyles().toArray(new FeatureTypeStyle[0]);
+		
+		if (fts[0].getDescription().getTitle().toString().equals("title")) {
 			layer.getStyle().getFeatureTypeStyles()[0].setTitle(layer
-					.getFeatureSource().getSchema().getTypeName());
+					.getFeatureSource().getSchema().getName().getLocalPart());
 		}
-		if (layer.getStyle().getTitle().equals("title")) {
-			layer.getStyle().setTitle(
-					layer.getFeatureSource().getSchema().getTypeName());
+		if (layer.getStyle().getDescription().getTitle().toString().equals("title")) {
+			layer.getStyle().getDescription().setTitle(
+					layer.getFeatureSource().getSchema().getName().getLocalPart());
 		}
-		styleTitleField.setText(layer.getStyle().getTitle());
+		styleTitleField.setText(layer.getStyle().getDescription().getTitle().toString());
 
 		rangePanel.init(layer);
 		byValuePanel.init(layer);

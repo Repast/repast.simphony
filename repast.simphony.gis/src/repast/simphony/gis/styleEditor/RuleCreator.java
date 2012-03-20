@@ -1,14 +1,30 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.feature.Feature;
-import org.geotools.filter.*;
-import org.geotools.styling.*;
-import org.geotools.styling.Stroke;
-import static repast.simphony.gis.GeometryUtil.GeometryType;
 import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
 import static repast.simphony.gis.GeometryUtil.GeometryType.POINT;
 
-import java.awt.*;
+import java.awt.Color;
+
+import org.geotools.filter.CompareFilter;
+import org.geotools.filter.Expression;
+import org.geotools.filter.FilterFactory;
+import org.geotools.filter.FilterFactoryFinder;
+import org.geotools.filter.FilterType;
+import org.geotools.filter.LiteralExpression;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
+import org.geotools.styling.StyleFactoryFinder;
+import org.geotools.styling.Symbolizer;
+import org.opengis.feature.simple.SimpleFeature;
+
+import repast.simphony.gis.GeometryUtil.GeometryType;
 
 /**
  * @author Nick Collier
@@ -76,7 +92,7 @@ public class RuleCreator {
 	 * @param factory       the factory to create the symbolizer with
 	 * @return the created rule.
 	 */
-	public Rule createValueRule(Feature feature, String attributeName, SymbolizerFactory factory) {
+	public Rule createValueRule(SimpleFeature feature, String attributeName, SymbolizerFactory factory) {
 		Object att = feature.getAttribute(attributeName);
 		Rule rule = fac.createRule();
 		rule.setTitle(att.toString());

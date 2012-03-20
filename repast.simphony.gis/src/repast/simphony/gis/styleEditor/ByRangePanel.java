@@ -208,7 +208,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	public void init(MapLayer layer) {
 		try {
 			FeatureSource source = layer.getFeatureSource();
-			this.type = source.getSchema();
+			this.type = (SimpleFeatureType)source.getSchema();
 
 			Rule rule = layer.getStyle().getFeatureTypeStyles()[0].getRules()[0];
 			mediator = new ByRangePanelMediator(source, rule);
@@ -218,9 +218,9 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
 			typeBox.setModel(model);
 			model = mediator.getAttributeModel();
-			FeatureType type = source.getSchema();
-			for (AttributeType at : type.getAttributeTypes()) {
-				if (numberTypes.contains(at.getType())) {
+			SimpleFeatureType type = (SimpleFeatureType)source.getSchema();
+			for (AttributeType at : type.getTypes()) {
+				if (numberTypes.contains(at.getBinding())) {
 					model.addElement(at.getName());
 				}
 			}

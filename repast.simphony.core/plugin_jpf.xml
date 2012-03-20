@@ -69,6 +69,9 @@
     <library id="gt-coverage-2.7.4.jar" path="lib/gt-coverage-2.7.4.jar" type="code">
       <export prefix="*"/>
     </library>
+    <library id="gt-cql-2.7.4.jar" path="lib/gt-cql-2.7.4.jar" type="code">
+      <export prefix="*"/>
+    </library>
     <library id="gt-data-2.7.4.jar" path="lib/gt-data-2.7.4.jar" type="code">
       <export prefix="*"/>
     </library>

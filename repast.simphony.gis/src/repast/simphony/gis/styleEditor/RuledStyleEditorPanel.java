@@ -4,23 +4,39 @@
 
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import org.geotools.map.MapLayer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * This is a component for editing multiple rules within a style
@@ -217,9 +233,9 @@ public class RuledStyleEditorPanel extends JPanel implements IStyleEditor {
 		model.copyInto(rules);
 		Style style = builder.createStyle();
 		FeatureTypeStyle fts = builder.createFeatureTypeStyle(layer
-				.getFeatureSource().getSchema().getTypeName(), rules);
+				.getFeatureSource().getSchema().getName().getLocalPart(), rules);
 		style.setFeatureTypeStyles(new FeatureTypeStyle[] { fts });
-		fts.setTitle(layer.getFeatureSource().getSchema().getTypeName());
+		fts.setTitle(layer.getFeatureSource().getSchema().getName().getLocalPart());
 		return style;
 	}
 }

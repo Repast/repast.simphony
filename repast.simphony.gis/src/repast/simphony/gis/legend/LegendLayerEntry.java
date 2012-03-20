@@ -47,15 +47,11 @@ public class LegendLayerEntry extends LegendEntry {
 				}
 			}
 
-			public void layerHidden(MapLayerEvent event) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void layerShown(MapLayerEvent event) {
-				// TODO Auto-generated method stub
-
-			}
+			public void layerHidden(MapLayerEvent event) {}
+			public void layerShown(MapLayerEvent event) {}
+			public void layerDeselected(MapLayerEvent arg0) {}
+			public void layerPreDispose(MapLayerEvent arg0) {}
+			public void layerSelected(MapLayerEvent arg0) {}
 
 		});
 	}

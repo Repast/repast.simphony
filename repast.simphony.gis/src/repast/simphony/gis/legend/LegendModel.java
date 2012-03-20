@@ -133,5 +133,8 @@ public class LegendModel extends DefaultTreeModel {
 
     public void layerHidden(MapLayerEvent event) {}
     public void layerShown(MapLayerEvent event) {}
+		public void layerDeselected(MapLayerEvent arg0) {}
+		public void layerPreDispose(MapLayerEvent arg0) {}
+		public void layerSelected(MapLayerEvent arg0) {}
 	}
 }

@@ -1,6 +1,35 @@
 package repast.simphony.gis.display;
 
+import java.awt.Cursor;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.MapContext;
+import org.geotools.map.MapLayer;
+import org.geotools.map.event.MapBoundsEvent;
+import org.geotools.map.event.MapBoundsListener;
+import org.geotools.map.event.MapLayerListEvent;
+import org.geotools.map.event.MapLayerListListener;
+import org.geotools.map.event.MapLayerListener;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.referencing.datum.DefaultEllipsoid;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import repast.simphony.gis.tools.MapTool;
+import simphony.util.ThreadUtilities;
+import simphony.util.messages.MessageCenter;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
@@ -12,32 +41,6 @@ import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPickPath;
-import org.geotools.feature.Feature;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.map.event.*;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.referencing.datum.DefaultEllipsoid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import repast.simphony.gis.tools.MapTool;
-import repast.simphony.gis.tools.ScaleDenominatorChanged;
-import simphony.util.ThreadUtilities;
-import simphony.util.messages.MessageCenter;
-import simphony.util.messages.TaskMessage;
-
-import java.awt.*;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This will show a MapContext and adds support for various tools.
@@ -66,7 +69,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
 
-  List<PDynamicGisLayer> dynamicLayers = new ArrayList<PDynamicGisLayer>();
+//  List<PDynamicGisLayer> dynamicLayers = new ArrayList<PDynamicGisLayer>();
 
   private PLayer layerListening;
 
@@ -187,7 +190,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 //        msg.debug("NodeSelectionType: " + node.getClass().getName());
 //        MessageCenter.getMessageCenter(getClass()).debug(
 //                "Node selection type: " + node.getClass().getName());
-        Feature feature = (Feature) node.getAttribute(Feature.class);
+        SimpleFeature feature = (SimpleFeature) node.getAttribute(SimpleFeature.class);
         if (feature != null) {
           handler.handleFeatureProbe(feature, ev);
           break;
@@ -235,13 +238,13 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     mediator.layerAdded(mapLayer, gisLayer);
     mapLayer.addMapLayerListener(gisLayer);
     this.mapLayer.addChild(index, gisLayer);
-    layerNames.put(mapLayer.getFeatureSource().getSchema().getTypeName(), gisLayer);
+    layerNames.put(mapLayer.getFeatureSource().getSchema().getName().getLocalPart(), gisLayer);
     layers.put(mapLayer, gisLayer);
   }
 
   private void removeMapLayer(MapLayer mapLayer) {
     mediator.layerRemoved(mapLayer);
-    layerNames.remove(mapLayer.getFeatureSource().getSchema().getTypeName());
+    layerNames.remove(mapLayer.getFeatureSource().getSchema().getName().getLocalPart());
     PLayer gisLayer = layers.get(mapLayer);
     if (gisLayer instanceof MapLayerListener) {
       MapLayerListener listener = (MapLayerListener) gisLayer;
@@ -428,4 +431,10 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 //    msg.info(new TaskMessage(TaskMessage.TaskStatus.FINISHED, "MAP",
 //            "Finished Updating Map"));
   }
+
+	@Override
+	public void layerPreDispose(MapLayerListEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

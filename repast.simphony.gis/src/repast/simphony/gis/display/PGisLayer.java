@@ -1,8 +1,15 @@
 package repast.simphony.gis.display;
 
-import com.vividsolutions.jts.geom.Envelope;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.nodes.PImage;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.geotools.map.DefaultMapContext;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
@@ -12,15 +19,13 @@ import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
+
 import simphony.util.messages.MessageCenter;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import com.vividsolutions.jts.geom.Envelope;
+
+import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.nodes.PImage;
 
 /**
  * This represents a MapLayer as an image. Each layer is inserted as a node into
@@ -91,7 +96,7 @@ public class PGisLayer extends PLayer implements MapLayerListener {
       this.layerArea = layer.getFeatureSource().getBounds();
     } catch (IOException e) {
       center.error("Unable to get Layer bounds for: "
-              + layer.getFeatureSource().getSchema().getTypeName(), e);
+              + layer.getFeatureSource().getSchema().getName().getLocalPart(), e);
     }
 
     this.context = context;
@@ -105,7 +110,7 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     rend = new StreamingRenderer();
     rend.setContext(localContext);
 
-    Map<String, Serializable> rendererParams = new HashMap<String, Serializable>();
+    Map rendererParams = new HashMap();
     rendererParams.put("optimizedDataLoadingEnabled", Boolean.TRUE);
     rend.setRendererHints(rendererParams);
 
@@ -191,5 +196,23 @@ public class PGisLayer extends PLayer implements MapLayerListener {
   public void layerShown(MapLayerEvent arg0) {
     setVisible(true);
   }
+
+	@Override
+	public void layerDeselected(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void layerPreDispose(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void layerSelected(MapLayerEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -1,17 +1,21 @@
 package repast.simphony.gis;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.map.DefaultMapLayer;
-import org.geotools.map.event.MapLayerEvent;
-import static org.geotools.map.event.MapLayerEvent.*;
-import org.geotools.map.event.MapLayerListener;
-import org.geotools.styling.Style;
+import static org.geotools.map.event.MapLayerEvent.DATA_CHANGED;
+import static org.geotools.map.event.MapLayerEvent.FILTER_CHANGED;
+import static org.geotools.map.event.MapLayerEvent.STYLE_CHANGED;
+import static org.geotools.map.event.MapLayerEvent.VISIBILITY_CHANGED;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepastMapLayer extends DefaultMapLayer {
+import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.map.MapLayer;
+import org.geotools.map.event.MapLayerEvent;
+import org.geotools.map.event.MapLayerListener;
+import org.geotools.styling.Style;
+
+public class RepastMapLayer extends MapLayer {
 
 	private boolean dynamic;
 

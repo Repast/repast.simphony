@@ -1,5 +1,13 @@
 package repast.simphony.gis.styleEditor;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.TableModel;
+
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
@@ -9,18 +17,21 @@ import org.geotools.filter.AttributeExpression;
 import org.geotools.filter.FilterFactory;
 import org.geotools.filter.FilterFactoryFinder;
 import org.geotools.filter.function.ClassificationFunction;
-import org.geotools.filter.function.CustomClassifierFunction;
-import org.geotools.styling.*;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Fill;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.gis.GeometryUtil;
-
-import javax.swing.*;
-import javax.swing.table.TableModel;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Mediates between the different components in ByRangePanel.

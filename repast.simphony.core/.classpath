@@ -37,5 +37,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-2.7.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-data-2.7.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-cql-2.7.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,13 +1,5 @@
 package repast.simphony.gis.styleEditor;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.feature.*;
-
-import repast.simphony.space.gis.FeatureAgent;
-import repast.simphony.util.ClassUtilities;
-import simphony.util.messages.MessageCenter;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -15,6 +7,20 @@ import java.beans.PropertyDescriptor;
 import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
+
+import repast.simphony.space.gis.FeatureAgent;
+import repast.simphony.util.ClassUtilities;
+import simphony.util.messages.MessageCenter;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Adapts a java Class to a GIS feature. The resulting
@@ -24,13 +30,13 @@ import java.util.Map;
  *
  * @author Nick Collier
  */
-public class HollowFeature implements Feature {
+public class HollowFeature implements SimpleFeature {
 
 	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(HollowFeature.class);
 
   private Map<String, FeatureAgentAttribute> attributeMap = new HashMap<String, FeatureAgentAttribute>();
 	private String id;
-	private FeatureType schema;
+	private SimpleFeatureType schema;
 	private FeatureCollection parent;
 	private Geometry geom;
 

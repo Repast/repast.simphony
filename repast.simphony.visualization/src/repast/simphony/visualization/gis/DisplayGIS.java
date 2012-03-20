@@ -33,6 +33,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.DefaultMapContext;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
+import org.geotools.referencing.CRS;
 import org.geotools.resources.CRSUtilities;
 import org.geotools.styling.Style;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -319,12 +320,11 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
         FeatureSource fs = layer.getFeatureSource();
         if (!fs.getFeatures().isEmpty()) {
-          CoordinateReferenceSystem sourceCrs = fs.getSchema().getDefaultGeometry()
-              .getCoordinateSystem();
+          CoordinateReferenceSystem sourceCrs = fs.getSchema().getCoordinateReferenceSystem();
           ReferencedEnvelope env = new ReferencedEnvelope(fs.getBounds(), sourceCrs);
 
           if ((sourceCrs != null) && (crs != null)
-              && !CRSUtilities.equalsIgnoreMetadata(sourceCrs, crs)) {
+              && !CRS.equalsIgnoreMetadata(sourceCrs, crs)) {
             env = env.transform(crs, true);
           }
 

@@ -1,27 +1,42 @@
 package repast.simphony.visualization.editor.gis;
 
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.filter.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.map.MapContext;
 import org.geotools.map.MapLayer;
 import org.geotools.map.event.MapLayerListEvent;
 import org.geotools.map.event.MapLayerListListener;
-import org.geotools.styling.*;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Fill;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.SLD;
 import org.geotools.styling.Stroke;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.FeatureAttributeAdapter;
 import repast.simphony.space.gis.GISConstants;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  * Decorates selected features with a highlight. This is done
@@ -36,7 +51,7 @@ public class SelectionDecorator implements MapLayerListListener {
   private Set<Object> selected = new HashSet<Object>();
   private List<MapLayer> layers = new ArrayList<MapLayer>();
   private StyleBuilder builder = new StyleBuilder();
-  private FilterFactory filterFactory = FilterFactoryFinder.createFilterFactory();
+  FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory( null );
   private Color highlightColor = Color.decode("#00FFFF");
 
   class AttributeAdapter implements FeatureAttributeAdapter {
@@ -97,7 +112,9 @@ public class SelectionDecorator implements MapLayerListListener {
   public void removeHighlightRules() {
     for (MapLayer layer : layers) {
       Style style = layer.getStyle();
-      Iterator iter = style.getFeatureTypeStyles()[0].rules().iterator();
+      
+      Iterator iter = style.featureTypeStyles().toArray(
+      		new FeatureTypeStyle[0])[0].rules().iterator();
       while (iter.hasNext()) {
         Rule rule = (Rule) iter.next();
         if (rule.getName() != null && rule.getName().equals(HIGHLIGHT_RULE_NAME)) {
@@ -111,8 +128,8 @@ public class SelectionDecorator implements MapLayerListListener {
   public void addHighightRules() {
     for (MapLayer layer : layers) {
       Style style = layer.getStyle();
-      SimpleFeatureType type = layer.getFeatureSource().getSchema();
-      Class geomType = type.getDefaultGeometry().getType();
+      SimpleFeatureType type = (SimpleFeatureType)layer.getFeatureSource().getSchema();
+      Class geomType = type.getGeometryDescriptor().getType().getBinding();
       if (geomType.equals(com.vividsolutions.jts.geom.Polygon.class)
               || geomType.equals(MultiPolygon.class)) {
         highlightPolygon(style);
@@ -127,26 +144,26 @@ public class SelectionDecorator implements MapLayerListListener {
     }
   }
 
-  private CompareFilter createFilter() {
+  private BinaryComparisonOperator createFilter() {
     Expression attExp = builder.attributeExpression(GISConstants.SELECTED_ATTRIBUTE_NAME);
-    Expression lit = filterFactory.createLiteralExpression(Boolean.TRUE);
-    CompareFilter filter = filterFactory.createCompareFilter(FilterType.COMPARE_EQUALS);
-    filter.addLeftValue(lit);
-    filter.addRightValue(attExp);
-    return filter;
+    Expression lit =  filterFactory.literal(Boolean.TRUE);
+    
+    return filterFactory.equals(attExp, lit);
   }
 
   private void highlightLine(Style style) {
-    FeatureTypeStyle fts = style.getFeatureTypeStyles()[0];
+    FeatureTypeStyle fts = style.featureTypeStyles().toArray(
+    		new FeatureTypeStyle[0])[0];
     Rule highlightRule = builder.createRule(builder.createLineSymbolizer(
             highlightColor, 3));
     highlightRule.setName(HIGHLIGHT_RULE_NAME);
     highlightRule.setFilter(createFilter());
-    fts.addRule(highlightRule);
+    fts.rules().add(highlightRule);
   }
 
   private void highlightPoint(Style style) {
-    FeatureTypeStyle fts = style.getFeatureTypeStyles()[0];
+    FeatureTypeStyle fts = style.featureTypeStyles().toArray(
+    		new FeatureTypeStyle[0])[0];
     Mark mark = SLD.pointMark(style);
     Expression expr = mark.getSize();
     mark = builder.createMark(mark.getWellKnownName().toString());
@@ -157,11 +174,12 @@ public class SelectionDecorator implements MapLayerListListener {
     Rule highlightRule = builder.createRule(ps);
     highlightRule.setName(HIGHLIGHT_RULE_NAME);
     highlightRule.setFilter(createFilter());
-    fts.addRule(highlightRule);
+    fts.rules().add(highlightRule);
   }
 
   private void highlightPolygon(Style style) {
-    FeatureTypeStyle fts = style.getFeatureTypeStyles()[0];
+    FeatureTypeStyle fts = style.featureTypeStyles().toArray(
+    		new FeatureTypeStyle[0])[0];
     Fill fill = builder.createFill(highlightColor, .01);
     Stroke stroke = builder.createStroke(highlightColor, 2, .9);
 
@@ -169,7 +187,7 @@ public class SelectionDecorator implements MapLayerListListener {
     Rule highlightRule = builder.createRule(symbol);
     highlightRule.setName(HIGHLIGHT_RULE_NAME);
     highlightRule.setFilter(createFilter());
-    fts.addRule(highlightRule);
+    fts.rules().add(highlightRule);
   }
 
   public void layerAdded(MapLayerListEvent event) {
@@ -188,4 +206,7 @@ public class SelectionDecorator implements MapLayerListListener {
   public void layerRemoved(MapLayerListEvent event) {
     layers.remove(event.getLayer());
   }
+
+	public void layerPreDispose(MapLayerListEvent arg0) {
+	}
 }

@@ -1902,7 +1902,7 @@ public class StyleBuilder {
 			String[] colors, SimpleFeatureType schema) throws IllegalFilterException {
 		// grab attribute col
 		AttributeExpression value = ff.createAttributeExpression(name);
-		String geomName = schema.getDefaultGeometry().getName();
+		String geomName = schema.getGeometryDescriptor().getLocalName();
 
 		double[] values = new double[fc.size()];
 		Iterator it = fc.iterator();

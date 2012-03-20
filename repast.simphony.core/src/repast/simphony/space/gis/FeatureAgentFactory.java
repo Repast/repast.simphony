@@ -135,11 +135,6 @@ public abstract class FeatureAgentFactory {
 		ftBuilder.setName(featureTypeName);
 		ftBuilder.setCRS(coordRefSystem);
 		
-//		builder.setName("the_geom");
-//		builder.setBinding(geomClass);
-//		ftBuilder.addBinding(builder.buildType());
-//		ftBuilder.setDefaultGeometry("the_geom");
-		
 		// The FeatureType Geometry class is the first attribute added
 		ftBuilder.add(featureTypeName, geomClass);
 		
@@ -202,13 +197,12 @@ public abstract class FeatureAgentFactory {
 		}
 
 		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
-		ftBuilder.setName(agentClass.getName() + ".FeatureType");
+		String featureTypeName = agentClass.getName() + ".FeatureType";
+		ftBuilder.setName(featureTypeName);
+		ftBuilder.setCRS(coordRefSystem);
 		
-		builder.setName("the_geom");
-		builder.setBinding(geomClass);
-		builder.setCRS(coordRefSystem);
-		ftBuilder.addBinding(builder.buildType());
-		ftBuilder.setDefaultGeometry("the_geom");
+		// The FeatureType Geometry class is the first attribute added
+		ftBuilder.add(featureTypeName, geomClass);
 		
 		for (AttributeType at : ats){
 		  ftBuilder.addBinding(at);
