@@ -1,0 +1,29 @@
+<!--  ant build file to run prior to launching hadoop -->
+<project name="hadoop pre-reqs" default="make_pre_reqs">
+
+	<property name="jar.dir" location="./tmp_jars" />
+	<property name="batch.bin" location="../repast.simphony.batch/bin" />
+	<property name="core.bin" location="../repast.simphony.core/bin" />
+	<property name="core.lib" location="../repast.simphony.core/lib" />
+	<property name="runtime.lib" location="../repast.simphony.runtime/lib" />
+	<property name="hadoop.bin" location="./bin" />
+
+	<target name="make_pre_reqs">
+		<jar destfile="${jar.dir}/repast.simphony.batch.jar" basedir="${batch.bin}" />
+		<jar destfile="${jar.dir}/repast.simphony.hadoop.jar" basedir="${hadoop.bin}" />
+		<jar destfile="${jar.dir}/repast.simphony.core.jar" basedir="${core.bin}" />
+
+		<copy todir="${jar.dir}">
+			<fileset dir="${core.lib}">
+				<include name="collections-generic-4.01.jar" />
+				<include name="jscience.jar" />
+			</fileset>
+			
+			<fileset dir="${runtime.lib}">
+			   <include name="saf.core.runtime.jar" />
+			</fileset>
+		</copy>
+
+	</target>
+
+</project>
