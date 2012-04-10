@@ -6,6 +6,9 @@ Bundle-Version: 2.0.1
 Export-Package: repast.simphony.parameter
 Require-Bundle: repast.simphony.batch;bundle-version="2.0.1",
  repast.simphony.data;bundle-version="2.0.1",
- org.junit
+ org.junit,
+ repast.simphony.core;bundle-version="2.0.1",
+ repast.simphony.scenario;bundle-version="2.0.1"
 Bundle-ClassPath: lib/hadoop-core-1.0.1.jar,
- .
+ .,
+ lib/log4j-1.2.15.jar

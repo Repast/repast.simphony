@@ -5,8 +5,6 @@ package repast.simphony.engine;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -39,9 +37,12 @@ public class BatchJob extends Configured implements Tool {
     FileInputFormat.setInputPaths(job, in);
     FileOutputFormat.setOutputPath(job, out);
     
-    DistributedCache.addCacheFile(new Path("./test_data/batch_params.xml").toUri(), conf);
     
-    //DistributedCache.addFileToClassPath(new Path("./tmp_jars/repast.simphony.batch.jar"), conf); //, FileSystem.getLocal(conf));
+    // This doesn't seem to add it, not sure why -- replaced with -files on the command line
+    //DistributedCache.addCacheFile(new File("./test_data/batch_params.xml").toURI(), conf);
+    // This doesn'tseem work. I'm not sure why -- tried with addArchive as well
+    //FileSystem fs = FileSystem.get(conf);
+    //DistributedCache.addFileToClassPath(new Path("/repast.simphony/repast.simphony.batch.jar"), conf, fs); 
 
     job.setJobName("RS Batch Job");
     job.setMapperClass(InstanceRunner.class);
@@ -56,6 +57,8 @@ public class BatchJob extends Configured implements Tool {
 
     return 0;
   }
+  
+  
 
   public static void main(String[] args) throws Exception {
     int res = ToolRunner.run(new Configuration(), new BatchJob(), args);
