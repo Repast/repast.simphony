@@ -23,16 +23,18 @@ public class InstanceRunner {
 
   private ParameterLineParser lineParser;
   private OneRunBatchRunner runner;
+  
+  public InstanceRunner() throws IOException {
+    Properties props = new Properties();
+    props.load(new FileInputStream("../MessageCenter.log4j.properties"));
+    PropertyConfigurator.configure(props);
+  }
 
-  public void configure(String scenarioDir) throws IOException, ScenarioLoadException {
+  public void configure(String paramFile, String scenarioDir) throws IOException, ScenarioLoadException {
     File scenario = new File(scenarioDir);
-    File params = new File(new File(scenario.getParent(), "batch"), "batch_params.xml");
+    File params = new File(paramFile);
     lineParser = new ParameterLineParser(params.toURI());
     runner = new OneRunBatchRunner(scenario);
-
-    Properties props = new Properties();
-    props.load(new FileInputStream("./MessageCenter.log4j.properties"));
-    PropertyConfigurator.configure(props);
   }
 
   public void run(String lines) throws ScenarioLoadException {
@@ -54,13 +56,14 @@ public class InstanceRunner {
     runner.batchCleanup();
   }
 
-  // arg[0] is the scenario directory
-  // arg[1] is a parameter line
+  // arg[0] is the xml parameter file
+  // arg[1] is the scenario directory
+  // arg[2] is the input line(s)
   public static void main(String[] args) {
     try {
       InstanceRunner runner = new InstanceRunner();
-      runner.configure(args[0]);
-      runner.run(args[1]);
+      runner.configure(args[0], args[1]);
+      runner.run(args[2]);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
