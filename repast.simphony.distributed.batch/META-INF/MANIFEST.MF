@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: distributed.batch
+Bundle-SymbolicName: repast.simphony.distributed.batch
+Bundle-Version: 2.0.1
+Require-Bundle: repast.simphony.core;bundle-version="2.0.1",
+ repast.simphony.batch;bundle-version="2.0.1",
+ repast.simphony.scenario;bundle-version="2.0.1",
+ repast.simphony.runtime;bundle-version="2.0.1",
+ repast.simphony.data;bundle-version="2.0.1"
+Export-Package: repast.simphony.batch.parameter

@@ -1,0 +1,48 @@
+<repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
+  <name>Time Series Chart</name>
+  <dataSet>A Data Set</dataSet>
+  <xAxisLabel>Tick Count</xAxisLabel>
+  <yAxisLabel></yAxisLabel>
+  <chartTitle>Agent Counts</chartTitle>
+  <type>TIME_SERIES</type>
+  <background>
+    <red>192</red>
+    <green>192</green>
+    <blue>192</blue>
+    <alpha>255</alpha>
+  </background>
+  <gridLineColor>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
+    <alpha>255</alpha>
+  </gridLineColor>
+  <showGrid>true</showGrid>
+  <seriesIds>
+    <entry>
+      <string>Human Count</string>
+      <SeriesData>
+        <label>Human Count</label>
+        <color>
+          <red>0</red>
+          <green>0</green>
+          <blue>255</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+    <entry>
+      <string>Zombie Count</string>
+      <SeriesData>
+        <label>Zombie Count</label>
+        <color>
+          <red>255</red>
+          <green>0</green>
+          <blue>0</blue>
+          <alpha>255</alpha>
+        </color>
+      </SeriesData>
+    </entry>
+  </seriesIds>
+  <plotRangeLength>20</plotRangeLength>
+</repast.simphony.chart2.engine.TimeSeriesChartDescriptor>
