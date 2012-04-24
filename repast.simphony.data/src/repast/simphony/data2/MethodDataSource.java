@@ -23,6 +23,7 @@ public class MethodDataSource implements NonAggregateDataSource {
   private FastMethod fmethod;
   private String id;
   private Class<?> type, sourceType;
+  private int hashcode;
 
   /**
    * Creates a MethodDataSource that will call the named method on objects of
@@ -49,6 +50,12 @@ public class MethodDataSource implements NonAggregateDataSource {
         type = ClassUtils.primitiveToWrapper(ret);
       else
         type = (Class<?>) ret;
+      
+      hashcode = 17;
+      hashcode = 31 * hashcode + id.hashCode();
+      hashcode = 31 * hashcode + fmethod.hashCode();
+      hashcode = 31 * hashcode + sourceType.hashCode();
+      hashcode = 31 * hashcode + type.hashCode();
     } catch (Exception ex) {
       throw new DataException("Error creating MethodDataSource", ex);
     }
@@ -100,4 +107,25 @@ public class MethodDataSource implements NonAggregateDataSource {
   public Class<?> getSourceType() {
     return sourceType;
   }
+  
+  
+  
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode() {
+    return hashcode;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof MethodDataSource) {
+      MethodDataSource other = (MethodDataSource)obj;
+      return other.fmethod.equals(fmethod) && other.id.equals(id) && other.sourceType.equals(sourceType) && other.type.equals(type);
+    }
+    
+    return false;
+  }
+  
 }

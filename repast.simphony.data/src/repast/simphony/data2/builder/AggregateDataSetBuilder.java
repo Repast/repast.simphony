@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.cglib.reflect.FastMethod;
 import repast.simphony.data2.AggregateDSCreator;
 import repast.simphony.data2.AggregateDataSet;
 import repast.simphony.data2.AggregateDataSource;
@@ -26,7 +25,7 @@ import repast.simphony.data2.MethodDataSource;
 public class AggregateDataSetBuilder extends AbstractDataSetBuilder implements DataSetBuilder<AggregateDataSource> {
   
   private List<AggregateDataSource> dataSources = new ArrayList<AggregateDataSource>();
-  private Map<FastMethod, AggregateDSCreator> fmBuilderMap = new HashMap<FastMethod, AggregateDSCreator>();
+  private Map<MethodDataSource, AggregateDSCreator> fmBuilderMap = new HashMap<MethodDataSource, AggregateDSCreator>();
   
 
   /**
@@ -83,10 +82,10 @@ public class AggregateDataSetBuilder extends AbstractDataSetBuilder implements D
    */
   public void defineMethodDataSource(String id, AggregateOp aggType, Class<?> objType, String methodName) {
     MethodDataSource mds = new MethodDataSource(id, objType, methodName);
-    AggregateDSCreator creator = fmBuilderMap.get(mds.getMethod());
+    AggregateDSCreator creator = fmBuilderMap.get(mds);
     if (creator == null) {
       creator = new AggregateDSCreator(mds);
-      fmBuilderMap.put(mds.getMethod(), creator);
+      fmBuilderMap.put(mds, creator);
     }
     
     dataSources.add(creator.createDataSource(id, aggType));
