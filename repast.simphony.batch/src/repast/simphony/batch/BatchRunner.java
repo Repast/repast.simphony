@@ -99,11 +99,25 @@ public class BatchRunner implements RunListener{
    * @throws ParameterFormatException
    */
   public void run(File scenarioDir) throws ScenarioLoadException {
+	  System.out.println("BatchRunner.run(File)");
     if (scenarioDir.exists()) {
       BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
       ControllerRegistry registry = loader.load(runEnvironmentBuilder);
       controller.setControllerRegistry(registry);
       run();
+    } else {
+      msgCenter.error("Scenario not found", new IllegalArgumentException("Invalid scenario "
+          + scenarioDir.getAbsolutePath()));
+      return;
+    }
+  }
+  
+  public void loadScenario(File scenarioDir) throws ScenarioLoadException {
+	  System.out.println("BatchRunner.run(File)");
+    if (scenarioDir.exists()) {
+      BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
+      ControllerRegistry registry = loader.load(runEnvironmentBuilder);
+      controller.setControllerRegistry(registry);
     } else {
       msgCenter.error("Scenario not found", new IllegalArgumentException("Invalid scenario "
           + scenarioDir.getAbsolutePath()));
@@ -123,6 +137,11 @@ public class BatchRunner implements RunListener{
     controller.setControllerRegistry(scenario.createRegistry(runEnvironmentBuilder));
     run();
   }
+  
+  public void createScenario(BatchScenarioCreator creator) throws ClassNotFoundException, IOException {
+	    BatchScenario scenario = creator.createScenario();
+	    controller.setControllerRegistry(scenario.createRegistry(runEnvironmentBuilder));
+	  }
 
   protected boolean keepRunning() {
     for (ParameterSetter setter : controller.getControllerRegistry().getParameterSetters()) {
@@ -148,17 +167,20 @@ public class BatchRunner implements RunListener{
     }
 
     if (!params.getSchema().contains(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
+    	System.out.println("Creating Random Seed");
       ParametersCreator creator = new ParametersCreator();
       creator.addParameters(params);
       creator.addParameter(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME, Integer.class,
           (int) System.currentTimeMillis(), false);
       params = creator.createParameters();
     }
+    System.out.println("Random Seed: "+params.getValueAsString(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME));
 
     return params;
   }
 
   protected void run() {
+	  System.out.println("BatchRunner.run()");
     Parameters params = null;
     try {
       params = setupSweep();
@@ -171,16 +193,44 @@ public class BatchRunner implements RunListener{
       return;
     }
 
+//    printMemoryStats("Prior to controller.batchInitialize()");
     controller.batchInitialize();
     while (keepRunning()) {
+//    	 System.out.println("BatchRunner.run() keepRunning Loop");
+    	 printMemoryStats(" ##### Prior to controller.runParameterSetters(params)");
       controller.runParameterSetters(params);
+      printMemoryStats("Prior to controller.runInitialize(params)");
       controller.runInitialize(params);
+//      System.out.println("BatchRunner.run() keepRunning Loop controller.execute()");
+      printMemoryStats("Prior to controller.execute()");
       controller.execute();
       pause = true;
+      printMemoryStats("Prior to waitForRun()");
       waitForRun();
       controller.runCleanup();
+      System.gc();
     }
+//    System.out.println("BatchRunner.run() batchCleanup");
+    printMemoryStats("Prior to controller.batchCleanup()");
     controller.batchCleanup();
+    System.gc();
+    printMemoryStats("Post controller.batchCleanup() + gc()");
+  }
+  
+  protected void printMemoryStats(String header) {
+	  int mb = 1024*1024;
+	  
+      //Getting the runtime reference from system
+      Runtime runtime = Runtime.getRuntime();
+
+//      System.out.println("##### Heap utilization statistics [MB] #####");
+//      System.out.println(header);
+
+      //Print used memory
+      System.out.println("UFTM:"
+          + ((runtime.totalMemory() - runtime.freeMemory()) / mb) + " " +
+    		  (runtime.freeMemory() / mb) +" "+(runtime.totalMemory() / mb) +" "+(runtime.maxMemory() / mb)+
+    		  " "+header);
   }
 
   protected void waitForRun() {

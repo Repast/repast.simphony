@@ -26,12 +26,30 @@ import repast.simphony.parameter.xml.XMLSweeperProducer;
 public class BatchInit {
 
   public void run(CommandLine line, String[] args) throws Exception {
+	  
+	  System.out.println("RepastInit.run()");
 
     BatchRunner runner;
     if (line.hasOption("interactive"))
       runner = new BatchRunner(true);
     else
       runner = new BatchRunner(false);
+    
+//    boolean mjbFix = true;
+    
+//    if (mjbFix) {
+    	// moved code and call load scenario
+    	// parse the target
+    	String targetArg = args[args.length - 1];
+    	File file = new File(targetArg);
+    	if (file.exists()) {
+    		runner.loadScenario(file);
+    	} else {
+    		Class<?> c = Class.forName(targetArg);
+    		BatchScenarioCreator creator = (BatchScenarioCreator) c.newInstance();
+    		runner.createScenario(creator);
+    	}
+//    }
 
     SweeperProducer producer = null;
     // parse all the options
@@ -52,16 +70,23 @@ public class BatchInit {
     }
 
     runner.setSweeperProducer(producer);
-    // parse the target
-    String targetArg = args[args.length - 1];
-    File file = new File(targetArg);
-    if (file.exists()) {
-      runner.run(file);
-    } else {
-      Class<?> c = Class.forName(targetArg);
-      BatchScenarioCreator creator = (BatchScenarioCreator) c.newInstance();
-      runner.run(creator);
-    }
+    
+//    if (mjbFix) {
+    	runner.run();
+//    }
+    
+//    if (!mjbFix) {
+//    	// parse the target
+//    	String targetArg = args[args.length - 1];
+//    	File file = new File(targetArg);
+//    	if (file.exists()) {
+//    		runner.run(file);
+//    	} else {
+//    		Class<?> c = Class.forName(targetArg);
+//    		BatchScenarioCreator creator = (BatchScenarioCreator) c.newInstance();
+//    		runner.run(creator);
+//    	}
+//    }
   }
 
   private SweeperProducer runOpt(CommandLine line) throws IOException, ClassNotFoundException,

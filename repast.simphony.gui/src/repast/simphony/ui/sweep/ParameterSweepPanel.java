@@ -59,8 +59,12 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 	JPanel localExecutionPanel = new JPanel();
 	JPanel gridExecutionPanel = new JPanel();
 	JPanel executionPanel = new JPanel();
-
+	JPanel commandPanel = new JPanel();
 	
+	JTextField textFieldCommandOptions;
+	JTextField textFieldClasspath;
+	
+
 	JTextField textField1;
 	JTextField textField2;
 	JTextField textField3;
@@ -91,6 +95,9 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 //	String tf4Grid ="..\\repast.simphony.demo.predatorprey\\predator_prey_continuous_batch.rs";
 //	String tf5Grid ="predator_prey_batch\\batch_params.xml";
 	
+	String commandLineOptionsLabel = "Command Line Options:";
+	String classpathLabel = "Classpath Additions:";
+	
 	String localEntry1Label = "Scenario Directory:";
 	String localEntry2Label = "";
 	String localEntry3Label = "";
@@ -109,8 +116,13 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 	String optimizedEntry4Label = "";
 	String optimizedEntry5Label = "";
 	
+	String commandLineArguments = "";
+	String classpathAdditions = "";
+	
 	boolean retainFiles = false;
 	boolean zipNShip = false;
+	
+	String executionMode = "";
 	
 	String retainFilesLabel = "Retain Remote Files";
 	String zipNShipLabel = "Create Jar";
@@ -204,10 +216,27 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			tf3Grid = sweepProps.getProperty("gridTF3");
 			tf4Grid = sweepProps.getProperty("gridTF4");
 			tf5Grid = sweepProps.getProperty("gridTF5");
+			
+			// if we are working with existing scenarios, we want to add these two
+			// new properties
+			if (sweepProps.getProperty("commandLineArguments") == null || sweepProps.getProperty("commandLineArguments").length() == 0) {
+				sweepProps.setProperty("commandLineArguments", "-Xmx600M");
+				sweepProps.setProperty("classpathAdditions", "");
+			}
+			
+			if (sweepProps.getProperty("executionMode") == null || sweepProps.getProperty("executionMode").length() == 0) {
+				sweepProps.setProperty("executionMode", "local");
+			}
+			
+			commandLineArguments = sweepProps.getProperty("commandLineArguments");
+			classpathAdditions = sweepProps.getProperty("classpathAdditions");
+			executionMode = sweepProps.getProperty("executionMode");
+		
 		} else {
 			// create an empty properties file
 			createProperties();
 			storeProperties();
+			loadProperties();
 		}
 	}
 	
@@ -246,6 +275,11 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		sweepProps.setProperty("gridTF3", "");
 		sweepProps.setProperty("gridTF4", "");
 		sweepProps.setProperty("gridTF5", "");
+		
+		sweepProps.setProperty("commandLineArguments", "-Xmx600M");
+		sweepProps.setProperty("classpathAdditions", "");
+		
+		sweepProps.setProperty("executionMode", "local");
 	}
 	public void updateValuesProperties(ParameterSweepInput psi) {
 
@@ -287,6 +321,10 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		sweepProps.setProperty("gridTF3", tf3Grid);
 		sweepProps.setProperty("gridTF4", tf4Grid);
 		sweepProps.setProperty("gridTF5", tf5Grid);
+		
+		sweepProps.setProperty("commandLineArguments", commandLineArguments);
+		sweepProps.setProperty("classpathAdditions", classpathAdditions);
+		sweepProps.setProperty("executionMode", executionMode);
 	}
 	
 	public void saveValuesProperties() {
@@ -343,6 +381,8 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 
 		JPanel all = new JPanel();
 		all.setLayout(new GridBagLayout());
+		
+		// Number of Runs
 
 		JPanel numberOfRunsPanel = new JPanel();
 		numberOfRunsPanel.setLayout(new GridBagLayout());
@@ -365,6 +405,36 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		p1.add(numberOfRuns, c);
 		numberOfRunsPanel.add(p1);
 		
+		// Number of Runs
+		
+		// command Line
+
+//		commandPanel = new JPanel();
+//		commandPanel.setLayout(new GridBagLayout());
+//		commandPanel.setBorder(BorderFactory.createTitledBorder("User Configurable Command Line Options and Classpath Additions"));
+//		
+//		p1 = new JPanel();
+//		p1.setLayout(new GridBagLayout());
+//		
+//		c.weighty = 0.0;
+//		c.gridy = 0;
+//		c.gridx = 0;
+//		p1.add(new JLabel(commandLineOptionsLabel), c);
+//		textFieldCommandOptions = new JTextField(commandLineArguments, 40);
+//		c.gridx = 1;
+//		p1.add(textFieldCommandOptions, c);
+//		
+//		c.gridy = 1;
+//		c.gridx = 0;
+//		p1.add(new JLabel(classpathLabel), c);
+//		textFieldClasspath = new JTextField(classpathAdditions, 40);
+//		c.gridx = 1;
+//		p1.add(textFieldClasspath, c);
+//		
+//		commandPanel.add(p1);
+		
+		// Command Line
+		
 		// radio buttons for local and grid execution
 		
 		c.fill = GridBagConstraints.NONE;
@@ -377,17 +447,23 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		
 		localButton = new JRadioButton("Local Execution");
 		localButton.setActionCommand("Local");
-		localButton.setSelected(true);
+		localButton.setSelected(false);
+		if (executionMode.equals("local"))
+			localButton.setSelected(true);
 		localButton.addActionListener(this);
 		
 		if (GRID_SUPPORT) {
-		optimizedButton = new JRadioButton("Optimized Execution (Local)");
+			optimizedButton = new JRadioButton("Optimized Execution (Local)");
 		} else {
 			optimizedButton = new JRadioButton("Optimized Execution");
 		}
 		optimizedButton.setActionCommand("Optimized");
 		optimizedButton.setSelected(false);
+		if (executionMode.equals("optimized"))
+			optimizedButton.setSelected(true);
 		optimizedButton.addActionListener(this);
+		
+		
 		
 		ButtonGroup executionButtonGroup = new ButtonGroup();
 		executionButtonGroup.add(localButton);
@@ -446,10 +522,13 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		zipNShipCheckBox.setSelected(zipNShip);
 		zipNShipCheckBox.setEnabled(false);
 		
+		// Start Execution Panel
+		
 		executionPanel.setLayout(new GridBagLayout());
 		String note = " (NOTE: Grid Execution Requires GridGain Installation)";
 		if (gridEligible || !GRID_SUPPORT)
 			note = "";
+		
 		executionPanel.setBorder(BorderFactory.createTitledBorder("Model Execution"+note));
 		
 		c.weightx = 1;
@@ -491,8 +570,9 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		labelEntry4 = new JLabel(localEntry4Label, JLabel.TRAILING);
 		textField4 = new JTextField(tf4Local, 40);
 		c.gridx = 0;
-		c.gridy = 3;
+//		c.gridy = 3;
 		if (GRID_SUPPORT) {
+			c.gridy++;
 			gridExecutionPanel.add(labelEntry4,c);
 			c.gridx = 1;
 			gridExecutionPanel.add(textField4,c);
@@ -501,17 +581,38 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		labelEntry5 = new JLabel(localEntry5Label, JLabel.TRAILING);
 		textField5 = new JTextField(tf5Local, 40);
 		c.gridx = 0;
-		c.gridy = 4;
+//		c.gridy = 4;
 		if (GRID_SUPPORT) {
+			c.gridy++;
 			gridExecutionPanel.add(labelEntry5,c);
 			c.gridx = 1;
 			gridExecutionPanel.add(textField5,c);
 		}
 		
+//		c.weighty = 0.0;
+//		c.gridy = 0;
+		c.gridx = 0;
+		c.gridy++;
+		gridExecutionPanel.add(new JLabel(commandLineOptionsLabel, JLabel.TRAILING), c);
+		textFieldCommandOptions = new JTextField(commandLineArguments, 40);
+		c.gridx = 1;
+		gridExecutionPanel.add(textFieldCommandOptions, c);
+		
+//		c.gridy = 1;
+		c.gridx = 0;
+		c.gridy++;
+		
+		gridExecutionPanel.add(new JLabel(classpathLabel, JLabel.TRAILING), c);
+		textFieldClasspath = new JTextField(classpathAdditions, 40);
+		c.gridx = 1;
+		gridExecutionPanel.add(textFieldClasspath, c);
+		
 		textField1.setEnabled(true);
 		textField1.setEditable(true);
+		
 		textField2.setEnabled(false);
 		textField3.setEnabled(false);
+		
 		textField4.setEnabled(false);
 		textField5.setEnabled(false);
 
@@ -530,6 +631,7 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		savePropsButton.addActionListener(this);
 		c.gridy = 2;
 		executionPanel.add(savePropsButton, c);
+		// End Execution Panel
 		
 //		
 		
@@ -568,13 +670,25 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		c.gridy = 2;
 		c.fill = GridBagConstraints.BOTH;
 		all.add(executionPanel,c);
+		
 		c.weighty = 0;
 		c.gridy = 3;
+		c.fill = GridBagConstraints.BOTH;
+		all.add(commandPanel,c);
+		
+		c.weighty = 0;
+		c.gridy = 4;
 		all.add(aButtonPanel,c);
 		
 		c.fill = GridBagConstraints.BOTH;
 		c.weighty = 1;
 		add(all, c);
+		
+		if (executionMode.equals("local")) {
+			localButton.doClick();
+		} else {
+			optimizedButton.doClick();
+		}
 		
 	}
 	
@@ -585,6 +699,7 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			tf3Local = textField3.getText();
 			tf4Local = textField4.getText();
 			tf5Local = textField5.getText();
+			executionMode = "local";
 		} else if (current.equals("Grid")) {
 			tf1Grid = textField1.getText();
 			tf2Grid = textField2.getText();
@@ -599,7 +714,13 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			tf3Optimized = textField3.getText();
 			tf4Optimized = textField4.getText();
 			tf5Optimized = textField5.getText();
+			executionMode = "optimized";
 		}
+		
+		commandLineArguments = textFieldCommandOptions.getText(); 
+		classpathAdditions = textFieldClasspath.getText(); 
+		
+		
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -671,6 +792,8 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			zipNShipCheckBox.setSelected(false);
 			zipNShipCheckBox.setEnabled(false);
 			
+			executionMode = "local";
+			
 
 			parameterSweepSubmitPanel.setButtonText("Submit For Local Execution");
 		} else if (e.getActionCommand().equals("Optimized")) {
@@ -698,6 +821,8 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			
 			zipNShipCheckBox.setSelected(false);
 			zipNShipCheckBox.setEnabled(false);
+			
+			executionMode = "optimized";
 
 			parameterSweepSubmitPanel.setButtonText("Submit For Optimized Execution");
 		}
@@ -969,4 +1094,30 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 	public void setZipNShip(boolean zipNShip) {
 		this.zipNShip = zipNShip;
 	}
+	
+	public String getCommandLineArguments() {
+		return commandLineArguments;
+	}
+
+	public void setCommandLineArguments(String commandLineArguments) {
+		this.commandLineArguments = commandLineArguments;
+	}
+
+	public String getClasspathAdditions() {
+		return classpathAdditions;
+	}
+
+	public void setClasspathAdditions(String classpathAdditions) {
+		this.classpathAdditions = classpathAdditions;
+	}
+
+	public JPanel getCommandPanel() {
+		return commandPanel;
+	}
+
+	public void setCommandPanel(JPanel commandPanel) {
+		this.commandPanel = commandPanel;
+	}
+
+	
 }

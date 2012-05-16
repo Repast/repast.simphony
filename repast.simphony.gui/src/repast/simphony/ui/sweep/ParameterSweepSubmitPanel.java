@@ -12,9 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -29,7 +27,6 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.Schema;
 import repast.simphony.parameter.StringConverter;
 import repast.simphony.runtime.RepastBatchMain;
-import repast.simphony.scenario.ScenarioUtils;
 
 public class ParameterSweepSubmitPanel extends JPanel implements ActionListener {
 
@@ -64,10 +61,11 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 		boolean gridExecution;
 		boolean separateProcess;
 
-		private final static String CLASSPATH_FILE = "../repast.simphony.distributedBatch/DBClasspath";
+		private final static String CLASSPATH_FILE = "repast.simphony.gui_2.0.1/optClasspath";
 
 		public ExecRunnable(ParameterSweepPanel parameterSweepPanel, String mainClass, 
-				String command, ArrayList<String> args, String logfile, boolean gridExecution) {
+				String command, ArrayList<String> args, String logfile, boolean gridExecution,
+				boolean optimizedExecution) {
 			
 			separateProcess = loadProcessProperties();
 
@@ -77,14 +75,27 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 			this.parameterSweepPanel = parameterSweepPanel;
 
 			theCommand.add("java");
-			theCommand.add("-Xmx600M");
+//			theCommand.add("-Xmx1500M");
+			theCommand.add(parameterSweepPanel.getCommandLineArguments());
 			theCommand.add("-cp");
+			
+			String userClasspath = "";
+			if (parameterSweepPanel.getClasspathAdditions().length() > 0)
+				userClasspath = parameterSweepPanel.getClasspathAdditions();
 
-			if (gridExecution)
-				theCommand.add((System.getProperty("java.class.path")+File.pathSeparator+loadClasspath()+
+			if (gridExecution) {
+				theCommand.add((userClasspath + ( userClasspath.length() > 0 ? File.pathSeparator : "") + 
+						System.getProperty("java.class.path")+File.pathSeparator+loadOptimizedClasspath()+
 						File.pathSeparator+getModelJar()).replaceAll("\\\\", "/"));
-			else
-				theCommand.add(System.getProperty("java.class.path").replaceAll("\\\\", "/"));
+			} else if (optimizedExecution) {
+//				theCommand.add(userClasspath + ( userClasspath.length() > 0 ? File.pathSeparator : "") + getModelBin() + File.pathSeparator + 
+//						loadOptimizedClasspath().replaceAll("\\\\", "/"));
+				theCommand.add((userClasspath + ( userClasspath.length() > 0 ? File.pathSeparator : "") + 
+						System.getProperty("java.class.path")).replaceAll("\\\\", "/"));
+			} else {
+				theCommand.add((userClasspath + ( userClasspath.length() > 0 ? File.pathSeparator : "") + 
+						System.getProperty("java.class.path")).replaceAll("\\\\", "/"));
+			}
 				
 			//		      theCommand.add(File.pathSeparator+loadClasspath()+File.pathSeparator+getModelJar());
 
@@ -103,7 +114,6 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 
 			this.args = args;
 
-			
 		}
 
 		private String getModelJar() {
@@ -119,6 +129,11 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 
 			return jar;
 		}
+		
+		private String getModelBin() {
+			// determine the name of the jar file
+			return "bin";
+		}
 
 		public void setBatchFile(String command, ArrayList<String> args, String logfile) {
 			theCommand.clear();
@@ -127,24 +142,43 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 			theCommand.add(">"+logfile);
 			theCommand.add("2>&1");
 		}
-
-		private String loadClasspath() {
-
+		
+		private String getPluginsRoot() {
 			URL runtimeSource = repast.simphony.runtime.RepastMain.class
-			.getProtectionDomain().getCodeSource().getLocation();
+					.getProtectionDomain().getCodeSource().getLocation();
 
 			// this path gets us to runtime. Classpath entries in file
 			// will always be relative to runtime.
-			String path = runtimeSource.getFile().replaceAll("%20", " ")+"../";
+			String path = runtimeSource.getFile().replaceAll("%20", " ");
 			path = path.replaceFirst("/", "");
+			String[] dirs = path.split("/");
+			StringBuffer sb = new StringBuffer();
+			for (String d : dirs) {
+				if (d.startsWith("repast.simphony.runtime_"))
+					break;
+				sb.append(d);
+				sb.append("/");
+			}
+			return sb.toString();
+		}
+
+		private String loadOptimizedClasspath() {
+
+//			URL runtimeSource = repast.simphony.runtime.RepastMain.class
+//			.getProtectionDomain().getCodeSource().getLocation();
+//
+//			// this path gets us to runtime. Classpath entries in file
+//			// will always be relative to runtime.
+//			String path = runtimeSource.getFile().replaceAll("%20", " ")+"../";
+//			path = path.replaceFirst("/", "");
 			
-			path = "";
+			String path = getPluginsRoot();
 
 
 			StringBuffer sb = new StringBuffer();
 
 			try {
-				BufferedReader reader = new BufferedReader(new FileReader(CLASSPATH_FILE));
+				BufferedReader reader = new BufferedReader(new FileReader(getPluginsRoot()+CLASSPATH_FILE));
 
 				String line;
 				while ((line = reader.readLine()) != null) {
@@ -370,7 +404,12 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 				StringBuffer optimize = new StringBuffer();
 				optimize.append("run_result_producer="+this.textField2.getText()+"\n");
 				optimize.append("advancement_chooser="+this.textField3.getText()+"\n");
-				optimize.append("parameter_file="+sweepFile+"\n");
+				optimize.append("parameter_file="+sweepFile.replaceAll("\\\\", "/")+"\n");
+				
+				// think
+				
+				optimizer.append(optimize.toString());
+				optimizer.close();
 			}
 
 			StringBuffer sweep = new StringBuffer();
@@ -442,9 +481,9 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 
 			String pName=new File(textField2.getText()).getName();
 
-			launch.append("<name>"+pName+"</name>\n");
+/* --> */	launch.append("<name>"+""+"</name>\n"); // orig: "<name>"+pName+"</name>\n"
 			launch.append("<mainScenario>" + textField1.getText()+"</mainScenario>\n"); 
-			launch.append("<projectPath>"+textField2.getText()+"</projectPath>\n");
+/* --> */	launch.append("<projectPath>"+""+"</projectPath>\n"); // orig: "<projectPath>"+textField2.getText()+"</projectPath>\n"
 
 			launch.append("<batchXMLPath>"+sweepFile+"</batchXMLPath>\n"); 
 			launch.append("<remoteBatchXML>"+sweepFile+"</remoteBatchXML>\n"); 
@@ -498,7 +537,7 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 		String command;
 		String logFile;
 		StringBuffer sbArgs = new StringBuffer();
-		boolean grid;
+		boolean grid, opt = false;
 		ArrayList<String> args = new ArrayList<String>();
 
 		if (parameterSweepPanel.getGridButton().isSelected()) {
@@ -514,6 +553,7 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 			args.add(parameterSweepPanel.getTextField1().getText()); 
 		} else  {
 			grid = false;
+			opt = true;
 			args.add("-opt");
 			args.add(optimizationFile);
 			args.add(parameterSweepPanel.getTextField1().getText()); 
@@ -530,13 +570,16 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 
 
 		String execString = command;
+		opt = false;
 
 
 		//		ExecRunnable er = new ExecRunnable(execString, sbArgs.toString().replaceAll("\\\\", "\\\\\\\\"), logFile);
 		//		ExecRunnable er = new ExecRunnable(parameterSweepPanel, (grid ? "repast.simphony.batch.setup.BatchMainSetup" : 
 		//			"repast.simphony.batch.BatchMain"),execString, args, logFile);
-		ExecRunnable er = new ExecRunnable(parameterSweepPanel, (grid ? "repast.simphony.batch.setup.BatchMainSetup" : 
-		"repast.simphony.runtime.RepastBatchMain"),execString, args, logFile, grid);
+		ExecRunnable er = new ExecRunnable(parameterSweepPanel, 
+				(grid ? "repast.simphony.batch.setup.BatchMainSetup" : 
+						(opt ? "repast.simphony.batch.BatchMain" : "repast.simphony.runtime.RepastBatchMain")),
+						execString, args, logFile, grid, opt);
 
 		//		er.setBatchFile(execString, args, logFile);
 
