@@ -9,3 +9,5 @@ Require-Bundle: repast.simphony.core;bundle-version="2.0.1",
  repast.simphony.runtime;bundle-version="2.0.1",
  repast.simphony.data;bundle-version="2.0.1"
 Export-Package: repast.simphony.batch.parameter
+Bundle-ClassPath: lib/jsch-0.1.48.jar,
+ .

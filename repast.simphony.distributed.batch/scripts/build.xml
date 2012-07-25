@@ -1,5 +1,19 @@
 <!--  ant build file for running hadoop -->
-<project name="build_batch_run" default="make_pre_reqs">
+<project name="build_batch_run" default="make_zip">
+
+	<!-- User edit these -->
+	<property name="model.dir" location="../test_data/JZombies" />
+	<property name="model.scenario.dir" location="../test_data/JZombies/JZombies.rs" />
+	<property name="batch.param.file" location="../test_data/JZombies/batch/batch_params.xml" />
+	<property name="working.dir" location="../tmp" />
+	<property name="zip.file" location="../complete_model.zip" />
+
+
+	<!-- User doesn't edit these -->
+	<property name="working.lib" location="${working.dir}/lib" />
+	<property name="model.dir.bin" location="${model.dir}/bin" />
+	<property name="model.dir.lib" location="${model.dir}/lib" />
+
 
 	<property name="libs.bsf" location="../../libs.bsf" />
 	<property name="batch" location="../../repast.simphony.batch" />
@@ -15,17 +29,28 @@
 	<property name="relogo.runtime" location="../../repast.simphony.relogo.runtime" />
 	<property name="relogo.ide" location="../../repast.simphony.relogo.ide" />
 
+	<property name="prototype.dir" location="../prototype" />
 
 
-	<property name="model.dir" location="../test_data/JZombies" />
-	<property name="model.dir.bin" location="${model.dir}/bin" />
-	<property name="model.dir.lib" location="${model.dir}/lib" />
-	<property name="model.scenario" location="${model.dir}/JZombies.rs" />
-	<property name="model.scenario.zip" value="scenario.zip" />
-
-	<property name="working" location="../test_working" />
-	<property name="working.lib" location="${working}/lib" />
-
+	<target name="make_zip">
+		<delete dir="${working.dir}" failonerror="false" />
+		<mkdir dir="${working.dir}" />
+		<copy todir="${working.dir}">
+			  <fileset dir="${prototype.dir}" />
+		</copy>
+		
+		<antcall target="make_pre_reqs" />
+		<copy todir="${working.dir}/scenario.rs">
+			<fileset dir="${model.scenario.dir}" excludes="styles/"/>
+			<fileset file="${batch.param.file}" />
+		</copy>
+		
+		<zip destfile="${zip.file}"
+			basedir="${working.dir}"
+		/>
+		
+		
+	</target>
 
 	<!-- Make jars and copy them to bin/lib. The contents of that directory become part of
 		the mappers classpath -->
@@ -47,7 +72,7 @@
 		<jar destfile="${working.lib}/repast.simphony.relogo.ide.jar" basedir="${relogo.ide}/bin" />
 
 
-		<!-- copy project's 3rd party libs to the hadoop lib directory -->
+		<!-- copy project's 3rd party libs to the  lib directory -->
 		<copy todir="${working.lib}">
 			<fileset dir="${libs.bsf}/lib">
 				<include name="*.jar" />
@@ -86,7 +111,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${working}">
+		<copy todir="${working.dir}">
 			<fileset dir="${runtime}">
 				<include name="MessageCenter.log4j.properties" />
 			</fileset>

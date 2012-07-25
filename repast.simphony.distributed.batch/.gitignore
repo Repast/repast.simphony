@@ -1,2 +1,4 @@
 test_working/*
 test_data/JZombies/ModelOutput*
+/test_working
+/notes

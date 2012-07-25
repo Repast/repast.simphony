@@ -26,7 +26,8 @@ public class InstanceRunner {
   
   public InstanceRunner() throws IOException {
     Properties props = new Properties();
-    props.load(new FileInputStream("../MessageCenter.log4j.properties"));
+    File in = new File("../MessageCenter.log4j.properties");
+    props.load(new FileInputStream(in));
     PropertyConfigurator.configure(props);
   }
 
@@ -54,11 +55,13 @@ public class InstanceRunner {
     }
 
     runner.batchCleanup();
+    System.out.println(new File(".").getAbsolutePath() + " DONE");
   }
 
   // arg[0] is the xml parameter file
   // arg[1] is the scenario directory
   // arg[2] is the input line(s)
+  // arg[3] is the id of the instance -- ignored for now
   public static void main(String[] args) {
     try {
       InstanceRunner runner = new InstanceRunner();
