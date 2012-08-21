@@ -173,10 +173,10 @@ public class BatchRunner implements RunListener{
 
     controller.batchInitialize();
     while (keepRunning()) {
+      pause = true;
       controller.runParameterSetters(params);
       controller.runInitialize(params);
       controller.execute();
-      pause = true;
       waitForRun();
       controller.runCleanup();
     }
