@@ -60,12 +60,12 @@ public class OneRunBatchRunner implements RunListener {
   }
   
   public void run(int runNum, Parameters params) {
+    pause = true;
     params = setupSweep(params);
     controller.runParameterSetters(params);
     controller.setRunNumber(runNum);
     controller.runInitialize(params);
     controller.execute();
-    pause = true;
     waitForRun();
     controller.runCleanup();
   }
@@ -93,6 +93,7 @@ public class OneRunBatchRunner implements RunListener {
   }
 
   protected void waitForRun() {
+    msgCenter.info("Waiting");
     synchronized (monitor) {
       while (pause) {
         try {
@@ -103,6 +104,7 @@ public class OneRunBatchRunner implements RunListener {
         }
       }
     }
+    msgCenter.info("Done Waiting");
   }
 
   protected void notifyMonitor() {
@@ -136,6 +138,7 @@ public class OneRunBatchRunner implements RunListener {
   public void stopped() {
     pause = false;
     notifyMonitor();
+    msgCenter.info("Stopped Called");
   }
   
   private static class ORBController extends DefaultController {

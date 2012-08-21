@@ -18,11 +18,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import repast.simphony.batch.parameter.ParametersToInput;
+import simphony.util.messages.MessageCenter;
 
 /**
  * @author Nick Collier
  */
 public class LocalDriver {
+  
+  private static MessageCenter msg = MessageCenter.getMessageCenter(LocalDriver.class);
 
   private static class ProcessRunner implements Callable<Void> {
 
@@ -53,11 +56,10 @@ public class LocalDriver {
     File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN))
         .getCanonicalFile();
     File wd = new File(props.getProperty(BatchConstants.WORKING_DIRECTORY_PN));
+    
     ParametersToInput toInput;
     try {
-
       toInput = new ParametersToInput(batchParamFile);
-
     } catch (Exception ex) {
       throw new IOException(ex);
     }
@@ -80,14 +82,13 @@ public class LocalDriver {
     futures = new ArrayList<Future<Void>>();
     executor = Executors.newFixedThreadPool(instanceCount);
     
-    File file = new File("./DONE");
+    File file = new File("./" + BatchConstants.DONE_FILE_NAME);
     file.delete();
     
     try {
-
       String hostname = InetAddress.getLocalHost().getCanonicalHostName();
       for (int i = 0; i < instanceCount; i++) {
-        File subwd = new File(wd, "instance_" + (i + 1)).getCanonicalFile();
+        File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + (i + 1)).getCanonicalFile();
         subwd.mkdirs();
         String inputArg = inputs.get(i);
         runInstance(inputArg, libDir, batchParamFile, scenario, subwd, hostname + " " + (i + 1));
@@ -98,13 +99,17 @@ public class LocalDriver {
           future.get();
         } catch (ExecutionException ex) {
           ex.getCause().printStackTrace();
+          msg.error("", ex);
         } catch (InterruptedException ex) {
           ex.printStackTrace();
+          msg.error("", ex);
         }
       }
     } finally {
-      file.createNewFile();
       executor.shutdown();
+      msg.info("done");
+      boolean result = file.createNewFile();
+      msg.info("writing file with result: " + result);
     }
   }
 
@@ -162,8 +167,7 @@ public class LocalDriver {
     try {
       driver.run(args[0]);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      msg.error("", e);
     }
   }
 

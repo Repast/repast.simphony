@@ -15,11 +15,14 @@ import org.apache.log4j.PropertyConfigurator;
 import repast.simphony.batch.parameter.ParameterLineParser;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.scenario.ScenarioLoadException;
+import simphony.util.messages.MessageCenter;
 
 /**
  * @author Nick Collier
  */
 public class InstanceRunner {
+  
+  private static MessageCenter msg = MessageCenter.getMessageCenter(InstanceRunner.class);
 
   private ParameterLineParser lineParser;
   private OneRunBatchRunner runner;
@@ -45,6 +48,7 @@ public class InstanceRunner {
     String line = null;
     try {
       while ((line = reader.readLine()) != null) {
+        msg.info("Params: " + line);
         Parameters params = lineParser.parse(line);
         int runNum = (Integer) params.getValue(BatchConstants.BATCH_RUN_PARAM_NAME);
         runner.run(runNum, params);
@@ -55,7 +59,7 @@ public class InstanceRunner {
     }
 
     runner.batchCleanup();
-    System.out.println(new File(".").getAbsolutePath() + " DONE");
+    msg.info("Instance Runner at : " + new File(".").getAbsolutePath() + " DONE");
   }
 
   // arg[0] is the xml parameter file

@@ -18,5 +18,8 @@ public interface BatchConstants {
 
   String INSTANCE_COUNT_PN = "instance.count";
   
+  String INSTANCE_DIR_PREFIX = "instance_";
+  String DONE_FILE_NAME = "DONE";
+  
 
 }
