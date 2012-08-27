@@ -1,14 +1,14 @@
 package repast.simphony.engine.schedule;
 
-import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
-import repast.simphony.util.ClassUtilities;
-import simphony.util.messages.MessageCenter;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import net.sf.cglib.reflect.FastClass;
+import net.sf.cglib.reflect.FastMethod;
+import repast.simphony.util.ClassUtilities;
+import simphony.util.messages.MessageCenter;
 
 /**
  * An IAction created from a Method. The target of the method can be changed.
@@ -68,7 +68,8 @@ public class DynamicTargetAction implements IAction {
     try {
       method.invoke(target, EMPTY_CLASS_ARRAY);
     } catch (InvocationTargetException e) {
-      msgCenter.error("Tried to call: " + method.toString(), e);
+      //msgCenter.error("Tried to call: " + method.toString(), e);
+      throw new RuntimeException(e);
     }
   }
 
