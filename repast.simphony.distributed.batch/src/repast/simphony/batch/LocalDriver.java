@@ -5,9 +5,9 @@ package repast.simphony.batch;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -17,15 +17,33 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import repast.simphony.batch.parameter.ParametersToInput;
 import simphony.util.messages.MessageCenter;
 
 /**
+ * Starts X number of simphony batch intances on the same machine that this
+ * is run on. Each instance is run on a separate JVM.
+ * 
  * @author Nick Collier
  */
 public class LocalDriver {
   
   private static MessageCenter msg = MessageCenter.getMessageCenter(LocalDriver.class);
+  
+  private static class Instance {
+    
+    int id;
+    File wd;
+    
+    public Instance(int id, File wd) {
+      this.id = id;
+      this.wd = wd;
+    }
+  }
 
   private static class ProcessRunner implements Callable<Void> {
 
@@ -48,31 +66,48 @@ public class LocalDriver {
   
   private ExecutorService executor;
   private List<Future<Void>> futures;
+  private List<Instance> instances = new ArrayList<Instance>();
+  
+  private File unrollXMLParamsIntoFile(File workingDir, File batchParamFile) throws IOException {
+    ParametersToInput toInput;
+    try {
+      toInput = new ParametersToInput(batchParamFile);
+    } catch (ParserConfigurationException ex) {
+      throw new IOException(ex);
+    } catch (SAXException ex) {
+      throw new IOException(ex);
+    }
+    
+    File input = new File(workingDir, "batch_parameters_input.txt");
+    toInput.formatForInput(input, new File(workingDir, "parameters_for_run.csv"));
+    return input;
+  }
+  
 
   public void run(String propsFile) throws IOException {
     Properties props = new Properties();
     props.load(new FileReader(propsFile));
 
-    File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN))
-        .getCanonicalFile();
+   
     File wd = new File(props.getProperty(BatchConstants.WORKING_DIRECTORY_PN));
     
-    ParametersToInput toInput;
-    try {
-      toInput = new ParametersToInput(batchParamFile);
-    } catch (Exception ex) {
-      throw new IOException(ex);
+    int instanceCount = Integer.parseInt(props.getProperty(BatchConstants.INSTANCE_COUNT_PN, "1"));
+    //if (instanceCount == -1) {
+    //  instanceCount = Runtime.getRuntime().availableProcessors();
+    //}
+    
+    File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN))
+    .getCanonicalFile();
+    
+    List<String> inputs = null;
+    if (props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN, "").length() > 0) {
+      // unrolled input already exists so use that.
+      inputs = createInputArgs(instanceCount, new File(props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN)));
+    } else {
+      File file = unrollXMLParamsIntoFile(wd, batchParamFile);
+      inputs = createInputArgs(instanceCount, file);
     }
-
-    File input = new File(wd, "batch_parameters_input.txt");
-    toInput.formatForInput(input, new File(wd, "parameters_for_run.csv"));
-
-    int instanceCount = Integer.parseInt(props.getProperty(BatchConstants.INSTANCE_COUNT_PN, "-1"));
-    if (instanceCount == -1) {
-      instanceCount = Runtime.getRuntime().availableProcessors();
-    }
-
-    List<String> inputs = createInputArgs(instanceCount, input);
+   
 
     File scenario = new File(props.getProperty(BatchConstants.SCENARIO_DIRECTORY_PN))
         .getCanonicalFile();
@@ -86,12 +121,13 @@ public class LocalDriver {
     file.delete();
     
     try {
-      String hostname = InetAddress.getLocalHost().getCanonicalHostName();
       for (int i = 0; i < instanceCount; i++) {
-        File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + (i + 1)).getCanonicalFile();
+        int id = i + 1;
+        File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + id).getCanonicalFile();
         subwd.mkdirs();
+        instances.add(new Instance(id, subwd));
         String inputArg = inputs.get(i);
-        runInstance(inputArg, libDir, batchParamFile, scenario, subwd, hostname + " " + (i + 1));
+        runInstance(inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
       
       for (Future<Void> future : futures) {
@@ -107,10 +143,30 @@ public class LocalDriver {
       }
     } finally {
       executor.shutdown();
-      msg.info("done");
-      boolean result = file.createNewFile();
-      msg.info("writing file with result: " + result);
+      createStatusOutput();
+      file.createNewFile();
     }
+  }
+  
+  private void createStatusOutput() throws IOException {
+    Properties props = new Properties();
+    for (Instance instance : instances) {
+      String suffix = "_" + instance.id;
+      RunningStatus status = RunningStatus.OK;
+      File file = new File(instance.wd, RunningStatus.FAILURE.toString() + suffix);
+      if (file.exists()) {
+        status = RunningStatus.FAILURE;
+      } else {
+        file = new File(instance.wd, RunningStatus.WARN.toString() + suffix);
+        if (file.exists()) {
+          status = RunningStatus.WARN;
+        }
+      }
+      
+      props.put(String.valueOf(instance.id), status.toString());
+    }
+    props.store(new FileOutputStream(BatchConstants.STATUS_OUTPUT_FILE), "");
+    
   }
 
   private List<String> createInputArgs(int instances, File input) throws IOException {

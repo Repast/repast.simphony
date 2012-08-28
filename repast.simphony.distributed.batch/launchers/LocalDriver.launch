@@ -9,5 +9,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="repast.simphony.batch.LocalDriver"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="./local_batch_run.properties"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="repast.simphony.distributed.batch"/>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:repast.simphony.distributed.batch}/complete_model/"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:repast.simphony.distributed.batch}/tmp/"/>
 </launchConfiguration>

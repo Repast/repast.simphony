@@ -40,8 +40,8 @@ public class BatchScheduleRunner extends AbstractRunner {
           }
         }
         schedule.executeEndActions();
-      } catch (RuntimeException ex) {
-        msgCenter.fatal("GUIScheduleRunner.execute: RunTimeException when running the schedule\n"
+      } catch (Throwable ex) {
+        msgCenter.fatal("BatchSchedule.execute: error when running the schedule\n"
             + "Current tick ("
             + (schedule != null ? String.valueOf(schedule.getTickCount()) : "unavailable") + ")",
             ex);

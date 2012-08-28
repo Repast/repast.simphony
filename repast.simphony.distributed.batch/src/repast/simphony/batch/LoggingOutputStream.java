@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
  * Code from
  * https://blogs.oracle.com/nickstephen/entry/java_redirecting_system_out_and
  */
-class LoggingOutputStream extends ByteArrayOutputStream {
+public class LoggingOutputStream extends ByteArrayOutputStream {
 
   private String lineSeparator;
 

@@ -47,7 +47,5 @@ public class ProcessOutputWriter {
       if (writer != null)
         writer.close();
     }
-
   }
-
 }

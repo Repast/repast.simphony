@@ -1,6 +1,5 @@
-package repast.simphony.batch;
+package repast.simphony.batch.ssh;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import repast.simphony.batch.RunningStatus;
 
 /**
  * Parses a remote format properties file into a Remotes object.
@@ -28,6 +29,14 @@ public class RemotePropsParser {
   public List<Remote> parse(String file) throws IOException {
     Properties props = new Properties();
     props.load(new FileReader(file));
+    return init(props);
+  }
+  
+  public List<Remote> parse(Properties props) throws IOException {
+    return init(props);
+  }
+  
+  private List<Remote> init(Properties props) throws IOException {
 
     Map<String, PRemote> remoteMap = new HashMap<String, PRemote>();
     for (Object key : props.keySet()) {
@@ -53,36 +62,51 @@ public class RemotePropsParser {
       if (remote.host != null)
         throw new IOException(String.format("Duplicate property %s for %s", type, key));
       remote.host = val.trim();
-    } else if (type.equals("password")) {
-      if (remote.password != null)
+    } else if (type.equals("instances")) {
+      if (remote.instances != -99)
         throw new IOException(String.format("Duplicate property %s for %s", type, key));
-      remote.password = val.trim();
-    } else if (type.equals("file")) {
-      if (remote.file != null)
-        throw new IOException(String.format("Duplicate property %s for %s", type, key));
-      if (!new File(val.trim()).exists())
-        throw new IOException(val + " for " + key + " doesn't exist");
-      remote.file = val.trim();
+      try {
+        remote.instances = Integer.parseInt(val.trim());
+        if (remote.instances < -1) {
+          throw new IOException(String.format("Invalid number of instances for property %s for %s", type, key));
+        }
+      } catch (NumberFormatException ex) {
+        throw new IOException(String.format("Invalid number format for property %s for %s", type, key));
+      }
     }
   }
 
   private void checkVals(String key, String[] vals) throws IOException {
     if (vals.length != 3)
       throw new IOException("Invalid remote properties configuration for '" + key
-          + "': expected remote.X.[host|user|password|file]");
+          + "': expected remote.X.[host|user|instances]");
     if (!vals[0].equals("remote"))
       throw new IOException("Invalid remote properties configuration:" + key);
 
-    if (!(vals[2].equals("user") || vals[2].equals("host") || vals[2].equals("password") || vals[2]
-        .equals("file"))) {
+    if (!(vals[2].equals("user") || vals[2].equals("host") || vals[2].equals("instances"))) {
       throw new IOException("Invalid remote properties configuration:" + key);
     }
   }
 
   private static class PRemote implements Remote {
 
-    String host, user, password, file;
+    String host, user, input = "";
+    int instances = -99;
+    
+    Map<Integer, RunningStatus> stati = new HashMap<Integer, RunningStatus>();
 
+    public int getInstances() {
+      return instances;
+    }
+    
+    /* (non-Javadoc)
+     * @see repast.simphony.batch.Remote#getId()
+     */
+    @Override
+    public String getId() {
+      return user + "@" + host;
+    }
+   
     /*
      * (non-Javadoc)
      * 
@@ -103,24 +127,36 @@ public class RemotePropsParser {
       return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see repast.simphony.batch.Remote#getPassword()
+    /* (non-Javadoc)
+     * @see repast.simphony.batch.ssh.Remote#getInput()
      */
     @Override
-    public String getPassword() {
-      return password;
+    public String getInput() {
+      return input;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see repast.simphony.batch.Remote#getModelArchive()
+    /* (non-Javadoc)
+     * @see repast.simphony.batch.ssh.Remote#setInput(java.lang.String)
      */
     @Override
-    public String getModelArchive() {
-      return file;
+    public void setInput(String input) {
+      this.input = input;
+    }
+
+    /* (non-Javadoc)
+     * @see repast.simphony.batch.ssh.Remote#setRunStatus(int, repast.simphony.batch.RunningStatus)
+     */
+    @Override
+    public void setRunStatus(int instance, RunningStatus status) {
+      stati.put(instance, status);
+    }
+
+    /* (non-Javadoc)
+     * @see repast.simphony.batch.ssh.Remote#getStatus(int)
+     */
+    @Override
+    public RunningStatus getStatus(int instance) {
+      return stati.get(instance);
     }
   }
 }

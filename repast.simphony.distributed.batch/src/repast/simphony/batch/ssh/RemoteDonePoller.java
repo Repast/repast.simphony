@@ -1,10 +1,10 @@
-package repast.simphony.batch;
+package repast.simphony.batch.ssh;
 
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
-import com.jcraft.jsch.Session;
+import repast.simphony.batch.BatchConstants;
 
 /**
  * Polls a remote machine via SSH looking for a "DONE" file in a specified
@@ -32,10 +32,10 @@ public class RemoteDonePoller implements Callable<Void> {
    */
   @Override
   public Void call() throws Exception {
-    Session session = null;
+    SSHSession session = null;
     try {
 
-      session = SSHUtil.connect(remote);
+      session = SSHSessionFactory.getInstance().create(remote);
       String cmd = String.format("cd %s;test -e %s", directory, BatchConstants.DONE_FILE_NAME);
 
       int exitStatus = 1;
@@ -46,7 +46,7 @@ public class RemoteDonePoller implements Callable<Void> {
         } catch (InterruptedException ex) {
         }
         
-        exitStatus = SSHUtil.executeCmd(session, cmd);
+        exitStatus = session.executeCmd(cmd);
         logger.info(String.format("Polled %s in %s for %s with %s", remote.getHost(), directory,
               BatchConstants.DONE_FILE_NAME, exitStatus == 0 ? "success" : "failure"));
       }

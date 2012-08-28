@@ -3,6 +3,8 @@ package repast.simphony.batch;
 
 import java.io.File;
 
+import repast.simphony.batch.BatchScenarioLoader;
+import repast.simphony.batch.BatchScheduleRunner;
 import repast.simphony.engine.controller.DefaultController;
 import repast.simphony.engine.environment.AbstractRunner;
 import repast.simphony.engine.environment.ControllerRegistry;
@@ -93,7 +95,7 @@ public class OneRunBatchRunner implements RunListener {
   }
 
   protected void waitForRun() {
-    msgCenter.info("Waiting");
+    //msgCenter.info("Waiting");
     synchronized (monitor) {
       while (pause) {
         try {
@@ -104,7 +106,7 @@ public class OneRunBatchRunner implements RunListener {
         }
       }
     }
-    msgCenter.info("Done Waiting");
+    //msgCenter.info("Done Waiting");
   }
 
   protected void notifyMonitor() {
@@ -138,7 +140,7 @@ public class OneRunBatchRunner implements RunListener {
   public void stopped() {
     pause = false;
     notifyMonitor();
-    msgCenter.info("Stopped Called");
+    //msgCenter.info("Stopped Called");
   }
   
   private static class ORBController extends DefaultController {
