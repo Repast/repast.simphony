@@ -92,17 +92,23 @@ public class RemoteOutputTest {
     testOutput(expOut, new File("./test_out/" + MODEL_OUT));
     testOutput(expPOut, new File("./test_out/" + P_OUT));
   }
+  
+  private Remote getTestingRemote(Configuration config) {
+    for (Remote remote : config.remotes()) {
+      if (remote.getUser().equals("sshtesting")) return remote;
+    }
+    return null;
+  }
 
   @Test
   public void testRemoteStatus() throws RemoteStatusException, IOException  {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteStatusGetter getter = new RemoteStatusGetter();
-    for (Remote remote : config.remotes()) {
-      getter.run(remote, REMOTE_DIR);
-    }
+    Remote remote = getTestingRemote(config);
+    getter.run(remote, REMOTE_DIR);
     
     RemoteStatusCopier copier = new RemoteStatusCopier();
-    copier.run(config.remotes().iterator().next(), REMOTE_DIR, "./test_out");
+    copier.run(remote, REMOTE_DIR, "./test_out");
     
     assertEquals(true, new File("./test_out/sshtesting_128.135.250.205_1_failure.txt").exists());
     assertEquals(true, new File("./test_out/sshtesting_128.135.250.205_3_warn.txt").exists());
@@ -131,7 +137,8 @@ public class RemoteOutputTest {
     // Session session = SSHUtil.connect(remotes.get(0));
     // SSHUtil.copyFileToRemote(session, remotes.get(0).getModelArchive());
     RemoteOutputCopier copier = new RemoteOutputCopier();
-    List<File> copiedFiles = copier.run(config.remotes().iterator().next(), REMOTE_DIR, "./test_out");
+    Remote remote = getTestingRemote(config);
+    List<File> copiedFiles = copier.run(remote, REMOTE_DIR, "./test_out");
 
     for (File file : copiedFiles) {
       File match = findExpectedMatch(file);
@@ -145,11 +152,9 @@ public class RemoteOutputTest {
   public void testRemoteStatusGetter()  throws IOException, RemoteStatusException {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteStatusGetter getter = new RemoteStatusGetter();
-    for (Remote remote : config.remotes()) {
-      getter.run(remote, REMOTE_DIR);
-    }
+    Remote remote = getTestingRemote(config);
+    getter.run(remote, REMOTE_DIR);
     
-    Remote remote = config.remotes().iterator().next();
     assertEquals(remote.getStatus(1), RunningStatus.FAILURE);
     assertEquals(remote.getStatus(2), RunningStatus.OK);
     assertEquals(remote.getStatus(3), RunningStatus.WARN);

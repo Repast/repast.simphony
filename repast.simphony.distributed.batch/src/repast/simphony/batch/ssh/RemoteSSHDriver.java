@@ -164,7 +164,7 @@ public class RemoteSSHDriver {
     try {
       executor = Executors.newFixedThreadPool(config.getRemoteCount());
       for (Remote remote : config.remotes()) {
-        RemoteDonePoller poller = new RemoteDonePoller(remote, remoteDir);
+        RemoteDonePoller poller = new RemoteDonePoller(remote, remoteDir, (long)(config.getPollFrequency() * 1000));
         futures.add(executor.submit(poller));
       }
 

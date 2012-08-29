@@ -18,11 +18,13 @@ public class RemoteDonePoller implements Callable<Void> {
 
   private String directory;
 
+  private long frequency;
   private Remote remote;
 
-  public RemoteDonePoller(Remote remote, String directory) {
+  public RemoteDonePoller(Remote remote, String directory, long frequency) {
     this.remote = remote;
     this.directory = directory;
+    this.frequency = frequency;
   }
 
   /*
@@ -41,8 +43,7 @@ public class RemoteDonePoller implements Callable<Void> {
       int exitStatus = 1;
       while (exitStatus != 0) {
         try {
-          // TODO make configurable
-          Thread.sleep(5000);
+          Thread.sleep(frequency);
         } catch (InterruptedException ex) {
         }
         

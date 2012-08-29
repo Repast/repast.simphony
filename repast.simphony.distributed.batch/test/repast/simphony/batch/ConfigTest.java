@@ -75,6 +75,7 @@ remote.2.instances = 2
     assertEquals("./test_out", config.getOutputDir());
     String keydir = System.getProperty("user.home") + "/" + ".ssh";
     assertEquals(keydir, config.getSSHKeyDir());
+    assertEquals(10f, config.getPollFrequency(), 0);
     assertEquals("scenario.rs/batch_params.xml", config.getBatchParamsFile());
     
     int count = 0;

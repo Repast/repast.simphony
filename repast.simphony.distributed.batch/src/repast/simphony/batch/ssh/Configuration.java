@@ -19,8 +19,10 @@ public class Configuration {
   private static final String SSH_DIR_KEY = "ssh.key_dir";
   private static final String OUT_DIR_KEY = "model.output";
   private static final String BATCH_PARAMS_KEY = "batch.params.file";
+  private static final String POLL_INTERVAL_KEY = "poll.frequency";
   
   private String modelArchive, sshKeyDir, outDir, paramsFile;
+  private float pollFrequency;
   private List<Remote> remotes;
   
   public Configuration(String file) throws IOException {
@@ -45,6 +47,16 @@ public class Configuration {
     if (paramsFile == null) throw new IOException("Invalid configuration file: file is missing " + BATCH_PARAMS_KEY + " property");
     props.remove(BATCH_PARAMS_KEY);
     
+    String sPoll = props.getProperty(POLL_INTERVAL_KEY);
+    if (sPoll == null) throw new IOException("Invalid configuration file: file is missing " + POLL_INTERVAL_KEY + " property");
+    try {
+      pollFrequency = Float.parseFloat(sPoll);
+    } catch (NumberFormatException ex) {
+      throw new IOException("Invalid configuration file: " + POLL_INTERVAL_KEY + " property must be a number");
+    }
+    props.remove(POLL_INTERVAL_KEY);
+    
+    
     remotes = new RemotePropsParser().parse(props);
   }
   
@@ -62,6 +74,14 @@ public class Configuration {
   
   public String getOutputDir() {
     return outDir;
+  }
+  
+  /**
+   * Gets how often, in seconds, to poll remotes to see if they are done.
+   * @return
+   */
+  public float getPollFrequency() {
+    return pollFrequency;
   }
   
   /**
