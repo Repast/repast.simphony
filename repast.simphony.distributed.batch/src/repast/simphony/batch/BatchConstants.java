@@ -4,6 +4,8 @@
 package repast.simphony.batch;
 
 /**
+ * Constants used by distributed batch code.
+ * 
  * @author Nick Collier
  */
 public interface BatchConstants {

@@ -23,6 +23,18 @@ import simphony.util.messages.MessageEvent;
 import simphony.util.messages.MessageEventListener;
 
 /**
+ * Runs a single instance of a simphony model in a batch run. This expects to be passed
+ * a String that multiple parameter lines. A parameter line hasthe format R\tP1\tV1,P2\tV2,P3\tV3,... 
+ * R is the run number followed by a tab. P* and V* is a parameter name and value 
+ * pair which are separated from each other by a tab and from other PV
+ * pairs by a comma delimeter.<p>
+ * 
+ * The InstanceRunner will feed each line to the model and run the model for that
+ * parameter combination. When all the lines have been processed the batch run is finished.
+ * If there are warnings or errors produced during the run then those will be written to 
+ * a WARN or FAILURE file in the working directory. If there is an error, no more
+ * lines will be read and the InstanceRunner will stop.
+ * 
  * @author Nick Collier
  */
 public class InstanceRunner {
@@ -77,7 +89,6 @@ public class InstanceRunner {
       if (writer != null)
         writer.close();
     }
-
   }
 
   public void configure(String paramFile, String scenarioDir) throws IOException,
