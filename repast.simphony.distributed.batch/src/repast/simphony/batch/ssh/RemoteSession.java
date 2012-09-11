@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import repast.simphony.batch.BatchConstants;
@@ -135,7 +136,7 @@ public class RemoteSession implements Session {
       session = SSHSessionFactory.getInstance().create(this);
       // mkdir
       String cmd = String.format("mkdir %s", remoteDir);
-      int exitStatus = session.executeCmd(cmd);
+      int exitStatus = session.executeCmd(cmd, Level.ERROR);
 
       if (exitStatus != 0) {
         String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
@@ -174,13 +175,21 @@ public class RemoteSession implements Session {
     try {
       session = SSHSessionFactory.getInstance().create(this);
       
-      logger.info(String.format("Unzipping model on %s@%s ...", getUser(), getHost()));
+      logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
       String cmd = String.format("cd %s; unzip -n %s", remoteDirectory, modelArchive.getName());
 
-      int exitStatus = session.executeCmd(cmd);
+      int exitStatus = session.executeCmd(cmd, Level.ERROR);
       if (exitStatus != 0) {
         String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
             getId());
+        throw new SessionException(msg);
+      }
+      
+      // check if java exists on the remote machine
+      logger.info(String.format("Checking for java on %s@%s", getUser(), getHost()));
+      exitStatus = session.executeCmd("java -version", Level.INFO);
+      if (exitStatus != 0) {
+        String msg = String.format("Error executing java on remote %s. Is it installed?", getId());
         throw new SessionException(msg);
       }
 
@@ -190,6 +199,7 @@ public class RemoteSession implements Session {
       // executes in the background, this session will disconnect
       try {
         session.executeBackgroundCommand(cmd);
+        
       } catch (JSchException e) {
         String msg = String.format("Error executing '%s' on remote %s.", cmd, getId());
         throw new SessionException(msg, e);

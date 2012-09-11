@@ -46,6 +46,7 @@ public class SSHSession {
       ((ChannelExec) channel).setCommand(cmd + " > /dev/null 2>&1 &");
       channel.setInputStream(null);
       channel.connect();
+      
     } finally {
       if (channel != null)
         channel.disconnect();
@@ -73,7 +74,7 @@ public class SSHSession {
     return out;
   }
 
-  public int executeCmd(String cmd) throws JSchException {
+  public int executeCmd(String cmd, Level level) throws JSchException {
     Channel channel = null;
     try {
       channel = session.openChannel("exec");
@@ -82,7 +83,7 @@ public class SSHSession {
       channel.setInputStream(null);
 
       ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
-          Level.ERROR)));
+          level)));
       channel.connect();
 
       while (!channel.isClosed()) {

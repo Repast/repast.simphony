@@ -2,6 +2,7 @@ package repast.simphony.batch.ssh;
 
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import repast.simphony.batch.BatchConstants;
@@ -47,7 +48,7 @@ public class RemoteDonePoller implements Callable<Void> {
         } catch (InterruptedException ex) {
         }
         
-        exitStatus = session.executeCmd(cmd);
+        exitStatus = session.executeCmd(cmd, Level.ERROR);
         logger.info(String.format("Polled %s on %s for %s with %s", directory, remote.getHost(),
               BatchConstants.DONE_FILE_NAME, exitStatus == 0 ? "success" : "failure"));
       }
