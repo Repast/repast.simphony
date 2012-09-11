@@ -1,4 +1,4 @@
-<!--  ant build file for running hadoop -->
+<!--  ant build file for creating self contained model zip -->
 <project name="build_batch_run" default="make_zip">
 
 	<!-- User edit these -->
@@ -31,25 +31,35 @@
 
 	<property name="prototype.dir" location="../prototype" />
 
+	<path id="lib.path">
+		<fileset dir="../antlib" includes="**/*.jar" />
+	</path>
+
+	<taskdef name="xmltask" classpathref="lib.path" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
 
 	<target name="make_zip">
 		<delete dir="${working.dir}" failonerror="false" />
 		<mkdir dir="${working.dir}" />
 		<copy todir="${working.dir}">
-			  <fileset dir="${prototype.dir}" />
+			<fileset dir="${prototype.dir}" />
 		</copy>
-		
+
 		<antcall target="make_pre_reqs" />
 		<copy todir="${working.dir}/scenario.rs">
-			<fileset dir="${model.scenario.dir}" excludes="styles/"/>
+			<fileset dir="${model.scenario.dir}" excludes="styles/" />
 			<fileset file="${batch.param.file}" />
 		</copy>
-		
-		<zip destfile="${zip.file}"
-			basedir="${working.dir}"
-		/>
-		
-		
+
+		<xmltask todir=".." preserveType="true">
+			<fileset dir="${working.dir}/scenario.rs">
+				<include name="user_path.xml" />
+			</fileset>
+
+			<replace path="/model/classpath/agents[@id='path']/@value" withText="../lib/model.jar" />
+
+		</xmltask>
+
+		<zip destfile="${zip.file}" basedir="${working.dir}" />
 	</target>
 
 	<!-- Make jars and copy them to bin/lib. The contents of that directory become part of

@@ -23,7 +23,7 @@ import com.jcraft.jsch.SftpException;
  */
 public class RemoteStatusCopier {
   
-  public void run(Remote remote, String remoteDir, String outDir) throws RemoteStatusException {
+  public void run(RemoteSession remote, String remoteDir, String outDir) throws StatusException {
     SSHSession session = null;
     try {
       session = SSHSessionFactory.getInstance().create(remote);
@@ -54,15 +54,15 @@ public class RemoteStatusCopier {
       
     } catch (SftpException e) {
       String msg = String.format("Error while copying instance status files from %s", remote.getId());
-      throw new RemoteStatusException(msg, e);
+      throw new StatusException(msg, e);
       
     } catch (JSchException e) {
       String msg = String.format("Error while creating connection to %s", remote.getId());
-      throw new RemoteStatusException(msg, e);
+      throw new StatusException(msg, e);
    
     } catch (IOException e) {
       String msg = String.format("Error copying status files from temporary directory to %s", outDir);
-      throw new RemoteStatusException(msg, e);
+      throw new StatusException(msg, e);
       
     } finally {
       if (session != null) session.disconnect();

@@ -51,7 +51,7 @@ public class SSHSessionFactory {
   }
   
 
-  public SSHSession create(Remote remote) throws JSchException {
+  public SSHSession create(RemoteSession remote) throws JSchException {
     JSch jsch = new JSch();
 
     if (passphrase != null) jsch.addIdentity(sshKeyDir + "/id_rsa", passphrase);

@@ -33,7 +33,7 @@ public class ModelArchiveConfigurator {
    * @param modelArchive
    * @throws IOException
    */
-  public File configure(Remote remote, Configuration config)
+  public File configure(Session remote, Configuration config)
       throws ModelArchiveConfiguratorException {
     File file = null;
     ZipFile zip = null;

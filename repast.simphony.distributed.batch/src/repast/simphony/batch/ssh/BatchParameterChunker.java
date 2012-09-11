@@ -43,7 +43,7 @@ public class BatchParameterChunker {
             config.getBatchParamsFile(), config.getModelArchive()));
 
       int instances = 0;
-      for (Remote remote : config.remotes()) {
+      for (Session remote : config.sessions()) {
         instances += remote.getInstances();
       }
 
@@ -53,13 +53,13 @@ public class BatchParameterChunker {
       List<String> instanceInput = createInstanceInput(instances, toInput.formatForInput());
       // concatenate the input for each remote.
       int index = 0;
-      for (Remote remote : config.remotes()) {
+      for (Session session : config.sessions()) {
         StringBuilder builder = new StringBuilder();
-        for (int i = index; i < index + remote.getInstances(); i++) {
+        for (int i = index; i < index + session.getInstances(); i++) {
           builder.append(instanceInput.get(i));
         }
-        remote.setInput(builder.toString());
-        index += remote.getInstances();
+        session.setInput(builder.toString());
+        index += session.getInstances();
       }
       
     } catch (IOException ex) {

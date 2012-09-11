@@ -7,8 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import repast.simphony.batch.BatchConstants;
 
 import com.jcraft.jsch.JSchException;
@@ -19,59 +17,14 @@ import com.jcraft.jsch.SftpException;
  * 
  * @author Nick Collier
  */
-public class RemoteOutputCopier {
-
-  private static class Instance {
-    String dir;
-    List<File> files = new ArrayList<File>();
-
-    public Instance(String dir) {
-      this.dir = dir;
-    }
-
-    public String getDirectory() {
-      return dir;
-    }
-
-    public void addFile(File file) {
-      files.add(file);
-    }
-
-    public List<File> getFiles() {
-      return files;
-    }
-  }
-
-  private static Logger logger = Logger.getLogger(RemoteOutputCopier.class);
-
+public class RemoteOutputFinderCopier extends OutputFinder {
+  
   private void findOutputFiles(SSHSession session, List<Instance> instances) throws JSchException,
       SftpException {
 
     for (Instance instance : instances) {
       List<String> files = session.listRemoteDirectory(instance.getDirectory());
-      String batchParamFile = null;
-
-      // find the batch parameter map file
-      for (String file : files) {
-        if (file.contains(BatchConstants.PARAM_MAP_SUFFIX)) {
-          batchParamFile = file;
-          break;
-        }
-      }
-
-      // got the batch_param file, find the matching output file
-      if (batchParamFile == null)
-        logger.warn("No model output found in " + instance.getDirectory());
-      else {
-        int index = batchParamFile.indexOf(BatchConstants.PARAM_MAP_SUFFIX);
-        String matchFile = batchParamFile.substring(0, index - 1);
-
-        for (String file : files) {
-          if (file.startsWith(matchFile)) {
-            instance.addFile(new File(instance.getDirectory(), file));
-          }
-        }
-      }
+      findFiles(files, instance);
     }
   }
 
@@ -86,8 +39,8 @@ public class RemoteOutputCopier {
    * @throws JSchException
    * @throws SftpException
    */
-  public List<File> run(Remote remote, String remoteDir, String localDir)
-      throws RemoteStatusException {
+  public List<File> run(RemoteSession remote, String remoteDir, String localDir)
+      throws StatusException {
     SSHSession session = null;
     List<File> out = new ArrayList<File>();
     try {
@@ -109,11 +62,11 @@ public class RemoteOutputCopier {
 
     } catch (SftpException e) {
       String msg = String.format("Error while copying output files from %s", remote.getId());
-      throw new RemoteStatusException(msg, e);
+      throw new StatusException(msg, e);
 
     } catch (JSchException e) {
       String msg = String.format("Error while creating connection to %s", remote.getId());
-      throw new RemoteStatusException(msg, e);
+      throw new StatusException(msg, e);
 
    
 

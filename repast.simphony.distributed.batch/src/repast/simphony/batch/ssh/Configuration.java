@@ -23,7 +23,7 @@ public class Configuration {
   
   private String modelArchive, sshKeyDir, outDir, paramsFile;
   private float pollFrequency;
-  private List<Remote> remotes;
+  private List<? extends Session> sessions;
   
   public Configuration(String file) throws IOException {
     Properties props = new Properties();
@@ -57,7 +57,7 @@ public class Configuration {
     props.remove(POLL_INTERVAL_KEY);
     
     
-    remotes = new RemotePropsParser().parse(props);
+    sessions = new SessionPropsParser().parse(props);
   }
   
   public String getModelArchive() {
@@ -90,7 +90,7 @@ public class Configuration {
    * @return the numer of specified remote locations to run the model.
    */
   public int getRemoteCount() {
-    return remotes.size();
+    return sessions.size();
   }
   
   /**
@@ -98,8 +98,8 @@ public class Configuration {
    * 
    * @return  an iterable over the Remotes described in this Configuration.
    */
-  public Iterable<Remote> remotes() {
-    return remotes;
+  public Iterable<? extends Session> sessions() {
+    return sessions;
   }
 
 }

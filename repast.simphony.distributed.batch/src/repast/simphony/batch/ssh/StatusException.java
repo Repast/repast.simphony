@@ -8,7 +8,7 @@ package repast.simphony.batch.ssh;
  * 
  * @author Nick Collier
  */
-public class RemoteStatusException extends Exception {
+public class StatusException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
@@ -16,21 +16,21 @@ public class RemoteStatusException extends Exception {
    * @param message
    * @param cause
    */
-  public RemoteStatusException(String message, Throwable cause) {
+  public StatusException(String message, Throwable cause) {
     super(message, cause);
   }
 
   /**
    * @param message
    */
-  public RemoteStatusException(String message) {
+  public StatusException(String message) {
     super(message);
   }
 
   /**
    * @param cause
    */
-  public RemoteStatusException(Throwable cause) {
+  public StatusException(Throwable cause) {
     super(cause);
   }
 }

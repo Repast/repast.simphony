@@ -21,12 +21,13 @@ import org.junit.Test;
 
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.OutputAggregator;
-import repast.simphony.batch.ssh.Remote;
-import repast.simphony.batch.ssh.RemoteOutputCopier;
+import repast.simphony.batch.ssh.RemoteOutputFinderCopier;
+import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.RemoteStatusCopier;
-import repast.simphony.batch.ssh.RemoteStatusException;
+import repast.simphony.batch.ssh.StatusException;
 import repast.simphony.batch.ssh.RemoteStatusGetter;
 import repast.simphony.batch.ssh.SSHSessionFactory;
+import repast.simphony.batch.ssh.Session;
 
 /**
  * @author Nick Collier
@@ -93,18 +94,18 @@ public class RemoteOutputTest {
     testOutput(expPOut, new File("./test_out/" + P_OUT));
   }
   
-  private Remote getTestingRemote(Configuration config) {
-    for (Remote remote : config.remotes()) {
+  private Session getTestingRemote(Configuration config) {
+    for (Session remote : config.sessions()) {
       if (remote.getUser().equals("sshtesting")) return remote;
     }
     return null;
   }
 
   @Test
-  public void testRemoteStatus() throws RemoteStatusException, IOException  {
+  public void testRemoteStatus() throws StatusException, IOException  {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteStatusGetter getter = new RemoteStatusGetter();
-    Remote remote = getTestingRemote(config);
+    RemoteSession remote = (RemoteSession) getTestingRemote(config);
     getter.run(remote, REMOTE_DIR);
     
     RemoteStatusCopier copier = new RemoteStatusCopier();
@@ -132,12 +133,12 @@ public class RemoteOutputTest {
   }
 
   @Test
-  public void testRemoteCopy() throws IOException, RemoteStatusException  {
+  public void testRemoteCopy() throws IOException, StatusException  {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     // Session session = SSHUtil.connect(remotes.get(0));
     // SSHUtil.copyFileToRemote(session, remotes.get(0).getModelArchive());
-    RemoteOutputCopier copier = new RemoteOutputCopier();
-    Remote remote = getTestingRemote(config);
+    RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
+    RemoteSession remote = (RemoteSession) getTestingRemote(config);
     List<File> copiedFiles = copier.run(remote, REMOTE_DIR, "./test_out");
 
     for (File file : copiedFiles) {
@@ -149,10 +150,10 @@ public class RemoteOutputTest {
   }
   
   @Test
-  public void testRemoteStatusGetter()  throws IOException, RemoteStatusException {
+  public void testRemoteStatusGetter()  throws IOException, StatusException {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteStatusGetter getter = new RemoteStatusGetter();
-    Remote remote = getTestingRemote(config);
+    RemoteSession remote = (RemoteSession) getTestingRemote(config);
     getter.run(remote, REMOTE_DIR);
     
     assertEquals(remote.getStatus(1), RunningStatus.FAILURE);

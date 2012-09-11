@@ -26,6 +26,7 @@ public interface BatchConstants {
   String STATUS_OUTPUT_FILE = "status_output.properties";
   
   String PARAM_MAP_SUFFIX = "batch_param_map";
+  String LOCAL_RUN_PROPS_FILE = "local_batch_run.properties";
   
 
 }

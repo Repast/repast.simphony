@@ -19,9 +19,9 @@ public class RemoteDonePoller implements Callable<Void> {
   private String directory;
 
   private long frequency;
-  private Remote remote;
+  private RemoteSession remote;
 
-  public RemoteDonePoller(Remote remote, String directory, long frequency) {
+  public RemoteDonePoller(RemoteSession remote, String directory, long frequency) {
     this.remote = remote;
     this.directory = directory;
     this.frequency = frequency;
@@ -48,7 +48,7 @@ public class RemoteDonePoller implements Callable<Void> {
         }
         
         exitStatus = session.executeCmd(cmd);
-        logger.info(String.format("Polled %s in %s for %s with %s", remote.getHost(), directory,
+        logger.info(String.format("Polled %s on %s for %s with %s", directory, remote.getHost(),
               BatchConstants.DONE_FILE_NAME, exitStatus == 0 ? "success" : "failure"));
       }
 

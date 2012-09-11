@@ -167,6 +167,20 @@ public class SSHSession {
       sftp.disconnect();
     }
   }
+  
+  public void copyFileToRemote(File localFile, String remoteDirectory) throws JSchException, SftpException {
+    ChannelSftp sftp = null;
+    try {
+      sftp = (ChannelSftp) session.openChannel("sftp");
+      sftp.connect();
+      sftp.cd(remoteDirectory);
+      sftp.put(localFile.getAbsolutePath(), localFile.getName());
+    } finally {
+      if (sftp != null)
+        sftp.exit();
+      sftp.disconnect();
+    }
+  }
 
   public File copyFileFromRemote(String localDir, File remoteFile)
       throws SftpException, JSchException {
