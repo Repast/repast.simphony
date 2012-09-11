@@ -13,26 +13,26 @@ dir
         fake_jar_to_avoid_watcher_init_warnings.jar
     MessageCenter.log4j.properties
     local_batch_run.properties
-    
+     
     
 The lib directory should contain jars of all the required repast 
 code as well as a jar of the model code. The Ant "make_pre_reqs"
-task will do that.
+task will do that. The ant script itself is in the scripts directory.
 
 The scenario file should be named scenario.rs and contain the contents
 of the model's scenario folder.
 
 user_path.xml by defaults points to the bin directory. We put
-an empty jar in there so that we don't get any warnings. The
-agents element in the user needs to point the lib/model.jar
+an empty jar in there so that we don't get any warnings.
 
 The make_zip ant task will create this structure copying from the
 prototype directory and adding in all the appropriate jars
 scenario etc. This zipped archive provides the base of what will be passed
 and then executed on a remote.
 
-2. The RemoteSSHDriver takes a configuration file that defines
-tells it which remotes to use etc. For example,
+2. The SessionsDriver takes a configuration file that 
+define the local and remote "sessions" in which the model
+will be run. For example,
 
 model.archive = ./complete_model.zip
 batch.params.file = scenario.rs/batch_params.xml
@@ -47,6 +47,9 @@ remote.2.user = nick
 remote.2.host = 192.168.1.12
 remote.2.instances = 2
 
+local.3.instances = 3
+local.3.working_directory = ~/tmp/
+
 model.archive -- the zip file from step 1.
 batch.params.file -- the location of the xml format batch parameter file
 in the model.archive file. 
@@ -57,18 +60,23 @@ ssh.key_dir -- the location of the ssh keys on the local machine
 remote.X.user -- the user to use when logging into the remote machine
 remote.X.host -- the host name or ip address of the remote machine
 remote.X.instances -- the number of JVM instances to start on the remote
-machine for running the model.
+machine for running the model. Each instance will run the model.
 
-X here is the numeric id of the remote.
+local.X.instances -- the number of jvm instances to start locally.
+Each instance will run the model.
+local.X.working_directory -- the local directory in which the model runs
+etc. will take place.
 
-The RemoteSSHDriver uses log4j for logging and its logging config file
+X here is the numeric id of the remote or local session.
+
+The SessionsDriver uses log4j for logging and its logging config file
 is found in config/SSH.MessageCenter.log4j.properties.
 
-Once configured, the RemoteSSHDriver does the following:
+Once configured, the SessionsDriver does the following:
 
-a. Generates all the possible parameter combinations and chunks of them
-to each remote based on the number of instances that remote will run. For
-example, if remote A has 2 instances and remote B has 4, then remote A
+a. Generates all the possible parameter combinations and assigns chunks of 
+them to each remote based on the number of instances that remote will run. 
+For example, if remote A has 2 instances and remote B has 4, then remote A
 will get a 1/3 of the parameter combinations and B will get 2/3.
 
 This work is done in the BatchParameterChunker. Note that it gets the
@@ -94,36 +102,39 @@ model archive configuration. The others are static defaults.
 
 The ModelArchiveConfigurator does most of this.
 
-c. This new customized model archive file is copied to the
-appropriate remote. The file is copied via sftp to the home directory
-of the user specified in the configuration file.
+c. A new directory is created in the remote home directory or
+the local working directory depending on the session type. 
+The directory's name is "simphony_model_X" where X is the 
+current timestamp (System.getTimeMillis()). In the remote case,
+this is done by executing a remote command over ssh.
 
-d. A new directory is created in the remote home directory. The directory's
-name is "simphony_model_X" where X is the current timestamp
-(System.getTimeMillis()). This is done by executing a remote command
-over ssh.
+d. The model archive file from b. above is copied to this
+new directory. In the remote case, this is done using
+sftp.
 
-e. The model archive file is copied from the home directory into this
-new directory. Again, this is done by executing a remote command.
+e. The model archive is then unzipped on the remote or
+on the local machine.
 
-f. The model archive is then unzipped on the remote.
+f. The model is then run on the remote using a background command that
+starts java passing the LocalDriver as the main class. If running 
+locally ProcessBuilder is used to start java and pass the LocalDriver.
+The LocalDriver uses the local driver config file described 
+above. 
 
-g. The model is then run on the remote using a background command that
-starts java passing the LocalDriver as the main class. The LocalDriver
-uses the local driver config file described above. The LocalDriver
+-- The LocalDriver chunks the parameter lines from the unrolled 
+parameter file into X number of chunks, where X is the 
+number of instances.
 
--- chunks the parameter lines from the unrolled parameter file into
-X number of chunks, where X is the number of instances.
-
--- start X number of jvm instances using InstanceRunner as the main class
-and passing it the chunk of parameter lines for it process.
+-- The LocalDriver starts X number of jvm instances using 
+InstanceRunner as the main class and passing InstanceRunner 
+the chunk of parameter lines for it to process.
 
 The InstanceRunner runs a single instance of a simphony model in a batch run.
 It expects to be passed a String that contains multiple parameter lines.
 A parameter line hasthe format R\tP1\tV1,P2\tV2,P3\tV3,...  R is the run
 number followed by a tab. P* and V* is a parameter name and value pair
-which are separated from each other by a tab and from other PV pairs b
-y a comma delimeter
+which are separated from each other by a tab and from other PV pairs by
+a comma delimeter.
  
 The InstanceRunner will feed each line to the model and run the model for that
 parameter combination. When all the lines have been processed the batch run is
@@ -131,25 +142,27 @@ finished. If there are warnings or errors produced during the run then those
 will be written to a WARN or FAILURE file in the working directory. If
 there is an error, no more lines will be read and the InstanceRunner will stop.
 The LocalDriver looks for these WARN and FAILURE files when determining
-the status of the instances.
+the final status of the instances.
 
--- waits for the instances to finish
+-- The LocalDriver waits for the instances to finish
 
--- creates a status output file that records that status of each instance.
-Each instance can be "OK", "WARN" or "FAILURE" depending on how the
+-- The LocalDriver creates a status output file that 
+records that status of each instance. Each instance can 
+be "OK", "WARN" or "FAILURE" depending on how the
 run completed. The LocalDriver looks for the WARN and FAILURE
 files produced by the InstanceRunner in order to determine the status of
 the instances.
 
 -- Writes a "DONE" file to its working directory.
 
-h. The RemoteSSHDriver periodically polls each remote for the presence
-of the "DONE" file produced by the LocalDriver. When the file has been
-found for all remotes then all the remotes are considered to have finished.
+h. The SessionsDriver periodically polls each remote and/or
+local directory for the presence of the "DONE" file produced 
+by the LocalDriver. When the file has been found for all remotes 
+then all the remotes are considered to have finished.
 
-i. The remote status of file produced by the LocalDriver's on each remote
-are copied to the local machine and concatenated. This
-status_output.properties file looks like:
+i. The remote status of file produced by the LocalDrivers in 
+each remote or local session are copied to the local machine and 
+concatenated. This status_output.properties file looks like:
 
 192.168.1.12.nick.1 = OK
 192.168.1.12.nick.2 = OK
@@ -161,19 +174,22 @@ status_output.properties file looks like:
 The line format is "host"."user".instance# = status.
 
 where status is one of OK, WARN, or FAILURE. If the status is not OK,
-the appropriate WARN or FAILURE file will be copied from the remote into
-the local model output directory. The file name format is
+the appropriate WARN or FAILURE file will be copied from the remote
+and / or the local working directory into the model output directory
+as defined in the SessionsDriver config file above.
+
+The file name format is
 
 user_host_instance#_[failure | warn].txt
 
-j. The output (file sinks) from each remote instance is copied from the
-remotes and concatenated into a single output in the local model output
-directory.
+j. The output (file sinks) from each remote instance and 
+local instance is copied from the remotes and / or 
+local instance and concatenated into a single output in the model 
+output directory.
 
 Throughout this any errors (or "info" depending on the log level) will
 be written to a ssh_remote_model.log in the RemoteSSHDriver's working
 directory.
-
 
 
 SSH Notes:
