@@ -4,6 +4,7 @@
 package repast.simphony.batch.ssh;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,6 +160,40 @@ public class RemoteSession implements Session {
         session.disconnect();
     }
   }
+  
+  private void unzipModel(SSHSession session) throws JSchException, SessionException {
+    logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
+    String cmd = String.format("cd %s; unzip -n %s", remoteDirectory, modelArchive.getName());
+
+    int exitStatus = session.executeCmd(cmd, Level.ERROR);
+    if (exitStatus != 0) {
+      String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
+          getId());
+      throw new SessionException(msg);
+    }
+  }
+  
+  private void checkForJava(SSHSession session) throws JSchException, SessionException {
+    // check if java exists on the remote machine
+    logger.info(String.format("Checking for java on %s@%s", getUser(), getHost()));
+    int exitStatus = session.executeCmd("java -version", Level.INFO);
+    if (exitStatus != 0) {
+      String msg = String.format("Error executing java on remote %s. Is it installed?", getId());
+      throw new SessionException(msg);
+    }
+  }
+  
+  private void checkIfRunning(SSHSession session, String javaCmd) throws JSchException, IOException, SessionException {
+    StringBuilder builder = new StringBuilder();
+    session.executeCmd("ps x", builder);
+    String psOutput = builder.toString();
+    // remove the quotes around the classpath as ps x doesn't show that
+    if (!psOutput.contains(javaCmd.replace("\"", ""))) {
+      String msg = String.format("Error executing '%s' on remote %s.", javaCmd, getId());
+      throw new SessionException(msg);
+    }
+  }
+  
 
   /**
    * Runs the model for this Session.
@@ -174,36 +209,33 @@ public class RemoteSession implements Session {
     SSHSession session = null;
     try {
       session = SSHSessionFactory.getInstance().create(this);
-      
-      logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
-      String cmd = String.format("cd %s; unzip -n %s", remoteDirectory, modelArchive.getName());
+      unzipModel(session);
+      checkForJava(session);
 
-      int exitStatus = session.executeCmd(cmd, Level.ERROR);
-      if (exitStatus != 0) {
-        String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
-            getId());
-        throw new SessionException(msg);
-      }
-      
-      // check if java exists on the remote machine
-      logger.info(String.format("Checking for java on %s@%s", getUser(), getHost()));
-      exitStatus = session.executeCmd("java -version", Level.INFO);
-      if (exitStatus != 0) {
-        String msg = String.format("Error executing java on remote %s. Is it installed?", getId());
-        throw new SessionException(msg);
-      }
-
+      // run the model 
       logger.info(String.format("Running model on %s@%s ...", getUser(), getHost()));
-      cmd = String.format("cd %s; nohup java -cp \"./lib/*\" repast.simphony.batch.LocalDriver "
-          + BatchConstants.LOCAL_RUN_PROPS_FILE + " ", remoteDirectory);
+      String javaCmd = String.format("java -cp \"../%s/lib/*\" repast.simphony.batch.LocalDriver "
+          + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
+      String cmd = String.format("cd %s; nohup %s ", remoteDirectory, javaCmd);
       // executes in the background, this session will disconnect
       try {
         session.executeBackgroundCommand(cmd);
         
+        // sleep for 5 seconds before we check if it started
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException ex) {}
+        checkIfRunning(session, javaCmd);
+        
       } catch (JSchException e) {
         String msg = String.format("Error executing '%s' on remote %s.", cmd, getId());
         throw new SessionException(msg, e);
+        
+      } catch (IOException ex) {
+        String msg = String.format("Error executing ps x on remote %s when checking if model has started.", cmd, getId());
+        throw new SessionException(msg, ex);
       }
+      
 
     } catch (JSchException e) {
       String msg = String.format("Error while creating connection to %s", getId());
