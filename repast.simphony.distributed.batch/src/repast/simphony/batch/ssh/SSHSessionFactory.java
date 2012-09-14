@@ -54,8 +54,8 @@ public class SSHSessionFactory {
   public SSHSession create(RemoteSession remote) throws JSchException {
     JSch jsch = new JSch();
 
-    if (passphrase != null) jsch.addIdentity(sshKeyDir + "/id_rsa", passphrase);
-    else jsch.addIdentity(sshKeyDir + "/id_rsa");
+    if (passphrase != null) jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile(), passphrase);
+    else jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile());
     jsch.setKnownHosts(sshKeyDir + "/known_hosts");
     Session session = jsch.getSession(remote.getUser(), remote.getHost());
     UserInfo userInfo = new ConsoleUserInfo();

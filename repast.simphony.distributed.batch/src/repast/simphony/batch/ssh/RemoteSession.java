@@ -29,7 +29,7 @@ public class RemoteSession implements Session {
 
   private static Logger logger = Logger.getLogger(RemoteSession.class);
 
-  String host, user, input = "";
+  String host, user, input = "", keyFile = "id_rsa";
   int instances = 0;
 
   private File modelArchive = null;
@@ -79,6 +79,10 @@ public class RemoteSession implements Session {
   @Override
   public String getInput() {
     return input;
+  }
+  
+  public String getKeyFile() {
+    return keyFile;
   }
 
   /*

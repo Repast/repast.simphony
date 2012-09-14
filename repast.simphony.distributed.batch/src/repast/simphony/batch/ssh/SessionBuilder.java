@@ -34,6 +34,10 @@ public class SessionBuilder {
     session.host = host;
   }
   
+  public void addKeyFile(int id, String keyFile) {
+    RemoteSession session = getRemote(id);
+    session.keyFile = keyFile;
+  }
   public void addInstancesToRemote(int id, int instances) throws IOException {
     RemoteSession session = getRemote(id);
     if (session.instances != 0) throw new IOException(String.format("Duplicate instances property for remote %d", id));

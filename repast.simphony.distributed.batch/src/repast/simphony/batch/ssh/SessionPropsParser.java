@@ -54,6 +54,8 @@ public class SessionPropsParser {
       builder.addUser(id, val.trim());
     } else if (type.equals("host")) {
       builder.addHost(id, val.trim());
+    } else if (type.equals("ssh_key_file")) {
+      builder.addKeyFile(id, val.trim());
     } else if (type.equals("instances")) {
       try {
         int instances = Integer.parseInt(val.trim());
@@ -97,7 +99,7 @@ public class SessionPropsParser {
     }
 
     if (vals[0].equals("remote")) {
-      if (!(vals[2].equals("user") || vals[2].equals("host") || vals[2].equals("instances"))) {
+      if (!(vals[2].equals("user") || vals[2].equals("host") || vals[2].equals("instances") || vals[2].equals("ssh_key_file"))) {
         throw new IOException("Invalid remote properties configuration:" + key);
       } else if (vals[0].equals("local")) {
         if (!(vals[2].equals("working_directory") || vals[2].equals("instances"))) {
