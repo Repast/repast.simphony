@@ -1,38 +1,31 @@
 <!--  ant build file for creating self contained model zip -->
 <project name="build_batch_run" default="make_zip">
 
-	<!-- User edit these -->
-	<property name="model.dir" location="../test_data/JZombies" />
-	<property name="model.scenario.dir" location="../test_data/JZombies/JZombies.rs" />
-	<property name="batch.param.file" location="../test_data/JZombies/batch/batch_params.xml" />
-	<property name="working.dir" location="../tmp" />
-	<property name="zip.file" location="../complete_model.zip" />
-
-
 	<!-- User doesn't edit these -->
 	<property name="working.lib" location="${working.dir}/lib" />
 	<property name="model.dir.bin" location="${model.dir}/bin" />
 	<property name="model.dir.lib" location="${model.dir}/lib" />
-	
-	
+
+
 	<!-- the plugins locations to their eclipse plugin values if the eclipse home and plugins 
 	version number has been set -->
-    <condition property="plugins.prefix" value="${eclipse.home}/plugins/" else="../../">
-        <isset property="eclipse.home" />
-    </condition>
+	<condition property="plugins.prefix" value="${eclipse.home}/plugins/" else="../../../">
+		<isset property="eclipse.home" />
+	</condition>
 	<echo message="plugins.prefix=${plugins.prefix}" />
-	
+
 	<condition property="plugins.suffix" value="_${plugins.version}" else="">
-		<isset property="plugins.version"/>
+		<isset property="plugins.version" />
 	</condition>
 	<echo message="plugins.suffix=${plugins.suffix}" />
-	
-	<property name="default.batch.param.file.name" value="batch_params.xml"/>
-	
+
+	<property name="default.batch.param.file.name" value="batch_params.xml" />
+
 
 	<property name="libs.bsf" location="${plugins.prefix}/libs.bsf${plugins.suffix}" />
 	<property name="batch" location="${plugins.prefix}/repast.simphony.batch${plugins.suffix}" />
 	<property name="distributed.batch" location="${plugins.prefix}/repast.simphony.distributed.batch${plugins.suffix}" />
+	<echo message="${distributed.batch}" />
 	<property name="core" location="${plugins.prefix}/repast.simphony.core${plugins.suffix}" />
 	<property name="runtime" location="${plugins.prefix}/repast.simphony.runtime${plugins.suffix}" />
 	<property name="data" location="${plugins.prefix}/repast.simphony.data${plugins.suffix}" />
@@ -46,17 +39,24 @@
 
 	<property name="prototype.dir" location="../prototype" />
 
-	<path id="lib.path">
-		<fileset dir="../antlib" includes="**/*.jar" />
-	</path>
 
-	<taskdef name="xmltask" classpathref="lib.path" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
 
 	<target name="make_zip">
 		<delete dir="${working.dir}" failonerror="false" />
 		<mkdir dir="${working.dir}" />
+		<mkdir dir="${working.dir}/bin" />
+		<mkdir dir="${working.dir}/scenario.rs" />
 		<copy todir="${working.dir}">
-			<fileset dir="${prototype.dir}" />
+			<resources>
+				<javaresource name="scripts/MessageCenter.log4j.properties" />
+			</resources>
+		</copy>
+
+		<copy todir="${working.dir}/bin">
+			<resources>
+				<javaresource name="scripts/fake_jar_to_avoid_watcher_init_warnings.jar" />
+			</resources>
 		</copy>
 
 		<antcall target="make_pre_reqs" />
@@ -64,12 +64,11 @@
 			<fileset dir="${model.scenario.dir}" excludes="styles/" />
 			<fileset file="${batch.param.file}" />
 		</copy>
-		
+
 		<!-- rename whatever the user's batch parmaeter file is called to the default name expected
 		by the system -->
 		<basename file="${batch.param.file}" property="batch.param.file.name" />
-		<move file="${working.dir}/scenario.rs/${batch.param.file.name}" 
-			tofile="${working.dir}/scenario.rs/${default.batch.param.file.name}" />
+		<move file="${working.dir}/scenario.rs/${batch.param.file.name}" tofile="${working.dir}/scenario.rs/${default.batch.param.file.name}" />
 
 		<!-- replace <agents path="../bin" in the user_path.xml with "../lib/model.jar" -->
 		<xmltask todir=".." preserveType="true">

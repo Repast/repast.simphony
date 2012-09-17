@@ -1,5 +1,8 @@
 package repast.simphony.batch.ssh;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.jcraft.jsch.JSch;
@@ -43,8 +46,8 @@ public class SSHSessionFactory {
     return instance;
   }
   
-  private byte[] passphrase = null;
   private String sshKeyDir;
+  private Map<String, byte[]> passphrases = new HashMap<String, byte[]>();
   
   private SSHSessionFactory(String sshKeyDir) {
     this.sshKeyDir = sshKeyDir;
@@ -53,17 +56,21 @@ public class SSHSessionFactory {
 
   public SSHSession create(RemoteSession remote) throws JSchException {
     JSch jsch = new JSch();
-
+    
+    byte[] passphrase = passphrases.get(remote.getKeyFile());
     if (passphrase != null) jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile(), passphrase);
     else jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile());
     jsch.setKnownHosts(sshKeyDir + "/known_hosts");
     Session session = jsch.getSession(remote.getUser(), remote.getHost());
-    UserInfo userInfo = new ConsoleUserInfo();
+    UserInfo userInfo = null;
+    if (Boolean.getBoolean("use.gui"))  userInfo = new GUIUserInfo();
+    else userInfo = new ConsoleUserInfo();
     session.setUserInfo(userInfo);
     session.connect();
     
     if (passphrase == null) {
       passphrase = userInfo.getPassphrase().getBytes();
+      passphrases.put(remote.getKeyFile(), passphrase);
     }
     
     return new SSHSession(session);

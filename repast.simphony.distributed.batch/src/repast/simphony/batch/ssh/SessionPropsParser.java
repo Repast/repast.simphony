@@ -88,7 +88,7 @@ public class SessionPropsParser {
   private void checkVals(String key, String[] vals) throws IOException {
     if (vals.length != 3)
       throw new IOException("Invalid properties configuration for '" + key
-          + "': expected remote.X.[host|user|instances] or local.X.[working_directory | instances]");
+          + "': expected remote.X.[host|user|instances|ssh_key_file] or local.X.[working_directory | instances]");
     if (!(vals[0].equals("remote") || vals[0].equals("local")))
       throw new IOException("Invalid  properties configuration:" + key);
 

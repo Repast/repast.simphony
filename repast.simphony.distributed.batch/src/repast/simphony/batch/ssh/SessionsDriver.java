@@ -32,13 +32,15 @@ public class SessionsDriver {
 
   private Configuration config;
 
-  SessionsDriver(String propsFile) throws IOException {
+  public SessionsDriver(String propsFile) throws IOException {
     this.config = new Configuration(propsFile);
     SSHSessionFactory.init(config.getSSHKeyDir());
   }
 
   public void run() {
     try {
+      
+      System.out.println("RUNNING !!!!");
       BatchParameterChunker chunker = new BatchParameterChunker(config);
       chunker.run();
 
