@@ -1,0 +1,24 @@
+package repast.simphony.batch.gui;
+
+/**
+ * Interface for panels that appear in the Batch Run UI.
+ * 
+ * @author Nick Collier
+ */
+public interface BatchRunPanel {
+  
+  /**
+   * Initializes the panel with the model. 
+   * 
+   * @param model
+   */
+  void init(BatchRunModel model);
+  
+  /**
+   * Commits changes to the model.
+   * 
+   * @param model
+   */
+  void commit(BatchRunModel model);
+
+}
