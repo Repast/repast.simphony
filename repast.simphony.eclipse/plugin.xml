@@ -282,6 +282,9 @@
          <actionSet
                id="repast.simphony.eclipse.samplemodelsactionSet">
          </actionSet>
+         <actionSet
+               id="repast.simphony.eclipse.insertcode">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    
