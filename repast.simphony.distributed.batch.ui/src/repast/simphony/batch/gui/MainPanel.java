@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -24,6 +23,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
@@ -31,14 +31,20 @@ import org.apache.log4j.Logger;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
+import org.xml.sax.SAXException;
 
 import repast.simphony.batch.BatchConstants;
+import repast.simphony.batch.parameter.ParametersToInput;
 import repast.simphony.batch.ssh.SessionsDriver;
 
 /**
  * @author Nick Collier
  */
 public class MainPanel {
+	
+	public static void main(String[] args) throws IOException{
+		
+	}
 
   private JPanel main;
   private JTabbedPane tabs = new JTabbedPane();
@@ -203,7 +209,12 @@ public class MainPanel {
     } catch (IOException ex) {
       ex.printStackTrace();
       ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    } finally {
+    }  catch (ParserConfigurationException ex) {
+    	ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));	
+	} catch (SAXException ex) {
+    	ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+	}
+    finally {
       if (writer != null) {
         try {
           writer.close();
@@ -214,14 +225,21 @@ public class MainPanel {
     }
   }
   
-  private Project createAntProject() throws IOException {
+  private Project createAntProject() throws IOException, ParserConfigurationException, SAXException {
     URL url = BatchConstants.class.getResource("/scripts/build.xml");
     Project project = new Project();
     project.setUserProperty("ant.file", url.getFile());
     project.setProperty("model.dir", new File(model.getModelDirectory()).getCanonicalPath());
     project.setProperty("model.scenario.dir", new File(model.getScenarioDirectory()).getCanonicalPath());
-    project.setProperty("working.dir", new File(System.getProperty("java.io.tmpdir")).getCanonicalPath());
-    project.setProperty("batch.param.file", new File(model.getBatchParameterFile()).getCanonicalPath());
+    project.setProperty("working.dir", new File(System.getProperty("java.io.tmpdir"),"working").getCanonicalPath());
+    File batchParamFile = new File(model.getBatchParameterFile());
+    File unrolledParamFile = new File(System.getProperty("java.io.tmpdir"),"unrolledParamFile.txt");
+    File batchMapFile = new File(System.getProperty("java.io.tmpdir"),"batchMapFile.txt");
+    ParametersToInput pti = new ParametersToInput(batchParamFile);
+    pti.formatForInput(unrolledParamFile, batchMapFile);
+    project.setProperty("unrolled.param.file", unrolledParamFile.getCanonicalPath());
+    project.setProperty("batch.param.file", batchParamFile.getCanonicalPath());
+    
     File output = new File(model.getOutputDirectory());
     if (!output.exists()) output.mkdirs();
     project.setProperty("zip.file", new File(output, "complete_model.zip").getCanonicalPath());
@@ -248,7 +266,11 @@ public class MainPanel {
       new AntSessionRunner(p, null).execute();
     } catch (IOException ex) {
       ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    }
+    } catch (ParserConfigurationException ex) {
+    	ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));	
+	} catch (SAXException ex) {
+    	ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+	}
   }
  
   class AntSessionRunner extends SwingWorker<Void, Object> {
