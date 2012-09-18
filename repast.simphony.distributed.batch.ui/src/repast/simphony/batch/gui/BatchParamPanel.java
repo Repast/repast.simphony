@@ -30,6 +30,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
     formBuilder.appendSeparator("Batch Parameters");
     formBuilder.nextLine();
     formBuilder.append("Batch Parameter File:", paramFileFld, paramFileBrowseBtn);
+    paramFileFld.setColumns(20);
     
     add(formBuilder.getPanel(), BorderLayout.CENTER);
   }
@@ -40,6 +41,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
   @Override
   public void init(BatchRunModel model) {
     paramFileFld.setText(model.getBatchParameterFile());
+    paramFileFld.setCaretPosition(0);
     
   }
 
@@ -47,7 +49,9 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
    * @see repast.simphony.batch.gui.BatchRunPanel#commit(repast.simphony.batch.gui.BatchRunModel)
    */
   @Override
-  public void commit(BatchRunModel model) {
+  public CommitResult commit(BatchRunModel model) {
+    // TODO check for validity
     model.setBatchParameterFile(paramFileFld.getText().trim());
+    return CommitResult.SUCCESS;
   }
 }

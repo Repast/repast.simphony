@@ -10,8 +10,9 @@ import java.util.List;
  */
 public class BatchRunModel {
   
-  private String modelDirectory, scenarioDirectory, outputDirectory;
+  private String modelDirectory, scenarioDirectory, outputDirectory, keyDirectory;
   private String batchParameterFile;
+  private double pollFrequency = .1;
   private List<Host> hosts = new ArrayList<Host>();
   
   /**
@@ -84,5 +85,32 @@ public class BatchRunModel {
   public void setBatchParameterFile(String batchParameterFile) {
     this.batchParameterFile = batchParameterFile;
   }
-  
+
+  /**
+   * @return the keyDirectory
+   */
+  public String getKeyDirectory() {
+    return keyDirectory;
+  }
+
+  /**
+   * @param keyDirectory the keyDirectory to set
+   */
+  public void setKeyDirectory(String keyDirectory) {
+    this.keyDirectory = keyDirectory;
+  }
+
+  /**
+   * @return the pollFrequency
+   */
+  public double getPollFrequency() {
+    return pollFrequency;
+  }
+
+  /**
+   * @param pollFrequency the pollFrequency to set
+   */
+  public void setPollFrequency(double pollFrequency) {
+    this.pollFrequency = pollFrequency;
+  }
 }

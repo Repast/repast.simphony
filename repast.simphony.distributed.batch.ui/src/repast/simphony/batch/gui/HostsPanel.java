@@ -2,6 +2,7 @@ package repast.simphony.batch.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -44,7 +46,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
   private JPanel propsPanel;
   private JLabel userLbl, hostsLbl, sshKeyFileLbl;
   private JSplitPane splitPane;
-  private JButton addBtn, deleteBtn, copyBtn, saveBtn, loadBtn;
+  private JButton addBtn, deleteBtn, copyBtn, loadBtn;
   private JList hostList;
   private JComboBox typeBox;
   private JSpinner instancesSpn;
@@ -58,6 +60,16 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     setLayout(new BorderLayout(0, 0));
     addComponents();
     addListeners();
+  }
+  
+  private JButton createButton(String icon, String tooltip) {
+    JButton btn = new JButton(IconLoader.loadIcon(icon));
+    btn.setToolTipText(tooltip);
+    btn.setBorderPainted(false);
+    btn.setPreferredSize(new Dimension(22, 18));
+    btn.setMaximumSize(btn.getPreferredSize());
+    btn.setMinimumSize(btn.getPreferredSize());
+    return btn;
   }
 
   private void addComponents() {
@@ -81,19 +93,19 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     toolBar.setFloatable(false);
     panel.add(toolBar, BorderLayout.NORTH);
 
-    addBtn = new JButton("A");
+    addBtn = createButton("new_con.gif", "Add a Host");
     toolBar.add(addBtn);
-
-    deleteBtn = new JButton("D");
-    toolBar.add(deleteBtn);
-
-    copyBtn = new JButton("C");
+    
+    copyBtn = createButton("copy_edit_co.gif", "Copy Selected Host");
     toolBar.add(copyBtn);
+    copyBtn.setEnabled(false);
 
-    saveBtn = new JButton("S");
-    toolBar.add(saveBtn);
+    deleteBtn = createButton("rem_co.gif", "Delete Selected Host(s)");
+    toolBar.add(deleteBtn);
+    deleteBtn.setEnabled(false);
 
-    loadBtn = new JButton("L");
+    toolBar.addSeparator();
+    loadBtn = createButton("prj_obj.gif", "Load hosts from exiting configuration file");
     toolBar.add(loadBtn);
 
     JScrollPane scrollPane = new JScrollPane();
@@ -160,6 +172,8 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       @Override
       public void valueChanged(ListSelectionEvent evt) {
         if (!evt.getValueIsAdjusting()) {
+          deleteBtn.setEnabled(hostList.getSelectedIndex() != -1);
+          copyBtn.setEnabled(hostList.getSelectedIndex() != -1);
           updateHost();
         }
       }
@@ -170,6 +184,68 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
         enableForType((Type) typeBox.getSelectedItem());
       }
     });
+
+    addBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        addHost();
+      }
+    });
+
+    deleteBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        deleteHost();
+      }
+    });
+
+    copyBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        copyHost();
+      }
+    });
+  }
+
+  private void deleteHost() {
+    Object[] objs = hostList.getSelectedValues();
+    int retVal = JOptionPane.showConfirmDialog(this,
+        "Are you sure you want to delete the selected host(s)?", "Delete Host(s)?",
+        JOptionPane.YES_NO_OPTION);
+    if (retVal == JOptionPane.YES_OPTION) {
+      DefaultListModel model = (DefaultListModel) hostList.getModel();
+      int index = 0;
+      for (Object obj : objs) {
+        index = model.indexOf(obj);
+        model.removeElementAt(index);
+      }
+      
+      if (model.size() > 0) {
+        if (index == 0)
+          hostList.setSelectedIndex(0);
+        else
+          hostList.setSelectedIndex(index - 1);
+      } else {
+        hostList.setSelectedIndex(-1);
+      }
+    }
+  }
+
+  private void addHost() {
+    commitCurrent();
+    Host host = new Host(Type.REMOTE);
+    host.setInstances(2);
+    host.setUser("user");
+    host.setHost("remotehost");
+    DefaultListModel model = (DefaultListModel) hostList.getModel();
+    model.addElement(host);
+    hostList.setSelectedIndex(model.getSize() - 1);
+  }
+
+  private void copyHost() {
+    commitCurrent();
+    Host source = (Host) hostList.getSelectedValue();
+    Host target = new Host(source);
+    DefaultListModel model = (DefaultListModel) hostList.getModel();
+    model.addElement(target);
+    hostList.setSelectedIndex(model.getSize() - 1);
   }
 
   private void commitCurrent() {
@@ -214,6 +290,8 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       sshKeyFileLbl.setEnabled(false);
       sshKeyFileFld.setEnabled(false);
       sshKeyFileFld.setText("");
+    } else {
+      sshKeyFileFld.setText("id_rsa");
     }
   }
 
@@ -250,9 +328,10 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       Host host = (Host) listModel.elementAt(i);
       if (host.getType() == Type.LOCAL) {
         writer.write("local." + i + ".instances = " + host.getInstances() + "\n");
-        
-        writer.write("local." + i + ".working_directory = " + System.getProperty("java.io.tmpdir")  + "\n");
-        
+
+        writer.write("local." + i + ".working_directory = "
+            + System.getProperty("java.io.tmpdir", "model_run") + "\n");
+
       } else {
         String prefix = "remote." + i + ".";
         writer.write(prefix + "user = " + host.getUser() + "\n");
@@ -271,7 +350,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
    * .BatchRunModel)
    */
   @Override
-  public void commit(BatchRunModel model) {
+  public CommitResult commit(BatchRunModel model) {
     commitCurrent();
     List<Host> hosts = new ArrayList<Host>();
     DefaultListModel listModel = (DefaultListModel) hostList.getModel();
@@ -280,6 +359,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     }
 
     model.setHosts(hosts);
+    return CommitResult.SUCCESS;
   }
 
   static class ItemRenderer extends DefaultListCellRenderer {

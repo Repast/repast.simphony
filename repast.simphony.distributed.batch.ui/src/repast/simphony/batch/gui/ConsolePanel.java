@@ -108,7 +108,7 @@ public class ConsolePanel extends JPanel implements BatchRunPanel {
    * @see repast.simphony.batch.gui.BatchRunPanel#commit(repast.simphony.batch.gui.BatchRunModel)
    */
   @Override
-  public void commit(BatchRunModel model) {
-    
+  public CommitResult commit(BatchRunModel model) {
+    return CommitResult.SUCCESS;    
   }
 }

@@ -39,8 +39,6 @@ public class SessionsDriver {
 
   public void run() {
     try {
-      
-      System.out.println("RUNNING !!!!");
       BatchParameterChunker chunker = new BatchParameterChunker(config);
       chunker.run();
 

@@ -18,7 +18,8 @@ public interface BatchRunPanel {
    * Commits changes to the model.
    * 
    * @param model
+   * @return TODO
    */
-  void commit(BatchRunModel model);
+  CommitResult commit(BatchRunModel model);
 
 }

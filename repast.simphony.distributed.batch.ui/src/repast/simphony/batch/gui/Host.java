@@ -23,6 +23,14 @@ public class Host {
       host = "localhost";
     }
   }
+  
+  public Host(Host other) {
+    this.type = other.type;
+    this.user = other.user;
+    this.sshKeyFile = other.sshKeyFile;
+    this.host = other.host;
+    this.instances = other.instances;
+  }
 
   /**
    * @return the type
