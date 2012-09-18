@@ -49,13 +49,17 @@
 		<mkdir dir="${working.dir}/scenario.rs" />
 		<copy todir="${working.dir}">
 			<resources>
-				<javaresource name="scripts/MessageCenter.log4j.properties" />
+				<javaresource name="MessageCenter.log4j.properties" />
+				<javaresource name="repast.pbs" />
+				<javaresource name="repastwrapper.sh" />
+				<javaresource name="outputcombiner.sh" />
 			</resources>
+			<fileset file="${unrolled.param.file}" />
 		</copy>
-
+		
 		<copy todir="${working.dir}/bin">
 			<resources>
-				<javaresource name="scripts/fake_jar_to_avoid_watcher_init_warnings.jar" />
+				<javaresource name="fake_jar_to_avoid_watcher_init_warnings.jar" />
 			</resources>
 		</copy>
 
@@ -82,6 +86,7 @@
 
 		<!-- zip the whole thing up -->
 		<zip destfile="${zip.file}" basedir="${working.dir}" />
+		<echo message="Completed building model archive." />
 	</target>
 
 	<!-- Make jars and copy them to bin/lib. The contents of that directory become part of
@@ -141,12 +146,6 @@
 
 			<fileset dir="${model.dir.lib}">
 				<include name="*.jar" />
-			</fileset>
-		</copy>
-
-		<copy todir="${working.dir}">
-			<fileset dir="${runtime}">
-				<include name="MessageCenter.log4j.properties" />
 			</fileset>
 		</copy>
 

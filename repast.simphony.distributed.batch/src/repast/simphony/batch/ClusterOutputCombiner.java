@@ -13,11 +13,11 @@ import org.apache.log4j.PropertyConfigurator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
 import repast.simphony.batch.ssh.OutputAggregator;
 import repast.simphony.batch.ssh.StatusException;
+import simphony.util.messages.MessageCenter;
 
 public class ClusterOutputCombiner {
 
-	private static Logger logger = Logger
-			.getLogger(ClusterOutputCombiner.class);
+	private static MessageCenter msg = MessageCenter.getMessageCenter(ClusterOutputCombiner.class);
 	
 	private String workingDir, outputDir;
 	
@@ -36,7 +36,7 @@ public class ClusterOutputCombiner {
 			OutputAggregator aggregator = new OutputAggregator();
 			new File(outputDir).mkdirs();
 			aggregator.run(files, outputDir);
-			logger.info("Aggregating output into " + outputDir);
+			msg.info("Aggregating output into " + outputDir);
 		} catch (StatusException e) {
 			e.printStackTrace();
 		} catch (IOException ex) {
@@ -47,7 +47,7 @@ public class ClusterOutputCombiner {
 	public List<File> findOutput(String directory) throws StatusException {
 		LocalOutputFinder finder = new LocalOutputFinder();
 		File localDir = new File(directory);
-		logger.info(String.format("Finding output on localhost in %s",
+		msg.info(String.format("Finding output on localhost in %s",
 				localDir.getPath()));
 		return finder.run(localDir);
 	}
