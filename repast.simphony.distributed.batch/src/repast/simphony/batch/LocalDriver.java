@@ -5,6 +5,7 @@ package repast.simphony.batch;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.concurrent.Future;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.SAXException;
 
 import repast.simphony.batch.parameter.ParametersToInput;
@@ -85,17 +87,18 @@ public class LocalDriver {
   
 
   public void run(String propsFile) throws IOException {
+    // load the message center log4j properties.
     Properties props = new Properties();
+    File in = new File("./MessageCenter.log4j.properties");
+    props.load(new FileInputStream(in));
+    PropertyConfigurator.configure(props);
+    
+    props = new Properties();
     props.load(new FileReader(propsFile));
 
-   
     File wd = new File(props.getProperty(BatchConstants.WORKING_DIRECTORY_PN));
     
     int instanceCount = Integer.parseInt(props.getProperty(BatchConstants.INSTANCE_COUNT_PN, "1"));
-    //if (instanceCount == -1) {
-    //  instanceCount = Runtime.getRuntime().availableProcessors();
-    //}
-    
     File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN))
     .getCanonicalFile();
     
