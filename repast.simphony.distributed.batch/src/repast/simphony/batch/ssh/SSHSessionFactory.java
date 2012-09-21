@@ -36,6 +36,7 @@ public class SSHSessionFactory {
   }
   
   private static SSHSessionFactory instance;
+  private UserInfo userInfo;
   
   public static void init(String sshKeyDir) {
     instance = new SSHSessionFactory(sshKeyDir);
@@ -53,6 +54,10 @@ public class SSHSessionFactory {
     this.sshKeyDir = sshKeyDir;
   }
   
+  public void setUserInfo(UserInfo userInfo) {
+    this.userInfo = userInfo;
+  }
+  
 
   public SSHSession create(RemoteSession remote) throws JSchException {
     JSch jsch = new JSch();
@@ -62,11 +67,8 @@ public class SSHSessionFactory {
     else jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile());
     jsch.setKnownHosts(sshKeyDir + "/known_hosts");
     Session session = jsch.getSession(remote.getUser(), remote.getHost());
-    //UserInfo userInfo = null;
-    //if (Boolean.getBoolean("use.gui"))  userInfo = new GUIUserInfo();
-    //else 
-    UserInfo userInfo = new ConsoleUserInfo();
-    session.setUserInfo(userInfo);
+    if (userInfo == null) session.setUserInfo(new ConsoleUserInfo());
+    else session.setUserInfo(userInfo);
     session.connect();
     
     if (passphrase == null) {

@@ -10,6 +10,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import repast.simphony.batch.BatchConstants;
+
 /**
  * 
  * 
@@ -46,7 +48,7 @@ public class ModelArchiveConfigurator {
       zip = new ZipFile(config.getModelArchive());
       for (Enumeration<? extends ZipEntry> iter = zip.entries(); iter.hasMoreElements();) {
         ZipEntry entry = iter.nextElement();
-        if (!entry.getName().equals(Constants.LOCAL_BATCH_PROPS_FNAME)) {
+        if (!entry.getName().equals(BatchConstants.LOCAL_RUN_PROPS_FILE)) {
           out.putNextEntry(entry);
           if (!entry.isDirectory()) {
             copy(zip.getInputStream(entry), out);
@@ -55,13 +57,14 @@ public class ModelArchiveConfigurator {
         }
       }
 
-      ZipEntry entry = new ZipEntry(Constants.LOCAL_BATCH_PROPS_FNAME);
+      ZipEntry entry = new ZipEntry(BatchConstants.LOCAL_RUN_PROPS_FILE);
       out.putNextEntry(entry);
       String params = config.getBatchParamsFile();
       if (!params.startsWith("./"))
         params = "./" + params;
       String contents = PROP_FILE_CONTENTS + "instance.count = " + remote.getInstances() + "\n"
           + "batch.parameter.file = " + params;
+      contents += "\n" + BatchConstants.VM_ARGS + " = " + config.getVMArguments();
       out.write(contents.getBytes());
       out.closeEntry();
 

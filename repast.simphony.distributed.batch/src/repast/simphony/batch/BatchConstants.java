@@ -18,6 +18,7 @@ public interface BatchConstants {
   String SCENARIO_DIRECTORY_PN = "scenario.directory";
   String WORKING_DIRECTORY_PN = "working.directory";
   String REPAST_LIB_DIRECTORY_PN = "repast.lib.directory";
+  String VM_ARGS = "vm.arguments";
 
   String INSTANCE_COUNT_PN = "instance.count";
   
@@ -27,6 +28,4 @@ public interface BatchConstants {
   
   String PARAM_MAP_SUFFIX = "batch_param_map";
   String LOCAL_RUN_PROPS_FILE = "local_batch_run.properties";
-  
-
 }

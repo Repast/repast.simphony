@@ -20,8 +20,9 @@ public class Configuration {
   private static final String OUT_DIR_KEY = "model.output";
   private static final String BATCH_PARAMS_KEY = "batch.params.file";
   private static final String POLL_INTERVAL_KEY = "poll.frequency";
+  private static final String VM_ARGS_KEY = "vm.arguments";
   
-  private String modelArchive, sshKeyDir, outDir, paramsFile;
+  private String modelArchive, sshKeyDir, outDir, paramsFile, vmArgs;
   private float pollFrequency;
   private List<? extends Session> sessions;
   
@@ -56,6 +57,9 @@ public class Configuration {
     }
     props.remove(POLL_INTERVAL_KEY);
     
+    vmArgs = props.getProperty(VM_ARGS_KEY);
+    if (vmArgs == null) throw new IOException("Invalid configuration file: file is missing " + VM_ARGS_KEY + " property");
+    props.remove(VM_ARGS_KEY);
     
     sessions = new SessionPropsParser().parse(props);
   }
@@ -91,6 +95,15 @@ public class Configuration {
    */
   public int getRemoteCount() {
     return sessions.size();
+  }
+  
+  /**
+   * Gets any arguments to pass the VM that runs the model.
+   * 
+   * @return any arguments to pass the VM that runs the model.
+   */
+  public String getVMArguments() {
+    return vmArgs;
   }
   
   /**

@@ -123,6 +123,8 @@ public class LocalDriver {
     File file = new File("./" + BatchConstants.DONE_FILE_NAME);
     file.delete();
     
+    String vmArgs = props.getProperty(BatchConstants.VM_ARGS, "");
+    
     try {
       for (int i = 0; i < instanceCount; i++) {
         int id = i + 1;
@@ -130,7 +132,7 @@ public class LocalDriver {
         subwd.mkdirs();
         instances.add(new Instance(id, subwd));
         String inputArg = inputs.get(i);
-        runInstance(inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
+        runInstance(vmArgs, inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
       
       for (Future<Void> future : futures) {
@@ -208,13 +210,20 @@ public class LocalDriver {
     return list;
   }
 
-  private void runInstance(String inputArg, File libDir, File batchParamFile, File scenarioFile,
+  private void runInstance(String vmArgs, String inputArg, File libDir, File batchParamFile, File scenarioFile,
       File workingDirectory, String id) throws IOException {
     ProcessBuilder builder = new ProcessBuilder();
     builder.directory(workingDirectory);
-    builder.command("java", "-cp", libDir.getCanonicalPath() + "/*",
+    
+    if (vmArgs.length() > 0) 
+    builder.command("java", vmArgs, "-cp", libDir.getCanonicalPath() + "/*",
         "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
         scenarioFile.getCanonicalPath(), inputArg, id);
+    else
+      builder.command("java", "-cp", libDir.getCanonicalPath() + "/*",
+          "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
+          scenarioFile.getCanonicalPath(), inputArg, id);
+    
     builder.redirectErrorStream(true);
     ProcessRunner runner = new ProcessRunner(builder, new File(workingDirectory, "instance.log"));
     futures.add(executor.submit(runner));

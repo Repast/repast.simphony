@@ -15,9 +15,10 @@
 				<parameter name="zombie_count" displayName="Zombie Count" type="int" 
 						defaultValue="5" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"/>
+						
+			 <parameter name="on" displayName="On" type="boolean" defaultValue="false" isReadOnly="false" 
+			 converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"/>
 		</parameters>
 
 

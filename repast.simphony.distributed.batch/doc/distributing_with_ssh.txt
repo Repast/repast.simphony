@@ -38,6 +38,7 @@ model.archive = ./complete_model.zip
 batch.params.file = scenario.rs/batch_params.xml
 model.output = ./test_out
 ssh.key_dir = ~/.ssh
+vm.arguments = -Xmx512M
 
 remote.1.user = sshtesting
 remote.1.host = 128.135.250.205
@@ -56,6 +57,7 @@ in the model.archive file.
 model.output -- where to write the final output to
 ssh.key_dir -- the location of the ssh keys on the local machine
 (the machine where the RemoteSSHDriver is being run).
+vm.arguments -- any arguments for the VM that runs the model.
 
 remote.X.user -- the user to use when logging into the remote machine
 remote.X.host -- the host name or ip address of the remote machine
