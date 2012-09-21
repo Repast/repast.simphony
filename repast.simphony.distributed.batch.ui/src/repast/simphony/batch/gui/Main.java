@@ -22,9 +22,10 @@ public class Main {
   public void run() {
     JFrame frame = new JFrame();
     frame.setLayout(new BorderLayout());
-    frame.add(new MainPanel().getPanel(), BorderLayout.CENTER);
+    frame.add(new MainPanel(), BorderLayout.CENTER);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(650, 500);
+    frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }
 

@@ -24,29 +24,23 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import repast.simphony.batch.gui.Host.Type;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.ConstantSize;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 @SuppressWarnings("serial")
 public class HostsPanel extends JPanel implements BatchRunPanel {
 
-  private JTextField userFld, hostsFld, sshKeyFileFld;
+  private JTextField userFld = new JTextField(10), hostsFld = new JTextField(10), 
+      sshKeyFileFld = new JTextField("id_rsa", 10);
   private JPanel propsPanel;
-  private JLabel userLbl, hostsLbl, sshKeyFileLbl;
+  private JLabel userLbl, hostLbl, sshKeyFileLbl;
   private JSplitPane splitPane;
-  private JButton addBtn, deleteBtn, copyBtn, loadBtn;
+  private JButton addBtn, deleteBtn, copyBtn;
   private JList hostList;
   private JComboBox typeBox;
   private JSpinner instancesSpn;
@@ -55,6 +49,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
 
   /**
    * Create the panel.
+   * @param adapter 
    */
   public HostsPanel() {
     setLayout(new BorderLayout(0, 0));
@@ -104,9 +99,9 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     toolBar.add(deleteBtn);
     deleteBtn.setEnabled(false);
 
-    toolBar.addSeparator();
-    loadBtn = createButton("prj_obj.gif", "Load hosts from exiting configuration file");
-    toolBar.add(loadBtn);
+    //toolBar.addSeparator();
+    //loadBtn = createButton("prj_obj.gif", "Load hosts from exiting configuration file");
+    //toolBar.add(loadBtn);
 
     JScrollPane scrollPane = new JScrollPane();
     panel.add(scrollPane, BorderLayout.CENTER);
@@ -114,56 +109,29 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     hostList = new JList();
     hostList.setCellRenderer(new ItemRenderer());
     scrollPane.setViewportView(hostList);
-
-    propsPanel = new JPanel();
-    propsPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
-    splitPane.setRightComponent(propsPanel);
-    propsPanel.setLayout(new FormLayout(new ColumnSpec[] { ColumnSpec.decode("left:pref"),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
-        new RowSpec[] { RowSpec.createGap(new ConstantSize(10, ConstantSize.DIALOG_UNITS_Y)),
-            FormFactory.PREF_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC, FormFactory.PREF_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.PREF_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.PREF_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.PREF_ROWSPEC,
-            FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
-
-    CellConstraints cc = new CellConstraints();
-    propsPanel.add(DefaultComponentFactory.getInstance().createSeparator("Properties"),
-        cc.xyw(1, 2, 3));
-    JLabel lblNewLabel = new JLabel("Type:");
-    propsPanel.add(lblNewLabel, "1, 4, right, default");
-
+    
+    layout = new FormLayout("5dlu, left:pref, 3dlu, pref:grow", "");
+    formBuilder = new DefaultFormBuilder(layout);
+    formBuilder.setDefaultDialogBorder();
+    formBuilder.appendSeparator("Host Properties");
+    formBuilder.nextLine();
+    formBuilder.setLeadingColumnOffset(1);
     typeBox = new JComboBox(new Object[] { Host.Type.LOCAL, Host.Type.REMOTE });
-    propsPanel.add(typeBox, "3, 4, fill, default");
-
-    userLbl = new JLabel("User:");
-    propsPanel.add(userLbl, "1, 6, right, default");
-
-    userFld = new JTextField();
-    propsPanel.add(userFld, "3, 6, fill, default");
-    userFld.setColumns(10);
-
-    hostsLbl = new JLabel("Host:");
-    propsPanel.add(hostsLbl, "1, 8, right, default");
-
-    hostsFld = new JTextField();
-    propsPanel.add(hostsFld, "3, 8, fill, default");
-    hostsFld.setColumns(10);
-
-    sshKeyFileLbl = new JLabel("SSH Key File:");
-    propsPanel.add(sshKeyFileLbl, "1, 10, right, default");
-
-    sshKeyFileFld = new JTextField("id_rsa");
-    propsPanel.add(sshKeyFileFld, "3, 10 fill, default");
-    userFld.setColumns(10);
-
-    JLabel lblInstances = new JLabel("Instances:");
-    propsPanel.add(lblInstances, "1, 12");
-
+    formBuilder.append("Type:", typeBox);
+    formBuilder.nextLine();
+    userLbl = formBuilder.append("User:", userFld);
+    formBuilder.nextLine();
+    hostLbl = formBuilder.append("Host (Name or Address):", hostsFld);
+    formBuilder.nextLine();
+    sshKeyFileLbl = formBuilder.append("SSH Key File:", sshKeyFileFld);
+    formBuilder.nextLine();
     instancesSpn = new JSpinner();
     instancesSpn.setModel(new SpinnerNumberModel(1, 1, 1000000, 1));
-    propsPanel.add(instancesSpn, "3, 12");
-
+    formBuilder.append("Instances:", instancesSpn);
+    
+    propsPanel = formBuilder.getPanel();
+    splitPane.setRightComponent(propsPanel);
+    
     setPropsEnabled(false);
   }
 
@@ -286,7 +254,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       userFld.setEnabled(false);
       hostsFld.setEnabled(false);
       userLbl.setEnabled(false);
-      hostsLbl.setEnabled(false);
+      hostLbl.setEnabled(false);
       sshKeyFileLbl.setEnabled(false);
       sshKeyFileFld.setEnabled(false);
       sshKeyFileFld.setText("");
@@ -309,7 +277,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
    * BatchRunModel)
    */
   @Override
-  public void init(BatchRunModel model) {
+  public void init(BatchRunConfigBean model) {
     splitPane.setDividerLocation(175);
     List<Host> hosts = model.getHosts();
     DefaultListModel listModel = new DefaultListModel();
@@ -350,7 +318,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
    * .BatchRunModel)
    */
   @Override
-  public CommitResult commit(BatchRunModel model) {
+  public CommitResult commit(BatchRunConfigBean model) {
     commitCurrent();
     List<Host> hosts = new ArrayList<Host>();
     DefaultListModel listModel = (DefaultListModel) hostList.getModel();

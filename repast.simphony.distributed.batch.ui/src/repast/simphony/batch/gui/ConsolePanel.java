@@ -6,10 +6,15 @@ package repast.simphony.batch.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -72,6 +77,34 @@ public class ConsolePanel extends JPanel implements BatchRunPanel {
     
     style = pane.addStyle("std", null);
     StyleConstants.setForeground(style, Color.BLACK);
+    addListeners();
+  }
+  
+  private void addListeners() {
+    pane.addMouseListener(new MouseAdapter() {
+
+      @Override
+      public void mousePressed(MouseEvent evt) {
+        if (evt.isPopupTrigger()) showMenu(evt);
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.isPopupTrigger()) showMenu(evt);
+      }
+      
+    });
+  }
+  
+  private void showMenu(MouseEvent evt) {
+    JPopupMenu menu = new JPopupMenu();
+    menu.add(new AbstractAction("Clear") {
+      @Override
+      public void actionPerformed(ActionEvent evt1) {
+        pane.setText("");
+      }
+    });
+    menu.show(pane, evt.getX(), evt.getY());
   }
   
   public void update(final String val, final boolean error) {
@@ -101,14 +134,14 @@ public class ConsolePanel extends JPanel implements BatchRunPanel {
    * @see repast.simphony.batch.gui.BatchRunPanel#init(repast.simphony.batch.gui.BatchRunModel)
    */
   @Override
-  public void init(BatchRunModel model) {
+  public void init(BatchRunConfigBean model) {
   }
 
   /* (non-Javadoc)
    * @see repast.simphony.batch.gui.BatchRunPanel#commit(repast.simphony.batch.gui.BatchRunModel)
    */
   @Override
-  public CommitResult commit(BatchRunModel model) {
+  public CommitResult commit(BatchRunConfigBean model) {
     return CommitResult.SUCCESS;    
   }
 }

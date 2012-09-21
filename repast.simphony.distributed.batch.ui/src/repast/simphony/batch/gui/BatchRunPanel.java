@@ -12,7 +12,7 @@ public interface BatchRunPanel {
    * 
    * @param model
    */
-  void init(BatchRunModel model);
+  void init(BatchRunConfigBean model);
   
   /**
    * Commits changes to the model.
@@ -20,6 +20,6 @@ public interface BatchRunPanel {
    * @param model
    * @return TODO
    */
-  CommitResult commit(BatchRunModel model);
+  CommitResult commit(BatchRunConfigBean model);
 
 }
