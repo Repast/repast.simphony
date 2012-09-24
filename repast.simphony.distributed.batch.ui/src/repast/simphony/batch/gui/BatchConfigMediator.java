@@ -3,6 +3,7 @@
  */
 package repast.simphony.batch.gui;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
@@ -13,11 +14,15 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Appender;
@@ -53,11 +58,12 @@ public class BatchConfigMediator {
   private ModelPanel modelPanel;
   private BatchParamPanel bpPanel;
   private JTabbedPane tabs = new JTabbedPane();
+  private JLabel status = new JLabel();
   
   private PresentationModel<BatchRunConfigBean> pModel = new PresentationModel<BatchRunConfigBean>(model);
 
   private File configFile = null;
-  private boolean dirty = true;
+  private boolean dirty = false;
 
   public BatchConfigMediator() {
     // append logging output to the console
@@ -75,12 +81,31 @@ public class BatchConfigMediator {
         setDirty(true);
       }
     });
+    
+    tabs.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent evt) {
+        tabChanged();
+      }
+    });
+   
+    status.setFont(status.getFont().deriveFont(12f));
+    status.setForeground(Color.RED);
+    status.setText(" ");
+  }
+  
+  private void tabChanged() {
+    status.setText(tabs.getTitleAt(tabs.getSelectedIndex()));
   }
   
   private void setDirty(boolean dirty) {
     this.dirty = dirty;
     // TODO query the panels to see if we can run
     
+  }
+  
+  public JComponent getStatusBar() {
+    return status;
   }
 
   /**
@@ -104,15 +129,19 @@ public class BatchConfigMediator {
     pModel.triggerCommit();
     hostsPanel.commit(model);
   }
+  
+  private void askSave() {
+    int ret = JOptionPane.showConfirmDialog(console.getParent().getParent(), 
+        "Do you want to save the changes you have made to the batch run configuration?", "Save Changes?",
+        JOptionPane.YES_NO_OPTION);
+    if (ret == JOptionPane.YES_OPTION) {
+      saveConfig();
+    }
+  }
 
   public void newConfig() {
     if (dirty) {
-      int ret = JOptionPane.showConfirmDialog(console.getParent().getParent(), 
-          "Do you want to save the changes you have made to the batch run configuration?", "Save Changes?",
-          JOptionPane.YES_NO_OPTION);
-      if (ret == JOptionPane.YES_OPTION) {
-        saveConfig();
-      }
+      askSave();
     }
     model = new BatchRunConfigBean();
     pModel.setBean(model);
@@ -121,7 +150,10 @@ public class BatchConfigMediator {
   }
 
   public void openConfig() {
-    // TODO if dirty then save current
+    if (dirty) {
+      askSave();
+    }
+    
     File file = configFile;
     if (file == null) {
       file = new File(model.getModelDirectory());
@@ -140,6 +172,7 @@ public class BatchConfigMediator {
     JFileChooser chooser = new JFileChooser(file);
     chooser.setDialogType(JFileChooser.OPEN_DIALOG);
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setDialogTitle("Open Configuration");
 
     int retVal = chooser.showOpenDialog(console.getParent().getParent());
     if (retVal == JFileChooser.APPROVE_OPTION)
