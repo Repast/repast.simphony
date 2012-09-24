@@ -1,1 +1,12 @@
-<?xml version="1.0" ?><sweep runs="1"><parameter name="human_count" type="constant" constant_type="int" value="200"></parameter><parameter name="on" type="constant" constant_type="boolean" value="true"></parameter><parameter name="randomSeed" type="number" number_type="int" start="1" end="3" step="1"><parameter name="zombie_count" type="number" number_type="int" start="5" end="10" step="1"></parameter></parameter></sweep>
+<?xml version="1.0" ?>
+<sweep runs="1">
+	<parameter name="human_count" type="constant" constant_type="int"
+		value="200"></parameter>
+	<parameter name="on" type="constant" constant_type="boolean"
+		value="true"></parameter>
+	<parameter name="randomSeed" type="number" number_type="int"
+		start="1" end="3" step="1">
+		<parameter name="zombie_count" type="number" number_type="int"
+			start="5" end="10" step="1"></parameter>
+	</parameter>
+</sweep>

@@ -6,29 +6,34 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import repast.simphony.batch.BatchConstants;
+import repast.simphony.data2.engine.FileSinkControllerActionIO;
 
 /**
- * Distributes parameters to remote ssh'able hosts and locally. Then runs a configurable
- * number of repast instances on those hosts. This then gathers the output and
- * any errors from the hosts and concatenates it.
+ * Distributes parameters to remote ssh'able hosts and locally. Then runs a
+ * configurable number of repast instances on those hosts. This then gathers the
+ * output and any errors from the hosts and concatenates it.
  * 
  * @author Nick Collier
  */
 public class SessionsDriver {
 
   private static Logger logger = Logger.getLogger(SessionsDriver.class);
-  
 
   private Configuration config;
 
@@ -43,7 +48,7 @@ public class SessionsDriver {
       chunker.run();
 
       String directory = "simphony_model_" + System.currentTimeMillis();
-      
+
       for (Session session : config.sessions()) {
         session.initModelArchive(config, directory);
       }
@@ -121,18 +126,40 @@ public class SessionsDriver {
   }
 
   private void concatenateOutput(String remoteDir) throws StatusException, SessionException {
- 
+
     List<File> copiedFiles = new ArrayList<File>();
     for (Session session : config.sessions()) {
       copiedFiles.addAll(session.findOutput());
     }
 
+    ZipFile zip = null;
     try {
+      // look in the scenario directory in the zip file to find the 
+      // base output names.
+      BaseOutputNamesFinder finder = new BaseOutputNamesFinder();
+      List<String> baseNames = new ArrayList<String>();
+      zip = new ZipFile(config.getModelArchive());
+      for (Enumeration<? extends ZipEntry> iter = zip.entries(); iter.hasMoreElements();) {
+        ZipEntry entry = iter.nextElement();
+        if (entry.getName().startsWith("scenario.rs/" + FileSinkControllerActionIO.SERIALIZATION_ID)) {
+          baseNames.add(finder.find(zip.getInputStream(entry)));
+        }
+      }
+      
       OutputAggregator aggregator = new OutputAggregator();
-      aggregator.run(copiedFiles, config.getOutputDir());
+      aggregator.run(baseNames, copiedFiles, config.getOutputDir());
       logger.info("Aggregating output into " + config.getOutputDir());
     } catch (IOException ex) {
       throw new SessionException("Error while aggregating remote output", ex);
+    } catch (XMLStreamException ex) {
+      throw new SessionException("Error while aggregating remote output", ex);
+    } finally {
+      if (zip != null)
+        try {
+          zip.close();
+        } catch (IOException ex) {
+          throw new SessionException("Error while aggregating remote output", ex);
+        }
     }
 
   }
@@ -144,7 +171,7 @@ public class SessionsDriver {
     try {
       executor = Executors.newFixedThreadPool(config.getRemoteCount());
       for (Session session : config.sessions()) {
-        Callable<Void> poller = session.createDonePoller((long)(config.getPollFrequency() * 1000));
+        Callable<Void> poller = session.createDonePoller((long) (config.getPollFrequency() * 1000));
         futures.add(executor.submit(poller));
       }
 

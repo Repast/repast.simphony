@@ -5,20 +5,27 @@ package repast.simphony.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
+import repast.simphony.batch.ssh.BaseOutputNamesFinder;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.OutputAggregator;
 import repast.simphony.batch.ssh.RemoteOutputFinderCopier;
@@ -28,6 +35,7 @@ import repast.simphony.batch.ssh.StatusException;
 import repast.simphony.batch.ssh.RemoteStatusGetter;
 import repast.simphony.batch.ssh.SSHSessionFactory;
 import repast.simphony.batch.ssh.Session;
+import repast.simphony.data2.engine.FileSinkControllerActionIO;
 
 /**
  * @author Nick Collier
@@ -36,7 +44,9 @@ public class RemoteOutputTest {
 
   private static final String REMOTE_DIR = "for_testing_simphony_model";
   private static final String MODEL_OUT = "ModelOutput.2012.Aug.21.11_58_43.txt";
+  private static final String MODEL2_OUT = "ModelOutput.2012.Aug.21.11_58_43.txt";
   private static final String P_OUT = "ModelOutput.2012.Aug.21.11_58_43.batch_param_map.txt";
+  private static final String P2_OUT = "ModelOutput.2012.Aug.21.11_58_43.batch_param_map.txt";
 
   private Set<File> expectedFiles = new HashSet<File>();
 
@@ -71,11 +81,42 @@ public class RemoteOutputTest {
         reader.close();
     }
   }
+  
+  @Test
+  public void testBaseNameFinder() throws IOException, XMLStreamException {
+    List<String> names = new BaseOutputNamesFinder().find("./test_data/test_scenario.rs");
+    assertEquals(2, names.size());
+    Set<String> expected = new HashSet<String>();
+    expected.add("ModelOutput.txt");
+    expected.add("ModelOutput2.txt");
+    
+    for (String name : names) {
+      assertTrue(expected.remove(name));
+    }
+  }
+  
+  @Test
+  public void testBaseNameFinderZip() throws IOException, XMLStreamException {
+    
+    // base output names.
+    BaseOutputNamesFinder finder = new BaseOutputNamesFinder();
+    List<String> baseNames = new ArrayList<String>();
+    ZipFile zip = new ZipFile("./test_data/test_scenario.rs/complete_model.zip");
+    for (Enumeration<? extends ZipEntry> iter = zip.entries(); iter.hasMoreElements();) {
+      ZipEntry entry = iter.nextElement();
+      if (entry.getName().startsWith("scenario.rs/" + FileSinkControllerActionIO.SERIALIZATION_ID)) {
+        baseNames.add(finder.find(zip.getInputStream(entry)));
+      }
+    }
+    assertEquals(1, baseNames.size());
+    assertEquals("ModelOutput.txt", baseNames.get(0));
+  }
 
   @Test
-  public void testAggregator() throws IOException {
+  public void testAggregator() throws IOException, XMLStreamException {
     OutputAggregator aggregator = new OutputAggregator();
-    aggregator.run(new ArrayList<File>(expectedFiles), "./test_out");
+    aggregator.run(new BaseOutputNamesFinder().find("./test_data/test_scenario.rs"), 
+        new ArrayList<File>(expectedFiles), "./test_out");
 
     Set<String> expOut = new HashSet<String>();
     Set<String> expPOut = new HashSet<String>();
@@ -92,6 +133,8 @@ public class RemoteOutputTest {
     assertEquals(true, expPOut.size() > 0);
     testOutput(expOut, new File("./test_out/" + MODEL_OUT));
     testOutput(expPOut, new File("./test_out/" + P_OUT));
+    testOutput(expOut, new File("./test_out/" + MODEL2_OUT));
+    testOutput(expPOut, new File("./test_out/" + P2_OUT));
   }
   
   private Session getTestingRemote(Configuration config) {
@@ -140,6 +183,9 @@ public class RemoteOutputTest {
     RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
     RemoteSession remote = (RemoteSession) getTestingRemote(config);
     List<File> copiedFiles = copier.run(remote, REMOTE_DIR, "./test_out");
+    
+    // 4 outputs from 4 instances
+    assertEquals(16, copiedFiles.size());
 
     for (File file : copiedFiles) {
       File match = findExpectedMatch(file);
