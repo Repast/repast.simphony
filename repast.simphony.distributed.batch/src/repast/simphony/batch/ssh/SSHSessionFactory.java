@@ -67,12 +67,14 @@ public class SSHSessionFactory {
     else jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile());
     jsch.setKnownHosts(sshKeyDir + "/known_hosts");
     Session session = jsch.getSession(remote.getUser(), remote.getHost());
-    if (userInfo == null) session.setUserInfo(new ConsoleUserInfo());
-    else session.setUserInfo(userInfo);
+    UserInfo uInfo = null;
+    if (userInfo == null) uInfo = new ConsoleUserInfo();
+    else uInfo = userInfo;
+     session.setUserInfo(uInfo);
     session.connect();
     
     if (passphrase == null) {
-      passphrase = userInfo.getPassphrase().getBytes();
+      passphrase = uInfo.getPassphrase().getBytes();
       passphrases.put(remote.getKeyFile(), passphrase);
     }
     

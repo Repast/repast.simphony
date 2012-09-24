@@ -49,8 +49,8 @@ public class RemoteDonePoller implements Callable<Void> {
         }
         
         exitStatus = session.executeCmd(cmd, Level.ERROR);
-        logger.info(String.format("Polled %s on %s for %s with %s", directory, remote.getHost(),
-              BatchConstants.DONE_FILE_NAME, exitStatus == 0 ? "success" : "failure"));
+        logger.info(String.format("Polled %s on %s for %s: %s", directory, remote.getHost(),
+              BatchConstants.DONE_FILE_NAME, exitStatus == 0 ? "yes" : "no"));
       }
 
     } finally {

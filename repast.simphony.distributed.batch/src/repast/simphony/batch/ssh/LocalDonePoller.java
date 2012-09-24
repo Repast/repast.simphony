@@ -40,8 +40,8 @@ public class LocalDonePoller implements Callable<Void> {
       } catch (InterruptedException ex) {
       }
 
-      logger.info(String.format("Polled %s for %s with %s", directory,
-          BatchConstants.DONE_FILE_NAME, doneFile.exists() ? "success" : "failure"));
+      logger.info(String.format("Polled %s for %s:  %s", directory,
+          BatchConstants.DONE_FILE_NAME, doneFile.exists() ? "yes" : "no"));
     }
     return null;
   }
