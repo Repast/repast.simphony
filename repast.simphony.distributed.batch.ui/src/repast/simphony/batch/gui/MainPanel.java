@@ -79,7 +79,7 @@ public class MainPanel extends JPanel {
     bar.add(saveAsBtn);
     
     bar.addSeparator();
-    JButton updateBtn = createButton("refresh_tab.gif", "Update All Input from Model Data");
+    JButton updateBtn = createButton("reset.gif", "Update All Input from Model Project");
     updateBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mediator.updateFromModel();
