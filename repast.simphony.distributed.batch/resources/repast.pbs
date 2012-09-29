@@ -31,3 +31,4 @@ do
     count=$(( $count + $np ))
     let remaining_instances=$remaining_instances-$np
 done
+echo "Completed all runs."
