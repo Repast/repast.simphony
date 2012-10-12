@@ -24,7 +24,7 @@ public class SimpleState extends State {
 	}
 
 	@Override
-	public Boolean hasParent() {
+	public boolean hasParent() {
 		return parent != null;
 	}
 

@@ -27,7 +27,7 @@ public abstract class State {
 		this.parent = parent;
 	}
 	
-	public Boolean hasParent() {
+	public boolean hasParent() {
 		return parent != null;
 	}
 
