@@ -1,4 +1,4 @@
-package repast.simphony.statecharts;
+package repast.simphony.statecharts.old;
 
 import java.util.ArrayList;
 import java.util.List;

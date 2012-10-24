@@ -5,38 +5,41 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-public class TimedTransition implements Transition {
+
+public class TimedTrigger extends AbstractTrigger{
 
 	private final double time;
 	private ISchedulableAction currentScheduledAction;
 	
-	public TimedTransition(double time){
+	public TimedTrigger(double time){
 		this.time = time;
 	}
 	
-	private boolean triggered = false;
-	
-	public boolean isTriggered() {
-		return triggered;
-	}
-	
-	public void initializeTrigger(){
-		triggered = false;
+	public void initialize(TriggerListener tl){
+		registerTriggerListener(tl);
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		double currentTickCount = schedule.getTickCount();
-		schedule.removeAction(currentScheduledAction);
+		if (currentScheduledAction != null){
+			schedule.removeAction(currentScheduledAction);
+		}
 		currentScheduledAction = schedule.schedule(ScheduleParameters.createOneTime(currentTickCount + time), this, "trigger");
+		
 	}
 	
 	public void trigger(){
-		this.triggered = true;
+		notifyTriggerListener();
 	}
 	
-	public void deactivateTrigger(){
+	public void deactivate(){
 		if (currentScheduledAction != null){
 			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 			schedule.removeAction(currentScheduledAction);
 		}
+		removeTriggerListener();
+	}
+	
+	public String toString(){
+		return "TimedTrigger with time: " + time;
 	}
 
 	

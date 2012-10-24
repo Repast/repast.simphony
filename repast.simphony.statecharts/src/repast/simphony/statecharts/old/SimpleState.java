@@ -1,4 +1,4 @@
-package repast.simphony.statecharts;
+package repast.simphony.statecharts.old;
 
 public class SimpleState extends State {
 

@@ -1,40 +1,30 @@
 package repast.simphony.statecharts;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface StateChart {
 
-public class StateChart {
-
-	private State entryState;
-	private List<State> topLevelStates = new ArrayList<State>();
+	/**
+	 * Begin state chart.
+	 */
+	public void begin();
 	
-	public StateChart(){
-		
-	}
+	/**
+	 * Add state to state chart.
+	 * @param state
+	 */
+	public void addState(State state);
 	
-	public void addState(){
-		
-	}
+	/**
+	 * Add transition to state chart.
+	 * @param transition
+	 * @param source
+	 * @param target
+	 */
+	public void addTransition(Trigger transition, State source, State target);
 	
-	public void addTransition(Transition transition, State source, State target){
-		
-	}
-	
-	public State getTopLevelActiveState(){
-		return null;
-	}
-	
-	public List<State> getAllActiveStates(){
-		return null;
-	}
-	
-	
-	public State getActiveSimpleState(){
-		return null;
-	}
-	
-	public void update(){
-		
-	}
+	/**
+	 * Retrieve current state.
+	 * @return
+	 */
+	public State getCurrentState();
 
 }
