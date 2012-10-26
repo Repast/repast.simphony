@@ -1,25 +1,37 @@
 package repast.simphony.statecharts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import repast.simphony.statecharts.State;
-import repast.simphony.statecharts.StateChart;
-import repast.simphony.statecharts.TimedTrigger;
-import repast.simphony.statecharts.Transition;
-import repast.simphony.statecharts.TransitionListener;
-import repast.simphony.statecharts.Trigger;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedulableAction;
+import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.random.RandomHelper;
+import cern.jet.random.Uniform;
 
 public class DefaultStateChart implements StateChart, TransitionListener {
 
+	public enum TransitionResolutionStrategy {
+		RANDOM, NATURAL, PRIORITY
+	}
+
+	private TransitionResolutionStrategy trs = TransitionResolutionStrategy.RANDOM;
+
 	private State entryState;
-//	private List<State> states = new ArrayList<State>();
+	// private List<State> states = new ArrayList<State>();
 	private List<Transition> transitions = new ArrayList<Transition>();
 
 	private List<Transition> activeTransitions = new ArrayList<Transition>();
 
+	private List<Double> resolvingTimes = new ArrayList<Double>();
+
 	private State currentState;
-	
+
 	@Override
 	public void registerEntryState(State state) {
 		entryState = state;
@@ -27,9 +39,10 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 
 	@Override
 	public void begin() {
-		if (entryState == null){
+		if (entryState == null) {
 			// illegal state
-			throw new IllegalStateException("An entry state was not registered in the StateChart.");
+			throw new IllegalStateException(
+					"An entry state was not registered in the StateChart.");
 		}
 		clearTransitionsAndCurrentState();
 		preEnter(entryState);
@@ -51,7 +64,7 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 	private void clearTransitionsAndCurrentState() {
 		// deactivate and clear all active transitions
 		for (Transition t : activeTransitions) {
-			t.deactivate();
+//			t.deactivate();
 		}
 		activeTransitions.clear();
 
@@ -60,7 +73,7 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 
 	@Override
 	public void addState(State state) {
-//		states.add(state);
+		// states.add(state);
 	}
 
 	@Override
@@ -89,23 +102,83 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		clearTransitionsAndCurrentState();
 		// Transition action
 		transition.onTransition();
-		
+
 		preEnter(target);
 		if (!isSourceTarget) {
 			target.onEnter();
 		}
 	}
-	
-	public List<Transition> getValidTransitions(){
+
+	public List<Transition> getValidTransitions() {
 		List<Transition> validTransitions = new ArrayList<Transition>();
-		for(Transition t : activeTransitions){
-			if(t.isValid()) validTransitions.add(t);
+		for (Transition t : activeTransitions) {
+			if (t.isValid())
+				validTransitions.add(t);
 		}
 		return validTransitions;
 	}
 
-	
+	public void resolveTransitions() {
+		// remove reference to scheduled item in resolveActions
+		resolveActions.remove(RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount());
+		resolve(getValidTransitions());
+	}
 
-	
+	// TODO: include rescheduling logic if no valid transitions are found
+	private void resolve(List<Transition> validTransitions) {
+		// If there are no valid transitions, do nothing
+		if (validTransitions.isEmpty())
+			return;
+		else {
+			// If there is one valid transition, make the transition
+			if (validTransitions.size() == 1)
+				update(validTransitions.get(0));
+			else {
+				// Otherwise resolve based on the StateChart's
+				// TransitionResolutionStrategy
+				if (trs == TransitionResolutionStrategy.RANDOM) {
+					int size = validTransitions.size();
+					Uniform defaultUniform = RandomHelper.getUniform();
+					int index = defaultUniform.nextIntFromTo(0, size - 1);
+					update(validTransitions.get(index));
+				} else if (trs == TransitionResolutionStrategy.NATURAL) {
+					update(validTransitions.get(0));
+				} else {
+					Collections.sort(validTransitions, pComp);
+					update(validTransitions.get(0));
+				}
+			}
+		}
+	}
+
+	private Comparator<Transition> pComp = new PriorityComparator();
+
+	/**
+	 * Compares Transitions according to their priority. Lower priority later in
+	 * order.
+	 */
+	static class PriorityComparator implements Comparator<Transition> {
+		public int compare(Transition t1, Transition t2) {
+			double index1 = t1.getPriority();
+			double index2 = t2.getPriority();
+			return index1 < index2 ? 1 : index1 == index2 ? 0 : -1;
+		}
+	}
+
+	Map<Double, ISchedulableAction> resolveActions = new HashMap<Double, ISchedulableAction>();
+
+	@Override
+	public void scheduleResolveTime(double nextTime) {
+		// check if nextTime is already scheduled for resolving
+		if (!resolveActions.containsKey(nextTime)) {
+			ISchedule schedule = RunEnvironment.getInstance()
+					.getCurrentSchedule();
+			ISchedulableAction ia = schedule.createAction(ScheduleParameters
+					.createOneTime(nextTime, ScheduleParameters.LAST_PRIORITY),
+					this, "resolveTransitions");
+			resolveActions.put(nextTime, ia);
+		}
+	}
 
 }

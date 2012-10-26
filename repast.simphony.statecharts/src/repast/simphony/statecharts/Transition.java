@@ -6,11 +6,17 @@ import java.util.List;
 public class Transition implements TriggerListener {
 	private Trigger trigger;
 	private State source, target;
+	private double priority;
 
 	public Transition(Trigger trigger, State source, State target) {
+		this(trigger,source,target,0);
+	}
+	
+	public Transition(Trigger trigger, State source, State target, double priority){
 		this.trigger = trigger;
 		this.source = source;
 		this.target = target;
+		this.priority = priority;
 	}
 
 	public Trigger getTrigger() {
@@ -24,26 +30,26 @@ public class Transition implements TriggerListener {
 	public State getTarget() {
 		return target;
 	}
-
-	public void deactivate() {
-		removeTransitionListener();
-		trigger.deactivate();
+	
+	public boolean isValid(){
+		return trigger.isTriggered();
+	}
+	
+	public boolean isRecurring(){
+		return trigger.isRecurring();
 	}
 
-	public void initialize(TransitionListener tl) {
-		registerTransitionListener(tl);
+	public double getPriority() {
+		return priority;
+	}
+
+
+	public void initialize(StateChart sc) {
 		trigger.initialize(this);
+		sc.scheduleResolveTime(trigger.getNextTime());
 	}
 
 	TransitionListener transitionListener;
-
-	protected void registerTransitionListener(TransitionListener tl) {
-		transitionListener = tl;
-	}
-
-	protected void removeTransitionListener() {
-		transitionListener = null;
-	}
 
 	@Override
 	public void update() {
@@ -56,8 +62,5 @@ public class Transition implements TriggerListener {
 				+ " to: " + target.getId() + " via: " + trigger);
 	}
 	
-	public boolean isValid(){
-		return false;//TODO: complete implementation
-	}
 
 }

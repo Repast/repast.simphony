@@ -33,4 +33,6 @@ public interface StateChart {
 	 */
 	public State getCurrentState();
 
+	public void scheduleResolveTime(double nextTime);
+
 }

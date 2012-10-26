@@ -9,34 +9,43 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 public class TimedTrigger extends AbstractTrigger{
 
 	private final double time;
+	private double initializedTickCount;
 	private ISchedulableAction currentScheduledAction;
 	
 	public TimedTrigger(double time){
 		this.time = time;
 	}
 	
-	public void initialize(TriggerListener tl){
-		registerTriggerListener(tl);
-		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		double currentTickCount = schedule.getTickCount();
-		if (currentScheduledAction != null){
-			schedule.removeAction(currentScheduledAction);
-		}
-		currentScheduledAction = schedule.schedule(ScheduleParameters.createOneTime(currentTickCount + time,ScheduleParameters.LAST_PRIORITY), tl, "resolveTransitions");
+	@Override
+	public boolean isRecurring() {
+		return false;
 	}
 	
+	public double getInterval(){
+		return 0;
+	}
 	
-	public void deactivate(){
-		if (currentScheduledAction != null){
-			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-			schedule.removeAction(currentScheduledAction);
-		}
-		removeTriggerListener();
+	public void initialize(Transition t){
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		initializedTickCount = schedule.getTickCount();
+	}
+	
+	@Override
+	public double getNextTime() {
+		return initializedTickCount + time;
+	}
+		
+	public boolean isTriggered(){
+		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),initializedTickCount + time) >= 0;
 	}
 	
 	public String toString(){
 		return "TimedTrigger with time: " + time;
 	}
+
+
+
+
 
 	
 }
