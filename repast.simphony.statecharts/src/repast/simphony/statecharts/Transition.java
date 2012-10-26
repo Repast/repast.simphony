@@ -55,5 +55,9 @@ public class Transition implements TriggerListener {
 		System.out.println("Making transition from: " + source.getId()
 				+ " to: " + target.getId() + " via: " + trigger);
 	}
+	
+	public boolean isValid(){
+		return false;//TODO: complete implementation
+	}
 
 }

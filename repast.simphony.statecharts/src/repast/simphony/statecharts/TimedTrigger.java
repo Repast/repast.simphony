@@ -22,13 +22,9 @@ public class TimedTrigger extends AbstractTrigger{
 		if (currentScheduledAction != null){
 			schedule.removeAction(currentScheduledAction);
 		}
-		currentScheduledAction = schedule.schedule(ScheduleParameters.createOneTime(currentTickCount + time), this, "trigger");
-		
+		currentScheduledAction = schedule.schedule(ScheduleParameters.createOneTime(currentTickCount + time,ScheduleParameters.LAST_PRIORITY), tl, "resolveTransitions");
 	}
 	
-	public void trigger(){
-		notifyTriggerListener();
-	}
 	
 	public void deactivate(){
 		if (currentScheduledAction != null){

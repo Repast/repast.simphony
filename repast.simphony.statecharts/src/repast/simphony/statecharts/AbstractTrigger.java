@@ -8,9 +8,7 @@ public abstract class AbstractTrigger implements Trigger {
 		this.triggerListener = triggerListener;
 	}
 
-	public void notifyTriggerListener() {
-		triggerListener.update();
-	}
+	
 
 	protected void removeTriggerListener() {
 		triggerListener = null;

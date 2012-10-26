@@ -14,6 +14,12 @@ public interface StateChart {
 	public void addState(State state);
 	
 	/**
+	 * Add state to state chart.
+	 * @param state
+	 */
+	public void registerEntryState(State state);
+	
+	/**
 	 * Add transition to state chart.
 	 * @param transition
 	 * @param source
