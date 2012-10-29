@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import repast.simphony.batch.setup.BatchMainSetup;
 import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.Schema;
@@ -339,7 +338,7 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 				a[i] = args.get(i);
 
 			if (gridExecution) {
-
+			  /*
 				BatchMainSetup bms = new BatchMainSetup();
 				try {
 					bms.execute(a);
@@ -347,6 +346,7 @@ public class ParameterSweepSubmitPanel extends JPanel implements ActionListener 
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			 */
 			} else {
 				RepastBatchMain bm = new RepastBatchMain();
 				bm.run(a);
