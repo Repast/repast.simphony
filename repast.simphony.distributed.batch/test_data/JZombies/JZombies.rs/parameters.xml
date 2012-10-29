@@ -17,8 +17,7 @@
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"/>
 						
-			 <parameter name="on" displayName="On" type="boolean" defaultValue="false" isReadOnly="false" 
-			 converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"/>
+			<parameter name="stop_at" displayName="Stop At" type="double" defaultValue="500" />
 		</parameters>
 
 
