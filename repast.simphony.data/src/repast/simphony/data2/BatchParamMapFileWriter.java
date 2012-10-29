@@ -21,14 +21,15 @@ import repast.simphony.parameter.Parameters;
  * @author Nick Collier
  */
 public class BatchParamMapFileWriter implements DataSink {
-  
+
   private class Updater {
-   
-    public void update() {}
+
+    public void update() {
+    }
   }
-  
+
   private class OneTimeUpdater extends Updater {
-    
+
     public void update() {
       write();
       updater = new Updater();
@@ -66,8 +67,13 @@ public class BatchParamMapFileWriter implements DataSink {
     sources.add(batchRunDS);
     Parameters params = RunEnvironment.getInstance().getParameters();
     for (String pName : params.getSchema().parameterNames()) {
-      ParameterDataSource ds = new ParameterDataSource(pName);
-      sources.add(ds);
+      // this keeps the synthetic parameter used by the distributed batch code
+      // to track the run number out of the actual output.
+      // we can't use a constant here because that would create bad dependencies.
+      if (!pName.equals("repast.simphony.batch.BatchConstantsbatch.name")) {
+        ParameterDataSource ds = new ParameterDataSource(pName);
+        sources.add(ds);
+      }
     }
 
     formatter = formatType == FormatType.TABULAR ? new TabularFormatter(sources, delimiter)
@@ -107,15 +113,16 @@ public class BatchParamMapFileWriter implements DataSink {
   }
 
   /**
-   * Notifies this BatchParamMapFileWriter that another batch run has started, so we
-   * write the current parameter values to a file.
+   * Notifies this BatchParamMapFileWriter that another batch run has started,
+   * so we write the current parameter values to a file.
    */
   public void runStarted() {
     updater = new OneTimeUpdater();
   }
-  
+
   private void write() {
-    if (formatter == null) init();
+    if (formatter == null)
+      init();
     for (AggregateDataSource source : sources) {
       formatter.addData(source.getId(), source.get(null, 0));
     }
