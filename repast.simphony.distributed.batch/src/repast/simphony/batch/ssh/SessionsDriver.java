@@ -44,26 +44,41 @@ public class SessionsDriver {
 
   public void run() {
     try {
+      long start = System.currentTimeMillis();
       BatchParameterChunker chunker = new BatchParameterChunker(config);
       chunker.run();
 
       String directory = "simphony_model_" + System.currentTimeMillis();
 
+      long time = System.currentTimeMillis();
       for (Session session : config.sessions()) {
         session.initModelArchive(config, directory);
       }
+      
+      String msg = String.format("Initialization Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
+      logger.info(msg);
 
+      time = System.currentTimeMillis();
       for (Session session : config.sessions()) {
         session.runModel();
       }
-
+      
       pollForDone(directory);
+      msg = String.format("Run Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
+      logger.info(msg);
+
+      time = System.currentTimeMillis();
       getRemoteRunStatus();
       copyRemoteRunStatus();
       writeRemoteRunStatus();
       concatenateOutput(directory);
-
-      logger.info("Finished");
+      
+      msg = String.format("Get Output Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
+      logger.info(msg);
+      
+      long duration = System.currentTimeMillis() - start;
+      msg = String.format("Finished. Elapsed Time: %.4f", duration / 1000f / 60f);
+      logger.info(msg);
 
     } catch (StatusException ex) {
       logError(ex.getMessage(), ex);
