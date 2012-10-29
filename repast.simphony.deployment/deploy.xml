@@ -98,6 +98,9 @@
 			<exclude name="**/watcher_test.jar" />
 			<exclude name="**/groovy-all-*.jar" />
 			<exclude name="**/xmltask.jar" />
+			
+			<exclude name="**/repast.simphony.distributed.batch/**" />
+			<exclude name="**/repast.simphony.hadoop/**" />
 		</fileset>
 		
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">

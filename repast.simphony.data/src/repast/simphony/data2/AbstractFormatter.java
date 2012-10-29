@@ -17,7 +17,7 @@ public abstract class AbstractFormatter implements Formatter {
 
   protected static class ItemFormatter {
 
-    int index;
+    public int index;
 
     public ItemFormatter(int index) {
       this.index = index;

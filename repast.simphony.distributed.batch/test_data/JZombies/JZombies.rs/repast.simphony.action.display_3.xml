@@ -1,0 +1,114 @@
+<repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+  <name>A Display</name>
+  <type>TWO_D</type>
+  <styles>
+    <entry>
+      <string>jzombies.Human</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+    <entry>
+      <string>jzombies.Zombie</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle2D</string>
+    </entry>
+  </styles>
+  <editedStyles>
+    <entry>
+      <string>jzombies.Human</string>
+      <string>jzombies.Human.style_0.xml</string>
+    </entry>
+    <entry>
+      <string>jzombies.Zombie</string>
+      <string>jzombies.Zombie.style_0.xml</string>
+    </entry>
+  </editedStyles>
+  <netStyles>
+    <entry>
+      <string>infection network</string>
+      <string>repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D</string>
+    </entry>
+  </netStyles>
+  <editedNetStyles>
+    <entry>
+      <string>infection network</string>
+      <null/>
+    </entry>
+  </editedNetStyles>
+  <frequency>ON_MOVE</frequency>
+  <schedParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </schedParams>
+  <layoutClassName>foo.bar.baz</layoutClassName>
+  <layoutProjection>space</layoutProjection>
+  <layoutInterval>0</layoutInterval>
+  <layerOrder>
+    <entry>
+      <string>jzombies.Human</string>
+      <int>1</int>
+    </entry>
+    <entry>
+      <string>jzombies.Zombie</string>
+      <int>0</int>
+    </entry>
+  </layerOrder>
+  <projections>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>space</id>
+      <attributes/>
+      <type>CONTINUOUS_SPACE</type>
+    </repast.simphony.scenario.data.ProjectionData>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>infection network</id>
+      <attributes/>
+      <type>NETWORK</type>
+    </repast.simphony.scenario.data.ProjectionData>
+  </projections>
+  <valueLayers/>
+  <visualizationProperties class="repast.simphony.visualization.UnitSizeLayoutProperties">
+    <unitSize>15.0</unitSize>
+  </visualizationProperties>
+  <projectionDescriptors>
+    <entry>
+      <string>space</string>
+      <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData"/>
+        <props>
+          <entry>
+            <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
+            <map>
+              <entry>
+                <string>UNIT_SIZE</string>
+                <float>15.0</float>
+              </entry>
+              <entry>
+                <string>SHOW</string>
+                <boolean>true</boolean>
+              </entry>
+              <entry>
+                <string>COLOR</string>
+                <int>-16777216</int>
+              </entry>
+            </map>
+          </entry>
+        </props>
+      </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+    </entry>
+    <entry>
+      <string>infection network</string>
+      <repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData[2]"/>
+        <props/>
+      </repast.simphony.visualization.engine.DefaultProjectionDescriptor>
+    </entry>
+  </projectionDescriptors>
+  <props/>
+  <backgroundColor>
+    <red>255</red>
+    <green>255</green>
+    <blue>255</blue>
+    <alpha>255</alpha>
+  </backgroundColor>
+</repast.simphony.visualization.engine.DefaultDisplayDescriptor>

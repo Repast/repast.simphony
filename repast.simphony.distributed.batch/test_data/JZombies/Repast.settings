@@ -1,0 +1,17 @@
+<simphony.settings.SettingsRegistry serialization="custom">
+  <unserializable-parents/>
+  <hashtable>
+    <default>
+      <loadFactor>0.75</loadFactor>
+      <threshold>8</threshold>
+    </default>
+    <int>3</int>
+    <int>3</int>
+    <string>SettingsFileName</string>
+    <string>Repast.settings</string>
+    <string>LastLoadedScenario</string>
+    <string>/Users/nick/tmp/workspace/JZombies/JZombies.rs</string>
+    <string>SettingsRegistryId</string>
+    <string>Repast.registry</string>
+  </hashtable>
+</simphony.settings.SettingsRegistry>
