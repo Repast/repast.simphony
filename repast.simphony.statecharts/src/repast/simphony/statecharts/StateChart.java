@@ -1,6 +1,6 @@
 package repast.simphony.statecharts;
 
-public interface StateChart {
+public interface StateChart extends StateChartResolveActionListener {
 
 	/**
 	 * Begin state chart.

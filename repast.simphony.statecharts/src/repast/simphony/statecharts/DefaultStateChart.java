@@ -181,4 +181,10 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		}
 	}
 
+	@Override
+	public void resolve() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
