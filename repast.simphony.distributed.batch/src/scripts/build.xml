@@ -37,9 +37,6 @@
 	<property name="relogo.runtime" location="${plugins.prefix}/repast.simphony.relogo.runtime${plugins.suffix}" />
 	<property name="relogo.ide" location="${plugins.prefix}/repast.simphony.relogo.ide${plugins.suffix}" />
 
-	<property name="prototype.dir" location="../prototype" />
-
-
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
 
 	<target name="make_zip">
