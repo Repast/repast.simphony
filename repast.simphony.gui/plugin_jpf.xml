@@ -12,7 +12,6 @@
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.essentials" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.groovy" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
-    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.distributedBatch" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
   </requires>
 
