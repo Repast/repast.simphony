@@ -64,6 +64,11 @@ public class BatchConfigMediator {
 
   private File configFile = null;
   private boolean dirty = false;
+  
+  public BatchConfigMediator(File modelDirectory) {
+    this();
+    model.setModelDirectory(modelDirectory.getAbsolutePath());
+  }
 
   public BatchConfigMediator() {
     // append logging output to the console
@@ -72,8 +77,6 @@ public class BatchConfigMediator {
     Layout layout = appender.getLayout();
     logger.removeAppender(appender);
     logger.addAppender(new TextAreaAppender(console, layout));
-
-    model.setModelDirectory("../repast.simphony.distributed.batch/test_data/JZombies");
     
     pModel.addPropertyChangeListener("buffering", new PropertyChangeListener() {
       @Override
@@ -122,6 +125,11 @@ public class BatchConfigMediator {
     tabs.addTab("Hosts", hostsPanel);
     tabs.addTab("Console", console);
     hostsPanel.init(model);
+    
+    if (model.getModelDirectory() != null) {
+      updateFromModel();
+      dirty = false;
+    }
     return tabs;
   }
 
@@ -237,7 +245,6 @@ public class BatchConfigMediator {
   }
 
   public void updateFromModel() {
-  
     File modelDir = new File(modelPanel.getModelDirectory());
     modelPanel.update(modelDir);
     File scenario = new File(modelPanel.getScenarioDirectory());
@@ -306,7 +313,7 @@ public class BatchConfigMediator {
     File unrolledParamFile = new File(System.getProperty("java.io.tmpdir"), "unrolledParamFile.txt");
     File batchMapFile = new File(System.getProperty("java.io.tmpdir"), "batchMapFile.txt");
     ParametersToInput pti = new ParametersToInput(batchParamFile);
-    logger.info(String.format("Unrolling batch paramter file:\n\t%s to\n\t%s",
+    logger.info(String.format("Unrolling batch parameter file:\n\t%s to\n\t%s",
         batchParamFile.getPath(), unrolledParamFile.getPath()));
     pti.formatForInput(unrolledParamFile, batchMapFile);
     project.setProperty("unrolled.param.file", unrolledParamFile.getCanonicalPath());

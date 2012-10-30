@@ -229,15 +229,15 @@ public class RemoteSession implements Session {
         try {
           Thread.sleep(5000);
         } catch (InterruptedException ex) {}
-        checkIfRunning(session, javaCmd);
+        //checkIfRunning(session, javaCmd);
         
       } catch (JSchException e) {
         String msg = String.format("Error executing '%s' on remote %s.", cmd, getId());
         throw new SessionException(msg, e);
         
-      } catch (IOException ex) {
-        String msg = String.format("Error executing ps x on remote %s when checking if model has started.", cmd, getId());
-        throw new SessionException(msg, ex);
+      //} catch (IOException ex) {
+       // String msg = String.format("Error executing ps x on remote %s when checking if model has started.", cmd, getId());
+       // throw new SessionException(msg, ex);
       }
       
 

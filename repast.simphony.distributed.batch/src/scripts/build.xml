@@ -72,13 +72,12 @@
 		<move file="${working.dir}/scenario.rs/${batch.param.file.name}" tofile="${working.dir}/scenario.rs/${default.batch.param.file.name}" />
 
 		<!-- replace <agents path="../bin" in the user_path.xml with "../lib/model.jar" -->
-		<xmltask todir=".." preserveType="true">
+		<xmltask todir="${working.dir}/scenario.rs" preserveType="true" failWithoutMatch="true" report="true">
 			<fileset dir="${working.dir}/scenario.rs">
 				<include name="user_path.xml" />
 			</fileset>
-
-			<replace path="/model/classpath/agents[@id='path']/@value" withText="../lib/model.jar" />
-
+			
+			<attr path="model/classpath/agents[@path='../bin']" attr="path" value="../lib/model.jar" />
 		</xmltask>
 
 		<!-- zip the whole thing up -->

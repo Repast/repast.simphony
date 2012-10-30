@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,19 +19,31 @@ import javax.swing.JToolBar;
  */
 @SuppressWarnings("serial")
 public class MainPanel extends JPanel {
-  
-  private BatchConfigMediator mediator = new BatchConfigMediator();
 
-  public MainPanel() {
+  private BatchConfigMediator mediator;
+
+  public MainPanel(File modelDirectory) {
     super(new BorderLayout());
+    mediator = new BatchConfigMediator(modelDirectory);
+    init();
+  }
+
+  private void init() {
     createToolBar();
     add(mediator.createTabs(), BorderLayout.CENTER);
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 5));
     panel.add(mediator.getStatusBar(), BorderLayout.CENTER);
     add(panel, BorderLayout.SOUTH);
+
   }
-  
+
+  public MainPanel() {
+    super(new BorderLayout());
+    mediator = new BatchConfigMediator();
+    init();
+  }
+
   private JButton createButton(String icon, String tooltip) {
     JButton btn = new JButton(IconLoader.loadIcon(icon));
     btn.setToolTipText(tooltip);
@@ -77,7 +90,7 @@ public class MainPanel extends JPanel {
       }
     });
     bar.add(saveAsBtn);
-    
+
     bar.addSeparator();
     JButton updateBtn = createButton("reset.gif", "Update All Input from Model Project");
     updateBtn.addActionListener(new ActionListener() {
@@ -106,5 +119,5 @@ public class MainPanel extends JPanel {
 
     add(bar, BorderLayout.NORTH);
   }
-  
+
 }

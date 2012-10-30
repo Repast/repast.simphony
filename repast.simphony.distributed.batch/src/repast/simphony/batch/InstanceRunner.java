@@ -38,7 +38,7 @@ import simphony.util.messages.MessageEventListener;
  * @author Nick Collier
  */
 public class InstanceRunner {
-
+  
   private static MessageCenter msg = MessageCenter.getMessageCenter(InstanceRunner.class);
 
   private ParameterLineParser lineParser;
@@ -106,7 +106,6 @@ public class InstanceRunner {
     String line = null;
     try {
       while ((line = reader.readLine()) != null) {
-        //msg.info("Params: " + line);
         Parameters params = lineParser.parse(line);
         int runNum = (Integer) params.getValue(BatchConstants.BATCH_RUN_PARAM_NAME);
         runner.run(runNum, params);
