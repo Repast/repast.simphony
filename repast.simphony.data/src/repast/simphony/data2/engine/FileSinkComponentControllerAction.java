@@ -86,7 +86,7 @@ public class FileSinkComponentControllerAction extends DefaultControllerAction i
     DataSetBuilder<?> builder = manager.getDataSetBuilder(descriptor.getDataSet());
 
     if (builder == null) {
-      msgCenter.error("Error while creating FileOutputter. DataSet '" + descriptor.getDataSet()
+      msgCenter.error("Error while creating FileDataSink. DataSet '" + descriptor.getDataSet()
           + "' not found", new NullPointerException());
     } else {
       
