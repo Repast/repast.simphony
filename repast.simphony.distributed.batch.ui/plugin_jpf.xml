@@ -35,7 +35,7 @@
 			<parameter id="label" value="Configure &amp; Launch Batch Runs" />
 			<parameter id="class" value="repast.simphony.batch.gui.ShowBatchDialog" />
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
-			<parameter id="groupID" value="runTools" />
+			<parameter id="groupID" value="batchTools" />
 			<parameter id="tooltip" value="Configure &amp; Launch Batch Runs" />
 		</parameter>
 	</extension>
