@@ -126,7 +126,7 @@ public class BatchConfigMediator {
     tabs.addTab("Console", console);
     hostsPanel.init(model);
     
-    if (model.getModelDirectory() != null) {
+    if (model.getModelDirectory().length() > 0) {
       updateFromModel();
       dirty = false;
     }
