@@ -268,12 +268,12 @@ public class BatchConfigMediator {
       configFile.getParentFile().mkdirs();
       writer = new BufferedWriter(new FileWriter(configFile));
       writer.write("model.archive = "
-          + new File(model.getOutputDirectory(), "complete_model.zip").getCanonicalPath() + "\n");
+          + convertPath(new File(model.getOutputDirectory(), "complete_model.zip").getCanonicalPath()) + "\n");
       writer.write("batch.params.file = scenario.rs/batch_params.xml\n");
-      writer.write("ssh.key_dir = " + new File(model.getKeyDirectory()).getCanonicalPath() + "\n");
+      writer.write("ssh.key_dir = " + convertPath(new File(model.getKeyDirectory()).getCanonicalPath()) + "\n");
       // stored in minutes, but config in seconds
       writer.write("poll.frequency = " + model.getPollFrequency() * 60 + "\n");
-      writer.write("model.output = " + new File(model.getOutputDirectory()).getCanonicalPath()
+      writer.write("model.output = " + convertPath(new File(model.getOutputDirectory()).getCanonicalPath())
           + "\n\n");
       writer.write("vm.arguments = " + model.getVMArguments() + "\n");
       hostsPanel.writeHosts(writer);
@@ -282,7 +282,10 @@ public class BatchConfigMediator {
       if (writer != null)
         writer.close();
     }
-
+  }
+  
+  private String convertPath(String path) {
+	  return path.replace("\\", "/");
   }
 
   public void run() {

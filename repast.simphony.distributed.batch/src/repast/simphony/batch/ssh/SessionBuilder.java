@@ -53,8 +53,8 @@ public class SessionBuilder {
   public void addWorkingDirectory(int id, String workingDirectory) throws IOException {
     if (localSession == null) localSession = new LocalSession();
     if (localSession.workingDir != null)  throw new IOException(String.format("Duplicate working directory property for local %d", id));
-    String wd = workingDirectory.contains("~") ? workingDirectory.replace("~", System.getProperty("user.home")) : workingDirectory;
-    localSession.workingDir = wd;
+    String wd = workingDirectory.contains("~/") ? workingDirectory.replace("~", System.getProperty("user.home")) : workingDirectory;
+    localSession.workingDir = wd.replace("\\", "/");
   }
 
   public void addUser(int id, String user) throws IOException {

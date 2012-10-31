@@ -201,7 +201,7 @@ public class LocalSession implements Session {
     logger.info("Running model on localhost ...");
     ProcessBuilder builder = new ProcessBuilder();
     builder.directory(localDir);
-    builder.command("java", "-cp", "./lib/*", "repast.simphony.batch.LocalDriver",
+    builder.command("java", "-cp", "\"./lib/*\"", "repast.simphony.batch.LocalDriver",
         BatchConstants.LOCAL_RUN_PROPS_FILE);
     builder.redirectErrorStream(true);
 
@@ -226,7 +226,8 @@ public class LocalSession implements Session {
           ReadableByteChannel source = Channels.newChannel(zip.getInputStream(entry));
           if (!file.exists())
             file.createNewFile();
-          FileChannel dstChannel = new FileOutputStream(file).getChannel();
+          @SuppressWarnings("resource")
+		FileChannel dstChannel = new FileOutputStream(file).getChannel();
           dstChannel.transferFrom(source, 0, entry.getSize());
           dstChannel.close();
           source.close();

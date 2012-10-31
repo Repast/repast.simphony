@@ -298,14 +298,14 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
         writer.write("local." + i + ".instances = " + host.getInstances() + "\n");
 
         writer.write("local." + i + ".working_directory = "
-            + System.getProperty("java.io.tmpdir", "model_run") + "\n");
+            + System.getProperty("java.io.tmpdir", "model_run").replace("\\", "/") + "\n");
 
       } else {
         String prefix = "remote." + i + ".";
         writer.write(prefix + "user = " + host.getUser() + "\n");
         writer.write(prefix + "host = " + host.getHost() + "\n");
         writer.write(prefix + "instances = " + host.getInstances() + "\n");
-        writer.write(prefix + "ssh_key_file = " + host.getSSHKeyFile() + "\n");
+        writer.write(prefix + "ssh_key_file = " + host.getSSHKeyFile().replace("\\", "/") + "\n");
       }
     }
   }
