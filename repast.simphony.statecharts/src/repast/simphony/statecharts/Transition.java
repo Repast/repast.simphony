@@ -34,11 +34,19 @@ public class Transition implements TriggerListener {
 	}
 	
 	public boolean isValid(){
+		return trigger.isValid();
+	}
+	
+	public boolean isTriggered(){
 		return trigger.isTriggered();
 	}
 	
 	public boolean isRecurring(){
 		return trigger.isRecurring();
+	}
+	
+	public boolean canTransitionZeroTime(){
+		return trigger.canTransitionZeroTime();
 	}
 
 	public double getPriority() {
@@ -50,13 +58,17 @@ public class Transition implements TriggerListener {
 		trigger.initialize(this);
 		sc.scheduleResolveTime(trigger.getNextTime());
 	}
+	
+	public void deactivate(StateChart sc, double time) {
+		sc.removeResolveTime(time);
+	}
 
 	TransitionListener transitionListener;
 
 	@Override
 	public void update() {
 		// In the future, the guard checks may go here.
-		transitionListener.update(this);
+		transitionListener.updateRegularTransition(this);
 	}
 
 	public void onTransition() {

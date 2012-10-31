@@ -36,11 +36,20 @@ public class TimedTrigger extends AbstractTrigger{
 	}
 		
 	public boolean isTriggered(){
+		return isValid();
+	}
+	
+	public boolean isValid(){
 		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),initializedTickCount + time) >= 0;
 	}
 	
 	public String toString(){
 		return "TimedTrigger with time: " + time;
+	}
+
+	@Override
+	public boolean canTransitionZeroTime() {
+		return false;
 	}
 
 

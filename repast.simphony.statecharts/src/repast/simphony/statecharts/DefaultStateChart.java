@@ -14,7 +14,7 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.random.RandomHelper;
 import cern.jet.random.Uniform;
 
-public class DefaultStateChart implements StateChart, TransitionListener {
+public class DefaultStateChart implements StateChart {
 
 	public enum TransitionResolutionStrategy {
 		RANDOM, NATURAL, PRIORITY
@@ -24,10 +24,14 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 
 	private State entryState;
 	// private List<State> states = new ArrayList<State>();
-	private List<Transition> transitions = new ArrayList<Transition>();
+
+	// Regular transitions
+	private List<Transition> regularTransitions = new ArrayList<Transition>();
+	private List<Transition> activeRegularTransitions = new ArrayList<Transition>();
+
+	// Self transitions
 	private List<Transition> selfTransitions = new ArrayList<Transition>();
-	
-	private List<Transition> activeTransitions = new ArrayList<Transition>();
+	private List<Transition> activeSelfTransitions = new ArrayList<Transition>();
 
 	private State currentState;
 
@@ -49,26 +53,66 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 	}
 
 	private void stateInit(State state) {
-		//TODO: implement stateInit logic
+		currentState = state;
+
 		// look through all defined transitions and find those with source.id ==
 		// state.id
-		for (Transition t : transitions) {
+		List<Transition> candidateTransitions = new ArrayList<Transition>();
+		for (Transition t : regularTransitions) {
 			if (t.getSource().getId().equals(state.getId())) {
-				activeTransitions.add(t);
-				t.initialize(this);
+				candidateTransitions.add(t);
 			}
 		}
-		currentState = state;
+
+		// find immediate transition candidates
+		List<Transition> zeroTimeTransitionCandidates = new ArrayList<Transition>();
+		for (Transition t : candidateTransitions) {
+			if (t.canTransitionZeroTime() && t.isValid()) {
+				zeroTimeTransitionCandidates.add(t);
+			}
+		}
+		Transition t = chooseOneTransition(zeroTimeTransitionCandidates);
+		if (t != null){
+			updateRegularTransition(t);
+		}
+		else {
+			// collect all relevant self transitions and initialize
+			for (Transition st : selfTransitions){
+				if (st.getSource().getId().equals(state.getId())) {
+					activeSelfTransitions.add(st);
+					st.initialize(this);
+				}
+			}
+			// collect all relevant regular transitions and initialize
+			for (Transition ct : candidateTransitions){
+				if (ct.getSource().getId().equals(state.getId())) {
+					activeRegularTransitions.add(ct);
+					ct.initialize(this);
+				}
+			}
+		}
+
 	}
 
 	private void clearTransitionsAndCurrentState() {
 		// deactivate and clear all active transitions
-		for (Transition t : activeTransitions) {
-//			t.deactivate();
-		}
-		activeTransitions.clear();
+		deactivateTransitions(activeSelfTransitions);
+		deactivateTransitions(activeRegularTransitions);
 
 		currentState = null;
+	}
+
+	private void deactivateTransitions(List<Transition> transitions) {
+		double now = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		for (Transition t : transitions) {
+			// if trigger's next time is after now,
+			Trigger tr = t.getTrigger();
+			double nextTime = tr.getNextTime();
+			if (Double.compare(nextTime,now) > 0){
+				t.deactivate(this, nextTime);
+			}
+		}
+		transitions.clear();
 	}
 
 	@Override
@@ -79,9 +123,9 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 	@Override
 	public void addTransition(Trigger trigger, State source, State target) {
 		Transition transition = new Transition(trigger, source, target);
-		transitions.add(transition);
+		regularTransitions.add(transition);
 	}
-	
+
 	@Override
 	public void addSelfTransition(Trigger trigger, State state) {
 		Transition transition = new Transition(trigger, state, state);
@@ -93,72 +137,92 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		return currentState;
 	}
 
-	@Override
-	public void update(Transition transition) {
-		boolean isSourceTarget = false;
+	public void updateRegularTransition(Transition transition) {
 		State source = transition.getSource();
 		State target = transition.getTarget();
 		// check that target is not the same as source
-		if (source.getId().equals(target.getId())) {
-			isSourceTarget = true;
-		}
-		if (!isSourceTarget) {
-			source.onExit();
-		}
+
 		clearTransitionsAndCurrentState();
+		source.onExit();
+
 		// Transition action
 		transition.onTransition();
 
+		target.onEnter();
+		
 		stateInit(target);
-		if (!isSourceTarget) {
-			target.onEnter();
-		}
 	}
 
-	public List<Transition> getValidTransitions() {
-		List<Transition> validTransitions = new ArrayList<Transition>();
+	public List<Transition> getTriggeredActiveTransitions(List<Transition> activeTransitions) {
+		List<Transition> triggeredTransitions = new ArrayList<Transition>();
 		for (Transition t : activeTransitions) {
-			if (t.isValid())
-				validTransitions.add(t);
+			if (t.isTriggered())
+				triggeredTransitions.add(t);
 		}
-		return validTransitions;
+		return triggeredTransitions;
 	}
 
 	public void resolve() {
 		resolveSelfTransitions();
-		resolve(getValidTransitions());
+		resolveRegularTransitions();
 	}
 
 	private void resolveSelfTransitions() {
-		// iterate through activeSelfTransitions
-		// if valid execute onTransition
-		
-		
+		List<Transition> triggeredTransitions = getTriggeredActiveTransitions(activeSelfTransitions);
+		for (Transition t : triggeredTransitions){
+			t.onTransition();
+		}
+		// rescheduleSelfTransitions
+		rescheduleTransitions(activeSelfTransitions);
 	}
 
-	// TODO: include rescheduling logic if no valid transitions are found
-	private void resolve(List<Transition> validTransitions) {
-		// If there are no valid transitions, do nothing
-		if (validTransitions.isEmpty())
+	private void resolveRegularTransitions() {
+		List<Transition> triggeredTransitions = getTriggeredActiveTransitions(activeRegularTransitions);
+		
+		Transition t = chooseOneTransition(triggeredTransitions);
+		// If there are no triggered transitions, reschedule
+		if (t == null) {
+			rescheduleTransitions(activeRegularTransitions);
 			return;
-		else {
-			// If there is one valid transition, make the transition
-			if (validTransitions.size() == 1)
-				update(validTransitions.get(0));
-			else {
-				// Otherwise resolve based on the StateChart's
-				// TransitionResolutionStrategy
-				if (trs == TransitionResolutionStrategy.RANDOM) {
-					int size = validTransitions.size();
-					Uniform defaultUniform = RandomHelper.getUniform();
-					int index = defaultUniform.nextIntFromTo(0, size - 1);
-					update(validTransitions.get(index));
-				} else if (trs == TransitionResolutionStrategy.NATURAL) {
-					update(validTransitions.get(0));
-				} else {
-					Collections.sort(validTransitions, pComp);
-					update(validTransitions.get(0));
-				}
+		} else {
+			updateRegularTransition(t);
+		}
+	}
+
+	private Transition chooseOneTransition(List<Transition> transitions) {
+		// If no transitions, return null
+		if (transitions.isEmpty()) return null;
+		
+		// If there is one valid transition, make the transition
+		if (transitions.size() == 1)
+			return transitions.get(0);
+		// Otherwise resolve based on the StateChart's
+		// TransitionResolutionStrategy
+		if (trs == TransitionResolutionStrategy.RANDOM) {
+			int size = transitions.size();
+			Uniform defaultUniform = RandomHelper.getUniform();
+			int index = defaultUniform.nextIntFromTo(0, size - 1);
+			return transitions.get(index);
+		} else if (trs == TransitionResolutionStrategy.NATURAL) {
+			return transitions.get(0);
+		} else {
+			Collections.sort(transitions, pComp);
+			return transitions.get(0);
+		}
+	}
+
+	private void rescheduleTransitions(List<Transition> activeTransitions) {
+		// get current time
+		double currentTime = RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount();
+		// for each active transition
+		for (Transition t : activeTransitions) {
+			// if recurring && getNextTime is now
+			Trigger tr = t.getTrigger();
+			if (tr.isRecurring()
+					&& Double.compare(tr.getNextTime(), currentTime) == 0) {
+				// reset to next time and reschedule
+				t.initialize(this);
 			}
 		}
 	}
@@ -179,7 +243,14 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 
 	@Override
 	public void scheduleResolveTime(double nextTime) {
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(nextTime, this);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(nextTime,
+				this);
+	}
+
+	@Override
+	public void removeResolveTime(double nextTime) {
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(nextTime,
+				this);
 	}
 
 }

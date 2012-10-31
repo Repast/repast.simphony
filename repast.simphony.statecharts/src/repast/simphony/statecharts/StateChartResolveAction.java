@@ -8,10 +8,10 @@ import repast.simphony.engine.schedule.IAction;
 
 public class StateChartResolveAction implements IAction {
 
-	Map<StateChartResolveActionListener,Long> scralsCountsMap = new HashMap<StateChartResolveActionListener,Long>();
+	Map<StateChart,Long> scralsCountsMap = new HashMap<StateChart,Long>();
 
 	// register listeners
-	public void registerListener(StateChartResolveActionListener scral){
+	public void registerListener(StateChart scral){
 		if (!scralsCountsMap.containsKey(scral)){
 			scralsCountsMap.put(scral, 0l);
 		}
@@ -20,7 +20,7 @@ public class StateChartResolveAction implements IAction {
 	}
 	
 	// remove listeners
-	public void removeListener(StateChartResolveActionListener scral){
+	public void removeListener(StateChart scral){
 		if (scralsCountsMap.containsKey(scral)){
 			long l = scralsCountsMap.get(scral);
 			if (l <= 1){
@@ -35,7 +35,7 @@ public class StateChartResolveAction implements IAction {
 	
 	// notify listeners
 	public void notifyListeners(){
-		for(StateChartResolveActionListener scral : scralsCountsMap.keySet()){
+		for(StateChart scral : scralsCountsMap.keySet()){
 			scral.resolve();
 		}
 	}

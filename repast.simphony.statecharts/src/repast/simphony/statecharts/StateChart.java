@@ -1,6 +1,6 @@
 package repast.simphony.statecharts;
 
-public interface StateChart extends StateChartResolveActionListener {
+public interface StateChart {
 
 	/**
 	 * Begin state chart.
@@ -41,8 +41,8 @@ public interface StateChart extends StateChartResolveActionListener {
 	 */
 	public State getCurrentState();
 
+	public void resolve();
 	public void scheduleResolveTime(double nextTime);
-
-	
+	public void removeResolveTime(double nextTime);
 
 }

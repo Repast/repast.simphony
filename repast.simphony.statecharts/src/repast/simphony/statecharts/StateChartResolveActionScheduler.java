@@ -27,11 +27,11 @@ public enum StateChartResolveActionScheduler {
 			this.isa = isa;
 		}
 		
-		public void registerListener(StateChartResolveActionListener scral){
+		public void registerListener(StateChart scral){
 			scra.registerListener(scral);
 		}
 		
-		public void removeListener(StateChartResolveActionListener scral){
+		public void removeListener(StateChart scral){
 			scra.removeListener(scral);
 			if (!scra.hasListeners()){
 				RunEnvironment.getInstance().getCurrentSchedule().removeAction(isa);
