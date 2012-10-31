@@ -3,11 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: batch.UI
 Bundle-SymbolicName: repast.simphony.distributed.batch.ui
 Bundle-Version: 2.0.1
-Require-Bundle: repast.simphony.core,
- repast.simphony.distributed.batch;bundle-version="2.0.1",
+Require-Bundle: repast.simphony.scenario;bundle-version="2.0.1",
  saf.core.ui;bundle-version="2.0.1",
  repast.simphony.gui;bundle-version="2.0.1",
- repast.simphony.scenario;bundle-version="2.0.1"
+ repast.simphony.core;bundle-version="2.0.1"
 Bundle-ClassPath: .,
  lib/jgoodies-forms-1.4.0.jar,
  lib/log4j-1.2.16.jar,
