@@ -25,7 +25,7 @@ public interface StateChart {
 	 * @param source
 	 * @param target
 	 */
-	public void addTransition(Trigger transition, State source, State target);
+	public void addRegularTransition(Transition transition);
 	
 	/**
 	 * Add self transition to state chart.
@@ -33,7 +33,7 @@ public interface StateChart {
 	 * @param source
 	 * @param target
 	 */
-	void addSelfTransition(Trigger trigger, State state);
+	void addSelfTransition(Transition transition);
 	
 	/**
 	 * Retrieve current state.

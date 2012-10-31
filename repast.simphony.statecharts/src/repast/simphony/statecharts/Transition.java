@@ -20,6 +20,7 @@ public class Transition implements TriggerListener {
 		this.target = target;
 		this.priority = priority;
 	}
+	
 
 	public Trigger getTrigger() {
 		return trigger;

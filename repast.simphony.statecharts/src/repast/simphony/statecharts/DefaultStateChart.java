@@ -26,14 +26,14 @@ public class DefaultStateChart implements StateChart {
 	// private List<State> states = new ArrayList<State>();
 
 	// Regular transitions
-	private List<Transition> regularTransitions = new ArrayList<Transition>();
-	private List<Transition> activeRegularTransitions = new ArrayList<Transition>();
+	protected List<Transition> regularTransitions = new ArrayList<Transition>();
+	protected List<Transition> activeRegularTransitions = new ArrayList<Transition>();
 
 	// Self transitions
-	private List<Transition> selfTransitions = new ArrayList<Transition>();
-	private List<Transition> activeSelfTransitions = new ArrayList<Transition>();
+	protected List<Transition> selfTransitions = new ArrayList<Transition>();
+	protected List<Transition> activeSelfTransitions = new ArrayList<Transition>();
 
-	private State currentState;
+	protected State currentState;
 
 	@Override
 	public void registerEntryState(State state) {
@@ -120,15 +120,25 @@ public class DefaultStateChart implements StateChart {
 		// states.add(state);
 	}
 
-	@Override
-	public void addTransition(Trigger trigger, State source, State target) {
+	
+	protected void addRegularTransition(Trigger trigger, State source, State target) {
 		Transition transition = new Transition(trigger, source, target);
+		addRegularTransition(transition);
+	}
+	
+	@Override
+	public void addRegularTransition(Transition transition){
 		regularTransitions.add(transition);
 	}
 
-	@Override
-	public void addSelfTransition(Trigger trigger, State state) {
+
+	protected void addSelfTransition(Trigger trigger, State state) {
 		Transition transition = new Transition(trigger, state, state);
+		addSelfTransition(transition);
+	}
+	
+	@Override
+	public void addSelfTransition(Transition transition){
 		selfTransitions.add(transition);
 	}
 
