@@ -20,7 +20,7 @@ import saf.core.ui.actions.AbstractSAFAction;
  * 
  * @author Nick Collier
  */
-@SuppressWarnings({ "serial", "restriction" })
+@SuppressWarnings({ "serial" })
 public class ShowBatchDialog extends AbstractSAFAction<RSApplication> {
 
   /* (non-Javadoc)
