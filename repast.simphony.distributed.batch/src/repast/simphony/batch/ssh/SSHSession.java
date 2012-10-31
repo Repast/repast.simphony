@@ -161,7 +161,7 @@ public class SSHSession {
     try {
       sftp = (ChannelSftp) session.openChannel("sftp");
       sftp.connect();
-      sftp.put(localFile.getAbsolutePath(), localFile.getName());
+      sftp.put(localFile.getAbsolutePath().replace("\\", "/"), localFile.getName());
     } finally {
       if (sftp != null)
         sftp.exit();
@@ -175,7 +175,7 @@ public class SSHSession {
       sftp = (ChannelSftp) session.openChannel("sftp");
       sftp.connect();
       sftp.cd(remoteDirectory);
-      sftp.put(localFile.getAbsolutePath(), localFile.getName());
+      sftp.put(localFile.getAbsolutePath().replace("\\", "/"), localFile.getName());
     } finally {
       if (sftp != null)
         sftp.exit();
@@ -204,7 +204,8 @@ public class SSHSession {
         // System.out.printf("copying %s to %s%n", remoteFile.getPath(),
         // localDir + "/" + remoteFile.getName());
         File dst = new File(localDir + "/" + remoteFile.getName());
-        sftp.get(remoteFile.getPath(), dst.getPath());
+        sftp.get(remoteFile.getPath().replace("\\", "/"), dst.getPath().replace("\\", "/"));
+        
         out.add(dst);
       }
     } finally {

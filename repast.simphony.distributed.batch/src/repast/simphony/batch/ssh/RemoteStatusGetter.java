@@ -29,7 +29,7 @@ public class RemoteStatusGetter {
     
     try {
       session = SSHSessionFactory.getInstance().create(remote);
-      file = session.copyFileFromRemote(tempDir.getPath(),
+      file = session.copyFileFromRemote(tempDir.getPath().replace("\\", "/"),
           new File(remoteDir + "/" + BatchConstants.STATUS_OUTPUT_FILE));
       Properties props = new Properties();
       props.load(new FileReader(file));
@@ -38,6 +38,7 @@ public class RemoteStatusGetter {
         remote.setRunStatus(Integer.valueOf(key), RunningStatus.valueOf(props.getProperty(key)));
       }
     } catch (SftpException e) {
+    	e.printStackTrace();
       String msg = String.format("Error while copying status output file from %s", remote.getId());
       throw new StatusException(msg, e);
       

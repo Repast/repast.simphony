@@ -31,7 +31,7 @@ public class RemoteStatusCopier {
       for (int i = 1; i <= remote.getInstances(); i++) {
         RunningStatus status = remote.getStatus(i);
         if (status != RunningStatus.OK) {
-          String dir = new File(remoteDir,  BatchConstants.INSTANCE_DIR_PREFIX + i).getPath();
+          String dir = new File(remoteDir,  BatchConstants.INSTANCE_DIR_PREFIX + i).getPath().replace("\\", "/");
           List<String> ls = session.listRemoteDirectory(dir);
           for (String fname : ls) {
             if (fname.startsWith(RunningStatus.FAILURE.toString()) || fname.startsWith(RunningStatus.WARN.toString())) {
