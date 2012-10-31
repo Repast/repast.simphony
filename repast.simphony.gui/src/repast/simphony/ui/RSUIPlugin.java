@@ -72,10 +72,8 @@ public class RSUIPlugin extends Plugin implements IApplicationRunnable {
       ThreadUtilities.runInEventThread(new Runnable() {
         public void run() {
           try {
-            //System.out.println(getClass().getClassLoader().getParent());
-            UIManager.getLookAndFeelDefaults().put("ClassLoader", getClass().getClassLoader().getParent());
+            UIManager.put("ClassLoader", getClass().getClassLoader());
             LookAndFeelFactory.installDefaultLookAndFeelAndExtension();
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             
             PluginManager manager = getManager();
             removeModelPlugins(manager);
