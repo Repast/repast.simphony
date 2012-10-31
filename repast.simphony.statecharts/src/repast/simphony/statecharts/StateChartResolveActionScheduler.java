@@ -1,6 +1,8 @@
 package repast.simphony.statecharts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import repast.simphony.engine.environment.RunEnvironment;
@@ -12,7 +14,7 @@ public enum StateChartResolveActionScheduler {
 	
 	INSTANCE;
 	
-	Map<Double, ResolveActionsMapValue> resolveActions = new HashMap<Double, ResolveActionsMapValue>();
+	protected Map<Double, ResolveActionsMapValue> resolveActions = new HashMap<Double, ResolveActionsMapValue>();
 
 	static class ResolveActionsMapValue {
 		private StateChartResolveAction scra;
@@ -41,6 +43,19 @@ public enum StateChartResolveActionScheduler {
 		
 		public boolean toRemove(){
 			return remove;
+		}
+	}
+	
+	public void clearOldResolveActions(){
+		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		List<Double> keysToRemove = new ArrayList<Double>();
+		for(Double rTime: resolveActions.keySet()){
+			if (rTime.compareTo(time) <= 0) keysToRemove.add(rTime);
+		}
+		for(Double key : keysToRemove) {
+			ResolveActionsMapValue ramv = resolveActions.remove(key);
+			ramv.isa = null;
+			ramv.scra = null;
 		}
 	}
 	

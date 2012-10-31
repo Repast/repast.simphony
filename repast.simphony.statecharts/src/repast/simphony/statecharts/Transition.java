@@ -7,6 +7,8 @@ public class Transition implements TriggerListener {
 	private Trigger trigger;
 	private State source, target;
 	private double priority;
+	
+
 
 	public Transition(Trigger trigger, State source, State target) {
 		this(trigger,source,target,0);

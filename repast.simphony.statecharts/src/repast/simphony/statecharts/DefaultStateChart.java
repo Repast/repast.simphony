@@ -25,10 +25,9 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 	private State entryState;
 	// private List<State> states = new ArrayList<State>();
 	private List<Transition> transitions = new ArrayList<Transition>();
-
+	private List<Transition> selfTransitions = new ArrayList<Transition>();
+	
 	private List<Transition> activeTransitions = new ArrayList<Transition>();
-
-	private List<Double> resolvingTimes = new ArrayList<Double>();
 
 	private State currentState;
 
@@ -45,11 +44,12 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 					"An entry state was not registered in the StateChart.");
 		}
 		clearTransitionsAndCurrentState();
-		preEnter(entryState);
 		entryState.onEnter();
+		stateInit(entryState);
 	}
 
-	private void preEnter(State state) {
+	private void stateInit(State state) {
+		//TODO: implement stateInit logic
 		// look through all defined transitions and find those with source.id ==
 		// state.id
 		for (Transition t : transitions) {
@@ -81,6 +81,12 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		Transition transition = new Transition(trigger, source, target);
 		transitions.add(transition);
 	}
+	
+	@Override
+	public void addSelfTransition(Trigger trigger, State state) {
+		Transition transition = new Transition(trigger, state, state);
+		selfTransitions.add(transition);
+	}
 
 	@Override
 	public State getCurrentState() {
@@ -103,7 +109,7 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		// Transition action
 		transition.onTransition();
 
-		preEnter(target);
+		stateInit(target);
 		if (!isSourceTarget) {
 			target.onEnter();
 		}
@@ -118,11 +124,16 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		return validTransitions;
 	}
 
-	public void resolveTransitions() {
-		// remove reference to scheduled item in resolveActions
-		resolveActions.remove(RunEnvironment.getInstance().getCurrentSchedule()
-				.getTickCount());
+	public void resolve() {
+		resolveSelfTransitions();
 		resolve(getValidTransitions());
+	}
+
+	private void resolveSelfTransitions() {
+		// iterate through activeSelfTransitions
+		// if valid execute onTransition
+		
+		
 	}
 
 	// TODO: include rescheduling logic if no valid transitions are found
@@ -166,25 +177,9 @@ public class DefaultStateChart implements StateChart, TransitionListener {
 		}
 	}
 
-	Map<Double, ISchedulableAction> resolveActions = new HashMap<Double, ISchedulableAction>();
-
 	@Override
 	public void scheduleResolveTime(double nextTime) {
-		// check if nextTime is already scheduled for resolving
-		if (!resolveActions.containsKey(nextTime)) {
-			ISchedule schedule = RunEnvironment.getInstance()
-					.getCurrentSchedule();
-			ISchedulableAction ia = schedule.createAction(ScheduleParameters
-					.createOneTime(nextTime, ScheduleParameters.LAST_PRIORITY),
-					this, "resolveTransitions");
-			resolveActions.put(nextTime, ia);
-		}
-	}
-
-	@Override
-	public void resolve() {
-		// TODO Auto-generated method stub
-		
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(nextTime, this);
 	}
 
 }

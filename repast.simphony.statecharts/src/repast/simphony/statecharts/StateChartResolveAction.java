@@ -3,6 +3,7 @@ package repast.simphony.statecharts;
 import java.util.HashMap;
 import java.util.Map;
 
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.IAction;
 
 public class StateChartResolveAction implements IAction {
@@ -46,6 +47,7 @@ public class StateChartResolveAction implements IAction {
 	@Override
 	public void execute() {
 		notifyListeners();
+		StateChartResolveActionScheduler.INSTANCE.clearOldResolveActions();
 	}
 
 }

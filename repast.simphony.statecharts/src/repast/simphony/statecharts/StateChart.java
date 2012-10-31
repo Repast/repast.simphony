@@ -28,11 +28,21 @@ public interface StateChart extends StateChartResolveActionListener {
 	public void addTransition(Trigger transition, State source, State target);
 	
 	/**
+	 * Add self transition to state chart.
+	 * @param transition
+	 * @param source
+	 * @param target
+	 */
+	void addSelfTransition(Trigger trigger, State state);
+	
+	/**
 	 * Retrieve current state.
 	 * @return
 	 */
 	public State getCurrentState();
 
 	public void scheduleResolveTime(double nextTime);
+
+	
 
 }
