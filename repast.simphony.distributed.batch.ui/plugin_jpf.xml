@@ -18,6 +18,11 @@
 	</requires>
 
 	<runtime>
+
+		<library id="icons" path="icons/" type="resources">
+			<export prefix="*" />
+		</library>
+
 		<library id="distributed.batch.ui" path="bin/" type="code">
 			<export prefix="*" />
 		</library>
@@ -33,6 +38,7 @@
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="repast.simphony.batch.gui.ShowBatchDialog" />
 			<parameter id="label" value="Configure &amp; Launch Batch Runs" />
+			<parameter id="icon" value="restart.png" />
 			<parameter id="class" value="repast.simphony.batch.gui.ShowBatchDialog" />
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
 			<parameter id="groupID" value="batchTools" />
