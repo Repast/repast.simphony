@@ -5,6 +5,7 @@
 	<property name="working.lib" location="${working.dir}/lib" />
 	<property name="model.dir.bin" location="${model.dir}/bin" />
 	<property name="model.dir.lib" location="${model.dir}/lib" />
+	<property name="message.center.props" location="${model.dir}/MessageCenter.log4j.properties" />
 
 
 	<!-- the plugins locations to their eclipse plugin values if the eclipse home and plugins 
@@ -46,11 +47,11 @@
 		<mkdir dir="${working.dir}/scenario.rs" />
 		<copy todir="${working.dir}">
 			<resources>
-				<javaresource name="MessageCenter.log4j.properties" />
 				<javaresource name="repast.pbs" />
 				<javaresource name="repastwrapper.sh" />
 				<javaresource name="outputcombiner.sh" />
 			</resources>
+			<fileset file="${message.center.props}" />
 			<fileset file="${unrolled.param.file}" />
 		</copy>
 		
