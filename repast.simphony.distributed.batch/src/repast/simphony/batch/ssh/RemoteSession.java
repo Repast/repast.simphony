@@ -80,7 +80,7 @@ public class RemoteSession implements Session {
   public String getInput() {
     return input;
   }
-  
+
   public String getKeyFile() {
     return keyFile;
   }
@@ -148,7 +148,7 @@ public class RemoteSession implements Session {
             getId());
         throw new SessionException(msg);
       }
-      
+
       session.copyFileToRemote(file, remoteDir);
 
     } catch (JSchException e) {
@@ -164,7 +164,7 @@ public class RemoteSession implements Session {
         session.disconnect();
     }
   }
-  
+
   private void unzipModel(SSHSession session) throws JSchException, SessionException {
     logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
     String cmd = String.format("cd %s; unzip -n %s", remoteDirectory, modelArchive.getName());
@@ -176,7 +176,7 @@ public class RemoteSession implements Session {
       throw new SessionException(msg);
     }
   }
-  
+
   private void checkForJava(SSHSession session) throws JSchException, SessionException {
     // check if java exists on the remote machine
     logger.info(String.format("Checking for java on %s@%s", getUser(), getHost()));
@@ -186,8 +186,9 @@ public class RemoteSession implements Session {
       throw new SessionException(msg);
     }
   }
-  
-  private void checkIfRunning(SSHSession session, String javaCmd) throws JSchException, IOException, SessionException {
+
+  private void checkIfRunning(SSHSession session, String javaCmd) throws JSchException,
+      IOException, SessionException {
     StringBuilder builder = new StringBuilder();
     session.executeCmd("ps x", builder);
     String psOutput = builder.toString();
@@ -197,7 +198,6 @@ public class RemoteSession implements Session {
       throw new SessionException(msg);
     }
   }
-  
 
   /**
    * Runs the model for this Session.
@@ -216,7 +216,7 @@ public class RemoteSession implements Session {
       unzipModel(session);
       checkForJava(session);
 
-      // run the model 
+      // run the model
       logger.info(String.format("Running model on %s@%s ...", getUser(), getHost()));
       String javaCmd = String.format("java -cp \"../%s/lib/*\" repast.simphony.batch.LocalDriver "
           + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
@@ -224,22 +224,23 @@ public class RemoteSession implements Session {
       // executes in the background, this session will disconnect
       try {
         session.executeBackgroundCommand(cmd);
-        
+
         // sleep for 5 seconds before we check if it started
         try {
           Thread.sleep(5000);
-        } catch (InterruptedException ex) {}
-        //checkIfRunning(session, javaCmd);
-        
+        } catch (InterruptedException ex) {
+        }
+        checkIfRunning(session, javaCmd);
+
       } catch (JSchException e) {
         String msg = String.format("Error executing '%s' on remote %s.", cmd, getId());
         throw new SessionException(msg, e);
-        
-      //} catch (IOException ex) {
-       // String msg = String.format("Error executing ps x on remote %s when checking if model has started.", cmd, getId());
-       // throw new SessionException(msg, ex);
+
+      } catch (IOException ex) {
+        String msg = String.format(
+            "Error executing ps x on remote %s when checking if model has started.", cmd, getId());
+        throw new SessionException(msg, ex);
       }
-      
 
     } catch (JSchException e) {
       String msg = String.format("Error while creating connection to %s", getId());
@@ -275,8 +276,8 @@ public class RemoteSession implements Session {
     RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
     File outDir = new File(tempDir, getUser() + "_" + getHost());
     outDir.mkdir();
-    logger.info(String.format("Finding and copying remote output from %s to %s", getUser() + "@" + getHost()
-        + ":" + remoteDirectory, outDir.getPath()));
+    logger.info(String.format("Finding and copying remote output from %s to %s", getUser() + "@"
+        + getHost() + ":" + remoteDirectory, outDir.getPath()));
 
     return copier.run(this, remoteDirectory, outDir.getAbsolutePath());
   }
