@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JComponent;
@@ -309,9 +310,9 @@ public class BatchConfigMediator {
   }
 
   private Project createAntProject() throws IOException, ParserConfigurationException, SAXException {
-    URL url = BatchConstants.class.getResource("/scripts/build.xml");
+	URL url = BatchConstants.class.getResource("/scripts/build.xml");
     Project project = new Project();
-    project.setUserProperty("ant.file", url.getFile());
+    project.setUserProperty("ant.file",  new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath());
     project.setProperty("model.dir", new File(model.getModelDirectory()).getCanonicalPath());
     project.setProperty("model.scenario.dir",
         new File(model.getScenarioDirectory()).getCanonicalPath());
@@ -335,7 +336,7 @@ public class BatchConfigMediator {
     project.init();
     ProjectHelper helper = ProjectHelper.getProjectHelper();
     project.addReference("ant.projectHelper", helper);
-    helper.parse(project, new File(url.getFile()));
+    helper.parse(project, new File(URLDecoder.decode(url.getFile(), "UTF-8")));
 
     DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(new PrintStream(console.getErrorOutputStream(), true));
