@@ -20,6 +20,7 @@ public class TextAreaAppender extends AppenderSkeleton {
     this.console = console;
     this.layout = layout;
   }
+  
 
   /*
    * (non-Javadoc)

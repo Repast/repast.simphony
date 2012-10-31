@@ -5,6 +5,8 @@ package repast.simphony.batch.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -38,9 +40,27 @@ public class ShowBatchDialog extends AbstractSAFAction<RSApplication> {
       main = new MainPanel();
     }
     dialog.add(main, BorderLayout.CENTER);
-    frame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.addWindowListener(new OnClose(dialog, main));
+  
     dialog.setSize(700, 500);
     dialog.setLocationRelativeTo(frame);
     dialog.setVisible(true);
+  }
+  
+  private static class OnClose extends WindowAdapter {
+    
+    JDialog dialog;
+    MainPanel main;
+    
+    public OnClose(JDialog dialog, MainPanel main) {
+      this.main = main;
+      this.dialog = dialog;
+    }
+    
+    @Override
+    public void windowClosing(WindowEvent evt) {
+      main.onExit();
+      dialog.dispose();
+    }
   }
 }

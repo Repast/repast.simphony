@@ -64,6 +64,7 @@ public class BatchConfigMediator {
 
   private File configFile = null;
   private boolean dirty = false;
+  private Appender stdout;
   
   public BatchConfigMediator(File modelDirectory) {
     this();
@@ -73,10 +74,12 @@ public class BatchConfigMediator {
   public BatchConfigMediator() {
     // append logging output to the console
     Logger logger = Logger.getLogger("repast.simphony.batch");
-    Appender appender = logger.getAppender("stdout");
-    Layout layout = appender.getLayout();
-    logger.removeAppender(appender);
-    logger.addAppender(new TextAreaAppender(console, layout));
+    stdout = logger.getAppender("stdout");
+    Layout layout = stdout.getLayout();
+    logger.removeAppender(stdout);
+    Appender tap = new TextAreaAppender(console, layout);
+    tap.setName(TextAreaAppender.class.getName());
+    logger.addAppender(tap);
     
     pModel.addPropertyChangeListener("buffering", new PropertyChangeListener() {
       @Override
@@ -105,6 +108,11 @@ public class BatchConfigMediator {
     this.dirty = dirty;
     // TODO query the panels to see if we can run
     
+  }
+  
+  public void onExit() {
+    Logger logger = Logger.getLogger("repast.simphony.batch");
+    logger.addAppender(stdout);
   }
   
   public JComponent getStatusBar() {

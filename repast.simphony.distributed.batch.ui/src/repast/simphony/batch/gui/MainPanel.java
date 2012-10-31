@@ -43,6 +43,10 @@ public class MainPanel extends JPanel {
     mediator = new BatchConfigMediator();
     init();
   }
+  
+  public void onExit() {
+    mediator.onExit();
+  }
 
   private JButton createButton(String icon, String tooltip) {
     JButton btn = new JButton(IconLoader.loadIcon(icon));
