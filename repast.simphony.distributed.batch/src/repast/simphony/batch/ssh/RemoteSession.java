@@ -187,16 +187,13 @@ public class RemoteSession implements Session {
     }
   }
 
-  private void checkIfRunning(SSHSession session, String javaCmd) throws JSchException,
+  private boolean checkIfRunning(SSHSession session, String javaCmd) throws JSchException,
       IOException, SessionException {
     StringBuilder builder = new StringBuilder();
     session.executeCmd("ps x", builder);
     String psOutput = builder.toString();
     // remove the quotes around the classpath as ps x doesn't show that
-    if (!psOutput.contains(javaCmd.replace("\"", ""))) {
-      String msg = String.format("Error executing '%s' on remote %s.", javaCmd, getId());
-      throw new SessionException(msg);
-    }
+    return psOutput.contains(javaCmd.replace("\"", ""));
   }
 
   /**
@@ -225,12 +222,21 @@ public class RemoteSession implements Session {
       try {
         session.executeBackgroundCommand(cmd);
 
-        // sleep for 5 seconds before we check if it started
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException ex) {
+        boolean running = false;
+        // check every half second for 20 seconds to see
+        // if it has started running
+        for (int count = 0; count < 40; count++) {
+          running = checkIfRunning(session, javaCmd);
+          if (running) break;
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException ex) {}
         }
-        checkIfRunning(session, javaCmd);
+        
+        if (!running) {
+          String msg = String.format("Error executing '%s' on remote %s.", javaCmd, getId());
+          throw new SessionException(msg);
+        }
 
       } catch (JSchException e) {
         String msg = String.format("Error executing '%s' on remote %s.", cmd, getId());
