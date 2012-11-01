@@ -3,7 +3,7 @@ package repast.simphony.statecharts;
 public interface Trigger {
 
 //	public boolean isTriggered();
-	public void initialize(Transition t);
+	public void initialize();
 //	public void deactivate();
 	public boolean isTriggered();
 	public boolean isValid();

@@ -56,7 +56,7 @@ public class Transition implements TriggerListener {
 
 
 	public void initialize(StateChart sc) {
-		trigger.initialize(this);
+		trigger.initialize();
 		sc.scheduleResolveTime(trigger.getNextTime());
 	}
 	

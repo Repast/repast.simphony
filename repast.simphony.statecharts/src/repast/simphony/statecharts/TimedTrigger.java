@@ -10,7 +10,6 @@ public class TimedTrigger extends AbstractTrigger{
 
 	private final double time;
 	private double initializedTickCount;
-	private ISchedulableAction currentScheduledAction;
 	
 	public TimedTrigger(double time){
 		this.time = time;
@@ -21,11 +20,13 @@ public class TimedTrigger extends AbstractTrigger{
 		return false;
 	}
 	
+	@Override
 	public double getInterval(){
 		return 0;
 	}
 	
-	public void initialize(Transition t){
+	@Override
+	public void initialize(){
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
 	}
@@ -34,13 +35,15 @@ public class TimedTrigger extends AbstractTrigger{
 	public double getNextTime() {
 		return initializedTickCount + time;
 	}
-		
+	
+	@Override
 	public boolean isTriggered(){
 		return isValid();
 	}
 	
+	@Override
 	public boolean isValid(){
-		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),initializedTickCount + time) >= 0;
+		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),getNextTime()) >= 0;
 	}
 	
 	public String toString(){
