@@ -221,8 +221,8 @@ public class RemoteSession implements Session {
       boolean isRemoteWindows = false;
       try {
         StringBuilder builder = new StringBuilder();
-        int ret = session.executeCmd("nohup", builder, false);
-        isRemoteWindows = ret != 0;
+        int exitStatus = session.executeCmd("nohup ls > /dev/null", builder, false);
+        isRemoteWindows = exitStatus != 0;
       } catch (IOException ex) {
         throw new SessionException("Error checking for nohup", ex);
       }
