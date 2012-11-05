@@ -152,6 +152,8 @@
 			<fileset dir="${model.dir.lib}">
 				<include name="*.jar" />
 			</fileset>
+			
+			<fileset file="${groovy.home}" />
 		</copy>
 
 		<jar destfile="${working.lib}/model.jar" basedir="${model.dir.bin}" />

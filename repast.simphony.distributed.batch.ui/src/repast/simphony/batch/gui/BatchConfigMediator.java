@@ -313,8 +313,12 @@ public class BatchConfigMediator {
   }
 
   private Project createAntProject() throws IOException, ParserConfigurationException, SAXException {
-	URL url = BatchConstants.class.getResource("/scripts/build.xml");
+    
     Project project = new Project();
+    @SuppressWarnings("restriction")
+    URL url = groovy.lang.GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
+    project.setProperty("groovy.home", URLDecoder.decode(url.getFile(), "UTF-8"));
+    url = BatchConstants.class.getResource("/scripts/build.xml");
     project.setUserProperty("ant.file",  new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath());
     project.setProperty("model.dir", new File(model.getModelDirectory()).getCanonicalPath());
     project.setProperty("model.scenario.dir",
