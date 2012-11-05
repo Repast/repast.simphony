@@ -105,7 +105,7 @@
 	<target name="make_pre_reqs">
 		<mkdir dir="${working.data}" />
 		<copy todir="${working.data}">
-			  <fileset dir="${model.data}" />
+			  <fileset dir="${model.data}" erroronmissingdir="false"/>
 		</copy>
 		
 		<mkdir dir="${working.lib}" />
