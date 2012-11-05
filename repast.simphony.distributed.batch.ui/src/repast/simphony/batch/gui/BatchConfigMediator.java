@@ -197,6 +197,7 @@ public class BatchConfigMediator {
         model.load(chooser.getSelectedFile());
         hostsPanel.init(model);
         configFile = chooser.getSelectedFile();
+        pModel.triggerFlush();
       } catch (IOException ex) {
         ex.printStackTrace();
       }
