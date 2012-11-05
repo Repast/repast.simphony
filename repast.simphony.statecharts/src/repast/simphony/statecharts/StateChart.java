@@ -1,6 +1,11 @@
 package repast.simphony.statecharts;
 
 public interface StateChart {
+	
+	/**
+	 * Receive a message into the statechart queue.
+	 */
+	public void receiveMessage(Object message);
 
 	/**
 	 * Begin state chart.

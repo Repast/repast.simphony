@@ -1,5 +1,6 @@
 package repast.simphony.statecharts;
 
+import java.util.Queue;
 import java.util.concurrent.Callable;
 
 import repast.simphony.engine.environment.RunEnvironment;
@@ -8,19 +9,21 @@ import repast.simphony.engine.schedule.ISchedule;
 import simphony.util.messages.MessageCenter;
 
 
-public class ConditionTrigger extends AbstractTrigger{
+public class MessageTrigger extends AbstractTrigger{
 
 	private final double pollingTime;
 	private double initializedTickCount;
-	private Callable<Boolean> condition;
-	
-	public ConditionTrigger(Callable<Boolean> condition, double pollingTime){
-		this.pollingTime = pollingTime;
-		this.condition = condition;
+	private Queue<Object> queue;
+	private MessageChecker messageChecker;
+		
+	public MessageTrigger(Queue<Object> queue, MessageChecker messageChecker, double pollingTime){
+		this.queue = queue;
+		this.messageChecker = messageChecker;
+		this.pollingTime = pollingTime;		
 	}
 	
-	public ConditionTrigger(Callable<Boolean> condition){
-		this(condition,1);
+	public MessageTrigger(Queue<Object> queue, MessageChecker messageChecker){
+		this(queue, messageChecker, 1);
 	}
 	
 	@Override
@@ -48,27 +51,20 @@ public class ConditionTrigger extends AbstractTrigger{
 	}
 	
 	public boolean isValid(){
-		boolean result = false;
-		try {
-			result = condition.call();
-		} catch (Exception e) {
-			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling condition: " + condition + " in " + this, e);
+		if (queue.isEmpty()) return false;
+		else {
+			return messageChecker.isValidMessage(queue.peek());
 		}
-		return result;
 	}
 	
 	public String toString(){
-		return "ConditionTrigger with pollingTime: " + pollingTime;
+		return "MessageTrigger with pollingTime: " + pollingTime;
 	}
 
 	@Override
 	public boolean canTransitionZeroTime() {
 		return true;
 	}
-
-
-
-
 
 	
 }

@@ -1,11 +1,13 @@
 package repast.simphony.statecharts;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
@@ -261,6 +263,17 @@ public class DefaultStateChart implements StateChart {
 	public void removeResolveTime(double nextTime) {
 		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(nextTime,
 				this);
+	}
+
+	Queue<Object> queue = new ArrayDeque<Object>();
+	
+	public Queue<Object> getQueue() {
+		return queue;
+	}
+
+	@Override
+	public void receiveMessage(Object message) {
+		queue.add(message);
 	}
 
 }
