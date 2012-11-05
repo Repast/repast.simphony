@@ -14,6 +14,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.SwingUtilities;
 
@@ -98,8 +99,9 @@ public class GUIUserInfo implements UserInfo {
    * @see com.jcraft.jsch.UserInfo#promptYesNo(java.lang.String)
    */
   @Override
-  public boolean promptYesNo(String arg0) {
-    return false;
+  public boolean promptYesNo(String msg) {
+    int ret = JOptionPane.showConfirmDialog(window, msg, "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+    return ret == JOptionPane.YES_OPTION;
   }
 
   /*

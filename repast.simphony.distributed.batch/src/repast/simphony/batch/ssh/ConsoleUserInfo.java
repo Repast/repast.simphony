@@ -72,7 +72,21 @@ public class ConsoleUserInfo implements UserInfo {
    * @see com.jcraft.jsch.UserInfo#promptPassword(java.lang.String)
    */
   @Override
-  public boolean promptPassword(String arg0) {
+  public boolean promptPassword(String prompt) {
+    System.out.print(prompt + ": ");
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(System.in));
+      String res = reader.readLine();
+      return res.trim().equalsIgnoreCase("yes");
+    } catch (IOException ex) {
+      if (reader != null) 
+        try {
+          reader.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+    }
     return false;
   }
 
