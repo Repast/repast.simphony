@@ -268,7 +268,7 @@ public class BatchConfigMediator {
       configFile.getParentFile().mkdirs();
       writer = new BufferedWriter(new FileWriter(configFile));
       writer.write("model.archive = "
-          + convertPath(new File(model.getOutputDirectory(), "complete_model.zip").getCanonicalPath()) + "\n");
+          + convertPath(new File(model.getOutputDirectory(), "complete_model.jar").getCanonicalPath()) + "\n");
       writer.write("batch.params.file = scenario.rs/batch_params.xml\n");
       writer.write("ssh.key_dir = " + convertPath(new File(model.getKeyDirectory()).getCanonicalPath()) + "\n");
       // stored in minutes, but config in seconds
@@ -334,7 +334,9 @@ public class BatchConfigMediator {
     File output = new File(model.getOutputDirectory());
     if (!output.exists())
       output.mkdirs();
-    project.setProperty("zip.file", new File(output, "complete_model.zip").getCanonicalPath());
+    
+    //project.setProperty("zip.file", new File(output, "complete_model.zip").getCanonicalPath());
+    project.setProperty("jar.file", new File(output, "complete_model.jar").getCanonicalPath());
 
     project.init();
     ProjectHelper helper = ProjectHelper.getProjectHelper();

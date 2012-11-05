@@ -54,7 +54,7 @@
 			<fileset file="${message.center.props}" />
 			<fileset file="${unrolled.param.file}" />
 		</copy>
-		
+
 		<copy todir="${working.dir}/bin">
 			<resources>
 				<javaresource name="fake_jar_to_avoid_watcher_init_warnings.jar" />
@@ -77,12 +77,20 @@
 			<fileset dir="${working.dir}/scenario.rs">
 				<include name="user_path.xml" />
 			</fileset>
-			
+
 			<attr path="model/classpath/agents[@path='../bin']" attr="path" value="../lib/model.jar" />
 		</xmltask>
 
-		<!-- zip the whole thing up -->
+		<!-- zip the whole thing up 
 		<zip destfile="${zip.file}" basedir="${working.dir}" />
+		-->
+		<jar destfile="${jar.file}">
+			<fileset dir="${working.dir}" />
+			<fileset dir="${distributed.batch}/bin" includes="**/Unzipper*.class" />
+			<manifest>
+				<attribute name="Main-Class" value="repast.simphony.util.Unzipper" />
+			</manifest>
+		</jar>
 		<echo message="Completed building model archive." />
 	</target>
 

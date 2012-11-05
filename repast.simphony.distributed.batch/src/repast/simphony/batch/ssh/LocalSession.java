@@ -20,6 +20,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 import repast.simphony.batch.BatchConstants;
@@ -201,8 +202,13 @@ public class LocalSession implements Session {
     logger.info("Running model on localhost ...");
     ProcessBuilder builder = new ProcessBuilder();
     builder.directory(localDir);
-    builder.command("java", "-cp", "\"./lib/*\"", "repast.simphony.batch.LocalDriver",
-        BatchConstants.LOCAL_RUN_PROPS_FILE);
+    if (SystemUtils.IS_OS_WINDOWS) {
+      builder.command("java", "-cp", "\"./lib/*\"", "repast.simphony.batch.LocalDriver",
+          BatchConstants.LOCAL_RUN_PROPS_FILE);
+    } else {
+      builder.command("java", "-cp", "./lib/*", "repast.simphony.batch.LocalDriver",
+          BatchConstants.LOCAL_RUN_PROPS_FILE);
+    }
     builder.redirectErrorStream(true);
 
     ProcessRunner runner = new ProcessRunner(builder);
@@ -227,7 +233,7 @@ public class LocalSession implements Session {
           if (!file.exists())
             file.createNewFile();
           @SuppressWarnings("resource")
-		FileChannel dstChannel = new FileOutputStream(file).getChannel();
+          FileChannel dstChannel = new FileOutputStream(file).getChannel();
           dstChannel.transferFrom(source, 0, entry.getSize());
           dstChannel.close();
           source.close();

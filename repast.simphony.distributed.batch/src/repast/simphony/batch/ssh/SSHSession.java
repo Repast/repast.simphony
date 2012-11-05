@@ -111,7 +111,7 @@ public class SSHSession {
    * @throws JSchException
    * @throws IOException
    */
-  public int executeCmd(String cmd, StringBuilder builder) throws JSchException,
+  public int executeCmd(String cmd, StringBuilder builder, boolean setErrStream) throws JSchException,
       IOException {
     Channel channel = null;
     int exitStatus = 0;
@@ -120,7 +120,7 @@ public class SSHSession {
       ((ChannelExec) channel).setCommand(cmd);
       channel.setInputStream(null);
 
-      ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
+     if (setErrStream) ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
           Level.ERROR)));
       InputStream in = channel.getInputStream();
       channel.connect();
