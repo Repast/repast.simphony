@@ -46,7 +46,7 @@ public class ParameterInputPanel extends JPanel {
 
     FormLayout layout = new FormLayout("5dlu, left:pref, 3dlu, fill:default:grow", "");
     DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
-    formBuilder.append(new JLabel(params.getDisplayName(pName) + ":"), 3);
+    formBuilder.append(new JLabel(params.getDisplayName(pName) + ":"), 4);
     formBuilder.nextLine();
     formBuilder.setLeadingColumnOffset(1);
     formBuilder.append(typeBox, inputPanels);
@@ -209,7 +209,7 @@ public class ParameterInputPanel extends JPanel {
         } else if (valueType.equals(Long.class) || valueType.equals(long.class)) {
           ((JTextField)fld).setDocument(new LongDocument());
           
-        } else {
+        } else if (valueType.equals(Integer.class) || valueType.equals(int.class)) {
           ((JTextField)fld).setDocument(new IntegerDocument());
         }
       }
