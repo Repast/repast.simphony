@@ -9,7 +9,7 @@ public class UnconditionalByClassMessageChecker implements MessageChecker {
 	}
 	
 	@Override
-	public boolean isValidMessage(Object message) {
+	public boolean checkMessage(Object message) {
 		return messageClass.isInstance(message);
 	}
 

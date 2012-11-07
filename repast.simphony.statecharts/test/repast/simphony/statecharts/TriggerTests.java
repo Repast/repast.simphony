@@ -41,6 +41,7 @@ public class TriggerTests {
 	public void setUp() throws Exception {
 		RunEnvironment.init(new Schedule(), null, null, false);
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		// This is required to ensure that the schedule is at tick = 0 when each test begins.
 		schedule.schedule(ScheduleParameters.createOneTime(0), action);
 		schedule.execute();
 	}
@@ -203,7 +204,7 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		Queue<Object> queue = new ArrayDeque<Object>();
 		
-		MessageTrigger mt1 = new MessageTrigger(queue, new UnconditionalByClassMessageChecker(String.class));
+		Trigger mt1 = new MessageTrigger(queue, new UnconditionalByClassMessageChecker(String.class));
 		mt1.initialize();
 		assertEquals(false, mt1.isValid()); 
 		assertEquals(false, mt1.isTriggered());
@@ -216,7 +217,7 @@ public class TriggerTests {
 		
 		schedule.schedule(ScheduleParameters.createOneTime(1.5), action);
 		queue.poll();
-		MessageTrigger mt2 = new MessageTrigger(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
+		Trigger mt2 = new MessageTrigger(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
 		mt2.initialize();
 		assertEquals(false, mt2.isValid()); 
 		assertEquals(false, mt2.isTriggered());

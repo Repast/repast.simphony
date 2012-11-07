@@ -25,10 +25,10 @@ public class MessageCheckerTests {
 	@Test
 	public void unconditionalMessageCheckerTest() {
 		UnconditionalMessageChecker umc = new UnconditionalMessageChecker();
-		assertEquals(true,umc.isValidMessage("hello"));
-		assertEquals(false,umc.isValidMessage(null));
+		assertEquals(true,umc.checkMessage("hello"));
+		assertEquals(false,umc.checkMessage(null));
 		int msg = 6;
-		assertEquals(true,umc.isValidMessage(msg));
+		assertEquals(true,umc.checkMessage(msg));
 	}
 	
 	// Test classes
@@ -42,18 +42,18 @@ public class MessageCheckerTests {
 	@Test
 	public void unconditionalByMessageCheckerTest() {
 		UnconditionalByClassMessageChecker ubcmc = new UnconditionalByClassMessageChecker(String.class);
-		assertEquals(true,ubcmc.isValidMessage("hello"));
-		assertEquals(false,ubcmc.isValidMessage(1));
-		assertEquals(false,ubcmc.isValidMessage(new Object()));
-		assertEquals(false,ubcmc.isValidMessage(null));
+		assertEquals(true,ubcmc.checkMessage("hello"));
+		assertEquals(false,ubcmc.checkMessage(1));
+		assertEquals(false,ubcmc.checkMessage(new Object()));
+		assertEquals(false,ubcmc.checkMessage(null));
 		
 		UnconditionalByClassMessageChecker ubcmc2 = new UnconditionalByClassMessageChecker(A.class);
-		assertEquals(true,ubcmc2.isValidMessage(new A(){}));
-		assertEquals(true,ubcmc2.isValidMessage(new B()));
-		assertEquals(true,ubcmc2.isValidMessage(new C()));
+		assertEquals(true,ubcmc2.checkMessage(new A(){}));
+		assertEquals(true,ubcmc2.checkMessage(new B()));
+		assertEquals(true,ubcmc2.checkMessage(new C()));
 		
 		UnconditionalByClassMessageChecker ubcmc3 = new UnconditionalByClassMessageChecker(C.class);
-		assertEquals(false,ubcmc3.isValidMessage(new B()));
+		assertEquals(false,ubcmc3.checkMessage(new B()));
 	}
 	
 	// Test class
@@ -87,21 +87,21 @@ public class MessageCheckerTests {
 	@Test
 	public void messageEqualsMessageCheckerTest() {
 		MessageEqualsMessageChecker<String> mc1 = new MessageEqualsMessageChecker<String>("hello");
-		assertEquals(true,mc1.isValidMessage("hello"));
-		assertEquals(false,mc1.isValidMessage("hell"));
-		assertEquals(false,mc1.isValidMessage(1));
-		assertEquals(false,mc1.isValidMessage(new Object()));
-		assertEquals(false,mc1.isValidMessage(new B()));
+		assertEquals(true,mc1.checkMessage("hello"));
+		assertEquals(false,mc1.checkMessage("hell"));
+		assertEquals(false,mc1.checkMessage(1));
+		assertEquals(false,mc1.checkMessage(new Object()));
+		assertEquals(false,mc1.checkMessage(new B()));
 		
 		C c = new C();
 		MessageEqualsMessageChecker<C> mc2 = new MessageEqualsMessageChecker<C>(c);
-		assertEquals(true,mc2.isValidMessage(c));
-		assertEquals(false,mc2.isValidMessage(new C()));
+		assertEquals(true,mc2.checkMessage(c));
+		assertEquals(false,mc2.checkMessage(new C()));
 		
 		D d = new D(3);
 		MessageEqualsMessageChecker<D> mc3 = new MessageEqualsMessageChecker<D>(d);
-		assertEquals(true,mc3.isValidMessage(new D(3)));
-		assertEquals(false,mc3.isValidMessage(new D(2)));
+		assertEquals(true,mc3.checkMessage(new D(3)));
+		assertEquals(false,mc3.checkMessage(new D(2)));
 	}
 	
 	@Test
@@ -109,7 +109,7 @@ public class MessageCheckerTests {
 		MessageConditionMessageChecker mc1 = new MessageConditionMessageChecker(new MessageCondition(){
 
 			@Override
-			public boolean isMessageConditionTrue(Object message)
+			public boolean isTrue(Object message)
 					throws Exception {
 				if (message instanceof D){
 					D d = (D)message;
@@ -119,14 +119,14 @@ public class MessageCheckerTests {
 			}
 			
 		});
-		assertEquals(true,mc1.isValidMessage(new D(3)));
-		assertEquals(false,mc1.isValidMessage(new D(4)));
-		assertEquals(false,mc1.isValidMessage("hell"));
+		assertEquals(true,mc1.checkMessage(new D(3)));
+		assertEquals(false,mc1.checkMessage(new D(4)));
+		assertEquals(false,mc1.checkMessage("hell"));
 		
 		MessageConditionMessageChecker mc2 = new MessageConditionMessageChecker(new MessageCondition(){
 
 			@Override
-			public boolean isMessageConditionTrue(Object message)
+			public boolean isTrue(Object message)
 					throws Exception {
 				throw new Exception();
 			}
@@ -154,7 +154,7 @@ public class MessageCheckerTests {
 		MyMessageEventListener mel = new MyMessageEventListener();
 		MessageCenter.addMessageListener(mel);
 		assertEquals(false, mel.messageReceived);
-		assertEquals(false, mc2.isValidMessage("hello"));
+		assertEquals(false, mc2.checkMessage("hello"));
 		assertEquals(true, mel.messageReceived); 
 		assertEquals("Error encountered when calling message condition in: MessageConditionMessageChecker with Exception throwing MessageCondition",mel.message);
 		

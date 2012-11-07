@@ -53,7 +53,7 @@ public class MessageTrigger extends AbstractTrigger{
 	public boolean isValid(){
 		if (queue.isEmpty()) return false;
 		else {
-			return messageChecker.isValidMessage(queue.peek());
+			return messageChecker.checkMessage(queue.peek());
 		}
 	}
 	

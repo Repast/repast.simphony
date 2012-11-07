@@ -10,10 +10,10 @@ public class MessageConditionMessageChecker implements MessageChecker {
 	}
 	
 	@Override
-	public boolean isValidMessage(Object message) {
+	public boolean checkMessage(Object message) {
 		boolean result = false;
 		try {
-			result = messageCondition.isMessageConditionTrue(message);
+			result = messageCondition.isTrue(message);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling message condition in: " + this, e);
 		}

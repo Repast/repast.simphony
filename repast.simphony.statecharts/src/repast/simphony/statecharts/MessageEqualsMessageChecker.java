@@ -9,7 +9,7 @@ public class MessageEqualsMessageChecker<T> implements MessageChecker {
 	}
 	
 	@Override
-	public boolean isValidMessage(Object message) {
+	public boolean checkMessage(Object message) {
 		return check == null ? message == null : check.equals(message);
 	}
 	
