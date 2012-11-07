@@ -12,4 +12,5 @@ public interface Trigger {
 	public double getInterval();
 	public double getNextTime();
 	public boolean canTransitionZeroTime();
+	public boolean isQueueConsuming();
 }

@@ -65,6 +65,12 @@ public class MessageTrigger extends AbstractTrigger{
 	public boolean canTransitionZeroTime() {
 		return true;
 	}
+	
+	@Override
+	public boolean isQueueConsuming() {
+		return true;
+	}
+
 
 	
 }

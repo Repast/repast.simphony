@@ -55,9 +55,9 @@ public class TimedTrigger extends AbstractTrigger{
 		return false;
 	}
 
-
-
-
-
+	@Override
+	public boolean isQueueConsuming() {
+		return false;
+	}
 	
 }

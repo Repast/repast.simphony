@@ -1,12 +1,15 @@
 package repast.simphony.statecharts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Callable;
 
-public class Transition implements TriggerListener {
+import simphony.util.messages.MessageCenter;
+
+public class Transition {
 	private Trigger trigger;
 	private State source, target;
 	private double priority;
+	private Callable<Void> onTransition;
+	private Callable<Boolean> guard;
 	
 
 
@@ -39,17 +42,32 @@ public class Transition implements TriggerListener {
 	}
 	
 	public boolean isTriggered(){
-		return trigger.isTriggered();
+		return trigger.isTriggered() && checkGuard();
 	}
 	
-	public boolean isRecurring(){
-		return trigger.isRecurring();
+	private boolean checkGuard() {
+		if (guard == null) return true;
+		boolean result = false;
+		try {
+			result = guard.call();
+		} catch (Exception e) {
+			MessageCenter.getMessageCenter(getClass()).error("Error encountered when checking guard: " + guard + " in " + this, e);
+		}
+		return result;
+	}
+
+	public void registerGuard(Callable<Boolean> guard) {
+		this.guard = guard;
 	}
 	
 	public boolean canTransitionZeroTime(){
 		return trigger.canTransitionZeroTime();
 	}
-
+	
+	public boolean isTriggerQueueConsuming(){
+		return trigger.isQueueConsuming();
+	}
+	
 	public double getPriority() {
 		return priority;
 	}
@@ -64,18 +82,36 @@ public class Transition implements TriggerListener {
 		sc.removeResolveTime(time);
 	}
 
-	TransitionListener transitionListener;
-
-	@Override
-	public void update() {
-		// In the future, the guard checks may go here.
-		transitionListener.updateRegularTransition(this);
+	
+	public void registerOnTransition(Callable<Void> onTransition) {
+		this.onTransition = onTransition;
 	}
-
+	
+	
+	
 	public void onTransition() {
-		System.out.println("Making transition from: " + source.getId()
-				+ " to: " + target.getId() + " via: " + trigger);
+		if(onTransition == null) return;
+		try {
+			onTransition.call();
+		} catch (Exception e) {
+			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onTransition in transition: " + this, e);
+		}
 	}
+	
+	@Override
+	public String toString(){
+		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
+	}
+	
+//	TransitionListener transitionListener;
+//
+//	@Override
+//	public void update() {
+//		// In the future, the guard checks may go here.
+//		transitionListener.updateRegularTransition(this);
+//	}
+
+	
 	
 
 }

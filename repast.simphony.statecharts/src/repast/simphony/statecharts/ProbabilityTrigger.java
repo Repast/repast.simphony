@@ -58,5 +58,11 @@ public class ProbabilityTrigger extends AbstractTrigger {
 	public boolean canTransitionZeroTime() {
 		return false;
 	}
+	
+	@Override
+	public boolean isQueueConsuming() {
+		return false;
+	}
+
 
 }

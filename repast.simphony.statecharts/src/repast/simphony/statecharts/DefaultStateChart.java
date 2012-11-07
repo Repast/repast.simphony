@@ -57,7 +57,8 @@ public class DefaultStateChart implements StateChart {
 	private void stateInit(State state) {
 		currentState = state;
 
-		// look through all defined transitions and find those with source.id ==
+		// look through all defined regular transitions and find those with
+		// source.id ==
 		// state.id
 		List<Transition> candidateTransitions = new ArrayList<Transition>();
 		for (Transition t : regularTransitions) {
@@ -67,26 +68,38 @@ public class DefaultStateChart implements StateChart {
 		}
 
 		// find immediate transition candidates
-		List<Transition> zeroTimeTransitionCandidates = new ArrayList<Transition>();
-		for (Transition t : candidateTransitions) {
-			if (t.canTransitionZeroTime() && t.isValid()) {
-				zeroTimeTransitionCandidates.add(t);
+		Transition t;
+		while (true) {
+			List<Transition> zeroTimeTransitionCandidates = new ArrayList<Transition>();
+			for (Transition tt : candidateTransitions) {
+				if (tt.canTransitionZeroTime() && tt.isValid()) {
+					zeroTimeTransitionCandidates.add(tt);
+				}
 			}
+			t = chooseOneTransition(zeroTimeTransitionCandidates);
+			if(t == null){
+				if (queue.isEmpty()) break;
+				else {
+					queue.poll();
+				}
+			}
+			else break;
 		}
-		Transition t = chooseOneTransition(zeroTimeTransitionCandidates);
-		if (t != null){
+		if (t != null) {
+			// if the transition consumes elements from queue, poll queue
+			if (t.isTriggerQueueConsuming())
+				queue.poll();
 			updateRegularTransition(t);
-		}
-		else {
+		} else {
 			// collect all relevant self transitions and initialize
-			for (Transition st : selfTransitions){
+			for (Transition st : selfTransitions) {
 				if (st.getSource().getId().equals(state.getId())) {
 					activeSelfTransitions.add(st);
 					st.initialize(this);
 				}
 			}
 			// collect all relevant regular transitions and initialize
-			for (Transition ct : candidateTransitions){
+			for (Transition ct : candidateTransitions) {
 				if (ct.getSource().getId().equals(state.getId())) {
 					activeRegularTransitions.add(ct);
 					ct.initialize(this);
@@ -105,12 +118,13 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	private void deactivateTransitions(List<Transition> transitions) {
-		double now = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double now = RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount();
 		for (Transition t : transitions) {
 			// if trigger's next time is after now,
 			Trigger tr = t.getTrigger();
 			double nextTime = tr.getNextTime();
-			if (Double.compare(nextTime,now) > 0){
+			if (Double.compare(nextTime, now) > 0) {
 				t.deactivate(this, nextTime);
 			}
 		}
@@ -122,25 +136,24 @@ public class DefaultStateChart implements StateChart {
 		// states.add(state);
 	}
 
-	
-	protected void addRegularTransition(Trigger trigger, State source, State target) {
+	protected void addRegularTransition(Trigger trigger, State source,
+			State target) {
 		Transition transition = new Transition(trigger, source, target);
 		addRegularTransition(transition);
 	}
-	
+
 	@Override
-	public void addRegularTransition(Transition transition){
+	public void addRegularTransition(Transition transition) {
 		regularTransitions.add(transition);
 	}
-
 
 	protected void addSelfTransition(Trigger trigger, State state) {
 		Transition transition = new Transition(trigger, state, state);
 		addSelfTransition(transition);
 	}
-	
+
 	@Override
-	public void addSelfTransition(Transition transition){
+	public void addSelfTransition(Transition transition) {
 		selfTransitions.add(transition);
 	}
 
@@ -161,11 +174,12 @@ public class DefaultStateChart implements StateChart {
 		transition.onTransition();
 
 		target.onEnter();
-		
+
 		stateInit(target);
 	}
 
-	public List<Transition> getTriggeredActiveTransitions(List<Transition> activeTransitions) {
+	public List<Transition> getTriggeredActiveTransitions(
+			List<Transition> activeTransitions) {
 		List<Transition> triggeredTransitions = new ArrayList<Transition>();
 		for (Transition t : activeTransitions) {
 			if (t.isTriggered())
@@ -181,7 +195,7 @@ public class DefaultStateChart implements StateChart {
 
 	private void resolveSelfTransitions() {
 		List<Transition> triggeredTransitions = getTriggeredActiveTransitions(activeSelfTransitions);
-		for (Transition t : triggeredTransitions){
+		for (Transition t : triggeredTransitions) {
 			t.onTransition();
 		}
 		// rescheduleSelfTransitions
@@ -190,21 +204,24 @@ public class DefaultStateChart implements StateChart {
 
 	private void resolveRegularTransitions() {
 		List<Transition> triggeredTransitions = getTriggeredActiveTransitions(activeRegularTransitions);
-		
+
 		Transition t = chooseOneTransition(triggeredTransitions);
 		// If there are no triggered transitions, reschedule
 		if (t == null) {
 			rescheduleTransitions(activeRegularTransitions);
 			return;
 		} else {
+			if (t.isTriggerQueueConsuming())
+				queue.poll();
 			updateRegularTransition(t);
 		}
 	}
 
 	private Transition chooseOneTransition(List<Transition> transitions) {
 		// If no transitions, return null
-		if (transitions.isEmpty()) return null;
-		
+		if (transitions.isEmpty())
+			return null;
+
 		// If there is one valid transition, make the transition
 		if (transitions.size() == 1)
 			return transitions.get(0);
@@ -265,8 +282,8 @@ public class DefaultStateChart implements StateChart {
 				this);
 	}
 
-	Queue<Object> queue = new ArrayDeque<Object>();
-	
+	private Queue<Object> queue = new ArrayDeque<Object>();
+
 	public Queue<Object> getQueue() {
 		return queue;
 	}
