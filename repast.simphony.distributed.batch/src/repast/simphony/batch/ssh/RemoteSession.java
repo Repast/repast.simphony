@@ -176,6 +176,25 @@ public class RemoteSession implements Session {
           getId());
       throw new SessionException(msg);
     }
+    
+    StringBuffer buf = new StringBuffer();
+    for (int i = 1; i <= instances; i++) {
+      buf.append(" mkdir instance_");
+      buf.append(i);
+      buf.append("; ln -s `pwd`/data `pwd`/instance_");
+      buf.append(i);
+      buf.append("/data;");
+      
+    }
+    
+    cmd = String.format("cd %s; %s", remoteDirectory, buf.toString());
+    System.out.println(cmd);
+    exitStatus = session.executeCmd(cmd, Level.ERROR);
+    if (exitStatus != 0) {
+      String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
+          getId());
+      throw new SessionException(msg);
+    }
   }
 
   private void checkForJava(SSHSession session) throws JSchException, SessionException {
