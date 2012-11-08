@@ -8,8 +8,18 @@ public class Transition {
 	private Trigger trigger;
 	private State source, target;
 	private double priority;
-	private Callable<Void> onTransition;
-	private Callable<Boolean> guard;
+	private Callable<Void> onTransition = new Callable<Void>(){
+		@Override
+		public Void call() throws Exception {
+			return null;
+		}
+	};
+	private Callable<Boolean> guard = new Callable<Boolean>(){
+		@Override
+		public Boolean call() throws Exception {
+			return true;
+		}
+	};
 	
 
 
@@ -46,14 +56,12 @@ public class Transition {
 	}
 	
 	private boolean checkGuard() {
-		if (guard == null) return true;
-		boolean result = false;
 		try {
-			result = guard.call();
+			return guard.call();
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when checking guard: " + guard + " in " + this, e);
+			throw new RuntimeException(e);
 		}
-		return result;
 	}
 
 	public void registerGuard(Callable<Boolean> guard) {
@@ -77,30 +85,33 @@ public class Transition {
 		trigger.initialize();
 		sc.scheduleResolveTime(trigger.getNextTime());
 	}
-	
-	public void deactivate(StateChart sc, double time) {
-		sc.removeResolveTime(time);
-	}
 
 	
 	public void registerOnTransition(Callable<Void> onTransition) {
 		this.onTransition = onTransition;
 	}
 	
-	
-	
 	public void onTransition() {
-		if(onTransition == null) return;
 		try {
 			onTransition.call();
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onTransition in transition: " + this, e);
+			throw new RuntimeException(e);
 		}
 	}
 	
 	@Override
 	public String toString(){
 		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
+	}
+
+	public void reschedule(StateChart stateChart, double currentTime) {
+		// if recurring && getNextTime is currentTime
+		if (trigger.isRecurring()
+				&& Double.compare(trigger.getNextTime(), currentTime) == 0) {
+			// reset to next time and reschedule
+			initialize(stateChart);
+		}
 	}
 	
 //	TransitionListener transitionListener;

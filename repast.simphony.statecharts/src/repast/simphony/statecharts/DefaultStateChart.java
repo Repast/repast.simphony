@@ -77,19 +77,20 @@ public class DefaultStateChart implements StateChart {
 				}
 			}
 			t = chooseOneTransition(zeroTimeTransitionCandidates);
-			if(t == null){
-				if (queue.isEmpty()) break;
+			if (t == null) {
+				if (queue.isEmpty())
+					break;
 				else {
 					queue.poll();
 				}
-			}
-			else break;
+			} else
+				break;
 		}
 		if (t != null) {
 			// if the transition consumes elements from queue, poll queue
 			if (t.isTriggerQueueConsuming())
 				queue.poll();
-			updateRegularTransition(t);
+			makeRegularTransition(t);
 		} else {
 			// collect all relevant self transitions and initialize
 			for (Transition st : selfTransitions) {
@@ -125,7 +126,7 @@ public class DefaultStateChart implements StateChart {
 			Trigger tr = t.getTrigger();
 			double nextTime = tr.getNextTime();
 			if (Double.compare(nextTime, now) > 0) {
-				t.deactivate(this, nextTime);
+				removeResolveTime(nextTime);
 			}
 		}
 		transitions.clear();
@@ -136,24 +137,20 @@ public class DefaultStateChart implements StateChart {
 		// states.add(state);
 	}
 
-	protected void addRegularTransition(Trigger trigger, State source,
-			State target) {
-		Transition transition = new Transition(trigger, source, target);
-		addRegularTransition(transition);
-	}
 
 	@Override
 	public void addRegularTransition(Transition transition) {
 		regularTransitions.add(transition);
 	}
 
-	protected void addSelfTransition(Trigger trigger, State state) {
+	@Override
+	public void addSelfTransition(Trigger trigger, State state) {
 		Transition transition = new Transition(trigger, state, state);
 		addSelfTransition(transition);
 	}
-
-	@Override
-	public void addSelfTransition(Transition transition) {
+	
+	
+	protected void addSelfTransition(Transition transition) {
 		selfTransitions.add(transition);
 	}
 
@@ -162,7 +159,7 @@ public class DefaultStateChart implements StateChart {
 		return currentState;
 	}
 
-	public void updateRegularTransition(Transition transition) {
+	private void makeRegularTransition(Transition transition) {
 		State source = transition.getSource();
 		State target = transition.getTarget();
 		// check that target is not the same as source
@@ -178,7 +175,7 @@ public class DefaultStateChart implements StateChart {
 		stateInit(target);
 	}
 
-	public List<Transition> getTriggeredActiveTransitions(
+	private List<Transition> getTriggeredActiveTransitions(
 			List<Transition> activeTransitions) {
 		List<Transition> triggeredTransitions = new ArrayList<Transition>();
 		for (Transition t : activeTransitions) {
@@ -213,7 +210,7 @@ public class DefaultStateChart implements StateChart {
 		} else {
 			if (t.isTriggerQueueConsuming())
 				queue.poll();
-			updateRegularTransition(t);
+			makeRegularTransition(t);
 		}
 	}
 
@@ -227,16 +224,19 @@ public class DefaultStateChart implements StateChart {
 			return transitions.get(0);
 		// Otherwise resolve based on the StateChart's
 		// TransitionResolutionStrategy
-		if (trs == TransitionResolutionStrategy.RANDOM) {
+		switch (trs) {
+		case NATURAL:
+			return transitions.get(0);
+		case PRIORITY:
+			Collections.sort(transitions, pComp);
+			return transitions.get(0);
+		case RANDOM:
 			int size = transitions.size();
 			Uniform defaultUniform = RandomHelper.getUniform();
 			int index = defaultUniform.nextIntFromTo(0, size - 1);
 			return transitions.get(index);
-		} else if (trs == TransitionResolutionStrategy.NATURAL) {
-			return transitions.get(0);
-		} else {
-			Collections.sort(transitions, pComp);
-			return transitions.get(0);
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 
@@ -246,13 +246,8 @@ public class DefaultStateChart implements StateChart {
 				.getTickCount();
 		// for each active transition
 		for (Transition t : activeTransitions) {
-			// if recurring && getNextTime is now
-			Trigger tr = t.getTrigger();
-			if (tr.isRecurring()
-					&& Double.compare(tr.getNextTime(), currentTime) == 0) {
-				// reset to next time and reschedule
-				t.initialize(this);
-			}
+			t.reschedule(this,currentTime);
+			
 		}
 	}
 
@@ -291,6 +286,18 @@ public class DefaultStateChart implements StateChart {
 	@Override
 	public void receiveMessage(Object message) {
 		queue.add(message);
+	}
+
+	private double priority = 0;
+	
+	@Override
+	public double getPriority() {
+		return priority;
+	}
+
+	@Override
+	public void setPriority(double priority) {
+		this.priority= priority;
 	}
 
 }

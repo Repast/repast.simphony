@@ -38,16 +38,21 @@ public interface StateChart {
 	 * @param source
 	 * @param target
 	 */
-	void addSelfTransition(Transition transition);
+	public void addSelfTransition(Trigger trigger, State state);
 	
 	/**
 	 * Retrieve current state.
 	 * @return
 	 */
 	public State getCurrentState();
+	
+	
 
 	public void resolve();
 	public void scheduleResolveTime(double nextTime);
 	public void removeResolveTime(double nextTime);
+
+	public double getPriority();
+	void setPriority(double priority);
 
 }

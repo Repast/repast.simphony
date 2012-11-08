@@ -27,12 +27,12 @@ public enum StateChartResolveActionScheduler {
 			this.isa = isa;
 		}
 		
-		public void registerListener(StateChart scral){
-			scra.registerListener(scral);
+		public void registerListener(StateChart sc){
+			scra.registerListener(sc);
 		}
 		
-		public void removeListener(StateChart scral){
-			scra.removeListener(scral);
+		public void removeListener(StateChart sc){
+			scra.removeListener(sc);
 			if (!scra.hasListeners()){
 				RunEnvironment.getInstance().getCurrentSchedule().removeAction(isa);
 				isa = null;
@@ -60,17 +60,17 @@ public enum StateChartResolveActionScheduler {
 	}
 	
 	public void scheduleResolveTime(double nextTime, StateChart sc) {
-		// check if nextTime is already scheduled for resolving
-		if (!resolveActions.containsKey(nextTime)) {
+		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
+		if (ramv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();
 			StateChartResolveAction scra = new StateChartResolveAction();
 			ISchedulableAction ia = schedule.schedule(ScheduleParameters
 					.createOneTime(nextTime, ScheduleParameters.LAST_PRIORITY),scra);
-			ResolveActionsMapValue ramv = new ResolveActionsMapValue(scra, ia);
+			 ramv = new ResolveActionsMapValue(scra, ia);
 			resolveActions.put(nextTime, ramv);
+			
 		}
-		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 		ramv.registerListener(sc);
 	}
 	
@@ -79,6 +79,9 @@ public enum StateChartResolveActionScheduler {
 			ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 			ramv.removeListener(sc);
 			if(ramv.toRemove()) resolveActions.remove(nextTime);
+		}
+		else {
+			throw new IllegalStateException("Excess removeResolveTime call detected for StateChart: " + sc);
 		}
 	}
 	

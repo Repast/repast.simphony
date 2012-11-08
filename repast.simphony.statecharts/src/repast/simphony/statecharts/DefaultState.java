@@ -7,7 +7,18 @@ import simphony.util.messages.MessageCenter;
 public class DefaultState implements State {
 
 	private String id;
-	private Callable<Void> onEnter, onExit;
+	private Callable<Void> onEnter = new Callable<Void>(){
+		@Override
+		public Void call() throws Exception {
+			return null;
+		}
+	};
+	private Callable<Void> onExit = new Callable<Void>(){
+		@Override
+		public Void call() throws Exception {
+			return null;
+		}
+	};
 	
 	public DefaultState(String id){
 		this.id = id;
@@ -25,21 +36,21 @@ public class DefaultState implements State {
 
 	@Override
 	public void onEnter() {
-		if(onEnter == null) return;
 		try {
 			onEnter.call();
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onEnter in state: " + id, e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void onExit() {
-		if(onExit == null) return;
 		try {
 			onExit.call();
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onExit in state: " + id, e);
+			throw new RuntimeException(e);
 		}
 	}
 
