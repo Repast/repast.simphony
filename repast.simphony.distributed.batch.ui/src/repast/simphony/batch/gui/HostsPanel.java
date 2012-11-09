@@ -38,7 +38,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
   private JTextField userFld = new JTextField(10), hostsFld = new JTextField(10), 
       sshKeyFileFld = new JTextField("id_rsa", 10);
   private JPanel propsPanel;
-  private JLabel userLbl, hostLbl, sshKeyFileLbl;
+  private JLabel userLbl, hostLbl, sshKeyFileLbl, typeLbl, instancesLbl;
   private JSplitPane splitPane;
   private JButton addBtn, deleteBtn, copyBtn;
   private JList hostList;
@@ -117,7 +117,8 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     formBuilder.nextLine();
     formBuilder.setLeadingColumnOffset(1);
     typeBox = new JComboBox(new Object[] { Host.Type.LOCAL, Host.Type.REMOTE });
-    formBuilder.append("Type:", typeBox);
+    typeLbl = formBuilder.append("Type:", typeBox);
+    
     formBuilder.nextLine();
     userLbl = formBuilder.append("User:", userFld);
     formBuilder.nextLine();
@@ -127,7 +128,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     formBuilder.nextLine();
     instancesSpn = new JSpinner();
     instancesSpn.setModel(new SpinnerNumberModel(1, 1, 1000000, 1));
-    formBuilder.append("Instances:", instancesSpn);
+    instancesLbl = formBuilder.append("Instances:", instancesSpn);
     
     propsPanel = formBuilder.getPanel();
     splitPane.setRightComponent(propsPanel);
@@ -143,13 +144,15 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
           deleteBtn.setEnabled(hostList.getSelectedIndex() != -1);
           copyBtn.setEnabled(hostList.getSelectedIndex() != -1);
           updateHost();
+          enableFields(hostList.getSelectedIndex() != -1);
         }
       }
     });
 
     typeBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        enableForType((Type) typeBox.getSelectedItem());
+        if (typeBox.getSelectedIndex() != -1)
+          enableForType((Type) typeBox.getSelectedItem());
       }
     });
 
@@ -241,9 +244,23 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       userFld.setText("");
       hostsFld.setText("");
       sshKeyFileFld.setText("");
-      typeBox.setSelectedIndex(0);
+      typeBox.setSelectedIndex(-1);
       instancesSpn.setValue(new Integer(1));
     }
+  }
+  
+  private void enableFields(boolean enabled) {
+    userFld.setEnabled(enabled);
+    hostsFld.setEnabled(enabled);
+    sshKeyFileFld.setEnabled(enabled);
+    instancesSpn.setEnabled(enabled);
+    typeBox.setEnabled(enabled);
+    
+    userLbl.setEnabled(enabled);
+    hostLbl.setEnabled(enabled);
+    sshKeyFileLbl.setEnabled(enabled);
+    typeLbl.setEnabled(enabled);
+    instancesLbl.setEnabled(enabled);
   }
 
   private void enableForType(Host.Type type) {
