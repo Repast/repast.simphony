@@ -167,34 +167,55 @@ public class RemoteSession implements Session {
 
   private void unzipModel(SSHSession session) throws JSchException, SessionException {
     logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
-    //String cmd = String.format("cd %s; jar -xf %s", remoteDirectory, modelArchive.getName());
-    String cmd = String.format("cd %s; java -jar %s %s", remoteDirectory, modelArchive.getName(), modelArchive.getName());
-    
+    // String cmd = String.format("cd %s; jar -xf %s", remoteDirectory,
+    // modelArchive.getName());
+    String cmd = String.format("cd %s; java -jar %s %s", remoteDirectory, modelArchive.getName(),
+        modelArchive.getName());
+
     int exitStatus = session.executeCmd(cmd, Level.ERROR);
     if (exitStatus != 0) {
       String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
           getId());
       throw new SessionException(msg);
     }
-    
-    StringBuffer buf = new StringBuffer();
-    for (int i = 1; i <= instances; i++) {
-      buf.append(" mkdir instance_");
-      buf.append(i);
-      buf.append("; ln -s `pwd`/data `pwd`/instance_");
-      buf.append(i);
-      buf.append("/data;");
-      
+
+    /*
+    StringBuilder prefix = new StringBuilder();
+    try {
+      session.executeCmd("pwd", prefix, false);
+    } catch (Exception ex) {
     }
-    
-    cmd = String.format("cd %s; %s", remoteDirectory, buf.toString());
-    System.out.println(cmd);
-    exitStatus = session.executeCmd(cmd, Level.ERROR);
-    if (exitStatus != 0) {
-      String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
-          getId());
-      throw new SessionException(msg);
+
+    if (prefix.toString().trim().length() > 0) {
+      StringBuilder buf = new StringBuilder();
+      for (int i = 1; i <= instances; i++) {
+        buf.append(" mkdir instance_");
+        buf.append(i);
+        buf.append("; ln -s ");
+        buf.append(prefix.toString().trim());
+        buf.append("/");
+        buf.append(remoteDirectory);
+        buf.append("/data ");
+        buf.append(prefix.toString().trim());
+        buf.append("/");
+        buf.append(remoteDirectory);
+        buf.append("/instance_");
+        buf.append(i);
+        buf.append("/data;");
+      }
+
+      cmd = String.format("cd %s; %s", remoteDirectory, buf.toString());
+      System.out.println(cmd);
+      exitStatus = session.executeCmd(cmd, Level.ERROR);
+      if (exitStatus != 0) {
+        String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
+            getId());
+        throw new SessionException(msg);
+      }
+    } else {
+      logger.warn("Unable to symlink data directory to instances directories");
     }
+    */
   }
 
   private void checkForJava(SSHSession session) throws JSchException, SessionException {
@@ -207,8 +228,8 @@ public class RemoteSession implements Session {
     }
   }
 
-  private boolean checkIfRunning(SSHSession session, String javaCmd, boolean isRemoteWindows) throws JSchException,
-      IOException, SessionException {
+  private boolean checkIfRunning(SSHSession session, String javaCmd, boolean isRemoteWindows)
+      throws JSchException, IOException, SessionException {
     StringBuilder builder = new StringBuilder();
     if (isRemoteWindows)
       session.executeCmd("ps -W", builder, true);
@@ -216,8 +237,10 @@ public class RemoteSession implements Session {
       session.executeCmd("ps x", builder, true);
     String psOutput = builder.toString();
     // remove the quotes around the classpath as ps x doesn't show that
-    if (isRemoteWindows) return psOutput.contains("java.exe"); 
-    else return psOutput.contains(javaCmd.replace("\"", ""));
+    if (isRemoteWindows)
+      return psOutput.contains("java.exe");
+    else
+      return psOutput.contains(javaCmd.replace("\"", ""));
   }
 
   /**
@@ -236,7 +259,7 @@ public class RemoteSession implements Session {
       session = SSHSessionFactory.getInstance().create(this);
       checkForJava(session);
       unzipModel(session);
-      
+
       boolean isRemoteWindows = false;
       try {
         StringBuilder builder = new StringBuilder();
@@ -245,21 +268,24 @@ public class RemoteSession implements Session {
       } catch (IOException ex) {
         throw new SessionException("Error checking for nohup", ex);
       }
-      
+
       // run the model
       logger.info(String.format("Running model on %s@%s ...", getUser(), getHost()));
       String javaCmd = "", cmd = "";
       if (isRemoteWindows) {
-        javaCmd = String.format("java -cp \"./lib/repast.simphony.batch.jar;./lib/*\" repast.simphony.batch.LocalDriver "
-            + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
-        //String cmd = String.format("cd %s; nohup %s ", remoteDirectory, javaCmd);
+        javaCmd = String.format(
+            "java -cp \"./lib/repast.simphony.batch.jar;./lib/*\" repast.simphony.batch.LocalDriver "
+                + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
+        // String cmd = String.format("cd %s; nohup %s ", remoteDirectory,
+        // javaCmd);
         cmd = String.format("cd %s;  %s ", remoteDirectory, javaCmd);
       } else {
-        javaCmd = String.format("java -cp \"./lib/repast.simphony.batch.jar:./lib/*\" repast.simphony.batch.LocalDriver "
-            + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
+        javaCmd = String.format(
+            "java -cp \"./lib/repast.simphony.batch.jar:./lib/*\" repast.simphony.batch.LocalDriver "
+                + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
         cmd = String.format("cd %s; nohup %s ", remoteDirectory, javaCmd);
       }
-      
+
       // executes in the background, this session will disconnect
       try {
         session.executeBackgroundCommand(cmd);
@@ -269,12 +295,14 @@ public class RemoteSession implements Session {
         // if it has started running
         for (int count = 0; count < 40; count++) {
           running = checkIfRunning(session, javaCmd, isRemoteWindows);
-          if (running) break;
+          if (running)
+            break;
           try {
             Thread.sleep(500);
-          } catch (InterruptedException ex) {}
+          } catch (InterruptedException ex) {
+          }
         }
-        
+
         if (!running) {
           String msg = String.format("Error executing '%s' on remote %s.", javaCmd, getId());
           throw new SessionException(msg);
