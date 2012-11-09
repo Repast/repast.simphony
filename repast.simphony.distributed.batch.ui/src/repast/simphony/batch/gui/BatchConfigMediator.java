@@ -236,6 +236,7 @@ public class BatchConfigMediator {
   }
 
   public void saveConfigAs() {
+    commitAll();
     if (configFile == null) {
       File file = new File(model.getModelDirectory());
       if (!file.exists()) {
