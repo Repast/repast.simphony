@@ -19,6 +19,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import repast.simphony.parameter.ParameterConstants;
+import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -32,17 +33,18 @@ public class ParameterInputPanel extends JPanel {
 
   private JComboBox typeBox;
   private JPanel inputPanels = new JPanel(new CardLayout());
-  private String pName;
+  private String pName, displayName;
   private Class<?> pType;
 
   public ParameterInputPanel(String pName, Parameters params, ParameterData pData) {
     super(new BorderLayout());
     this.pName = pName;
+    this.displayName = params.getDisplayName(pName);
     setName(pName);
     this.pType = params.getSchema().getDetails(pName).getType();
 
     fillTypeBox(pName, params);
-    createInputPanels(pName, params);
+    createInputPanels(params);
 
     FormLayout layout = new FormLayout("5dlu, left:pref, 3dlu, fill:default:grow", "");
     DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
@@ -61,10 +63,10 @@ public class ParameterInputPanel extends JPanel {
       }
     });
 
-    update(pData);
+    update(pData, params);
   }
-  
-  public void update(ParameterData pData) {
+
+  public void update(ParameterData pData, Parameters params) {
     if (pData == null && pName.equals(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
       typeBox.setSelectedItem(ParameterType.RANDOM);
     } else if (pData != null) {
@@ -72,6 +74,11 @@ public class ParameterInputPanel extends JPanel {
       getCurrentPanel().set(pData);
     } else if (pData == null) {
       typeBox.setSelectedItem(ParameterType.CONSTANT);
+      if (params != null && params.getSchema().getDetails(pName) != null) {
+        ParameterSchema schema = params.getSchema().getDetails(pName);
+        if (schema.getDefaultValue() != null)
+          ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema.getDefaultValue());
+      }
     }
   }
 
@@ -106,18 +113,22 @@ public class ParameterInputPanel extends JPanel {
     }
   }
 
-  private void createInputPanels(String pName, Parameters params) {
+  private void createInputPanels(Parameters params) {
     for (int i = 0; i < typeBox.getModel().getSize(); i++) {
       Object type = typeBox.getModel().getElementAt(i);
-      if (type == ParameterType.LIST)
-        inputPanels.add(new ListInputPanel(), type.toString());
-      else if (type == ParameterType.CONSTANT)
-        inputPanels.add(new ConstantInputPanel(pType), type.toString());
-      else if (type == ParameterType.NUMBER)
-        inputPanels.add(new NumberInputPanel(pType),
-            type.toString());
-      else if (type == ParameterType.RANDOM)
-        inputPanels.add(new RandomInputPanel(), type.toString());
+      if (type == ParameterType.LIST) {
+        ListInputPanel inputPanel = new ListInputPanel(displayName);
+        inputPanels.add(inputPanel, type.toString());
+      } else if (type == ParameterType.CONSTANT) {
+        ConstantInputPanel inputPanel = new ConstantInputPanel(displayName, pType);
+        inputPanels.add(inputPanel, type.toString());
+      } else if (type == ParameterType.NUMBER) {
+        NumberInputPanel inputPanel = new NumberInputPanel(displayName, pType);
+        inputPanels.add(inputPanel, type.toString());
+      } else if (type == ParameterType.RANDOM) {
+        RandomInputPanel inputPanel = new RandomInputPanel();
+        inputPanels.add(inputPanel, type.toString());
+      }
     }
   }
 
@@ -127,19 +138,40 @@ public class ParameterInputPanel extends JPanel {
         || clazz.equals(byte.class) || clazz.equals(short.class);
   }
 
-  private interface InputPanel {
-    void write(XMLStreamWriter writer, String pName, Class<?> pType) throws XMLStreamException;
-    void set(ParameterData data);
+  /**
+   * Validates the input in the result panels.
+   */
+  public ValidationResult validateInput() {
+    return getCurrentPanel().validateInput();
   }
 
-  private static class NumberInputPanel extends JPanel implements InputPanel {
+  private interface InputPanel {
+    void write(XMLStreamWriter writer, String pName, Class<?> pType) throws XMLStreamException;
+
+    void set(ParameterData data);
+
+    ValidationResult validateInput();
+  }
+
+  private static abstract class AbstractInputPanel extends JPanel {
+
+    protected String pName;
+
+    public AbstractInputPanel(String pName) {
+      super(new BorderLayout());
+      this.pName = pName;
+    }
+
+  }
+
+  private static class NumberInputPanel extends AbstractInputPanel implements InputPanel {
 
     protected JTextField fromFld = new JTextField(5);
     protected JTextField toFld = new JTextField(5);
     protected JTextField stepFld = new JTextField(5);
 
-    public NumberInputPanel(Class<?> numberType) {
-      super(new BorderLayout());
+    public NumberInputPanel(String pName, Class<?> numberType) {
+      super(pName);
 
       if (numberType.equals(Double.class) || numberType.equals(double.class)) {
         fromFld.setDocument(new DoubleDocument());
@@ -171,6 +203,27 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
+    public ValidationResult validateInput() {
+      if (fromFld.getText().trim().isEmpty())
+        return new ValidationResult("Parameter " + pName + " is missing a \"from\" value");
+      if (toFld.getText().trim().isEmpty())
+        return new ValidationResult("Parameter " + pName + " is missing a \"to\" value");
+      if (stepFld.getText().trim().isEmpty())
+        return new ValidationResult("Parameter " + pName + " is missing a \"step\" value");
+      
+      double from = Double.valueOf(fromFld.getText().trim());
+      double to = Double.valueOf(toFld.getText().trim());
+      double step = Double.valueOf(stepFld.getText().trim());
+      
+      if (step == 0) return new ValidationResult("Parameter " + pName + ": \"step\" value must be greater than 0");
+      if (step > 0 && to <= from) return new ValidationResult("Parameter " + pName + ": \"to\" value must be greater than \"from\" value");
+      if (step < 0 && to >= from) return new ValidationResult("Parameter " + pName + ": \"from\" value must be greater than \"to\" value");
+      
+
+      return ValidationResult.SUCCESS;
+    }
+
+    @Override
     public void write(XMLStreamWriter writer, String pName, Class<?> pType)
         throws XMLStreamException {
       writer.writeStartElement("parameter");
@@ -190,34 +243,51 @@ public class ParameterInputPanel extends JPanel {
     }
   }
 
-  private static class ConstantInputPanel extends JPanel implements InputPanel {
-    
+  private static class ConstantInputPanel extends AbstractInputPanel implements InputPanel {
+
     private JComponent fld;
 
-    public ConstantInputPanel(Class<?> valueType) {
-      super(new BorderLayout());
+    public ConstantInputPanel(String pName, Class<?> valueType) {
+      super(pName);
       if (valueType.equals(boolean.class) || valueType.equals(Boolean.class)) {
         fld = new JCheckBox();
       } else {
-        fld = new JTextField(15);
+        fld = new JTextField("0", 15);
         if (valueType.equals(Double.class) || valueType.equals(double.class)) {
-          ((JTextField)fld).setDocument(new DoubleDocument());
-          
+          ((JTextField) fld).setDocument(new DoubleDocument());
+
         } else if (valueType.equals(Float.class) || valueType.equals(float.class)) {
-          ((JTextField)fld).setDocument(new FloatDocument());
-          
+          ((JTextField) fld).setDocument(new FloatDocument());
+
         } else if (valueType.equals(Long.class) || valueType.equals(long.class)) {
-          ((JTextField)fld).setDocument(new LongDocument());
-          
+          ((JTextField) fld).setDocument(new LongDocument());
+
         } else if (valueType.equals(Integer.class) || valueType.equals(int.class)) {
-          ((JTextField)fld).setDocument(new IntegerDocument());
+          ((JTextField) fld).setDocument(new IntegerDocument());
         }
       }
-      
+
       FormLayout layout = new FormLayout("left:pref, 3dlu, fill:default:grow", "");
       DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
       formBuilder.append("Value:", fld);
       add(formBuilder.getPanel(), BorderLayout.CENTER);
+    }
+
+    @Override
+    public ValidationResult validateInput() {
+      if (!(fld instanceof JCheckBox)) {
+        if (((JTextField) fld).getText().trim().isEmpty())
+          return new ValidationResult("Parameter " + pName + " is missing a value");
+      }
+      return ValidationResult.SUCCESS;
+    }
+
+    void setDefaultValue(Object obj) {
+      if (obj instanceof Boolean) {
+        ((JCheckBox) fld).setSelected((Boolean) obj);
+      } else {
+        ((JTextField) fld).setText(obj.toString());
+      }
     }
 
     @Override
@@ -228,29 +298,30 @@ public class ParameterInputPanel extends JPanel {
       writer.writeAttribute("type", "constant");
       writer.writeAttribute("constant_type", pType.getName());
       if (fld instanceof JTextField)
-        writer.writeAttribute("value",  ((JTextField)fld).getText().trim());
+        writer.writeAttribute("value", ((JTextField) fld).getText().trim());
       else {
-        writer.writeAttribute("value",  String.valueOf(((JCheckBox)fld).isSelected()));
+        writer.writeAttribute("value", String.valueOf(((JCheckBox) fld).isSelected()));
       }
       writer.writeEndElement();
     }
-    
+
     @Override
     public void set(ParameterData data) {
       if (fld instanceof JTextField)
-        ((JTextField)fld).setText(data.getAttribute(ParameterAttribute.VALUE));
+        ((JTextField) fld).setText(data.getAttribute(ParameterAttribute.VALUE));
       else {
-        ((JCheckBox)fld).setSelected(Boolean.parseBoolean(data.getAttribute(ParameterAttribute.VALUE)));
+        ((JCheckBox) fld).setSelected(Boolean.parseBoolean(data
+            .getAttribute(ParameterAttribute.VALUE)));
       }
     }
   }
 
-  private static class ListInputPanel extends JPanel implements InputPanel {
-    
+  private static class ListInputPanel extends AbstractInputPanel implements InputPanel {
+
     protected JTextField fld = new JTextField(15);
 
-    public ListInputPanel() {
-      super(new BorderLayout());
+    public ListInputPanel(String pName) {
+      super(pName);
       FormLayout layout = new FormLayout("left:pref, 3dlu, fill:default:grow", "");
       DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
       formBuilder.append("Values:", fld);
@@ -266,7 +337,15 @@ public class ParameterInputPanel extends JPanel {
       writer.writeAttribute("value_type", pType.getName());
       writer.writeAttribute("values", fld.getText().trim());
     }
-    
+
+    @Override
+    public ValidationResult validateInput() {
+      // validate the list format somehow
+      if (fld.getText().trim().isEmpty())
+        return new ValidationResult("Parameter " + pName + " is missing a value");
+      return ValidationResult.SUCCESS;
+    }
+
     @Override
     public void set(ParameterData data) {
       fld.setText(data.getAttribute(ParameterAttribute.VALUES));
@@ -281,6 +360,13 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
-    public void set(ParameterData data) {}
+    public void set(ParameterData data) {
+    }
+
+    @Override
+    public ValidationResult validateInput() {
+      return ValidationResult.SUCCESS;
+    }
+
   }
 }

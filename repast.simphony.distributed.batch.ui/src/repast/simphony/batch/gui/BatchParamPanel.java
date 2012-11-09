@@ -52,9 +52,12 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
   private JPanel bpConfigPanel = new JPanel(new BorderLayout());
 
   private List<ParameterInputPanel> inputPanels = new ArrayList<ParameterInputPanel>();
+  private Parameters params;
+  private BatchConfigMediator mediator;
 
-  public BatchParamPanel(PresentationModel<BatchRunConfigBean> pModel) {
+  public BatchParamPanel(BatchConfigMediator mediator, PresentationModel<BatchRunConfigBean> pModel) {
     super(new BorderLayout());
+    this.mediator = mediator;
     FormLayout layout = new FormLayout("5dlu, left:pref, 3dlu, fill:pref:grow, 3dlu, fill:pref", "");
     DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
     formBuilder.setDefaultDialogBorder();
@@ -89,11 +92,11 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
     bindComponents(pModel);
     initListeners();
   }
-  
+
   private void bindComponents(PresentationModel<BatchRunConfigBean> pModel) {
     ValueModel vm = pModel.getBufferedModel("batchParameterFile");
     Bindings.bind(bpFileFld, vm);
-    
+
     vm = pModel.getBufferedModel("parameterFile");
     Bindings.bind(pFileFld, vm);
   }
@@ -169,7 +172,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
           String name = data.getName();
           for (ParameterInputPanel panel : inputPanels) {
             if (panel.getName().equals(name)) {
-              panel.update(data);
+              panel.update(data, params);
               break;
             }
           }
@@ -230,7 +233,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
 
     try {
       ParametersParser parser = new ParametersParser(new File(parameterFile));
-      Parameters params = parser.getParameters();
+      params = parser.getParameters();
 
       Map<String, ParameterData> pdMap = new HashMap<String, ParameterData>();
       // on first open data might be empty
@@ -256,7 +259,8 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
         ParameterData pd = pdMap.get(name);
         // parameter file has field that bp file does not
         // so flag that
-        if (pd == null) bpFileFld.setForeground(Color.RED);
+        if (pd == null && !bpFileFld.getForeground().equals(Color.RED))
+          bpFileFld.setForeground(Color.RED);
         ParameterInputPanel inputPanel = new ParameterInputPanel(name, params, pd);
         formBuilder.append(inputPanel);
         inputPanels.add(inputPanel);
@@ -287,60 +291,76 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       fld.setText(chooser.getSelectedFile().getAbsolutePath());
   }
 
-  private void generate() {
-    List<ParameterInputPanel> constants = new ArrayList<ParameterInputPanel>();
-    List<ParameterInputPanel> nonConsts = new ArrayList<ParameterInputPanel>();
-
+  private boolean validateInput() {
+    boolean passed = true;
     for (ParameterInputPanel panel : inputPanels) {
-      if (panel.getType() == ParameterType.CONSTANT || panel.getType() == ParameterType.RANDOM) {
-        constants.add(panel);
-      } else {
-        nonConsts.add(panel);
+      ValidationResult vResult = panel.validateInput();
+      if (vResult != ValidationResult.SUCCESS) {
+        passed = false;
+        mediator.updateStatusBar(Color.RED, vResult.getMessage());
+        break;
       }
     }
 
-    File file = new File(bpFileFld.getText());
-    if (!file.getParentFile().exists())
-      file.getParentFile().mkdirs();
+    return passed;
+  }
 
-    XMLStreamWriter writer = null;
-    try {
-      writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(file),
-          "UTF-8");
-      writer.writeStartDocument();
-      writer.writeStartElement("sweep");
-      writer.writeAttribute("runs", "1");
-      for (ParameterInputPanel panel : constants) {
-        panel.writeXML(writer);
+  private void generate() {
+    if (validateInput()) {
+      mediator.updateStatusBar(Color.BLACK, "");
+      List<ParameterInputPanel> constants = new ArrayList<ParameterInputPanel>();
+      List<ParameterInputPanel> nonConsts = new ArrayList<ParameterInputPanel>();
+
+      for (ParameterInputPanel panel : inputPanels) {
+        if (panel.getType() == ParameterType.CONSTANT || panel.getType() == ParameterType.RANDOM) {
+          constants.add(panel);
+        } else {
+          nonConsts.add(panel);
+        }
       }
 
-      for (ParameterInputPanel panel : nonConsts) {
-        panel.writeXML(writer);
-      }
+      File file = new File(bpFileFld.getText());
+      if (!file.getParentFile().exists())
+        file.getParentFile().mkdirs();
 
-      for (int i = 0; i < nonConsts.size(); i++) {
-        writer.writeEndElement();
-      }
-      // for sweep
-      writer.writeEndElement();
-      writer.writeEndDocument();
-    } catch (XMLStreamException e) {
-
-      e.printStackTrace();
-    } catch (IOException e) {
-
-      e.printStackTrace();
-    } catch (FactoryConfigurationError e) {
-
-      e.printStackTrace();
-    } finally {
+      XMLStreamWriter writer = null;
       try {
-        writer.close();
-      } catch (XMLStreamException ex) {
-      }
-    }
-    bpFileFld.setForeground(Color.BLACK);
+        writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(file),
+            "UTF-8");
+        writer.writeStartDocument();
+        writer.writeStartElement("sweep");
+        writer.writeAttribute("runs", "1");
+        for (ParameterInputPanel panel : constants) {
+          panel.writeXML(writer);
+        }
 
+        for (ParameterInputPanel panel : nonConsts) {
+          panel.writeXML(writer);
+        }
+
+        for (int i = 0; i < nonConsts.size(); i++) {
+          writer.writeEndElement();
+        }
+        // for sweep
+        writer.writeEndElement();
+        writer.writeEndDocument();
+      } catch (XMLStreamException e) {
+
+        e.printStackTrace();
+      } catch (IOException e) {
+
+        e.printStackTrace();
+      } catch (FactoryConfigurationError e) {
+
+        e.printStackTrace();
+      } finally {
+        try {
+          writer.close();
+        } catch (XMLStreamException ex) {
+        }
+      }
+      bpFileFld.setForeground(Color.BLACK);
+    }
   }
 
   /*

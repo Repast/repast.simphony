@@ -116,7 +116,12 @@ public class BatchConfigMediator {
     logger.addAppender(stdout);
   }
   
-  public JComponent getStatusBar() {
+  public void updateStatusBar(Color color, String msg) {
+    status.setForeground(color);
+    status.setText(msg);
+  }
+  
+  JComponent getStatusBar() {
     return status;
   }
 
@@ -128,7 +133,7 @@ public class BatchConfigMediator {
   public JTabbedPane createTabs() {
     modelPanel = new ModelPanel(pModel);
     tabs.addTab("Model", modelPanel);
-    bpPanel = new BatchParamPanel(pModel);
+    bpPanel = new BatchParamPanel(this, pModel);
     tabs.addTab("Batch Parameters", bpPanel);
     hostsPanel = new HostsPanel();
     tabs.addTab("Hosts", hostsPanel);
