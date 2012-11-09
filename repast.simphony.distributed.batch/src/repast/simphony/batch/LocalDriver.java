@@ -165,14 +165,15 @@ public class LocalDriver {
       builder.redirectErrorStream(true);
 
       // try mklink first,
-      builder.command("mklink", "/D", "/J", new File(instanceDir, "data").getCanonicalPath(),
-          new File(instanceDir.getParentFile(), "data").getCanonicalPath());
+      builder.command("cmd", "/c", "mklink", "/D", "/J", "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"",
+          "\"" + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
 
       Process p = builder.start();
       exitCode = p.waitFor();
 
     } catch (InterruptedException ex) {
     } catch (IOException ex) {
+      // catch this with no error -- assumed tried on non-windows machine 
     }
 
     if (exitCode != 0) {
