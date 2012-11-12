@@ -1,5 +1,7 @@
 package repast.simphony.statecharts;
 
+import java.util.Queue;
+
 public interface StateChart {
 	
 	/**
@@ -54,5 +56,11 @@ public interface StateChart {
 
 	public double getPriority();
 	void setPriority(double priority);
+
+	public Queue<Object> getQueue();
+
+	public void setTransitionResolutionStrategy(TransitionResolutionStrategy transitionResolutionStrategy);
+
+	public TransitionResolutionStrategy getTransitionResolutionStrategy();
 
 }

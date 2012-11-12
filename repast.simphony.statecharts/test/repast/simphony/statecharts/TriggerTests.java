@@ -60,17 +60,17 @@ public class TriggerTests {
 			}
 		});
 		tCondition.initialize();
-		assertEquals(false, tTimed.isValid());
+		assertEquals(false, tTimed.isTriggerConditionTrue());
 		assertEquals(false, tTimed.isTriggered());
-		assertEquals(true, tCondition.isValid()); // valid but not triggered
+		assertEquals(true, tCondition.isTriggerConditionTrue()); // valid but not triggered
 													// because the scheduled
 													// polling time is at 1 not
 													// 0
 		assertEquals(false, tCondition.isTriggered());
 		schedule.execute();
-		assertEquals(true, tTimed.isValid());
+		assertEquals(true, tTimed.isTriggerConditionTrue());
 		assertEquals(true, tTimed.isTriggered());
-		assertEquals(true, tCondition.isValid());
+		assertEquals(true, tCondition.isTriggerConditionTrue());
 		assertEquals(true, tCondition.isTriggered());
 	}
 
@@ -89,20 +89,20 @@ public class TriggerTests {
 			}
 		});
 		tCondition.initialize();
-		assertEquals(false, tTimed.isValid());
+		assertEquals(false, tTimed.isTriggerConditionTrue());
 		assertEquals(false, tTimed.isTriggered());
-		assertEquals(true, tCondition.isValid());
+		assertEquals(true, tCondition.isTriggerConditionTrue());
 		assertEquals(false, tCondition.isTriggered());
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals(false, tTimed.isValid());
+		assertEquals(false, tTimed.isTriggerConditionTrue());
 		assertEquals(false, tTimed.isTriggered());
-		assertEquals(true, tCondition.isValid());
+		assertEquals(true, tCondition.isTriggerConditionTrue());
 		assertEquals(true, tCondition.isTriggered());
 		schedule.execute();
-		assertEquals(true, tTimed.isValid());
+		assertEquals(true, tTimed.isTriggerConditionTrue());
 		assertEquals(true, tTimed.isTriggered());
-		assertEquals(true, tCondition.isValid());
+		assertEquals(true, tCondition.isTriggerConditionTrue());
 		assertEquals(true, tCondition.isTriggered());
 	}
 
@@ -112,11 +112,11 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		Trigger tProb = new ProbabilityTrigger(1);
 		tProb.initialize();
-		assertEquals(true, tProb.isValid());
+		assertEquals(true, tProb.isTriggerConditionTrue());
 		assertEquals(false, tProb.isTriggered());
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals(true, tProb.isValid());
+		assertEquals(true, tProb.isTriggerConditionTrue());
 		assertEquals(true, tProb.isTriggered());
 		Trigger tProb2 = new ProbabilityTrigger(0.5);
 		int counter = 0;
@@ -148,11 +148,11 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(6.9), action); // Should have triggered with 0.999 probability.
 		Trigger tExpDecay = new ExponentialDecayRateTrigger(1);
 		tExpDecay.initialize();
-		assertEquals(false, tExpDecay.isValid());
+		assertEquals(false, tExpDecay.isTriggerConditionTrue());
 		assertEquals(false, tExpDecay.isTriggered());
 		schedule.execute();
 		
-		assertEquals(true, tExpDecay.isValid());
+		assertEquals(true, tExpDecay.isTriggerConditionTrue());
 		assertEquals(true, tExpDecay.isTriggered());
 		assertEquals(6.9, schedule.getTickCount(), 0.0001);
 	}
@@ -192,7 +192,7 @@ public class TriggerTests {
 		MyMessageEventListener mel = new MyMessageEventListener();
 		MessageCenter.addMessageListener(mel);
 		assertEquals(false, mel.messageReceived);
-		assertEquals(false, tCondition.isValid());
+		assertEquals(false, tCondition.isTriggerConditionTrue());
 		assertEquals(true, mel.messageReceived);
 		assertEquals("Error encountered when calling condition: TestConditionTrigger in ConditionTrigger with pollingTime: 1.0",mel.message);
 		
@@ -206,26 +206,26 @@ public class TriggerTests {
 		
 		Trigger mt1 = new MessageTrigger(queue, new UnconditionalByClassMessageChecker(String.class));
 		mt1.initialize();
-		assertEquals(false, mt1.isValid()); 
+		assertEquals(false, mt1.isTriggerConditionTrue()); 
 		assertEquals(false, mt1.isTriggered());
 		queue.add("Hello");
-		assertEquals(true, mt1.isValid());// valid but not triggered because the scheduled polling time is at 1 not 0
+		assertEquals(true, mt1.isTriggerConditionTrue());// valid but not triggered because the scheduled polling time is at 1 not 0
 		assertEquals(false, mt1.isTriggered());
 		schedule.execute();
-		assertEquals(true, mt1.isValid());
+		assertEquals(true, mt1.isTriggerConditionTrue());
 		assertEquals(true, mt1.isTriggered());
 		
 		schedule.schedule(ScheduleParameters.createOneTime(1.5), action);
 		queue.poll();
 		Trigger mt2 = new MessageTrigger(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
 		mt2.initialize();
-		assertEquals(false, mt2.isValid()); 
+		assertEquals(false, mt2.isTriggerConditionTrue()); 
 		assertEquals(false, mt2.isTriggered());
 		queue.add("hello");
-		assertEquals(true, mt2.isValid());// valid but not triggered because the scheduled polling time is at 1 not 0
+		assertEquals(true, mt2.isTriggerConditionTrue());// valid but not triggered because the scheduled polling time is at 1 not 0
 		assertEquals(false, mt2.isTriggered());
 		schedule.execute();
-		assertEquals(true, mt2.isValid());
+		assertEquals(true, mt2.isTriggerConditionTrue());
 		assertEquals(true, mt2.isTriggered());
 		assertEquals(1.5, schedule.getTickCount(), 0.0001);
 

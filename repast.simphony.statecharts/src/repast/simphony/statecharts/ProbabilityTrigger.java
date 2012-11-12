@@ -41,10 +41,10 @@ public class ProbabilityTrigger extends AbstractTrigger {
 	public boolean isTriggered() {
 		double now = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
-		return Double.compare(now, getNextTime()) >= 0 && isValid();
+		return Double.compare(now, getNextTime()) >= 0 && isTriggerConditionTrue();
 	}
 
-	public boolean isValid() {
+	public boolean isTriggerConditionTrue() {
 		double rand = RandomHelper.nextDouble();
 		return probability > rand;
 	}

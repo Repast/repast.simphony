@@ -47,11 +47,11 @@ public class Transition {
 		return target;
 	}
 	
-	public boolean isValid(){
-		return trigger.isValid();
+	public boolean isTransitionConditionTrue(){
+		return trigger.isTriggerConditionTrue() && checkGuard();
 	}
 	
-	public boolean isTriggered(){
+	public boolean isTransitionTriggered(){
 		return trigger.isTriggered() && checkGuard();
 	}
 	

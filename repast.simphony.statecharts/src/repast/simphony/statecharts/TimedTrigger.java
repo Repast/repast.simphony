@@ -38,11 +38,11 @@ public class TimedTrigger extends AbstractTrigger{
 	
 	@Override
 	public boolean isTriggered(){
-		return isValid();
+		return isTriggerConditionTrue();
 	}
 	
 	@Override
-	public boolean isValid(){
+	public boolean isTriggerConditionTrue(){
 		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),getNextTime()) >= 0;
 	}
 	

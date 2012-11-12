@@ -46,6 +46,14 @@ public enum StateChartResolveActionScheduler {
 		}
 	}
 	
+	public void initialize(){
+		for(Double key : resolveActions.keySet()) {
+			ResolveActionsMapValue ramv = resolveActions.remove(key);
+			ramv.isa = null;
+			ramv.scra = null;
+		}
+	}
+	
 	public void clearOldResolveActions(){
 		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		List<Double> keysToRemove = new ArrayList<Double>();

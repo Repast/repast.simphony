@@ -36,10 +36,10 @@ public class ExponentialDecayRateTrigger extends AbstractTrigger {
 	}
 
 	public boolean isTriggered() {
-		return isValid();
+		return isTriggerConditionTrue();
 	}
 
-	public boolean isValid() {
+	public boolean isTriggerConditionTrue() {
 		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),getNextTime()) >= 0;
 	}
 
