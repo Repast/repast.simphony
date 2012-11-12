@@ -118,6 +118,19 @@ public class ModelPanel extends JPanel implements BatchRunPanel {
     });
   }
   
+  /* (non-Javadoc)
+   * @see repast.simphony.batch.gui.BatchRunPanel#validateInput()
+   */
+  @Override
+  public ValidationResult validateInput() {
+    if (modelFld.getText().trim().isEmpty()) return new ValidationResult("Model directory is missing.");
+    if (scenarioFld.getText().trim().isEmpty()) return new ValidationResult("Scenario directory is missing.");
+    if (outFld.getText().trim().isEmpty()) return new ValidationResult("Ouput directory is missing.");
+    if (keyDirFld.getText().trim().isEmpty()) return new ValidationResult("SSH key directory is missing.");
+    
+    return ValidationResult.SUCCESS;
+  }
+
   public String getModelDirectory() {
     return modelFld.getText().trim();
   }

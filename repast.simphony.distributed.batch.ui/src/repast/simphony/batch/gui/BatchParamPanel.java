@@ -12,8 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,6 +30,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import repast.simphony.parameter.ParameterConstants;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersParser;
 
@@ -52,8 +55,10 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
   private JPanel bpConfigPanel = new JPanel(new BorderLayout());
 
   private List<ParameterInputPanel> inputPanels = new ArrayList<ParameterInputPanel>();
+  private Map<String, ParameterData> pdMap = new HashMap<String, ParameterData>();
   private Parameters params;
   private BatchConfigMediator mediator;
+  private Set<String> changedParams = new HashSet<String>();
 
   public BatchParamPanel(BatchConfigMediator mediator, PresentationModel<BatchRunConfigBean> pModel) {
     super(new BorderLayout());
@@ -230,12 +235,14 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
   private void loadParameters(String parameterFile, String bpFile) {
     bpConfigPanel.removeAll();
     inputPanels.clear();
+    pdMap.clear();
+    mediator.updateStatusBar(Color.BLACK, "");
+    bpFileFld.setForeground(Color.BLACK);
 
     try {
       ParametersParser parser = new ParametersParser(new File(parameterFile));
       params = parser.getParameters();
 
-      Map<String, ParameterData> pdMap = new HashMap<String, ParameterData>();
       // on first open data might be empty
       if (bpFile.length() > 0) {
         BatchParameterParser bpParser = new BatchParameterParser(bpFile);
@@ -246,9 +253,19 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
           for (ParameterData data : bpParser.parse()) {
             pdMap.put(data.getName(), data);
           }
+
+          if (!pdMap.containsKey(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
+            // if the seed is the timestamp then we just omit it from the file
+            // this adds it back in.
+            BatchParameterParser.PD pd = new BatchParameterParser.PD();
+            pd.data.put(ParameterAttribute.NAME, ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME);
+            pd.type = ParameterType.RANDOM;
+            pdMap.put(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME, pd);
+          }
         } catch (IOException ex) {
           // this means error parsing the bpFile so its bad data
           // so make foreground red.
+          mediator.updateStatusBar(Color.RED, "Error parsing batch paramter file");
           bpFileFld.setForeground(Color.RED);
         }
       }
@@ -261,7 +278,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
         // so flag that
         if (pd == null && !bpFileFld.getForeground().equals(Color.RED))
           bpFileFld.setForeground(Color.RED);
-        ParameterInputPanel inputPanel = new ParameterInputPanel(name, params, pd);
+        ParameterInputPanel inputPanel = new ParameterInputPanel(this, name, params, pd);
         formBuilder.append(inputPanel);
         inputPanels.add(inputPanel);
       }
@@ -272,6 +289,32 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       // TODO better error.
       ex.printStackTrace();
     }
+  }
+
+  /**
+   * Tells this batch parameter panel that the parameter data has changed.
+   * 
+   * @param parameterData
+   */
+  public void parameterChanged(ParameterData parameterData) {
+
+    boolean changed = false;
+    ParameterData pd = pdMap.get(parameterData.getName());
+    if (pd == null) {
+      changed = true;
+    } else {
+      changed = !pd.equals(parameterData);
+    }
+
+    if (changed) {
+      changedParams.add(parameterData.getName());
+      bpFileFld.setForeground(Color.RED);
+    } else {
+      changedParams.remove(parameterData.getName());
+    }
+
+    if (changedParams.size() == 0)
+      bpFileFld.setForeground(Color.BLACK);
   }
 
   private void browse(JTextField fld, String title, boolean showHidden) {
@@ -291,22 +334,36 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       fld.setText(chooser.getSelectedFile().getAbsolutePath());
   }
 
-  private boolean validateInput() {
-    boolean passed = true;
-    for (ParameterInputPanel panel : inputPanels) {
-      ValidationResult vResult = panel.validateInput();
-      if (vResult != ValidationResult.SUCCESS) {
-        passed = false;
-        mediator.updateStatusBar(Color.RED, vResult.getMessage());
-        break;
-      }
-    }
+  private boolean validateBatchInput() {
+    ValidationResult result = validateInput();
+
+    boolean passed = ValidationResult.SUCCESS.equals(result);
+    if (!passed)
+      mediator.updateStatusBar(Color.RED, result.getMessage());
 
     return passed;
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see repast.simphony.batch.gui.BatchRunPanel#validateInput()
+   */
+  @Override
+  public ValidationResult validateInput() {
+    for (ParameterInputPanel panel : inputPanels) {
+      ValidationResult vResult = panel.validateInput();
+      if (vResult != ValidationResult.SUCCESS) {
+        return vResult;
+      }
+    }
+    
+    if (bpFileFld.getForeground().equals(Color.RED)) return new ValidationResult("Batch parameter file needs to be generated.");
+    return ValidationResult.SUCCESS;
+  }
+
   private void generate() {
-    if (validateInput()) {
+    if (validateBatchInput()) {
       mediator.updateStatusBar(Color.BLACK, "");
       List<ParameterInputPanel> constants = new ArrayList<ParameterInputPanel>();
       List<ParameterInputPanel> nonConsts = new ArrayList<ParameterInputPanel>();
@@ -359,6 +416,7 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
         } catch (XMLStreamException ex) {
         }
       }
+      changedParams.clear();
       bpFileFld.setForeground(Color.BLACK);
     }
   }

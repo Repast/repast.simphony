@@ -21,5 +21,12 @@ public interface BatchRunPanel {
    * @return TODO
    */
   CommitResult commit(BatchRunConfigBean model);
+  
+  /**
+   * Validates the input for this panel.
+   * 
+   * @return the result of the validation.
+   */
+  ValidationResult validateInput();
 
 }

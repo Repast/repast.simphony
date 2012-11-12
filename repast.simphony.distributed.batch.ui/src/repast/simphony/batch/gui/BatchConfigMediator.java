@@ -60,13 +60,14 @@ public class BatchConfigMediator {
   private BatchParamPanel bpPanel;
   private JTabbedPane tabs = new JTabbedPane();
   private JLabel status = new JLabel();
-  
-  private PresentationModel<BatchRunConfigBean> pModel = new PresentationModel<BatchRunConfigBean>(model);
+
+  private PresentationModel<BatchRunConfigBean> pModel = new PresentationModel<BatchRunConfigBean>(
+      model);
 
   private File configFile = null;
   private boolean dirty = false;
   private Appender stdout;
-  
+
   public BatchConfigMediator(File modelDirectory) {
     this();
     model.setModelDirectory(modelDirectory.getAbsolutePath());
@@ -81,46 +82,46 @@ public class BatchConfigMediator {
     Appender tap = new TextAreaAppender(console, layout);
     tap.setName(TextAreaAppender.class.getName());
     logger.addAppender(tap);
-    
+
     pModel.addPropertyChangeListener("buffering", new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent arg0) {
         setDirty(true);
       }
     });
-    
+
     tabs.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent evt) {
         tabChanged();
       }
     });
-   
+
     status.setFont(status.getFont().deriveFont(12f));
     status.setForeground(Color.RED);
     status.setText(" ");
   }
-  
+
   private void tabChanged() {
-    status.setText(tabs.getTitleAt(tabs.getSelectedIndex()));
+    // status.setText(tabs.getTitleAt(tabs.getSelectedIndex()));
   }
-  
+
   private void setDirty(boolean dirty) {
     this.dirty = dirty;
     // TODO query the panels to see if we can run
-    
+
   }
-  
+
   public void onExit() {
     Logger logger = Logger.getLogger("repast.simphony.batch");
     logger.addAppender(stdout);
   }
-  
+
   public void updateStatusBar(Color color, String msg) {
     status.setForeground(color);
     status.setText(msg);
   }
-  
+
   JComponent getStatusBar() {
     return status;
   }
@@ -139,7 +140,7 @@ public class BatchConfigMediator {
     tabs.addTab("Hosts", hostsPanel);
     tabs.addTab("Console", console);
     hostsPanel.init(model);
-    
+
     if (model.getModelDirectory().length() > 0) {
       updateFromModel();
       dirty = false;
@@ -147,15 +148,26 @@ public class BatchConfigMediator {
     return tabs;
   }
 
+  private ValidationResult validateAll() {
+    ValidationResult result = bpPanel.validateInput();
+    if (!result.equals(ValidationResult.SUCCESS))
+      return result;
+    result = modelPanel.validateInput();
+    if (!result.equals(ValidationResult.SUCCESS))
+      return result;
+    result = hostsPanel.validateInput();
+    return result;
+  }
+
   private void commitAll() {
     pModel.triggerCommit();
     hostsPanel.commit(model);
   }
-  
+
   private void askSave() {
-    int ret = JOptionPane.showConfirmDialog(console.getParent().getParent(), 
-        "Do you want to save the changes you have made to the batch run configuration?", "Save Changes?",
-        JOptionPane.YES_NO_OPTION);
+    int ret = JOptionPane.showConfirmDialog(console.getParent().getParent(),
+        "Do you want to save the changes you have made to the batch run configuration?",
+        "Save Changes?", JOptionPane.YES_NO_OPTION);
     if (ret == JOptionPane.YES_OPTION) {
       saveConfig();
     }
@@ -175,7 +187,7 @@ public class BatchConfigMediator {
     if (dirty) {
       askSave();
     }
-    
+
     File file = configFile;
     if (file == null) {
       file = new File(model.getModelDirectory());
@@ -190,7 +202,7 @@ public class BatchConfigMediator {
         }
       }
     }
-    
+
     JFileChooser chooser = new JFileChooser(file);
     chooser.setDialogType(JFileChooser.OPEN_DIALOG);
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -275,13 +287,15 @@ public class BatchConfigMediator {
       configFile.getParentFile().mkdirs();
       writer = new BufferedWriter(new FileWriter(configFile));
       writer.write("model.archive = "
-          + convertPath(new File(model.getOutputDirectory(), "complete_model.jar").getCanonicalPath()) + "\n");
+          + convertPath(new File(model.getOutputDirectory(), "complete_model.jar")
+              .getCanonicalPath()) + "\n");
       writer.write("batch.params.file = scenario.rs/batch_params.xml\n");
-      writer.write("ssh.key_dir = " + convertPath(new File(model.getKeyDirectory()).getCanonicalPath()) + "\n");
+      writer.write("ssh.key_dir = "
+          + convertPath(new File(model.getKeyDirectory()).getCanonicalPath()) + "\n");
       // stored in minutes, but config in seconds
       writer.write("poll.frequency = " + model.getPollFrequency() * 60 + "\n");
-      writer.write("model.output = " + convertPath(new File(model.getOutputDirectory()).getCanonicalPath())
-          + "\n\n");
+      writer.write("model.output = "
+          + convertPath(new File(model.getOutputDirectory()).getCanonicalPath()) + "\n\n");
       writer.write("vm.arguments = " + model.getVMArguments() + "\n");
       hostsPanel.writeHosts(writer);
       logger.info("Writing batch run config file to: " + configFile.getAbsolutePath());
@@ -290,43 +304,48 @@ public class BatchConfigMediator {
         writer.close();
     }
   }
-  
+
   private String convertPath(String path) {
-	  return path.replace("\\", "/");
+    return path.replace("\\", "/");
   }
 
   public void run() {
     commitAll();
-    tabs.setSelectedComponent(console);
+    ValidationResult result = validateAll();
+    if (result.equals(ValidationResult.SUCCESS)) {
+      tabs.setSelectedComponent(console);
+      try {
+        File configFile = new File(model.getOutputDirectory(), "config.props");
+        writeConfigFile(configFile);
+        System.setErr(new PrintStream(console.getErrorOutputStream(), true));
+        System.setOut(new PrintStream(console.getStdOutputStream(), true));
 
-    try {
-      File configFile = new File(model.getOutputDirectory(), "config.props");
-      writeConfigFile(configFile);
-      System.setErr(new PrintStream(console.getErrorOutputStream(), true));
-      System.setOut(new PrintStream(console.getStdOutputStream(), true));
+        Project p = createAntProject();
+        AntSessionRunner runner = new AntSessionRunner(p, configFile.getCanonicalPath());
+        runner.execute();
 
-      Project p = createAntProject();
-      AntSessionRunner runner = new AntSessionRunner(p, configFile.getCanonicalPath());
-      runner.execute();
-
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    } catch (ParserConfigurationException ex) {
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    } catch (SAXException ex) {
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      } catch (IOException ex) {
+        ex.printStackTrace();
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      } catch (ParserConfigurationException ex) {
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      } catch (SAXException ex) {
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      }
+    } else {
+      JOptionPane.showMessageDialog(tabs, result.getMessage());
     }
   }
 
   private Project createAntProject() throws IOException, ParserConfigurationException, SAXException {
-    
+
     Project project = new Project();
     @SuppressWarnings("restriction")
     URL url = groovy.lang.GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
     project.setProperty("groovy.home", URLDecoder.decode(url.getFile(), "UTF-8"));
     url = BatchConstants.class.getResource("/scripts/build.xml");
-    project.setUserProperty("ant.file",  new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath());
+    project.setUserProperty("ant.file",
+        new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath());
     project.setProperty("model.dir", new File(model.getModelDirectory()).getCanonicalPath());
     project.setProperty("model.scenario.dir",
         new File(model.getScenarioDirectory()).getCanonicalPath());
@@ -345,8 +364,9 @@ public class BatchConfigMediator {
     File output = new File(model.getOutputDirectory());
     if (!output.exists())
       output.mkdirs();
-    
-    //project.setProperty("zip.file", new File(output, "complete_model.zip").getCanonicalPath());
+
+    // project.setProperty("zip.file", new File(output,
+    // "complete_model.zip").getCanonicalPath());
     project.setProperty("jar.file", new File(output, "complete_model.jar").getCanonicalPath());
 
     project.init();
@@ -365,18 +385,23 @@ public class BatchConfigMediator {
 
   public void createArchive() {
     commitAll();
-    tabs.setSelectedComponent(console);
-    try {
-      File configFile = new File(model.getOutputDirectory(), "config.props");
-      writeConfigFile(configFile);
-      Project p = createAntProject();
-      new AntSessionRunner(p, null).execute();
-    } catch (IOException ex) {
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    } catch (ParserConfigurationException ex) {
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
-    } catch (SAXException ex) {
-      ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+    ValidationResult result = validateAll();
+    if (result.equals(ValidationResult.SUCCESS)) {
+      tabs.setSelectedComponent(console);
+      try {
+        File configFile = new File(model.getOutputDirectory(), "config.props");
+        writeConfigFile(configFile);
+        Project p = createAntProject();
+        new AntSessionRunner(p, null).execute();
+      } catch (IOException ex) {
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      } catch (ParserConfigurationException ex) {
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      } catch (SAXException ex) {
+        ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
+      }
+    } else {
+      JOptionPane.showMessageDialog(tabs, result.getMessage());
     }
   }
 
@@ -400,7 +425,8 @@ public class BatchConfigMediator {
       project.executeTarget(project.getDefaultTarget());
       if (configFile != null) {
         SessionsDriver driver = new SessionsDriver(configFile);
-        SSHSessionFactory.getInstance().setUserInfo(new GUIUserInfo(SwingUtilities.getWindowAncestor(console)));
+        SSHSessionFactory.getInstance().setUserInfo(
+            new GUIUserInfo(SwingUtilities.getWindowAncestor(console)));
         driver.run();
       }
       return null;

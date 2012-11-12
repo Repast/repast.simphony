@@ -107,10 +107,10 @@ public class BatchParameterParser {
     return attrib.getValue().trim();
   }
   
-  private static class PD implements ParameterData {
+static class PD implements ParameterData {
     
-    private Map<ParameterAttribute, String> data = new HashMap<ParameterAttribute, String>();
-    private ParameterType type;
+    Map<ParameterAttribute, String> data = new HashMap<ParameterAttribute, String>();
+    ParameterType type;
 
     @Override
     public String getName() {
@@ -127,7 +127,22 @@ public class BatchParameterParser {
       return type;
     }
     
-    
+    public boolean equals(Object obj) {
+      if (obj == null) return false;
+      if (obj instanceof ParameterData) {
+        ParameterData pd = (ParameterData)obj;
+        if (pd.getName().equals(getName()) && type.equals(pd.getType())) {
+          for (ParameterAttribute key : data.keySet()) {
+            String val = pd.getAttribute(key);
+            if (val == null) return false;
+            if (!val.equals(data.get(key))) return false;
+          }
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    }
   }
-
 }

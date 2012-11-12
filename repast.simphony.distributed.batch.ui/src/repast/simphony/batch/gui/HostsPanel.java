@@ -218,6 +218,17 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     model.addElement(target);
     hostList.setSelectedIndex(model.getSize() - 1);
   }
+  
+  
+
+  /* (non-Javadoc)
+   * @see repast.simphony.batch.gui.BatchRunPanel#validateInput()
+   */
+  @Override
+  public ValidationResult validateInput() {
+    if (hostList.getModel().getSize() == 0) return new ValidationResult("Hosts list is empty.");
+    return ValidationResult.SUCCESS;
+  }
 
   private void commitCurrent() {
     if (selectedHost != null) {

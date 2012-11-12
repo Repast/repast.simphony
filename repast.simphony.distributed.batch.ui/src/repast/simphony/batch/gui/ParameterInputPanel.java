@@ -6,6 +6,8 @@ package repast.simphony.batch.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -15,6 +17,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -35,9 +39,13 @@ public class ParameterInputPanel extends JPanel {
   private JPanel inputPanels = new JPanel(new CardLayout());
   private String pName, displayName;
   private Class<?> pType;
+  private BatchParamPanel batchPanel;
+  private boolean notifyBP = true;
 
-  public ParameterInputPanel(String pName, Parameters params, ParameterData pData) {
+  public ParameterInputPanel(BatchParamPanel batchPanel, String pName, Parameters params,
+      ParameterData pData) {
     super(new BorderLayout());
+    this.batchPanel = batchPanel;
     this.pName = pName;
     this.displayName = params.getDisplayName(pName);
     setName(pName);
@@ -55,18 +63,35 @@ public class ParameterInputPanel extends JPanel {
 
     add(formBuilder.getPanel(), BorderLayout.CENTER);
 
+    notifyBP = false;
     typeBox.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent evt) {
         CardLayout layout = (CardLayout) inputPanels.getLayout();
         layout.show(inputPanels, ((ParameterType) evt.getItem()).toString());
+        fireParameterChanged();
       }
     });
 
     update(pData, params);
+    notifyBP = true;
+  }
+
+  private void fireParameterChanged() {
+    if (notifyBP)
+      ParameterInputPanel.this.batchPanel.parameterChanged(createParameterData());
+  }
+
+  private ParameterData createParameterData() {
+    InputPanel ip = getCurrentPanel();
+    if (ip != null) {
+      return ip.createParameterData(pName);
+    }
+    return null;
   }
 
   public void update(ParameterData pData, Parameters params) {
+    notifyBP = false;
     if (pData == null && pName.equals(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
       typeBox.setSelectedItem(ParameterType.RANDOM);
     } else if (pData != null) {
@@ -80,6 +105,7 @@ public class ParameterInputPanel extends JPanel {
           ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema.getDefaultValue());
       }
     }
+    notifyBP = true;
   }
 
   public ParameterType getType() {
@@ -114,16 +140,32 @@ public class ParameterInputPanel extends JPanel {
   }
 
   private void createInputPanels(Parameters params) {
+    BatchInputListener listener = new BatchInputListener(this);
     for (int i = 0; i < typeBox.getModel().getSize(); i++) {
       Object type = typeBox.getModel().getElementAt(i);
       if (type == ParameterType.LIST) {
         ListInputPanel inputPanel = new ListInputPanel(displayName);
+        inputPanel.fld.getDocument().addDocumentListener(listener);
         inputPanels.add(inputPanel, type.toString());
       } else if (type == ParameterType.CONSTANT) {
         ConstantInputPanel inputPanel = new ConstantInputPanel(displayName, pType);
+        if (pType.equals(Boolean.class) || pType.equals(Boolean.class)) {
+          JCheckBox box = (JCheckBox)inputPanel.fld;
+          box.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+              fireParameterChanged();
+            }
+          });
+        } else {
+          JTextField fld = (JTextField) inputPanel.fld;
+          fld.getDocument().addDocumentListener(listener);
+        }
         inputPanels.add(inputPanel, type.toString());
       } else if (type == ParameterType.NUMBER) {
         NumberInputPanel inputPanel = new NumberInputPanel(displayName, pType);
+        inputPanel.toFld.getDocument().addDocumentListener(listener);
+        inputPanel.fromFld.getDocument().addDocumentListener(listener);
+        inputPanel.stepFld.getDocument().addDocumentListener(listener);
         inputPanels.add(inputPanel, type.toString());
       } else if (type == ParameterType.RANDOM) {
         RandomInputPanel inputPanel = new RandomInputPanel();
@@ -151,15 +193,17 @@ public class ParameterInputPanel extends JPanel {
     void set(ParameterData data);
 
     ValidationResult validateInput();
+
+    ParameterData createParameterData(String pName);
   }
 
   private static abstract class AbstractInputPanel extends JPanel {
 
-    protected String pName;
+    protected String displayName;
 
-    public AbstractInputPanel(String pName) {
+    public AbstractInputPanel(String displayName) {
       super(new BorderLayout());
-      this.pName = pName;
+      this.displayName = displayName;
     }
 
   }
@@ -203,22 +247,38 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
+    public ParameterData createParameterData(String pName) {
+      BatchParameterParser.PD pd = new BatchParameterParser.PD();
+      pd.data.put(ParameterAttribute.START, fromFld.getText().trim());
+      pd.data.put(ParameterAttribute.END, toFld.getText().trim());
+      pd.data.put(ParameterAttribute.STEP, stepFld.getText().trim());
+      pd.data.put(ParameterAttribute.NAME, pName);
+      pd.type = ParameterType.NUMBER;
+      return pd;
+    }
+
+    @Override
     public ValidationResult validateInput() {
       if (fromFld.getText().trim().isEmpty())
-        return new ValidationResult("Parameter " + pName + " is missing a \"from\" value");
+        return new ValidationResult("Parameter " + displayName + " is missing a \"from\" value");
       if (toFld.getText().trim().isEmpty())
-        return new ValidationResult("Parameter " + pName + " is missing a \"to\" value");
+        return new ValidationResult("Parameter " + displayName + " is missing a \"to\" value");
       if (stepFld.getText().trim().isEmpty())
-        return new ValidationResult("Parameter " + pName + " is missing a \"step\" value");
-      
+        return new ValidationResult("Parameter " + displayName + " is missing a \"step\" value");
+
       double from = Double.valueOf(fromFld.getText().trim());
       double to = Double.valueOf(toFld.getText().trim());
       double step = Double.valueOf(stepFld.getText().trim());
-      
-      if (step == 0) return new ValidationResult("Parameter " + pName + ": \"step\" value must be greater than 0");
-      if (step > 0 && to <= from) return new ValidationResult("Parameter " + pName + ": \"to\" value must be greater than \"from\" value");
-      if (step < 0 && to >= from) return new ValidationResult("Parameter " + pName + ": \"from\" value must be greater than \"to\" value");
-      
+
+      if (step == 0)
+        return new ValidationResult("Parameter " + displayName
+            + ": \"step\" value must be greater than 0");
+      if (step > 0 && to <= from)
+        return new ValidationResult("Parameter " + displayName
+            + ": \"to\" value must be greater than \"from\" value");
+      if (step < 0 && to >= from)
+        return new ValidationResult("Parameter " + displayName
+            + ": \"from\" value must be greater than \"to\" value");
 
       return ValidationResult.SUCCESS;
     }
@@ -274,10 +334,23 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
+    public ParameterData createParameterData(String pName) {
+      BatchParameterParser.PD pd = new BatchParameterParser.PD();
+      if (fld instanceof JTextField)
+        pd.data.put(ParameterAttribute.VALUE, ((JTextField) fld).getText().trim());
+      else
+        pd.data.put(ParameterAttribute.VALUE, Boolean.valueOf(((JCheckBox) fld).isSelected())
+            .toString());
+      pd.data.put(ParameterAttribute.NAME, pName);
+      pd.type = ParameterType.CONSTANT;
+      return pd;
+    }
+
+    @Override
     public ValidationResult validateInput() {
       if (!(fld instanceof JCheckBox)) {
         if (((JTextField) fld).getText().trim().isEmpty())
-          return new ValidationResult("Parameter " + pName + " is missing a value");
+          return new ValidationResult("Parameter " + displayName + " is missing a value");
       }
       return ValidationResult.SUCCESS;
     }
@@ -329,6 +402,15 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
+    public ParameterData createParameterData(String pName) {
+      BatchParameterParser.PD pd = new BatchParameterParser.PD();
+      pd.data.put(ParameterAttribute.VALUES, fld.getText().trim());
+      pd.data.put(ParameterAttribute.NAME, pName);
+      pd.type = ParameterType.LIST;
+      return pd;
+    }
+
+    @Override
     public void write(XMLStreamWriter writer, String pName, Class<?> pType)
         throws XMLStreamException {
       writer.writeStartElement("parameter");
@@ -342,7 +424,7 @@ public class ParameterInputPanel extends JPanel {
     public ValidationResult validateInput() {
       // validate the list format somehow
       if (fld.getText().trim().isEmpty())
-        return new ValidationResult("Parameter " + pName + " is missing a value");
+        return new ValidationResult("Parameter " + displayName + " is missing a value");
       return ValidationResult.SUCCESS;
     }
 
@@ -352,11 +434,43 @@ public class ParameterInputPanel extends JPanel {
     }
   }
 
+  private class BatchInputListener implements DocumentListener {
+    
+    ParameterInputPanel inputPanel;
+    
+    public BatchInputListener(ParameterInputPanel inputPanel) {
+      this.inputPanel = inputPanel;
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent evt) {
+      inputPanel.fireParameterChanged();
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent evt) {
+      inputPanel.fireParameterChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent evt) {
+      inputPanel.fireParameterChanged();
+    }
+  }
+
   private static class RandomInputPanel extends JPanel implements InputPanel {
 
     @Override
     public void write(XMLStreamWriter writer, String pName, Class<?> pType)
         throws XMLStreamException {
+    }
+
+    @Override
+    public ParameterData createParameterData(String pName) {
+      BatchParameterParser.PD pd = new BatchParameterParser.PD();
+      pd.data.put(ParameterAttribute.NAME, pName);
+      pd.type = ParameterType.RANDOM;
+      return pd;
     }
 
     @Override

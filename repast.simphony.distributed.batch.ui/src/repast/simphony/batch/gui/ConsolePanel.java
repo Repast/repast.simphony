@@ -107,6 +107,14 @@ public class ConsolePanel extends JPanel implements BatchRunPanel {
     menu.show(pane, evt.getX(), evt.getY());
   }
   
+  /* (non-Javadoc)
+   * @see repast.simphony.batch.gui.BatchRunPanel#validateInput()
+   */
+  @Override
+  public ValidationResult validateInput() {
+    return ValidationResult.SUCCESS;
+  }
+
   public void update(final String val, final boolean error) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
