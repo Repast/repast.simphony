@@ -4,17 +4,14 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.collections15.ListUtils;
 
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.ISchedulableAction;
-import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.random.RandomHelper;
 import cern.jet.random.Uniform;
 
@@ -185,7 +182,14 @@ public class DefaultStateChart implements StateChart {
 
 	@Override
 	public void addSelfTransition(Trigger trigger, State state) {
+		addSelfTransition(trigger, Transition.createEmptyOnTransition(), Transition.createEmptyGuard(), state);
+	}
+	
+	@Override
+	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition, Callable<Boolean> guard, State state) {
 		Transition transition = new Transition(trigger, state, state);
+		transition.registerOnTransition(onTransition);
+		transition.registerGuard(guard);
 		addSelfTransition(transition);
 	}
 
@@ -387,6 +391,26 @@ public class DefaultStateChart implements StateChart {
 	@Override
 	public void setPriority(double priority) {
 		this.priority = priority;
+	}
+
+	@Override
+	public void addBranch(Branch branch) {
+		// create transition from "from" to branch
+		Transition t = new Transition(branch.getFromTrigger(), branch.getFrom(), branch, branch.getFromTransitionPriority());
+		t.registerGuard(branch.getFromGuard());
+		t.registerOnTransition(branch.getFromOnTransition());
+		addRegularTransition(t);
+		// create tos transitions
+		List<State> tos = branch.getTos();
+		int numOfTos = tos.size(); 
+		List<Trigger> allTriggers = new ArrayList<Trigger>(branch.getConditions());
+		allTriggers.add(new AlwaysTrigger());
+		for (int i = 0; i < numOfTos; i++){
+			State to = tos.get(i);
+			Trigger tr = allTriggers.get(i);
+			Transition tt = new Transition(tr, branch, to, numOfTos - i);
+			addRegularTransition(tt);
+		}
 	}
 
 }

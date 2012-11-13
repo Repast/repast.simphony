@@ -5,21 +5,34 @@ import java.util.concurrent.Callable;
 import simphony.util.messages.MessageCenter;
 
 public class Transition {
-	private Trigger trigger;
-	private State source, target;
-	private double priority;
-	private Callable<Void> onTransition = new Callable<Void>(){
-		@Override
-		public Void call() throws Exception {
-			return null;
-		}
-	};
-	private Callable<Boolean> guard = new Callable<Boolean>(){
+	
+	private static class EmptyGuard implements Callable<Boolean>{
 		@Override
 		public Boolean call() throws Exception {
 			return true;
 		}
-	};
+	}
+	
+	private static class EmptyOnTransition implements Callable<Void>{
+		@Override
+		public Void call() throws Exception {
+			return null;
+		}
+	}
+	
+	public static Callable<Boolean> createEmptyGuard() {
+		return new EmptyGuard();
+	}
+	
+	public static Callable<Void> createEmptyOnTransition() {
+		return new EmptyOnTransition();
+	}
+	
+	private Trigger trigger;
+	private State source, target;
+	private double priority;
+	private Callable<Void> onTransition = new EmptyOnTransition();
+	private Callable<Boolean> guard = new EmptyGuard();
 	
 
 
