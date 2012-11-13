@@ -43,7 +43,7 @@ public class TimedTrigger extends AbstractTrigger{
 	
 	@Override
 	public boolean isTriggerConditionTrue(){
-		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),getNextTime()) >= 0;
+		return Double.compare(RunEnvironment.getInstance().getCurrentSchedule().getTickCount(),getNextTime()) == 0;
 	}
 	
 	public String toString(){

@@ -118,10 +118,18 @@ public class Transition {
 		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
 	}
 
-	public void reschedule(StateChart stateChart, double currentTime) {
+	public void rescheduleRegularTransition(StateChart stateChart, double currentTime) {
 		// if recurring && getNextTime is currentTime
 		if (trigger.isRecurring()
 				&& Double.compare(trigger.getNextTime(), currentTime) == 0) {
+			// reset to next time and reschedule
+			initialize(stateChart);
+		}
+	}
+	
+	public void rescheduleSelfTransition(StateChart stateChart, double currentTime) {
+		// if getNextTime is currentTime
+		if (Double.compare(trigger.getNextTime(), currentTime) == 0) {
 			// reset to next time and reschedule
 			initialize(stateChart);
 		}

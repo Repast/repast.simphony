@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import repast.simphony.engine.environment.RunEnvironment;
@@ -24,8 +25,7 @@ public class StateChartTest {
 		RunEnvironment.init(new Schedule(), null, null, false);
 		StateChartResolveActionScheduler.INSTANCE.initialize();
 	}
-	
-	
+
 	@Test
 	public void removeTime() {
 		List<Double> times = new ArrayList<Double>();
@@ -172,23 +172,25 @@ public class StateChartTest {
 		assertEquals(true, tc4.onEnter);
 		assertEquals(5, schedule.getTickCount(), 0.001);
 	}
-	
+
 	private static class MyStateChart2 extends DefaultStateChart {
-		
+
 		public MyStateChart2() {
 			DefaultState one = new DefaultState("one");
 			this.registerEntryState(one);
 			DefaultState two = new DefaultState("two");
 			DefaultState three = new DefaultState("three");
-			Trigger tr1 = new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a"));
+			Trigger tr1 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
 			Transition t1 = new Transition(tr1, one, two);
 			this.addRegularTransition(t1);
-			Trigger tr2 = new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b"));
+			Trigger tr2 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b"));
 			Transition t2 = new Transition(tr2, two, three);
 			this.addRegularTransition(t2);
 		}
 	}
-	
+
 	private static class MyAgent2 {
 
 		public StateChart st;
@@ -198,107 +200,112 @@ public class StateChartTest {
 			st.begin();
 		}
 	}
-	
+
 	@Test
-	public void myStateChart2Scenario1(){
+	public void myStateChart2Scenario1() {
 		MyAgent2 a = new MyAgent2();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
+		assertEquals(1, schedule.getTickCount(), 0.0001);
 		StateChart st = a.st;
 		st.receiveMessage("a");
 		st.receiveMessage("b");
 		schedule.execute();
-		assertEquals("three",a.st.getCurrentState().getId());
-		assertEquals(2,schedule.getTickCount(),0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
 	}
-	
+
 	@Test
-	public void myStateChart2Scenario2(){
+	public void myStateChart2Scenario2() {
 		MyAgent2 a = new MyAgent2();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
+		assertEquals(1, schedule.getTickCount(), 0.0001);
 		StateChart st = a.st;
 		st.receiveMessage("a");
 		st.receiveMessage("a");
 		st.receiveMessage("b");
 		schedule.execute();
-		assertEquals("three",a.st.getCurrentState().getId());
-		assertEquals(2,schedule.getTickCount(),0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
 	}
-	
+
 	@Test
-	public void myStateChart2Scenario3_simple(){
+	public void myStateChart2Scenario3_simple() {
 		MyAgent2 a = new MyAgent2();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
+		assertEquals(1, schedule.getTickCount(), 0.0001);
 		StateChart st = a.st;
 		schedule.execute();
-		assertEquals(2,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		st.receiveMessage("hello");
 		schedule.execute();
-		assertEquals("one",a.st.getCurrentState().getId());
-		assertEquals(3,schedule.getTickCount(),0.0001);
-		// the queue should have been cleared if no candidate was found in time step
-		assertEquals(true,a.st.getQueue().isEmpty());
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		// the queue should have been cleared if no candidate was found in time
+		// step
+		assertEquals(true, a.st.getQueue().isEmpty());
 	}
-	
+
 	@Test
-	public void myStateChart2Scenario3(){
+	public void myStateChart2Scenario3() {
 		MyAgent2 a = new MyAgent2();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
+		assertEquals(1, schedule.getTickCount(), 0.0001);
 		StateChart st = a.st;
 		schedule.execute();
-		assertEquals("one",a.st.getCurrentState().getId());
-		assertEquals(2,schedule.getTickCount(),0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
 		st.receiveMessage("a");
 		schedule.execute();
-		assertEquals(3,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
 		schedule.execute();
-		assertEquals(4,schedule.getTickCount(),0.0001);
+		assertEquals(4, schedule.getTickCount(), 0.0001);
 		schedule.execute();
-		assertEquals(5,schedule.getTickCount(),0.0001);
+		assertEquals(5, schedule.getTickCount(), 0.0001);
 		st.receiveMessage("a");
 		schedule.execute();
-		assertEquals(6,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
+		assertEquals(6, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
 		st.receiveMessage("b");
 		schedule.execute();
-		assertEquals(7,schedule.getTickCount(),0.0001);
-		assertEquals("three",a.st.getCurrentState().getId());
+		assertEquals(7, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
 	}
-	
+
 	/**
-	 * For testing transition resolution when multiple transitions are triggered.
+	 * For testing transition resolution when multiple transitions are
+	 * triggered.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	private static class MyStateChart3 extends DefaultStateChart {
-		
+
 		public MyStateChart3() {
 			DefaultState one = new DefaultState("one");
 			this.registerEntryState(one);
 			DefaultState two = new DefaultState("two");
 			DefaultState three = new DefaultState("three");
-			Trigger tr1 = new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a"));
-			Transition t1 = new Transition(tr1, one, two,1);
+			Trigger tr1 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
+			Transition t1 = new Transition(tr1, one, two, 1);
 			this.addRegularTransition(t1);
-			Trigger tr2 = new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a"));
+			Trigger tr2 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
 			Transition t2 = new Transition(tr2, one, three);
 			this.addRegularTransition(t2);
 		}
 	}
-	
+
 	private static class MyAgent3 {
 
 		public StateChart st;
@@ -308,86 +315,91 @@ public class StateChartTest {
 			st.begin();
 		}
 	}
-	
+
 	/**
 	 * Transition leading to state "two" is a higher priority.
 	 */
 	@Test
-	public void myStateChart3Scenario1(){
+	public void myStateChart3Scenario1() {
 		MyAgent3 a = new MyAgent3();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.PRIORITY);
 		st.receiveMessage("a");
 		schedule.execute();
-		assertEquals(2,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
 	}
-	
+
 	/**
-	 * Natural ordering of transitions (based on the order in which they were added to statechart).
+	 * Natural ordering of transitions (based on the order in which they were
+	 * added to statechart).
 	 */
 	@Test
-	public void myStateChart3Scenario2(){
+	public void myStateChart3Scenario2() {
 		MyAgent3 a = new MyAgent3();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.NATURAL);
 		st.receiveMessage("a");
 		schedule.execute();
-		assertEquals(2,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
 	}
-	
+
 	/**
-	 * Random ordering of transitions.
+	 * Random ordering of transitions. Generally ignored, but can be used to
+	 * check results with specific seed.
 	 */
+	@Ignore
 	@Test
-	public void myStateChart3Scenario3(){
+	public void myStateChart3Scenario3() {
 		MyAgent3 a = new MyAgent3();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.RANDOM);
 		st.receiveMessage("a");
-		RandomHelper.getDefaultRegistry().setSeed(0);
+		// RandomHelper.getDefaultRegistry().setSeed(0);
 		schedule.execute();
-		assertEquals(2,schedule.getTickCount(),0.0001);
-		assertEquals("three",a.st.getCurrentState().getId());
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
 	}
-	
+
 	/**
 	 * For testing transition deactivation.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	private static class MyStateChart4 extends DefaultStateChart {
-		
+
 		public MyStateChart4() {
 			DefaultState one = new DefaultState("one");
 			this.registerEntryState(one);
 			DefaultState two = new DefaultState("two");
 			DefaultState three = new DefaultState("three");
 			Trigger tr1 = new TimedTrigger(2);
-			Transition t1 = new Transition(tr1, one, two,1);
+			Transition t1 = new Transition(tr1, one, two, 1);
 			this.addRegularTransition(t1);
-			Trigger tr2 = new TimedTrigger(3);;
+			Trigger tr2 = new TimedTrigger(3);
+			;
 			Transition t2 = new Transition(tr2, one, three);
 			this.addRegularTransition(t2);
 		}
 	}
-	
+
 	private static class MyAgent4 {
 
 		public StateChart st;
@@ -397,52 +409,60 @@ public class StateChartTest {
 			st.begin();
 		}
 	}
-	
+
 	/**
 	 * Random ordering of transitions.
 	 */
 	@Test
-	public void myStateChart4Scenario1(){
+	public void myStateChart4Scenario1() {
 		MyAgent4 a = new MyAgent4();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
-		
-		assertEquals(2,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
-		assertEquals(true,StateChartResolveActionScheduler.INSTANCE.resolveActions.containsKey(3d));
-		assertEquals(true,StateChartResolveActionScheduler.INSTANCE.resolveActions.containsKey(4d));
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+
+		assertEquals(2,
+				StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
+		assertEquals(true,
+				StateChartResolveActionScheduler.INSTANCE.resolveActions
+						.containsKey(3d));
+		assertEquals(true,
+				StateChartResolveActionScheduler.INSTANCE.resolveActions
+						.containsKey(4d));
 		schedule.execute();
-		assertEquals(3,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
-		assertEquals(true,StateChartResolveActionScheduler.INSTANCE.resolveActions.isEmpty());
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals(true,
+				StateChartResolveActionScheduler.INSTANCE.resolveActions
+						.isEmpty());
 	}
-	
+
 	/**
 	 * For testing rescheduling recurring transitions.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	private static class MyStateChart5 extends DefaultStateChart {
-		
+
 		public MyStateChart5(final MyAgent5 a) {
 			DefaultState one = new DefaultState("one");
 			this.registerEntryState(one);
 			DefaultState two = new DefaultState("two");
-			Trigger tr1 = new ConditionTrigger(new Callable<Boolean>(){
+			Trigger tr1 = new ConditionTrigger(new Callable<Boolean>() {
 
 				@Override
 				public Boolean call() throws Exception {
 					return a.isTrue;
 				}
-				
-			},2);
-			Transition t1 = new Transition(tr1, one, two,1);
+
+			}, 2);
+			Transition t1 = new Transition(tr1, one, two, 1);
 			this.addRegularTransition(t1);
 		}
 	}
-	
+
 	private static class MyAgent5 {
 
 		public boolean isTrue = false;
@@ -453,29 +473,314 @@ public class StateChartTest {
 			st.begin();
 		}
 	}
-	
+
 	/**
 	 * Random ordering of transitions.
 	 */
 	@Test
-	public void myStateChart5Scenario1(){
+	public void myStateChart5Scenario1() {
 		MyAgent5 a = new MyAgent5();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
-		assertEquals(1,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		schedule.execute();
-		assertEquals(3,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		schedule.execute();
-		assertEquals(5,schedule.getTickCount(),0.0001);
-		assertEquals("one",a.st.getCurrentState().getId());
+		assertEquals(5, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
 		a.isTrue = true;
 		schedule.execute();
-		assertEquals(7,schedule.getTickCount(),0.0001);
-		assertEquals("two",a.st.getCurrentState().getId());
-		assertEquals(true,StateChartResolveActionScheduler.INSTANCE.resolveActions.isEmpty());
+		assertEquals(7, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals(true,
+				StateChartResolveActionScheduler.INSTANCE.resolveActions
+						.isEmpty());
+	}
+
+	/**
+	 * For testing branching transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart6 extends DefaultStateChart {
+
+		public MyStateChart6(final MyAgent6 a) {
+			DefaultState one = new DefaultState("one");
+			this.registerEntryState(one);
+			DefaultState two = new DefaultState("two");
+			DefaultState three = new DefaultState("three");
+			DefaultState four = new DefaultState("four");
+			ConditionTrigger tr1 = new ConditionTrigger(
+					new Callable<Boolean>() {
+
+						@Override
+						public Boolean call() throws Exception {
+							return a.value > 0.75;
+						}
+
+					});
+			ConditionTrigger tr2 = new ConditionTrigger(
+					new Callable<Boolean>() {
+
+						@Override
+						public Boolean call() throws Exception {
+							return a.value > 0.25;
+						}
+
+					});
+			List<State> tos = new ArrayList<State>();
+			tos.add(two);
+			tos.add(three);
+			tos.add(four);
+			List<ConditionTrigger> conditions = new ArrayList<ConditionTrigger>();
+			conditions.add(tr1);
+			conditions.add(tr2);
+			Branch branch = Branch.createBranch("branch", one,
+					new TimedTrigger(1), tos, conditions);
+			addBranch(branch);
+		}
+	}
+
+	private static class MyAgent6 {
+
+		public double value;
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart6(this);
+			st.begin();
+		}
+	}
+
+	/**
+	 * Should go to default.
+	 */
+	@Test
+	public void myStateChart6Scenario1() {
+		MyAgent6 a = new MyAgent6();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.1;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("four", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+
+	/**
+	 * Should go to two.
+	 */
+	@Test
+	public void myStateChart6Scenario2() {
+		MyAgent6 a = new MyAgent6();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.8;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+
+	/**
+	 * Should go to three.
+	 */
+	@Test
+	public void myStateChart6Scenario3() {
+		MyAgent6 a = new MyAgent6();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.6;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+
+	/**
+	 * For testing self transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart7 extends DefaultStateChart {
+
+		public MyStateChart7(final MyAgent7 a) {
+			DefaultState one = new DefaultState("one");
+			this.registerEntryState(one);
+			Trigger timedTrigger = new TimedTrigger(2);
+			Callable<Void> onTransition = new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					a.value++;
+					return null;
+				}
+
+			};
+			addSelfTransition(timedTrigger, onTransition,
+					Transition.createEmptyGuard(), one);
+			Trigger messageTriggerA = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
+			addSelfTransition(messageTriggerA, onTransition,
+					Transition.createEmptyGuard(), one);
+
+			DefaultState two = new DefaultState("two");
+			Trigger messageTriggerB = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b"));
+			Transition t1 = new Transition(messageTriggerB, one, two);
+			addRegularTransition(t1);
+		}
+	}
+
+	private static class MyAgent7 {
+
+		public int value;
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart7(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart7Scenario1() {
+		MyAgent7 a = new MyAgent7();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(0, a.value);
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		schedule.execute();
+		// timed self transition should have occurred
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals(1, a.value);
+		schedule.execute();
+		assertEquals(4, schedule.getTickCount(), 0.0001);
+		assertEquals(1, a.value);
+		schedule.execute();
+		// another timed self transition should have occurred
+		assertEquals(5, schedule.getTickCount(), 0.0001);
+		assertEquals(2, a.value);
+		a.st.receiveMessage("a");
+		schedule.execute();
+		assertEquals(6, schedule.getTickCount(), 0.0001);
+		assertEquals(3, a.value);
+		assertEquals("one", a.st.getCurrentState().getId());
+		schedule.execute();
+		// another timed self transition should have occurred
+		assertEquals(7, schedule.getTickCount(), 0.0001);
+		assertEquals(4, a.value);
+		a.st.receiveMessage("b");
+		schedule.execute();
+		assertEquals(8, schedule.getTickCount(), 0.0001);
+		assertEquals(4, a.value);
+		assertEquals("two", a.st.getCurrentState().getId());
+
+	}
+
+	/**
+	 * Alternate statechart for self transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart7b extends DefaultStateChart {
+
+		public MyStateChart7b(final MyAgent7b a) {
+			DefaultState one = new DefaultState("one");
+			this.registerEntryState(one);
+			// Strategy is to create non-commutative operations
+			// onTransition1 is adding 1
+			Callable<Void> onTransition1 = new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					a.value++;
+					return null;
+				}
+			};
+
+			Trigger messageTriggerA1 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
+			addSelfTransition(messageTriggerA1, onTransition1,
+					Transition.createEmptyGuard(), one);
+
+			DefaultState two = new DefaultState("two");
+			Trigger messageTriggerA2 = new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a"));
+			Transition t1 = new Transition(messageTriggerA2, one, two);
+			// onTransition2 is multiplying by 2
+			Callable<Void> onTransition2 = new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					a.value *= 2;
+					return null;
+				}
+			};
+
+			t1.registerOnTransition(onTransition2);
+			addRegularTransition(t1);
+		}
+	}
+
+	private static class MyAgent7b {
+
+		public int value;
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart7b(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart7bScenario1() {
+		MyAgent7b a = new MyAgent7b();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals(0, a.value);
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		schedule.execute();
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals(0, a.value);
+		a.st.receiveMessage("a");
+		schedule.execute();
+		assertEquals(4, schedule.getTickCount(), 0.0001);
+		// (0 + 1) * 2 = 2 but (0 * 2) + 1 = 1 so this would indicate that the
+		// addition in the self transition is completed first
+		assertEquals(2, a.value);
+		assertEquals("two", a.st.getCurrentState().getId());
 	}
 
 }

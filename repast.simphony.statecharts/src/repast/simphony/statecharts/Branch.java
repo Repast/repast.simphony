@@ -38,31 +38,31 @@ public class Branch extends DefaultState {
 	public static Branch createBranch(String id, State from,
 			Trigger fromTrigger, List<State> tos,
 			List<ConditionTrigger> conditions) {
-		return createBranch(id, from, fromTrigger,
+		return createBranch(id, from, fromTrigger, 0,
 				Transition.createEmptyOnTransition(),
-				Transition.createEmptyGuard(), tos, conditions,0);
+				Transition.createEmptyGuard(), tos, conditions);
 	}
 	
 	public static Branch createBranch(String id, State from,
-			Trigger fromTrigger, List<State> tos,
-			List<ConditionTrigger> conditions, double fromTransitionPriority) {
-		return createBranch(id, from, fromTrigger,
+			Trigger fromTrigger, double fromTransitionPriority, List<State> tos,
+			List<ConditionTrigger> conditions) {
+		return createBranch(id, from, fromTrigger, fromTransitionPriority,
 				Transition.createEmptyOnTransition(),
-				Transition.createEmptyGuard(), tos, conditions,fromTransitionPriority);
+				Transition.createEmptyGuard(), tos, conditions);
 	}
 
 	public static Branch createBranch(String id, State from,
-			Trigger fromTrigger, Callable<Void> fromOnTransition,
+			Trigger fromTrigger, double fromTransitionPriority, Callable<Void> fromOnTransition,
 			Callable<Boolean> fromGuard, List<State> tos,
-			List<ConditionTrigger> conditions, double fromTransitionPriority) {
+			List<ConditionTrigger> conditions) {
 		Branch branch = new Branch(id);
 		branch.from = from;
 		branch.fromTrigger = fromTrigger;
+		branch.fromTransitionPriority = fromTransitionPriority;
 		branch.fromOnTransition = fromOnTransition;
 		branch.fromGuard = fromGuard;
 		branch.tos = tos;
 		branch.conditions = conditions;
-		branch.fromTransitionPriority = fromTransitionPriority;
 		return branch;
 	}
 

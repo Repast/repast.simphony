@@ -25,7 +25,8 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public void setTransitionResolutionStrategy(TransitionResolutionStrategy transitionResolutionStrategy) {
+	public void setTransitionResolutionStrategy(
+			TransitionResolutionStrategy transitionResolutionStrategy) {
 		this.transitionResolutionStrategy = transitionResolutionStrategy;
 	}
 
@@ -144,7 +145,7 @@ public class DefaultStateChart implements StateChart {
 			for (Transition ct : activeRegularTransitions) {
 				ct.initialize(this);
 			}
-			
+
 		}
 	}
 
@@ -182,11 +183,13 @@ public class DefaultStateChart implements StateChart {
 
 	@Override
 	public void addSelfTransition(Trigger trigger, State state) {
-		addSelfTransition(trigger, Transition.createEmptyOnTransition(), Transition.createEmptyGuard(), state);
+		addSelfTransition(trigger, Transition.createEmptyOnTransition(),
+				Transition.createEmptyGuard(), state);
 	}
-	
+
 	@Override
-	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition, Callable<Boolean> guard, State state) {
+	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
+			Callable<Boolean> guard, State state) {
 		Transition transition = new Transition(trigger, state, state);
 		transition.registerOnTransition(onTransition);
 		transition.registerGuard(guard);
@@ -284,25 +287,11 @@ public class DefaultStateChart implements StateChart {
 			makeRegularTransition(t);
 		} else {
 			// reschedule selfTransitions
-			rescheduleTransitions(activeSelfTransitions);
+			rescheduleTransitions(activeSelfTransitions,false);
 			// reschedule regularTransitions
-			rescheduleTransitions(activeRegularTransitions);
+			rescheduleTransitions(activeRegularTransitions,true);
 		}
 
-	}
-
-	private void resolveSelfTransitions() {
-		List<Transition> triggeredTransitions = getTriggeredTransitions(activeSelfTransitions);
-		for (Transition t : triggeredTransitions) {
-			t.onTransition();
-		}
-
-	}
-
-	private Transition resolveRegularTransitions() {
-		List<Transition> triggeredTransitions = getTriggeredTransitions(activeRegularTransitions);
-
-		return chooseOneTransition(triggeredTransitions);
 	}
 
 	private Transition chooseOneTransition(List<Transition> transitions) {
@@ -332,14 +321,22 @@ public class DefaultStateChart implements StateChart {
 		}
 	}
 
-	private void rescheduleTransitions(List<Transition> activeTransitions) {
+	private void rescheduleTransitions(List<Transition> activeTransitions,
+			boolean regular) {
 		// get current time
 		double currentTime = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
 		// for each active transition
-		for (Transition t : activeTransitions) {
-			t.reschedule(this, currentTime);
+		if (regular) {
+			for (Transition t : activeTransitions) {
+				t.rescheduleRegularTransition(this, currentTime);
 
+			}
+		}
+		else {
+			for (Transition t : activeTransitions) {
+				t.rescheduleSelfTransition(this, currentTime);
+			}
 		}
 	}
 
@@ -396,16 +393,19 @@ public class DefaultStateChart implements StateChart {
 	@Override
 	public void addBranch(Branch branch) {
 		// create transition from "from" to branch
-		Transition t = new Transition(branch.getFromTrigger(), branch.getFrom(), branch, branch.getFromTransitionPriority());
+		branch.initializeBranch(this);
+		Transition t = new Transition(branch.getFromTrigger(),
+				branch.getFrom(), branch, branch.getFromTransitionPriority());
 		t.registerGuard(branch.getFromGuard());
 		t.registerOnTransition(branch.getFromOnTransition());
 		addRegularTransition(t);
 		// create tos transitions
 		List<State> tos = branch.getTos();
-		int numOfTos = tos.size(); 
-		List<Trigger> allTriggers = new ArrayList<Trigger>(branch.getConditions());
+		int numOfTos = tos.size();
+		List<Trigger> allTriggers = new ArrayList<Trigger>(
+				branch.getConditions());
 		allTriggers.add(new AlwaysTrigger());
-		for (int i = 0; i < numOfTos; i++){
+		for (int i = 0; i < numOfTos; i++) {
 			State to = tos.get(i);
 			Trigger tr = allTriggers.get(i);
 			Transition tt = new Transition(tr, branch, to, numOfTos - i);
