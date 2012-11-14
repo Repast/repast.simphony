@@ -396,10 +396,10 @@ public class DefaultStateChart implements StateChart {
 		branch.initializeBranch(this);
 		// create into transition from ...
 		IntoBranchTransition ibt = branch.getIntoBranchTransition();
-		Transition t = new Transition(ibt.getFromTrigger(),
-				ibt.getFrom(), branch, ibt.getFromTransitionPriority());
-		t.registerGuard(ibt.getFromGuard());
-		t.registerOnTransition(ibt.getFromOnTransition());
+		Transition t = new Transition(ibt.getTrigger(),
+				ibt.getSource(), branch, ibt.getTransitionPriority());
+		t.registerGuard(ibt.getGuard());
+		t.registerOnTransition(ibt.getOnTransition());
 		addRegularTransition(t);
 		
 		// create tos transitions from ...
@@ -407,7 +407,7 @@ public class DefaultStateChart implements StateChart {
 		int numOfTos = tos.size();
 		for (int i = 0; i < numOfTos; i++){
 			OutOfBranchTransition oobt = tos.get(i);
-			Transition outt = new Transition(oobt.getTrigger(), branch, oobt.getToState(), numOfTos - i);
+			Transition outt = new Transition(oobt.getTrigger(), branch, oobt.getTarget(), numOfTos - i);
 			addRegularTransition(outt);
 		}
 	}
