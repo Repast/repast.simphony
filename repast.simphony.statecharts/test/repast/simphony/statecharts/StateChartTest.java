@@ -15,7 +15,6 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-
 public class StateChartTest {
 
 	@Before
@@ -512,33 +511,34 @@ public class StateChartTest {
 			DefaultState two = new DefaultState("two");
 			DefaultState three = new DefaultState("three");
 			DefaultState four = new DefaultState("four");
-			ConditionTrigger tr1 = new ConditionTrigger(
-					new Callable<Boolean>() {
 
-						@Override
-						public Boolean call() throws Exception {
-							return a.value > 0.75;
-						}
+			Callable<Boolean> state2Condition = new Callable<Boolean>() {
 
-					});
-			ConditionTrigger tr2 = new ConditionTrigger(
-					new Callable<Boolean>() {
+				@Override
+				public Boolean call() throws Exception {
+					return a.value > 0.75;
+				}
 
-						@Override
-						public Boolean call() throws Exception {
-							return a.value > 0.25;
-						}
+			};
+			Callable<Boolean> state3Condition = new Callable<Boolean>() {
 
-					});
-			List<State> tos = new ArrayList<State>();
-			tos.add(two);
-			tos.add(three);
-			tos.add(four);
-			List<ConditionTrigger> conditions = new ArrayList<ConditionTrigger>();
-			conditions.add(tr1);
-			conditions.add(tr2);
-			Branch branch = Branch.createBranch("branch", one,
-					new TimedTrigger(1), tos, conditions);
+				@Override
+				public Boolean call() throws Exception {
+					return a.value > 0.25;
+				}
+
+			};
+			
+			IntoBranchTransition ibt = IntoBranchTransition.createIntoBranchTransition(one, new TimedTrigger(1));
+
+			List<OutOfBranchTransition> oobts = new ArrayList<OutOfBranchTransition>();
+			oobts.add(OutOfBranchTransition.createOutOfBranchTransition(two,
+					state2Condition));
+			oobts.add(OutOfBranchTransition.createOutOfBranchTransition(three,
+					state3Condition));
+			oobts.add(OutOfBranchTransition.createDefaultOutOfBranchTransition(four));
+
+			Branch branch = Branch.createBranch("branch", ibt, oobts);
 			addBranch(branch);
 		}
 	}

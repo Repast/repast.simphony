@@ -394,22 +394,21 @@ public class DefaultStateChart implements StateChart {
 	public void addBranch(Branch branch) {
 		// create transition from "from" to branch
 		branch.initializeBranch(this);
-		Transition t = new Transition(branch.getFromTrigger(),
-				branch.getFrom(), branch, branch.getFromTransitionPriority());
-		t.registerGuard(branch.getFromGuard());
-		t.registerOnTransition(branch.getFromOnTransition());
+		// create into transition from ...
+		IntoBranchTransition ibt = branch.getIntoBranchTransition();
+		Transition t = new Transition(ibt.getFromTrigger(),
+				ibt.getFrom(), branch, ibt.getFromTransitionPriority());
+		t.registerGuard(ibt.getFromGuard());
+		t.registerOnTransition(ibt.getFromOnTransition());
 		addRegularTransition(t);
-		// create tos transitions
-		List<State> tos = branch.getTos();
+		
+		// create tos transitions from ...
+		List<OutOfBranchTransition> tos = branch.getTos();
 		int numOfTos = tos.size();
-		List<Trigger> allTriggers = new ArrayList<Trigger>(
-				branch.getConditions());
-		allTriggers.add(new AlwaysTrigger());
-		for (int i = 0; i < numOfTos; i++) {
-			State to = tos.get(i);
-			Trigger tr = allTriggers.get(i);
-			Transition tt = new Transition(tr, branch, to, numOfTos - i);
-			addRegularTransition(tt);
+		for (int i = 0; i < numOfTos; i++){
+			OutOfBranchTransition oobt = tos.get(i);
+			Transition outt = new Transition(oobt.getTrigger(), branch, oobt.getToState(), numOfTos - i);
+			addRegularTransition(outt);
 		}
 	}
 
