@@ -1,10 +1,24 @@
 package repast.simphony.statecharts;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import simphony.util.messages.MessageCenter;
 
-public class DefaultState implements State {
+public abstract class AbstractState {
+
+	private AbstractState parent;
+	
+	public AbstractState getParent() {
+		return parent;
+	}
+
+	
+	public void setParent(AbstractState parent) {
+		this.parent = parent;
+	}
 
 	private String id;
 	private Callable<Void> onEnter = new Callable<Void>(){
@@ -20,7 +34,7 @@ public class DefaultState implements State {
 		}
 	};
 	
-	public DefaultState(String id){
+	public AbstractState(String id){
 		this.id = id;
 	}
 	
@@ -29,12 +43,11 @@ public class DefaultState implements State {
 		return getId();
 	}
 	
-	@Override
 	public String getId() {
 		return id;
 	}
 
-	@Override
+	
 	public void onEnter() {
 		try {
 			onEnter.call();
@@ -44,7 +57,7 @@ public class DefaultState implements State {
 		}
 	}
 
-	@Override
+	
 	public void onExit() {
 		try {
 			onExit.call();
@@ -54,14 +67,39 @@ public class DefaultState implements State {
 		}
 	}
 
-	@Override
+	
 	public void registerOnEnter(Callable<Void> onEnter) {
 		this.onEnter = onEnter;
 	}
 
-	@Override
+	
 	public void registerOnExit(Callable<Void> onExit) {
 		this.onExit = onExit;
 	}
 
+	
+	public AbstractState calculateLowestCommonAncestor(AbstractState other){
+		Iterator<AbstractState> myAncestors = getAncestors().iterator();
+		Iterator<AbstractState> otherAncestors = other.getAncestors().iterator();
+		AbstractState currentCandidate = null;
+		while(myAncestors.hasNext() && otherAncestors.hasNext()){
+			AbstractState myNext = myAncestors.next(); 
+			if (myNext == otherAncestors.next()) currentCandidate = myNext;
+		}
+		return currentCandidate;
+	}
+	
+	/**
+	 * Returns a list with the highest node in front.
+	 */
+	protected List<AbstractState> getAncestors(){
+		LinkedList<AbstractState> ancestors = new LinkedList<AbstractState>();
+		AbstractState s = this;
+		ancestors.addFirst(s);
+		while (s.getParent() != null){
+			s = s.getParent();
+			ancestors.addFirst(s);
+		}
+		return ancestors;
+	}
 }

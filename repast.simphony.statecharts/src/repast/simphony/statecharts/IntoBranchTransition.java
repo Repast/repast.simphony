@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 public class IntoBranchTransition{
 	
-	public State getSource() {
+	public AbstractState getSource() {
 		return source;
 	}
 	
@@ -25,13 +25,13 @@ public class IntoBranchTransition{
 	private double transitionPriority;
 	private Callable<Void> onTransition;
 	private Callable<Boolean> guard;
-	private State source;
+	private AbstractState source;
 
-	public static IntoBranchTransition createIntoBranchTransition(State source, Trigger trigger){
+	public static IntoBranchTransition createIntoBranchTransition(AbstractState source, Trigger trigger){
 		return new IntoBranchTransition(source, trigger, 0, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
 	}
 
-	public static IntoBranchTransition createIntoBranchTransition(State source, Trigger trigger, double transitionPriority){
+	public static IntoBranchTransition createIntoBranchTransition(AbstractState source, Trigger trigger, double transitionPriority){
 		return new IntoBranchTransition(source, trigger, transitionPriority, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
 	}
 	
@@ -44,7 +44,7 @@ public class IntoBranchTransition{
 	}
 	
 	
-	private IntoBranchTransition(State source,
+	private IntoBranchTransition(AbstractState source,
 		Trigger trigger, double transitionPriority, Callable<Void> onTransition,
 		Callable<Boolean> guard){
 		this.source = source;

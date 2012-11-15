@@ -3,11 +3,11 @@ package repast.simphony.statecharts;
 import java.util.concurrent.Callable;
 
 public class OutOfBranchTransition{
-	final State target;
+	final AbstractState target;
 	final Trigger trigger;
 	Callable<Void> onTransition;
 	
-	public State getTarget() {
+	public AbstractState getTarget() {
 		return target;
 	}
 	public Trigger getTrigger() {
@@ -17,15 +17,15 @@ public class OutOfBranchTransition{
 		return onTransition;
 	}
 	
-	public static OutOfBranchTransition createOutOfBranchTransition(State toState, Callable<Boolean> condition){
+	public static OutOfBranchTransition createOutOfBranchTransition(AbstractState toState, Callable<Boolean> condition){
 		return new OutOfBranchTransition(toState, condition, Transition.createEmptyOnTransition());
 	}
 
-	public static OutOfBranchTransition createDefaultOutOfBranchTransition(State toState){
+	public static OutOfBranchTransition createDefaultOutOfBranchTransition(AbstractState toState){
 		return new OutOfBranchTransition(toState,null,Transition.createEmptyOnTransition());
 	}
 	
-	private OutOfBranchTransition(State toState, Callable<Boolean> condition,
+	private OutOfBranchTransition(AbstractState toState, Callable<Boolean> condition,
 			Callable<Void> onTransition) {
 		this.target = toState;
 		if (condition == null) this.trigger = new AlwaysTrigger();

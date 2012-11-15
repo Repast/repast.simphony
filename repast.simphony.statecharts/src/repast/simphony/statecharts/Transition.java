@@ -29,18 +29,18 @@ public class Transition {
 	}
 	
 	private Trigger trigger;
-	private State source, target;
+	private AbstractState source, target;
 	private double priority;
 	private Callable<Void> onTransition = new EmptyOnTransition();
 	private Callable<Boolean> guard = new EmptyGuard();
 	
 
 
-	public Transition(Trigger trigger, State source, State target) {
+	public Transition(Trigger trigger, AbstractState source, AbstractState target) {
 		this(trigger,source,target,0);
 	}
 	
-	public Transition(Trigger trigger, State source, State target, double priority){
+	public Transition(Trigger trigger, AbstractState source, AbstractState target, double priority){
 		this.trigger = trigger;
 		this.source = source;
 		this.target = target;
@@ -52,11 +52,11 @@ public class Transition {
 		return trigger;
 	}
 
-	public State getSource() {
+	public AbstractState getSource() {
 		return source;
 	}
 
-	public State getTarget() {
+	public AbstractState getTarget() {
 		return target;
 	}
 	

@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -30,7 +30,7 @@ public class DefaultStateChart implements StateChart {
 		this.transitionResolutionStrategy = transitionResolutionStrategy;
 	}
 
-	private State entryState;
+	private AbstractState entryState;
 	// private List<State> states = new ArrayList<State>();
 
 	// Regular transitions
@@ -41,10 +41,10 @@ public class DefaultStateChart implements StateChart {
 	protected List<Transition> selfTransitions = new ArrayList<Transition>();
 	protected List<Transition> activeSelfTransitions = new ArrayList<Transition>();
 
-	protected State currentState;
+	protected AbstractState currentState;
 
 	@Override
-	public void registerEntryState(State state) {
+	public void registerEntryState(AbstractState state) {
 		entryState = state;
 	}
 
@@ -55,9 +55,21 @@ public class DefaultStateChart implements StateChart {
 			throw new IllegalStateException(
 					"An entry state was not registered in the StateChart.");
 		}
-		clearTransitionsAndCurrentState();
-		entryState.onEnter();
-		stateInit(entryState);
+		clearTransitions(null);
+		List<AbstractState> statesToEnter = new ArrayList<AbstractState>();
+		AbstractState t = entryState;
+		while (t instanceof CompositeState) {
+			statesToEnter.add(t);
+			CompositeState cs = (CompositeState) t;
+			t = cs.getEntryState();
+		}
+		statesToEnter.add(t);
+		// Entering states from the top down
+		for (AbstractState as : statesToEnter) {
+			as.onEnter();
+		}
+
+		stateInit(statesToEnter);
 	}
 
 	private void partitionQueueConsuming(List<Transition> transitions,
@@ -70,15 +82,19 @@ public class DefaultStateChart implements StateChart {
 		}
 	}
 
-	private void stateInit(State state) {
-		currentState = state;
+	private void stateInit(List<AbstractState> statesToEnter) {
 
+		currentState = statesToEnter.get(statesToEnter.size() - 1);
+		List<String> statesToEnterStateIds = new ArrayList<String>();
+		for (AbstractState as : statesToEnter) {
+			statesToEnterStateIds.add(as.getId());
+		}
 		// look through all defined regular transitions and find those with
 		// source.id ==
 		// state.id
 		List<Transition> candidateTransitions = new ArrayList<Transition>();
 		for (Transition t : regularTransitions) {
-			if (t.getSource().getId().equals(state.getId())) {
+			if (statesToEnterStateIds.contains(t.getSource().getId())) {
 				candidateTransitions.add(t);
 			}
 		}
@@ -135,32 +151,43 @@ public class DefaultStateChart implements StateChart {
 		else {
 			// collect all relevant self transitions and initialize
 			for (Transition st : selfTransitions) {
-				if (st.getSource().getId().equals(state.getId())) {
+				if (statesToEnterStateIds.contains(st.getSource().getId())) {
 					activeSelfTransitions.add(st);
 					st.initialize(this);
 				}
 			}
 			// collect all relevant regular transitions and initialize
 			activeRegularTransitions.addAll(candidateTransitions);
-			for (Transition ct : activeRegularTransitions) {
+			for (Transition ct : candidateTransitions) {
 				ct.initialize(this);
 			}
 
 		}
 	}
 
-	private void clearTransitionsAndCurrentState() {
+	private void clearTransitions(AbstractState as) {
 		// deactivate and clear all active transitions
-		deactivateTransitions(activeSelfTransitions);
-		deactivateTransitions(activeRegularTransitions);
+		deactivateTransitions(as, activeSelfTransitions);
+		deactivateTransitions(as, activeRegularTransitions);
 
-		currentState = null;
+		// currentState = null;
 	}
 
-	private void deactivateTransitions(List<Transition> transitions) {
+	private void deactivateTransitions(AbstractState as,
+			List<Transition> transitions) {
+		List<Transition> candidateTransitions = new ArrayList<Transition>();
+		if (as == null) {
+			candidateTransitions = transitions;
+		} else {
+			for (Transition t : transitions) {
+				if (t.getSource().getId().equals(as.getId())) {
+					candidateTransitions.add(t);
+				}
+			}
+		}
 		double now = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
-		for (Transition t : transitions) {
+		for (Transition t : candidateTransitions) {
 			// if trigger's next time is after now,
 			Trigger tr = t.getTrigger();
 			double nextTime = tr.getNextTime();
@@ -168,11 +195,11 @@ public class DefaultStateChart implements StateChart {
 				removeResolveTime(nextTime);
 			}
 		}
-		transitions.clear();
+		transitions.removeAll(candidateTransitions);
 	}
 
 	@Override
-	public void addState(State state) {
+	public void addState(AbstractState state) {
 		// states.add(state);
 	}
 
@@ -182,14 +209,14 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public void addSelfTransition(Trigger trigger, State state) {
+	public void addSelfTransition(Trigger trigger, AbstractState state) {
 		addSelfTransition(trigger, Transition.createEmptyOnTransition(),
 				Transition.createEmptyGuard(), state);
 	}
 
 	@Override
 	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
-			Callable<Boolean> guard, State state) {
+			Callable<Boolean> guard, AbstractState state) {
 		Transition transition = new Transition(trigger, state, state);
 		transition.registerOnTransition(onTransition);
 		transition.registerGuard(guard);
@@ -201,25 +228,52 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public State getCurrentState() {
+	public AbstractState getCurrentState() {
 		return currentState;
 	}
 
 	private void makeRegularTransition(Transition transition) {
-		State source = transition.getSource();
-		State target = transition.getTarget();
-		// check that target is not the same as source
+		AbstractState source = transition.getSource();
+		AbstractState target = transition.getTarget();
 
-		clearTransitionsAndCurrentState();
-		source.onExit();
+		List<AbstractState> statesToExit = new ArrayList<AbstractState>();
+		AbstractState lca = source.calculateLowestCommonAncestor(target);
+		// Gather all states, from current state (simple state) to just before
+		// the lca of the source state (not necessarily a simple state)
+		AbstractState s = getCurrentState();
+		while (s != lca && s != null) {
+			statesToExit.add(s);
+			s = s.getParent();
+		}
+		currentState = null;
+		for (AbstractState as : statesToExit) {
+			clearTransitions(as);
+			as.onExit();
+		}
 
 		// Transition action
 		transition.onTransition();
 
-		target.onEnter();
+		LinkedList<AbstractState> statesToEnter = new LinkedList<AbstractState>();
+		AbstractState t = target;
+		while (t instanceof CompositeState) {
+			CompositeState cs = (CompositeState) t;
+			t = cs.getEntryState();
+		}
+		// At this point t should be the target simple state
+		while (t != lca && t != null) {
+			statesToEnter.addFirst(t);
+			t = t.getParent();
+		}
+		// Entering states from the top down
+		for (AbstractState as : statesToEnter) {
+			as.onEnter();
+		}
 
-		stateInit(target);
+		stateInit(statesToEnter);
 	}
+
+	// private List<Transition>
 
 	private List<Transition> getTriggeredTransitions(
 			List<Transition> transitions) {
@@ -287,9 +341,9 @@ public class DefaultStateChart implements StateChart {
 			makeRegularTransition(t);
 		} else {
 			// reschedule selfTransitions
-			rescheduleTransitions(activeSelfTransitions,false);
+			rescheduleTransitions(activeSelfTransitions, false);
 			// reschedule regularTransitions
-			rescheduleTransitions(activeRegularTransitions,true);
+			rescheduleTransitions(activeRegularTransitions, true);
 		}
 
 	}
@@ -332,8 +386,7 @@ public class DefaultStateChart implements StateChart {
 				t.rescheduleRegularTransition(this, currentTime);
 
 			}
-		}
-		else {
+		} else {
 			for (Transition t : activeTransitions) {
 				t.rescheduleSelfTransition(this, currentTime);
 			}
@@ -396,18 +449,19 @@ public class DefaultStateChart implements StateChart {
 		branch.initializeBranch(this);
 		// create into transition from ...
 		IntoBranchTransition ibt = branch.getIntoBranchTransition();
-		Transition t = new Transition(ibt.getTrigger(),
-				ibt.getSource(), branch, ibt.getTransitionPriority());
+		Transition t = new Transition(ibt.getTrigger(), ibt.getSource(),
+				branch, ibt.getTransitionPriority());
 		t.registerGuard(ibt.getGuard());
 		t.registerOnTransition(ibt.getOnTransition());
 		addRegularTransition(t);
-		
+
 		// create tos transitions from ...
 		List<OutOfBranchTransition> tos = branch.getTos();
 		int numOfTos = tos.size();
-		for (int i = 0; i < numOfTos; i++){
+		for (int i = 0; i < numOfTos; i++) {
 			OutOfBranchTransition oobt = tos.get(i);
-			Transition outt = new Transition(oobt.getTrigger(), branch, oobt.getTarget(), numOfTos - i);
+			Transition outt = new Transition(oobt.getTrigger(), branch,
+					oobt.getTarget(), numOfTos - i);
 			addRegularTransition(outt);
 		}
 	}

@@ -19,13 +19,13 @@ public interface StateChart {
 	 * Add state to state chart.
 	 * @param state
 	 */
-	public void addState(State state);
+	public void addState(AbstractState state);
 	
 	/**
 	 * Add state to state chart.
 	 * @param state
 	 */
-	public void registerEntryState(State state);
+	public void registerEntryState(AbstractState state);
 	
 	/**
 	 * Add transition to state chart.
@@ -45,16 +45,16 @@ public interface StateChart {
 	 * @param source
 	 * @param target
 	 */
-	public void addSelfTransition(Trigger trigger, State state);
+	public void addSelfTransition(Trigger trigger, AbstractState state);
 	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
-			Callable<Boolean> guard, State state);
+			Callable<Boolean> guard, AbstractState state);
 
 	
 	/**
 	 * Retrieve current state.
 	 * @return
 	 */
-	public State getCurrentState();
+	public AbstractState getCurrentState();
 	
 	
 

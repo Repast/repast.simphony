@@ -74,7 +74,7 @@ public class StateChartTest {
 		}
 	}
 
-	private static class MyState extends DefaultState {
+	private static class MyState extends AbstractState {
 
 		public TestClass tc;
 
@@ -105,7 +105,7 @@ public class StateChartTest {
 
 		public TestClass tc;
 
-		public MyTransition(Trigger trigger, State source, State target,
+		public MyTransition(Trigger trigger, AbstractState source, AbstractState target,
 				TestClass tc) {
 			super(trigger, source, target);
 			this.tc = tc;
@@ -173,10 +173,10 @@ public class StateChartTest {
 	private static class MyStateChart2 extends DefaultStateChart {
 
 		public MyStateChart2() {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
-			DefaultState two = new DefaultState("two");
-			DefaultState three = new DefaultState("three");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
 			Trigger tr1 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			Transition t1 = new Transition(tr1, one, two);
@@ -288,10 +288,10 @@ public class StateChartTest {
 	private static class MyStateChart3 extends DefaultStateChart {
 
 		public MyStateChart3() {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
-			DefaultState two = new DefaultState("two");
-			DefaultState three = new DefaultState("three");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
 			Trigger tr1 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			Transition t1 = new Transition(tr1, one, two, 1);
@@ -383,10 +383,10 @@ public class StateChartTest {
 	private static class MyStateChart4 extends DefaultStateChart {
 
 		public MyStateChart4() {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
-			DefaultState two = new DefaultState("two");
-			DefaultState three = new DefaultState("three");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
 			Trigger tr1 = new TimedTrigger(2);
 			Transition t1 = new Transition(tr1, one, two, 1);
 			this.addRegularTransition(t1);
@@ -444,9 +444,9 @@ public class StateChartTest {
 	private static class MyStateChart5 extends DefaultStateChart {
 
 		public MyStateChart5(final MyAgent5 a) {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
-			DefaultState two = new DefaultState("two");
+			AbstractState two = new SimpleState("two");
 			Trigger tr1 = new ConditionTrigger(new Callable<Boolean>() {
 
 				@Override
@@ -506,11 +506,11 @@ public class StateChartTest {
 	private static class MyStateChart6 extends DefaultStateChart {
 
 		public MyStateChart6(final MyAgent6 a) {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
-			DefaultState two = new DefaultState("two");
-			DefaultState three = new DefaultState("three");
-			DefaultState four = new DefaultState("four");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
+			AbstractState four = new SimpleState("four");
 
 			Callable<Boolean> state2Condition = new Callable<Boolean>() {
 
@@ -626,7 +626,7 @@ public class StateChartTest {
 	private static class MyStateChart7 extends DefaultStateChart {
 
 		public MyStateChart7(final MyAgent7 a) {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
 			Trigger timedTrigger = new TimedTrigger(2);
 			Callable<Void> onTransition = new Callable<Void>() {
@@ -645,7 +645,7 @@ public class StateChartTest {
 			addSelfTransition(messageTriggerA, onTransition,
 					Transition.createEmptyGuard(), one);
 
-			DefaultState two = new DefaultState("two");
+			AbstractState two = new SimpleState("two");
 			Trigger messageTriggerB = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"));
 			Transition t1 = new Transition(messageTriggerB, one, two);
@@ -712,7 +712,7 @@ public class StateChartTest {
 	private static class MyStateChart7b extends DefaultStateChart {
 
 		public MyStateChart7b(final MyAgent7b a) {
-			DefaultState one = new DefaultState("one");
+			AbstractState one = new SimpleState("one");
 			this.registerEntryState(one);
 			// Strategy is to create non-commutative operations
 			// onTransition1 is adding 1
@@ -729,7 +729,7 @@ public class StateChartTest {
 			addSelfTransition(messageTriggerA1, onTransition1,
 					Transition.createEmptyGuard(), one);
 
-			DefaultState two = new DefaultState("two");
+			AbstractState two = new SimpleState("two");
 			Trigger messageTriggerA2 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			Transition t1 = new Transition(messageTriggerA2, one, two);
