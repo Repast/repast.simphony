@@ -92,17 +92,23 @@ public class DefaultStateChart implements StateChart {
 		// look through all defined regular transitions and find those with
 		// source.id ==
 		// state.id
-		List<Transition> candidateTransitions = new ArrayList<Transition>();
+		List<Transition> newCandidateTransitions = new ArrayList<Transition>();
 		for (Transition t : regularTransitions) {
 			if (statesToEnterStateIds.contains(t.getSource().getId())) {
-				candidateTransitions.add(t);
+				newCandidateTransitions.add(t);
 			}
 		}
 
 		// Get zero time transitions
 		List<Transition> zeroTimeTransitions = new ArrayList<Transition>();
-		for (Transition tt : candidateTransitions) {
+		// for new candidate transitions find all zeroTimeTransitions
+		for (Transition tt : newCandidateTransitions) {
 			if (tt.canTransitionZeroTime())
+				zeroTimeTransitions.add(tt);
+		}
+		// for existing active regular transitions, only those that are triggered
+		for (Transition tt : activeRegularTransitions) {
+			if (tt.canTransitionZeroTime() && tt.isTransitionTriggered())
 				zeroTimeTransitions.add(tt);
 		}
 
@@ -157,8 +163,8 @@ public class DefaultStateChart implements StateChart {
 				}
 			}
 			// collect all relevant regular transitions and initialize
-			activeRegularTransitions.addAll(candidateTransitions);
-			for (Transition ct : candidateTransitions) {
+			activeRegularTransitions.addAll(newCandidateTransitions);
+			for (Transition ct : newCandidateTransitions) {
 				ct.initialize(this);
 			}
 
@@ -332,6 +338,10 @@ public class DefaultStateChart implements StateChart {
 		Transition t = chooseOneTransition(ListUtils.union(
 				nonQueueConsumingRegularCandidates,
 				queueConsumingRegularCandidates));
+
+		// reschedule selfTransitions
+		rescheduleTransitions(activeSelfTransitions, false);
+
 		// If a zero time transition was found, make that transition
 		if (t != null) {
 			// if chosen one is queue consuming
@@ -340,8 +350,6 @@ public class DefaultStateChart implements StateChart {
 			}
 			makeRegularTransition(t);
 		} else {
-			// reschedule selfTransitions
-			rescheduleTransitions(activeSelfTransitions, false);
 			// reschedule regularTransitions
 			rescheduleTransitions(activeRegularTransitions, true);
 		}

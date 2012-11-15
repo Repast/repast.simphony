@@ -22,9 +22,10 @@ public class StateChartTest2 {
 		RunEnvironment.init(new Schedule(), null, null, false);
 		StateChartResolveActionScheduler.INSTANCE.initialize();
 	}
-	
+
 	/**
-	 * Statechart for composite state transition not being affected by internal transition.
+	 * Statechart for composite state transition not being affected by internal
+	 * transition.
 	 * 
 	 * @author jozik
 	 * 
@@ -70,7 +71,211 @@ public class StateChartTest2 {
 		assertEquals("three", a.st.getCurrentState().getId());
 	}
 
-	
+	/**
+	 * Statechart for composite state transition not being affected by internal
+	 * transition and self transition.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart2 extends DefaultStateChart {
 
+		public MyStateChart2(final MyAgent2 a) {
+			CompositeState cs = new CompositeState("cs");
+			this.registerEntryState(cs);
+			AbstractState one = new SimpleState("one");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
+			cs.registerEntryState(one);
+			cs.add(two);
+			addRegularTransition(new Transition(new TimedTrigger(1), one, two));
+			addRegularTransition(new Transition(new TimedTrigger(2), cs, three));
+			Callable<Void> onTransition = new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					a.value++;
+					return null;
+				}
+			};
+			addSelfTransition(new TimedTrigger(1), onTransition, Transition.createEmptyGuard(), cs);
+			
+		}
+	}
+
+	private static class MyAgent2 {
+
+		public StateChart st;
+		public int value;
+
+		public void setup() {
+			st = new MyStateChart2(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart2Scenario1() {
+		MyAgent2 a = new MyAgent2();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals(1,a.value);
+		schedule.execute();
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals(2,a.value);
+	}
+	
+	/**
+	 * Statechart for composite state zero time transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart3 extends DefaultStateChart {
+
+		public MyStateChart3(final MyAgent3 a) {
+			CompositeState cs = new CompositeState("cs");
+			this.registerEntryState(cs);
+			AbstractState one = new SimpleState("one");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
+			cs.registerEntryState(one);
+			cs.add(two);
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), two, three));
+		}
+	}
+
+	private static class MyAgent3 {
+
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart3(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart3Scenario1() {
+		MyAgent3 a = new MyAgent3();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		a.st.receiveMessage("a");
+		a.st.receiveMessage("b");
+		schedule.execute();
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+
+	}
+	
+	/**
+	 * Another statechart for composite state zero time transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart3b extends DefaultStateChart {
+
+		public MyStateChart3b(final MyAgent3b a) {
+			CompositeState cs = new CompositeState("cs");
+			this.registerEntryState(cs);
+			AbstractState one = new SimpleState("one");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
+			cs.registerEntryState(one);
+			cs.add(two);
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), cs, three));
+		}
+	}
+	
+	private static class MyAgent3b {
+
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart3b(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart3bScenario1() {
+		MyAgent3b a = new MyAgent3b();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		a.st.receiveMessage("a");
+		a.st.receiveMessage("b");
+		schedule.execute();
+		assertEquals(3, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentState().getId());
+
+	}
+	
+	/**
+	 * Another statechart for composite state zero time transitions, but with different polling times.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart3c extends DefaultStateChart {
+
+		public MyStateChart3c(final MyAgent3c a) {
+			CompositeState cs = new CompositeState("cs");
+			this.registerEntryState(cs);
+			AbstractState one = new SimpleState("one");
+			AbstractState two = new SimpleState("two");
+			AbstractState three = new SimpleState("three");
+			cs.registerEntryState(one);
+			cs.add(two);
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b"),2), cs, three));
+		}
+	}
+	
+	private static class MyAgent3c {
+
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart3c(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart3cScenario1() {
+		MyAgent3c a = new MyAgent3c();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentState().getId());
+		a.st.receiveMessage("a");
+		a.st.receiveMessage("b");
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentState().getId());
+
+	}
 
 }
