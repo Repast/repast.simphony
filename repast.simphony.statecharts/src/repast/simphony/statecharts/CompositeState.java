@@ -4,7 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeState extends AbstractState {
+	
+	private List<HistoryState> historyStates = new ArrayList<HistoryState>();
 
+	public List<HistoryState> getHistoryStates() {
+		return historyStates;
+	}
+
+	public void addHistoryState(HistoryState historyState){
+		historyStates.add(historyState);
+	}
+	
+	public void removeHistoryState(HistoryState historyState){
+		historyStates.remove(historyState);
+	}
+	
+	public void removeAllHistoryStates(){
+		historyStates.clear();
+	}
+	
 	private AbstractState entryState;
 	
 	public AbstractState getEntryState() {

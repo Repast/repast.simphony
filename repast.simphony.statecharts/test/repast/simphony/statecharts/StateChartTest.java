@@ -209,7 +209,7 @@ public class StateChartTest {
 		st.receiveMessage("a");
 		st.receiveMessage("b");
 		schedule.execute();
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 	}
 
@@ -225,7 +225,7 @@ public class StateChartTest {
 		st.receiveMessage("a");
 		st.receiveMessage("b");
 		schedule.execute();
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 	}
 
@@ -239,10 +239,10 @@ public class StateChartTest {
 		StateChart st = a.st;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		st.receiveMessage("hello");
 		schedule.execute();
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(3, schedule.getTickCount(), 0.0001);
 		// the queue should have been cleared if no candidate was found in time
 		// step
@@ -258,12 +258,12 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		StateChart st = a.st;
 		schedule.execute();
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(4, schedule.getTickCount(), 0.0001);
 		schedule.execute();
@@ -271,11 +271,11 @@ public class StateChartTest {
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(6, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		st.receiveMessage("b");
 		schedule.execute();
 		assertEquals(7, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 	}
 
 	/**
@@ -323,13 +323,13 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.PRIORITY);
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 	}
 
 	/**
@@ -343,13 +343,13 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.NATURAL);
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 	}
 
 	/**
@@ -364,14 +364,14 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		StateChart st = a.st;
 		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.RANDOM);
 		st.receiveMessage("a");
 		// RandomHelper.getDefaultRegistry().setSeed(0);
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 
 		assertEquals(2,
 				StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
@@ -429,7 +429,7 @@ public class StateChartTest {
 						.containsKey(4d));
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(true,
 				StateChartResolveActionScheduler.INSTANCE.resolveActions
 						.isEmpty());
@@ -481,17 +481,17 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(5, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		a.isTrue = true;
 		schedule.execute();
 		assertEquals(7, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(true,
 				StateChartResolveActionScheduler.INSTANCE.resolveActions
 						.isEmpty());
@@ -564,13 +564,13 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 		a.value = 0.1;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("four", a.st.getCurrentState().getId());
+		assertEquals("four", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 	}
@@ -585,13 +585,13 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 		a.value = 0.8;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 	}
@@ -606,13 +606,13 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 		a.value = 0.6;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				a.st.getTransitionResolutionStrategy());
 	}
@@ -671,7 +671,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(0, a.value);
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
@@ -690,7 +690,7 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(6, schedule.getTickCount(), 0.0001);
 		assertEquals(3, a.value);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		// another timed self transition should have occurred
 		assertEquals(7, schedule.getTickCount(), 0.0001);
@@ -699,7 +699,7 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(8, schedule.getTickCount(), 0.0001);
 		assertEquals(4, a.value);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 
 	}
 
@@ -765,7 +765,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(0, a.value);
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
@@ -778,7 +778,7 @@ public class StateChartTest {
 		// (0 + 1) * 2 = 2 but (0 * 2) + 1 = 1 so this would indicate that the
 		// addition in the self transition is completed first
 		assertEquals(2, a.value);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 	}
 
 }

@@ -9,14 +9,14 @@ import simphony.util.messages.MessageCenter;
 
 public abstract class AbstractState {
 
-	private AbstractState parent;
+	private CompositeState parent;
 	
-	public AbstractState getParent() {
+	public CompositeState getParent() {
 		return parent;
 	}
 
 	
-	public void setParent(AbstractState parent) {
+	public void setParent(CompositeState parent) {
 		this.parent = parent;
 	}
 

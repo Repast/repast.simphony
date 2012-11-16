@@ -54,7 +54,7 @@ public interface StateChart {
 	 * Retrieve current state.
 	 * @return
 	 */
-	public AbstractState getCurrentState();
+	public AbstractState getCurrentSimpleState();
 	
 	
 

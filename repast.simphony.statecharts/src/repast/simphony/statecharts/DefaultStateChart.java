@@ -41,7 +41,7 @@ public class DefaultStateChart implements StateChart {
 	protected List<Transition> selfTransitions = new ArrayList<Transition>();
 	protected List<Transition> activeSelfTransitions = new ArrayList<Transition>();
 
-	protected AbstractState currentState;
+	protected SimpleState currentSimpleState;
 
 	@Override
 	public void registerEntryState(AbstractState state) {
@@ -56,19 +56,11 @@ public class DefaultStateChart implements StateChart {
 					"An entry state was not registered in the StateChart.");
 		}
 		clearTransitions(null);
-		List<AbstractState> statesToEnter = new ArrayList<AbstractState>();
-		AbstractState t = entryState;
-		while (t instanceof CompositeState) {
-			statesToEnter.add(t);
-			CompositeState cs = (CompositeState) t;
-			t = cs.getEntryState();
-		}
-		statesToEnter.add(t);
+		List<AbstractState> statesToEnter = getStatesToEnter(null,entryState);
 		// Entering states from the top down
 		for (AbstractState as : statesToEnter) {
 			as.onEnter();
 		}
-
 		stateInit(statesToEnter);
 	}
 
@@ -84,7 +76,7 @@ public class DefaultStateChart implements StateChart {
 
 	private void stateInit(List<AbstractState> statesToEnter) {
 
-		currentState = statesToEnter.get(statesToEnter.size() - 1);
+		currentSimpleState = (SimpleState) statesToEnter.get(statesToEnter.size() - 1);
 		List<String> statesToEnterStateIds = new ArrayList<String>();
 		for (AbstractState as : statesToEnter) {
 			statesToEnterStateIds.add(as.getId());
@@ -106,7 +98,8 @@ public class DefaultStateChart implements StateChart {
 			if (tt.canTransitionZeroTime())
 				zeroTimeTransitions.add(tt);
 		}
-		// for existing active regular transitions, only those that are triggered
+		// for existing active regular transitions, only those that are
+		// triggered
 		for (Transition tt : activeRegularTransitions) {
 			if (tt.canTransitionZeroTime() && tt.isTransitionTriggered())
 				zeroTimeTransitions.add(tt);
@@ -234,24 +227,75 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public AbstractState getCurrentState() {
-		return currentState;
+	public SimpleState getCurrentSimpleState() {
+		return currentSimpleState;
 	}
 
+	/**
+	 * Returns a list of states to exit, in the order that they should be exited.
+	 * @param lca
+	 * @return
+	 */
+	private List<AbstractState> getStatesToExit(AbstractState lca){
+		List<AbstractState> statesToExit = new ArrayList<AbstractState>();
+		// Gather all states, from current state (simple state) to just before
+		// the lca of the source state (not necessarily a simple state)
+		AbstractState s = getCurrentSimpleState();
+		while (s != lca && s != null) {
+			if (s instanceof CompositeState){
+				CompositeState cs = (CompositeState)s;
+				for (HistoryState hs : cs.getHistoryStates()){
+					if(hs.isShallow()){
+						hs.setDestination(statesToExit.get(statesToExit.size()-1));
+					}
+					else {
+						hs.setDestination(getCurrentSimpleState());
+					}
+				}
+			}
+			statesToExit.add(s);
+			s = s.getParent();
+		}		
+		return statesToExit;
+	}
+	
+	/**
+	 * Returns a list of states to enter, in the order that they should be entered.
+	 * @param lca
+	 * @param target
+	 * @return
+	 */
+	private List<AbstractState> getStatesToEnter(AbstractState lca, AbstractState target){
+		LinkedList<AbstractState> statesToEnter = new LinkedList<AbstractState>();
+		AbstractState t = target;
+		while (!(t instanceof SimpleState)) {
+			if (t instanceof CompositeState) {
+				CompositeState cs = (CompositeState) t;
+				t = cs.getEntryState();
+			}
+			else {
+				if (t instanceof HistoryState){
+					HistoryState hs = (HistoryState) t;
+					t = hs.followDestination();
+				}
+			}
+		}
+		// At this point t should be the target simple state
+		while (t != lca && t != null) {
+			statesToEnter.addFirst(t);
+			t = t.getParent();
+		}
+		return statesToEnter;
+	}
+	
 	private void makeRegularTransition(Transition transition) {
 		AbstractState source = transition.getSource();
 		AbstractState target = transition.getTarget();
 
-		List<AbstractState> statesToExit = new ArrayList<AbstractState>();
 		AbstractState lca = source.calculateLowestCommonAncestor(target);
-		// Gather all states, from current state (simple state) to just before
-		// the lca of the source state (not necessarily a simple state)
-		AbstractState s = getCurrentState();
-		while (s != lca && s != null) {
-			statesToExit.add(s);
-			s = s.getParent();
-		}
-		currentState = null;
+		List<AbstractState> statesToExit = getStatesToExit(lca);
+		
+		currentSimpleState = null;
 		for (AbstractState as : statesToExit) {
 			clearTransitions(as);
 			as.onExit();
@@ -260,17 +304,7 @@ public class DefaultStateChart implements StateChart {
 		// Transition action
 		transition.onTransition();
 
-		LinkedList<AbstractState> statesToEnter = new LinkedList<AbstractState>();
-		AbstractState t = target;
-		while (t instanceof CompositeState) {
-			CompositeState cs = (CompositeState) t;
-			t = cs.getEntryState();
-		}
-		// At this point t should be the target simple state
-		while (t != lca && t != null) {
-			statesToEnter.addFirst(t);
-			t = t.getParent();
-		}
+		List<AbstractState> statesToEnter = getStatesToEnter(lca,target);
 		// Entering states from the top down
 		for (AbstractState as : statesToEnter) {
 			as.onEnter();

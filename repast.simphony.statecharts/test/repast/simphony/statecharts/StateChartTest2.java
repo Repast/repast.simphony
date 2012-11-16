@@ -62,13 +62,13 @@ public class StateChartTest2 {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 	}
 
 	/**
@@ -120,14 +120,14 @@ public class StateChartTest2 {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(1,a.value);
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(2,a.value);
 	}
 	
@@ -169,15 +169,15 @@ public class StateChartTest2 {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		a.st.receiveMessage("a");
 		a.st.receiveMessage("b");
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 
 	}
 	
@@ -219,15 +219,15 @@ public class StateChartTest2 {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		a.st.receiveMessage("a");
 		a.st.receiveMessage("b");
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
-		assertEquals("three", a.st.getCurrentState().getId());
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
 
 	}
 	
@@ -269,12 +269,12 @@ public class StateChartTest2 {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		assertEquals("one", a.st.getCurrentState().getId());
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		a.st.receiveMessage("a");
 		a.st.receiveMessage("b");
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
-		assertEquals("two", a.st.getCurrentState().getId());
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
 
 	}
 
