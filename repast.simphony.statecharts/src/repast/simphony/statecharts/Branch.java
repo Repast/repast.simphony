@@ -3,7 +3,7 @@ package repast.simphony.statecharts;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class Branch extends AbstractState {
+public class Branch extends SimpleState {
 
 	private TransitionResolutionStrategy originalTRS;
 	

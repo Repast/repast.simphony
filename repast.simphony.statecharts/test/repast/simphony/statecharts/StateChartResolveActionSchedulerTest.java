@@ -28,6 +28,7 @@ public class StateChartResolveActionSchedulerTest {
 	@Before
 	public void setUp() throws Exception {
 		RunEnvironment.init(new Schedule(), null, null, false);
+		StateChartResolveActionScheduler.INSTANCE.initialize();
 	}
 
 	@After
@@ -135,12 +136,12 @@ public class StateChartResolveActionSchedulerTest {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.execute();
 		assertEquals(true,tc.resolved);
-		assertEquals(1,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
+//		assertEquals(1,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
 		assertEquals(0.5, schedule.getTickCount(),0.0001);
 		tc.resolved = false;
 		schedule.execute();
 		assertEquals(true,tc.resolved);
-		assertEquals(0,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
+//		assertEquals(0,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
 		assertEquals(1, schedule.getTickCount(),0.0001);
 	}
 
