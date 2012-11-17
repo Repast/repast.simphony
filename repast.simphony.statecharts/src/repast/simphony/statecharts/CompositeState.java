@@ -13,6 +13,7 @@ public class CompositeState extends AbstractState {
 
 	public void addHistoryState(HistoryState historyState){
 		historyStates.add(historyState);
+		historyState.setParent(this);
 	}
 	
 	public void removeHistoryState(HistoryState historyState){

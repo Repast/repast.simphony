@@ -51,10 +51,11 @@ public enum StateChartResolveActionScheduler {
 	public void initialize() {
 		clearCounter = 0;
 		for (Double key : resolveActions.keySet()) {
-			ResolveActionsMapValue ramv = resolveActions.remove(key);
+			ResolveActionsMapValue ramv = resolveActions.get(key);
 			ramv.isa = null;
 			ramv.scra = null;
 		}
+		resolveActions.clear();
 	}
 
 	long clearCounter = 0;

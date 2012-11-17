@@ -74,7 +74,7 @@ public class StateChartTest {
 		}
 	}
 
-	private static class MyState extends AbstractState {
+	private static class MyState extends SimpleState {
 
 		public TestClass tc;
 
@@ -430,9 +430,6 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
-		assertEquals(true,
-				StateChartResolveActionScheduler.INSTANCE.resolveActions
-						.isEmpty());
 	}
 
 	/**
@@ -492,9 +489,7 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(7, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
-		assertEquals(true,
-				StateChartResolveActionScheduler.INSTANCE.resolveActions
-						.isEmpty());
+
 	}
 
 	/**

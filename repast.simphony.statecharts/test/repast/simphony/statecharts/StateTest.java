@@ -48,5 +48,22 @@ public class StateTest {
 		assertNull(four.calculateLowestCommonAncestor(six));
 		assertNull(six.calculateLowestCommonAncestor(four));
 	}
+	
+	
+	@Test
+	public void getDefaultDestinationFromHistory(){
+		CompositeState zero = new CompositeState("zero");
+		CompositeState one = new CompositeState("one");
+		zero.registerEntryState(one);
+		SimpleState two = new SimpleState("two");
+		one.registerEntryState(two);
+		HistoryState hs1 = new HistoryState("hs1");
+		HistoryState hs2 = new HistoryState("hs2",false);
+		zero.addHistoryState(hs1);
+		zero.addHistoryState(hs2);
+		assertEquals(one,hs1.followDestination());
+		assertEquals(one,hs2.followDestination());
+		
+	}
 
 }
