@@ -277,5 +277,130 @@ public class StateChartTest2 {
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
 
 	}
+	
+	/**
+	 * Statechart for history states.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart4 extends DefaultStateChart {
+
+		public MyStateChart4(final MyAgent4 a) {
+			
+			CompositeState three = new CompositeState("three");
+			registerEntryState(three);
+			CompositeState two = new CompositeState("two");
+			three.registerEntryState(two);
+			HistoryState hs3 = new HistoryState("hs3");
+			HistoryState hs3Star = new HistoryState("hs3*",false);
+			three.addHistoryState(hs3);
+			three.addHistoryState(hs3Star);
+			HistoryState hs2 = new HistoryState("hs2");
+			two.addHistoryState(hs2);
+			class MyHistoryCallable implements Callable<Void>{
+
+				HistoryState historyState;
+				public MyHistoryCallable(HistoryState historyState){
+					this.historyState = historyState;
+				}
+				@Override
+				public Void call() throws Exception {
+					a.lastHistoryDestination = historyState.getDestination().getId();
+					return null;
+				}
+				
+			}
+			hs3.registerOnEnter(new MyHistoryCallable(hs3));
+			hs3Star.registerOnEnter(new MyHistoryCallable(hs3Star));
+			hs2.registerOnEnter(new MyHistoryCallable(hs2));
+			SimpleState oneA = new SimpleState("oneA");
+			SimpleState oneB = new SimpleState("oneB");
+			two.registerEntryState(oneA);
+			two.add(oneB);
+			addRegularTransition(new Transition(new TimedTrigger(1), oneA, oneB));
+			SimpleState four = new SimpleState("four");
+			addRegularTransition(new Transition(new TimedTrigger(4), three, four));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), four, hs3));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), four, hs3Star));
+			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("c")), four, hs2));
+		}
+	}
+	
+	private static class MyAgent4 {
+		public String lastHistoryDestination;
+		public StateChart st;
+
+		public void setup() {
+			st = new MyStateChart4(this);
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart4Scenario1() {
+		MyAgent4 a = new MyAgent4();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(5, schedule.getTickCount(), 0.0001);
+		assertEquals("four", a.st.getCurrentSimpleState().getId());
+		a.st.receiveMessage("a");
+		schedule.execute();
+		assertEquals(6, schedule.getTickCount(), 0.0001);
+		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		assertEquals("two",a.lastHistoryDestination);
+		
+	}
+	
+	@Test
+	public void myStateChart4Scenario2() {
+		MyAgent4 a = new MyAgent4();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(5, schedule.getTickCount(), 0.0001);
+		assertEquals("four", a.st.getCurrentSimpleState().getId());
+		a.st.receiveMessage("b");
+		schedule.execute();
+		assertEquals(6, schedule.getTickCount(), 0.0001);
+		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
+		assertEquals("oneB",a.lastHistoryDestination);
+		
+	}
+	
+	@Test
+	public void myStateChart4Scenario3() {
+		MyAgent4 a = new MyAgent4();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
+		schedule.execute();
+		assertEquals(5, schedule.getTickCount(), 0.0001);
+		assertEquals("four", a.st.getCurrentSimpleState().getId());
+		a.st.receiveMessage("c");
+		schedule.execute();
+		assertEquals(6, schedule.getTickCount(), 0.0001);
+		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
+		assertEquals("oneB",a.lastHistoryDestination);
+		
+	}
 
 }

@@ -4,8 +4,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 
@@ -277,6 +280,7 @@ public class DefaultStateChart implements StateChart {
 	private List<AbstractState> getStatesToEnter(AbstractState lca,
 			AbstractState target) {
 		LinkedList<AbstractState> statesToEnter = new LinkedList<AbstractState>();
+		Map<CompositeState,HistoryState> compositeHistoryMap = new HashMap<CompositeState,HistoryState>();
 		AbstractState t = target;
 		while (!(t instanceof SimpleState)) {
 			if (t instanceof CompositeState) {
@@ -285,12 +289,16 @@ public class DefaultStateChart implements StateChart {
 			} else {
 				if (t instanceof HistoryState) {
 					HistoryState hs = (HistoryState) t;
-					t = hs.followDestination();
+					compositeHistoryMap.put(hs.getParent(),hs);
+					t = hs.getDestination();
 				}
 			}
 		}
 		// At this point t should be the target simple state
 		while (t != lca && t != null) {
+			if (compositeHistoryMap.containsKey(t)){
+				statesToEnter.addFirst(compositeHistoryMap.get(t));
+			}
 			statesToEnter.addFirst(t);
 			t = t.getParent();
 		}

@@ -11,7 +11,7 @@ public class HistoryState extends AbstractState {
 		return shallow;
 	}
 
-	public AbstractState followDestination() {
+	public AbstractState getDestination() {
 		// History not established
 		if (destination == null) {
 			CompositeState parent = getParent();

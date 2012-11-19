@@ -61,8 +61,8 @@ public class StateTest {
 		HistoryState hs2 = new HistoryState("hs2",false);
 		zero.addHistoryState(hs1);
 		zero.addHistoryState(hs2);
-		assertEquals(one,hs1.followDestination());
-		assertEquals(one,hs2.followDestination());
+		assertEquals(one,hs1.getDestination());
+		assertEquals(one,hs2.getDestination());
 		
 	}
 
