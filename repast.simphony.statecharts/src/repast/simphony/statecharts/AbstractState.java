@@ -3,34 +3,41 @@ package repast.simphony.statecharts;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import simphony.util.messages.MessageCenter;
 
-public abstract class AbstractState {
-
-	private CompositeState parent;
+public abstract class AbstractState<T> {
 	
-	public CompositeState getParent() {
+	private T agent;
+	
+	public T getAgent(){
+		return agent;
+	}
+	
+	public void setAgent(T agent){
+		this.agent = agent;
+	}
+
+	private CompositeState<T> parent;
+	
+	public CompositeState<T> getParent() {
 		return parent;
 	}
 
 	
-	public void setParent(CompositeState parent) {
+	public void setParent(CompositeState<T> parent) {
 		this.parent = parent;
 	}
 
 	private String id;
-	private Callable<Void> onEnter = new Callable<Void>(){
+	private StateAction<T> onEnter = new StateAction<T>(){
 		@Override
-		public Void call() throws Exception {
-			return null;
+		public void action(T agent, AbstractState<T> state) throws Exception {
 		}
 	};
-	private Callable<Void> onExit = new Callable<Void>(){
+	private StateAction<T> onExit = new StateAction<T>(){
 		@Override
-		public Void call() throws Exception {
-			return null;
+		public void action(T agent, AbstractState<T> state) throws Exception {
 		}
 	};
 	
@@ -50,7 +57,7 @@ public abstract class AbstractState {
 	
 	public void onEnter() {
 		try {
-			onEnter.call();
+			onEnter.action(getAgent(),this);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onEnter in state: " + id, e);
 			throw new RuntimeException(e);
@@ -60,7 +67,7 @@ public abstract class AbstractState {
 	
 	public void onExit() {
 		try {
-			onExit.call();
+			onExit.action(getAgent(),this);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onExit in state: " + id, e);
 			throw new RuntimeException(e);
@@ -68,22 +75,22 @@ public abstract class AbstractState {
 	}
 
 	
-	public void registerOnEnter(Callable<Void> onEnter) {
+	public void registerOnEnter(StateAction<T> onEnter) {
 		this.onEnter = onEnter;
 	}
 
 	
-	public void registerOnExit(Callable<Void> onExit) {
+	public void registerOnExit(StateAction<T> onExit) {
 		this.onExit = onExit;
 	}
 
 	
-	public AbstractState calculateLowestCommonAncestor(AbstractState other){
-		Iterator<AbstractState> myAncestors = getAncestors().iterator();
-		Iterator<AbstractState> otherAncestors = other.getAncestors().iterator();
-		AbstractState currentCandidate = null;
+	public AbstractState<T> calculateLowestCommonAncestor(AbstractState<T> other){
+		Iterator<AbstractState<T>> myAncestors = getAncestors().iterator();
+		Iterator<AbstractState<T>> otherAncestors = other.getAncestors().iterator();
+		AbstractState<T> currentCandidate = null;
 		while(myAncestors.hasNext() && otherAncestors.hasNext()){
-			AbstractState myNext = myAncestors.next(); 
+			AbstractState<T> myNext = myAncestors.next(); 
 			if (myNext == otherAncestors.next()) currentCandidate = myNext;
 		}
 		return currentCandidate;
@@ -92,9 +99,9 @@ public abstract class AbstractState {
 	/**
 	 * Returns a list with the highest node in front.
 	 */
-	protected List<AbstractState> getAncestors(){
-		LinkedList<AbstractState> ancestors = new LinkedList<AbstractState>();
-		AbstractState s = this;
+	protected List<AbstractState<T>> getAncestors(){
+		LinkedList<AbstractState<T>> ancestors = new LinkedList<AbstractState<T>>();
+		AbstractState<T> s = this;
 		ancestors.addFirst(s);
 		while (s.getParent() != null){
 			s = s.getParent();

@@ -18,7 +18,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.random.RandomHelper;
 import cern.jet.random.Uniform;
 
-public class DefaultStateChart implements StateChart {
+public class DefaultStateChart<T> implements StateChart<T> {
 
 	private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
@@ -33,21 +33,21 @@ public class DefaultStateChart implements StateChart {
 		this.transitionResolutionStrategy = transitionResolutionStrategy;
 	}
 
-	private AbstractState entryState;
+	private AbstractState<T> entryState;
 	// private List<State> states = new ArrayList<State>();
 
 	// Regular transitions
-	protected List<Transition> regularTransitions = new ArrayList<Transition>();
-	protected List<Transition> activeRegularTransitions = new ArrayList<Transition>();
+	protected List<Transition<T>> regularTransitions = new ArrayList<Transition<T>>();
+	protected List<Transition<T>> activeRegularTransitions = new ArrayList<Transition<T>>();
 
 	// Self transitions
-	protected List<Transition> selfTransitions = new ArrayList<Transition>();
-	protected List<Transition> activeSelfTransitions = new ArrayList<Transition>();
+	protected List<Transition<T>> selfTransitions = new ArrayList<Transition<T>>();
+	protected List<Transition<T>> activeSelfTransitions = new ArrayList<Transition<T>>();
 
-	protected SimpleState currentSimpleState;
+	protected SimpleState<T> currentSimpleState;
 
 	@Override
-	public void registerEntryState(AbstractState state) {
+	public void registerEntryState(AbstractState<T> state) {
 		entryState = state;
 	}
 
@@ -59,17 +59,17 @@ public class DefaultStateChart implements StateChart {
 					"An entry state was not registered in the StateChart.");
 		}
 		clearTransitions(null);
-		List<AbstractState> statesToEnter = getStatesToEnter(null, entryState);
+		List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
 		// Entering states from the top down
-		for (AbstractState as : statesToEnter) {
+		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
 		}
 		stateInit(statesToEnter);
 	}
 
-	private void partitionQueueConsuming(List<Transition> transitions,
-			List<Transition> queueConsuming, List<Transition> nonQueueConsuming) {
-		for (Transition t : transitions) {
+	private void partitionQueueConsuming(List<Transition<T>> transitions,
+			List<Transition<T>> queueConsuming, List<Transition<T>> nonQueueConsuming) {
+		for (Transition<T> t : transitions) {
 			if (t.isTriggerQueueConsuming())
 				queueConsuming.add(t);
 			else
@@ -77,37 +77,37 @@ public class DefaultStateChart implements StateChart {
 		}
 	}
 
-	private void stateInit(List<AbstractState> statesToEnter) {
+	private void stateInit(List<AbstractState<T>> statesToEnter) {
 
-		currentSimpleState = (SimpleState) statesToEnter.get(statesToEnter
+		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter
 				.size() - 1);
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
 		} else {
 			List<String> statesToEnterStateIds = new ArrayList<String>();
-			for (AbstractState as : statesToEnter) {
+			for (AbstractState<T> as : statesToEnter) {
 				statesToEnterStateIds.add(as.getId());
 			}
 			// look through all defined regular transitions and find those with
 			// source.id ==
 			// state.id
-			List<Transition> newCandidateTransitions = new ArrayList<Transition>();
-			for (Transition t : regularTransitions) {
+			List<Transition<T>> newCandidateTransitions = new ArrayList<Transition<T>>();
+			for (Transition<T> t : regularTransitions) {
 				if (statesToEnterStateIds.contains(t.getSource().getId())) {
 					newCandidateTransitions.add(t);
 				}
 			}
 
 			// Get zero time transitions
-			List<Transition> zeroTimeTransitions = new ArrayList<Transition>();
+			List<Transition<T>> zeroTimeTransitions = new ArrayList<Transition<T>>();
 			// for new candidate transitions find all zeroTimeTransitions
-			for (Transition tt : newCandidateTransitions) {
+			for (Transition<T> tt : newCandidateTransitions) {
 				if (tt.canTransitionZeroTime())
 					zeroTimeTransitions.add(tt);
 			}
 			// for existing active regular transitions, only those that are
 			// triggered
-			for (Transition tt : activeRegularTransitions) {
+			for (Transition<T> tt : activeRegularTransitions) {
 				if (tt.canTransitionZeroTime() && tt.isTransitionTriggered())
 					zeroTimeTransitions.add(tt);
 			}
@@ -115,22 +115,22 @@ public class DefaultStateChart implements StateChart {
 			// Partition zero time transitions into queue consuming and non
 			// queue
 			// consuming
-			List<Transition> queueConsuming = new ArrayList<Transition>();
-			List<Transition> nonQueueConsuming = new ArrayList<Transition>();
+			List<Transition<T>> queueConsuming = new ArrayList<Transition<T>>();
+			List<Transition<T>> nonQueueConsuming = new ArrayList<Transition<T>>();
 			partitionQueueConsuming(zeroTimeTransitions, queueConsuming,
 					nonQueueConsuming);
 
 			// Find non queue consuming candidate transitions
-			List<Transition> nonQueueConsumingCandidates = new ArrayList<Transition>();
-			for (Transition tt : nonQueueConsuming) {
+			List<Transition<T>> nonQueueConsumingCandidates = new ArrayList<Transition<T>>();
+			for (Transition<T> tt : nonQueueConsuming) {
 				if (tt.isTransitionConditionTrue())
 					nonQueueConsumingCandidates.add(tt);
 			}
 
-			List<Transition> queueConsumingCandidates = new ArrayList<Transition>();
+			List<Transition<T>> queueConsumingCandidates = new ArrayList<Transition<T>>();
 			// Find queue consuming candidate transitions
 			while (true) {
-				for (Transition tt : queueConsuming) {
+				for (Transition<T> tt : queueConsuming) {
 					if (tt.isTransitionConditionTrue())
 						queueConsumingCandidates.add(tt);
 				}
@@ -145,7 +145,7 @@ public class DefaultStateChart implements StateChart {
 
 			// Concatenate queue and non queue consuming candidates and choose
 			// one
-			Transition t = chooseOneTransition(ListUtils.union(
+			Transition<T> t = chooseOneTransition(ListUtils.union(
 					nonQueueConsumingCandidates, queueConsumingCandidates));
 			// If a zero time transition was found, make that transition
 			if (t != null) {
@@ -159,7 +159,7 @@ public class DefaultStateChart implements StateChart {
 			// them
 			else {
 				// collect all relevant self transitions and initialize
-				for (Transition st : selfTransitions) {
+				for (Transition<T> st : selfTransitions) {
 					if (statesToEnterStateIds.contains(st.getSource().getId())) {
 						activeSelfTransitions.add(st);
 						st.initialize(this);
@@ -167,7 +167,7 @@ public class DefaultStateChart implements StateChart {
 				}
 				// collect all relevant regular transitions and initialize
 				activeRegularTransitions.addAll(newCandidateTransitions);
-				for (Transition ct : newCandidateTransitions) {
+				for (Transition<T> ct : newCandidateTransitions) {
 					ct.initialize(this);
 				}
 
@@ -175,19 +175,19 @@ public class DefaultStateChart implements StateChart {
 		}
 	}
 
-	private void clearTransitions(AbstractState as) {
+	private void clearTransitions(AbstractState<T> as) {
 		// deactivate and clear all active transitions
 		deactivateTransitions(as, activeSelfTransitions);
 		deactivateTransitions(as, activeRegularTransitions);
 	}
 
-	private void deactivateTransitions(AbstractState as,
-			List<Transition> transitions) {
-		List<Transition> candidateTransitions = new ArrayList<Transition>();
+	private void deactivateTransitions(AbstractState<T> as,
+			List<Transition<T>> transitions) {
+		List<Transition<T>> candidateTransitions = new ArrayList<Transition<T>>();
 		if (as == null) {
 			candidateTransitions = transitions;
 		} else {
-			for (Transition t : transitions) {
+			for (Transition<T> t : transitions) {
 				if (t.getSource().getId().equals(as.getId())) {
 					candidateTransitions.add(t);
 				}
@@ -195,7 +195,7 @@ public class DefaultStateChart implements StateChart {
 		}
 		double now = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
-		for (Transition t : candidateTransitions) {
+		for (Transition<T> t : candidateTransitions) {
 			// if trigger's next time is after now,
 			Trigger tr = t.getTrigger();
 			double nextTime = tr.getNextTime();
@@ -207,36 +207,36 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public void addState(AbstractState state) {
+	public void addState(AbstractState<T> state) {
 		// states.add(state);
 	}
 
 	@Override
-	public void addRegularTransition(Transition transition) {
+	public void addRegularTransition(Transition<T> transition) {
 		regularTransitions.add(transition);
 	}
 
 	@Override
-	public void addSelfTransition(Trigger trigger, AbstractState state) {
+	public void addSelfTransition(Trigger trigger, AbstractState<T> state) {
 		addSelfTransition(trigger, Transition.createEmptyOnTransition(),
 				Transition.createEmptyGuard(), state);
 	}
 
 	@Override
 	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
-			Callable<Boolean> guard, AbstractState state) {
-		Transition transition = new Transition(trigger, state, state);
+			Callable<Boolean> guard, AbstractState<T> state) {
+		Transition<T> transition = new Transition<T>(trigger, state, state);
 		transition.registerOnTransition(onTransition);
 		transition.registerGuard(guard);
 		addSelfTransition(transition);
 	}
 
-	protected void addSelfTransition(Transition transition) {
+	protected void addSelfTransition(Transition<T> transition) {
 		selfTransitions.add(transition);
 	}
 
 	@Override
-	public SimpleState getCurrentSimpleState() {
+	public SimpleState<T> getCurrentSimpleState() {
 		return currentSimpleState;
 	}
 
@@ -247,15 +247,15 @@ public class DefaultStateChart implements StateChart {
 	 * @param lca
 	 * @return
 	 */
-	private List<AbstractState> getStatesToExit(AbstractState lca) {
-		List<AbstractState> statesToExit = new ArrayList<AbstractState>();
+	private List<AbstractState<T>> getStatesToExit(AbstractState<T> lca) {
+		List<AbstractState<T>> statesToExit = new ArrayList<AbstractState<T>>();
 		// Gather all states, from current state (simple state) to just before
 		// the lca of the source state (not necessarily a simple state)
-		AbstractState s = getCurrentSimpleState();
+		AbstractState<T> s = getCurrentSimpleState();
 		while (s != lca && s != null) {
-			if (s instanceof CompositeState) {
-				CompositeState cs = (CompositeState) s;
-				for (HistoryState hs : cs.getHistoryStates()) {
+			if (s instanceof CompositeState<?>) {
+				CompositeState<T> cs = (CompositeState<T>) s;
+				for (HistoryState<T> hs : cs.getHistoryStates()) {
 					if (hs.isShallow()) {
 						hs.setDestination(statesToExit.get(statesToExit.size() - 1));
 					} else {
@@ -277,18 +277,18 @@ public class DefaultStateChart implements StateChart {
 	 * @param target
 	 * @return
 	 */
-	private List<AbstractState> getStatesToEnter(AbstractState lca,
-			AbstractState target) {
-		LinkedList<AbstractState> statesToEnter = new LinkedList<AbstractState>();
-		Map<CompositeState,HistoryState> compositeHistoryMap = new HashMap<CompositeState,HistoryState>();
-		AbstractState t = target;
+	private List<AbstractState<T>> getStatesToEnter(AbstractState<T> lca,
+			AbstractState<T> target) {
+		LinkedList<AbstractState<T>> statesToEnter = new LinkedList<AbstractState<T>>();
+		Map<CompositeState<T>,HistoryState<T>> compositeHistoryMap = new HashMap<CompositeState<T>,HistoryState<T>>();
+		AbstractState<T> t = target;
 		while (!(t instanceof SimpleState)) {
 			if (t instanceof CompositeState) {
-				CompositeState cs = (CompositeState) t;
+				CompositeState<T> cs = (CompositeState<T>) t;
 				t = cs.getEntryState();
 			} else {
 				if (t instanceof HistoryState) {
-					HistoryState hs = (HistoryState) t;
+					HistoryState<T> hs = (HistoryState<T>) t;
 					compositeHistoryMap.put(hs.getParent(),hs);
 					t = hs.getDestination();
 				}
@@ -305,15 +305,15 @@ public class DefaultStateChart implements StateChart {
 		return statesToEnter;
 	}
 
-	private void makeRegularTransition(Transition transition) {
-		AbstractState source = transition.getSource();
-		AbstractState target = transition.getTarget();
+	private void makeRegularTransition(Transition<T> transition) {
+		AbstractState<T> source = transition.getSource();
+		AbstractState<T> target = transition.getTarget();
 
-		AbstractState lca = source.calculateLowestCommonAncestor(target);
-		List<AbstractState> statesToExit = getStatesToExit(lca);
+		AbstractState<T> lca = source.calculateLowestCommonAncestor(target);
+		List<AbstractState<T>> statesToExit = getStatesToExit(lca);
 
 		currentSimpleState = null;
-		for (AbstractState as : statesToExit) {
+		for (AbstractState<T> as : statesToExit) {
 			clearTransitions(as);
 			as.onExit();
 		}
@@ -321,9 +321,9 @@ public class DefaultStateChart implements StateChart {
 		// Transition action
 		transition.onTransition();
 
-		List<AbstractState> statesToEnter = getStatesToEnter(lca, target);
+		List<AbstractState<T>> statesToEnter = getStatesToEnter(lca, target);
 		// Entering states from the top down
-		for (AbstractState as : statesToEnter) {
+		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
 		}
 
@@ -332,10 +332,10 @@ public class DefaultStateChart implements StateChart {
 
 	// private List<Transition>
 
-	private List<Transition> getTriggeredTransitions(
-			List<Transition> transitions) {
-		List<Transition> triggeredTransitions = new ArrayList<Transition>();
-		for (Transition t : transitions) {
+	private List<Transition<T>> getTriggeredTransitions(
+			List<Transition<T>> transitions) {
+		List<Transition<T>> triggeredTransitions = new ArrayList<Transition<T>>();
+		for (Transition<T> t : transitions) {
 			if (t.isTransitionTriggered())
 				triggeredTransitions.add(t);
 		}
@@ -345,31 +345,31 @@ public class DefaultStateChart implements StateChart {
 	public void resolve() {
 		// Partition active self transitions into queue consuming and non queue
 		// consuming
-		List<Transition> queueConsumingActiveSelfTransitions = new ArrayList<Transition>();
-		List<Transition> nonQueueConsumingActiveSelfTransitions = new ArrayList<Transition>();
+		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
+		List<Transition<T>> nonQueueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
 		partitionQueueConsuming(activeSelfTransitions,
 				queueConsumingActiveSelfTransitions,
 				nonQueueConsumingActiveSelfTransitions);
 
 		// Execute all non queue consuming active self transitions
-		for (Transition t : getTriggeredTransitions(nonQueueConsumingActiveSelfTransitions)) {
+		for (Transition<T> t : getTriggeredTransitions(nonQueueConsumingActiveSelfTransitions)) {
 			t.onTransition();
 		}
 
 		// Partition active regular transitions into queue consuming and non
 		// queue consuming
-		List<Transition> queueConsumingActiveRegularTransitions = new ArrayList<Transition>();
-		List<Transition> nonQueueConsumingActiveRegularTransitions = new ArrayList<Transition>();
+		List<Transition<T>> queueConsumingActiveRegularTransitions = new ArrayList<Transition<T>>();
+		List<Transition<T>> nonQueueConsumingActiveRegularTransitions = new ArrayList<Transition<T>>();
 		partitionQueueConsuming(activeRegularTransitions,
 				queueConsumingActiveRegularTransitions,
 				nonQueueConsumingActiveRegularTransitions);
 
 		// Find non queue consuming candidate regular transitions
-		List<Transition> nonQueueConsumingRegularCandidates = getTriggeredTransitions(nonQueueConsumingActiveRegularTransitions);
-		List<Transition> queueConsumingRegularCandidates;
+		List<Transition<T>> nonQueueConsumingRegularCandidates = getTriggeredTransitions(nonQueueConsumingActiveRegularTransitions);
+		List<Transition<T>> queueConsumingRegularCandidates;
 		while (true) {
 			// Execute all queue consuming active self transitions
-			for (Transition t : getTriggeredTransitions(queueConsumingActiveSelfTransitions)) {
+			for (Transition<T> t : getTriggeredTransitions(queueConsumingActiveSelfTransitions)) {
 				t.onTransition();
 			}
 
@@ -386,7 +386,7 @@ public class DefaultStateChart implements StateChart {
 		}
 
 		// Concatenate queue and non queue consuming candidates and choose one
-		Transition t = chooseOneTransition(ListUtils.union(
+		Transition<T> t = chooseOneTransition(ListUtils.union(
 				nonQueueConsumingRegularCandidates,
 				queueConsumingRegularCandidates));
 
@@ -407,7 +407,7 @@ public class DefaultStateChart implements StateChart {
 
 	}
 
-	private Transition chooseOneTransition(List<Transition> transitions) {
+	private Transition<T> chooseOneTransition(List<Transition<T>> transitions) {
 		// If no transitions, return null
 		if (transitions.isEmpty())
 			return null;
@@ -421,7 +421,7 @@ public class DefaultStateChart implements StateChart {
 		case NATURAL:
 			return transitions.get(0);
 		case PRIORITY:
-			List<Transition> temp = new ArrayList<Transition>(transitions);
+			List<Transition<T>> temp = new ArrayList<Transition<T>>(transitions);
 			Collections.sort(temp, pComp);
 			return temp.get(0);
 		case RANDOM:
@@ -434,32 +434,32 @@ public class DefaultStateChart implements StateChart {
 		}
 	}
 
-	private void rescheduleTransitions(List<Transition> activeTransitions,
+	private void rescheduleTransitions(List<Transition<T>> activeTransitions,
 			boolean regular) {
 		// get current time
 		double currentTime = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
 		// for each active transition
 		if (regular) {
-			for (Transition t : activeTransitions) {
+			for (Transition<T> t : activeTransitions) {
 				t.rescheduleRegularTransition(this, currentTime);
 
 			}
 		} else {
-			for (Transition t : activeTransitions) {
+			for (Transition<T> t : activeTransitions) {
 				t.rescheduleSelfTransition(this, currentTime);
 			}
 		}
 	}
 
-	private Comparator<Transition> pComp = new PriorityComparator();
+	private Comparator<Transition<T>> pComp = new PriorityComparator<T>();
 
 	/**
 	 * Compares Transitions according to their priority. Lower priority later in
 	 * order.
 	 */
-	static class PriorityComparator implements Comparator<Transition> {
-		public int compare(Transition t1, Transition t2) {
+	static class PriorityComparator<U> implements Comparator<Transition<U>> {
+		public int compare(Transition<U> t1, Transition<U> t2) {
 			double index1 = t1.getPriority();
 			double index2 = t2.getPriority();
 			return index1 < index2 ? 1 : index1 == index2 ? 0 : -1;
@@ -503,23 +503,23 @@ public class DefaultStateChart implements StateChart {
 	}
 
 	@Override
-	public void addBranch(Branch branch) {
+	public void addBranch(Branch<T> branch) {
 		// create transition from "from" to branch
 		branch.initializeBranch(this);
 		// create into transition from ...
-		IntoBranchTransition ibt = branch.getIntoBranchTransition();
-		Transition t = new Transition(ibt.getTrigger(), ibt.getSource(),
+		IntoBranchTransition<T> ibt = branch.getIntoBranchTransition();
+		Transition<T> t = new Transition<T>(ibt.getTrigger(), ibt.getSource(),
 				branch, ibt.getTransitionPriority());
 		t.registerGuard(ibt.getGuard());
 		t.registerOnTransition(ibt.getOnTransition());
 		addRegularTransition(t);
 
 		// create tos transitions from ...
-		List<OutOfBranchTransition> tos = branch.getTos();
+		List<OutOfBranchTransition<T>> tos = branch.getTos();
 		int numOfTos = tos.size();
 		for (int i = 0; i < numOfTos; i++) {
-			OutOfBranchTransition oobt = tos.get(i);
-			Transition outt = new Transition(oobt.getTrigger(), branch,
+			OutOfBranchTransition<T> oobt = tos.get(i);
+			Transition<T> outt = new Transition<T>(oobt.getTrigger(), branch,
 					oobt.getTarget(), numOfTos - i);
 			addRegularTransition(outt);
 		}

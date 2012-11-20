@@ -2,19 +2,19 @@ package repast.simphony.statecharts;
 
 import java.util.concurrent.Callable;
 
-public class HistoryState extends AbstractState {
+public class HistoryState<T> extends AbstractState<T> {
 
 	final boolean shallow;
-	private AbstractState destination;
+	private AbstractState<T> destination;
 
 	public boolean isShallow() {
 		return shallow;
 	}
 
-	public AbstractState getDestination() {
+	public AbstractState<T> getDestination() {
 		// History not established
 		if (destination == null) {
-			CompositeState parent = getParent();
+			CompositeState<T> parent = getParent();
 			if (parent == null) {
 				throw new IllegalStateException(
 						"A history state cannot be at the root level of a state chart.");
@@ -26,7 +26,7 @@ public class HistoryState extends AbstractState {
 		}
 	}
 
-	public void setDestination(AbstractState destination) {
+	public void setDestination(AbstractState<T> destination) {
 		this.destination = destination;
 	}
 
@@ -40,7 +40,7 @@ public class HistoryState extends AbstractState {
 	}
 	
 	@Override
-	public void registerOnExit(Callable<Void> onExit) {
+	public void registerOnExit(StateAction<T> onExit) {
 		throw new UnsupportedOperationException("HistoryStates are never exited, only entered. Use registerOnEnter instead.");
 	}
 

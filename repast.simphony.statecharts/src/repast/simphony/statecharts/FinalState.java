@@ -1,6 +1,6 @@
 package repast.simphony.statecharts;
 
-public class FinalState extends SimpleState {
+public class FinalState<T> extends SimpleState<T> {
 
 	public FinalState(String id) {
 		super(id);

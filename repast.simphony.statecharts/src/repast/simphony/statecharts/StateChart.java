@@ -3,7 +3,7 @@ package repast.simphony.statecharts;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 
-public interface StateChart {
+public interface StateChart<T> {
 	
 	/**
 	 * Receive a message into the statechart queue.
@@ -19,25 +19,25 @@ public interface StateChart {
 	 * Add state to state chart.
 	 * @param state
 	 */
-	public void addState(AbstractState state);
+	public void addState(AbstractState<T> state);
 	
 	/**
 	 * Add state to state chart.
 	 * @param state
 	 */
-	public void registerEntryState(AbstractState state);
+	public void registerEntryState(AbstractState<T> state);
 	
 	/**
 	 * Add transition to state chart.
 	 * @param transition
 	 */
-	public void addRegularTransition(Transition transition);
+	public void addRegularTransition(Transition<T> transition);
 	
 	/**
 	 * Add branch to state chart. 
 	 * @param branch
 	 */
-	public void addBranch(Branch branch);
+	public void addBranch(Branch<T> branch);
 	
 	/**
 	 * Add self transition to state chart.
@@ -45,16 +45,16 @@ public interface StateChart {
 	 * @param source
 	 * @param target
 	 */
-	public void addSelfTransition(Trigger trigger, AbstractState state);
+	public void addSelfTransition(Trigger trigger, AbstractState<T> state);
 	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
-			Callable<Boolean> guard, AbstractState state);
+			Callable<Boolean> guard, AbstractState<T> state);
 
 	
 	/**
 	 * Retrieve current state.
 	 * @return
 	 */
-	public AbstractState getCurrentSimpleState();
+	public AbstractState<T> getCurrentSimpleState();
 	
 	
 

@@ -2,9 +2,9 @@ package repast.simphony.statecharts;
 
 import java.util.concurrent.Callable;
 
-public class IntoBranchTransition{
+public class IntoBranchTransition<T>{
 	
-	public AbstractState getSource() {
+	public AbstractState<T> getSource() {
 		return source;
 	}
 	
@@ -25,14 +25,14 @@ public class IntoBranchTransition{
 	private double transitionPriority;
 	private Callable<Void> onTransition;
 	private Callable<Boolean> guard;
-	private AbstractState source;
+	private AbstractState<T> source;
 
-	public static IntoBranchTransition createIntoBranchTransition(AbstractState source, Trigger trigger){
-		return new IntoBranchTransition(source, trigger, 0, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
+	public static <U> IntoBranchTransition<U> createIntoBranchTransition(AbstractState<U> source, Trigger trigger){
+		return new IntoBranchTransition<U>(source, trigger, 0, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
 	}
 
-	public static IntoBranchTransition createIntoBranchTransition(AbstractState source, Trigger trigger, double transitionPriority){
-		return new IntoBranchTransition(source, trigger, transitionPriority, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
+	public static <U> IntoBranchTransition<U> createIntoBranchTransition(AbstractState<U> source, Trigger trigger, double transitionPriority){
+		return new IntoBranchTransition<U>(source, trigger, transitionPriority, Transition.createEmptyOnTransition(), Transition.createEmptyGuard());
 	}
 	
 	public void registerGuard(Callable<Boolean> guard) {
@@ -44,7 +44,7 @@ public class IntoBranchTransition{
 	}
 	
 	
-	private IntoBranchTransition(AbstractState source,
+	private IntoBranchTransition(AbstractState<T> source,
 		Trigger trigger, double transitionPriority, Callable<Void> onTransition,
 		Callable<Boolean> guard){
 		this.source = source;

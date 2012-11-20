@@ -3,20 +3,20 @@ package repast.simphony.statecharts;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeState extends AbstractState {
+public class CompositeState<T> extends AbstractState<T> {
 	
-	private List<HistoryState> historyStates = new ArrayList<HistoryState>();
+	private List<HistoryState<T>> historyStates = new ArrayList<HistoryState<T>>();
 
-	public List<HistoryState> getHistoryStates() {
+	public List<HistoryState<T>> getHistoryStates() {
 		return historyStates;
 	}
 
-	public void addHistoryState(HistoryState historyState){
+	public void addHistoryState(HistoryState<T> historyState){
 		historyStates.add(historyState);
 		historyState.setParent(this);
 	}
 	
-	public void removeHistoryState(HistoryState historyState){
+	public void removeHistoryState(HistoryState<T> historyState){
 		historyStates.remove(historyState);
 	}
 	
@@ -24,15 +24,15 @@ public class CompositeState extends AbstractState {
 		historyStates.clear();
 	}
 	
-	private AbstractState entryState;
+	private AbstractState<T> entryState;
 	
-	public AbstractState getEntryState() {
+	public AbstractState<T> getEntryState() {
 		return entryState;
 	}
 
-	private List<AbstractState> children = new ArrayList<AbstractState>();
+	private List<AbstractState<T>> children = new ArrayList<AbstractState<T>>();
 	
-	public void registerEntryState(AbstractState state) {
+	public void registerEntryState(AbstractState<T> state) {
 		entryState = state;
 		add(state);
 	}
@@ -41,7 +41,7 @@ public class CompositeState extends AbstractState {
 		super(id);
 	}
 	
-	public void add(AbstractState state){
+	public void add(AbstractState<T> state){
 		state.setParent(this);
 		if (!children.contains(state)){
 			children.add(state);

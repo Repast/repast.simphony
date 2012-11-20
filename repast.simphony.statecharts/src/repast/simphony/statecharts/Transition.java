@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import simphony.util.messages.MessageCenter;
 
-public class Transition {
+public class Transition<T> {
 	
 	private static class EmptyGuard implements Callable<Boolean>{
 		@Override
@@ -29,18 +29,18 @@ public class Transition {
 	}
 	
 	private Trigger trigger;
-	private AbstractState source, target;
+	private AbstractState<T> source, target;
 	private double priority;
 	private Callable<Void> onTransition = new EmptyOnTransition();
 	private Callable<Boolean> guard = new EmptyGuard();
 	
 
 
-	public Transition(Trigger trigger, AbstractState source, AbstractState target) {
+	public Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target) {
 		this(trigger,source,target,0);
 	}
 	
-	public Transition(Trigger trigger, AbstractState source, AbstractState target, double priority){
+	public Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target, double priority){
 		this.trigger = trigger;
 		this.source = source;
 		this.target = target;
@@ -52,11 +52,11 @@ public class Transition {
 		return trigger;
 	}
 
-	public AbstractState getSource() {
+	public AbstractState<T> getSource() {
 		return source;
 	}
 
-	public AbstractState getTarget() {
+	public AbstractState<T> getTarget() {
 		return target;
 	}
 	
@@ -94,7 +94,7 @@ public class Transition {
 	}
 
 
-	public void initialize(StateChart sc) {
+	public void initialize(StateChart<T> sc) {
 		trigger.initialize();
 		sc.scheduleResolveTime(trigger.getNextTime());
 	}
@@ -118,7 +118,7 @@ public class Transition {
 		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
 	}
 
-	public void rescheduleRegularTransition(StateChart stateChart, double currentTime) {
+	public void rescheduleRegularTransition(StateChart<T> stateChart, double currentTime) {
 		// if recurring && getNextTime is currentTime
 		if (trigger.isRecurring()
 				&& Double.compare(trigger.getNextTime(), currentTime) == 0) {
@@ -127,7 +127,7 @@ public class Transition {
 		}
 	}
 	
-	public void rescheduleSelfTransition(StateChart stateChart, double currentTime) {
+	public void rescheduleSelfTransition(StateChart<T> stateChart, double currentTime) {
 		// if getNextTime is currentTime
 		if (Double.compare(trigger.getNextTime(), currentTime) == 0) {
 			// reset to next time and reschedule

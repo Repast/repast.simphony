@@ -1,57 +1,54 @@
 package repast.simphony.statecharts;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
-public class Branch extends SimpleState {
+public class Branch<T> extends SimpleState<T> {
+
+	private Branch(String id) {
+		super(id);
+	}
 
 	private TransitionResolutionStrategy originalTRS;
 	
-	private List<OutOfBranchTransition> tos;
-	private IntoBranchTransition intoBranchTransition;
+	private List<OutOfBranchTransition<T>> tos;
+	private IntoBranchTransition<T> intoBranchTransition;
 	
 
 
-	public void initializeBranch(final StateChart st) {
-		registerOnEnter(new Callable<Void>(){
-
+	public void initializeBranch(final StateChart<T> st) {
+		registerOnEnter(new StateAction<T>(){
 			@Override
-			public Void call() throws Exception {
+			public void action(T agent, AbstractState<T> state)
+					throws Exception {
 				Branch.this.originalTRS = st.getTransitionResolutionStrategy();
 				st.setTransitionResolutionStrategy(TransitionResolutionStrategy.PRIORITY);
-				return null;
+				
 			}
-			
 		});
-		registerOnExit(new Callable<Void>(){
-
+		registerOnExit(new StateAction<T>(){
 			@Override
-			public Void call() throws Exception {
+			public void action(T agent, AbstractState<T> state)
+					throws Exception {
 				st.setTransitionResolutionStrategy(Branch.this.originalTRS);
-				return null;
+				
 			}
-			
 		});
 	}
 
 
-	public static Branch createBranch(String id, IntoBranchTransition ibt, List<OutOfBranchTransition> tos) {
-		Branch branch = new Branch(id);
+	public static <U> Branch<U> createBranch(String id, IntoBranchTransition<U> ibt, List<OutOfBranchTransition<U>> tos) {
+		Branch<U> branch = new Branch<U>(id);
 		branch.intoBranchTransition = ibt;
 		branch.tos = tos;
 		return branch;
 	}
 
-	public IntoBranchTransition getIntoBranchTransition() {
+	public IntoBranchTransition<T> getIntoBranchTransition() {
 		return intoBranchTransition;
 	}
 
-	public List<OutOfBranchTransition> getTos() {
+	public List<OutOfBranchTransition<T>> getTos() {
 		return tos;
-	}
-
-	private Branch(String id) {
-		super(id);
 	}
 
 }
