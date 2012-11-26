@@ -1,17 +1,16 @@
 package repast.simphony.statecharts;
 
-import java.util.concurrent.Callable;
 
 public class HistoryState<T> extends AbstractState<T> {
 
 	final boolean shallow;
 	private AbstractState<T> destination;
 
-	public boolean isShallow() {
+	protected boolean isShallow() {
 		return shallow;
 	}
 
-	public AbstractState<T> getDestination() {
+	protected AbstractState<T> getDestination() {
 		// History not established
 		if (destination == null) {
 			CompositeState<T> parent = getParent();
@@ -26,22 +25,14 @@ public class HistoryState<T> extends AbstractState<T> {
 		}
 	}
 
-	public void setDestination(AbstractState<T> destination) {
+	protected void setDestination(AbstractState<T> destination) {
 		this.destination = destination;
 	}
 
-	public HistoryState(String id, boolean shallow) {
+	protected HistoryState(String id, boolean shallow) {
 		super(id);
 		this.shallow = shallow;
-	}
-
-	public HistoryState(String id) {
-		this(id, true);
-	}
+	}	
 	
-	@Override
-	public void registerOnExit(StateAction<T> onExit) {
-		throw new UnsupportedOperationException("HistoryStates are never exited, only entered. Use registerOnEnter instead.");
-	}
 
 }

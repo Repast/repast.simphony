@@ -59,10 +59,6 @@ public class ProbabilityTrigger extends AbstractTrigger {
 		return false;
 	}
 	
-	@Override
-	public boolean isQueueConsuming() {
-		return false;
-	}
 
 
 }

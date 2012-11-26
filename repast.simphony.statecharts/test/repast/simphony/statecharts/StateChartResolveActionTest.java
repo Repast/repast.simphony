@@ -32,11 +32,12 @@ public class StateChartResolveActionTest {
 	public void tearDown() throws Exception {
 	}
 	
-	private static class TestStateChart extends DefaultStateChart {
+	private static class TestStateChart extends DefaultStateChart<Object> {
 
 		TestClass testClass;
 		
 		public TestStateChart(TestClass tc){
+			super(null);
 			testClass = tc;
 		}
 		@Override

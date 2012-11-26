@@ -28,18 +28,30 @@ public class StateTest {
 
 	@Test
 	public void lowestCommonAncestor() {
-		CompositeState zero = new CompositeState("zero");
-		CompositeState one = new CompositeState("one");
-		CompositeState two = new CompositeState("two");
-		CompositeState three = new CompositeState("three");
-		AbstractState four = new SimpleState("four");
-		AbstractState five = new SimpleState("five");
-		AbstractState six = new SimpleState("six");
-		zero.add(one);
-		one.add(two);
-		one.add(five);
-		two.add(three);
-		three.add(four);
+		SimpleState<Object> four = new SimpleStateBuilder<Object>(
+				"four").build();
+		SimpleState<Object> five = new SimpleStateBuilder<Object>(
+				"five").build();
+		SimpleState<Object> six = new SimpleStateBuilder<Object>(
+				"six").build();
+		
+		CompositeStateBuilder<Object> csb3 = new CompositeStateBuilder<Object>(
+				"three",four);
+		CompositeState<Object> three = csb3.build();
+		
+		CompositeStateBuilder<Object> csb2 = new CompositeStateBuilder<Object>(
+				"two",three);
+		CompositeState<Object> two = csb2.build();
+		
+		CompositeStateBuilder<Object> csb1 = new CompositeStateBuilder<Object>(
+				"one",two);
+		csb1.addChildState(five);
+		CompositeState<Object> one = csb1.build();
+		
+		CompositeStateBuilder<Object> csb0 = new CompositeStateBuilder<Object>(
+				"zero",one);
+		CompositeState<Object> zero = csb0.build();
+				
 		assertEquals(one,four.calculateLowestCommonAncestor(five));
 		assertEquals(one,five.calculateLowestCommonAncestor(four));
 		assertEquals(three,four.calculateLowestCommonAncestor(three));
@@ -52,15 +64,23 @@ public class StateTest {
 	
 	@Test
 	public void getDefaultDestinationFromHistory(){
-		CompositeState zero = new CompositeState("zero");
-		CompositeState one = new CompositeState("one");
-		zero.registerEntryState(one);
-		SimpleState two = new SimpleState("two");
-		one.registerEntryState(two);
-		HistoryState hs1 = new HistoryState("hs1");
-		HistoryState hs2 = new HistoryState("hs2",false);
-		zero.addHistoryState(hs1);
-		zero.addHistoryState(hs2);
+		SimpleState<Object> two = new SimpleStateBuilder<Object>(
+				"two").build();
+		
+		CompositeStateBuilder<Object> csb1 = new CompositeStateBuilder<Object>(
+				"one",two);
+		CompositeState<Object> one = csb1.build();
+		
+		HistoryState<Object> hs1 = new HistoryStateBuilder<Object>("hs1").build();
+		HistoryState<Object> hs2 = new HistoryStateBuilder<Object>("hs2",false).build();
+		
+		CompositeStateBuilder<Object> csb0 = new CompositeStateBuilder<Object>(
+				"zero",one);
+		csb0.addHistoryState(hs1);
+		csb0.addHistoryState(hs2);
+		@SuppressWarnings("unused")
+		CompositeState<Object> zero = csb0.build();
+		
 		assertEquals(one,hs1.getDestination());
 		assertEquals(one,hs2.getDestination());
 		

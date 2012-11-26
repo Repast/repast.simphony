@@ -43,9 +43,5 @@ public class AlwaysTrigger extends AbstractTrigger {
 		return true;
 	}
 
-	@Override
-	public boolean isQueueConsuming() {
-		return false;
-	}
 
 }

@@ -6,9 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.Callable;
 
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,13 +50,16 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		Trigger tTimed = new TimedTrigger(1);
 		tTimed.initialize();
-		Trigger tCondition = new ConditionTrigger(new Callable<Boolean>() {
+		ConditionTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
-			public Boolean call() throws Exception {
+			public boolean condition(Object agent, Transition<Object> transition)
+					throws Exception {
 				return true;
 			}
+			
 		});
+		tCondition.setAgent(new Object());// For testing purposes only
 		tCondition.initialize();
 		assertEquals(false, tTimed.isTriggerConditionTrue());
 		assertEquals(false, tTimed.isTriggered());
@@ -81,13 +82,16 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(2), action);
 		Trigger tTimed = new TimedTrigger(2);
 		tTimed.initialize();
-		Trigger tCondition = new ConditionTrigger(new Callable<Boolean>() {
+		ConditionTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
-			public Boolean call() throws Exception {
+			public boolean condition(Object agent, Transition<Object> transition)
+					throws Exception {
 				return true;
 			}
+			
 		});
+		tCondition.setAgent(new Object());// For testing purposes only
 		tCondition.initialize();
 		assertEquals(false, tTimed.isTriggerConditionTrue());
 		assertEquals(false, tTimed.isTriggered());
@@ -175,19 +179,21 @@ public class TriggerTests {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		
-		Trigger tCondition = new ConditionTrigger(new Callable<Boolean>() {
+		Trigger tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
 			public String toString() {
 				return "TestConditionTrigger";
 			}
-
+			
 			@Override
-			public Boolean call() throws Exception {
-				throw new Exception();
-//				return true;
+			public boolean condition(Object agent, Transition<Object> transition)
+					throws Exception {
+				return true;
 			}
+			
 		});
+		
 		tCondition.initialize();
 		MyMessageEventListener mel = new MyMessageEventListener();
 		MessageCenter.addMessageListener(mel);

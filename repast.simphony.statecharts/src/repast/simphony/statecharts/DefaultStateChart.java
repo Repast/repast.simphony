@@ -5,20 +5,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 import org.apache.commons.collections15.ListUtils;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.util.SimUtilities;
 import cern.jet.random.Uniform;
 
 public class DefaultStateChart<T> implements StateChart<T> {
+
+	protected DefaultStateChart(T agent) {
+		this.agent = agent;
+	}
 
 	private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
@@ -27,14 +32,13 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return transitionResolutionStrategy;
 	}
 
-	@Override
-	public void setTransitionResolutionStrategy(
+	protected void setTransitionResolutionStrategy(
 			TransitionResolutionStrategy transitionResolutionStrategy) {
 		this.transitionResolutionStrategy = transitionResolutionStrategy;
 	}
 
 	private AbstractState<T> entryState;
-	// private List<State> states = new ArrayList<State>();
+	private Set<AbstractState<T>> states = new HashSet<AbstractState<T>>();
 
 	// Regular transitions
 	protected List<Transition<T>> regularTransitions = new ArrayList<Transition<T>>();
@@ -46,9 +50,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	protected SimpleState<T> currentSimpleState;
 
-	@Override
-	public void registerEntryState(AbstractState<T> state) {
+	protected void registerEntryState(AbstractState<T> state) {
 		entryState = state;
+		addState(state);
 	}
 
 	@Override
@@ -59,7 +63,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 					"An entry state was not registered in the StateChart.");
 		}
 		clearTransitions(null);
-		List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
+		List<AbstractState<T>> statesToEnter = getStatesToEnter(null,
+				entryState);
 		// Entering states from the top down
 		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
@@ -68,7 +73,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	private void partitionQueueConsuming(List<Transition<T>> transitions,
-			List<Transition<T>> queueConsuming, List<Transition<T>> nonQueueConsuming) {
+			List<Transition<T>> queueConsuming,
+			List<Transition<T>> nonQueueConsuming) {
 		for (Transition<T> t : transitions) {
 			if (t.isTriggerQueueConsuming())
 				queueConsuming.add(t);
@@ -83,6 +89,35 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				.size() - 1);
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
+		} else if (currentSimpleState instanceof BranchState) {
+			List<Transition<T>> branchCandidateTransitions = new ArrayList<Transition<T>>();
+			for (Transition<T> t : regularTransitions) {
+				if (currentSimpleState.getId().equals(t.getSource().getId())) {
+					branchCandidateTransitions.add(t);
+				}
+			}
+
+			Transition<T> defaultTransition = null;
+			List<Transition<T>> trueBranchTransitions = new ArrayList<Transition<T>>();
+			for (Transition<T> t : branchCandidateTransitions) {
+				if (t.getTrigger() instanceof AlwaysTrigger) {
+					defaultTransition = t;
+				} else {
+					if (t.isTransitionConditionTrue()) {
+						trueBranchTransitions.add(t);
+					}
+				}
+			}
+			if (defaultTransition == null) {
+				throw new IllegalStateException(
+						"All branch states must define at least one default transition");
+			}
+			Transition<T> t = chooseOneTransition(trueBranchTransitions);
+			if (t == null)
+				makeRegularTransition(defaultTransition);
+			else
+				makeRegularTransition(t);
+
 		} else {
 			List<String> statesToEnterStateIds = new ArrayList<String>();
 			for (AbstractState<T> as : statesToEnter) {
@@ -206,32 +241,22 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		transitions.removeAll(candidateTransitions);
 	}
 
-	@Override
-	public void addState(AbstractState<T> state) {
-		// states.add(state);
+	protected void addState(AbstractState<T> state) {
+		if (!states.contains(state)) {
+			state.setStateChart(this);
+			states.add(state);
+		}
 	}
 
-	@Override
-	public void addRegularTransition(Transition<T> transition) {
+	protected void addRegularTransition(Transition<T> transition) {
+		transition.setStateChart(this);
+		addState(transition.getSource());
+		addState(transition.getTarget());
 		regularTransitions.add(transition);
 	}
 
-	@Override
-	public void addSelfTransition(Trigger trigger, AbstractState<T> state) {
-		addSelfTransition(trigger, Transition.createEmptyOnTransition(),
-				Transition.createEmptyGuard(), state);
-	}
-
-	@Override
-	public void addSelfTransition(Trigger trigger, Callable<Void> onTransition,
-			Callable<Boolean> guard, AbstractState<T> state) {
-		Transition<T> transition = new Transition<T>(trigger, state, state);
-		transition.registerOnTransition(onTransition);
-		transition.registerGuard(guard);
-		addSelfTransition(transition);
-	}
-
-	protected void addSelfTransition(Transition<T> transition) {
+	protected void addSelfTransition(SelfTransition<T> transition) {
+		transition.setStateChart(this);
 		selfTransitions.add(transition);
 	}
 
@@ -280,7 +305,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	private List<AbstractState<T>> getStatesToEnter(AbstractState<T> lca,
 			AbstractState<T> target) {
 		LinkedList<AbstractState<T>> statesToEnter = new LinkedList<AbstractState<T>>();
-		Map<CompositeState<T>,HistoryState<T>> compositeHistoryMap = new HashMap<CompositeState<T>,HistoryState<T>>();
+		Map<CompositeState<T>, HistoryState<T>> compositeHistoryMap = new HashMap<CompositeState<T>, HistoryState<T>>();
 		AbstractState<T> t = target;
 		while (!(t instanceof SimpleState)) {
 			if (t instanceof CompositeState) {
@@ -289,14 +314,14 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			} else {
 				if (t instanceof HistoryState) {
 					HistoryState<T> hs = (HistoryState<T>) t;
-					compositeHistoryMap.put(hs.getParent(),hs);
+					compositeHistoryMap.put(hs.getParent(), hs);
 					t = hs.getDestination();
 				}
 			}
 		}
 		// At this point t should be the target simple state
 		while (t != lca && t != null) {
-			if (compositeHistoryMap.containsKey(t)){
+			if (compositeHistoryMap.containsKey(t)) {
 				statesToEnter.addFirst(compositeHistoryMap.get(t));
 			}
 			statesToEnter.addFirst(t);
@@ -342,7 +367,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return triggeredTransitions;
 	}
 
-	public void resolve() {
+	protected void resolve() {
 		// Partition active self transitions into queue consuming and non queue
 		// consuming
 		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
@@ -422,6 +447,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			return transitions.get(0);
 		case PRIORITY:
 			List<Transition<T>> temp = new ArrayList<Transition<T>>(transitions);
+			SimUtilities.shuffle(temp, RandomHelper.getUniform());
 			Collections.sort(temp, pComp);
 			return temp.get(0);
 		case RANDOM:
@@ -466,22 +492,19 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		}
 	}
 
-	@Override
-	public void scheduleResolveTime(double nextTime) {
+	protected void scheduleResolveTime(double nextTime) {
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(nextTime,
 				this);
 	}
 
-	@Override
-	public void removeResolveTime(double nextTime) {
+	protected void removeResolveTime(double nextTime) {
 		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(nextTime,
 				this);
 	}
 
 	private Queue<Object> queue = new ArrayDeque<Object>();
 
-	@Override
-	public Queue<Object> getQueue() {
+	protected Queue<Object> getQueue() {
 		return queue;
 	}
 
@@ -497,32 +520,23 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return priority;
 	}
 
-	@Override
-	public void setPriority(double priority) {
+	protected void setPriority(double priority) {
 		this.priority = priority;
 	}
 
-	@Override
-	public void addBranch(Branch<T> branch) {
+	protected void addBranch(BranchState<T> branch) {
 		// create transition from "from" to branch
 		branch.initializeBranch(this);
-		// create into transition from ...
-		IntoBranchTransition<T> ibt = branch.getIntoBranchTransition();
-		Transition<T> t = new Transition<T>(ibt.getTrigger(), ibt.getSource(),
-				branch, ibt.getTransitionPriority());
-		t.registerGuard(ibt.getGuard());
-		t.registerOnTransition(ibt.getOnTransition());
-		addRegularTransition(t);
 
-		// create tos transitions from ...
-		List<OutOfBranchTransition<T>> tos = branch.getTos();
-		int numOfTos = tos.size();
-		for (int i = 0; i < numOfTos; i++) {
-			OutOfBranchTransition<T> oobt = tos.get(i);
-			Transition<T> outt = new Transition<T>(oobt.getTrigger(), branch,
-					oobt.getTarget(), numOfTos - i);
-			addRegularTransition(outt);
+	}
+
+	private T agent;
+
+	public T getAgent() {
+		if (agent == null) {
+			throw new IllegalStateException("The agent was not set in: " + this);
 		}
+		return agent;
 	}
 
 }

@@ -45,9 +45,9 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="6" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.Branch" 
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.BranchState" 
     project="repast.simphony.statecharts" 
-    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/Branch.java" binary="false">    
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/BranchState.java" binary="false">    
     <position height="-1" width="-1" x="1242" y="151"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      

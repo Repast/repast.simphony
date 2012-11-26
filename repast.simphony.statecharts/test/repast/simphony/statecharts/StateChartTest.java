@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,7 +41,7 @@ public class StateChartTest {
 
 	private static class MyAgent1 {
 
-		private StateChart st;
+		private StateChart<MyAgent1> st;
 		public TestClass tc1, tc2, tc3, tc4;
 
 		public MyAgent1(TestClass tc1, TestClass tc2, TestClass tc3,
@@ -53,68 +52,77 @@ public class StateChartTest {
 			this.tc4 = tc4;
 		}
 
+		@SuppressWarnings("unused")
 		public void setup() {
-			st = new MyStateChart1(tc1, tc2, tc3, tc4);
+			st = new MyStateChart1(this, tc1, tc2, tc3, tc4);
 			st.begin();
 		}
 	}
 
-	private static class MyStateChart1 extends DefaultStateChart {
-		public MyStateChart1(TestClass tc1, TestClass tc2, TestClass tc3,
-				TestClass tc4) {
+	private static class MyStateChart1 extends DefaultStateChart<MyAgent1> {
+		public MyStateChart1(MyAgent1 agent, TestClass tc1, TestClass tc2,
+				TestClass tc3, TestClass tc4) {
+			super(agent);
 			MyState one = new MyState("one", tc1);
 			this.registerEntryState(one);
 			MyState two = new MyState("two", tc2);
 			Trigger tr1 = new TimedTrigger(2);
-			Transition t1 = new MyTransition(tr1, one, two, tc3);
+			Transition<MyAgent1> t1 = new MyTransition(tr1, one, two, tc3);
 			this.addRegularTransition(t1);
 			Trigger tr2 = new TimedTrigger(2);
-			Transition t2 = new MyTransition(tr2, two, one, tc4);
+			Transition<MyAgent1> t2 = new MyTransition(tr2, two, one, tc4);
 			this.addRegularTransition(t2);
 		}
 	}
 
-	private static class MyState extends SimpleState {
+	private static class MyState extends SimpleState<MyAgent1> {
 
 		public TestClass tc;
 
 		public MyState(String id, TestClass tc) {
 			super(id);
 			this.tc = tc;
-			registerOnEnter(new Callable<Void>() {
+			registerOnEnter(new StateAction<MyAgent1>() {
+
 				@Override
-				public Void call() throws Exception {
+				public void action(MyAgent1 agent, AbstractState<MyAgent1> state)
+						throws Exception {
 					MyState.this.tc.onEnter = true;
-					return null;
+
 				}
 			});
-
+			//
 			// register on exit
-			registerOnExit(new Callable<Void>() {
+			registerOnExit(new StateAction<MyAgent1>() {
+
 				@Override
-				public Void call() throws Exception {
+				public void action(MyAgent1 agent, AbstractState<MyAgent1> state)
+						throws Exception {
 					MyState.this.tc.onExit = true;
-					return null;
 				}
 			});
 		}
 
 	}
 
-	private static class MyTransition extends Transition {
+	private static class MyTransition extends Transition<MyAgent1> {
 
-		public TestClass tc;
+		public final TestClass tc;
 
-		public MyTransition(Trigger trigger, AbstractState source, AbstractState target,
-				TestClass tc) {
+		public MyTransition(Trigger trigger, AbstractState<MyAgent1> source,
+				AbstractState<MyAgent1> target, TestClass tc) {
 			super(trigger, source, target);
 			this.tc = tc;
-		}
+			registerGuard(TransitionBuilder.<MyAgent1> createEmptyGuard());
+			registerOnTransition(new TransitionAction<MyAgent1>() {
 
-		@Override
-		public void onTransition() {
-			tc.onEnter = true;
-			tc.onExit = true;
+				@Override
+				public void action(MyAgent1 agent,
+						Transition<MyAgent1> transition) throws Exception {
+					MyTransition.this.tc.onEnter = true;
+					MyTransition.this.tc.onExit = true;
+				}
+			});
 		}
 
 	}
@@ -170,30 +178,39 @@ public class StateChartTest {
 		assertEquals(5, schedule.getTickCount(), 0.001);
 	}
 
-	private static class MyStateChart2 extends DefaultStateChart {
+	private static class MyStateChart2 extends DefaultStateChart<MyAgent2> {
 
-		public MyStateChart2() {
-			AbstractState one = new SimpleState("one");
+		public MyStateChart2(MyAgent2 agent) {
+			super(agent);
+
+			SimpleState<MyAgent2> one = new SimpleStateBuilder<MyAgent2>("one")
+					.build();
 			this.registerEntryState(one);
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
+			SimpleState<MyAgent2> two = new SimpleStateBuilder<MyAgent2>("two")
+					.build();
+			SimpleState<MyAgent2> three = new SimpleStateBuilder<MyAgent2>(
+					"three").build();
 			Trigger tr1 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			Transition t1 = new Transition(tr1, one, two);
+			TransitionBuilder<MyAgent2> tb = new TransitionBuilder<MyAgent2>(one,two);
+			tb.addTrigger(tr1);
+			Transition<MyAgent2> t1 = tb.build();
 			this.addRegularTransition(t1);
+			tb = new TransitionBuilder<MyAgent2>(two,three);
 			Trigger tr2 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"));
-			Transition t2 = new Transition(tr2, two, three);
+			tb.addTrigger(tr2);
+			Transition<MyAgent2> t2 = tb.build();
 			this.addRegularTransition(t2);
 		}
 	}
 
 	private static class MyAgent2 {
 
-		public StateChart st;
-
+		public StateChart<MyAgent2> st;
+		@SuppressWarnings("unused")
 		public void setup() {
-			st = new MyStateChart2();
+			st = new MyStateChart2(this);
 			st.begin();
 		}
 	}
@@ -205,7 +222,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		StateChart st = a.st;
+		StateChart<MyAgent2> st = a.st;
 		st.receiveMessage("a");
 		st.receiveMessage("b");
 		schedule.execute();
@@ -220,7 +237,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		StateChart st = a.st;
+		StateChart<MyAgent2> st = a.st;
 		st.receiveMessage("a");
 		st.receiveMessage("a");
 		st.receiveMessage("b");
@@ -236,7 +253,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		StateChart st = a.st;
+		StateChart<MyAgent2> st = a.st;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
@@ -246,7 +263,7 @@ public class StateChartTest {
 		assertEquals(3, schedule.getTickCount(), 0.0001);
 		// the queue should have been cleared if no candidate was found in time
 		// step
-		assertEquals(true, a.st.getQueue().isEmpty());
+		assertEquals(true, ((DefaultStateChart<?>) a.st).getQueue().isEmpty());
 	}
 
 	@Test
@@ -256,7 +273,7 @@ public class StateChartTest {
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
-		StateChart st = a.st;
+		StateChart<MyAgent2> st = a.st;
 		schedule.execute();
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(2, schedule.getTickCount(), 0.0001);
@@ -285,30 +302,39 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart3 extends DefaultStateChart {
+	private static class MyStateChart3 extends DefaultStateChart<MyAgent3> {
 
-		public MyStateChart3() {
-			AbstractState one = new SimpleState("one");
+		public MyStateChart3(MyAgent3 agent) {
+			super(agent);
+			SimpleState<MyAgent3> one = new SimpleStateBuilder<MyAgent3>("one")
+					.build();
 			this.registerEntryState(one);
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
+			SimpleState<MyAgent3> two = new SimpleStateBuilder<MyAgent3>("two")
+					.build();
+			SimpleState<MyAgent3> three = new SimpleStateBuilder<MyAgent3>(
+					"three").build();
 			Trigger tr1 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			Transition t1 = new Transition(tr1, one, two, 1);
+			TransitionBuilder<MyAgent3> tb = new TransitionBuilder<MyAgent3>(one,two);
+			tb.addTrigger(tr1);
+			tb.setPriority(1);
+			Transition<MyAgent3> t1 = tb.build();
 			this.addRegularTransition(t1);
 			Trigger tr2 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			Transition t2 = new Transition(tr2, one, three);
+			tb = new TransitionBuilder<MyAgent3>(one,three);
+			tb.addTrigger(tr2);
+			Transition<MyAgent3> t2 = tb.build();
 			this.addRegularTransition(t2);
 		}
 	}
 
 	private static class MyAgent3 {
 
-		public StateChart st;
-
+		public StateChart<MyAgent3> st;
+		@SuppressWarnings("unused")
 		public void setup() {
-			st = new MyStateChart3();
+			st = new MyStateChart3(this);
 			st.begin();
 		}
 	}
@@ -324,8 +350,9 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
-		StateChart st = a.st;
-		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.PRIORITY);
+		StateChart<MyAgent3> st = a.st;
+		((DefaultStateChart<MyAgent3>) st)
+				.setTransitionResolutionStrategy(TransitionResolutionStrategy.PRIORITY);
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
@@ -344,8 +371,9 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
-		StateChart st = a.st;
-		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.NATURAL);
+		StateChart<MyAgent3> st = a.st;
+		((DefaultStateChart<MyAgent3>) st)
+				.setTransitionResolutionStrategy(TransitionResolutionStrategy.NATURAL);
 		st.receiveMessage("a");
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
@@ -365,8 +393,9 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
-		StateChart st = a.st;
-		st.setTransitionResolutionStrategy(TransitionResolutionStrategy.RANDOM);
+		StateChart<MyAgent3> st = a.st;
+		((DefaultStateChart<MyAgent3>) st)
+				.setTransitionResolutionStrategy(TransitionResolutionStrategy.RANDOM);
 		st.receiveMessage("a");
 		// RandomHelper.getDefaultRegistry().setSeed(0);
 		schedule.execute();
@@ -380,29 +409,37 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart4 extends DefaultStateChart {
+	private static class MyStateChart4 extends DefaultStateChart<MyAgent4> {
 
-		public MyStateChart4() {
-			AbstractState one = new SimpleState("one");
+		public MyStateChart4(MyAgent4 agent) {
+			super(agent);
+			SimpleState<MyAgent4> one = new SimpleStateBuilder<MyAgent4>("one")
+					.build();
 			this.registerEntryState(one);
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
+			SimpleState<MyAgent4> two = new SimpleStateBuilder<MyAgent4>("two")
+					.build();
+			SimpleState<MyAgent4> three = new SimpleStateBuilder<MyAgent4>(
+					"three").build();
 			Trigger tr1 = new TimedTrigger(2);
-			Transition t1 = new Transition(tr1, one, two, 1);
+			TransitionBuilder<MyAgent4> tb = new TransitionBuilder<MyAgent4>(one,two);
+			tb.addTrigger(tr1);
+			tb.setPriority(1);
+			Transition<MyAgent4> t1 = tb.build();
 			this.addRegularTransition(t1);
 			Trigger tr2 = new TimedTrigger(3);
-			;
-			Transition t2 = new Transition(tr2, one, three);
+			tb = new TransitionBuilder<MyAgent4>(one,three);
+			tb.addTrigger(tr2);
+			Transition<MyAgent4> t2 = tb.build();
 			this.addRegularTransition(t2);
 		}
 	}
 
 	private static class MyAgent4 {
 
-		public StateChart st;
-
+		public StateChart<MyAgent4> st;
+		@SuppressWarnings("unused")
 		public void setup() {
-			st = new MyStateChart4();
+			st = new MyStateChart4(this);
 			st.begin();
 		}
 	}
@@ -438,21 +475,30 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart5 extends DefaultStateChart {
+	private static class MyStateChart5 extends DefaultStateChart<MyAgent5> {
 
 		public MyStateChart5(final MyAgent5 a) {
-			AbstractState one = new SimpleState("one");
+			super(a);
+			SimpleState<MyAgent5> one = new SimpleStateBuilder<MyAgent5>("one")
+					.build();
 			this.registerEntryState(one);
-			AbstractState two = new SimpleState("two");
-			Trigger tr1 = new ConditionTrigger(new Callable<Boolean>() {
+			SimpleState<MyAgent5> two = new SimpleStateBuilder<MyAgent5>("two")
+					.build();
+			Trigger tr1 = new ConditionTrigger<MyAgent5>(
+					new ConditionTriggerCondition<MyAgent5>() {
 
-				@Override
-				public Boolean call() throws Exception {
-					return a.isTrue;
-				}
+						@Override
+						public boolean condition(MyAgent5 agent,
+								Transition<MyAgent5> transition)
+								throws Exception {
+							return a.isTrue;
+						}
 
-			}, 2);
-			Transition t1 = new Transition(tr1, one, two, 1);
+					}, 2);
+			TransitionBuilder<MyAgent5> tb = new TransitionBuilder<MyAgent5>(one,two);
+			tb.addTrigger(tr1);
+			tb.setPriority(1);
+			Transition<MyAgent5> t1 = tb.build();
 			this.addRegularTransition(t1);
 		}
 	}
@@ -460,8 +506,8 @@ public class StateChartTest {
 	private static class MyAgent5 {
 
 		public boolean isTrue = false;
-		public StateChart st;
-
+		public StateChart<MyAgent5> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart5(this);
 			st.begin();
@@ -498,51 +544,73 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart6 extends DefaultStateChart {
+	private static class MyStateChart6 extends DefaultStateChart<MyAgent6> {
 
-		public MyStateChart6(final MyAgent6 a) {
-			AbstractState one = new SimpleState("one");
-			this.registerEntryState(one);
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			AbstractState four = new SimpleState("four");
+		public MyStateChart6(MyAgent6 agent) {
+			super(agent);
+			SimpleState<MyAgent6> one = new SimpleStateBuilder<MyAgent6>("one")
+					.build();
+			registerEntryState(one);
+			SimpleState<MyAgent6> two = new SimpleStateBuilder<MyAgent6>("two")
+					.build();
+			SimpleState<MyAgent6> three = new SimpleStateBuilder<MyAgent6>(
+					"three").build();
+			SimpleState<MyAgent6> four = new SimpleStateBuilder<MyAgent6>(
+					"four").build();
 
-			Callable<Boolean> state2Condition = new Callable<Boolean>() {
+			ConditionTriggerCondition<MyAgent6> state2Condition = new ConditionTriggerCondition<MyAgent6>() {
+				@Override
+				public boolean condition(MyAgent6 agent,
+						Transition<MyAgent6> transition) {
+					return agent.value > 0.75;
+				}
+			};
+			ConditionTriggerCondition<MyAgent6> state3Condition = new ConditionTriggerCondition<MyAgent6>() {
 
 				@Override
-				public Boolean call() throws Exception {
-					return a.value > 0.75;
+				public boolean condition(MyAgent6 agent,
+						Transition<MyAgent6> transition) {
+					return agent.value > 0.25;
 				}
 
 			};
-			Callable<Boolean> state3Condition = new Callable<Boolean>() {
 
-				@Override
-				public Boolean call() throws Exception {
-					return a.value > 0.25;
-				}
-
-			};
+			// IntoBranchTransition ibt =
+			// IntoBranchTransition.createIntoBranchTransition(one, new
+			// TimedTrigger(1));
 			
-			IntoBranchTransition ibt = IntoBranchTransition.createIntoBranchTransition(one, new TimedTrigger(1));
-
-			List<OutOfBranchTransition> oobts = new ArrayList<OutOfBranchTransition>();
-			oobts.add(OutOfBranchTransition.createOutOfBranchTransition(two,
-					state2Condition));
-			oobts.add(OutOfBranchTransition.createOutOfBranchTransition(three,
-					state3Condition));
-			oobts.add(OutOfBranchTransition.createDefaultOutOfBranchTransition(four));
-
-			Branch branch = Branch.createBranch("branch", ibt, oobts);
-			addBranch(branch);
+			BranchState<MyAgent6> bs = new BranchStateBuilder<StateChartTest.MyAgent6>("branch").build();
+			addBranch(bs);
+			
+			TransitionBuilder<MyAgent6> tb = new TransitionBuilder<StateChartTest.MyAgent6>(one,bs);
+			tb.addTrigger(new TimedTrigger(1));
+			addRegularTransition(tb.build());
+			
+			OutOfBranchTransitionBuilder<MyAgent6> oobtb = new OutOfBranchTransitionBuilder<MyAgent6>(bs,two);
+			oobtb.addTrigger(new ConditionTrigger<MyAgent6>(state2Condition));
+			oobtb.setPriority(2);
+			Transition<MyAgent6> bt = oobtb.build();
+			addRegularTransition(bt);
+			
+			oobtb = new OutOfBranchTransitionBuilder<MyAgent6>(bs,three);
+			oobtb.addTrigger(new ConditionTrigger<MyAgent6>(state3Condition));
+			oobtb.setPriority(1);
+			bt = oobtb.build();
+			addRegularTransition(bt);
+			
+			
+			DefaultOutOfBranchTransitionBuilder<MyAgent6> doobtb = new DefaultOutOfBranchTransitionBuilder<MyAgent6>(bs,four);
+			bt = doobtb.build();
+			addRegularTransition(bt);			
+			
 		}
 	}
 
 	private static class MyAgent6 {
 
 		public double value;
-		public StateChart st;
-
+		public StateChart<MyAgent6> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart6(this);
 			st.begin();
@@ -618,41 +686,47 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart7 extends DefaultStateChart {
+	private static class MyStateChart7 extends DefaultStateChart<MyAgent7> {
 
 		public MyStateChart7(final MyAgent7 a) {
-			AbstractState one = new SimpleState("one");
+			super(a);
+			SimpleState<MyAgent7> one = new SimpleStateBuilder<MyAgent7>("one").build();
 			this.registerEntryState(one);
 			Trigger timedTrigger = new TimedTrigger(2);
-			Callable<Void> onTransition = new Callable<Void>() {
+			TransitionAction<MyAgent7> onTransition =new TransitionAction<MyAgent7>(){
 
 				@Override
-				public Void call() throws Exception {
-					a.value++;
-					return null;
+				public void action(MyAgent7 agent,
+						Transition<MyAgent7> transition) throws Exception {
+					agent.value++;
 				}
-
+				
 			};
-			addSelfTransition(timedTrigger, onTransition,
-					Transition.createEmptyGuard(), one);
+			SelfTransitionBuilder<MyAgent7> stb = new SelfTransitionBuilder<StateChartTest.MyAgent7>(one);
+			stb.addTrigger(timedTrigger);
+			stb.registerOnTransition(onTransition);
+			addSelfTransition(stb.build());
 			Trigger messageTriggerA = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			addSelfTransition(messageTriggerA, onTransition,
-					Transition.createEmptyGuard(), one);
-
-			AbstractState two = new SimpleState("two");
+			stb = new SelfTransitionBuilder<StateChartTest.MyAgent7>(one);
+			stb.addTrigger(messageTriggerA);
+			stb.registerOnTransition(onTransition);
+			addSelfTransition(stb.build());
+			
+			SimpleState<MyAgent7> two = new SimpleStateBuilder<MyAgent7>("two").build();
 			Trigger messageTriggerB = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"));
-			Transition t1 = new Transition(messageTriggerB, one, two);
-			addRegularTransition(t1);
+			TransitionBuilder<MyAgent7> tb = new TransitionBuilder<MyAgent7>(one,two);
+			tb.addTrigger(messageTriggerB);
+			addRegularTransition(tb.build());
 		}
 	}
 
 	private static class MyAgent7 {
 
 		public int value;
-		public StateChart st;
-
+		public StateChart<MyAgent7> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart7(this);
 			st.begin();
@@ -704,49 +778,55 @@ public class StateChartTest {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart7b extends DefaultStateChart {
+	private static class MyStateChart7b extends DefaultStateChart<MyAgent7b> {
 
 		public MyStateChart7b(final MyAgent7b a) {
-			AbstractState one = new SimpleState("one");
+			super(a);
+			SimpleState<MyAgent7b> one = new SimpleStateBuilder<MyAgent7b>("one").build();
 			this.registerEntryState(one);
 			// Strategy is to create non-commutative operations
 			// onTransition1 is adding 1
-			Callable<Void> onTransition1 = new Callable<Void>() {
+			TransitionAction<MyAgent7b> onTransition1 = new TransitionAction<StateChartTest.MyAgent7b>() {
+				
 				@Override
-				public Void call() throws Exception {
-					a.value++;
-					return null;
+				public void action(MyAgent7b agent, Transition<MyAgent7b> transition)
+						throws Exception {
+					agent.value++;
 				}
-			};
+			}; 
 
 			Trigger messageTriggerA1 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			addSelfTransition(messageTriggerA1, onTransition1,
-					Transition.createEmptyGuard(), one);
+			SelfTransitionBuilder<MyAgent7b> stb = new SelfTransitionBuilder<StateChartTest.MyAgent7b>(one);
+			stb.addTrigger(messageTriggerA1);
+			stb.registerOnTransition(onTransition1);
+			addSelfTransition(stb.build());
 
-			AbstractState two = new SimpleState("two");
+			SimpleState<MyAgent7b> two = new SimpleStateBuilder<MyAgent7b>("two").build();
 			Trigger messageTriggerA2 = new MessageTrigger(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
-			Transition t1 = new Transition(messageTriggerA2, one, two);
+			TransitionBuilder<MyAgent7b> tb = new TransitionBuilder<StateChartTest.MyAgent7b>(one,two);
+			tb.addTrigger(messageTriggerA2);
 			// onTransition2 is multiplying by 2
-			Callable<Void> onTransition2 = new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					a.value *= 2;
-					return null;
-				}
-			};
+			TransitionAction<MyAgent7b> onTransition2 = new TransitionAction<MyAgent7b>() {
 
-			t1.registerOnTransition(onTransition2);
-			addRegularTransition(t1);
+				@Override
+				public void action(MyAgent7b agent, Transition<MyAgent7b> transition)
+						throws Exception {
+					agent.value *= 2;
+				}
+			};			
+
+			tb.registerOnTransition(onTransition2);
+			addRegularTransition(tb.build());
 		}
 	}
 
 	private static class MyAgent7b {
 
 		public int value;
-		public StateChart st;
-
+		public StateChart<MyAgent7b> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart7b(this);
 			st.begin();

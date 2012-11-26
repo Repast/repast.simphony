@@ -22,17 +22,17 @@ public enum StateChartResolveActionScheduler {
 		private ISchedulableAction isa;
 		private boolean remove = false;
 
-		public ResolveActionsMapValue(StateChartResolveAction scra,
+		protected ResolveActionsMapValue(StateChartResolveAction scra,
 				ISchedulableAction isa) {
 			this.scra = scra;
 			this.isa = isa;
 		}
 
-		public void registerListener(StateChart sc) {
+		protected void registerListener(DefaultStateChart<?> sc) {
 			scra.registerListener(sc);
 		}
 
-		public void removeListener(StateChart sc) {
+		protected void removeListener(DefaultStateChart<?> sc) {
 			scra.removeListener(sc);
 			if (!scra.hasListeners()) {
 				RunEnvironment.getInstance().getCurrentSchedule()
@@ -43,7 +43,7 @@ public enum StateChartResolveActionScheduler {
 			}
 		}
 
-		public boolean toRemove() {
+		protected boolean toRemove() {
 			return remove;
 		}
 	}
@@ -60,7 +60,7 @@ public enum StateChartResolveActionScheduler {
 
 	long clearCounter = 0;
 
-	public void clearOldResolveActions() {
+	protected void clearOldResolveActions() {
 		clearCounter++;
 		if (clearCounter > MAX_BEFOFE_CLEAR) {
 			double time = RunEnvironment.getInstance().getCurrentSchedule()
@@ -79,7 +79,7 @@ public enum StateChartResolveActionScheduler {
 		}
 	}
 
-	public void scheduleResolveTime(double nextTime, StateChart sc) {
+	protected void scheduleResolveTime(double nextTime, DefaultStateChart<?> sc) {
 		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 		if (ramv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
@@ -95,7 +95,7 @@ public enum StateChartResolveActionScheduler {
 		ramv.registerListener(sc);
 	}
 
-	public void removeResolveTime(double nextTime, StateChart sc) {
+	protected void removeResolveTime(double nextTime, DefaultStateChart<?> sc) {
 		if (resolveActions.containsKey(nextTime)) {
 			ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 			ramv.removeListener(sc);

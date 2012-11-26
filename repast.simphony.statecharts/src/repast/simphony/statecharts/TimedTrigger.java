@@ -1,9 +1,7 @@
 package repast.simphony.statecharts;
 
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduleParameters;
 
 
 public class TimedTrigger extends AbstractTrigger{
@@ -52,11 +50,6 @@ public class TimedTrigger extends AbstractTrigger{
 
 	@Override
 	public boolean canTransitionZeroTime() {
-		return false;
-	}
-
-	@Override
-	public boolean isQueueConsuming() {
 		return false;
 	}
 	

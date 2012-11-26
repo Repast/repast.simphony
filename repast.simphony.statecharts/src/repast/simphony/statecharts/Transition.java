@@ -1,50 +1,73 @@
 package repast.simphony.statecharts;
 
-import java.util.concurrent.Callable;
+import java.util.Queue;
 
 import simphony.util.messages.MessageCenter;
 
 public class Transition<T> {
 	
-	private static class EmptyGuard implements Callable<Boolean>{
-		@Override
-		public Boolean call() throws Exception {
-			return true;
+	private DefaultStateChart<T> stateChart;
+	private T agent;
+	
+	protected T getAgent(){
+		if (agent == null){
+			if (stateChart == null){
+				throw new IllegalStateException("The stateChart was not set in: " + this);
+			}
+			else{
+				agent = stateChart.getAgent();
+			}
 		}
+		return agent;
 	}
 	
-	private static class EmptyOnTransition implements Callable<Void>{
-		@Override
-		public Void call() throws Exception {
-			return null;
+	private Queue<Object> queue;
+	
+	protected Queue<Object> getQueue(){
+		if (queue == null){
+			if (stateChart == null){
+				throw new IllegalStateException("The stateChart was not set in: " + this);
+			}
+			else{
+				queue = stateChart.getQueue();
+			}
 		}
+		return queue;
 	}
 	
-	public static Callable<Boolean> createEmptyGuard() {
-		return new EmptyGuard();
+	
+	
+	protected void setStateChart(DefaultStateChart<T> stateChart){
+		this.stateChart = stateChart;
 	}
 	
-	public static Callable<Void> createEmptyOnTransition() {
-		return new EmptyOnTransition();
-	}
 	
 	private Trigger trigger;
 	private AbstractState<T> source, target;
 	private double priority;
-	private Callable<Void> onTransition = new EmptyOnTransition();
-	private Callable<Boolean> guard = new EmptyGuard();
+	private TransitionAction<T> onTransition;
+	private GuardCondition<T> guard;
 	
 
 
-	public Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target) {
+	protected Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target) {
 		this(trigger,source,target,0);
 	}
 	
-	public Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target, double priority){
+	protected Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target, double priority){
 		this.trigger = trigger;
 		this.source = source;
 		this.target = target;
 		this.priority = priority;
+		if (trigger instanceof ConditionTrigger){
+			@SuppressWarnings("unchecked")
+			ConditionTrigger<T> ct = (ConditionTrigger<T>) trigger;
+			ct.setTransition(this);
+		}
+		if (trigger instanceof MessageTrigger){
+			MessageTrigger mt = (MessageTrigger) trigger;
+			mt.setTransition(this);
+		}
 	}
 	
 
@@ -60,32 +83,32 @@ public class Transition<T> {
 		return target;
 	}
 	
-	public boolean isTransitionConditionTrue(){
+	protected boolean isTransitionConditionTrue(){
 		return trigger.isTriggerConditionTrue() && checkGuard();
 	}
 	
-	public boolean isTransitionTriggered(){
+	protected boolean isTransitionTriggered(){
 		return trigger.isTriggered() && checkGuard();
 	}
 	
 	private boolean checkGuard() {
 		try {
-			return guard.call();
+			return guard.condition(getAgent(),this);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when checking guard: " + guard + " in " + this, e);
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void registerGuard(Callable<Boolean> guard) {
+	protected void registerGuard(GuardCondition<T> guard) {
 		this.guard = guard;
 	}
 	
-	public boolean canTransitionZeroTime(){
+	protected boolean canTransitionZeroTime(){
 		return trigger.canTransitionZeroTime();
 	}
 	
-	public boolean isTriggerQueueConsuming(){
+	protected boolean isTriggerQueueConsuming(){
 		return trigger.isQueueConsuming();
 	}
 	
@@ -94,19 +117,19 @@ public class Transition<T> {
 	}
 
 
-	public void initialize(StateChart<T> sc) {
+	protected void initialize(DefaultStateChart<T> sc) {
 		trigger.initialize();
 		sc.scheduleResolveTime(trigger.getNextTime());
 	}
 
 	
-	public void registerOnTransition(Callable<Void> onTransition) {
+	protected void registerOnTransition(TransitionAction<T> onTransition) {
 		this.onTransition = onTransition;
 	}
 	
-	public void onTransition() {
+	protected void onTransition() {
 		try {
-			onTransition.call();
+			onTransition.action(getAgent(),this);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onTransition in transition: " + this, e);
 			throw new RuntimeException(e);
@@ -118,7 +141,7 @@ public class Transition<T> {
 		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
 	}
 
-	public void rescheduleRegularTransition(StateChart<T> stateChart, double currentTime) {
+	protected void rescheduleRegularTransition(DefaultStateChart<T> stateChart, double currentTime) {
 		// if recurring && getNextTime is currentTime
 		if (trigger.isRecurring()
 				&& Double.compare(trigger.getNextTime(), currentTime) == 0) {
@@ -127,23 +150,13 @@ public class Transition<T> {
 		}
 	}
 	
-	public void rescheduleSelfTransition(StateChart<T> stateChart, double currentTime) {
+	protected void rescheduleSelfTransition(DefaultStateChart<T> stateChart, double currentTime) {
 		// if getNextTime is currentTime
 		if (Double.compare(trigger.getNextTime(), currentTime) == 0) {
 			// reset to next time and reschedule
 			initialize(stateChart);
 		}
 	}
-	
-//	TransitionListener transitionListener;
-//
-//	@Override
-//	public void update() {
-//		// In the future, the guard checks may go here.
-//		transitionListener.updateRegularTransition(this);
-//	}
-
-	
 	
 
 }

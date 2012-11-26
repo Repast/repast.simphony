@@ -1,29 +1,55 @@
 package repast.simphony.statecharts;
 
 import java.util.Queue;
-import java.util.concurrent.Callable;
 
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
-import simphony.util.messages.MessageCenter;
 
 
 public class MessageTrigger extends AbstractTrigger{
 
+	private Transition<?> transition;
+	
+	protected void setTransition(Transition<?> transition){
+		this.transition = transition;
+	}
+	
+	private Queue<Object> queue;
+
+	protected Queue<Object> getQueue() {
+		if (queue == null) {
+			if (transition == null) {
+				throw new IllegalStateException(
+						"The transition was not set in a MessageTrigger.");
+			} else {
+				queue = transition.getQueue();
+			}
+		}
+		return queue;
+	}
+
+	
 	private final double pollingTime;
 	private double initializedTickCount;
-	private Queue<Object> queue;
 	private MessageChecker messageChecker;
 		
-	public MessageTrigger(Queue<Object> queue, MessageChecker messageChecker, double pollingTime){
+	protected MessageTrigger(Queue<Object> queue, MessageChecker messageChecker, double pollingTime){
 		this.queue = queue;
 		this.messageChecker = messageChecker;
 		this.pollingTime = pollingTime;		
 	}
 	
-	public MessageTrigger(Queue<Object> queue, MessageChecker messageChecker){
+	protected MessageTrigger(Queue<Object> queue, MessageChecker messageChecker){
 		this(queue, messageChecker, 1);
+	}
+	
+	/**
+	 * Proper constructor used for creating MessageTrigger.
+	 * @param messageChecker
+	 * @param pollingTime
+	 */
+	public MessageTrigger(MessageChecker messageChecker, double pollingTime){
+		this(null, messageChecker, pollingTime);		
 	}
 	
 	@Override

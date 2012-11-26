@@ -2,12 +2,7 @@ package repast.simphony.statecharts;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import repast.simphony.engine.environment.RunEnvironment;
@@ -30,25 +25,37 @@ public class StateChartTest2 {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart1 extends DefaultStateChart {
+	private static class MyStateChart1 extends DefaultStateChart<MyAgent1> {
 
-		public MyStateChart1(final MyAgent1 a) {
-			CompositeState cs = new CompositeState("cs");
+		public MyStateChart1(MyAgent1 a) {
+			super(a);
+			SimpleState<MyAgent1> one = new SimpleStateBuilder<MyAgent1>("one")
+					.build();
+			CompositeStateBuilder<MyAgent1> csb = new CompositeStateBuilder<StateChartTest2.MyAgent1>(
+					"cs",one);
+
+			SimpleState<MyAgent1> two = new SimpleStateBuilder<MyAgent1>("two")
+					.build();
+			csb.addChildState(two);
+			CompositeState<MyAgent1> cs = csb.build();
 			this.registerEntryState(cs);
-			AbstractState one = new SimpleState("one");
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			cs.registerEntryState(one);
-			cs.add(two);
-			addRegularTransition(new Transition(new TimedTrigger(1), one, two));
-			addRegularTransition(new Transition(new TimedTrigger(2), cs, three));
+			addState(csb.build());
+			SimpleState<MyAgent1> three = new SimpleStateBuilder<MyAgent1>(
+					"three").build();
+			addState(three);
+			TransitionBuilder<MyAgent1> tb = new TransitionBuilder<StateChartTest2.MyAgent1>(one,two);
+			tb.addTrigger(new TimedTrigger(1));
+			addRegularTransition(tb.build());
+			tb = new TransitionBuilder<StateChartTest2.MyAgent1>(cs,three);
+			tb.addTrigger(new TimedTrigger(2));
+			addRegularTransition(tb.build());
 		}
 	}
 
 	private static class MyAgent1 {
 
-		public StateChart st;
-
+		public StateChart<MyAgent1> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart1(this);
 			st.begin();
@@ -78,35 +85,53 @@ public class StateChartTest2 {
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart2 extends DefaultStateChart {
+	private static class MyStateChart2 extends DefaultStateChart<MyAgent2> {
 
-		public MyStateChart2(final MyAgent2 a) {
-			CompositeState cs = new CompositeState("cs");
-			this.registerEntryState(cs);
-			AbstractState one = new SimpleState("one");
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			cs.registerEntryState(one);
-			cs.add(two);
-			addRegularTransition(new Transition(new TimedTrigger(1), one, two));
-			addRegularTransition(new Transition(new TimedTrigger(2), cs, three));
-			Callable<Void> onTransition = new Callable<Void>() {
+		public MyStateChart2(MyAgent2 a) {
+			super(a);
+			SimpleState<MyAgent2> one = new SimpleStateBuilder<MyAgent2>("one")
+					.build();
+			CompositeStateBuilder<MyAgent2> csb = new CompositeStateBuilder<StateChartTest2.MyAgent2>(
+					"cs",one);
+			SimpleState<MyAgent2> two = new SimpleStateBuilder<MyAgent2>("two")
+					.build();
+			csb.addChildState(two);
+			CompositeState<MyAgent2> cs = csb.build();
+			registerEntryState(cs);
+			SimpleState<MyAgent2> three = new SimpleStateBuilder<MyAgent2>(
+					"three").build();
+
+			TransitionBuilder<MyAgent2> tb = new TransitionBuilder<StateChartTest2.MyAgent2>(one,two);
+			tb.addTrigger(new TimedTrigger(1));
+			addRegularTransition(tb.build());
+
+			tb = new TransitionBuilder<StateChartTest2.MyAgent2>(cs,three);
+			tb.addTrigger(new TimedTrigger(2));
+
+			addRegularTransition(tb.build());
+
+			TransitionAction<MyAgent2> onTransition = new TransitionAction<StateChartTest2.MyAgent2>() {
+
 				@Override
-				public Void call() throws Exception {
-					a.value++;
-					return null;
+				public void action(MyAgent2 agent,
+						Transition<MyAgent2> transition) throws Exception {
+					agent.value++;
+
 				}
 			};
-			addSelfTransition(new TimedTrigger(1), onTransition, Transition.createEmptyGuard(), cs);
-			
+			SelfTransitionBuilder<MyAgent2> stb = new SelfTransitionBuilder<StateChartTest2.MyAgent2>(cs);
+			stb.addTrigger(new TimedTrigger(1));
+			stb.registerOnTransition(onTransition);
+			addSelfTransition(stb.build());
+
 		}
 	}
 
 	private static class MyAgent2 {
 
-		public StateChart st;
+		public StateChart<MyAgent2> st;
 		public int value;
-
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart2(this);
 			st.begin();
@@ -124,38 +149,53 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
-		assertEquals(1,a.value);
+		assertEquals(1, a.value);
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);
 		assertEquals("three", a.st.getCurrentSimpleState().getId());
-		assertEquals(2,a.value);
+		assertEquals(2, a.value);
 	}
-	
+
 	/**
 	 * Statechart for composite state zero time transitions.
 	 * 
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart3 extends DefaultStateChart {
+	private static class MyStateChart3 extends DefaultStateChart<MyAgent3> {
 
-		public MyStateChart3(final MyAgent3 a) {
-			CompositeState cs = new CompositeState("cs");
-			this.registerEntryState(cs);
-			AbstractState one = new SimpleState("one");
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			cs.registerEntryState(one);
-			cs.add(two);
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), two, three));
+		public MyStateChart3(MyAgent3 a) {
+			super(a);
+			SimpleState<MyAgent3> one = new SimpleStateBuilder<MyAgent3>("one")
+					.build();
+			CompositeStateBuilder<MyAgent3> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3>(
+					"cs",one);
+
+			SimpleState<MyAgent3> two = new SimpleStateBuilder<MyAgent3>("two")
+					.build();
+			csb.addChildState(two);
+			CompositeState<MyAgent3> cs = csb.build();
+			registerEntryState(cs);
+
+			SimpleState<MyAgent3> three = new SimpleStateBuilder<MyAgent3>(
+					"three").build();
+
+			TransitionBuilder<MyAgent3> tb = new TransitionBuilder<StateChartTest2.MyAgent3>(one,two);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a")));
+			addRegularTransition(tb.build());
+
+			tb = new TransitionBuilder<StateChartTest2.MyAgent3>(two,three);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b")));
+			addRegularTransition(tb.build());
 		}
 	}
 
 	private static class MyAgent3 {
 
-		public StateChart st;
-
+		public StateChart<MyAgent3> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart3(this);
 			st.begin();
@@ -180,32 +220,46 @@ public class StateChartTest2 {
 		assertEquals("three", a.st.getCurrentSimpleState().getId());
 
 	}
-	
+
 	/**
 	 * Another statechart for composite state zero time transitions.
 	 * 
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart3b extends DefaultStateChart {
+	private static class MyStateChart3b extends DefaultStateChart<MyAgent3b> {
 
-		public MyStateChart3b(final MyAgent3b a) {
-			CompositeState cs = new CompositeState("cs");
-			this.registerEntryState(cs);
-			AbstractState one = new SimpleState("one");
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			cs.registerEntryState(one);
-			cs.add(two);
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), cs, three));
+		public MyStateChart3b(MyAgent3b a) {
+			super(a);
+			SimpleState<MyAgent3b> one = new SimpleStateBuilder<MyAgent3b>(
+					"one").build();
+			CompositeStateBuilder<MyAgent3b> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3b>(
+					"cs",one);
+			SimpleState<MyAgent3b> two = new SimpleStateBuilder<MyAgent3b>(
+					"two").build();
+			csb.addChildState(two);
+			CompositeState<MyAgent3b> cs = csb.build();
+			registerEntryState(cs);
+
+			SimpleState<MyAgent3b> three = new SimpleStateBuilder<MyAgent3b>(
+					"three").build();
+
+			TransitionBuilder<MyAgent3b> tb = new TransitionBuilder<StateChartTest2.MyAgent3b>(one,two);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a")));
+			addRegularTransition(tb.build());
+
+			tb = new TransitionBuilder<StateChartTest2.MyAgent3b>(cs,three);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b")));
+			addRegularTransition(tb.build());
 		}
 	}
-	
+
 	private static class MyAgent3b {
 
-		public StateChart st;
-
+		public StateChart<MyAgent3b> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart3b(this);
 			st.begin();
@@ -230,32 +284,48 @@ public class StateChartTest2 {
 		assertEquals("three", a.st.getCurrentSimpleState().getId());
 
 	}
-	
+
 	/**
-	 * Another statechart for composite state zero time transitions, but with different polling times.
+	 * Another statechart for composite state zero time transitions, but with
+	 * different polling times.
 	 * 
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart3c extends DefaultStateChart {
+	private static class MyStateChart3c extends DefaultStateChart<MyAgent3c> {
 
-		public MyStateChart3c(final MyAgent3c a) {
-			CompositeState cs = new CompositeState("cs");
-			this.registerEntryState(cs);
-			AbstractState one = new SimpleState("one");
-			AbstractState two = new SimpleState("two");
-			AbstractState three = new SimpleState("three");
-			cs.registerEntryState(one);
-			cs.add(two);
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), one, two));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b"),2), cs, three));
+		public MyStateChart3c(MyAgent3c a) {
+			super(a);
+			SimpleState<MyAgent3c> one = new SimpleStateBuilder<MyAgent3c>(
+					"one").build();
+			CompositeStateBuilder<MyAgent3c> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3c>(
+					"cs",one);
+			
+			SimpleState<MyAgent3c> two = new SimpleStateBuilder<MyAgent3c>(
+					"two").build();
+			csb.addChildState(two);
+			CompositeState<MyAgent3c> cs = csb.build();
+			registerEntryState(cs);
+
+			SimpleState<MyAgent3c> three = new SimpleStateBuilder<MyAgent3c>(
+					"three").build();
+
+			TransitionBuilder<MyAgent3c> tb = new TransitionBuilder<StateChartTest2.MyAgent3c>(one,two);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a")));
+			addRegularTransition(tb.build());
+
+			tb = new TransitionBuilder<StateChartTest2.MyAgent3c>(cs,three);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b"), 2));
+			addRegularTransition(tb.build());
 		}
 	}
-	
+
 	private static class MyAgent3c {
 
-		public StateChart st;
-
+		public StateChart<MyAgent3c> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart3c(this);
 			st.begin();
@@ -277,60 +347,94 @@ public class StateChartTest2 {
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
 
 	}
-	
+
 	/**
 	 * Statechart for history states.
 	 * 
 	 * @author jozik
 	 * 
 	 */
-	private static class MyStateChart4 extends DefaultStateChart {
+	private static class MyStateChart4 extends DefaultStateChart<MyAgent4> {
 
-		public MyStateChart4(final MyAgent4 a) {
+		public MyStateChart4(MyAgent4 a) {
+			super(a);
 			
-			CompositeState three = new CompositeState("three");
-			registerEntryState(three);
-			CompositeState two = new CompositeState("two");
-			three.registerEntryState(two);
-			HistoryState hs3 = new HistoryState("hs3");
-			HistoryState hs3Star = new HistoryState("hs3*",false);
-			three.addHistoryState(hs3);
-			three.addHistoryState(hs3Star);
-			HistoryState hs2 = new HistoryState("hs2");
-			two.addHistoryState(hs2);
-			class MyHistoryCallable implements Callable<Void>{
+			
+			class MyHistoryStateAction implements StateAction<MyAgent4> {
 
-				HistoryState historyState;
-				public MyHistoryCallable(HistoryState historyState){
-					this.historyState = historyState;
-				}
 				@Override
-				public Void call() throws Exception {
-					a.lastHistoryDestination = historyState.getDestination().getId();
-					return null;
+				public void action(MyAgent4 agent, AbstractState<MyAgent4> state)
+						throws Exception {
+					agent.lastHistoryDestination = ((HistoryState<MyAgent4>) state)
+							.getDestination().getId();
+
 				}
-				
 			}
-			hs3.registerOnEnter(new MyHistoryCallable(hs3));
-			hs3Star.registerOnEnter(new MyHistoryCallable(hs3Star));
-			hs2.registerOnEnter(new MyHistoryCallable(hs2));
-			SimpleState oneA = new SimpleState("oneA");
-			SimpleState oneB = new SimpleState("oneB");
-			two.registerEntryState(oneA);
-			two.add(oneB);
-			addRegularTransition(new Transition(new TimedTrigger(1), oneA, oneB));
-			SimpleState four = new SimpleState("four");
-			addRegularTransition(new Transition(new TimedTrigger(4), three, four));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("a")), four, hs3));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("b")), four, hs3Star));
-			addRegularTransition(new Transition(new MessageTrigger(getQueue(), new MessageEqualsMessageChecker<String>("c")), four, hs2));
+			HistoryStateBuilder<MyAgent4> hsb3 = new HistoryStateBuilder<StateChartTest2.MyAgent4>(
+					"hs3");
+			hsb3.registerOnEnter(new MyHistoryStateAction());
+			HistoryState<MyAgent4> hs3 = hsb3.build();
+
+			HistoryStateBuilder<MyAgent4> hsb3Star = new HistoryStateBuilder<StateChartTest2.MyAgent4>(
+					"hs3*",false);
+			hsb3Star.registerOnEnter(new MyHistoryStateAction());
+			HistoryState<MyAgent4> hs3Star = hsb3Star.build();
+
+			HistoryStateBuilder<MyAgent4> hsb2 = new HistoryStateBuilder<StateChartTest2.MyAgent4>(
+					"hs2");
+			hsb2.registerOnEnter(new MyHistoryStateAction());
+			HistoryState<MyAgent4> hs2 = hsb2.build();
+
+			SimpleState<MyAgent4> four = new SimpleStateBuilder<MyAgent4>(
+					"four").build();
+			addState(four);
+
+			SimpleState<MyAgent4> oneA = new SimpleStateBuilder<MyAgent4>(
+					"oneA").build();
+			SimpleState<MyAgent4> oneB = new SimpleStateBuilder<MyAgent4>(
+					"oneB").build();
+			addState(four);
+			CompositeStateBuilder<MyAgent4> csb2 = new CompositeStateBuilder<StateChartTest2.MyAgent4>(
+					"two",oneA);
+			csb2.addChildState(oneB);
+			csb2.addHistoryState(hs2);
+			CompositeState<MyAgent4> cs2 = csb2.build();
+			CompositeStateBuilder<MyAgent4> csb3 = new CompositeStateBuilder<StateChartTest2.MyAgent4>(
+					"three",cs2);
+			csb3.addHistoryState(hs3);
+			csb3.addHistoryState(hs3Star);
+			CompositeState<MyAgent4> cs3 = csb3.build();
+			registerEntryState(cs3);
+
+			TransitionBuilder<MyAgent4> tb = new TransitionBuilder<StateChartTest2.MyAgent4>(oneA,oneB);
+			tb.addTrigger(new TimedTrigger(1));
+			addRegularTransition(tb.build());
+			
+			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(cs3,four);
+			tb.addTrigger(new TimedTrigger(4));
+			addRegularTransition(tb.build());
+			
+			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs3);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("a")));
+			addRegularTransition(tb.build());
+
+			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs3Star);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("b")));
+			addRegularTransition(tb.build());
+			
+			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs2);
+			tb.addTrigger(new MessageTrigger(getQueue(),
+					new MessageEqualsMessageChecker<String>("c")));
+			addRegularTransition(tb.build());
 		}
 	}
-	
+
 	private static class MyAgent4 {
 		public String lastHistoryDestination;
-		public StateChart st;
-
+		public StateChart<MyAgent4> st;
+		@SuppressWarnings("unused")
 		public void setup() {
 			st = new MyStateChart4(this);
 			st.begin();
@@ -355,10 +459,10 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(6, schedule.getTickCount(), 0.0001);
 		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
-		assertEquals("two",a.lastHistoryDestination);
-		
+		assertEquals("two", a.lastHistoryDestination);
+
 	}
-	
+
 	@Test
 	public void myStateChart4Scenario2() {
 		MyAgent4 a = new MyAgent4();
@@ -377,10 +481,10 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(6, schedule.getTickCount(), 0.0001);
 		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
-		assertEquals("oneB",a.lastHistoryDestination);
-		
+		assertEquals("oneB", a.lastHistoryDestination);
+
 	}
-	
+
 	@Test
 	public void myStateChart4Scenario3() {
 		MyAgent4 a = new MyAgent4();
@@ -399,8 +503,8 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(6, schedule.getTickCount(), 0.0001);
 		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
-		assertEquals("oneB",a.lastHistoryDestination);
-		
+		assertEquals("oneB", a.lastHistoryDestination);
+
 	}
 
 }

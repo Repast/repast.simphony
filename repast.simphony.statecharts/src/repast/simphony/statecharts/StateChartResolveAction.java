@@ -9,15 +9,14 @@ import java.util.Map;
 
 import repast.simphony.engine.schedule.IAction;
 import repast.simphony.random.RandomHelper;
-import repast.simphony.statecharts.DefaultStateChart.PriorityComparator;
 import repast.simphony.util.SimUtilities;
 
 public class StateChartResolveAction implements IAction {
 
-	Map<StateChart,Long> scCountsMap = new LinkedHashMap<StateChart,Long>();
+	Map<DefaultStateChart<?>,Long> scCountsMap = new LinkedHashMap<DefaultStateChart<?>,Long>();
 
 	// register listeners
-	public void registerListener(StateChart sc){
+	public void registerListener(DefaultStateChart<?> sc){
 		if (!scCountsMap.containsKey(sc)){
 			scCountsMap.put(sc, 0l);
 		}
@@ -26,7 +25,7 @@ public class StateChartResolveAction implements IAction {
 	}
 	
 	// remove listeners
-	public void removeListener(StateChart sc){
+	public void removeListener(DefaultStateChart<?> sc){
 		if (scCountsMap.containsKey(sc)){
 			long l = scCountsMap.get(sc);
 			if (l <= 1){
@@ -39,27 +38,27 @@ public class StateChartResolveAction implements IAction {
 		
 	}
 	
-	private Comparator<StateChart> pComp = new PriorityComparator();
+	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
 
 	/**
 	 * Compares StateCharts according to their priority. Lower priority later in
 	 * order.
 	 */
-	static class PriorityComparator implements Comparator<StateChart> {
-		public int compare(StateChart s1, StateChart s2) {
-			double index1 = s1.getPriority();
+	static class PriorityComparator implements Comparator<DefaultStateChart<?>> {
+		public int compare(DefaultStateChart<?> s1, DefaultStateChart<?> s2) {
+			double index1 = ((DefaultStateChart<?>) s1).getPriority();
 			double index2 = s2.getPriority();
 			return index1 < index2 ? 1 : index1 == index2 ? 0 : -1;
 		}
 	}
 	
 	// notify listeners
-	public void notifyListeners(){
-		List<StateChart> temp = new ArrayList<StateChart>(scCountsMap.keySet());
+	protected void notifyListeners(){
+		List<DefaultStateChart<?>> temp = new ArrayList<DefaultStateChart<?>>(scCountsMap.keySet());
 		SimUtilities.shuffle(temp, RandomHelper.getUniform());
 		Collections.sort(temp,pComp);
 		
-		for(StateChart sc : temp){
+		for(DefaultStateChart<?> sc : temp){
 			sc.resolve();
 		}
 	}

@@ -8,16 +8,30 @@ import simphony.util.messages.MessageCenter;
 
 public abstract class AbstractState<T> {
 	
+	private StateChart<T> stateChart;
 	private T agent;
 	
-	public T getAgent(){
+	protected T getAgent(){
+		if (agent == null){
+			if (stateChart == null){
+				if (getParent() == null){
+					throw new IllegalStateException("The state: " + this + " was not added to the statechart");
+				}
+				else {
+					agent = getParent().getAgent();
+				}
+			}
+			else{
+				agent = stateChart.getAgent();
+			}
+		}
 		return agent;
 	}
 	
-	public void setAgent(T agent){
-		this.agent = agent;
+	protected void setStateChart(StateChart<T> stateChart){
+		this.stateChart = stateChart;
 	}
-
+	
 	private CompositeState<T> parent;
 	
 	public CompositeState<T> getParent() {
@@ -30,16 +44,8 @@ public abstract class AbstractState<T> {
 	}
 
 	private String id;
-	private StateAction<T> onEnter = new StateAction<T>(){
-		@Override
-		public void action(T agent, AbstractState<T> state) throws Exception {
-		}
-	};
-	private StateAction<T> onExit = new StateAction<T>(){
-		@Override
-		public void action(T agent, AbstractState<T> state) throws Exception {
-		}
-	};
+	private StateAction<T> onEnter;
+	private StateAction<T> onExit;
 	
 	public AbstractState(String id){
 		this.id = id;
@@ -55,7 +61,7 @@ public abstract class AbstractState<T> {
 	}
 
 	
-	public void onEnter() {
+	protected void onEnter() {
 		try {
 			onEnter.action(getAgent(),this);
 		} catch (Exception e) {
@@ -65,7 +71,7 @@ public abstract class AbstractState<T> {
 	}
 
 	
-	public void onExit() {
+	protected void onExit() {
 		try {
 			onExit.action(getAgent(),this);
 		} catch (Exception e) {
@@ -75,12 +81,12 @@ public abstract class AbstractState<T> {
 	}
 
 	
-	public void registerOnEnter(StateAction<T> onEnter) {
+	protected void registerOnEnter(StateAction<T> onEnter) {
 		this.onEnter = onEnter;
 	}
 
 	
-	public void registerOnExit(StateAction<T> onExit) {
+	protected void registerOnExit(StateAction<T> onExit) {
 		this.onExit = onExit;
 	}
 

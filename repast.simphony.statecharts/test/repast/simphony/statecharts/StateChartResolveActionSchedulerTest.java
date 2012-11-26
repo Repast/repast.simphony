@@ -53,63 +53,81 @@ public class StateChartResolveActionSchedulerTest {
 	@Test
 	public void testOneStateChartSameTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChart sc = new DefaultStateChart();
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc);
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc);
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc);
+		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
+		StateChart<Object> sc = scb.build(null);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 	}
 	
 	@Test
 	public void testTwoStateChartsSameTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChart sc1 = new DefaultStateChart();
-		StateChart sc2 = new DefaultStateChart();
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc1);
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc2);
+		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
+		StateChart<Object> sc1 = scb.build(null);
+		
+		ss = new SimpleStateBuilder<Object>("one").build();
+		scb = new StateChartBuilder<Object>(ss);
+		StateChart<Object> sc2 = scb.build(null);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc1);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc2);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc1);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc1);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc2);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc2);
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 	}
 	
 	@Test
 	public void testOneStateChartDifferentTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChart sc = new DefaultStateChart();
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc);
+		
+		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
+		StateChart<Object> sc = scb.build(null);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, sc);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, (DefaultStateChart<?>) sc);
 		assertEquals(2,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(0.5, sc);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(0.5, (DefaultStateChart<?>) sc);
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 	}
 	
 	@Test
 	public void testTwoStateChartsDifferentTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChart sc1 = new DefaultStateChart();
-		StateChart sc2 = new DefaultStateChart();
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc1);
+		
+		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
+		
+		StateChart<Object> sc1 = scb.build(null);
+		
+		ss = new SimpleStateBuilder<Object>("one").build();
+		scb = new StateChartBuilder<Object>(ss);
+		StateChart<Object> sc2 = scb.build(null);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc1);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, sc2);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, (DefaultStateChart<?>) sc2);
 		assertEquals(2,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, sc1);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc1);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(0.5, sc2);
+		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(0.5, (DefaultStateChart<?>) sc2);
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 	}
 	
-	private static class TestStateChart extends DefaultStateChart {
+	private static class TestStateChart extends DefaultStateChart<Object> {
 
 		TestClass testClass;
 		
 		public TestStateChart(TestClass tc){
+			super(null);
 			testClass = tc;
 		}
 		@Override
@@ -127,10 +145,10 @@ public class StateChartResolveActionSchedulerTest {
 	public void testClearOldResolveActions() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		TestClass tc = new TestClass();
-		StateChart sc = new TestStateChart(tc);
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, sc);
+		StateChart<Object> sc = new TestStateChart(tc);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
-		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, sc);
+		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, (DefaultStateChart<?>) sc);
 		assertEquals(2,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		assertEquals(2,StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
