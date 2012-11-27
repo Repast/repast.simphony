@@ -22,7 +22,7 @@ public class StateChartBuilder<T> {
 		states.add(entryState);
 	}
 	
-	public void addState(AbstractState<T> state){
+	public void addRootState(AbstractState<T> state){
 		states.add(state);
 	}
 	
@@ -48,8 +48,8 @@ public class StateChartBuilder<T> {
 	}
 	
 	protected void addRegularTransition(Transition<T> transition) {
-		addState(transition.getSource());
-		addState(transition.getTarget());
+		addRootState(transition.getSource());
+		addRootState(transition.getTarget());
 		regularTransitions.add(transition);
 	}
 	
@@ -66,6 +66,9 @@ public class StateChartBuilder<T> {
 		// add root level states
 			// add entry state
 		result.registerEntryState(entryState);
+		for (AbstractState<T> state : states){
+			result.addState(state);
+		}
 			// composite
 		for (SelfTransition<T> t : selfTransitions){
 			result.addSelfTransition(t);

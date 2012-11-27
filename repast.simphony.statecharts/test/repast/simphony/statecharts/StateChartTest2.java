@@ -358,8 +358,7 @@ public class StateChartTest2 {
 
 		public MyStateChart4(MyAgent4 a) {
 			super(a);
-			
-			
+
 			class MyHistoryStateAction implements StateAction<MyAgent4> {
 
 				@Override
@@ -505,6 +504,88 @@ public class StateChartTest2 {
 		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
 		assertEquals("oneB", a.lastHistoryDestination);
 
+	}
+	
+	/**
+	 * Statechart for final states.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart5 extends DefaultStateChart<MyAgent5> {
+
+		public static MyStateChart5 createStateChart(MyAgent5 agent){
+			MyStateChart5 stateChart = new MyStateChart5(agent);
+			SimpleState<MyAgent5> four = new SimpleStateBuilder<MyAgent5>(
+					"four").build();
+			stateChart.addState(four);
+
+			SimpleState<MyAgent5> three = new SimpleStateBuilder<MyAgent5>(
+					"three").build();
+			stateChart.addState(three);
+			
+			
+			SimpleState<MyAgent5> two = new SimpleStateBuilder<MyAgent5>(
+					"two").build();
+			FinalState<MyAgent5> fState = new FinalStateBuilder<MyAgent5>("final").build();
+			
+			CompositeStateBuilder<MyAgent5> csb1 = new CompositeStateBuilder<MyAgent5>(
+					"one",two);
+			csb1.addChildState(fState);
+			
+			CompositeState<MyAgent5> one = csb1.build();
+			
+			CompositeStateBuilder<MyAgent5> csb0 = new CompositeStateBuilder<MyAgent5>(
+					"zero",one);
+			
+			CompositeState<MyAgent5> zero = csb0.build();
+			
+			stateChart.registerEntryState(zero);
+			
+			TransitionBuilder<MyAgent5> tb = new TransitionBuilder<MyAgent5>(two,fState);
+			tb.addTrigger(new TimedTrigger(1));
+			stateChart.addRegularTransition(tb.build());
+			
+			tb = new TransitionBuilder<MyAgent5>(zero,three);
+			tb.addTrigger(new TimedTrigger(2));
+			stateChart.addRegularTransition(tb.build());
+			
+			tb = new TransitionBuilder<MyAgent5>(one,four);
+			tb.addTrigger(new MessageTrigger(stateChart.getQueue(),
+					new MessageEqualsMessageChecker<String>("a")));
+			stateChart.addRegularTransition(tb.build());
+			
+			return stateChart;
+		}
+		
+		private MyStateChart5(MyAgent5 a) {
+			super(a);
+		}
+	}
+
+	private static class MyAgent5 {
+		public MyStateChart5 st = MyStateChart5.createStateChart(this);
+		@SuppressWarnings("unused")
+		public void setup() {
+			st.begin();
+		}
+	}
+
+	@Test
+	public void myStateChart5Scenario1() {
+		MyAgent5 a = new MyAgent5();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
+		assertEquals(false,a.st.activeRegularTransitions.isEmpty());
+		assertEquals(true,StateChartResolveActionScheduler.INSTANCE.resolveActions.containsKey(3d));
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("final", a.st.getCurrentSimpleState().getId());
+		assertEquals(true,a.st.activeRegularTransitions.isEmpty());
+		assertEquals(false,StateChartResolveActionScheduler.INSTANCE.resolveActions.containsKey(3d));
 	}
 
 }
