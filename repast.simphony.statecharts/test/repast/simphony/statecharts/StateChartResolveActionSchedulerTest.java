@@ -54,8 +54,8 @@ public class StateChartResolveActionSchedulerTest {
 	public void testOneStateChartSameTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
-		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
-		StateChart<Object> sc = scb.build(null);
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(null,ss);
+		StateChart<Object> sc = scb.build();
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
 		StateChartResolveActionScheduler.INSTANCE.removeResolveTime(1, (DefaultStateChart<?>) sc);
@@ -68,12 +68,12 @@ public class StateChartResolveActionSchedulerTest {
 	public void testTwoStateChartsSameTime() {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
-		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
-		StateChart<Object> sc1 = scb.build(null);
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(null,ss);
+		StateChart<Object> sc1 = scb.build();
 		
 		ss = new SimpleStateBuilder<Object>("one").build();
-		scb = new StateChartBuilder<Object>(ss);
-		StateChart<Object> sc2 = scb.build(null);
+		scb = new StateChartBuilder<Object>(null,ss);
+		StateChart<Object> sc2 = scb.build();
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc1);
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc2);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
@@ -88,8 +88,8 @@ public class StateChartResolveActionSchedulerTest {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		
 		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
-		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
-		StateChart<Object> sc = scb.build(null);
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(null,ss);
+		StateChart<Object> sc = scb.build();
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, (DefaultStateChart<?>) sc);
@@ -105,13 +105,13 @@ public class StateChartResolveActionSchedulerTest {
 		assertEquals(0,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		
 		SimpleState<Object> ss = new SimpleStateBuilder<Object>("one").build();
-		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(ss);
+		StateChartBuilder<Object> scb = new StateChartBuilder<Object>(null,ss);
 		
-		StateChart<Object> sc1 = scb.build(null);
+		StateChart<Object> sc1 = scb.build();
 		
 		ss = new SimpleStateBuilder<Object>("one").build();
-		scb = new StateChartBuilder<Object>(ss);
-		StateChart<Object> sc2 = scb.build(null);
+		scb = new StateChartBuilder<Object>(null,ss);
+		StateChart<Object> sc2 = scb.build();
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(1, (DefaultStateChart<?>) sc1);
 		assertEquals(1,RunEnvironment.getInstance().getCurrentSchedule().getModelActionCount());
 		StateChartResolveActionScheduler.INSTANCE.scheduleResolveTime(0.5, (DefaultStateChart<?>) sc2);

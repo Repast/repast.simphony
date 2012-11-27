@@ -22,7 +22,7 @@ public class CompositeState<T> extends AbstractState<T> {
 		return entryState;
 	}
 
-	private List<AbstractState<T>> children = new ArrayList<AbstractState<T>>();
+	protected List<AbstractState<T>> children = new ArrayList<AbstractState<T>>();
 	
 	protected void registerEntryState(AbstractState<T> state) {
 		entryState = state;

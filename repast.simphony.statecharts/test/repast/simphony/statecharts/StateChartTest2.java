@@ -513,17 +513,14 @@ public class StateChartTest2 {
 	 * 
 	 */
 	private static class MyStateChart5 extends DefaultStateChart<MyAgent5> {
-
+		
 		public static MyStateChart5 createStateChart(MyAgent5 agent){
-			MyStateChart5 stateChart = new MyStateChart5(agent);
+
 			SimpleState<MyAgent5> four = new SimpleStateBuilder<MyAgent5>(
 					"four").build();
-			stateChart.addState(four);
 
 			SimpleState<MyAgent5> three = new SimpleStateBuilder<MyAgent5>(
 					"three").build();
-			stateChart.addState(three);
-			
 			
 			SimpleState<MyAgent5> two = new SimpleStateBuilder<MyAgent5>(
 					"two").build();
@@ -540,22 +537,37 @@ public class StateChartTest2 {
 			
 			CompositeState<MyAgent5> zero = csb0.build();
 			
-			stateChart.registerEntryState(zero);
+			MyStateChart5Builder mb = new MyStateChart5Builder(agent,zero);
+			mb.addRootState(four);
+			mb.addRootState(three);
 			
 			TransitionBuilder<MyAgent5> tb = new TransitionBuilder<MyAgent5>(two,fState);
 			tb.addTrigger(new TimedTrigger(1));
-			stateChart.addRegularTransition(tb.build());
+			mb.addRegularTransition(tb.build());
 			
 			tb = new TransitionBuilder<MyAgent5>(zero,three);
 			tb.addTrigger(new TimedTrigger(2));
-			stateChart.addRegularTransition(tb.build());
+			mb.addRegularTransition(tb.build());
 			
 			tb = new TransitionBuilder<MyAgent5>(one,four);
-			tb.addTrigger(new MessageTrigger(stateChart.getQueue(),
-					new MessageEqualsMessageChecker<String>("a")));
-			stateChart.addRegularTransition(tb.build());
+			tb.addTrigger(new MessageTrigger(new MessageEqualsMessageChecker<String>("a")));
+			mb.addRegularTransition(tb.build());
 			
-			return stateChart;
+			return mb.build();
+		}
+		
+		private static class MyStateChart5Builder extends StateChartBuilder<MyAgent5>{
+
+			public MyStateChart5Builder(MyAgent5 agent, AbstractState<MyAgent5> entryState) {
+				super(agent,entryState);
+			}
+			
+			@Override
+			public MyStateChart5 build(){
+				MyStateChart5 result = new MyStateChart5(getAgent());
+				setStateChartProperties(result);
+				return result;
+			}
 		}
 		
 		private MyStateChart5(MyAgent5 a) {
@@ -565,10 +577,12 @@ public class StateChartTest2 {
 
 	private static class MyAgent5 {
 		public MyStateChart5 st = MyStateChart5.createStateChart(this);
+		
 		@SuppressWarnings("unused")
 		public void setup() {
 			st.begin();
 		}
+		
 	}
 
 	@Test

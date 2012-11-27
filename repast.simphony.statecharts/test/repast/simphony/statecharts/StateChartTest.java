@@ -545,12 +545,9 @@ public class StateChartTest {
 	 * 
 	 */
 	private static class MyStateChart6 extends DefaultStateChart<MyAgent6> {
-
-		public MyStateChart6(MyAgent6 agent) {
-			super(agent);
+		public static StateChart<MyAgent6> createStateChart(MyAgent6 agent){
 			SimpleState<MyAgent6> one = new SimpleStateBuilder<MyAgent6>("one")
 					.build();
-			registerEntryState(one);
 			SimpleState<MyAgent6> two = new SimpleStateBuilder<MyAgent6>("two")
 					.build();
 			SimpleState<MyAgent6> three = new SimpleStateBuilder<MyAgent6>(
@@ -575,34 +572,37 @@ public class StateChartTest {
 
 			};
 
-			// IntoBranchTransition ibt =
-			// IntoBranchTransition.createIntoBranchTransition(one, new
-			// TimedTrigger(1));
-			
+			StateChartBuilder<MyAgent6> scb = new StateChartBuilder<StateChartTest.MyAgent6>(agent, one);
 			BranchState<MyAgent6> bs = new BranchStateBuilder<StateChartTest.MyAgent6>("branch").build();
-			addBranch(bs);
+			scb.addRootState(bs);
+			scb.addRootState(two);
+			scb.addRootState(three);
+			scb.addRootState(four);
 			
 			TransitionBuilder<MyAgent6> tb = new TransitionBuilder<StateChartTest.MyAgent6>(one,bs);
 			tb.addTrigger(new TimedTrigger(1));
-			addRegularTransition(tb.build());
+			scb.addRegularTransition(tb.build());
 			
 			OutOfBranchTransitionBuilder<MyAgent6> oobtb = new OutOfBranchTransitionBuilder<MyAgent6>(bs,two);
 			oobtb.addTrigger(new ConditionTrigger<MyAgent6>(state2Condition));
 			oobtb.setPriority(2);
 			Transition<MyAgent6> bt = oobtb.build();
-			addRegularTransition(bt);
+			scb.addRegularTransition(bt);
 			
 			oobtb = new OutOfBranchTransitionBuilder<MyAgent6>(bs,three);
 			oobtb.addTrigger(new ConditionTrigger<MyAgent6>(state3Condition));
 			oobtb.setPriority(1);
 			bt = oobtb.build();
-			addRegularTransition(bt);
+			scb.addRegularTransition(bt);
 			
 			
 			DefaultOutOfBranchTransitionBuilder<MyAgent6> doobtb = new DefaultOutOfBranchTransitionBuilder<MyAgent6>(bs,four);
 			bt = doobtb.build();
-			addRegularTransition(bt);			
-			
+			scb.addRegularTransition(bt);
+			return scb.build();
+		}
+		private MyStateChart6(MyAgent6 agent) {
+			super(agent);
 		}
 	}
 
@@ -612,7 +612,7 @@ public class StateChartTest {
 		public StateChart<MyAgent6> st;
 		@SuppressWarnings("unused")
 		public void setup() {
-			st = new MyStateChart6(this);
+			st = MyStateChart6.createStateChart(this);
 			st.begin();
 		}
 	}
@@ -665,6 +665,150 @@ public class StateChartTest {
 	@Test
 	public void myStateChart6Scenario3() {
 		MyAgent6 a = new MyAgent6();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.6;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("three", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+	
+	/**
+	 * For testing branching transitions.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class MyStateChart6b extends DefaultStateChart<MyAgent6b> {
+		public static StateChart<MyAgent6b> createStateChart(MyAgent6b agent){
+			SimpleState<MyAgent6b> one = new SimpleStateBuilder<MyAgent6b>("one")
+					.build();
+			SimpleState<MyAgent6b> two = new SimpleStateBuilder<MyAgent6b>("two")
+					.build();
+			SimpleState<MyAgent6b> three = new SimpleStateBuilder<MyAgent6b>(
+					"three").build();
+			SimpleState<MyAgent6b> four = new SimpleStateBuilder<MyAgent6b>(
+					"four").build();
+
+			ConditionTriggerCondition<MyAgent6b> state2Condition = new ConditionTriggerCondition<MyAgent6b>() {
+				@Override
+				public boolean condition(MyAgent6b agent,
+						Transition<MyAgent6b> transition) {
+					return agent.value > 0.75;
+				}
+			};
+			ConditionTriggerCondition<MyAgent6b> state3Condition = new ConditionTriggerCondition<MyAgent6b>() {
+
+				@Override
+				public boolean condition(MyAgent6b agent,
+						Transition<MyAgent6b> transition) {
+					return agent.value > 0.25;
+				}
+
+			};
+			BranchState<MyAgent6b> bs = new BranchStateBuilder<StateChartTest.MyAgent6b>("branch").build();
+			CompositeStateBuilder<MyAgent6b> zeroBuilder = new CompositeStateBuilder<MyAgent6b>("zero",one);
+			zeroBuilder.addChildState(bs);
+			zeroBuilder.addChildState(two);
+			CompositeState<MyAgent6b> zero = zeroBuilder.build();
+
+			StateChartBuilder<MyAgent6b> scb = new StateChartBuilder<StateChartTest.MyAgent6b>(agent, zero);
+			scb.addRootState(three);
+			scb.addRootState(four);
+			
+			TransitionBuilder<MyAgent6b> tb = new TransitionBuilder<StateChartTest.MyAgent6b>(one,bs);
+			tb.addTrigger(new TimedTrigger(1));
+			scb.addRegularTransition(tb.build());
+			
+			OutOfBranchTransitionBuilder<MyAgent6b> oobtb = new OutOfBranchTransitionBuilder<MyAgent6b>(bs,two);
+			oobtb.addTrigger(new ConditionTrigger<MyAgent6b>(state2Condition));
+			oobtb.setPriority(2);
+			Transition<MyAgent6b> bt = oobtb.build();
+			scb.addRegularTransition(bt);
+			
+			oobtb = new OutOfBranchTransitionBuilder<MyAgent6b>(bs,three);
+			oobtb.addTrigger(new ConditionTrigger<MyAgent6b>(state3Condition));
+			oobtb.setPriority(1);
+			bt = oobtb.build();
+			scb.addRegularTransition(bt);
+			
+			
+			DefaultOutOfBranchTransitionBuilder<MyAgent6b> doobtb = new DefaultOutOfBranchTransitionBuilder<MyAgent6b>(bs,four);
+			bt = doobtb.build();
+			scb.addRegularTransition(bt);
+			return scb.build();
+		}
+		private MyStateChart6b(MyAgent6b agent) {
+			super(agent);
+		}
+	}
+
+	private static class MyAgent6b {
+
+		public double value;
+		public StateChart<MyAgent6b> st;
+		@SuppressWarnings("unused")
+		public void setup() {
+			st = MyStateChart6b.createStateChart(this);
+			st.begin();
+		}
+	}
+
+	/**
+	 * Should go to default.
+	 */
+	@Test
+	public void myStateChart6bScenario1() {
+		MyAgent6b a = new MyAgent6b();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.1;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("four", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+
+	/**
+	 * Should go to two.
+	 */
+	@Test
+	public void myStateChart6bScenario2() {
+		MyAgent6b a = new MyAgent6b();
+		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+		schedule.execute();
+		assertEquals(1, schedule.getTickCount(), 0.0001);
+		assertEquals("one", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+		a.value = 0.8;
+		schedule.execute();
+		assertEquals(2, schedule.getTickCount(), 0.0001);
+		assertEquals("two", a.st.getCurrentSimpleState().getId());
+		assertEquals(TransitionResolutionStrategy.RANDOM,
+				a.st.getTransitionResolutionStrategy());
+	}
+
+	/**
+	 * Should go to three.
+	 */
+	@Test
+	public void myStateChart6bScenario3() {
+		MyAgent6b a = new MyAgent6b();
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
 		schedule.execute();

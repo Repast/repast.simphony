@@ -2,8 +2,8 @@ package repast.simphony.statecharts;
 
 public class MasterBuilderFactory<T> {
 
-	public StateChartBuilder<T> createStateChartBuilder(AbstractState<T> entryState){
-		return new StateChartBuilder<T>(entryState);
+	public StateChartBuilder<T> createStateChartBuilder(T agent, AbstractState<T> entryState){
+		return new StateChartBuilder<T>(agent, entryState);
 	}
 	
 	public TransitionBuilder<T> createTransitionBuilder(AbstractState<T> source, AbstractState<T> target){

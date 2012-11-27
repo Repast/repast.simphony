@@ -524,11 +524,10 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		this.priority = priority;
 	}
 
-	protected void addBranch(BranchState<T> branch) {
-		// create transition from "from" to branch
-		branch.initializeBranch(this);
-
-	}
+//	protected void addBranch(BranchState<T> branch) {
+//		branch.initializeBranch(this);
+//
+//	}
 
 	private T agent;
 

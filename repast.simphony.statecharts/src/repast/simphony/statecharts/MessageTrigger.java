@@ -52,6 +52,14 @@ public class MessageTrigger extends AbstractTrigger{
 		this(null, messageChecker, pollingTime);		
 	}
 	
+	/**
+	 * Proper constructor used for creating MessageTrigger.
+	 * @param messageChecker
+	 */
+	public MessageTrigger(MessageChecker messageChecker){
+		this(null, messageChecker, 1);		
+	}
+	
 	@Override
 	public boolean isRecurring() {
 		return true;
@@ -77,7 +85,7 @@ public class MessageTrigger extends AbstractTrigger{
 	}
 	
 	public boolean isTriggerConditionTrue(){
-		if (queue.isEmpty()) return false;
+		if (getQueue().isEmpty()) return false;
 		else {
 			return messageChecker.checkMessage(queue.peek());
 		}
