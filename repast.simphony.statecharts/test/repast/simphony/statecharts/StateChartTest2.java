@@ -181,12 +181,12 @@ public class StateChartTest2 {
 					"three").build();
 
 			TransitionBuilder<MyAgent3> tb = new TransitionBuilder<StateChartTest2.MyAgent3>(one,two);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a")));
 			addRegularTransition(tb.build());
 
 			tb = new TransitionBuilder<StateChartTest2.MyAgent3>(two,three);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b")));
 			addRegularTransition(tb.build());
 		}
@@ -245,12 +245,12 @@ public class StateChartTest2 {
 					"three").build();
 
 			TransitionBuilder<MyAgent3b> tb = new TransitionBuilder<StateChartTest2.MyAgent3b>(one,two);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3b>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a")));
 			addRegularTransition(tb.build());
 
 			tb = new TransitionBuilder<StateChartTest2.MyAgent3b>(cs,three);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3b>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b")));
 			addRegularTransition(tb.build());
 		}
@@ -311,12 +311,12 @@ public class StateChartTest2 {
 					"three").build();
 
 			TransitionBuilder<MyAgent3c> tb = new TransitionBuilder<StateChartTest2.MyAgent3c>(one,two);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3c>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a")));
 			addRegularTransition(tb.build());
 
 			tb = new TransitionBuilder<StateChartTest2.MyAgent3c>(cs,three);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent3c>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"), 2));
 			addRegularTransition(tb.build());
 		}
@@ -414,17 +414,17 @@ public class StateChartTest2 {
 			addRegularTransition(tb.build());
 			
 			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs3);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent4>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a")));
 			addRegularTransition(tb.build());
 
 			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs3Star);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent4>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b")));
 			addRegularTransition(tb.build());
 			
 			tb = new TransitionBuilder<StateChartTest2.MyAgent4>(four,hs2);
-			tb.addTrigger(new MessageTrigger(getQueue(),
+			tb.addTrigger(new MessageTrigger<MyAgent4>(getQueue(),
 					new MessageEqualsMessageChecker<String>("c")));
 			addRegularTransition(tb.build());
 		}
@@ -550,7 +550,7 @@ public class StateChartTest2 {
 			mb.addRegularTransition(tb.build());
 			
 			tb = new TransitionBuilder<MyAgent5>(one,four);
-			tb.addTrigger(new MessageTrigger(new MessageEqualsMessageChecker<String>("a")));
+			tb.addTrigger(new MessageTrigger<MyAgent4>(new MessageEqualsMessageChecker<String>("a")));
 			mb.addRegularTransition(tb.build());
 			
 			return mb.build();

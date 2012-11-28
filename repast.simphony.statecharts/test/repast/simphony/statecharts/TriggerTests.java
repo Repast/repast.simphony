@@ -210,7 +210,7 @@ public class TriggerTests {
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		Queue<Object> queue = new ArrayDeque<Object>();
 		
-		Trigger mt1 = new MessageTrigger(queue, new UnconditionalByClassMessageChecker(String.class));
+		Trigger mt1 = new MessageTrigger<Object>(queue, new UnconditionalByClassMessageChecker(String.class));
 		mt1.initialize();
 		assertEquals(false, mt1.isTriggerConditionTrue()); 
 		assertEquals(false, mt1.isTriggered());
@@ -223,7 +223,7 @@ public class TriggerTests {
 		
 		schedule.schedule(ScheduleParameters.createOneTime(1.5), action);
 		queue.poll();
-		Trigger mt2 = new MessageTrigger(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
+		Trigger mt2 = new MessageTrigger<Object>(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
 		mt2.initialize();
 		assertEquals(false, mt2.isTriggerConditionTrue()); 
 		assertEquals(false, mt2.isTriggered());

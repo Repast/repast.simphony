@@ -190,14 +190,14 @@ public class StateChartTest {
 					.build();
 			SimpleState<MyAgent2> three = new SimpleStateBuilder<MyAgent2>(
 					"three").build();
-			Trigger tr1 = new MessageTrigger(getQueue(),
+			Trigger tr1 = new MessageTrigger<MyAgent2>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			TransitionBuilder<MyAgent2> tb = new TransitionBuilder<MyAgent2>(one,two);
 			tb.addTrigger(tr1);
 			Transition<MyAgent2> t1 = tb.build();
 			this.addRegularTransition(t1);
 			tb = new TransitionBuilder<MyAgent2>(two,three);
-			Trigger tr2 = new MessageTrigger(getQueue(),
+			Trigger tr2 = new MessageTrigger<MyAgent2>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"));
 			tb.addTrigger(tr2);
 			Transition<MyAgent2> t2 = tb.build();
@@ -313,14 +313,14 @@ public class StateChartTest {
 					.build();
 			SimpleState<MyAgent3> three = new SimpleStateBuilder<MyAgent3>(
 					"three").build();
-			Trigger tr1 = new MessageTrigger(getQueue(),
+			Trigger tr1 = new MessageTrigger<MyAgent3>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			TransitionBuilder<MyAgent3> tb = new TransitionBuilder<MyAgent3>(one,two);
 			tb.addTrigger(tr1);
 			tb.setPriority(1);
 			Transition<MyAgent3> t1 = tb.build();
 			this.addRegularTransition(t1);
-			Trigger tr2 = new MessageTrigger(getQueue(),
+			Trigger tr2 = new MessageTrigger<MyAgent3>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			tb = new TransitionBuilder<MyAgent3>(one,three);
 			tb.addTrigger(tr2);
@@ -850,7 +850,7 @@ public class StateChartTest {
 			stb.addTrigger(timedTrigger);
 			stb.registerOnTransition(onTransition);
 			addSelfTransition(stb.build());
-			Trigger messageTriggerA = new MessageTrigger(getQueue(),
+			Trigger messageTriggerA = new MessageTrigger<MyAgent7>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			stb = new SelfTransitionBuilder<StateChartTest.MyAgent7>(one);
 			stb.addTrigger(messageTriggerA);
@@ -858,7 +858,7 @@ public class StateChartTest {
 			addSelfTransition(stb.build());
 			
 			SimpleState<MyAgent7> two = new SimpleStateBuilder<MyAgent7>("two").build();
-			Trigger messageTriggerB = new MessageTrigger(getQueue(),
+			Trigger messageTriggerB = new MessageTrigger<MyAgent7>(getQueue(),
 					new MessageEqualsMessageChecker<String>("b"));
 			TransitionBuilder<MyAgent7> tb = new TransitionBuilder<MyAgent7>(one,two);
 			tb.addTrigger(messageTriggerB);
@@ -939,7 +939,7 @@ public class StateChartTest {
 				}
 			}; 
 
-			Trigger messageTriggerA1 = new MessageTrigger(getQueue(),
+			Trigger messageTriggerA1 = new MessageTrigger<MyAgent7b>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			SelfTransitionBuilder<MyAgent7b> stb = new SelfTransitionBuilder<StateChartTest.MyAgent7b>(one);
 			stb.addTrigger(messageTriggerA1);
@@ -947,7 +947,7 @@ public class StateChartTest {
 			addSelfTransition(stb.build());
 
 			SimpleState<MyAgent7b> two = new SimpleStateBuilder<MyAgent7b>("two").build();
-			Trigger messageTriggerA2 = new MessageTrigger(getQueue(),
+			Trigger messageTriggerA2 = new MessageTrigger<MyAgent7b>(getQueue(),
 					new MessageEqualsMessageChecker<String>("a"));
 			TransitionBuilder<MyAgent7b> tb = new TransitionBuilder<StateChartTest.MyAgent7b>(one,two);
 			tb.addTrigger(messageTriggerA2);

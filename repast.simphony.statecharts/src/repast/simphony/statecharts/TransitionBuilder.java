@@ -43,14 +43,6 @@ public class TransitionBuilder<T> {
 		this.trigger = trigger;
 	}
 	
-	public void addSourceState(AbstractState<T> source){
-		this.source = source;
-	}
-	
-	public void addTargetState(AbstractState<T> target){
-		this.target = target;
-	}
-	
 	public void registerOnTransition(TransitionAction<T> onTransition) {
 		this.onTransition = onTransition;
 	}

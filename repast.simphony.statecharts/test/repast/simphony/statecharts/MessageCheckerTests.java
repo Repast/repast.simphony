@@ -106,10 +106,10 @@ public class MessageCheckerTests {
 	
 	@Test
 	public void messageConditionMessageCheckerTest() {
-		MessageConditionMessageChecker mc1 = new MessageConditionMessageChecker(new MessageCondition(){
+		MessageConditionMessageChecker<Object> mc1 = new MessageConditionMessageChecker<Object>(new MessageCondition<Object>(){
 
 			@Override
-			public boolean isTrue(Object message)
+			public boolean isTrue(Object message, Object agent, Transition<Object> transition)
 					throws Exception {
 				if (message instanceof D){
 					D d = (D)message;
@@ -119,14 +119,15 @@ public class MessageCheckerTests {
 			}
 			
 		});
+		mc1.setAgent(new Object());
 		assertEquals(true,mc1.checkMessage(new D(3)));
 		assertEquals(false,mc1.checkMessage(new D(4)));
 		assertEquals(false,mc1.checkMessage("hell"));
 		
-		MessageConditionMessageChecker mc2 = new MessageConditionMessageChecker(new MessageCondition(){
+		MessageConditionMessageChecker<Object> mc2 = new MessageConditionMessageChecker<Object>(new MessageCondition<Object>(){
 
 			@Override
-			public boolean isTrue(Object message)
+			public boolean isTrue(Object message, Object agent, Transition<Object> transition)
 					throws Exception {
 				throw new Exception();
 			}
@@ -137,6 +138,7 @@ public class MessageCheckerTests {
 			}
 			
 		});
+		mc2.setAgent(new Object());//Only for testing purposes
 		
 		class MyMessageEventListener implements MessageEventListener{
 

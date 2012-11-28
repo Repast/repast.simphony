@@ -65,7 +65,8 @@ public class Transition<T> {
 			ct.setTransition(this);
 		}
 		if (trigger instanceof MessageTrigger){
-			MessageTrigger mt = (MessageTrigger) trigger;
+			@SuppressWarnings("unchecked")
+			MessageTrigger<T> mt = (MessageTrigger<T>) trigger;
 			mt.setTransition(this);
 		}
 	}

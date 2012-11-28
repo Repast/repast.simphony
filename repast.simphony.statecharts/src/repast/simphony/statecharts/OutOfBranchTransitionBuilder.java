@@ -7,14 +7,7 @@ public class OutOfBranchTransitionBuilder<T> extends TransitionBuilder<T>{
 	public OutOfBranchTransitionBuilder(AbstractState<T> source,
 			AbstractState<T> target) {
 		super(source, target);
-	}
-
-	@Override
-	public void addSourceState(AbstractState<T> source){
-		if (source instanceof BranchState){
-			super.addSourceState(source);
-		}
-		else {
+		if (!(source instanceof BranchState)){
 			throw new IllegalParameterException("Out of branch transitions require a BranchState as a source.");
 		}
 	}
