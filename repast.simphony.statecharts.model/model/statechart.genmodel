@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/repast.simphony.statecharts.model/src-gen" editDirectory="/repast.simphony.statecharts.edit/src-gen"
+    modelPluginID="repast.simphony.statecharts.model" modelName="Statechart" editPluginClass="repast.simphony.statecharts.scmodel.provider.StatechartEditPlugin"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    editPluginID="repast.simphony.statecharts.edit">
+  <foreignModel>statechart.ecore</foreignModel>
+  <genPackages prefix="Statechart" basePackage="repast.simphony.statecharts" disposableProviderFactory="true"
+      ecorePackage="statechart.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="statechart.ecore#//PseudoStateTypes">
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//PseudoStateTypes/initial"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//PseudoStateTypes/entry"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//PseudoStateTypes/choice"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="statechart.ecore#//TriggerTypes">
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/always"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/timed"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/exponential"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/probability"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/condition"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//TriggerTypes/message"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="statechart.ecore#//MessageCheckerTypes">
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//MessageCheckerTypes/conditional"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//MessageCheckerTypes/equals"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//MessageCheckerTypes/unconditional"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//MessageCheckerTypes/always"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="statechart.ecore#//LanguageTypes">
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//LanguageTypes/java"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//LanguageTypes/groovy"/>
+      <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//LanguageTypes/relogo"/>
+    </genEnums>
+    <genClasses ecoreClass="statechart.ecore#//StateMachine">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StateMachine/states"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StateMachine/transitions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/agentType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/package"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/className"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/language"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//State">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//State/onExit"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//State/onEnter"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//FinalState"/>
+    <genClasses ecoreClass="statechart.ecore#//Transition">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/from"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/to"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/priority"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/onTransition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/outOfBranch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/defaultTransition"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/trigger"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//CompositeState">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/children"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/onEnter"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/onExit"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//AbstractState">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/id"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//PseudoState">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//PseudoState/type"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//History">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//History/shallow"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="statechart.ecore#//Trigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Trigger/type"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//DefaultTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//DefaultTrigger/time"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//ProbabilityTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ProbabilityTrigger/probability"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//ConditionTrigger">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ConditionTrigger/condition"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//MessageTrigger">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//MessageTrigger/checker"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//MessageChecker">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//MessageChecker/type"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//ConditionChecker">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ConditionChecker/condition"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//EqualsChecker">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//EqualsChecker/clazz"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//EqualsChecker/obj"/>
+    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//Action">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Action/code"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Action/language"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,0 +1,50 @@
+«IMPORT scmodel»
+
+«DEFINE Main FOR StateMachine»
+
+«REM»package and generator name should come from the statemachine itself or 
+outside
+«ENDREM»
+«FILE "org/sample/statemachine/StateMachineBuilder.java"»
+
+package org.sample.statemachine;
+
+public class StateMachineBuilder {
+
+public void buildStateMachine() {
+
+«EXPAND state FOREACH states»
+
+}
+}
+
+«ENDFILE»
+«ENDDEFINE»
+
+«REM» Empty define for super class is required «ENDREM»
+«DEFINE state FOR AbstractState»
+«ENDDEFINE»
+
+«DEFINE state FOR State»
+// build the state named «this.id»
+
+
+«ENDDEFINE»
+
+«DEFINE state FOR CompositeState»
+// build the composite named «this.id»
+    «EXPAND state FOREACH children»
+
+«ENDDEFINE»
+
+«DEFINE state FOR PseudoState»
+
+// psuedostate = «this.type»
+
+«ENDDEFINE»
+
+«DEFINE state FOR FinalState»
+// build an final state
+
+
+«ENDDEFINE»
