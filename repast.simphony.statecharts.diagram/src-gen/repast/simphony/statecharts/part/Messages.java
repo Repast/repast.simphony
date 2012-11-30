@@ -343,52 +343,12 @@ public class Messages extends NLS {
   /**
    * @generated
    */
-  public static String NavigatorGroupName_PseudoState_3006_incominglinks;
+  public static String NavigatorGroupName_PseudoState_2007_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_PseudoState_3006_outgoinglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_Transition_4001_target;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_Transition_4001_source;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_CompositeState_3002_incominglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_CompositeState_3002_outgoinglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_History_3008_incominglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_History_3008_outgoinglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_State_2003_incominglinks;
-
-  /**
-   * @generated
-   */
-  public static String NavigatorGroupName_State_2003_outgoinglinks;
+  public static String NavigatorGroupName_PseudoState_2007_outgoinglinks;
 
   /**
    * @generated
@@ -403,32 +363,32 @@ public class Messages extends NLS {
   /**
    * @generated
    */
-  public static String NavigatorGroupName_PseudoState_2007_incominglinks;
+  public static String NavigatorGroupName_CompositeState_2004_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_PseudoState_2007_outgoinglinks;
+  public static String NavigatorGroupName_CompositeState_2004_outgoinglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_State_3001_incominglinks;
+  public static String NavigatorGroupName_PseudoState_3006_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_State_3001_outgoinglinks;
+  public static String NavigatorGroupName_PseudoState_3006_outgoinglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_FinalState_2008_incominglinks;
+  public static String NavigatorGroupName_State_2003_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_FinalState_2008_outgoinglinks;
+  public static String NavigatorGroupName_State_2003_outgoinglinks;
 
   /**
    * @generated
@@ -443,17 +403,32 @@ public class Messages extends NLS {
   /**
    * @generated
    */
-  public static String NavigatorGroupName_StateMachine_1000_links;
+  public static String NavigatorGroupName_FinalState_3007_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_History_3009_incominglinks;
+  public static String NavigatorGroupName_FinalState_3007_outgoinglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_History_3009_outgoinglinks;
+  public static String NavigatorGroupName_History_3008_incominglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_History_3008_outgoinglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_FinalState_2008_incominglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_FinalState_2008_outgoinglinks;
 
   /**
    * @generated
@@ -468,22 +443,47 @@ public class Messages extends NLS {
   /**
    * @generated
    */
-  public static String NavigatorGroupName_CompositeState_2004_incominglinks;
+  public static String NavigatorGroupName_State_3001_incominglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_CompositeState_2004_outgoinglinks;
+  public static String NavigatorGroupName_State_3001_outgoinglinks;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_FinalState_3007_incominglinks;
+  public static String NavigatorGroupName_StateMachine_1000_links;
 
   /**
    * @generated
    */
-  public static String NavigatorGroupName_FinalState_3007_outgoinglinks;
+  public static String NavigatorGroupName_CompositeState_3002_incominglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_CompositeState_3002_outgoinglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_Transition_4001_target;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_Transition_4001_source;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_History_3009_incominglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_History_3009_outgoinglinks;
 
   /**
    * @generated

@@ -85,60 +85,6 @@ public interface StatechartFactory extends EFactory {
   History createHistory();
 
   /**
-   * Returns a new object of class '<em>Default Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Default Trigger</em>'.
-   * @generated
-   */
-  DefaultTrigger createDefaultTrigger();
-
-  /**
-   * Returns a new object of class '<em>Probability Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Probability Trigger</em>'.
-   * @generated
-   */
-  ProbabilityTrigger createProbabilityTrigger();
-
-  /**
-   * Returns a new object of class '<em>Condition Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Condition Trigger</em>'.
-   * @generated
-   */
-  ConditionTrigger createConditionTrigger();
-
-  /**
-   * Returns a new object of class '<em>Message Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Message Trigger</em>'.
-   * @generated
-   */
-  MessageTrigger createMessageTrigger();
-
-  /**
-   * Returns a new object of class '<em>Message Checker</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Message Checker</em>'.
-   * @generated
-   */
-  MessageChecker createMessageChecker();
-
-  /**
-   * Returns a new object of class '<em>Condition Checker</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Condition Checker</em>'.
-   * @generated
-   */
-  ConditionChecker createConditionChecker();
-
-  /**
    * Returns a new object of class '<em>Equals Checker</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -146,15 +92,6 @@ public interface StatechartFactory extends EFactory {
    * @generated
    */
   EqualsChecker createEqualsChecker();
-
-  /**
-   * Returns a new object of class '<em>Action</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Action</em>'.
-   * @generated
-   */
-  Action createAction();
 
   /**
    * Returns the package supported by this factory.

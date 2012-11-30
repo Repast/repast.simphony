@@ -46,8 +46,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
 
   private EMFDataBindingContext bindingContext;
 
-  private Form form;
-
   @Override
   public void refresh() {
     super.refresh();
@@ -74,15 +72,7 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     super.createControls(parent, aTabbedPropertySheetPage);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
     parent.setLayout(new GridLayout(1, true));
-    form = toolkit.createForm(parent);
-    toolkit.decorateFormHeading(form);
-    GridDataFactory.fillDefaults().grab(true, true).applyTo(form);
-    form.getBody().setLayout(createBodyLayout());
-    createControls(form.getBody());
-  }
-
-  protected Layout createBodyLayout() {
-    return new GridLayout(1, false);
+    createControls(parent);
   }
 
   public FormToolkit getToolkit() {

@@ -39,10 +39,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/className"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/language"/>
     </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//State">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//State/onExit"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//State/onEnter"/>
-    </genClasses>
+    <genClasses ecoreClass="statechart.ecore#//State"/>
     <genClasses ecoreClass="statechart.ecore#//FinalState"/>
     <genClasses ecoreClass="statechart.ecore#//Transition">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/from"/>
@@ -51,15 +48,25 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/onTransition"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/outOfBranch"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/defaultTransition"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/trigger"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerCondition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerConditionLanguage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerObj"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbability"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCondition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//CompositeState">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/children"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/onEnter"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/onExit"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//AbstractState">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onEnter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onExit"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/language"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//PseudoState">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//PseudoState/type"/>
@@ -67,34 +74,8 @@
     <genClasses ecoreClass="statechart.ecore#//History">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//History/shallow"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="statechart.ecore#//Trigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Trigger/type"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//DefaultTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//DefaultTrigger/time"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//ProbabilityTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ProbabilityTrigger/probability"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//ConditionTrigger">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ConditionTrigger/condition"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//MessageTrigger">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//MessageTrigger/checker"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//MessageChecker">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//MessageChecker/type"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//ConditionChecker">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//ConditionChecker/condition"/>
-    </genClasses>
     <genClasses ecoreClass="statechart.ecore#//EqualsChecker">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//EqualsChecker/clazz"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//EqualsChecker/obj"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//Action">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Action/code"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Action/language"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

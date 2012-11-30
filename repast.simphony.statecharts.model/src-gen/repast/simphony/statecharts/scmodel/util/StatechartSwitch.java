@@ -121,66 +121,9 @@ public class StatechartSwitch<T> extends Switch<T> {
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StatechartPackage.TRIGGER: {
-        Trigger trigger = (Trigger)theEObject;
-        T result = caseTrigger(trigger);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.DEFAULT_TRIGGER: {
-        DefaultTrigger defaultTrigger = (DefaultTrigger)theEObject;
-        T result = caseDefaultTrigger(defaultTrigger);
-        if (result == null) result = caseTrigger(defaultTrigger);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.PROBABILITY_TRIGGER: {
-        ProbabilityTrigger probabilityTrigger = (ProbabilityTrigger)theEObject;
-        T result = caseProbabilityTrigger(probabilityTrigger);
-        if (result == null) result = caseDefaultTrigger(probabilityTrigger);
-        if (result == null) result = caseTrigger(probabilityTrigger);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.CONDITION_TRIGGER: {
-        ConditionTrigger conditionTrigger = (ConditionTrigger)theEObject;
-        T result = caseConditionTrigger(conditionTrigger);
-        if (result == null) result = caseDefaultTrigger(conditionTrigger);
-        if (result == null) result = caseTrigger(conditionTrigger);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.MESSAGE_TRIGGER: {
-        MessageTrigger messageTrigger = (MessageTrigger)theEObject;
-        T result = caseMessageTrigger(messageTrigger);
-        if (result == null) result = caseDefaultTrigger(messageTrigger);
-        if (result == null) result = caseTrigger(messageTrigger);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.MESSAGE_CHECKER: {
-        MessageChecker messageChecker = (MessageChecker)theEObject;
-        T result = caseMessageChecker(messageChecker);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.CONDITION_CHECKER: {
-        ConditionChecker conditionChecker = (ConditionChecker)theEObject;
-        T result = caseConditionChecker(conditionChecker);
-        if (result == null) result = caseMessageChecker(conditionChecker);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case StatechartPackage.EQUALS_CHECKER: {
         EqualsChecker equalsChecker = (EqualsChecker)theEObject;
         T result = caseEqualsChecker(equalsChecker);
-        if (result == null) result = caseMessageChecker(equalsChecker);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case StatechartPackage.ACTION: {
-        Action action = (Action)theEObject;
-        T result = caseAction(action);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -309,111 +252,6 @@ public class StatechartSwitch<T> extends Switch<T> {
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Trigger</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseTrigger(Trigger object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Default Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Default Trigger</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDefaultTrigger(DefaultTrigger object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Probability Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Probability Trigger</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseProbabilityTrigger(ProbabilityTrigger object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Condition Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Condition Trigger</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseConditionTrigger(ConditionTrigger object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Message Trigger</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Message Trigger</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseMessageTrigger(MessageTrigger object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Message Checker</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Message Checker</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseMessageChecker(MessageChecker object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Condition Checker</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Condition Checker</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseConditionChecker(ConditionChecker object) {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Equals Checker</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -425,21 +263,6 @@ public class StatechartSwitch<T> extends Switch<T> {
    * @generated
    */
   public T caseEqualsChecker(EqualsChecker object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Action</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Action</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAction(Action object) {
     return null;
   }
 

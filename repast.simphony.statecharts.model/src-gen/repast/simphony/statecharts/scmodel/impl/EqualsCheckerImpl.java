@@ -7,6 +7,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import repast.simphony.statecharts.scmodel.EqualsChecker;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
@@ -18,34 +19,13 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl#getClazz <em>Clazz</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl#getObj <em>Obj</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsChecker {
-  /**
-   * The default value of the '{@link #getClazz() <em>Clazz</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getClazz()
-   * @generated
-   * @ordered
-   */
-  protected static final String CLAZZ_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getClazz() <em>Clazz</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getClazz()
-   * @generated
-   * @ordered
-   */
-  protected String clazz = CLAZZ_EDEFAULT;
-
+public class EqualsCheckerImpl extends EObjectImpl implements EqualsChecker {
   /**
    * The default value of the '{@link #getObj() <em>Obj</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -90,27 +70,6 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getClazz() {
-    return clazz;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setClazz(String newClazz) {
-    String oldClazz = clazz;
-    clazz = newClazz;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.EQUALS_CHECKER__CLAZZ, oldClazz, clazz));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public String getObj() {
     return obj;
   }
@@ -135,8 +94,6 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
-      case StatechartPackage.EQUALS_CHECKER__CLAZZ:
-        return getClazz();
       case StatechartPackage.EQUALS_CHECKER__OBJ:
         return getObj();
     }
@@ -151,9 +108,6 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
   @Override
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
-      case StatechartPackage.EQUALS_CHECKER__CLAZZ:
-        setClazz((String)newValue);
-        return;
       case StatechartPackage.EQUALS_CHECKER__OBJ:
         setObj((String)newValue);
         return;
@@ -169,9 +123,6 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
   @Override
   public void eUnset(int featureID) {
     switch (featureID) {
-      case StatechartPackage.EQUALS_CHECKER__CLAZZ:
-        setClazz(CLAZZ_EDEFAULT);
-        return;
       case StatechartPackage.EQUALS_CHECKER__OBJ:
         setObj(OBJ_EDEFAULT);
         return;
@@ -187,8 +138,6 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
   @Override
   public boolean eIsSet(int featureID) {
     switch (featureID) {
-      case StatechartPackage.EQUALS_CHECKER__CLAZZ:
-        return CLAZZ_EDEFAULT == null ? clazz != null : !CLAZZ_EDEFAULT.equals(clazz);
       case StatechartPackage.EQUALS_CHECKER__OBJ:
         return OBJ_EDEFAULT == null ? obj != null : !OBJ_EDEFAULT.equals(obj);
     }
@@ -205,9 +154,7 @@ public class EqualsCheckerImpl extends MessageCheckerImpl implements EqualsCheck
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (clazz: ");
-    result.append(clazz);
-    result.append(", obj: ");
+    result.append(" (obj: ");
     result.append(obj);
     result.append(')');
     return result.toString();

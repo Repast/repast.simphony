@@ -9,6 +9,8 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.ResourceLocator;
+
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -17,10 +19,10 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import repast.simphony.statecharts.scmodel.EqualsChecker;
-import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
@@ -30,7 +32,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  * @generated
  */
 public class EqualsCheckerItemProvider
-  extends MessageCheckerItemProvider
+  extends ItemProviderAdapter
   implements
     IEditingDomainItemProvider,
     IStructuredItemContentProvider,
@@ -58,32 +60,9 @@ public class EqualsCheckerItemProvider
     if (itemPropertyDescriptors == null) {
       super.getPropertyDescriptors(object);
 
-      addClazzPropertyDescriptor(object);
       addObjPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
-  }
-
-  /**
-   * This adds a property descriptor for the Clazz feature.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  protected void addClazzPropertyDescriptor(Object object) {
-    itemPropertyDescriptors.add
-      (createItemPropertyDescriptor
-        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-         getResourceLocator(),
-         getString("_UI_EqualsChecker_clazz_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_EqualsChecker_clazz_feature", "_UI_EqualsChecker_type"),
-         StatechartPackage.Literals.EQUALS_CHECKER__CLAZZ,
-         true,
-         false,
-         false,
-         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-         null,
-         null));
   }
 
   /**
@@ -127,8 +106,7 @@ public class EqualsCheckerItemProvider
    */
   @Override
   public String getText(Object object) {
-    MessageCheckerTypes labelValue = ((EqualsChecker)object).getType();
-    String label = labelValue == null ? null : labelValue.toString();
+    String label = ((EqualsChecker)object).getObj();
     return label == null || label.length() == 0 ?
       getString("_UI_EqualsChecker_type") :
       getString("_UI_EqualsChecker_type") + " " + label;
@@ -146,7 +124,6 @@ public class EqualsCheckerItemProvider
     updateChildren(notification);
 
     switch (notification.getFeatureID(EqualsChecker.class)) {
-      case StatechartPackage.EQUALS_CHECKER__CLAZZ:
       case StatechartPackage.EQUALS_CHECKER__OBJ:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
@@ -164,6 +141,17 @@ public class EqualsCheckerItemProvider
   @Override
   protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
     super.collectNewChildDescriptors(newChildDescriptors, object);
+  }
+
+  /**
+   * Return the resource locator for this item provider's resources.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ResourceLocator getResourceLocator() {
+    return StatechartEditPlugin.INSTANCE;
   }
 
 }

@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import repast.simphony.statecharts.scmodel.AbstractState;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
@@ -20,6 +21,9 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  * The following features are implemented:
  * <ul>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getId <em>Id</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnEnter <em>On Enter</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnExit <em>On Exit</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getLanguage <em>Language</em>}</li>
  * </ul>
  * </p>
  *
@@ -45,6 +49,66 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * @ordered
    */
   protected String id = ID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getOnEnter() <em>On Enter</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnEnter()
+   * @generated
+   * @ordered
+   */
+  protected static final String ON_ENTER_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOnEnter() <em>On Enter</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnEnter()
+   * @generated
+   * @ordered
+   */
+  protected String onEnter = ON_ENTER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getOnExit() <em>On Exit</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnExit()
+   * @generated
+   * @ordered
+   */
+  protected static final String ON_EXIT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOnExit() <em>On Exit</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnExit()
+   * @generated
+   * @ordered
+   */
+  protected String onExit = ON_EXIT_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLanguage() <em>Language</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLanguage()
+   * @generated
+   * @ordered
+   */
+  protected static final LanguageTypes LANGUAGE_EDEFAULT = LanguageTypes.JAVA;
+
+  /**
+   * The cached value of the '{@link #getLanguage() <em>Language</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLanguage()
+   * @generated
+   * @ordered
+   */
+  protected LanguageTypes language = LANGUAGE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -91,11 +155,81 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getOnEnter() {
+    return onEnter;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOnEnter(String newOnEnter) {
+    String oldOnEnter = onEnter;
+    onEnter = newOnEnter;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__ON_ENTER, oldOnEnter, onEnter));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getOnExit() {
+    return onExit;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOnExit(String newOnExit) {
+    String oldOnExit = onExit;
+    onExit = newOnExit;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__ON_EXIT, oldOnExit, onExit));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LanguageTypes getLanguage() {
+    return language;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLanguage(LanguageTypes newLanguage) {
+    LanguageTypes oldLanguage = language;
+    language = newLanguage == null ? LANGUAGE_EDEFAULT : newLanguage;
+    //System.out.println("language: " + language);
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__LANGUAGE, oldLanguage, language));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
       case StatechartPackage.ABSTRACT_STATE__ID:
         return getId();
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
+        return getOnEnter();
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
+        return getOnExit();
+      case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
+        return getLanguage();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -110,6 +244,15 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
     switch (featureID) {
       case StatechartPackage.ABSTRACT_STATE__ID:
         setId((String)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
+        setOnEnter((String)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
+        setOnExit((String)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
+        setLanguage((LanguageTypes)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -126,6 +269,15 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
       case StatechartPackage.ABSTRACT_STATE__ID:
         setId(ID_EDEFAULT);
         return;
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
+        setOnEnter(ON_ENTER_EDEFAULT);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
+        setOnExit(ON_EXIT_EDEFAULT);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
+        setLanguage(LANGUAGE_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -140,6 +292,12 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
     switch (featureID) {
       case StatechartPackage.ABSTRACT_STATE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
+        return ON_ENTER_EDEFAULT == null ? onEnter != null : !ON_ENTER_EDEFAULT.equals(onEnter);
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
+        return ON_EXIT_EDEFAULT == null ? onExit != null : !ON_EXIT_EDEFAULT.equals(onExit);
+      case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
+        return language != LANGUAGE_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -156,6 +314,12 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", onEnter: ");
+    result.append(onEnter);
+    result.append(", onExit: ");
+    result.append(onExit);
+    result.append(", language: ");
+    result.append(language);
     result.append(')');
     return result.toString();
   }

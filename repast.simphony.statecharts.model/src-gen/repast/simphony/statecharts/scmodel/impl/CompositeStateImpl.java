@@ -4,7 +4,6 @@ package repast.simphony.statecharts.scmodel.impl;
 
 import java.util.Collection;
 
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -12,13 +11,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import repast.simphony.statecharts.scmodel.AbstractState;
-import repast.simphony.statecharts.scmodel.Action;
 import repast.simphony.statecharts.scmodel.CompositeState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
@@ -30,8 +26,6 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  * The following features are implemented:
  * <ul>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl#getOnEnter <em>On Enter</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl#getOnExit <em>On Exit</em>}</li>
  * </ul>
  * </p>
  *
@@ -47,26 +41,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
    * @ordered
    */
   protected EList<AbstractState> children;
-
-  /**
-   * The cached value of the '{@link #getOnEnter() <em>On Enter</em>}' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getOnEnter()
-   * @generated
-   * @ordered
-   */
-  protected Action onEnter;
-
-  /**
-   * The cached value of the '{@link #getOnExit() <em>On Exit</em>}' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getOnExit()
-   * @generated
-   * @ordered
-   */
-  protected Action onExit;
 
   /**
    * <!-- begin-user-doc -->
@@ -104,82 +78,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
    * <!-- end-user-doc -->
    * @generated
    */
-  public Action getOnEnter() {
-    if (onEnter != null && onEnter.eIsProxy()) {
-      InternalEObject oldOnEnter = (InternalEObject)onEnter;
-      onEnter = (Action)eResolveProxy(oldOnEnter);
-      if (onEnter != oldOnEnter) {
-        if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, StatechartPackage.COMPOSITE_STATE__ON_ENTER, oldOnEnter, onEnter));
-      }
-    }
-    return onEnter;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Action basicGetOnEnter() {
-    return onEnter;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setOnEnter(Action newOnEnter) {
-    Action oldOnEnter = onEnter;
-    onEnter = newOnEnter;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.COMPOSITE_STATE__ON_ENTER, oldOnEnter, onEnter));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Action getOnExit() {
-    if (onExit != null && onExit.eIsProxy()) {
-      InternalEObject oldOnExit = (InternalEObject)onExit;
-      onExit = (Action)eResolveProxy(oldOnExit);
-      if (onExit != oldOnExit) {
-        if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, StatechartPackage.COMPOSITE_STATE__ON_EXIT, oldOnExit, onExit));
-      }
-    }
-    return onExit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Action basicGetOnExit() {
-    return onExit;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setOnExit(Action newOnExit) {
-    Action oldOnExit = onExit;
-    onExit = newOnExit;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.COMPOSITE_STATE__ON_EXIT, oldOnExit, onExit));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
     switch (featureID) {
@@ -199,12 +97,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
     switch (featureID) {
       case StatechartPackage.COMPOSITE_STATE__CHILDREN:
         return getChildren();
-      case StatechartPackage.COMPOSITE_STATE__ON_ENTER:
-        if (resolve) return getOnEnter();
-        return basicGetOnEnter();
-      case StatechartPackage.COMPOSITE_STATE__ON_EXIT:
-        if (resolve) return getOnExit();
-        return basicGetOnExit();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -222,12 +114,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
         getChildren().clear();
         getChildren().addAll((Collection<? extends AbstractState>)newValue);
         return;
-      case StatechartPackage.COMPOSITE_STATE__ON_ENTER:
-        setOnEnter((Action)newValue);
-        return;
-      case StatechartPackage.COMPOSITE_STATE__ON_EXIT:
-        setOnExit((Action)newValue);
-        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -243,12 +129,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
       case StatechartPackage.COMPOSITE_STATE__CHILDREN:
         getChildren().clear();
         return;
-      case StatechartPackage.COMPOSITE_STATE__ON_ENTER:
-        setOnEnter((Action)null);
-        return;
-      case StatechartPackage.COMPOSITE_STATE__ON_EXIT:
-        setOnExit((Action)null);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -263,10 +143,6 @@ public class CompositeStateImpl extends AbstractStateImpl implements CompositeSt
     switch (featureID) {
       case StatechartPackage.COMPOSITE_STATE__CHILDREN:
         return children != null && !children.isEmpty();
-      case StatechartPackage.COMPOSITE_STATE__ON_ENTER:
-        return onEnter != null;
-      case StatechartPackage.COMPOSITE_STATE__ON_EXIT:
-        return onExit != null;
     }
     return super.eIsSet(featureID);
   }

@@ -100,40 +100,8 @@ public class StatechartAdapterFactory extends AdapterFactoryImpl {
         return createHistoryAdapter();
       }
       @Override
-      public Adapter caseTrigger(Trigger object) {
-        return createTriggerAdapter();
-      }
-      @Override
-      public Adapter caseDefaultTrigger(DefaultTrigger object) {
-        return createDefaultTriggerAdapter();
-      }
-      @Override
-      public Adapter caseProbabilityTrigger(ProbabilityTrigger object) {
-        return createProbabilityTriggerAdapter();
-      }
-      @Override
-      public Adapter caseConditionTrigger(ConditionTrigger object) {
-        return createConditionTriggerAdapter();
-      }
-      @Override
-      public Adapter caseMessageTrigger(MessageTrigger object) {
-        return createMessageTriggerAdapter();
-      }
-      @Override
-      public Adapter caseMessageChecker(MessageChecker object) {
-        return createMessageCheckerAdapter();
-      }
-      @Override
-      public Adapter caseConditionChecker(ConditionChecker object) {
-        return createConditionCheckerAdapter();
-      }
-      @Override
       public Adapter caseEqualsChecker(EqualsChecker object) {
         return createEqualsCheckerAdapter();
-      }
-      @Override
-      public Adapter caseAction(Action object) {
-        return createActionAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object) {
@@ -268,104 +236,6 @@ public class StatechartAdapterFactory extends AdapterFactoryImpl {
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.Trigger <em>Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.Trigger
-   * @generated
-   */
-  public Adapter createTriggerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.DefaultTrigger <em>Default Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.DefaultTrigger
-   * @generated
-   */
-  public Adapter createDefaultTriggerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.ProbabilityTrigger <em>Probability Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.ProbabilityTrigger
-   * @generated
-   */
-  public Adapter createProbabilityTriggerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.ConditionTrigger <em>Condition Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.ConditionTrigger
-   * @generated
-   */
-  public Adapter createConditionTriggerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.MessageTrigger <em>Message Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.MessageTrigger
-   * @generated
-   */
-  public Adapter createMessageTriggerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.MessageChecker <em>Message Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.MessageChecker
-   * @generated
-   */
-  public Adapter createMessageCheckerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.ConditionChecker <em>Condition Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.ConditionChecker
-   * @generated
-   */
-  public Adapter createConditionCheckerAdapter() {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.EqualsChecker <em>Equals Checker</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -376,20 +246,6 @@ public class StatechartAdapterFactory extends AdapterFactoryImpl {
    * @generated
    */
   public Adapter createEqualsCheckerAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.Action <em>Action</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.Action
-   * @generated
-   */
-  public Adapter createActionAdapter() {
     return null;
   }
 

@@ -61,6 +61,9 @@ public class AbstractStateItemProvider
       super.getPropertyDescriptors(object);
 
       addIdPropertyDescriptor(object);
+      addOnEnterPropertyDescriptor(object);
+      addOnExitPropertyDescriptor(object);
+      addLanguagePropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -79,6 +82,72 @@ public class AbstractStateItemProvider
          getString("_UI_AbstractState_id_feature"),
          getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_id_feature", "_UI_AbstractState_type"),
          StatechartPackage.Literals.ABSTRACT_STATE__ID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the On Enter feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addOnEnterPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_onEnter_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_onEnter_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the On Exit feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addOnExitPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_onExit_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_onExit_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Language feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addLanguagePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_language_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_language_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE,
          true,
          false,
          false,
@@ -125,6 +194,9 @@ public class AbstractStateItemProvider
 
     switch (notification.getFeatureID(AbstractState.class)) {
       case StatechartPackage.ABSTRACT_STATE__ID:
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
+      case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

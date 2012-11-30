@@ -179,7 +179,7 @@
    </extension>
 
    <extension point="org.eclipse.ui.views.properties.tabbed.propertySections" id="propsections">
-      <?gmfgen generated="true"?>   
+      <?gmfgen generated="false"?>   
       <propertySections contributorId="repast.simphony.statecharts.diagram">
          <propertySection id="property.section.ConnectorAppearancePropertySection" 
             filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.ConnectionEditPartPropertySectionFilter" 
@@ -200,7 +200,19 @@
             filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.DiagramEditPartPropertySectionFilter" 
             class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.grid.RulerGridPropertySection" 
             tab="property.tab.DiagramPropertySection">
-         </propertySection>     
+         </propertySection>    
+         
+         <propertySection
+               class="repast.simphony.statecharts.sheets.StatePropertySection"
+               id="property.section.domain.state"
+               tab="property.tab.domain">
+            <input type="repast.simphony.statecharts.edit.parts.StateEditPart"/>
+            <input type="repast.simphony.statecharts.edit.parts.State2EditPart"/>
+            <input type ="repast.simphony.statecharts.edit.parts.CompositeState2EditPart"/>
+            <input type ="repast.simphony.statecharts.edit.parts.CompositeStateEditPart"/>
+         </propertySection>    
+         
+         <!--
          <propertySection
             id="property.section.domain" 
             tab="property.tab.domain"
@@ -209,6 +221,8 @@
             <input type="org.eclipse.gef.EditPart"/>
             <input type="repast.simphony.statecharts.navigator.StatechartAbstractNavigatorItem"/>
          </propertySection>
+         -->
+         
       </propertySections>
    </extension>
 
