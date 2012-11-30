@@ -10,12 +10,14 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-public enum StateChartResolveActionScheduler {
+public enum StateChartCombinedActionScheduler {
 
 	INSTANCE;
 
 	private final static long MAX_BEFOFE_CLEAR = 10000;
 	protected Map<Double, ResolveActionsMapValue> resolveActions = new HashMap<Double, ResolveActionsMapValue>();
+
+	protected Map<Double, BeginActionsMapValue> beginActions = new HashMap<Double, BeginActionsMapValue>();
 
 	static class ResolveActionsMapValue {
 		private StateChartResolveAction scra;
@@ -47,22 +49,33 @@ public enum StateChartResolveActionScheduler {
 			return remove;
 		}
 	}
+	
+	static class BeginActionsMapValue {
+		private StateChartBeginAction scba;
 
-	public void initialize() {
-		clearCounter = 0;
-		for (Double key : resolveActions.keySet()) {
-			ResolveActionsMapValue ramv = resolveActions.get(key);
-			ramv.isa = null;
-			ramv.scra = null;
+		protected BeginActionsMapValue(StateChartBeginAction scba) {
+			this.scba = scba;
 		}
-		resolveActions.clear();
+
+		protected void registerListener(DefaultStateChart<?> sc) {
+			scba.registerListener(sc);
+		}
 	}
 
-	long clearCounter = 0;
+	public void initialize() {
+		resolveClearCounter = 0;
+		beginClearCounter = 0;
+		resolveActions.clear();
+		beginActions.clear();
+	}
+
+	long resolveClearCounter = 0;
+	long beginClearCounter = 0;
+	
 
 	protected void clearOldResolveActions() {
-		clearCounter++;
-		if (clearCounter > MAX_BEFOFE_CLEAR) {
+		resolveClearCounter++;
+		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
 			double time = RunEnvironment.getInstance().getCurrentSchedule()
 					.getTickCount();
 			List<Double> keysToRemove = new ArrayList<Double>();
@@ -71,13 +84,29 @@ public enum StateChartResolveActionScheduler {
 					keysToRemove.add(rTime);
 			}
 			for (Double key : keysToRemove) {
-				ResolveActionsMapValue ramv = resolveActions.remove(key);
-				ramv.isa = null;
-				ramv.scra = null;
+				resolveActions.remove(key);
 			}
-			clearCounter = 0;
+			resolveClearCounter = 0;
 		}
 	}
+	
+	protected void clearOldBeginActions() {
+		beginClearCounter++;
+		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
+			double time = RunEnvironment.getInstance().getCurrentSchedule()
+					.getTickCount();
+			List<Double> keysToRemove = new ArrayList<Double>();
+			for (Double rTime : beginActions.keySet()) {
+				if (rTime.compareTo(time) <= 0)
+					keysToRemove.add(rTime);
+			}
+			for (Double key : keysToRemove) {
+				beginActions.remove(key);
+			}
+			beginClearCounter = 0;
+		}
+	}
+
 
 	protected void scheduleResolveTime(double nextTime, DefaultStateChart<?> sc) {
 		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
@@ -94,6 +123,21 @@ public enum StateChartResolveActionScheduler {
 		}
 		ramv.registerListener(sc);
 	}
+	
+	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
+		BeginActionsMapValue bamv = beginActions.get(nextTime);
+		if (bamv == null) {
+			ISchedule schedule = RunEnvironment.getInstance()
+					.getCurrentSchedule();
+			StateChartBeginAction scba = new StateChartBeginAction();
+			schedule.schedule(ScheduleParameters
+					.createOneTime(nextTime, ScheduleParameters.FIRST_PRIORITY),
+					scba);
+			bamv = new BeginActionsMapValue(scba);
+			beginActions.put(nextTime, bamv);
+		}
+		bamv.registerListener(sc);
+	}
 
 	protected void removeResolveTime(double nextTime, DefaultStateChart<?> sc) {
 		if (resolveActions.containsKey(nextTime)) {
@@ -107,5 +151,6 @@ public enum StateChartResolveActionScheduler {
 							+ sc);
 		}
 	}
+
 
 }

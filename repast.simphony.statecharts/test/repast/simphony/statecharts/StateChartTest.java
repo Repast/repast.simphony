@@ -19,7 +19,7 @@ public class StateChartTest {
 	@Before
 	public void setUp() throws Exception {
 		RunEnvironment.init(new Schedule(), null, null, false);
-		StateChartResolveActionScheduler.INSTANCE.initialize();
+		StateChartCombinedActionScheduler.INSTANCE.initialize();
 	}
 
 	@Test
@@ -457,12 +457,12 @@ public class StateChartTest {
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 
 		assertEquals(2,
-				StateChartResolveActionScheduler.INSTANCE.resolveActions.size());
+				StateChartCombinedActionScheduler.INSTANCE.resolveActions.size());
 		assertEquals(true,
-				StateChartResolveActionScheduler.INSTANCE.resolveActions
+				StateChartCombinedActionScheduler.INSTANCE.resolveActions
 						.containsKey(3d));
 		assertEquals(true,
-				StateChartResolveActionScheduler.INSTANCE.resolveActions
+				StateChartCombinedActionScheduler.INSTANCE.resolveActions
 						.containsKey(4d));
 		schedule.execute();
 		assertEquals(3, schedule.getTickCount(), 0.0001);

@@ -3,41 +3,23 @@ package repast.simphony.statecharts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import repast.simphony.engine.schedule.IAction;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.SimUtilities;
 
-public class StateChartResolveAction implements IAction {
+public class StateChartBeginAction implements IAction {
 
-	Map<DefaultStateChart<?>,Long> scCountsMap = new LinkedHashMap<DefaultStateChart<?>,Long>();
+	Set<DefaultStateChart<?>> scSet = new LinkedHashSet<DefaultStateChart<?>>();
 
 	// register listeners
 	public void registerListener(DefaultStateChart<?> sc){
-		if (!scCountsMap.containsKey(sc)){
-			scCountsMap.put(sc, 0l);
-		}
-		long l = scCountsMap.get(sc);
-		scCountsMap.put(sc, l + 1);
+		scSet.add(sc);
 	}
-	
-	// remove listeners
-	public void removeListener(DefaultStateChart<?> sc){
-		if (scCountsMap.containsKey(sc)){
-			long l = scCountsMap.get(sc);
-			if (l <= 1){
-				scCountsMap.remove(sc);
-			}
-			else {
-				scCountsMap.put(sc, l - 1);
-			}
-		}
 		
-	}
-	
 	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
 
 	/**
@@ -54,23 +36,23 @@ public class StateChartResolveAction implements IAction {
 	
 	// notify listeners
 	protected void notifyListeners(){
-		List<DefaultStateChart<?>> temp = new ArrayList<DefaultStateChart<?>>(scCountsMap.keySet());
+		List<DefaultStateChart<?>> temp = new ArrayList<DefaultStateChart<?>>(scSet);
 		SimUtilities.shuffle(temp, RandomHelper.getUniform());
 		Collections.sort(temp,pComp);
 		
 		for(DefaultStateChart<?> sc : temp){
-			sc.resolve();
+			sc.begin();
 		}
 	}
 	
 	public boolean hasListeners(){
-		return !scCountsMap.isEmpty();
+		return !scSet.isEmpty();
 	}
 	
 	@Override
 	public void execute() {
 		notifyListeners();
-		StateChartCombinedActionScheduler.INSTANCE.clearOldResolveActions();
+		StateChartCombinedActionScheduler.INSTANCE.clearOldBeginActions();
 	}
 
 }
