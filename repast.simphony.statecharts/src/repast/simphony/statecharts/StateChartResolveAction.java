@@ -70,7 +70,7 @@ public class StateChartResolveAction implements IAction {
 	@Override
 	public void execute() {
 		notifyListeners();
-		StateChartResolveActionScheduler.INSTANCE.clearOldResolveActions();
+		StateChartCombinedActionScheduler.INSTANCE.clearOldResolveActions();
 	}
 
 }

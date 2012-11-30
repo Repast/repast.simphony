@@ -10,12 +10,14 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-public enum StateChartResolveActionScheduler {
+public enum StateChartCombinedActionScheduler {
 
 	INSTANCE;
 
 	private final static long MAX_BEFOFE_CLEAR = 10000;
 	protected Map<Double, ResolveActionsMapValue> resolveActions = new HashMap<Double, ResolveActionsMapValue>();
+
+	protected Map<Double, ResolveActionsMapValue> beginActions = new HashMap<Double, ResolveActionsMapValue>();
 
 	static class ResolveActionsMapValue {
 		private StateChartResolveAction scra;
@@ -50,12 +52,13 @@ public enum StateChartResolveActionScheduler {
 
 	public void initialize() {
 		clearCounter = 0;
-		for (Double key : resolveActions.keySet()) {
-			ResolveActionsMapValue ramv = resolveActions.get(key);
-			ramv.isa = null;
-			ramv.scra = null;
-		}
 		resolveActions.clear();
+//		for (Double key : resolveActions.keySet()) {
+//			ResolveActionsMapValue ramv = resolveActions.remove(key);
+//			ramv.isa = null;
+//			ramv.scra = null;
+//		}
+//		resolveActions.clear();
 	}
 
 	long clearCounter = 0;
@@ -72,9 +75,10 @@ public enum StateChartResolveActionScheduler {
 			}
 			for (Double key : keysToRemove) {
 				ResolveActionsMapValue ramv = resolveActions.remove(key);
-				ramv.isa = null;
-				ramv.scra = null;
+//				ramv.isa = null;
+//				ramv.scra = null;
 			}
+//			keysToRemove.clear();
 			clearCounter = 0;
 		}
 	}
