@@ -2,15 +2,31 @@ package repast.simphony.statecharts;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
+import simphony.util.messages.MessageCenter;
 
 
-public class TimedTrigger extends AbstractTrigger{
+public class TimedTrigger<T> extends AbstractTrigger<T>{
 
-	private final double time;
-	private double initializedTickCount;
+	private TriggerDoubleFunction<T> tdf;
+	private double nextTime;
 	
-	public TimedTrigger(double time){
-		this.time = time;
+	public TimedTrigger(final double time){
+		this(new TriggerDoubleFunction<T>(){
+			@Override
+			public double value(T agent, Transition<T> transition)
+					throws Exception {
+				return time;
+			}
+
+			@Override
+			public String toString() {
+				return Double.toString(time);
+			}			
+		});
+	}
+	
+	public TimedTrigger(TriggerDoubleFunction<T> tdf){
+		this.tdf = tdf;
 	}
 	
 	@Override
@@ -26,12 +42,19 @@ public class TimedTrigger extends AbstractTrigger{
 	@Override
 	public void initialize(){
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-		initializedTickCount = schedule.getTickCount();
+		try {
+			double initializedTickCount = schedule.getTickCount();
+			double time = tdf.value(getAgent(),transition);
+			this.nextTime = initializedTickCount + time;
+		} catch (Exception e) {
+			MessageCenter.getMessageCenter(getClass()).error("Error encountered when evaluating double function: " + tdf + " in " + this, e);
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
 	public double getNextTime() {
-		return initializedTickCount + time;
+		return nextTime;
 	}
 	
 	@Override
@@ -45,7 +68,7 @@ public class TimedTrigger extends AbstractTrigger{
 	}
 	
 	public String toString(){
-		return "TimedTrigger with time: " + time;
+		return "TimedTrigger with time: " + tdf;
 	}
 
 	@Override

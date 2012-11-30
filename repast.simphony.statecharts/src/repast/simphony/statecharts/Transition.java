@@ -59,15 +59,10 @@ public class Transition<T> {
 		this.source = source;
 		this.target = target;
 		this.priority = priority;
-		if (trigger instanceof ConditionTrigger){
+		if (trigger instanceof AbstractTrigger){
 			@SuppressWarnings("unchecked")
-			ConditionTrigger<T> ct = (ConditionTrigger<T>) trigger;
-			ct.setTransition(this);
-		}
-		if (trigger instanceof MessageTrigger){
-			@SuppressWarnings("unchecked")
-			MessageTrigger<T> mt = (MessageTrigger<T>) trigger;
-			mt.setTransition(this);
+			AbstractTrigger<T> at = (AbstractTrigger<T>) trigger;
+			at.setTransition(this);
 		}
 	}
 	
