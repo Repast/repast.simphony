@@ -12,6 +12,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ConfigureRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
+import repast.simphony.statecharts.providers.ElementInitializers;
 import repast.simphony.statecharts.scmodel.State;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartFactory;
@@ -57,6 +58,8 @@ public class StateCreateCommand extends EditElementCommand {
 
     StateMachine owner = (StateMachine) getElementToEdit();
     owner.getStates().add(newElement);
+
+    ElementInitializers.getInstance().init_State_2003(newElement);
 
     doConfigure(newElement, monitor, info);
 

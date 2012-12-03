@@ -12,23 +12,26 @@ import repast.simphony.statecharts.scmodel.History;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>History</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '
+ * <em><b>History</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.HistoryImpl#isShallow <em>Shallow</em>}</li>
+ * <li>{@link repast.simphony.statecharts.scmodel.impl.HistoryImpl#isShallow
+ * <em>Shallow</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class HistoryImpl extends StateImpl implements History {
+
+  private static final String DEEP_NAME = "Deep History";
+  private static final String SHALLOW_NAME = "Shallow History";
   /**
    * The default value of the '{@link #isShallow() <em>Shallow</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isShallow()
    * @generated
    * @ordered
@@ -37,8 +40,8 @@ public class HistoryImpl extends StateImpl implements History {
 
   /**
    * The cached value of the '{@link #isShallow() <em>Shallow</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #isShallow()
    * @generated
    * @ordered
@@ -46,8 +49,8 @@ public class HistoryImpl extends StateImpl implements History {
   protected boolean shallow = SHALLOW_EDEFAULT;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected HistoryImpl() {
@@ -55,8 +58,8 @@ public class HistoryImpl extends StateImpl implements History {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -65,8 +68,8 @@ public class HistoryImpl extends StateImpl implements History {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public boolean isShallow() {
@@ -74,83 +77,92 @@ public class HistoryImpl extends StateImpl implements History {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated NOT
    */
   public void setShallow(boolean newShallow) {
     boolean oldShallow = shallow;
     shallow = newShallow;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.HISTORY__SHALLOW, oldShallow, shallow));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.HISTORY__SHALLOW,
+          oldShallow, shallow));
+    if (getId() != null) {
+      if (shallow && getId().startsWith(DEEP_NAME)) {
+        setId(SHALLOW_NAME + getId().substring(DEEP_NAME.length()));
+      } else if (!shallow && getId().startsWith(SHALLOW_NAME)) {
+        setId(DEEP_NAME + getId().substring(SHALLOW_NAME.length()));
+      }
+    }
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
-      case StatechartPackage.HISTORY__SHALLOW:
-        return isShallow();
+    case StatechartPackage.HISTORY__SHALLOW:
+      return isShallow();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
-      case StatechartPackage.HISTORY__SHALLOW:
-        setShallow((Boolean)newValue);
-        return;
+    case StatechartPackage.HISTORY__SHALLOW:
+      setShallow((Boolean) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public void eUnset(int featureID) {
     switch (featureID) {
-      case StatechartPackage.HISTORY__SHALLOW:
-        setShallow(SHALLOW_EDEFAULT);
-        return;
+    case StatechartPackage.HISTORY__SHALLOW:
+      setShallow(SHALLOW_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public boolean eIsSet(int featureID) {
     switch (featureID) {
-      case StatechartPackage.HISTORY__SHALLOW:
-        return shallow != SHALLOW_EDEFAULT;
+    case StatechartPackage.HISTORY__SHALLOW:
+      return shallow != SHALLOW_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString() {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (shallow: ");
@@ -159,4 +171,4 @@ public class HistoryImpl extends StateImpl implements History {
     return result.toString();
   }
 
-} //HistoryImpl
+} // HistoryImpl

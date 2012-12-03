@@ -12,6 +12,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ConfigureRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
+import repast.simphony.statecharts.providers.ElementInitializers;
 import repast.simphony.statecharts.scmodel.CompositeState;
 import repast.simphony.statecharts.scmodel.FinalState;
 import repast.simphony.statecharts.scmodel.StatechartFactory;
@@ -57,6 +58,8 @@ public class FinalState2CreateCommand extends EditElementCommand {
 
     CompositeState owner = (CompositeState) getElementToEdit();
     owner.getChildren().add(newElement);
+
+    ElementInitializers.getInstance().init_FinalState_3007(newElement);
 
     doConfigure(newElement, monitor, info);
 

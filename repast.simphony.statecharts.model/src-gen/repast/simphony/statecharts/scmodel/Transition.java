@@ -18,7 +18,17 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getOnTransition <em>On Transition</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#isOutOfBranch <em>Out Of Branch</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#isDefaultTransition <em>Default Transition</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTrigger <em>Trigger</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerType <em>Trigger Type</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTime <em>Trigger Time</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCondition <em>Trigger Condition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage <em>Trigger Condition Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType <em>Message Checker Type</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass <em>Message Checker Class</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj <em>Message Checker Obj</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbability <em>Trigger Probability</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition <em>Message Checker Condition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}</li>
  * </ul>
  * </p>
  *
@@ -89,12 +99,12 @@ public interface Transition extends EObject {
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Priority</em>' attribute.
-   * @see #setPriority(int)
+   * @see #setPriority(double)
    * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_Priority()
    * @model default="0"
    * @generated
    */
-  int getPriority();
+  double getPriority();
 
   /**
    * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getPriority <em>Priority</em>}' attribute.
@@ -104,7 +114,7 @@ public interface Transition extends EObject {
    * @see #getPriority()
    * @generated
    */
-  void setPriority(int value);
+  void setPriority(double value);
 
   /**
    * Returns the value of the '<em><b>On Transition</b></em>' attribute.
@@ -187,29 +197,301 @@ public interface Transition extends EObject {
   void setDefaultTransition(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Trigger</b></em>' reference.
+   * Returns the value of the '<em><b>Trigger Type</b></em>' attribute.
+   * The literals are from the enumeration {@link repast.simphony.statecharts.scmodel.TriggerTypes}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger</em>' reference isn't clear,
+   * If the meaning of the '<em>Trigger Type</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger</em>' reference.
-   * @see #setTrigger(Trigger)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_Trigger()
-   * @model required="true"
+   * @return the value of the '<em>Trigger Type</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.TriggerTypes
+   * @see #setTriggerType(TriggerTypes)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerType()
+   * @model
    * @generated
    */
-  Trigger getTrigger();
+  TriggerTypes getTriggerType();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTrigger <em>Trigger</em>}' reference.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerType <em>Trigger Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger</em>' reference.
-   * @see #getTrigger()
+   * @param value the new value of the '<em>Trigger Type</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.TriggerTypes
+   * @see #getTriggerType()
    * @generated
    */
-  void setTrigger(Trigger value);
+  void setTriggerType(TriggerTypes value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Time</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Time</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Time</em>' attribute.
+   * @see #setTriggerTime(double)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerTime()
+   * @model
+   * @generated
+   */
+  double getTriggerTime();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTime <em>Trigger Time</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Time</em>' attribute.
+   * @see #getTriggerTime()
+   * @generated
+   */
+  void setTriggerTime(double value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Condition</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Condition</em>' attribute.
+   * @see #setTriggerCondition(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerCondition()
+   * @model
+   * @generated
+   */
+  String getTriggerCondition();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCondition <em>Trigger Condition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Condition</em>' attribute.
+   * @see #getTriggerCondition()
+   * @generated
+   */
+  void setTriggerCondition(String value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Condition Language</b></em>' attribute.
+   * The literals are from the enumeration {@link repast.simphony.statecharts.scmodel.LanguageTypes}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Condition Language</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Condition Language</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.LanguageTypes
+   * @see #setTriggerConditionLanguage(LanguageTypes)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerConditionLanguage()
+   * @model
+   * @generated
+   */
+  LanguageTypes getTriggerConditionLanguage();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage <em>Trigger Condition Language</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Condition Language</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.LanguageTypes
+   * @see #getTriggerConditionLanguage()
+   * @generated
+   */
+  void setTriggerConditionLanguage(LanguageTypes value);
+
+  /**
+   * Returns the value of the '<em><b>Message Checker Type</b></em>' attribute.
+   * The literals are from the enumeration {@link repast.simphony.statecharts.scmodel.MessageCheckerTypes}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Checker Type</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Checker Type</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.MessageCheckerTypes
+   * @see #setMessageCheckerType(MessageCheckerTypes)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerType()
+   * @model
+   * @generated
+   */
+  MessageCheckerTypes getMessageCheckerType();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType <em>Message Checker Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Checker Type</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.MessageCheckerTypes
+   * @see #getMessageCheckerType()
+   * @generated
+   */
+  void setMessageCheckerType(MessageCheckerTypes value);
+
+  /**
+   * Returns the value of the '<em><b>Message Checker Class</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Checker Class</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Checker Class</em>' attribute.
+   * @see #setMessageCheckerClass(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerClass()
+   * @model
+   * @generated
+   */
+  String getMessageCheckerClass();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass <em>Message Checker Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Checker Class</em>' attribute.
+   * @see #getMessageCheckerClass()
+   * @generated
+   */
+  void setMessageCheckerClass(String value);
+
+  /**
+   * Returns the value of the '<em><b>Message Checker Obj</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Checker Obj</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Checker Obj</em>' attribute.
+   * @see #setMessageCheckerObj(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerObj()
+   * @model
+   * @generated
+   */
+  String getMessageCheckerObj();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj <em>Message Checker Obj</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Checker Obj</em>' attribute.
+   * @see #getMessageCheckerObj()
+   * @generated
+   */
+  void setMessageCheckerObj(String value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Probability</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Probability</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Probability</em>' attribute.
+   * @see #setTriggerProbability(double)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerProbability()
+   * @model
+   * @generated
+   */
+  double getTriggerProbability();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbability <em>Trigger Probability</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Probability</em>' attribute.
+   * @see #getTriggerProbability()
+   * @generated
+   */
+  void setTriggerProbability(double value);
+
+  /**
+   * Returns the value of the '<em><b>Message Checker Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Checker Condition</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Checker Condition</em>' attribute.
+   * @see #setMessageCheckerCondition(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerCondition()
+   * @model
+   * @generated
+   */
+  String getMessageCheckerCondition();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition <em>Message Checker Condition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Checker Condition</em>' attribute.
+   * @see #getMessageCheckerCondition()
+   * @generated
+   */
+  void setMessageCheckerCondition(String value);
+
+  /**
+   * Returns the value of the '<em><b>Message Checker Condition Language</b></em>' attribute.
+   * The literals are from the enumeration {@link repast.simphony.statecharts.scmodel.LanguageTypes}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Checker Condition Language</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Checker Condition Language</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.LanguageTypes
+   * @see #setMessageCheckerConditionLanguage(LanguageTypes)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerConditionLanguage()
+   * @model
+   * @generated
+   */
+  LanguageTypes getMessageCheckerConditionLanguage();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Checker Condition Language</em>' attribute.
+   * @see repast.simphony.statecharts.scmodel.LanguageTypes
+   * @see #getMessageCheckerConditionLanguage()
+   * @generated
+   */
+  void setMessageCheckerConditionLanguage(LanguageTypes value);
+
+  /**
+   * Returns the value of the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>ID</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>ID</em>' attribute.
+   * @see #setID(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_ID()
+   * @model
+   * @generated
+   */
+  String getID();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>ID</em>' attribute.
+   * @see #getID()
+   * @generated
+   */
+  void setID(String value);
 
 } // Transition

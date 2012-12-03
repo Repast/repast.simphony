@@ -64,14 +64,6 @@ public class StatechartFactoryImpl extends EFactoryImpl implements StatechartFac
       case StatechartPackage.COMPOSITE_STATE: return createCompositeState();
       case StatechartPackage.PSEUDO_STATE: return createPseudoState();
       case StatechartPackage.HISTORY: return createHistory();
-      case StatechartPackage.DEFAULT_TRIGGER: return createDefaultTrigger();
-      case StatechartPackage.PROBABILITY_TRIGGER: return createProbabilityTrigger();
-      case StatechartPackage.CONDITION_TRIGGER: return createConditionTrigger();
-      case StatechartPackage.MESSAGE_TRIGGER: return createMessageTrigger();
-      case StatechartPackage.MESSAGE_CHECKER: return createMessageChecker();
-      case StatechartPackage.CONDITION_CHECKER: return createConditionChecker();
-      case StatechartPackage.EQUALS_CHECKER: return createEqualsChecker();
-      case StatechartPackage.ACTION: return createAction();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -187,86 +179,6 @@ public class StatechartFactoryImpl extends EFactoryImpl implements StatechartFac
   public History createHistory() {
     HistoryImpl history = new HistoryImpl();
     return history;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DefaultTrigger createDefaultTrigger() {
-    DefaultTriggerImpl defaultTrigger = new DefaultTriggerImpl();
-    return defaultTrigger;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ProbabilityTrigger createProbabilityTrigger() {
-    ProbabilityTriggerImpl probabilityTrigger = new ProbabilityTriggerImpl();
-    return probabilityTrigger;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ConditionTrigger createConditionTrigger() {
-    ConditionTriggerImpl conditionTrigger = new ConditionTriggerImpl();
-    return conditionTrigger;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public MessageTrigger createMessageTrigger() {
-    MessageTriggerImpl messageTrigger = new MessageTriggerImpl();
-    return messageTrigger;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public MessageChecker createMessageChecker() {
-    MessageCheckerImpl messageChecker = new MessageCheckerImpl();
-    return messageChecker;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ConditionChecker createConditionChecker() {
-    ConditionCheckerImpl conditionChecker = new ConditionCheckerImpl();
-    return conditionChecker;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EqualsChecker createEqualsChecker() {
-    EqualsCheckerImpl equalsChecker = new EqualsCheckerImpl();
-    return equalsChecker;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Action createAction() {
-    ActionImpl action = new ActionImpl();
-    return action;
   }
 
   /**

@@ -10,37 +10,46 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="package" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="language" eType="#//LanguageTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nextID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//AbstractState">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="onExit" lowerBound="1"
-        eType="#//Action"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="onEnter" lowerBound="1"
-        eType="#//Action"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//AbstractState"/>
   <eClassifiers xsi:type="ecore:EClass" name="FinalState" eSuperTypes="#//State"/>
   <eClassifiers xsi:type="ecore:EClass" name="Transition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//AbstractState"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//AbstractState"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="priority" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="priority" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         defaultValueLiteral="0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTransition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="outOfBranch" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultTransition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="false"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="trigger" lowerBound="1"
-        eType="#//Trigger"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerType" eType="#//TriggerTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionLanguage"
+        eType="#//LanguageTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerType" eType="#//MessageCheckerTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerObj" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbability" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerCondition"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerConditionLanguage"
+        eType="#//LanguageTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CompositeState" eSuperTypes="#//AbstractState">
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
         eType="#//AbstractState" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="onEnter" lowerBound="1"
-        eType="#//Action"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="onExit" lowerBound="1"
-        eType="#//Action"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractState" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="onEnter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="onExit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="language" eType="#//LanguageTypes"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="PseudoStateTypes">
     <eLiterals name="initial"/>
@@ -53,9 +62,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="History" eSuperTypes="#//State">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="shallow" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Trigger" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//TriggerTypes"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="TriggerTypes">
     <eLiterals name="always"/>
     <eLiterals name="timed"/>
@@ -64,43 +70,15 @@
     <eLiterals name="condition"/>
     <eLiterals name="message"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DefaultTrigger" eSuperTypes="#//Trigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
-        defaultValueLiteral="1.0"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ProbabilityTrigger" eSuperTypes="#//DefaultTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="probability" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ConditionTrigger" eSuperTypes="#//DefaultTrigger">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MessageTrigger" eSuperTypes="#//DefaultTrigger">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="checker" lowerBound="1"
-        eType="#//MessageChecker"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MessageChecker">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//MessageCheckerTypes"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="MessageCheckerTypes">
     <eLiterals name="conditional"/>
     <eLiterals name="equals"/>
     <eLiterals name="unconditional"/>
     <eLiterals name="always"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ConditionChecker" eSuperTypes="#//MessageChecker">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EqualsChecker" eSuperTypes="#//MessageChecker">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="clazz" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="obj" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="LanguageTypes">
     <eLiterals name="java"/>
     <eLiterals name="groovy"/>
     <eLiterals name="relogo"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Action">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="language" eType="#//LanguageTypes"/>
   </eClassifiers>
 </ecore:EPackage>

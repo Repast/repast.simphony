@@ -121,13 +121,31 @@ public interface StatechartPackage extends EPackage {
   int STATE_MACHINE__LANGUAGE = 5;
 
   /**
+   * The feature id for the '<em><b>Next ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE_MACHINE__NEXT_ID = 6;
+
+  /**
+   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE_MACHINE__ID = 7;
+
+  /**
    * The number of structural features of the '<em>State Machine</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATE_MACHINE_FEATURE_COUNT = 6;
+  int STATE_MACHINE_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl <em>Abstract State</em>}' class.
@@ -149,13 +167,40 @@ public interface StatechartPackage extends EPackage {
   int ABSTRACT_STATE__ID = 0;
 
   /**
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_STATE__ON_ENTER = 1;
+
+  /**
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_STATE__ON_EXIT = 2;
+
+  /**
+   * The feature id for the '<em><b>Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_STATE__LANGUAGE = 3;
+
+  /**
    * The number of structural features of the '<em>Abstract State</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ABSTRACT_STATE_FEATURE_COUNT = 1;
+  int ABSTRACT_STATE_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.
@@ -177,22 +222,31 @@ public interface StatechartPackage extends EPackage {
   int STATE__ID = ABSTRACT_STATE__ID;
 
   /**
-   * The feature id for the '<em><b>On Exit</b></em>' reference.
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATE__ON_EXIT = ABSTRACT_STATE_FEATURE_COUNT + 0;
+  int STATE__ON_ENTER = ABSTRACT_STATE__ON_ENTER;
 
   /**
-   * The feature id for the '<em><b>On Enter</b></em>' reference.
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATE__ON_ENTER = ABSTRACT_STATE_FEATURE_COUNT + 1;
+  int STATE__ON_EXIT = ABSTRACT_STATE__ON_EXIT;
+
+  /**
+   * The feature id for the '<em><b>Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE__LANGUAGE = ABSTRACT_STATE__LANGUAGE;
 
   /**
    * The number of structural features of the '<em>State</em>' class.
@@ -201,7 +255,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int STATE_FEATURE_COUNT = ABSTRACT_STATE_FEATURE_COUNT + 2;
+  int STATE_FEATURE_COUNT = ABSTRACT_STATE_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.FinalStateImpl <em>Final State</em>}' class.
@@ -223,7 +277,16 @@ public interface StatechartPackage extends EPackage {
   int FINAL_STATE__ID = STATE__ID;
 
   /**
-   * The feature id for the '<em><b>On Exit</b></em>' reference.
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FINAL_STATE__ON_ENTER = STATE__ON_ENTER;
+
+  /**
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -232,13 +295,13 @@ public interface StatechartPackage extends EPackage {
   int FINAL_STATE__ON_EXIT = STATE__ON_EXIT;
 
   /**
-   * The feature id for the '<em><b>On Enter</b></em>' reference.
+   * The feature id for the '<em><b>Language</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FINAL_STATE__ON_ENTER = STATE__ON_ENTER;
+  int FINAL_STATE__LANGUAGE = STATE__LANGUAGE;
 
   /**
    * The number of structural features of the '<em>Final State</em>' class.
@@ -314,13 +377,103 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__DEFAULT_TRANSITION = 5;
 
   /**
-   * The feature id for the '<em><b>Trigger</b></em>' reference.
+   * The feature id for the '<em><b>Trigger Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER = 6;
+  int TRANSITION__TRIGGER_TYPE = 6;
+
+  /**
+   * The feature id for the '<em><b>Trigger Time</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_TIME = 7;
+
+  /**
+   * The feature id for the '<em><b>Trigger Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_CONDITION = 8;
+
+  /**
+   * The feature id for the '<em><b>Trigger Condition Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_CONDITION_LANGUAGE = 9;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_TYPE = 10;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Class</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_CLASS = 11;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Obj</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_OBJ = 12;
+
+  /**
+   * The feature id for the '<em><b>Trigger Probability</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_PROBABILITY = 13;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_CONDITION = 14;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Condition Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = 15;
+
+  /**
+   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__ID = 16;
 
   /**
    * The number of structural features of the '<em>Transition</em>' class.
@@ -329,7 +482,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION_FEATURE_COUNT = 7;
+  int TRANSITION_FEATURE_COUNT = 17;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
@@ -351,6 +504,33 @@ public interface StatechartPackage extends EPackage {
   int COMPOSITE_STATE__ID = ABSTRACT_STATE__ID;
 
   /**
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPOSITE_STATE__ON_ENTER = ABSTRACT_STATE__ON_ENTER;
+
+  /**
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPOSITE_STATE__ON_EXIT = ABSTRACT_STATE__ON_EXIT;
+
+  /**
+   * The feature id for the '<em><b>Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPOSITE_STATE__LANGUAGE = ABSTRACT_STATE__LANGUAGE;
+
+  /**
    * The feature id for the '<em><b>Children</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -360,31 +540,13 @@ public interface StatechartPackage extends EPackage {
   int COMPOSITE_STATE__CHILDREN = ABSTRACT_STATE_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>On Enter</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMPOSITE_STATE__ON_ENTER = ABSTRACT_STATE_FEATURE_COUNT + 1;
-
-  /**
-   * The feature id for the '<em><b>On Exit</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMPOSITE_STATE__ON_EXIT = ABSTRACT_STATE_FEATURE_COUNT + 2;
-
-  /**
    * The number of structural features of the '<em>Composite State</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int COMPOSITE_STATE_FEATURE_COUNT = ABSTRACT_STATE_FEATURE_COUNT + 3;
+  int COMPOSITE_STATE_FEATURE_COUNT = ABSTRACT_STATE_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.PseudoStateImpl <em>Pseudo State</em>}' class.
@@ -404,6 +566,33 @@ public interface StatechartPackage extends EPackage {
    * @ordered
    */
   int PSEUDO_STATE__ID = ABSTRACT_STATE__ID;
+
+  /**
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PSEUDO_STATE__ON_ENTER = ABSTRACT_STATE__ON_ENTER;
+
+  /**
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PSEUDO_STATE__ON_EXIT = ABSTRACT_STATE__ON_EXIT;
+
+  /**
+   * The feature id for the '<em><b>Language</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PSEUDO_STATE__LANGUAGE = ABSTRACT_STATE__LANGUAGE;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -443,7 +632,16 @@ public interface StatechartPackage extends EPackage {
   int HISTORY__ID = STATE__ID;
 
   /**
-   * The feature id for the '<em><b>On Exit</b></em>' reference.
+   * The feature id for the '<em><b>On Enter</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int HISTORY__ON_ENTER = STATE__ON_ENTER;
+
+  /**
+   * The feature id for the '<em><b>On Exit</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -452,13 +650,13 @@ public interface StatechartPackage extends EPackage {
   int HISTORY__ON_EXIT = STATE__ON_EXIT;
 
   /**
-   * The feature id for the '<em><b>On Enter</b></em>' reference.
+   * The feature id for the '<em><b>Language</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int HISTORY__ON_ENTER = STATE__ON_ENTER;
+  int HISTORY__LANGUAGE = STATE__LANGUAGE;
 
   /**
    * The feature id for the '<em><b>Shallow</b></em>' attribute.
@@ -479,357 +677,6 @@ public interface StatechartPackage extends EPackage {
   int HISTORY_FEATURE_COUNT = STATE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.TriggerImpl <em>Trigger</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.TriggerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getTrigger()
-   * @generated
-   */
-  int TRIGGER = 8;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TRIGGER__TYPE = 0;
-
-  /**
-   * The number of structural features of the '<em>Trigger</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TRIGGER_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.DefaultTriggerImpl <em>Default Trigger</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.DefaultTriggerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getDefaultTrigger()
-   * @generated
-   */
-  int DEFAULT_TRIGGER = 9;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEFAULT_TRIGGER__TYPE = TRIGGER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Time</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEFAULT_TRIGGER__TIME = TRIGGER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Default Trigger</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEFAULT_TRIGGER_FEATURE_COUNT = TRIGGER_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.ProbabilityTriggerImpl <em>Probability Trigger</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.ProbabilityTriggerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getProbabilityTrigger()
-   * @generated
-   */
-  int PROBABILITY_TRIGGER = 10;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PROBABILITY_TRIGGER__TYPE = DEFAULT_TRIGGER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Time</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PROBABILITY_TRIGGER__TIME = DEFAULT_TRIGGER__TIME;
-
-  /**
-   * The feature id for the '<em><b>Probability</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PROBABILITY_TRIGGER__PROBABILITY = DEFAULT_TRIGGER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Probability Trigger</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PROBABILITY_TRIGGER_FEATURE_COUNT = DEFAULT_TRIGGER_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.ConditionTriggerImpl <em>Condition Trigger</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.ConditionTriggerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getConditionTrigger()
-   * @generated
-   */
-  int CONDITION_TRIGGER = 11;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_TRIGGER__TYPE = DEFAULT_TRIGGER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Time</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_TRIGGER__TIME = DEFAULT_TRIGGER__TIME;
-
-  /**
-   * The feature id for the '<em><b>Condition</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_TRIGGER__CONDITION = DEFAULT_TRIGGER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Condition Trigger</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_TRIGGER_FEATURE_COUNT = DEFAULT_TRIGGER_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.MessageTriggerImpl <em>Message Trigger</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.MessageTriggerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageTrigger()
-   * @generated
-   */
-  int MESSAGE_TRIGGER = 12;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_TRIGGER__TYPE = DEFAULT_TRIGGER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Time</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_TRIGGER__TIME = DEFAULT_TRIGGER__TIME;
-
-  /**
-   * The feature id for the '<em><b>Checker</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_TRIGGER__CHECKER = DEFAULT_TRIGGER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Message Trigger</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_TRIGGER_FEATURE_COUNT = DEFAULT_TRIGGER_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.MessageCheckerImpl <em>Message Checker</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.MessageCheckerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageChecker()
-   * @generated
-   */
-  int MESSAGE_CHECKER = 13;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_CHECKER__TYPE = 0;
-
-  /**
-   * The number of structural features of the '<em>Message Checker</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MESSAGE_CHECKER_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.ConditionCheckerImpl <em>Condition Checker</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.ConditionCheckerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getConditionChecker()
-   * @generated
-   */
-  int CONDITION_CHECKER = 14;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_CHECKER__TYPE = MESSAGE_CHECKER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Condition</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_CHECKER__CONDITION = MESSAGE_CHECKER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>Condition Checker</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONDITION_CHECKER_FEATURE_COUNT = MESSAGE_CHECKER_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl <em>Equals Checker</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getEqualsChecker()
-   * @generated
-   */
-  int EQUALS_CHECKER = 15;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER__TYPE = MESSAGE_CHECKER__TYPE;
-
-  /**
-   * The feature id for the '<em><b>Clazz</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER__CLAZZ = MESSAGE_CHECKER_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Obj</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER__OBJ = MESSAGE_CHECKER_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Equals Checker</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER_FEATURE_COUNT = MESSAGE_CHECKER_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.ActionImpl <em>Action</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.ActionImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getAction()
-   * @generated
-   */
-  int ACTION = 16;
-
-  /**
-   * The feature id for the '<em><b>Code</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__CODE = 0;
-
-  /**
-   * The feature id for the '<em><b>Language</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__LANGUAGE = 1;
-
-  /**
-   * The number of structural features of the '<em>Action</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION_FEATURE_COUNT = 2;
-
-  /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -837,7 +684,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getPseudoStateTypes()
    * @generated
    */
-  int PSEUDO_STATE_TYPES = 17;
+  int PSEUDO_STATE_TYPES = 8;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.TriggerTypes <em>Trigger Types</em>}' enum.
@@ -847,7 +694,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getTriggerTypes()
    * @generated
    */
-  int TRIGGER_TYPES = 18;
+  int TRIGGER_TYPES = 9;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.MessageCheckerTypes <em>Message Checker Types</em>}' enum.
@@ -857,7 +704,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageCheckerTypes()
    * @generated
    */
-  int MESSAGE_CHECKER_TYPES = 19;
+  int MESSAGE_CHECKER_TYPES = 10;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.LanguageTypes <em>Language Types</em>}' enum.
@@ -867,7 +714,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getLanguageTypes()
    * @generated
    */
-  int LANGUAGE_TYPES = 20;
+  int LANGUAGE_TYPES = 11;
 
 
   /**
@@ -947,6 +794,28 @@ public interface StatechartPackage extends EPackage {
   EAttribute getStateMachine_Language();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Next ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getNextID()
+   * @see #getStateMachine()
+   * @generated
+   */
+  EAttribute getStateMachine_NextID();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getID()
+   * @see #getStateMachine()
+   * @generated
+   */
+  EAttribute getStateMachine_ID();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.State <em>State</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -955,28 +824,6 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EClass getState();
-
-  /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.State#getOnExit <em>On Exit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>On Exit</em>'.
-   * @see repast.simphony.statecharts.scmodel.State#getOnExit()
-   * @see #getState()
-   * @generated
-   */
-  EReference getState_OnExit();
-
-  /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.State#getOnEnter <em>On Enter</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>On Enter</em>'.
-   * @see repast.simphony.statecharts.scmodel.State#getOnEnter()
-   * @see #getState()
-   * @generated
-   */
-  EReference getState_OnEnter();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.FinalState <em>Final State</em>}'.
@@ -1065,15 +912,125 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_DefaultTransition();
 
   /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.Transition#getTrigger <em>Trigger</em>}'.
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerType <em>Trigger Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.Transition#getTrigger()
+   * @return the meta object for the attribute '<em>Trigger Type</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerType()
    * @see #getTransition()
    * @generated
    */
-  EReference getTransition_Trigger();
+  EAttribute getTransition_TriggerType();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTime <em>Trigger Time</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Time</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerTime()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerTime();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCondition <em>Trigger Condition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Condition</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerCondition()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerCondition();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage <em>Trigger Condition Language</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Condition Language</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerConditionLanguage();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType <em>Message Checker Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Type</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerType();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass <em>Message Checker Class</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Class</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerClass();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj <em>Message Checker Obj</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Obj</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerObj();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbability <em>Trigger Probability</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Probability</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerProbability()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerProbability();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition <em>Message Checker Condition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Condition</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerCondition();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Condition Language</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerConditionLanguage();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getID()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_ID();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.CompositeState <em>Composite State</em>}'.
@@ -1097,28 +1054,6 @@ public interface StatechartPackage extends EPackage {
   EReference getCompositeState_Children();
 
   /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.CompositeState#getOnEnter <em>On Enter</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>On Enter</em>'.
-   * @see repast.simphony.statecharts.scmodel.CompositeState#getOnEnter()
-   * @see #getCompositeState()
-   * @generated
-   */
-  EReference getCompositeState_OnEnter();
-
-  /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.CompositeState#getOnExit <em>On Exit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>On Exit</em>'.
-   * @see repast.simphony.statecharts.scmodel.CompositeState#getOnExit()
-   * @see #getCompositeState()
-   * @generated
-   */
-  EReference getCompositeState_OnExit();
-
-  /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.AbstractState <em>Abstract State</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1138,6 +1073,39 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getAbstractState_Id();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnEnter <em>On Enter</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>On Enter</em>'.
+   * @see repast.simphony.statecharts.scmodel.AbstractState#getOnEnter()
+   * @see #getAbstractState()
+   * @generated
+   */
+  EAttribute getAbstractState_OnEnter();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExit <em>On Exit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>On Exit</em>'.
+   * @see repast.simphony.statecharts.scmodel.AbstractState#getOnExit()
+   * @see #getAbstractState()
+   * @generated
+   */
+  EAttribute getAbstractState_OnExit();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.AbstractState#getLanguage <em>Language</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Language</em>'.
+   * @see repast.simphony.statecharts.scmodel.AbstractState#getLanguage()
+   * @see #getAbstractState()
+   * @generated
+   */
+  EAttribute getAbstractState_Language();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.PseudoState <em>Pseudo State</em>}'.
@@ -1180,217 +1148,6 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getHistory_Shallow();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.Trigger <em>Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.Trigger
-   * @generated
-   */
-  EClass getTrigger();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Trigger#getType <em>Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Type</em>'.
-   * @see repast.simphony.statecharts.scmodel.Trigger#getType()
-   * @see #getTrigger()
-   * @generated
-   */
-  EAttribute getTrigger_Type();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.DefaultTrigger <em>Default Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Default Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.DefaultTrigger
-   * @generated
-   */
-  EClass getDefaultTrigger();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.DefaultTrigger#getTime <em>Time</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Time</em>'.
-   * @see repast.simphony.statecharts.scmodel.DefaultTrigger#getTime()
-   * @see #getDefaultTrigger()
-   * @generated
-   */
-  EAttribute getDefaultTrigger_Time();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.ProbabilityTrigger <em>Probability Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Probability Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.ProbabilityTrigger
-   * @generated
-   */
-  EClass getProbabilityTrigger();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.ProbabilityTrigger#getProbability <em>Probability</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Probability</em>'.
-   * @see repast.simphony.statecharts.scmodel.ProbabilityTrigger#getProbability()
-   * @see #getProbabilityTrigger()
-   * @generated
-   */
-  EAttribute getProbabilityTrigger_Probability();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.ConditionTrigger <em>Condition Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Condition Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.ConditionTrigger
-   * @generated
-   */
-  EClass getConditionTrigger();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.ConditionTrigger#getCondition <em>Condition</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Condition</em>'.
-   * @see repast.simphony.statecharts.scmodel.ConditionTrigger#getCondition()
-   * @see #getConditionTrigger()
-   * @generated
-   */
-  EAttribute getConditionTrigger_Condition();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.MessageTrigger <em>Message Trigger</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Message Trigger</em>'.
-   * @see repast.simphony.statecharts.scmodel.MessageTrigger
-   * @generated
-   */
-  EClass getMessageTrigger();
-
-  /**
-   * Returns the meta object for the reference '{@link repast.simphony.statecharts.scmodel.MessageTrigger#getChecker <em>Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Checker</em>'.
-   * @see repast.simphony.statecharts.scmodel.MessageTrigger#getChecker()
-   * @see #getMessageTrigger()
-   * @generated
-   */
-  EReference getMessageTrigger_Checker();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.MessageChecker <em>Message Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Message Checker</em>'.
-   * @see repast.simphony.statecharts.scmodel.MessageChecker
-   * @generated
-   */
-  EClass getMessageChecker();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.MessageChecker#getType <em>Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Type</em>'.
-   * @see repast.simphony.statecharts.scmodel.MessageChecker#getType()
-   * @see #getMessageChecker()
-   * @generated
-   */
-  EAttribute getMessageChecker_Type();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.ConditionChecker <em>Condition Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Condition Checker</em>'.
-   * @see repast.simphony.statecharts.scmodel.ConditionChecker
-   * @generated
-   */
-  EClass getConditionChecker();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.ConditionChecker#getCondition <em>Condition</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Condition</em>'.
-   * @see repast.simphony.statecharts.scmodel.ConditionChecker#getCondition()
-   * @see #getConditionChecker()
-   * @generated
-   */
-  EAttribute getConditionChecker_Condition();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.EqualsChecker <em>Equals Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Equals Checker</em>'.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker
-   * @generated
-   */
-  EClass getEqualsChecker();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.EqualsChecker#getClazz <em>Clazz</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Clazz</em>'.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker#getClazz()
-   * @see #getEqualsChecker()
-   * @generated
-   */
-  EAttribute getEqualsChecker_Clazz();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.EqualsChecker#getObj <em>Obj</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Obj</em>'.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker#getObj()
-   * @see #getEqualsChecker()
-   * @generated
-   */
-  EAttribute getEqualsChecker_Obj();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.Action <em>Action</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Action</em>'.
-   * @see repast.simphony.statecharts.scmodel.Action
-   * @generated
-   */
-  EClass getAction();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Action#getCode <em>Code</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Code</em>'.
-   * @see repast.simphony.statecharts.scmodel.Action#getCode()
-   * @see #getAction()
-   * @generated
-   */
-  EAttribute getAction_Code();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Action#getLanguage <em>Language</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Language</em>'.
-   * @see repast.simphony.statecharts.scmodel.Action#getLanguage()
-   * @see #getAction()
-   * @generated
-   */
-  EAttribute getAction_Language();
 
   /**
    * Returns the meta object for enum '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}'.
@@ -1513,6 +1270,22 @@ public interface StatechartPackage extends EPackage {
     EAttribute STATE_MACHINE__LANGUAGE = eINSTANCE.getStateMachine_Language();
 
     /**
+     * The meta object literal for the '<em><b>Next ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATE_MACHINE__NEXT_ID = eINSTANCE.getStateMachine_NextID();
+
+    /**
+     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATE_MACHINE__ID = eINSTANCE.getStateMachine_ID();
+
+    /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1521,22 +1294,6 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EClass STATE = eINSTANCE.getState();
-
-    /**
-     * The meta object literal for the '<em><b>On Exit</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference STATE__ON_EXIT = eINSTANCE.getState_OnExit();
-
-    /**
-     * The meta object literal for the '<em><b>On Enter</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference STATE__ON_ENTER = eINSTANCE.getState_OnEnter();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.FinalStateImpl <em>Final State</em>}' class.
@@ -1607,12 +1364,92 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__DEFAULT_TRANSITION = eINSTANCE.getTransition_DefaultTransition();
 
     /**
-     * The meta object literal for the '<em><b>Trigger</b></em>' reference feature.
+     * The meta object literal for the '<em><b>Trigger Type</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference TRANSITION__TRIGGER = eINSTANCE.getTransition_Trigger();
+    EAttribute TRANSITION__TRIGGER_TYPE = eINSTANCE.getTransition_TriggerType();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Time</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_TIME = eINSTANCE.getTransition_TriggerTime();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Condition</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_CONDITION = eINSTANCE.getTransition_TriggerCondition();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Condition Language</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_CONDITION_LANGUAGE = eINSTANCE.getTransition_TriggerConditionLanguage();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_TYPE = eINSTANCE.getTransition_MessageCheckerType();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Class</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_CLASS = eINSTANCE.getTransition_MessageCheckerClass();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Obj</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_OBJ = eINSTANCE.getTransition_MessageCheckerObj();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Probability</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_PROBABILITY = eINSTANCE.getTransition_TriggerProbability();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Condition</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_CONDITION = eINSTANCE.getTransition_MessageCheckerCondition();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Condition Language</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = eINSTANCE.getTransition_MessageCheckerConditionLanguage();
+
+    /**
+     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__ID = eINSTANCE.getTransition_ID();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
@@ -1633,22 +1470,6 @@ public interface StatechartPackage extends EPackage {
     EReference COMPOSITE_STATE__CHILDREN = eINSTANCE.getCompositeState_Children();
 
     /**
-     * The meta object literal for the '<em><b>On Enter</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference COMPOSITE_STATE__ON_ENTER = eINSTANCE.getCompositeState_OnEnter();
-
-    /**
-     * The meta object literal for the '<em><b>On Exit</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference COMPOSITE_STATE__ON_EXIT = eINSTANCE.getCompositeState_OnExit();
-
-    /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl <em>Abstract State</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1665,6 +1486,30 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute ABSTRACT_STATE__ID = eINSTANCE.getAbstractState_Id();
+
+    /**
+     * The meta object literal for the '<em><b>On Enter</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_STATE__ON_ENTER = eINSTANCE.getAbstractState_OnEnter();
+
+    /**
+     * The meta object literal for the '<em><b>On Exit</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_STATE__ON_EXIT = eINSTANCE.getAbstractState_OnExit();
+
+    /**
+     * The meta object literal for the '<em><b>Language</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_STATE__LANGUAGE = eINSTANCE.getAbstractState_Language();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.PseudoStateImpl <em>Pseudo State</em>}' class.
@@ -1701,184 +1546,6 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute HISTORY__SHALLOW = eINSTANCE.getHistory_Shallow();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.TriggerImpl <em>Trigger</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.TriggerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getTrigger()
-     * @generated
-     */
-    EClass TRIGGER = eINSTANCE.getTrigger();
-
-    /**
-     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute TRIGGER__TYPE = eINSTANCE.getTrigger_Type();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.DefaultTriggerImpl <em>Default Trigger</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.DefaultTriggerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getDefaultTrigger()
-     * @generated
-     */
-    EClass DEFAULT_TRIGGER = eINSTANCE.getDefaultTrigger();
-
-    /**
-     * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DEFAULT_TRIGGER__TIME = eINSTANCE.getDefaultTrigger_Time();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.ProbabilityTriggerImpl <em>Probability Trigger</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.ProbabilityTriggerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getProbabilityTrigger()
-     * @generated
-     */
-    EClass PROBABILITY_TRIGGER = eINSTANCE.getProbabilityTrigger();
-
-    /**
-     * The meta object literal for the '<em><b>Probability</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute PROBABILITY_TRIGGER__PROBABILITY = eINSTANCE.getProbabilityTrigger_Probability();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.ConditionTriggerImpl <em>Condition Trigger</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.ConditionTriggerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getConditionTrigger()
-     * @generated
-     */
-    EClass CONDITION_TRIGGER = eINSTANCE.getConditionTrigger();
-
-    /**
-     * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONDITION_TRIGGER__CONDITION = eINSTANCE.getConditionTrigger_Condition();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.MessageTriggerImpl <em>Message Trigger</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.MessageTriggerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageTrigger()
-     * @generated
-     */
-    EClass MESSAGE_TRIGGER = eINSTANCE.getMessageTrigger();
-
-    /**
-     * The meta object literal for the '<em><b>Checker</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference MESSAGE_TRIGGER__CHECKER = eINSTANCE.getMessageTrigger_Checker();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.MessageCheckerImpl <em>Message Checker</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.MessageCheckerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageChecker()
-     * @generated
-     */
-    EClass MESSAGE_CHECKER = eINSTANCE.getMessageChecker();
-
-    /**
-     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MESSAGE_CHECKER__TYPE = eINSTANCE.getMessageChecker_Type();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.ConditionCheckerImpl <em>Condition Checker</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.ConditionCheckerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getConditionChecker()
-     * @generated
-     */
-    EClass CONDITION_CHECKER = eINSTANCE.getConditionChecker();
-
-    /**
-     * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONDITION_CHECKER__CONDITION = eINSTANCE.getConditionChecker_Condition();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl <em>Equals Checker</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getEqualsChecker()
-     * @generated
-     */
-    EClass EQUALS_CHECKER = eINSTANCE.getEqualsChecker();
-
-    /**
-     * The meta object literal for the '<em><b>Clazz</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute EQUALS_CHECKER__CLAZZ = eINSTANCE.getEqualsChecker_Clazz();
-
-    /**
-     * The meta object literal for the '<em><b>Obj</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute EQUALS_CHECKER__OBJ = eINSTANCE.getEqualsChecker_Obj();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.ActionImpl <em>Action</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.ActionImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getAction()
-     * @generated
-     */
-    EClass ACTION = eINSTANCE.getAction();
-
-    /**
-     * The meta object literal for the '<em><b>Code</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION__CODE = eINSTANCE.getAction_Code();
-
-    /**
-     * The meta object literal for the '<em><b>Language</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTION__LANGUAGE = eINSTANCE.getAction_Language();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}' enum.

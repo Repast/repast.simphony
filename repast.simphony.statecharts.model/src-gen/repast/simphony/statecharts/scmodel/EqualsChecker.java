@@ -2,6 +2,7 @@
  */
 package repast.simphony.statecharts.scmodel;
 
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -11,7 +12,6 @@ package repast.simphony.statecharts.scmodel;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link repast.simphony.statecharts.scmodel.EqualsChecker#getClazz <em>Clazz</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.EqualsChecker#getObj <em>Obj</em>}</li>
  * </ul>
  * </p>
@@ -20,33 +20,7 @@ package repast.simphony.statecharts.scmodel;
  * @model
  * @generated
  */
-public interface EqualsChecker extends MessageChecker {
-  /**
-   * Returns the value of the '<em><b>Clazz</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Clazz</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Clazz</em>' attribute.
-   * @see #setClazz(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getEqualsChecker_Clazz()
-   * @model
-   * @generated
-   */
-  String getClazz();
-
-  /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.EqualsChecker#getClazz <em>Clazz</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Clazz</em>' attribute.
-   * @see #getClazz()
-   * @generated
-   */
-  void setClazz(String value);
-
+public interface EqualsChecker extends EObject {
   /**
    * Returns the value of the '<em><b>Obj</b></em>' attribute.
    * <!-- begin-user-doc -->

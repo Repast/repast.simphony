@@ -67,6 +67,8 @@ public class StateMachineItemProvider
       addPackagePropertyDescriptor(object);
       addClassNamePropertyDescriptor(object);
       addLanguagePropertyDescriptor(object);
+      addNextIDPropertyDescriptor(object);
+      addIDPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -160,6 +162,50 @@ public class StateMachineItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Next ID feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addNextIDPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_StateMachine_nextID_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_nextID_feature", "_UI_StateMachine_type"),
+         StatechartPackage.Literals.STATE_MACHINE__NEXT_ID,
+         false,
+         false,
+         false,
+         ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the ID feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addIDPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_StateMachine_ID_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_ID_feature", "_UI_StateMachine_type"),
+         StatechartPackage.Literals.STATE_MACHINE__ID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
    * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
    * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -231,6 +277,8 @@ public class StateMachineItemProvider
       case StatechartPackage.STATE_MACHINE__PACKAGE:
       case StatechartPackage.STATE_MACHINE__CLASS_NAME:
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
+      case StatechartPackage.STATE_MACHINE__NEXT_ID:
+      case StatechartPackage.STATE_MACHINE__ID:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
       case StatechartPackage.STATE_MACHINE__STATES:

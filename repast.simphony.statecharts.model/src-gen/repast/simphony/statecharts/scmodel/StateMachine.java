@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getPackage <em>Package</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getClassName <em>Class Name</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getLanguage <em>Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}</li>
  * </ul>
  * </p>
  *
@@ -166,5 +168,58 @@ public interface StateMachine extends EObject {
    * @generated
    */
   void setLanguage(LanguageTypes value);
+
+  /**
+   * Returns the value of the '<em><b>Next ID</b></em>' attribute.
+   * The default value is <code>"0"</code>.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Next ID</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Next ID</em>' attribute.
+   * @see #setNextID(int)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_NextID()
+   * @model default="0"
+   * @generated
+   */
+  int getNextID();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Next ID</em>' attribute.
+   * @see #getNextID()
+   * @generated
+   */
+  void setNextID(int value);
+
+  /**
+   * Returns the value of the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>ID</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>ID</em>' attribute.
+   * @see #setID(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_ID()
+   * @model
+   * @generated
+   */
+  String getID();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>ID</em>' attribute.
+   * @see #getID()
+   * @generated
+   */
+  void setID(String value);
 
 } // StateMachine
