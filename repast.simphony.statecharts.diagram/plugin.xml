@@ -219,7 +219,14 @@
                tab="property.tab.domain">
             <input type="repast.simphony.statecharts.edit.parts.FinalStateEditPart"/>
             <input type="repast.simphony.statecharts.edit.parts.FinalState2EditPart"/>
-         </propertySection>   
+         </propertySection>  
+         
+         <propertySection
+               class="repast.simphony.statecharts.sheets.StateMachinePropertySection"
+               id="property.section.domain.statemachine"
+               tab="property.tab.domain">
+            <input type="repast.simphony.statecharts.edit.parts.StateMachineEditPart"/>
+         </propertySection>    
       
           <propertySection
                class="repast.simphony.statecharts.sheets.HistoryStatePropertySection"

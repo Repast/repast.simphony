@@ -64,7 +64,6 @@ public class StatechartFactoryImpl extends EFactoryImpl implements StatechartFac
       case StatechartPackage.COMPOSITE_STATE: return createCompositeState();
       case StatechartPackage.PSEUDO_STATE: return createPseudoState();
       case StatechartPackage.HISTORY: return createHistory();
-      case StatechartPackage.EQUALS_CHECKER: return createEqualsChecker();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -180,16 +179,6 @@ public class StatechartFactoryImpl extends EFactoryImpl implements StatechartFac
   public History createHistory() {
     HistoryImpl history = new HistoryImpl();
     return history;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EqualsChecker createEqualsChecker() {
-    EqualsCheckerImpl equalsChecker = new EqualsCheckerImpl();
-    return equalsChecker;
   }
 
   /**

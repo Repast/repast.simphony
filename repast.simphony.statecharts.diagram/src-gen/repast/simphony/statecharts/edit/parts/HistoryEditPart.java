@@ -97,22 +97,22 @@ public class HistoryEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected IFigure createNodeShape() {
     return primaryShape = new ShallowHistoryFigure(getMapMode());
   }
 
-  
   /**
    * @generated NOT
    */
   protected IFigure getPrimaryShape() {
-    History history = (History)resolveSemanticElement();
-    if (history.isShallow()) return new ShallowHistoryFigure(getMapMode());
+    History history = (History) resolveSemanticElement();
+    if (history.isShallow())
+      return new ShallowHistoryFigure(getMapMode());
     return new History2EditPart.DeepHistoryFigure(getMapMode());
   }
-  
+
   /**
    * Switches history figures depending on value of shallow. This is duplicated in
    * History2EditPart.
@@ -128,7 +128,7 @@ public class HistoryEditPart extends ShapeNodeEditPart {
       contentPane = setupContentPane(primaryShape);
       figure.add(primaryShape);
     }
-    
+
     super.handleNotificationEvent(notification);
   }
 

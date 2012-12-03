@@ -20,9 +20,7 @@ import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionHandleEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
-import org.eclipse.gmf.runtime.diagram.ui.handles.ConnectionHandle.HandleDirection;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
@@ -69,9 +67,7 @@ public class History2EditPart extends ShapeNodeEditPart {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new History2ItemSemanticEditPolicy());
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
-    
-    // XXX need an SCR to runtime to have another abstract superclass that would
-    // let children add reasonable editpolicies
+    // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
     // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
   }
 
@@ -106,13 +102,14 @@ public class History2EditPart extends ShapeNodeEditPart {
   protected IFigure createNodeShape() {
     return primaryShape = new DeepHistoryFigure(getMapMode());
   }
-  
+
   /**
    * @generated NOT
    */
   protected IFigure getPrimaryShape() {
-    History history = (History)resolveSemanticElement();
-    if (history.isShallow()) return new HistoryEditPart.ShallowHistoryFigure(getMapMode());
+    History history = (History) resolveSemanticElement();
+    if (history.isShallow())
+      return new HistoryEditPart.ShallowHistoryFigure(getMapMode());
     return new DeepHistoryFigure(getMapMode());
   }
 
@@ -151,7 +148,7 @@ public class History2EditPart extends ShapeNodeEditPart {
       contentPane = setupContentPane(primaryShape);
       figure.add(primaryShape);
     }
-    
+
     super.handleNotificationEvent(notification);
   }
 
@@ -181,7 +178,7 @@ public class History2EditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected IFigure setupContentPane(IFigure nodeShape) {
-    return nodeShape;
+    return nodeShape; // use nodeShape itself as contentPane
   }
 
   /**
@@ -344,15 +341,16 @@ public class History2EditPart extends ShapeNodeEditPart {
   /**
    * @generated NOT
    */
-  public static class DeepHistoryFigure extends repast.simphony.statecharts.figures.DeepHistoryFigure {
+  public static class DeepHistoryFigure extends
+      repast.simphony.statecharts.figures.DeepHistoryFigure {
 
     /**
-     * @generated
+     * @generated NOT
      */
-    public DeepHistoryFigure(IMapMode mapMode) {
-      this.setPreferredSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
-      this.setMaximumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
-      this.setMinimumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
+    public DeepHistoryFigure(IMapMode mode) {
+      this.setPreferredSize(new Dimension(mode.DPtoLP(15), mode.DPtoLP(15)));
+      this.setMaximumSize(new Dimension(mode.DPtoLP(15), mode.DPtoLP(15)));
+      this.setMinimumSize(new Dimension(mode.DPtoLP(15), mode.DPtoLP(15)));
     }
 
   }

@@ -37,6 +37,8 @@ import repast.simphony.statecharts.scmodel.Transition;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getPackage <em>Package</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getClassName <em>Class Name</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getLanguage <em>Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getNextID <em>Next ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getID <em>ID</em>}</li>
  * </ul>
  * </p>
  *
@@ -142,6 +144,46 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * @ordered
    */
   protected LanguageTypes language = LANGUAGE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getNextID() <em>Next ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getNextID()
+   * @generated
+   * @ordered
+   */
+  protected static final int NEXT_ID_EDEFAULT = 0;
+
+  /**
+   * The cached value of the '{@link #getNextID() <em>Next ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getNextID()
+   * @generated
+   * @ordered
+   */
+  protected int nextID = NEXT_ID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getID() <em>ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getID()
+   * @generated
+   * @ordered
+   */
+  protected static final String ID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getID() <em>ID</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getID()
+   * @generated
+   * @ordered
+   */
+  protected String id = ID_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -273,6 +315,50 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public int getNextID() {
+    int tmp = nextID;
+    nextID++;
+    return tmp;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setNextID(int newNextID) {
+    int oldNextID = nextID;
+    nextID = newNextID;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__NEXT_ID, oldNextID, nextID));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getID() {
+    return id;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setID(String newID) {
+    String oldID = id;
+    id = newID;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__ID, oldID, id));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
    * @generated
    */
   @Override
@@ -306,6 +392,10 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return getClassName();
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
         return getLanguage();
+      case StatechartPackage.STATE_MACHINE__NEXT_ID:
+        return getNextID();
+      case StatechartPackage.STATE_MACHINE__ID:
+        return getID();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -339,6 +429,12 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
         setLanguage((LanguageTypes)newValue);
         return;
+      case StatechartPackage.STATE_MACHINE__NEXT_ID:
+        setNextID((Integer)newValue);
+        return;
+      case StatechartPackage.STATE_MACHINE__ID:
+        setID((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -369,6 +465,12 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
         setLanguage(LANGUAGE_EDEFAULT);
         return;
+      case StatechartPackage.STATE_MACHINE__NEXT_ID:
+        setNextID(NEXT_ID_EDEFAULT);
+        return;
+      case StatechartPackage.STATE_MACHINE__ID:
+        setID(ID_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -393,6 +495,10 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return CLASS_NAME_EDEFAULT == null ? className != null : !CLASS_NAME_EDEFAULT.equals(className);
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
         return language != LANGUAGE_EDEFAULT;
+      case StatechartPackage.STATE_MACHINE__NEXT_ID:
+        return nextID != NEXT_ID_EDEFAULT;
+      case StatechartPackage.STATE_MACHINE__ID:
+        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
     }
     return super.eIsSet(featureID);
   }
@@ -415,6 +521,10 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
     result.append(className);
     result.append(", language: ");
     result.append(language);
+    result.append(", nextID: ");
+    result.append(nextID);
+    result.append(", ID: ");
+    result.append(id);
     result.append(')');
     return result.toString();
   }

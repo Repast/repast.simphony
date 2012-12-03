@@ -100,10 +100,6 @@ public class StatechartAdapterFactory extends AdapterFactoryImpl {
         return createHistoryAdapter();
       }
       @Override
-      public Adapter caseEqualsChecker(EqualsChecker object) {
-        return createEqualsCheckerAdapter();
-      }
-      @Override
       public Adapter defaultCase(EObject object) {
         return createEObjectAdapter();
       }
@@ -232,20 +228,6 @@ public class StatechartAdapterFactory extends AdapterFactoryImpl {
    * @generated
    */
   public Adapter createHistoryAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.statecharts.scmodel.EqualsChecker <em>Equals Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker
-   * @generated
-   */
-  public Adapter createEqualsCheckerAdapter() {
     return null;
   }
 

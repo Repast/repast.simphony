@@ -209,7 +209,6 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
   public void setLanguage(LanguageTypes newLanguage) {
     LanguageTypes oldLanguage = language;
     language = newLanguage == null ? LANGUAGE_EDEFAULT : newLanguage;
-    //System.out.println("language: " + language);
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__LANGUAGE, oldLanguage, language));
   }

@@ -121,13 +121,31 @@ public interface StatechartPackage extends EPackage {
   int STATE_MACHINE__LANGUAGE = 5;
 
   /**
+   * The feature id for the '<em><b>Next ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE_MACHINE__NEXT_ID = 6;
+
+  /**
+   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE_MACHINE__ID = 7;
+
+  /**
    * The number of structural features of the '<em>State Machine</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATE_MACHINE_FEATURE_COUNT = 6;
+  int STATE_MACHINE_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl <em>Abstract State</em>}' class.
@@ -449,13 +467,22 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = 15;
 
   /**
+   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__ID = 16;
+
+  /**
    * The number of structural features of the '<em>Transition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION_FEATURE_COUNT = 16;
+  int TRANSITION_FEATURE_COUNT = 17;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
@@ -650,34 +677,6 @@ public interface StatechartPackage extends EPackage {
   int HISTORY_FEATURE_COUNT = STATE_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl <em>Equals Checker</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl
-   * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getEqualsChecker()
-   * @generated
-   */
-  int EQUALS_CHECKER = 8;
-
-  /**
-   * The feature id for the '<em><b>Obj</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER__OBJ = 0;
-
-  /**
-   * The number of structural features of the '<em>Equals Checker</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALS_CHECKER_FEATURE_COUNT = 1;
-
-  /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -685,7 +684,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getPseudoStateTypes()
    * @generated
    */
-  int PSEUDO_STATE_TYPES = 9;
+  int PSEUDO_STATE_TYPES = 8;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.TriggerTypes <em>Trigger Types</em>}' enum.
@@ -695,7 +694,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getTriggerTypes()
    * @generated
    */
-  int TRIGGER_TYPES = 10;
+  int TRIGGER_TYPES = 9;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.MessageCheckerTypes <em>Message Checker Types</em>}' enum.
@@ -705,7 +704,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getMessageCheckerTypes()
    * @generated
    */
-  int MESSAGE_CHECKER_TYPES = 11;
+  int MESSAGE_CHECKER_TYPES = 10;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.LanguageTypes <em>Language Types</em>}' enum.
@@ -715,7 +714,7 @@ public interface StatechartPackage extends EPackage {
    * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getLanguageTypes()
    * @generated
    */
-  int LANGUAGE_TYPES = 12;
+  int LANGUAGE_TYPES = 11;
 
 
   /**
@@ -793,6 +792,28 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getStateMachine_Language();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Next ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getNextID()
+   * @see #getStateMachine()
+   * @generated
+   */
+  EAttribute getStateMachine_NextID();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getID()
+   * @see #getStateMachine()
+   * @generated
+   */
+  EAttribute getStateMachine_ID();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.State <em>State</em>}'.
@@ -1001,6 +1022,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_MessageCheckerConditionLanguage();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>ID</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getID()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_ID();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.CompositeState <em>Composite State</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1116,27 +1148,6 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getHistory_Shallow();
-
-  /**
-   * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.EqualsChecker <em>Equals Checker</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Equals Checker</em>'.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker
-   * @generated
-   */
-  EClass getEqualsChecker();
-
-  /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.EqualsChecker#getObj <em>Obj</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Obj</em>'.
-   * @see repast.simphony.statecharts.scmodel.EqualsChecker#getObj()
-   * @see #getEqualsChecker()
-   * @generated
-   */
-  EAttribute getEqualsChecker_Obj();
 
   /**
    * Returns the meta object for enum '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}'.
@@ -1257,6 +1268,22 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute STATE_MACHINE__LANGUAGE = eINSTANCE.getStateMachine_Language();
+
+    /**
+     * The meta object literal for the '<em><b>Next ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATE_MACHINE__NEXT_ID = eINSTANCE.getStateMachine_NextID();
+
+    /**
+     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATE_MACHINE__ID = eINSTANCE.getStateMachine_ID();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.
@@ -1417,6 +1444,14 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = eINSTANCE.getTransition_MessageCheckerConditionLanguage();
 
     /**
+     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__ID = eINSTANCE.getTransition_ID();
+
+    /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1511,24 +1546,6 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute HISTORY__SHALLOW = eINSTANCE.getHistory_Shallow();
-
-    /**
-     * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl <em>Equals Checker</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see repast.simphony.statecharts.scmodel.impl.EqualsCheckerImpl
-     * @see repast.simphony.statecharts.scmodel.impl.StatechartPackageImpl#getEqualsChecker()
-     * @generated
-     */
-    EClass EQUALS_CHECKER = eINSTANCE.getEqualsChecker();
-
-    /**
-     * The meta object literal for the '<em><b>Obj</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute EQUALS_CHECKER__OBJ = eINSTANCE.getEqualsChecker_Obj();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.PseudoStateTypes <em>Pseudo State Types</em>}' enum.

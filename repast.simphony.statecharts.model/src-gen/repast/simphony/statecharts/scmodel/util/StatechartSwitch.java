@@ -121,12 +121,6 @@ public class StatechartSwitch<T> extends Switch<T> {
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case StatechartPackage.EQUALS_CHECKER: {
-        EqualsChecker equalsChecker = (EqualsChecker)theEObject;
-        T result = caseEqualsChecker(equalsChecker);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       default: return defaultCase(theEObject);
     }
   }
@@ -248,21 +242,6 @@ public class StatechartSwitch<T> extends Switch<T> {
    * @generated
    */
   public T caseHistory(History object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Equals Checker</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Equals Checker</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseEqualsChecker(EqualsChecker object) {
     return null;
   }
 

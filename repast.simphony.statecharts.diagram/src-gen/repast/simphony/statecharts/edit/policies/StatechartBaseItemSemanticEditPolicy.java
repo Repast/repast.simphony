@@ -1,7 +1,10 @@
 package repast.simphony.statecharts.edit.policies;
 
+import java.util.Collections;
 import java.util.Iterator;
 
+import java.util.Map;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
@@ -32,11 +35,13 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.SetRequest;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.tooling.runtime.edit.helpers.GeneratedEditHelperBase;
 
+import repast.simphony.statecharts.expressions.StatechartOCLFactory;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StateMachine;
+import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 
 /**
@@ -322,7 +327,36 @@ public class StatechartBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     public boolean canExistTransition_4001(StateMachine container, Transition linkInstance,
         AbstractState source, AbstractState target) {
-      return true;
+      try {
+        if (source == null) {
+          return true;
+        } else {
+          Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
+              "oppositeEnd", StatechartPackage.eINSTANCE.getAbstractState()); //$NON-NLS-1$
+          Object sourceVal = StatechartOCLFactory.getExpression(9,
+              StatechartPackage.eINSTANCE.getAbstractState(), env).evaluate(source,
+              Collections.singletonMap("oppositeEnd", target)); //$NON-NLS-1$
+          if (false == sourceVal instanceof Boolean || !((Boolean) sourceVal).booleanValue()) {
+            return false;
+          } // else fall-through
+        }
+        if (target == null) {
+          return true;
+        } else {
+          Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
+              "oppositeEnd", StatechartPackage.eINSTANCE.getAbstractState()); //$NON-NLS-1$
+          Object targetVal = StatechartOCLFactory.getExpression(10,
+              StatechartPackage.eINSTANCE.getAbstractState(), env).evaluate(target,
+              Collections.singletonMap("oppositeEnd", source)); //$NON-NLS-1$
+          if (false == targetVal instanceof Boolean || !((Boolean) targetVal).booleanValue()) {
+            return false;
+          } // else fall-through
+        }
+        return true;
+      } catch (Exception e) {
+        StatechartDiagramEditorPlugin.getInstance().logError("Link constraint evaluation error", e); //$NON-NLS-1$
+        return false;
+      }
     }
   }
 

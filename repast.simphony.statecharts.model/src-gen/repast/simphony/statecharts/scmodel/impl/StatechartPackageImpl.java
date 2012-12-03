@@ -94,13 +94,6 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass equalsCheckerEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EEnum pseudoStateTypesEEnum = null;
 
   /**
@@ -246,6 +239,24 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    */
   public EAttribute getStateMachine_Language() {
     return (EAttribute)stateMachineEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getStateMachine_NextID() {
+    return (EAttribute)stateMachineEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getStateMachine_ID() {
+    return (EAttribute)stateMachineEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -424,6 +435,15 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getTransition_ID() {
+    return (EAttribute)transitionEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getCompositeState() {
     return compositeStateEClass;
   }
@@ -523,24 +543,6 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getEqualsChecker() {
-    return equalsCheckerEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getEqualsChecker_Obj() {
-    return (EAttribute)equalsCheckerEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EEnum getPseudoStateTypes() {
     return pseudoStateTypesEEnum;
   }
@@ -607,6 +609,8 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     createEAttribute(stateMachineEClass, STATE_MACHINE__PACKAGE);
     createEAttribute(stateMachineEClass, STATE_MACHINE__CLASS_NAME);
     createEAttribute(stateMachineEClass, STATE_MACHINE__LANGUAGE);
+    createEAttribute(stateMachineEClass, STATE_MACHINE__NEXT_ID);
+    createEAttribute(stateMachineEClass, STATE_MACHINE__ID);
 
     stateEClass = createEClass(STATE);
 
@@ -629,6 +633,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_PROBABILITY);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CONDITION);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE);
+    createEAttribute(transitionEClass, TRANSITION__ID);
 
     compositeStateEClass = createEClass(COMPOSITE_STATE);
     createEReference(compositeStateEClass, COMPOSITE_STATE__CHILDREN);
@@ -644,9 +649,6 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
 
     historyEClass = createEClass(HISTORY);
     createEAttribute(historyEClass, HISTORY__SHALLOW);
-
-    equalsCheckerEClass = createEClass(EQUALS_CHECKER);
-    createEAttribute(equalsCheckerEClass, EQUALS_CHECKER__OBJ);
 
     // Create enums
     pseudoStateTypesEEnum = createEEnum(PSEUDO_STATE_TYPES);
@@ -697,6 +699,8 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getStateMachine_Package(), ecorePackage.getEString(), "package", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStateMachine_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStateMachine_Language(), this.getLanguageTypes(), "language", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStateMachine_NextID(), ecorePackage.getEInt(), "nextID", "0", 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStateMachine_ID(), ecorePackage.getEString(), "ID", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -719,6 +723,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getTransition_TriggerProbability(), ecorePackage.getEDouble(), "triggerProbability", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerCondition(), ecorePackage.getEString(), "messageCheckerCondition", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerConditionLanguage(), this.getLanguageTypes(), "messageCheckerConditionLanguage", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTransition_ID(), ecorePackage.getEString(), "ID", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(compositeStateEClass, CompositeState.class, "CompositeState", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCompositeState_Children(), this.getAbstractState(), null, "children", null, 0, -1, CompositeState.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -734,9 +739,6 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
 
     initEClass(historyEClass, History.class, "History", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getHistory_Shallow(), ecorePackage.getEBoolean(), "shallow", null, 0, 1, History.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(equalsCheckerEClass, EqualsChecker.class, "EqualsChecker", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getEqualsChecker_Obj(), ecorePackage.getEString(), "obj", null, 0, 1, EqualsChecker.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(pseudoStateTypesEEnum, PseudoStateTypes.class, "PseudoStateTypes");
