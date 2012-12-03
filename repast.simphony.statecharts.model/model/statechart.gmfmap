@@ -14,6 +14,18 @@
           href="statechart.ecore#//State"/>
       <domainSpecialization
           body="not self.oclIsKindOf(History) and not self.oclIsKindOf(FinalState)"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/id"/>
+          <value
+              body="StatechartsModelUtil.getNextID()"
+              language="java"/>
+        </initializers>
+      </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
@@ -34,6 +46,18 @@
     <ownedChild>
       <domainMetaElement
           href="statechart.ecore#//CompositeState"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/id"/>
+          <value
+              body="&quot;Composite State &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
+        </initializers>
+      </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
@@ -97,6 +121,15 @@
                   body="true"
                   language="literal"/>
             </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/id"/>
+              <value
+                  body="&quot;History &quot; + StatechartsModelUtil.getNextID()"
+                  language="java"/>
+            </initializers>
           </domainInitializer>
           <tool
               xsi:type="gmftool:CreationTool"
@@ -124,6 +157,15 @@
               <value
                   body="false"
                   language="literal"/>
+            </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/id"/>
+              <value
+                  body="&quot;History &quot; + StatechartsModelUtil.getNextID()"
+                  language="java"/>
             </initializers>
           </domainInitializer>
           <tool
@@ -164,8 +206,8 @@
               xsi:type="ecore:EAttribute"
               href="statechart.ecore#//AbstractState/id"/>
           <value
-              body="&quot;Initial State Pointer&quot;"
-              language="literal"/>
+              body="&quot;Initial State Pointer &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
         </initializers>
       </domainInitializer>
       <tool
@@ -199,8 +241,8 @@
               xsi:type="ecore:EAttribute"
               href="statechart.ecore#//AbstractState/id"/>
           <value
-              body="&quot;choice&quot;"
-              language="literal"/>
+              body="&quot;Choice &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
         </initializers>
       </domainInitializer>
       <tool
@@ -234,7 +276,7 @@
               xsi:type="ecore:EAttribute"
               href="statechart.ecore#//AbstractState/id"/>
           <value
-              body="&quot;Entry State Pointer&quot;"
+              body="&quot;Entry State Pointer&quot; "
               language="literal"/>
         </initializers>
       </domainInitializer>
@@ -251,6 +293,18 @@
     <ownedChild>
       <domainMetaElement
           href="statechart.ecore#//FinalState"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/id"/>
+          <value
+              body="&quot;Final State &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
+        </initializers>
+      </domainInitializer>
       <tool
           xsi:type="gmftool:CreationTool"
           href="statechart.gmftool#//@palette/@tools.0/@tools.7"/>
@@ -261,6 +315,18 @@
   <links>
     <domainMetaElement
         href="statechart.ecore#//Transition"/>
+    <domainInitializer
+        xsi:type="gmfmap:FeatureSeqInitializer">
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="statechart.ecore#//Transition/ID"/>
+        <value
+            body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"
+            language="java"/>
+      </initializers>
+    </domainInitializer>
     <containmentFeature
         href="statechart.ecore#//StateMachine/transitions"/>
     <tool
@@ -274,6 +340,12 @@
     <linkMetaFeature
         xsi:type="ecore:EReference"
         href="statechart.ecore#//Transition/to"/>
+    <creationConstraints>
+      <sourceEnd
+          body="not self.oclIsKindOf(FinalState) and not self.oclIsKindOf(History)"/>
+      <targetEnd
+          body="not self.oclIsKindOf(PseudoState) or (self.oclAsType(PseudoState).type = PseudoStateTypes::choice)"/>
+    </creationConstraints>
   </links>
   <diagram>
     <diagramCanvas

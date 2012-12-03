@@ -53,6 +53,15 @@
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.0">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5002"
@@ -104,6 +113,15 @@
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.1">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5003"
@@ -167,7 +185,7 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.0">
+              value="//@expressionProviders/@providers.1/@expressions.2">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
@@ -217,7 +235,7 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.1">
+              value="//@expressionProviders/@providers.1/@expressions.3">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
@@ -256,6 +274,15 @@
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/CompositeState/children"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.4">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
     </childNodes>
     <childNodes
@@ -295,9 +322,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.2">
+              value="//@expressionProviders/@providers.2/@expressions.0">
             <feature
                 href="statechart.genmodel#//scmodel/History/shallow"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.5">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -339,9 +372,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.2/@expressions.1">
             <feature
                 href="statechart.genmodel#//scmodel/History/shallow"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.6">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -372,6 +411,15 @@
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.0">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5001"
@@ -422,6 +470,15 @@
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.1">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5004"
@@ -488,7 +545,7 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.0">
+              value="//@expressionProviders/@providers.1/@expressions.2">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
@@ -537,7 +594,7 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.1">
+              value="//@expressionProviders/@providers.1/@expressions.3">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
@@ -586,7 +643,7 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.4">
+              value="//@expressionProviders/@providers.2/@expressions.2">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
@@ -624,6 +681,15 @@
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/StateMachine/states"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.4">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
     </topLevelNodes>
     <links
@@ -654,11 +720,23 @@
             href="statechart.genmodel#//scmodel/StateMachine/transitions"/>
         <childMetaFeature
             href="statechart.genmodel#//scmodel/StateMachine/transitions"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.7">
+            <feature
+                href="statechart.genmodel#//scmodel/Transition/ID"/>
+          </initializers>
+        </modelElementInitializer>
         <sourceMetaFeature
             href="statechart.genmodel#//scmodel/Transition/from"/>
         <targetMetaFeature
             href="statechart.genmodel#//scmodel/Transition/to"/>
       </modelFacet>
+      <creationConstraints
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.9"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.10"/>
     </links>
     <compartments
         visualID="7001"
@@ -1229,19 +1307,40 @@
           body="self.type = PseudoStateTypes::entry"/>
       <expressions
           body="PseudoStateTypes::entry"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="not self.oclIsKindOf(FinalState) and not self.oclIsKindOf(History)"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="not self.oclIsKindOf(PseudoState) or (self.oclAsType(PseudoState).type = PseudoStateTypes::choice)"/>
+    </providers>
+    <providers
+        xsi:type="gmfgen:GenJavaExpressionProvider">
+      <expressions
+          body="StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;Composite State &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;Initial State Pointer &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;Choice &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;Final State &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">
-      <expressions
-          body="&quot;Initial State Pointer&quot;"/>
-      <expressions
-          body="&quot;choice&quot;"/>
       <expressions
           body="true"/>
       <expressions
           body="false"/>
       <expressions
-          body="&quot;Entry State Pointer&quot;"/>
+          body="&quot;Entry State Pointer&quot; "/>
     </providers>
   </expressionProviders>
   <labelParsers
