@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: repast.simphony.statecharts.scmodel,
  repast.simphony.statecharts.scmodel.impl,
- repast.simphony.statecharts.scmodel.util
+ repast.simphony.statecharts.scmodel.util,
+ repast.simphony.statecharts.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy
