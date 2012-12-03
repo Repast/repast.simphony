@@ -23,6 +23,18 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 	}
 
 	
+	
+	@Override
+	protected void setTransition(Transition<T> transition) {
+		super.setTransition(transition);
+		if (messageChecker instanceof AgentTransitionMessageChecker){
+			@SuppressWarnings("unchecked")
+			AgentTransitionMessageChecker<T> atmc = (AgentTransitionMessageChecker<T>)messageChecker;
+			atmc.setTransition(transition);
+		}
+	}
+
+
 	private final double pollingTime;
 	private double initializedTickCount;
 	private MessageChecker messageChecker;
@@ -31,9 +43,7 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 		this.queue = queue;
 		this.messageChecker = messageChecker;
 		this.pollingTime = pollingTime;
-		if (messageChecker instanceof MessageConditionMessageChecker){
-			
-		}
+		
 	}
 	
 	protected MessageTrigger(Queue<Object> queue, MessageChecker messageChecker){

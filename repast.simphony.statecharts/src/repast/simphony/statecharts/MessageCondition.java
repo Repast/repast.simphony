@@ -1,6 +1,6 @@
 package repast.simphony.statecharts;
 
 
-public interface MessageCondition<T>{
-	public boolean isTrue(Object message, T agent, Transition<T> transition) throws Exception;
+public interface MessageCondition<T,U>{
+	public boolean isTrue(T agent, Transition<T> transition, U message) throws Exception;
 }
