@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.RowData;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class PseudoStateSheet extends Composite {
   
@@ -25,14 +27,16 @@ public class PseudoStateSheet extends Composite {
     super(parent, style);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
-    setLayout(new RowLayout(SWT.HORIZONTAL));
+    setLayout(new GridLayout(2, false));
     
     Label lblId = new Label(this, SWT.NONE);
     toolkit.adapt(lblId, true, true);
     lblId.setText("ID:");
     
     idTxt = new Text(this, SWT.BORDER);
-    idTxt.setLayoutData(new RowData(199, SWT.DEFAULT));
+    GridData gd_idTxt = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+    gd_idTxt.widthHint = 200;
+    idTxt.setLayoutData(gd_idTxt);
     toolkit.adapt(idTxt, true, true);
   }
   
