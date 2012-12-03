@@ -27,16 +27,15 @@ import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-public class StateSheet extends Composite {
+public class FinalStateSheet extends Composite {
 
   private Text idTxt;
   private Text onEnterTxt;
-  private Text onExitTxt;
   private Button btnJava, btnRelogo, btnGroovy;
 
   private LanguageTypes selectedType;
 
-  public StateSheet(FormToolkit toolkit, Composite parent, int style) {
+  public FinalStateSheet(FormToolkit toolkit, Composite parent, int style) {
     super(parent, style);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
@@ -62,7 +61,7 @@ public class StateSheet extends Composite {
     GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1);
     gd_composite.heightHint = 183;
     composite.setLayoutData(gd_composite);
-    GridLayout gl_composite = new GridLayout(2, false);
+    GridLayout gl_composite = new GridLayout(1, false);
     gl_composite.horizontalSpacing = 12;
     gl_composite.marginHeight = 0;
     composite.setLayout(gl_composite);
@@ -76,7 +75,7 @@ public class StateSheet extends Composite {
     gl_composite_1.marginHeight = 0;
     gl_composite_1.marginWidth = 0;
     composite_1.setLayout(gl_composite_1);
-    GridData gd_composite_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+    GridData gd_composite_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_composite_1.widthHint = 353;
     composite_1.setLayoutData(gd_composite_1);
     toolkit.adapt(composite_1);
@@ -104,32 +103,12 @@ public class StateSheet extends Composite {
     toolkit.adapt(lblOnEnter, true, true);
     lblOnEnter.setText("On Enter:");
 
-    Label lblOnExit = new Label(composite, SWT.NONE);
-    toolkit.adapt(lblOnExit, true, true);
-    lblOnExit.setText("On Exit:");
-
     onEnterTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     onEnterTxt.setText("");
     GridData data = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     data.heightHint = 120;
     onEnterTxt.setLayoutData(data);
     toolkit.adapt(onEnterTxt, true, true);
-
-    onExitTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    gd_onExitTxt.heightHint = 120;
-    gd_onExitTxt.horizontalIndent = 1;
-    onExitTxt.setLayoutData(gd_onExitTxt);
-    toolkit.adapt(onExitTxt, true, true);
-
-    onExitTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
 
     onEnterTxt.addTraverseListener(new TraverseListener() {
       public void keyTraversed(TraverseEvent e) {
@@ -178,11 +157,6 @@ public class StateSheet extends Composite {
                 onEnterTxt),
             EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
                 StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
-
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(onExitTxt),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
 
     selectedType = ((AbstractState) eObject).getLanguage();
     initLanguageButton();

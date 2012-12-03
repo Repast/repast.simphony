@@ -9,6 +9,7 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -20,6 +21,7 @@ import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
+import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
@@ -28,6 +30,8 @@ import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.HistoryItemSemanticEditPolicy;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
+import repast.simphony.statecharts.scmodel.History;
+import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
  * @generated
@@ -96,14 +100,36 @@ public class HistoryEditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected IFigure createNodeShape() {
-    return primaryShape = new ShallowHistoryFigure();
+    return primaryShape = new ShallowHistoryFigure(getMapMode());
   }
 
+  
   /**
-   * @generated
+   * @generated NOT
    */
-  public ShallowHistoryFigure getPrimaryShape() {
-    return (ShallowHistoryFigure) primaryShape;
+  protected IFigure getPrimaryShape() {
+    History history = (History)resolveSemanticElement();
+    if (history.isShallow()) return new ShallowHistoryFigure(getMapMode());
+    return new History2EditPart.DeepHistoryFigure(getMapMode());
+  }
+  
+  /**
+   * Switches history figures depending on value of shallow. This is duplicated in
+   * History2EditPart.
+   * 
+   */
+  @Override
+  protected void handleNotificationEvent(Notification notification) {
+    // We have to update the primary shape when the entry kind changes
+    if (StatechartPackage.eINSTANCE.getHistory_Shallow().equals(notification.getFeature())) {
+      NodeFigure figure = (NodeFigure) getContentPane().getParent();
+      figure.remove(primaryShape);
+      primaryShape = getPrimaryShape();
+      contentPane = setupContentPane(primaryShape);
+      figure.add(primaryShape);
+    }
+    
+    super.handleNotificationEvent(notification);
   }
 
   /**
@@ -311,18 +337,18 @@ public class HistoryEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
-  public class ShallowHistoryFigure extends
+  public static class ShallowHistoryFigure extends
       repast.simphony.statecharts.figures.ShallowHistoryFigure {
 
     /**
-     * @generated
+     * @generated NOT
      */
-    public ShallowHistoryFigure() {
-      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
-      this.setMaximumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
-      this.setMinimumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
+    public ShallowHistoryFigure(IMapMode mapMode) {
+      this.setPreferredSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
+      this.setMaximumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
+      this.setMinimumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
     }
 
   }

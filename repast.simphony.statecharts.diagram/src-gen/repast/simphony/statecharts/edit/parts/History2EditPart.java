@@ -9,6 +9,7 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -19,7 +20,10 @@ import org.eclipse.gef.editpolicies.ResizableEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionHandleEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
+import org.eclipse.gmf.runtime.diagram.ui.handles.ConnectionHandle.HandleDirection;
+import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
@@ -28,6 +32,8 @@ import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.History2ItemSemanticEditPolicy;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
+import repast.simphony.statecharts.scmodel.History;
+import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
  * @generated
@@ -63,7 +69,9 @@ public class History2EditPart extends ShapeNodeEditPart {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new History2ItemSemanticEditPolicy());
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
-    // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
+    
+    // XXX need an SCR to runtime to have another abstract superclass that would
+    // let children add reasonable editpolicies
     // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
   }
 
@@ -96,14 +104,16 @@ public class History2EditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected IFigure createNodeShape() {
-    return primaryShape = new DeepHistoryFigure();
+    return primaryShape = new DeepHistoryFigure(getMapMode());
   }
-
+  
   /**
-   * @generated
+   * @generated NOT
    */
-  public DeepHistoryFigure getPrimaryShape() {
-    return (DeepHistoryFigure) primaryShape;
+  protected IFigure getPrimaryShape() {
+    History history = (History)resolveSemanticElement();
+    if (history.isShallow()) return new HistoryEditPart.ShallowHistoryFigure(getMapMode());
+    return new DeepHistoryFigure(getMapMode());
   }
 
   /**
@@ -127,12 +137,31 @@ public class History2EditPart extends ShapeNodeEditPart {
   }
 
   /**
+   * Switches history figures depending on value of shallow. This is duplicated in
+   * HistoryEditPart.
+   * 
+   */
+  @Override
+  protected void handleNotificationEvent(Notification notification) {
+    // We have to update the primary shape when the entry kind changes
+    if (StatechartPackage.eINSTANCE.getHistory_Shallow().equals(notification.getFeature())) {
+      NodeFigure figure = (NodeFigure) getContentPane().getParent();
+      figure.remove(primaryShape);
+      primaryShape = getPrimaryShape();
+      contentPane = setupContentPane(primaryShape);
+      figure.add(primaryShape);
+    }
+    
+    super.handleNotificationEvent(notification);
+  }
+
+  /**
    * Creates figure for this edit part.
    * 
-   * Body of this method does not depend on settings in generation model
-   * so you may safely remove <i>generated</i> tag and modify it.
+   * Body of this method does not depend on settings in generation model so you
+   * may safely remove <i>generated</i> tag and modify it.
    * 
-   * @generated
+   * @generated NOT
    */
   protected NodeFigure createNodeFigure() {
     NodeFigure figure = createNodePlate();
@@ -144,13 +173,15 @@ public class History2EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * Default implementation treats passed figure as content pane.
-   * Respects layout one may have set for generated figure.
-   * @param nodeShape instance of generated figure class
+   * Default implementation treats passed figure as content pane. Respects
+   * layout one may have set for generated figure.
+   * 
+   * @param nodeShape
+   *          instance of generated figure class
    * @generated
    */
   protected IFigure setupContentPane(IFigure nodeShape) {
-    return nodeShape; // use nodeShape itself as contentPane
+    return nodeShape;
   }
 
   /**
@@ -311,17 +342,17 @@ public class History2EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
-  public class DeepHistoryFigure extends repast.simphony.statecharts.figures.DeepHistoryFigure {
+  public static class DeepHistoryFigure extends repast.simphony.statecharts.figures.DeepHistoryFigure {
 
     /**
      * @generated
      */
-    public DeepHistoryFigure() {
-      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
-      this.setMaximumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
-      this.setMinimumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
+    public DeepHistoryFigure(IMapMode mapMode) {
+      this.setPreferredSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
+      this.setMaximumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
+      this.setMinimumSize(new Dimension(mapMode.DPtoLP(15), mapMode.DPtoLP(15)));
     }
 
   }

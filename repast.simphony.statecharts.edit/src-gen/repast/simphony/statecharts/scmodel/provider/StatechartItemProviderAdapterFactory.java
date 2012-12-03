@@ -233,29 +233,6 @@ public class StatechartItemProviderAdapterFactory extends StatechartAdapterFacto
   }
 
   /**
-   * This keeps track of the one adapter used for all {@link repast.simphony.statecharts.scmodel.EqualsChecker} instances.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  protected EqualsCheckerItemProvider equalsCheckerItemProvider;
-
-  /**
-   * This creates an adapter for a {@link repast.simphony.statecharts.scmodel.EqualsChecker}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Adapter createEqualsCheckerAdapter() {
-    if (equalsCheckerItemProvider == null) {
-      equalsCheckerItemProvider = new EqualsCheckerItemProvider(this);
-    }
-
-    return equalsCheckerItemProvider;
-  }
-
-  /**
    * This returns the root adapter factory that contains this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -361,7 +338,6 @@ public class StatechartItemProviderAdapterFactory extends StatechartAdapterFacto
     if (compositeStateItemProvider != null) compositeStateItemProvider.dispose();
     if (pseudoStateItemProvider != null) pseudoStateItemProvider.dispose();
     if (historyItemProvider != null) historyItemProvider.dispose();
-    if (equalsCheckerItemProvider != null) equalsCheckerItemProvider.dispose();
   }
 
 }

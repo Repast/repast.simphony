@@ -76,6 +76,7 @@ public class TransitionItemProvider
       addTriggerProbabilityPropertyDescriptor(object);
       addMessageCheckerConditionPropertyDescriptor(object);
       addMessageCheckerConditionLanguagePropertyDescriptor(object);
+      addIDPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -433,6 +434,28 @@ public class TransitionItemProvider
   }
 
   /**
+   * This adds a property descriptor for the ID feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addIDPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_ID_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_ID_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__ID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns Transition.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -451,8 +474,10 @@ public class TransitionItemProvider
    */
   @Override
   public String getText(Object object) {
-    Transition transition = (Transition)object;
-    return getString("_UI_Transition_type") + " " + transition.getPriority();
+    String label = ((Transition)object).getID();
+    return label == null || label.length() == 0 ?
+      getString("_UI_Transition_type") :
+      getString("_UI_Transition_type") + " " + label;
   }
 
   /**
@@ -481,6 +506,7 @@ public class TransitionItemProvider
       case StatechartPackage.TRANSITION__TRIGGER_PROBABILITY:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
+      case StatechartPackage.TRANSITION__ID:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }
