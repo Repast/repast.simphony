@@ -38,6 +38,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/package"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/className"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/language"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/nextID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/ID"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//State"/>
     <genClasses ecoreClass="statechart.ecore#//FinalState"/>
@@ -58,6 +60,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbability"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCondition"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/ID"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//CompositeState">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/children"/>
@@ -73,9 +76,6 @@
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//History">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//History/shallow"/>
-    </genClasses>
-    <genClasses ecoreClass="statechart.ecore#//EqualsChecker">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//EqualsChecker/obj"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

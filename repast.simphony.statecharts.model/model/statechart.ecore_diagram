@@ -19,6 +19,14 @@
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/language"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_7V57UTmnEeKxnN0LAy103w"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_0FpuYD1YEeKKxrXsLEWJQQ" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/nextID"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_0FpuYT1YEeKKxrXsLEWJQQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_uKsHoD1fEeKKxrXsLEWJQQ" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/ID"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_uKsHoT1fEeKKxrXsLEWJQQ"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_rvHUcS9mEeKhRft3018vxw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_rvHUci9mEeKhRft3018vxw"/>
     </children>
@@ -125,6 +133,10 @@
       <children xmi:type="notation:Node" xmi:id="_NQ1ecDsqEeKFE9JigeYQog" type="3001">
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_NQ1ecTsqEeKFE9JigeYQog"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_wTlGwD1fEeKKxrXsLEWJQQ" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/ID"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_wTlGwT1fEeKKxrXsLEWJQQ"/>
       </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_S6r8FC9nEeKhRft3018vxw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_S6r8FS9nEeKhRft3018vxw"/>
@@ -322,27 +334,6 @@
     </children>
     <element xmi:type="ecore:EEnum" href="statechart.ecore#//MessageCheckerTypes"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pfVkYTmREeKxnN0LAy103w" x="243" y="468"/>
-  </children>
-  <children xmi:type="notation:Shape" xmi:id="_ScgsgDmSEeKxnN0LAy103w" type="2001" fontName="Lucida Grande" fontHeight="10">
-    <children xmi:type="notation:DecorationNode" xmi:id="_SchTkDmSEeKxnN0LAy103w" type="5001"/>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_SchTkTmSEeKxnN0LAy103w" type="7001">
-      <children xmi:type="notation:Node" xmi:id="_jRtIADmSEeKxnN0LAy103w" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//EqualsChecker/obj"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="_jRtIATmSEeKxnN0LAy103w"/>
-      </children>
-      <styles xmi:type="notation:SortingStyle" xmi:id="_SchTkjmSEeKxnN0LAy103w"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_SchTkzmSEeKxnN0LAy103w"/>
-    </children>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_SchTlDmSEeKxnN0LAy103w" type="7002">
-      <styles xmi:type="notation:SortingStyle" xmi:id="_SchTlTmSEeKxnN0LAy103w"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_SchTljmSEeKxnN0LAy103w"/>
-    </children>
-    <children xmi:type="notation:BasicCompartment" xmi:id="_SchTlzmSEeKxnN0LAy103w" type="7003">
-      <styles xmi:type="notation:SortingStyle" xmi:id="_SchTmDmSEeKxnN0LAy103w"/>
-      <styles xmi:type="notation:FilteringStyle" xmi:id="_SchTmTmSEeKxnN0LAy103w"/>
-    </children>
-    <element xmi:type="ecore:EClass" href="statechart.ecore#//EqualsChecker"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ScgsgTmSEeKxnN0LAy103w" x="639" y="711"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_5Far8DmSEeKxnN0LAy103w" type="Text" fontName="Lucida Grande" fontHeight="10">
     <children xmi:type="notation:BasicDecorationNode" xmi:id="_5FbTADmSEeKxnN0LAy103w" type="DiagramName">
