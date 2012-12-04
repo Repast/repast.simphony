@@ -81,8 +81,8 @@
         <layout
             xsi:type="gmfgraph:GridLayout"/>
         <preferredSize
-            dx="100"
-            dy="150"/>
+            dx="200"
+            dy="200"/>
         <insets
             top="2"
             left="2"
