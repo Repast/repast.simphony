@@ -97,7 +97,7 @@ public class History2EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected IFigure createNodeShape() {
     return primaryShape = new DeepHistoryFigure(getMapMode());
