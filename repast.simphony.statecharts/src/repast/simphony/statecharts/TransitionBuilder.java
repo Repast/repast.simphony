@@ -29,10 +29,16 @@ public class TransitionBuilder<T> {
 	private double priority = 0;
 	private TransitionAction<T> onTransition = new EmptyOnTransition<T>();
 	private GuardCondition<T> guard = new EmptyGuard<T>();
+	private String id;
 	
-	public TransitionBuilder(AbstractState<T> source, AbstractState<T> target){
+	public TransitionBuilder(String id, AbstractState<T> source, AbstractState<T> target){
+		this.id = id;
 		this.source = source;
 		this.target = target;
+	}
+	
+	public TransitionBuilder(AbstractState<T> source, AbstractState<T> target){
+		this("",source,target);
 	}
 	
 	public void setPriority(double priority){
@@ -61,7 +67,7 @@ public class TransitionBuilder<T> {
 		if (target == null){
 			throw new IllegalStateException("The target state must be specified to build a transition.");
 		}
-		Transition<T> result = new Transition<T>(trigger, source, target,priority);
+		Transition<T> result = new Transition<T>(id, trigger, source, target,priority);
 		result.registerGuard(guard);
 		result.registerOnTransition(onTransition);
 		return result;

@@ -7,7 +7,12 @@ public class DefaultOutOfBranchTransitionBuilder<T> extends
 
 	public DefaultOutOfBranchTransitionBuilder(AbstractState<T> source,
 			AbstractState<T> target) {
-		super(source, target);
+		this("",source,target);
+	}
+	
+	public DefaultOutOfBranchTransitionBuilder(String id, AbstractState<T> source,
+			AbstractState<T> target) {
+		super(id, source, target);
 		if (!(source instanceof BranchState)){
 			throw new IllegalParameterException("Default out of branch transitions require a BranchState as a source.");
 		}

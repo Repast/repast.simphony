@@ -47,6 +47,7 @@ public class Transition<T> {
 	private double priority;
 	private TransitionAction<T> onTransition;
 	private GuardCondition<T> guard;
+	private String id;
 	
 
 
@@ -55,6 +56,11 @@ public class Transition<T> {
 	}
 	
 	protected Transition(Trigger trigger, AbstractState<T> source, AbstractState<T> target, double priority){
+		this("",trigger,source,target,priority);
+	}
+	
+	protected Transition(String id, Trigger trigger, AbstractState<T> source, AbstractState<T> target, double priority){
+		this.id = id;
 		this.trigger = trigger;
 		this.source = source;
 		this.target = target;
@@ -134,7 +140,7 @@ public class Transition<T> {
 	
 	@Override
 	public String toString(){
-		return "Transition(" + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
+		return "Transition(\"" + id + "\", " + trigger + ", " + source + ", " + target + ", " + priority + ")"; 
 	}
 
 	protected void rescheduleRegularTransition(DefaultStateChart<T> stateChart, double currentTime) {
