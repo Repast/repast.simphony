@@ -48,9 +48,10 @@ public class TriggerTests {
 	public void timedAndConditionTriggers() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
-		Trigger tTimed = new TimedTrigger(1);
+		AbstractTrigger<Object> tTimed = new TimedTrigger<Object>(1);
+		tTimed.setAgent(new Object());
 		tTimed.initialize();
-		ConditionTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
+		AbstractTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
 			public boolean condition(Object agent, Transition<Object> transition)
@@ -80,9 +81,10 @@ public class TriggerTests {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
 		schedule.schedule(ScheduleParameters.createOneTime(2), action);
-		Trigger tTimed = new TimedTrigger(2);
+		AbstractTrigger<Object> tTimed = new TimedTrigger<Object>(2);
+		tTimed.setAgent(new Object());
 		tTimed.initialize();
-		ConditionTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
+		AbstractTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
 			public boolean condition(Object agent, Transition<Object> transition)
@@ -114,7 +116,8 @@ public class TriggerTests {
 	public void probabilityTrigger() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(1), action);
-		Trigger tProb = new ProbabilityTrigger(1);
+		AbstractTrigger<Object> tProb = new ProbabilityTrigger<Object>(1);
+		tProb.setAgent(new Object());
 		tProb.initialize();
 		assertEquals(true, tProb.isTriggerConditionTrue());
 		assertEquals(false, tProb.isTriggered());
@@ -122,7 +125,8 @@ public class TriggerTests {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals(true, tProb.isTriggerConditionTrue());
 		assertEquals(true, tProb.isTriggered());
-		Trigger tProb2 = new ProbabilityTrigger(0.5);
+		AbstractTrigger<Object> tProb2 = new ProbabilityTrigger<Object>(0.5);
+		tProb2.setAgent(new Object());
 		int counter = 0;
 		while (true) {
 			counter++;
@@ -150,7 +154,8 @@ public class TriggerTests {
 	public void expDecayTrigger() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		schedule.schedule(ScheduleParameters.createOneTime(6.9), action); // Should have triggered with 0.999 probability.
-		Trigger tExpDecay = new ExponentialDecayRateTrigger(1);
+		AbstractTrigger<Object> tExpDecay = new ExponentialDecayRateTrigger<Object>(1);
+		tExpDecay.setAgent(new Object());
 		tExpDecay.initialize();
 		assertEquals(false, tExpDecay.isTriggerConditionTrue());
 		assertEquals(false, tExpDecay.isTriggered());
@@ -223,7 +228,12 @@ public class TriggerTests {
 		
 		schedule.schedule(ScheduleParameters.createOneTime(1.5), action);
 		queue.poll();
-		Trigger mt2 = new MessageTrigger<Object>(queue, new MessageEqualsMessageChecker<String>("hello"),0.5);
+		MessageEqualsMessageChecker<Object,String> memc = new MessageEqualsMessageChecker<Object,String>("hello",String.class);
+		memc.setAgent(new Object());
+		Trigger mt2 = new MessageTrigger<Object>(queue, memc ,0.5);
+		SimpleState<Object> ss = new SimpleStateBuilder<Object>("ss").build();
+		new Transition<Object>(mt2,ss,ss); // Just so the transition is set in the trigger
+		
 		mt2.initialize();
 		assertEquals(false, mt2.isTriggerConditionTrue()); 
 		assertEquals(false, mt2.isTriggered());

@@ -3,7 +3,7 @@ package repast.simphony.statecharts;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 
-public class AlwaysTrigger extends AbstractTrigger {
+public class AlwaysTrigger extends AbstractTrigger<Object> {
 
 	private final double pollingTime;
 	

@@ -4,32 +4,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import simphony.util.messages.MessageCenter;
 
-public class ConditionTrigger<T> extends AbstractTrigger {
-
-	private Transition<T> transition;
-
-	protected void setTransition(Transition<T> transition) {
-		this.transition = transition;
-	}
-
-	private T agent;
-
-	// For testing purposes only.
-	protected void setAgent(T agent){
-		this.agent = agent;
-	}
-	
-	protected T getAgent() {
-		if (agent == null) {
-			if (transition == null) {
-				throw new IllegalStateException(
-						"The transition was not set in a condition trigger.");
-			} else {
-				agent = transition.getAgent();
-			}
-		}
-		return agent;
-	}
+public class ConditionTrigger<T> extends AbstractTrigger<T> {
 
 	private final double pollingTime;
 	private double initializedTickCount;

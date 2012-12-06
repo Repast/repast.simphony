@@ -3,22 +3,43 @@ package repast.simphony.statecharts;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.random.RandomHelper;
+import simphony.util.messages.MessageCenter;
 
-public class ProbabilityTrigger extends AbstractTrigger {
+public class ProbabilityTrigger<T> extends AbstractTrigger<T> {
 
+	private TriggerDoubleFunction<T> tdf;
 	private final double pollingTime;
 	private double initializedTickCount;
 	private double probability;
 
-	public ProbabilityTrigger(double probability, double pollingTime) {
-		this.pollingTime = pollingTime;
-		this.probability = probability;
+	public ProbabilityTrigger(final double probability, double pollingTime) {
+		this(new TriggerDoubleFunction<T>(){
+			@Override
+			public double value(T agent, Transition<T> transition)
+					throws Exception {
+				return probability;
+			}
+
+			@Override
+			public String toString() {
+				return Double.toString(probability);
+			}			
+		},pollingTime);
 	}
 
 	public ProbabilityTrigger(double probability) {
-		this(probability, 1);
+		this(probability, 1d);
+	}
+	
+	public ProbabilityTrigger(TriggerDoubleFunction<T> tdf){
+		this(tdf, 1d);
 	}
 
+	public ProbabilityTrigger(TriggerDoubleFunction<T> tdf, double pollingTime){
+		this.tdf = tdf;
+		this.pollingTime = pollingTime;
+	}
+	
 	@Override
 	public boolean isRecurring() {
 		return true;
@@ -46,7 +67,12 @@ public class ProbabilityTrigger extends AbstractTrigger {
 
 	public boolean isTriggerConditionTrue() {
 		double rand = RandomHelper.nextDouble();
-		return probability > rand;
+		try {
+			return tdf.value(getAgent(),transition) > rand;
+		} catch (Exception e) {
+			MessageCenter.getMessageCenter(getClass()).error("Error encountered when evaluating double function: " + tdf + " in " + this, e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String toString() {

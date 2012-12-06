@@ -1,19 +1,16 @@
 package repast.simphony.statecharts;
 
-public abstract class AbstractTrigger<T> implements Trigger {
+public abstract class AgentTransitionMessageChecker<T> implements MessageChecker {
 
 	protected Transition<T> transition;
-	private T agent;
 
 	protected void setTransition(Transition<T> transition) {
 		this.transition = transition;
 	}
 
-	@Override
-	public boolean isQueueConsuming() {
-		return false;
-	}
+	private T agent;
 
+	// For testing purposes only.
 	protected void setAgent(T agent) {
 		this.agent = agent;
 	}
@@ -22,7 +19,7 @@ public abstract class AbstractTrigger<T> implements Trigger {
 		if (agent == null) {
 			if (transition == null) {
 				throw new IllegalStateException(
-						"The transition was not set in a condition trigger.");
+						"The transition was not set in a MessageConditionMessageChecker.");
 			} else {
 				agent = transition.getAgent();
 			}
