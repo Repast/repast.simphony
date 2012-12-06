@@ -32,8 +32,8 @@ public class StateMachineSheet extends Composite {
   private Text txtPackage;
   private Text txtAgent;
 
-  public StateMachineSheet(FormToolkit toolkit, Composite parent, int style) {
-    super(parent, style);
+  public StateMachineSheet(FormToolkit toolkit, Composite parent) {
+    super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
     setLayout(new GridLayout(3, false));
@@ -130,7 +130,7 @@ public class StateMachineSheet extends Composite {
  
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-        StatechartPackage.Literals.ABSTRACT_STATE__ID);
+        StatechartPackage.Literals.STATE_MACHINE__ID);
     ISWTObservableValue observe = WidgetProperties.text(
         new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(idTxt);
     context.bindValue(observe, property.observe(eObject));
@@ -163,11 +163,6 @@ public class StateMachineSheet extends Composite {
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME).observe(eObject));
 
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(idTxt),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.STATE_MACHINE__ID).observe(eObject));
-    
-    buttonGroup.bindModel(context, eObject);
+    buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.STATE_MACHINE__LANGUAGE);
   }
 }

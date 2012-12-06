@@ -179,7 +179,7 @@ public class CompositeStateEditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected NodeFigure createNodePlate() {
-    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(100, 150);
+    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(200, 200);
     return result;
   }
 
@@ -405,7 +405,7 @@ public class CompositeStateEditPart extends ShapeNodeEditPart {
       this.setLayoutManager(layoutThis);
 
       this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(8), getMapMode().DPtoLP(8)));
-      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(100), getMapMode().DPtoLP(150)));
+      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(200), getMapMode().DPtoLP(200)));
 
       this.setBorder(new MarginBorder(getMapMode().DPtoLP(2), getMapMode().DPtoLP(2), getMapMode()
           .DPtoLP(2), getMapMode().DPtoLP(2)));

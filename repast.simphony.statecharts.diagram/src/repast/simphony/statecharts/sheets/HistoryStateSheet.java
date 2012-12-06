@@ -27,8 +27,8 @@ public class HistoryStateSheet extends Composite {
   private Button btnShallow;
   private LanguageButtonsGroup buttonGroup;
 
-  public HistoryStateSheet(FormToolkit toolkit, Composite parent, int style) {
-    super(parent, style);
+  public HistoryStateSheet(FormToolkit toolkit, Composite parent) {
+    super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
     GridLayout gridLayout = new GridLayout(3, false);
@@ -139,6 +139,6 @@ public class HistoryStateSheet extends Composite {
             EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
                 StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 
-    buttonGroup.bindModel(context, eObject);
+    buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }
 }

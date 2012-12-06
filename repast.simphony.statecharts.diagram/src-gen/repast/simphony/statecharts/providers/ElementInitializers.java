@@ -1,5 +1,7 @@
 package repast.simphony.statecharts.providers;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import repast.simphony.statecharts.expressions.StatechartAbstractExpression;
 import repast.simphony.statecharts.expressions.StatechartOCLFactory;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
@@ -29,6 +31,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_State_2003(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_State_2003(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -41,6 +45,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_CompositeState_2004(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_CompositeState_2004(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -59,6 +65,8 @@ public class ElementInitializers {
       instance.setType((PseudoStateTypes) value_0);
       Object value_1 = id_PseudoState_2005(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_PseudoState_2005(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -77,6 +85,8 @@ public class ElementInitializers {
       instance.setType((PseudoStateTypes) value_0);
       Object value_1 = id_PseudoState_2006(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_PseudoState_2006(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -106,6 +116,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_FinalState_2008(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_FinalState_2008(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -118,6 +130,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_State_3001(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_State_3001(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -130,6 +144,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_CompositeState_3002(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_CompositeState_3002(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -148,6 +164,8 @@ public class ElementInitializers {
       instance.setType((PseudoStateTypes) value_0);
       Object value_1 = id_PseudoState_3003(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_PseudoState_3003(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -166,6 +184,8 @@ public class ElementInitializers {
       instance.setType((PseudoStateTypes) value_0);
       Object value_1 = id_PseudoState_3006(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_PseudoState_3006(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -178,6 +198,8 @@ public class ElementInitializers {
     try {
       Object value_0 = id_FinalState_3007(instance);
       instance.setId((String) value_0);
+      Object value_1 = uuid_FinalState_3007(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -191,6 +213,8 @@ public class ElementInitializers {
       instance.setShallow(true);
       Object value_1 = id_History_3008(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_History_3008(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -204,6 +228,8 @@ public class ElementInitializers {
       instance.setShallow(false);
       Object value_1 = id_History_3009(instance);
       instance.setId((String) value_1);
+      Object value_2 = uuid_History_3009(instance);
+      instance.setUuid((String) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -216,6 +242,8 @@ public class ElementInitializers {
     try {
       Object value_0 = ID_Transition_4001(instance);
       instance.setID((String) value_0);
+      Object value_1 = uuid_Transition_4001(instance);
+      instance.setUuid((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -236,6 +264,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_State_2003(State self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_CompositeState_2004(CompositeState self) {
     try {
       return "Composite State " + StatechartsModelUtil.getNextID(self);
@@ -243,6 +278,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_CompositeState_2004(CompositeState self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**
@@ -260,6 +302,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_PseudoState_2005(PseudoState self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_PseudoState_2006(PseudoState self) {
     try {
       return "Choice " + StatechartsModelUtil.getNextID(self);
@@ -267,6 +316,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_PseudoState_2006(PseudoState self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**
@@ -284,6 +340,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_FinalState_2008(FinalState self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_State_3001(State self) {
     try {
       return "State " + StatechartsModelUtil.getNextID(self);
@@ -291,6 +354,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_State_3001(State self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**
@@ -308,6 +378,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_CompositeState_3002(CompositeState self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_PseudoState_3003(PseudoState self) {
     try {
       return "Initial State Pointer " + StatechartsModelUtil.getNextID(self);
@@ -315,6 +392,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_PseudoState_3003(PseudoState self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**
@@ -332,6 +416,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_PseudoState_3006(PseudoState self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_FinalState_3007(FinalState self) {
     try {
       return "Final State " + StatechartsModelUtil.getNextID(self);
@@ -339,6 +430,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_FinalState_3007(FinalState self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**
@@ -356,6 +454,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_History_3008(History self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_History_3009(History self) {
     try {
       return "Deep History " + StatechartsModelUtil.getNextID(self);
@@ -368,6 +473,13 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private String uuid_History_3009(History self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
   private String ID_Transition_4001(Transition self) {
     try {
       return "Transition " + StatechartsModelUtil.getNextID(self);
@@ -375,6 +487,13 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_Transition_4001(Transition self) {
+    return EcoreUtil.generateUUID();
   }
 
   /**

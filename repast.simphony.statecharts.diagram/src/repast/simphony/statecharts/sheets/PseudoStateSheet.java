@@ -21,8 +21,8 @@ public class PseudoStateSheet extends Composite {
   
   private Text idTxt;
   
-  public PseudoStateSheet(FormToolkit toolkit, Composite parent, int style) {
-    super(parent, style);
+  public PseudoStateSheet(FormToolkit toolkit, Composite parent) {
+    super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
     setLayout(new GridLayout(2, false));

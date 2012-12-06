@@ -27,8 +27,8 @@ public class StateSheet extends Composite {
   private Text onExitTxt;
   private LanguageButtonsGroup buttonGroup;
 
-  public StateSheet(FormToolkit toolkit, Composite parent, int style) {
-    super(parent, style);
+  public StateSheet(FormToolkit toolkit, Composite parent) {
+    super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
     setLayout(new GridLayout(3, false));
@@ -155,6 +155,6 @@ public class StateSheet extends Composite {
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
     
-    buttonGroup.bindModel(context, eObject);
+    buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }
 }

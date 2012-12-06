@@ -227,6 +227,13 @@
                tab="property.tab.domain">
             <input type="repast.simphony.statecharts.edit.parts.StateMachineEditPart"/>
          </propertySection>    
+         
+         <propertySection
+               class="repast.simphony.statecharts.sheets.TransitionPropertySection"
+               id="property.section.domain.transition"
+               tab="property.tab.domain">
+            <input type="repast.simphony.statecharts.edit.parts.TransitionEditPart"/>
+         </propertySection>    
       
           <propertySection
                class="repast.simphony.statecharts.sheets.HistoryStatePropertySection"
