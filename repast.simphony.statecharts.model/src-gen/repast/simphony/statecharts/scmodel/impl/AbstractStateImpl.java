@@ -24,6 +24,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnEnter <em>On Enter</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnExit <em>On Exit</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getLanguage <em>Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getUuid <em>Uuid</em>}</li>
  * </ul>
  * </p>
  *
@@ -109,6 +110,26 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * @ordered
    */
   protected LanguageTypes language = LANGUAGE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUuid()
+   * @generated
+   * @ordered
+   */
+  protected static final String UUID_EDEFAULT = "";
+
+  /**
+   * The cached value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUuid()
+   * @generated
+   * @ordered
+   */
+  protected String uuid = UUID_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -218,6 +239,27 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getUuid() {
+    return uuid;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setUuid(String newUuid) {
+    String oldUuid = uuid;
+    uuid = newUuid;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__UUID, oldUuid, uuid));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
@@ -229,6 +271,8 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return getOnExit();
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
         return getLanguage();
+      case StatechartPackage.ABSTRACT_STATE__UUID:
+        return getUuid();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -252,6 +296,9 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return;
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
         setLanguage((LanguageTypes)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__UUID:
+        setUuid((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -277,6 +324,9 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
         setLanguage(LANGUAGE_EDEFAULT);
         return;
+      case StatechartPackage.ABSTRACT_STATE__UUID:
+        setUuid(UUID_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -297,6 +347,8 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return ON_EXIT_EDEFAULT == null ? onExit != null : !ON_EXIT_EDEFAULT.equals(onExit);
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
         return language != LANGUAGE_EDEFAULT;
+      case StatechartPackage.ABSTRACT_STATE__UUID:
+        return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
     }
     return super.eIsSet(featureID);
   }
@@ -319,6 +371,8 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
     result.append(onExit);
     result.append(", language: ");
     result.append(language);
+    result.append(", uuid: ");
+    result.append(uuid);
     result.append(')');
     return result.toString();
   }

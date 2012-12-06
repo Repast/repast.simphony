@@ -25,6 +25,15 @@
               body="StatechartsModelUtil.getNextID()"
               language="java"/>
         </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
       </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
@@ -55,6 +64,15 @@
               href="statechart.ecore#//AbstractState/id"/>
           <value
               body="&quot;Composite State &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
               language="java"/>
         </initializers>
       </domainInitializer>
@@ -130,6 +148,15 @@
                   body="&quot;History &quot; + StatechartsModelUtil.getNextID()"
                   language="java"/>
             </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/uuid"/>
+              <value
+                  body="EcoreUtil.generateUUID();"
+                  language="java"/>
+            </initializers>
           </domainInitializer>
           <tool
               xsi:type="gmftool:CreationTool"
@@ -165,6 +192,15 @@
                   href="statechart.ecore#//AbstractState/id"/>
               <value
                   body="&quot;History &quot; + StatechartsModelUtil.getNextID()"
+                  language="java"/>
+            </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/uuid"/>
+              <value
+                  body="EcoreUtil.generateUUID();"
                   language="java"/>
             </initializers>
           </domainInitializer>
@@ -209,6 +245,15 @@
               body="&quot;Initial State Pointer &quot; + StatechartsModelUtil.getNextID()"
               language="java"/>
         </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
       </domainInitializer>
       <tool
           xsi:type="gmftool:CreationTool"
@@ -242,6 +287,15 @@
               href="statechart.ecore#//AbstractState/id"/>
           <value
               body="&quot;Choice &quot; + StatechartsModelUtil.getNextID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
               language="java"/>
         </initializers>
       </domainInitializer>
@@ -304,6 +358,15 @@
               body="&quot;Final State &quot; + StatechartsModelUtil.getNextID()"
               language="java"/>
         </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
       </domainInitializer>
       <tool
           xsi:type="gmftool:CreationTool"
@@ -324,6 +387,15 @@
             href="statechart.ecore#//Transition/ID"/>
         <value
             body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"
+            language="java"/>
+      </initializers>
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="statechart.ecore#//Transition/uuid"/>
+        <value
+            body="EcoreUtil.generateUUID()"
             language="java"/>
       </initializers>
     </domainInitializer>

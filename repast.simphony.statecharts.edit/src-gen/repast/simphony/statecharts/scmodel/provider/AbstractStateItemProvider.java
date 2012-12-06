@@ -64,6 +64,7 @@ public class AbstractStateItemProvider
       addOnEnterPropertyDescriptor(object);
       addOnExitPropertyDescriptor(object);
       addLanguagePropertyDescriptor(object);
+      addUuidPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -157,6 +158,28 @@ public class AbstractStateItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Uuid feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUuidPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_uuid_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_uuid_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__UUID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns AbstractState.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -197,6 +220,7 @@ public class AbstractStateItemProvider
       case StatechartPackage.ABSTRACT_STATE__ON_ENTER:
       case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
+      case StatechartPackage.ABSTRACT_STATE__UUID:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

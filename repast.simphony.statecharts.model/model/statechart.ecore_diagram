@@ -39,7 +39,7 @@
       <styles xmi:type="notation:FilteringStyle" xmi:id="_rvHUeC9mEeKhRft3018vxw"/>
     </children>
     <element xmi:type="ecore:EClass" href="statechart.ecore#//StateMachine"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rvERIS9mEeKhRft3018vxw" x="387" y="27"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rvERIS9mEeKhRft3018vxw" x="387" y="18"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_8O7V0C9mEeKhRft3018vxw" type="2001" fontName="Lucida Grande" fontHeight="10">
     <children xmi:type="notation:DecorationNode" xmi:id="_8O7V0i9mEeKhRft3018vxw" type="5001"/>
@@ -103,11 +103,11 @@
         <layoutConstraint xmi:type="notation:Location" xmi:id="_i_3zMTspEeKFE9JigeYQog"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_nJod4DspEeKFE9JigeYQog" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerCondition"/>
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerConditionCode"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_nJod4TspEeKFE9JigeYQog"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_rIOaYDspEeKFE9JigeYQog" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerConditionLanguage"/>
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerCodeLanguage"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_rIOaYTspEeKFE9JigeYQog"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_yEnkwDspEeKFE9JigeYQog" type="3001">
@@ -118,16 +118,12 @@
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/messageCheckerClass"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_161oYTspEeKFE9JigeYQog"/>
       </children>
-      <children xmi:type="notation:Node" xmi:id="__GQPEDspEeKFE9JigeYQog" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/messageCheckerObj"/>
-        <layoutConstraint xmi:type="notation:Location" xmi:id="__GQPETspEeKFE9JigeYQog"/>
-      </children>
       <children xmi:type="notation:Node" xmi:id="_DJ_xUDsqEeKFE9JigeYQog" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerProbability"/>
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerProbCode"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_DJ_xUTsqEeKFE9JigeYQog"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_K_j_YDsqEeKFE9JigeYQog" type="3001">
-        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/messageCheckerCondition"/>
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/messageCheckerCode"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_K_j_YTsqEeKFE9JigeYQog"/>
       </children>
       <children xmi:type="notation:Node" xmi:id="_NQ1ecDsqEeKFE9JigeYQog" type="3001">
@@ -137,6 +133,22 @@
       <children xmi:type="notation:Node" xmi:id="_wTlGwD1fEeKKxrXsLEWJQQ" type="3001">
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/ID"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_wTlGwT1fEeKKxrXsLEWJQQ"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_87orAD4xEeKvOLN31Rt6mg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/guard"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_87orAT4xEeKvOLN31Rt6mg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_5moNAD-wEeKqcdTPsdilrg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerTimedCode"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_5moNAT-wEeKqcdTPsdilrg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_9hSrwD-wEeKqcdTPsdilrg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/triggerExpRateCode"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_9hSrwT-wEeKqcdTPsdilrg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_2Eyq4D_lEeKqcdTPsdilrg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//Transition/uuid"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_2Eyq4T_lEeKqcdTPsdilrg"/>
       </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_S6r8FC9nEeKhRft3018vxw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_S6r8FS9nEeKhRft3018vxw"/>
@@ -188,6 +200,10 @@
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//AbstractState/language"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_rSHysTsoEeKFE9JigeYQog"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_xa8nYD_kEeKqcdTPsdilrg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//AbstractState/uuid"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_xa8nYT_kEeKqcdTPsdilrg"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_g04WQjA8EeKcldlxofIQtg"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_g04WQzA8EeKcldlxofIQtg"/>
     </children>
@@ -200,7 +216,7 @@
       <styles xmi:type="notation:FilteringStyle" xmi:id="_g04WSTA8EeKcldlxofIQtg"/>
     </children>
     <element xmi:type="ecore:EClass" href="statechart.ecore#//AbstractState"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_g03vMTA8EeKcldlxofIQtg" x="468" y="171"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_g03vMTA8EeKcldlxofIQtg" x="459" y="198"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_9dEIQDQZEeKdffyc71kkMw" type="2005" fontName="Lucida Grande" fontHeight="10">
     <children xmi:type="notation:DecorationNode" xmi:id="_9dEvUDQZEeKdffyc71kkMw" type="5005"/>
