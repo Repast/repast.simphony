@@ -3,8 +3,6 @@ package repast.simphony.statecharts;
 
 public interface StateChart<T> {
 	
-	public T getAgent();
-	
 	/**
 	 * Receive a message into the statechart queue.
 	 */

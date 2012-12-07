@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.collections15.ListUtils;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.SimUtilities;
 import cern.jet.random.Uniform;
@@ -531,11 +532,22 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private T agent;
 
-	public T getAgent() {
+	protected T getAgent() {
 		if (agent == null) {
 			throw new IllegalStateException("The agent was not set in: " + this);
 		}
 		return agent;
+	}
+	
+	Parameters params;
+	
+	protected Parameters getParams() {
+		if (params == null) {
+			RunEnvironment re = RunEnvironment.getInstance();
+			if (re != null)
+				params = re.getParameters();
+		}
+		return params;
 	}
 
 }

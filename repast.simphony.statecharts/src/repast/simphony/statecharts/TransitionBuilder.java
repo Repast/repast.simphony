@@ -1,5 +1,7 @@
 package repast.simphony.statecharts;
 
+import repast.simphony.parameter.Parameters;
+
 
 public class TransitionBuilder<T> {
 	public static <U> GuardCondition<U> createEmptyGuard() {
@@ -12,13 +14,13 @@ public class TransitionBuilder<T> {
 
 	private static class EmptyOnTransition<U> implements TransitionAction<U>{
 		@Override
-		public void action(U agent, Transition<U> transition) throws Exception {
+		public void action(U agent, Transition<U> transition, Parameters params) throws Exception {
 		}
 	}
 	private static class EmptyGuard<U> implements GuardCondition<U>{
 
 		@Override
-		public boolean condition(U agent, Transition<U> transition)
+		public boolean condition(U agent, Transition<U> transition, Parameters params)
 				throws Exception {
 			return true;
 		}

@@ -13,6 +13,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.parameter.Parameters;
 
 public class StateChartTest {
 
@@ -85,7 +86,7 @@ public class StateChartTest {
 			registerOnEnter(new StateAction<MyAgent1>() {
 
 				@Override
-				public void action(MyAgent1 agent, AbstractState<MyAgent1> state)
+				public void action(MyAgent1 agent, AbstractState<MyAgent1> state, Parameters params)
 						throws Exception {
 					MyState.this.tc.onEnter = true;
 
@@ -96,7 +97,7 @@ public class StateChartTest {
 			registerOnExit(new StateAction<MyAgent1>() {
 
 				@Override
-				public void action(MyAgent1 agent, AbstractState<MyAgent1> state)
+				public void action(MyAgent1 agent, AbstractState<MyAgent1> state, Parameters params)
 						throws Exception {
 					MyState.this.tc.onExit = true;
 				}
@@ -118,7 +119,7 @@ public class StateChartTest {
 
 				@Override
 				public void action(MyAgent1 agent,
-						Transition<MyAgent1> transition) throws Exception {
+						Transition<MyAgent1> transition, Parameters params) throws Exception {
 					MyTransition.this.tc.onEnter = true;
 					MyTransition.this.tc.onExit = true;
 				}
@@ -489,7 +490,7 @@ public class StateChartTest {
 
 						@Override
 						public boolean condition(MyAgent5 agent,
-								Transition<MyAgent5> transition)
+								Transition<MyAgent5> transition, Parameters params)
 								throws Exception {
 							return a.isTrue;
 						}
@@ -558,7 +559,7 @@ public class StateChartTest {
 			ConditionTriggerCondition<MyAgent6> state2Condition = new ConditionTriggerCondition<MyAgent6>() {
 				@Override
 				public boolean condition(MyAgent6 agent,
-						Transition<MyAgent6> transition) {
+						Transition<MyAgent6> transition, Parameters params) {
 					return agent.value > 0.75;
 				}
 			};
@@ -566,7 +567,7 @@ public class StateChartTest {
 
 				@Override
 				public boolean condition(MyAgent6 agent,
-						Transition<MyAgent6> transition) {
+						Transition<MyAgent6> transition, Parameters params) {
 					return agent.value > 0.25;
 				}
 
@@ -700,7 +701,7 @@ public class StateChartTest {
 			ConditionTriggerCondition<MyAgent6b> state2Condition = new ConditionTriggerCondition<MyAgent6b>() {
 				@Override
 				public boolean condition(MyAgent6b agent,
-						Transition<MyAgent6b> transition) {
+						Transition<MyAgent6b> transition, Parameters params) {
 					return agent.value > 0.75;
 				}
 			};
@@ -708,7 +709,7 @@ public class StateChartTest {
 
 				@Override
 				public boolean condition(MyAgent6b agent,
-						Transition<MyAgent6b> transition) {
+						Transition<MyAgent6b> transition, Parameters params) {
 					return agent.value > 0.25;
 				}
 
@@ -841,7 +842,7 @@ public class StateChartTest {
 
 				@Override
 				public void action(MyAgent7 agent,
-						Transition<MyAgent7> transition) throws Exception {
+						Transition<MyAgent7> transition, Parameters params) throws Exception {
 					agent.value++;
 				}
 				
@@ -933,7 +934,7 @@ public class StateChartTest {
 			TransitionAction<MyAgent7b> onTransition1 = new TransitionAction<StateChartTest.MyAgent7b>() {
 				
 				@Override
-				public void action(MyAgent7b agent, Transition<MyAgent7b> transition)
+				public void action(MyAgent7b agent, Transition<MyAgent7b> transition, Parameters params)
 						throws Exception {
 					agent.value++;
 				}
@@ -955,7 +956,7 @@ public class StateChartTest {
 			TransitionAction<MyAgent7b> onTransition2 = new TransitionAction<MyAgent7b>() {
 
 				@Override
-				public void action(MyAgent7b agent, Transition<MyAgent7b> transition)
+				public void action(MyAgent7b agent, Transition<MyAgent7b> transition, Parameters params)
 						throws Exception {
 					agent.value *= 2;
 				}

@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import repast.simphony.statecharts.TriggerTests.MyMessageEventListener;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 import simphony.util.messages.MessageEvent;
 import simphony.util.messages.MessageEventListener;
@@ -125,7 +125,7 @@ public class MessageCheckerTests {
 
 					@Override
 					public boolean isTrue(Object agent,
-							Transition<Object> transition, D message) throws Exception {
+							Transition<Object> transition, D message, Parameters params) throws Exception {
 
 						return message.d == 3 ? true : false;
 
@@ -143,7 +143,7 @@ public class MessageCheckerTests {
 
 					@Override
 					public boolean isTrue(Object agent,
-							Transition<Object> transition, Object message) throws Exception {
+							Transition<Object> transition, Object message, Parameters params) throws Exception {
 						throw new Exception();
 					}
 

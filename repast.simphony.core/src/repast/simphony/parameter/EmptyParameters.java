@@ -136,4 +136,29 @@ public class EmptyParameters implements Parameters {
 			return 0;
 		}
 	}
+
+
+	public Double getDouble(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of double type.");
+	}
+
+	public Integer getInteger(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of integer type.");
+	}
+
+	public Boolean getBoolean(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of boolean type.");
+	}
+
+	public String getString(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of String type.");
+	}
+
+	public Long getLong(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of long type.");
+	}
+
+	public Float getFloat(String paramName) {
+		throw new IllegalParameterException("Parameter '" + paramName + "' not of float type.");
+	}
 }
