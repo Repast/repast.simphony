@@ -52,15 +52,18 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/defaultTransition"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTime"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerCondition"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerConditionLanguage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerConditionCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerCodeLanguage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerClass"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerObj"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbability"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCondition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCode"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/ID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/guard"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTimedCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerExpRateCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/uuid"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//CompositeState">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//CompositeState/children"/>
@@ -70,6 +73,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onEnter"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onExit"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/language"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/uuid"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//PseudoState">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//PseudoState/type"/>

@@ -36,7 +36,7 @@ public enum LanguageTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  GROOVY(0, "groovy", "groovy"),
+  GROOVY(1, "groovy", "groovy"),
 
   /**
    * The '<em><b>Relogo</b></em>' literal object.
@@ -46,7 +46,7 @@ public enum LanguageTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  RELOGO(0, "relogo", "relogo");
+  RELOGO(2, "relogo", "relogo");
 
   /**
    * The '<em><b>Java</b></em>' literal value.
@@ -76,7 +76,7 @@ public enum LanguageTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int GROOVY_VALUE = 0;
+  public static final int GROOVY_VALUE = 1;
 
   /**
    * The '<em><b>Relogo</b></em>' literal value.
@@ -91,7 +91,7 @@ public enum LanguageTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int RELOGO_VALUE = 0;
+  public static final int RELOGO_VALUE = 2;
 
   /**
    * An array of all the '<em><b>Language Types</b></em>' enumerators.
@@ -155,6 +155,8 @@ public enum LanguageTypes implements Enumerator {
   public static LanguageTypes get(int value) {
     switch (value) {
       case JAVA_VALUE: return JAVA;
+      case GROOVY_VALUE: return GROOVY;
+      case RELOGO_VALUE: return RELOGO;
     }
     return null;
   }

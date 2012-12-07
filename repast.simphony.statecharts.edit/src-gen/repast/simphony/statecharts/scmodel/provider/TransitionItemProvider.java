@@ -68,15 +68,18 @@ public class TransitionItemProvider
       addDefaultTransitionPropertyDescriptor(object);
       addTriggerTypePropertyDescriptor(object);
       addTriggerTimePropertyDescriptor(object);
-      addTriggerConditionPropertyDescriptor(object);
-      addTriggerConditionLanguagePropertyDescriptor(object);
+      addTriggerConditionCodePropertyDescriptor(object);
+      addTriggerCodeLanguagePropertyDescriptor(object);
       addMessageCheckerTypePropertyDescriptor(object);
       addMessageCheckerClassPropertyDescriptor(object);
-      addMessageCheckerObjPropertyDescriptor(object);
-      addTriggerProbabilityPropertyDescriptor(object);
-      addMessageCheckerConditionPropertyDescriptor(object);
+      addTriggerProbCodePropertyDescriptor(object);
+      addMessageCheckerCodePropertyDescriptor(object);
       addMessageCheckerConditionLanguagePropertyDescriptor(object);
       addIDPropertyDescriptor(object);
+      addGuardPropertyDescriptor(object);
+      addTriggerTimedCodePropertyDescriptor(object);
+      addTriggerExpRateCodePropertyDescriptor(object);
+      addUuidPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -258,19 +261,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Trigger Condition feature.
+   * This adds a property descriptor for the Trigger Condition Code feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addTriggerConditionPropertyDescriptor(Object object) {
+  protected void addTriggerConditionCodePropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_triggerCondition_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerCondition_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION,
+         getString("_UI_Transition_triggerConditionCode_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerConditionCode_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE,
          true,
          false,
          false,
@@ -280,19 +283,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Trigger Condition Language feature.
+   * This adds a property descriptor for the Trigger Code Language feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addTriggerConditionLanguagePropertyDescriptor(Object object) {
+  protected void addTriggerCodeLanguagePropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_triggerConditionLanguage_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerConditionLanguage_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_LANGUAGE,
+         getString("_UI_Transition_triggerCodeLanguage_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerCodeLanguage_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_CODE_LANGUAGE,
          true,
          false,
          false,
@@ -346,19 +349,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Message Checker Obj feature.
+   * This adds a property descriptor for the Trigger Prob Code feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addMessageCheckerObjPropertyDescriptor(Object object) {
+  protected void addTriggerProbCodePropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_messageCheckerObj_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_messageCheckerObj_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_OBJ,
+         getString("_UI_Transition_triggerProbCode_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerProbCode_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE,
          true,
          false,
          false,
@@ -368,41 +371,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Trigger Probability feature.
+   * This adds a property descriptor for the Message Checker Code feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addTriggerProbabilityPropertyDescriptor(Object object) {
+  protected void addMessageCheckerCodePropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_triggerProbability_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerProbability_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__TRIGGER_PROBABILITY,
-         true,
-         false,
-         false,
-         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
-         null,
-         null));
-  }
-
-  /**
-   * This adds a property descriptor for the Message Checker Condition feature.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  protected void addMessageCheckerConditionPropertyDescriptor(Object object) {
-    itemPropertyDescriptors.add
-      (createItemPropertyDescriptor
-        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-         getResourceLocator(),
-         getString("_UI_Transition_messageCheckerCondition_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_messageCheckerCondition_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CONDITION,
+         getString("_UI_Transition_messageCheckerCode_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_messageCheckerCode_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE,
          true,
          false,
          false,
@@ -456,6 +437,94 @@ public class TransitionItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Guard feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addGuardPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_guard_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_guard_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__GUARD,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Trigger Timed Code feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addTriggerTimedCodePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_triggerTimedCode_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerTimedCode_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Trigger Exp Rate Code feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addTriggerExpRateCodePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_triggerExpRateCode_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerExpRateCode_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Uuid feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUuidPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_uuid_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_uuid_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__UUID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns Transition.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -498,15 +567,18 @@ public class TransitionItemProvider
       case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
       case StatechartPackage.TRANSITION__TRIGGER_TYPE:
       case StatechartPackage.TRANSITION__TRIGGER_TIME:
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION:
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_LANGUAGE:
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
+      case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
-      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_OBJ:
-      case StatechartPackage.TRANSITION__TRIGGER_PROBABILITY:
-      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION:
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
       case StatechartPackage.TRANSITION__ID:
+      case StatechartPackage.TRANSITION__GUARD:
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
+      case StatechartPackage.TRANSITION__UUID:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

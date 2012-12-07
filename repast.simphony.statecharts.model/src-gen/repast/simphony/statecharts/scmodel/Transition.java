@@ -20,15 +20,18 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#isDefaultTransition <em>Default Transition</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerType <em>Trigger Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTime <em>Trigger Time</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCondition <em>Trigger Condition</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage <em>Trigger Condition Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCode <em>Trigger Condition Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCodeLanguage <em>Trigger Code Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType <em>Message Checker Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass <em>Message Checker Class</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj <em>Message Checker Obj</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbability <em>Trigger Probability</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition <em>Message Checker Condition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getGuard <em>Guard</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCode <em>Trigger Timed Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getUuid <em>Uuid</em>}</li>
  * </ul>
  * </p>
  *
@@ -252,59 +255,59 @@ public interface Transition extends EObject {
   void setTriggerTime(double value);
 
   /**
-   * Returns the value of the '<em><b>Trigger Condition</b></em>' attribute.
+   * Returns the value of the '<em><b>Trigger Condition Code</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger Condition</em>' attribute isn't clear,
+   * If the meaning of the '<em>Trigger Condition Code</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger Condition</em>' attribute.
-   * @see #setTriggerCondition(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerCondition()
+   * @return the value of the '<em>Trigger Condition Code</em>' attribute.
+   * @see #setTriggerConditionCode(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerConditionCode()
    * @model
    * @generated
    */
-  String getTriggerCondition();
+  String getTriggerConditionCode();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCondition <em>Trigger Condition</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCode <em>Trigger Condition Code</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger Condition</em>' attribute.
-   * @see #getTriggerCondition()
+   * @param value the new value of the '<em>Trigger Condition Code</em>' attribute.
+   * @see #getTriggerConditionCode()
    * @generated
    */
-  void setTriggerCondition(String value);
+  void setTriggerConditionCode(String value);
 
   /**
-   * Returns the value of the '<em><b>Trigger Condition Language</b></em>' attribute.
+   * Returns the value of the '<em><b>Trigger Code Language</b></em>' attribute.
    * The literals are from the enumeration {@link repast.simphony.statecharts.scmodel.LanguageTypes}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger Condition Language</em>' attribute isn't clear,
+   * If the meaning of the '<em>Trigger Code Language</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger Condition Language</em>' attribute.
+   * @return the value of the '<em>Trigger Code Language</em>' attribute.
    * @see repast.simphony.statecharts.scmodel.LanguageTypes
-   * @see #setTriggerConditionLanguage(LanguageTypes)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerConditionLanguage()
+   * @see #setTriggerCodeLanguage(LanguageTypes)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerCodeLanguage()
    * @model
    * @generated
    */
-  LanguageTypes getTriggerConditionLanguage();
+  LanguageTypes getTriggerCodeLanguage();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionLanguage <em>Trigger Condition Language</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCodeLanguage <em>Trigger Code Language</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger Condition Language</em>' attribute.
+   * @param value the new value of the '<em>Trigger Code Language</em>' attribute.
    * @see repast.simphony.statecharts.scmodel.LanguageTypes
-   * @see #getTriggerConditionLanguage()
+   * @see #getTriggerCodeLanguage()
    * @generated
    */
-  void setTriggerConditionLanguage(LanguageTypes value);
+  void setTriggerCodeLanguage(LanguageTypes value);
 
   /**
    * Returns the value of the '<em><b>Message Checker Type</b></em>' attribute.
@@ -362,82 +365,56 @@ public interface Transition extends EObject {
   void setMessageCheckerClass(String value);
 
   /**
-   * Returns the value of the '<em><b>Message Checker Obj</b></em>' attribute.
+   * Returns the value of the '<em><b>Trigger Prob Code</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Message Checker Obj</em>' attribute isn't clear,
+   * If the meaning of the '<em>Trigger Prob Code</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Message Checker Obj</em>' attribute.
-   * @see #setMessageCheckerObj(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerObj()
+   * @return the value of the '<em>Trigger Prob Code</em>' attribute.
+   * @see #setTriggerProbCode(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerProbCode()
    * @model
    * @generated
    */
-  String getMessageCheckerObj();
+  String getTriggerProbCode();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerObj <em>Message Checker Obj</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCode <em>Trigger Prob Code</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Message Checker Obj</em>' attribute.
-   * @see #getMessageCheckerObj()
+   * @param value the new value of the '<em>Trigger Prob Code</em>' attribute.
+   * @see #getTriggerProbCode()
    * @generated
    */
-  void setMessageCheckerObj(String value);
+  void setTriggerProbCode(String value);
 
   /**
-   * Returns the value of the '<em><b>Trigger Probability</b></em>' attribute.
+   * Returns the value of the '<em><b>Message Checker Code</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger Probability</em>' attribute isn't clear,
+   * If the meaning of the '<em>Message Checker Code</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger Probability</em>' attribute.
-   * @see #setTriggerProbability(double)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerProbability()
+   * @return the value of the '<em>Message Checker Code</em>' attribute.
+   * @see #setMessageCheckerCode(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerCode()
    * @model
    * @generated
    */
-  double getTriggerProbability();
+  String getMessageCheckerCode();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbability <em>Trigger Probability</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger Probability</em>' attribute.
-   * @see #getTriggerProbability()
+   * @param value the new value of the '<em>Message Checker Code</em>' attribute.
+   * @see #getMessageCheckerCode()
    * @generated
    */
-  void setTriggerProbability(double value);
-
-  /**
-   * Returns the value of the '<em><b>Message Checker Condition</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Message Checker Condition</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Message Checker Condition</em>' attribute.
-   * @see #setMessageCheckerCondition(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_MessageCheckerCondition()
-   * @model
-   * @generated
-   */
-  String getMessageCheckerCondition();
-
-  /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCondition <em>Message Checker Condition</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Message Checker Condition</em>' attribute.
-   * @see #getMessageCheckerCondition()
-   * @generated
-   */
-  void setMessageCheckerCondition(String value);
+  void setMessageCheckerCode(String value);
 
   /**
    * Returns the value of the '<em><b>Message Checker Condition Language</b></em>' attribute.
@@ -493,5 +470,109 @@ public interface Transition extends EObject {
    * @generated
    */
   void setID(String value);
+
+  /**
+   * Returns the value of the '<em><b>Guard</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Guard</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Guard</em>' attribute.
+   * @see #setGuard(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_Guard()
+   * @model
+   * @generated
+   */
+  String getGuard();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getGuard <em>Guard</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Guard</em>' attribute.
+   * @see #getGuard()
+   * @generated
+   */
+  void setGuard(String value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Timed Code</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Timed Code</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Timed Code</em>' attribute.
+   * @see #setTriggerTimedCode(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerTimedCode()
+   * @model
+   * @generated
+   */
+  String getTriggerTimedCode();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCode <em>Trigger Timed Code</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Timed Code</em>' attribute.
+   * @see #getTriggerTimedCode()
+   * @generated
+   */
+  void setTriggerTimedCode(String value);
+
+  /**
+   * Returns the value of the '<em><b>Trigger Exp Rate Code</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Trigger Exp Rate Code</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Trigger Exp Rate Code</em>' attribute.
+   * @see #setTriggerExpRateCode(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerExpRateCode()
+   * @model
+   * @generated
+   */
+  String getTriggerExpRateCode();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Trigger Exp Rate Code</em>' attribute.
+   * @see #getTriggerExpRateCode()
+   * @generated
+   */
+  void setTriggerExpRateCode(String value);
+
+  /**
+   * Returns the value of the '<em><b>Uuid</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Uuid</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Uuid</em>' attribute.
+   * @see #setUuid(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_Uuid()
+   * @model
+   * @generated
+   */
+  String getUuid();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getUuid <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Uuid</em>' attribute.
+   * @see #getUuid()
+   * @generated
+   */
+  void setUuid(String value);
 
 } // Transition

@@ -1,7 +1,5 @@
 package repast.simphony.statecharts.sheets;
 
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -10,9 +8,6 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
@@ -23,8 +18,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import repast.simphony.statecharts.scmodel.AbstractState;
-import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class StateSheet extends Composite {
@@ -32,12 +25,10 @@ public class StateSheet extends Composite {
   private Text idTxt;
   private Text onEnterTxt;
   private Text onExitTxt;
-  private Button btnJava, btnRelogo, btnGroovy;
+  private LanguageButtonsGroup buttonGroup;
 
-  private LanguageTypes selectedType;
-
-  public StateSheet(FormToolkit toolkit, Composite parent, int style) {
-    super(parent, style);
+  public StateSheet(FormToolkit toolkit, Composite parent) {
+    super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
     setLayout(new GridLayout(3, false));
@@ -88,17 +79,19 @@ public class StateSheet extends Composite {
     lblLanguage.setText("Language:");
     new Label(composite_1, SWT.NONE);
 
-    btnJava = new Button(composite_1, SWT.RADIO);
+    Button btnJava = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnJava, true, true);
     btnJava.setText("Java");
 
-    btnRelogo = new Button(composite_1, SWT.RADIO);
+    Button btnRelogo = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnRelogo, true, true);
     btnRelogo.setText("ReLogo");
 
-    btnGroovy = new Button(composite_1, SWT.RADIO);
+    Button btnGroovy = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnGroovy, true, true);
     btnGroovy.setText("Groovy");
+    
+    buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
 
     Label lblOnEnter = new Label(composite, SWT.NONE);
     toolkit.adapt(lblOnEnter, true, true);
@@ -140,31 +133,9 @@ public class StateSheet extends Composite {
       }
     });
 
-    SelectionListener listener = new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        if (e.getSource().equals(btnJava))
-          selectedType = LanguageTypes.JAVA;
-        else if (e.getSource().equals(btnRelogo))
-          selectedType = LanguageTypes.RELOGO;
-        else if (e.getSource().equals(btnGroovy))
-          selectedType = LanguageTypes.GROOVY;
-
-        System.out.println("type selected: " + selectedType);
-      }
-    };
-
-    btnJava.addSelectionListener(listener);
-    btnRelogo.addSelectionListener(listener);
-    btnGroovy.addSelectionListener(listener);
   }
 
-  private void initLanguageButton() {
-    btnJava.setSelection(selectedType.equals(LanguageTypes.JAVA));
-    btnRelogo.setSelection(selectedType.equals(LanguageTypes.RELOGO));
-    btnGroovy.setSelection(selectedType.equals(LanguageTypes.GROOVY));
-  }
-
+ 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
@@ -183,69 +154,7 @@ public class StateSheet extends Composite {
         WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(onExitTxt),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
-
-    selectedType = ((AbstractState) eObject).getLanguage();
-    initLanguageButton();
-
-    UpdateValueStrategy targetToModel = new UpdateValueStrategy();
-    BooleanToLanguageConverter converter = new BooleanToLanguageConverter();
-    targetToModel.setConverter(converter);
-
-    context.bindValue(
-        WidgetProperties.selection().observe(btnJava),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE).observe(eObject), targetToModel,
-        null);
-
-    context.bindValue(
-        WidgetProperties.selection().observe(btnGroovy),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE).observe(eObject), targetToModel,
-        null);
-
-    context.bindValue(
-        WidgetProperties.selection().observe(btnRelogo),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE).observe(eObject), targetToModel,
-        null);
-
-    /*
-     * FeaturePath onEnter = null, onExit = null; if (eObject instanceof
-     * CompositeState) { onEnter =
-     * FeaturePath.fromList(StatechartPackage.Literals
-     * .COMPOSITE_STATE__ON_ENTER, StatechartPackage.Literals.ACTION__CODE);
-     * onExit =
-     * FeaturePath.fromList(StatechartPackage.Literals.COMPOSITE_STATE__ON_EXIT,
-     * StatechartPackage.Literals.ACTION__CODE); } else { onEnter =
-     * FeaturePath.fromList(StatechartPackage.Literals.STATE__ON_ENTER,
-     * StatechartPackage.Literals.ACTION__CODE); onExit =
-     * FeaturePath.fromList(StatechartPackage.Literals.STATE__ON_EXIT,
-     * StatechartPackage.Literals.ACTION__CODE); }
-     * 
-     * context.bindValue(WidgetProperties.text(SWT.Modify).observe(onExitTxt),
-     * EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-     * onExit).observe(eObject));
-     * context.bindValue(WidgetProperties.text(SWT.Modify).observe(onEnterTxt),
-     * EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-     * onEnter).observe(eObject));
-     */
-  }
-
-  private class BooleanToLanguageConverter implements IConverter {
-
-    @Override
-    public Object getFromType() {
-      return Boolean.class;
-    }
-
-    @Override
-    public Object getToType() {
-      return LanguageTypes.class;
-    }
-
-    @Override
-    public Object convert(Object fromObject) {
-      return selectedType;
-    }
+    
+    buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }
 }

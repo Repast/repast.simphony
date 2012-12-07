@@ -28,18 +28,19 @@
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerType" eType="#//TriggerTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerCondition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionLanguage"
-        eType="#//LanguageTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerCodeLanguage" eType="#//LanguageTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerType" eType="#//MessageCheckerTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerObj" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbability" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerCondition"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerConditionLanguage"
         eType="#//LanguageTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="guard" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTimedCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerExpRateCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CompositeState" eSuperTypes="#//AbstractState">
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
@@ -50,6 +51,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="onEnter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="onExit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="language" eType="#//LanguageTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="PseudoStateTypes">
     <eLiterals name="initial"/>
@@ -64,21 +67,21 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="TriggerTypes">
     <eLiterals name="always"/>
-    <eLiterals name="timed"/>
-    <eLiterals name="exponential"/>
-    <eLiterals name="probability"/>
-    <eLiterals name="condition"/>
-    <eLiterals name="message"/>
+    <eLiterals name="timed" value="1"/>
+    <eLiterals name="exponential" value="4"/>
+    <eLiterals name="probability" value="3"/>
+    <eLiterals name="condition" value="2"/>
+    <eLiterals name="message" value="5"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="MessageCheckerTypes">
     <eLiterals name="conditional"/>
-    <eLiterals name="equals"/>
-    <eLiterals name="unconditional"/>
-    <eLiterals name="always"/>
+    <eLiterals name="equals" value="1"/>
+    <eLiterals name="unconditional" value="2"/>
+    <eLiterals name="always" value="3"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="LanguageTypes">
     <eLiterals name="java"/>
-    <eLiterals name="groovy"/>
-    <eLiterals name="relogo"/>
+    <eLiterals name="groovy" value="1"/>
+    <eLiterals name="relogo" value="2"/>
   </eClassifiers>
 </ecore:EPackage>

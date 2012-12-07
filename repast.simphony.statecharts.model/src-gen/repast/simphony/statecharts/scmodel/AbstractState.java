@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getOnEnter <em>On Enter</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExit <em>On Exit</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getLanguage <em>Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getUuid <em>Uuid</em>}</li>
  * </ul>
  * </p>
  *
@@ -130,5 +131,32 @@ public interface AbstractState extends EObject {
    * @generated
    */
   void setLanguage(LanguageTypes value);
+
+  /**
+   * Returns the value of the '<em><b>Uuid</b></em>' attribute.
+   * The default value is <code>""</code>.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Uuid</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Uuid</em>' attribute.
+   * @see #setUuid(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getAbstractState_Uuid()
+   * @model default=""
+   * @generated
+   */
+  String getUuid();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.AbstractState#getUuid <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Uuid</em>' attribute.
+   * @see #getUuid()
+   * @generated
+   */
+  void setUuid(String value);
 
 } // AbstractState

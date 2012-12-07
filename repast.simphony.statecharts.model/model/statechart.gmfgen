@@ -61,6 +61,12 @@
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.1">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
         </modelElementInitializer>
       </modelFacet>
       <labels
@@ -100,11 +106,11 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="CompositeStateFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CompositeStateFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RectangleFigure fFigureCompositeStateCompartmentRectangle; &#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureCompositeStateNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CompositeStateFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.GridLayout layoutThis = new org.eclipse.draw2d.GridLayout();&#xA;&#x9;layoutThis.numColumns = 1;&#xA;&#x9;layoutThis.makeColumnsEqualWidth = true;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(8)&#xA;, getMapMode().DPtoLP(8)&#xA;));&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(100)&#xA;, getMapMode().DPtoLP(150)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureCompositeStateNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureCompositeStateNameFigure.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureCompositeStateNameFigure);&#xA;&#xA;&#xA;&#xA;fFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.RectangleFigure();&#xA;&#xA;&#xA;&#xA;org.eclipse.draw2d.GridData constraintFFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.GridData();&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalIndent = 0;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessHorizontalSpace = true;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessVerticalSpace = true;&#xA;this.add(fFigureCompositeStateCompartmentRectangle, constraintFFigureCompositeStateCompartmentRectangle);&#xA;&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.draw2d.RectangleFigure getFigureCompositeStateCompartmentRectangle() {&#xA;&#x9;&#x9;return fFigureCompositeStateCompartmentRectangle;&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureCompositeStateNameFigure() {&#xA;&#x9;&#x9;return fFigureCompositeStateNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CompositeStateFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RectangleFigure fFigureCompositeStateCompartmentRectangle; &#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureCompositeStateNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CompositeStateFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.GridLayout layoutThis = new org.eclipse.draw2d.GridLayout();&#xA;&#x9;layoutThis.numColumns = 1;&#xA;&#x9;layoutThis.makeColumnsEqualWidth = true;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(8)&#xA;, getMapMode().DPtoLP(8)&#xA;));&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(200)&#xA;, getMapMode().DPtoLP(200)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureCompositeStateNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureCompositeStateNameFigure.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureCompositeStateNameFigure);&#xA;&#xA;&#xA;&#xA;fFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.RectangleFigure();&#xA;&#xA;&#xA;&#xA;org.eclipse.draw2d.GridData constraintFFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.GridData();&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalIndent = 0;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessHorizontalSpace = true;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessVerticalSpace = true;&#xA;this.add(fFigureCompositeStateCompartmentRectangle, constraintFFigureCompositeStateCompartmentRectangle);&#xA;&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.draw2d.RectangleFigure getFigureCompositeStateCompartmentRectangle() {&#xA;&#x9;&#x9;return fFigureCompositeStateCompartmentRectangle;&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureCompositeStateNameFigure() {&#xA;&#x9;&#x9;return fFigureCompositeStateNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:DefaultSizeAttributes"
-            width="100"
-            height="150"/>
+            width="200"
+            height="200"/>
       </viewmap>
       <modelFacet>
         <metaClass
@@ -117,9 +123,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.1">
+              value="//@expressionProviders/@providers.1/@expressions.2">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.3">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -185,9 +197,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.2">
+              value="//@expressionProviders/@providers.1/@expressions.4">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.5">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -235,9 +253,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.1/@expressions.6">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.7">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -278,9 +302,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.4">
+              value="//@expressionProviders/@providers.1/@expressions.8">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.9">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -328,9 +358,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.5">
+              value="//@expressionProviders/@providers.1/@expressions.10">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.11">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -378,9 +414,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.6">
+              value="//@expressionProviders/@providers.1/@expressions.12">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.13">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -418,6 +460,12 @@
               value="//@expressionProviders/@providers.1/@expressions.0">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.1">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -457,11 +505,11 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="CompositeStateFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CompositeStateFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RectangleFigure fFigureCompositeStateCompartmentRectangle; &#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureCompositeStateNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CompositeStateFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.GridLayout layoutThis = new org.eclipse.draw2d.GridLayout();&#xA;&#x9;layoutThis.numColumns = 1;&#xA;&#x9;layoutThis.makeColumnsEqualWidth = true;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(8)&#xA;, getMapMode().DPtoLP(8)&#xA;));&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(100)&#xA;, getMapMode().DPtoLP(150)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureCompositeStateNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureCompositeStateNameFigure.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureCompositeStateNameFigure);&#xA;&#xA;&#xA;&#xA;fFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.RectangleFigure();&#xA;&#xA;&#xA;&#xA;org.eclipse.draw2d.GridData constraintFFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.GridData();&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalIndent = 0;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessHorizontalSpace = true;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessVerticalSpace = true;&#xA;this.add(fFigureCompositeStateCompartmentRectangle, constraintFFigureCompositeStateCompartmentRectangle);&#xA;&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.draw2d.RectangleFigure getFigureCompositeStateCompartmentRectangle() {&#xA;&#x9;&#x9;return fFigureCompositeStateCompartmentRectangle;&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureCompositeStateNameFigure() {&#xA;&#x9;&#x9;return fFigureCompositeStateNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CompositeStateFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RectangleFigure fFigureCompositeStateCompartmentRectangle; &#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureCompositeStateNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CompositeStateFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.GridLayout layoutThis = new org.eclipse.draw2d.GridLayout();&#xA;&#x9;layoutThis.numColumns = 1;&#xA;&#x9;layoutThis.makeColumnsEqualWidth = true;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(8)&#xA;, getMapMode().DPtoLP(8)&#xA;));&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(200)&#xA;, getMapMode().DPtoLP(200)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;, getMapMode().DPtoLP(2)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureCompositeStateNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureCompositeStateNameFigure.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureCompositeStateNameFigure);&#xA;&#xA;&#xA;&#xA;fFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.RectangleFigure();&#xA;&#xA;&#xA;&#xA;org.eclipse.draw2d.GridData constraintFFigureCompositeStateCompartmentRectangle = new org.eclipse.draw2d.GridData();&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalAlignment = org.eclipse.draw2d.GridData.FILL;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalIndent = 0;&#xA;constraintFFigureCompositeStateCompartmentRectangle.horizontalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.verticalSpan = 1;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessHorizontalSpace = true;&#xA;constraintFFigureCompositeStateCompartmentRectangle.grabExcessVerticalSpace = true;&#xA;this.add(fFigureCompositeStateCompartmentRectangle, constraintFFigureCompositeStateCompartmentRectangle);&#xA;&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.draw2d.RectangleFigure getFigureCompositeStateCompartmentRectangle() {&#xA;&#x9;&#x9;return fFigureCompositeStateCompartmentRectangle;&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureCompositeStateNameFigure() {&#xA;&#x9;&#x9;return fFigureCompositeStateNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:DefaultSizeAttributes"
-            width="100"
-            height="150"/>
+            width="200"
+            height="200"/>
       </viewmap>
       <modelFacet>
         <metaClass
@@ -474,9 +522,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.1">
+              value="//@expressionProviders/@providers.1/@expressions.2">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.3">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -545,9 +599,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.2">
+              value="//@expressionProviders/@providers.1/@expressions.4">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.5">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -594,9 +654,15 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.1/@expressions.6">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.7">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -685,9 +751,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.4">
+              value="//@expressionProviders/@providers.1/@expressions.8">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.9">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -724,9 +796,15 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.7">
+              value="//@expressionProviders/@providers.1/@expressions.14">
             <feature
                 href="statechart.genmodel#//scmodel/Transition/ID"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.15">
+            <feature
+                href="statechart.genmodel#//scmodel/Transition/uuid"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1319,19 +1397,35 @@
       <expressions
           body="StatechartsModelUtil.getNextID()"/>
       <expressions
+          body="EcoreUtil.generateUUID()"/>
+      <expressions
           body="&quot;Composite State &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
       <expressions
           body="&quot;Initial State Pointer &quot; + StatechartsModelUtil.getNextID()"/>
       <expressions
+          body="EcoreUtil.generateUUID()"/>
+      <expressions
           body="&quot;Choice &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
       <expressions
           body="&quot;Final State &quot; + StatechartsModelUtil.getNextID()"/>
       <expressions
-          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+          body="EcoreUtil.generateUUID()"/>
       <expressions
           body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID();"/>
+      <expressions
+          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID();"/>
       <expressions
           body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">

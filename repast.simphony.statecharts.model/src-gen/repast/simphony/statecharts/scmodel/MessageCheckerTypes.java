@@ -36,7 +36,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  EQUALS(0, "equals", "equals"),
+  EQUALS(1, "equals", "equals"),
 
   /**
    * The '<em><b>Unconditional</b></em>' literal object.
@@ -46,7 +46,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  UNCONDITIONAL(0, "unconditional", "unconditional"),
+  UNCONDITIONAL(2, "unconditional", "unconditional"),
 
   /**
    * The '<em><b>Always</b></em>' literal object.
@@ -56,7 +56,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  ALWAYS(0, "always", "always");
+  ALWAYS(3, "always", "always");
 
   /**
    * The '<em><b>Conditional</b></em>' literal value.
@@ -86,7 +86,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int EQUALS_VALUE = 0;
+  public static final int EQUALS_VALUE = 1;
 
   /**
    * The '<em><b>Unconditional</b></em>' literal value.
@@ -101,7 +101,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int UNCONDITIONAL_VALUE = 0;
+  public static final int UNCONDITIONAL_VALUE = 2;
 
   /**
    * The '<em><b>Always</b></em>' literal value.
@@ -116,7 +116,7 @@ public enum MessageCheckerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int ALWAYS_VALUE = 0;
+  public static final int ALWAYS_VALUE = 3;
 
   /**
    * An array of all the '<em><b>Message Checker Types</b></em>' enumerators.
@@ -181,6 +181,9 @@ public enum MessageCheckerTypes implements Enumerator {
   public static MessageCheckerTypes get(int value) {
     switch (value) {
       case CONDITIONAL_VALUE: return CONDITIONAL;
+      case EQUALS_VALUE: return EQUALS;
+      case UNCONDITIONAL_VALUE: return UNCONDITIONAL;
+      case ALWAYS_VALUE: return ALWAYS;
     }
     return null;
   }

@@ -36,7 +36,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  TIMED(0, "timed", "timed"),
+  TIMED(1, "timed", "timed"),
 
   /**
    * The '<em><b>Exponential</b></em>' literal object.
@@ -46,7 +46,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  EXPONENTIAL(0, "exponential", "exponential"),
+  EXPONENTIAL(4, "exponential", "exponential"),
 
   /**
    * The '<em><b>Probability</b></em>' literal object.
@@ -56,7 +56,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  PROBABILITY(0, "probability", "probability"),
+  PROBABILITY(3, "probability", "probability"),
 
   /**
    * The '<em><b>Condition</b></em>' literal object.
@@ -66,7 +66,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  CONDITION(0, "condition", "condition"),
+  CONDITION(2, "condition", "condition"),
 
   /**
    * The '<em><b>Message</b></em>' literal object.
@@ -76,7 +76,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  MESSAGE(0, "message", "message");
+  MESSAGE(5, "message", "message");
 
   /**
    * The '<em><b>Always</b></em>' literal value.
@@ -106,7 +106,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int TIMED_VALUE = 0;
+  public static final int TIMED_VALUE = 1;
 
   /**
    * The '<em><b>Exponential</b></em>' literal value.
@@ -121,7 +121,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int EXPONENTIAL_VALUE = 0;
+  public static final int EXPONENTIAL_VALUE = 4;
 
   /**
    * The '<em><b>Probability</b></em>' literal value.
@@ -136,7 +136,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int PROBABILITY_VALUE = 0;
+  public static final int PROBABILITY_VALUE = 3;
 
   /**
    * The '<em><b>Condition</b></em>' literal value.
@@ -151,7 +151,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int CONDITION_VALUE = 0;
+  public static final int CONDITION_VALUE = 2;
 
   /**
    * The '<em><b>Message</b></em>' literal value.
@@ -166,7 +166,7 @@ public enum TriggerTypes implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int MESSAGE_VALUE = 0;
+  public static final int MESSAGE_VALUE = 5;
 
   /**
    * An array of all the '<em><b>Trigger Types</b></em>' enumerators.
@@ -233,6 +233,11 @@ public enum TriggerTypes implements Enumerator {
   public static TriggerTypes get(int value) {
     switch (value) {
       case ALWAYS_VALUE: return ALWAYS;
+      case TIMED_VALUE: return TIMED;
+      case EXPONENTIAL_VALUE: return EXPONENTIAL;
+      case PROBABILITY_VALUE: return PROBABILITY;
+      case CONDITION_VALUE: return CONDITION;
+      case MESSAGE_VALUE: return MESSAGE;
     }
     return null;
   }

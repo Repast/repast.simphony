@@ -23,10 +23,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
@@ -49,8 +47,28 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
   @Override
   public void refresh() {
     super.refresh();
+    if (bindingContext == null) {
+      bindingContext = new EMFDataBindingContext();
+      bindModel(bindingContext);
+    } else {
+      bindingContext.updateTargets();
+    }
+    
+    /*
+     * this is the older version
     if (bindingContext != null)
       bindingContext.dispose();
+    bindingContext = new EMFDataBindingContext();
+    bindModel(bindingContext);
+    */
+  }
+  
+  @Override
+  protected void setEObject(EObject object) {
+    super.setEObject(object);
+    if (bindingContext != null) {
+      bindingContext.dispose();
+    }
     bindingContext = new EMFDataBindingContext();
     bindModel(bindingContext);
   }
@@ -67,14 +85,15 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
   @Override
   public final void createControls(Composite parent,
       TabbedPropertySheetPage aTabbedPropertySheetPage) {
+    super.createControls(parent, aTabbedPropertySheetPage);
+    
     toolkit = new FormToolkit(parent.getDisplay());
     toolkit.setBorderStyle(SWT.BORDER);
-    super.createControls(parent, aTabbedPropertySheetPage);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
     parent.setLayout(new GridLayout(1, true));
     createControls(parent);
   }
-
+  
   public FormToolkit getToolkit() {
     return toolkit;
   }
