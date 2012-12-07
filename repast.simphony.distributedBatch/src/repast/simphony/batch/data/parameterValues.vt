@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<sweep runs="1">
-	#set ($schema = $parameters.getSchema())
-		#foreach($name in $schema.parameterNames())
-		#set ($details = $schema.getDetails($name))
-		<parameter name="$name"  type="constant" constant_type="number" 
-			value="$parameters.getValueAsString($name)" />
-		#end
-</sweep>

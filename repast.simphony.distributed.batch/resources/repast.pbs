@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N <Job_Name>
+#PBS -q <Queue_Name>
+#PBS -l nodes=<nodes>:ppn=<ppn>
+#PBS -m e
+
+cd $PBS_O_WORKDIR
+
+# number of parameter combinations per job
+run_per_instance=4
+
+# lines in unrolled batch file
+f=unrolledParamFile.txt
+lines=`wc -l $f | cut -f1 -d' '`
+echo "Total lines: $lines"
+
+# while total_full_instances > 0
+np=`wc -l < $PBS_NODEFILE`
+echo "Total processing nodes: $np"
+
+let "remaining_instances = ($lines + $run_per_instance - 1) /  $run_per_instance"
+
+count=0
+while (( $remaining_instances > 0 ))
+do
+    if [ "$remaining_instances" -lt "$np" ]
+        then
+        np=$remaining_instances
+    fi
+    pbsdsh -c $np $PBS_O_WORKDIR/repastwrapper.sh $lines $run_per_instance $count $f
+    count=$(( $count + $np ))
+    let remaining_instances=$remaining_instances-$np
+done
+echo "Completed all runs."

@@ -1,13 +1,13 @@
 package repast.simphony.engine.schedule;
 
-import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
-import repast.simphony.util.ClassUtilities;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import net.sf.cglib.reflect.FastClass;
+import net.sf.cglib.reflect.FastMethod;
+import repast.simphony.util.ClassUtilities;
 
 /**
  * An IAction created from a method name and method parameters. When a CallBackAction is executed
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * @version $Revision: 1.1 $ $Date: 2005/12/21 22:25:34 $
  */
 public class CallBackAction implements IAction {
-
+  
   static final long serialVersionUID = 3628821571113796716L;
 
   private Object target;
@@ -126,9 +126,7 @@ public class CallBackAction implements IAction {
     try {
       method.invoke(target, args);
     } catch (InvocationTargetException e) {
-      // todo add proper logging!!!!
-      System.err.print("Tried to call: " + method.toString());
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
 

@@ -10,9 +10,15 @@ Require-Bundle: repast.simphony.runtime,
  org.eclipse.wst.xml.core,
  repast.simphony.eclipse,
  org.eclipse.ui
-Export-Package: repast.simphony.annotate,
- repast.simphony.plugin,
+Export-Package: repast.simphony.annotate;uses:="simphony.util.messages",
+ repast.simphony.plugin;
+  uses:="repast.simphony.engine.environment,
+   repast.simphony.scenario,
+   org.java.plugin,
+   org.java.plugin.registry",
  repast.simphony.scenario,
- repast.simphony.scenario.data
+ repast.simphony.scenario.data;uses:="junit.framework",
+ repast.simphony.scenario.eclipse,
+ repast.simphony.score
 Bundle-Vendor: %providerName
 Bundle-ClassPath: bin/

@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: repast.simphony.eclipse
 Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
 Bundle-Version: 2.0.1
-Bundle-ClassPath: bin/
+Bundle-ClassPath: bin/,
+ lib/commons-lang-2.6.jar
 Bundle-Activator: repast.simphony.agents.designer.core.AgentBuilderPlugin
 Bundle-Vendor: Provider
 Require-Bundle: org.eclipse.ui,

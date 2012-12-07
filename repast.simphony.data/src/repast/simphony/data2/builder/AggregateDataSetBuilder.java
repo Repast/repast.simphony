@@ -16,6 +16,7 @@ import repast.simphony.data2.CountDataSource;
 import repast.simphony.data2.DataSet;
 import repast.simphony.data2.DataSink;
 import repast.simphony.data2.MethodDataSource;
+import simphony.util.messages.MessageCenter;
 
 /**
  * Builds datasets from a description of them.

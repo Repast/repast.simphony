@@ -99,7 +99,6 @@ public class BatchRunner implements RunListener{
    * @throws ParameterFormatException
    */
   public void run(File scenarioDir) throws ScenarioLoadException {
-	  System.out.println("BatchRunner.run(File)");
     if (scenarioDir.exists()) {
       BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
       ControllerRegistry registry = loader.load(runEnvironmentBuilder);
@@ -113,7 +112,7 @@ public class BatchRunner implements RunListener{
   }
   
   public void loadScenario(File scenarioDir) throws ScenarioLoadException {
-	  System.out.println("BatchRunner.run(File)");
+	 
     if (scenarioDir.exists()) {
       BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
       ControllerRegistry registry = loader.load(runEnvironmentBuilder);
@@ -167,14 +166,12 @@ public class BatchRunner implements RunListener{
     }
 
     if (!params.getSchema().contains(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
-    	System.out.println("Creating Random Seed");
       ParametersCreator creator = new ParametersCreator();
       creator.addParameters(params);
       creator.addParameter(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME, Integer.class,
           (int) System.currentTimeMillis(), false);
       params = creator.createParameters();
     }
-    System.out.println("Random Seed: "+params.getValueAsString(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME));
 
     return params;
   }
@@ -196,25 +193,22 @@ public class BatchRunner implements RunListener{
 //    printMemoryStats("Prior to controller.batchInitialize()");
     controller.batchInitialize();
     while (keepRunning()) {
-//    	 System.out.println("BatchRunner.run() keepRunning Loop");
-    	 printMemoryStats(" ##### Prior to controller.runParameterSetters(params)");
-      controller.runParameterSetters(params);
-      printMemoryStats("Prior to controller.runInitialize(params)");
-      controller.runInitialize(params);
-//      System.out.println("BatchRunner.run() keepRunning Loop controller.execute()");
-      printMemoryStats("Prior to controller.execute()");
-      controller.execute();
       pause = true;
-      printMemoryStats("Prior to waitForRun()");
+      controller.runParameterSetters(params);
+      //printMemoryStats("Prior to controller.runInitialize(params)");
+      controller.runInitialize(params);
+      //printMemoryStats("Prior to controller.execute()");
+      controller.execute();
+      //printMemoryStats("Prior to waitForRun()");
       waitForRun();
       controller.runCleanup();
       System.gc();
     }
-//    System.out.println("BatchRunner.run() batchCleanup");
-    printMemoryStats("Prior to controller.batchCleanup()");
+    
+    //printMemoryStats("Prior to controller.batchCleanup()");
     controller.batchCleanup();
     System.gc();
-    printMemoryStats("Post controller.batchCleanup() + gc()");
+    //printMemoryStats("Post controller.batchCleanup() + gc()");
   }
   
   protected void printMemoryStats(String header) {
