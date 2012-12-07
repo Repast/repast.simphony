@@ -449,6 +449,8 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		assertEquals(true, a.st.withinState("three"));
+		assertEquals(3, a.st.getCurrentStates().size());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("oneB", a.st.getCurrentSimpleState().getId());

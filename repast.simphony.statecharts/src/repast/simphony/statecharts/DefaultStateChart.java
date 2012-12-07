@@ -28,8 +28,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
-	@Override
-	public TransitionResolutionStrategy getTransitionResolutionStrategy() {
+	
+	protected TransitionResolutionStrategy getTransitionResolutionStrategy() {
 		return transitionResolutionStrategy;
 	}
 
@@ -516,19 +516,14 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	@Override
-	public double getPriority() {
+	
+	protected double getPriority() {
 		return priority;
 	}
 
 	protected void setPriority(double priority) {
 		this.priority = priority;
 	}
-
-//	protected void addBranch(BranchState<T> branch) {
-//		branch.initializeBranch(this);
-//
-//	}
 
 	private T agent;
 
@@ -548,6 +543,26 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				params = re.getParameters();
 		}
 		return params;
+	}
+
+	@Override
+	public boolean withinState(String id) {
+		List<AbstractState<T>> currentStates = getCurrentStates();
+		for (AbstractState<T> s : currentStates){
+			if (s.getId().equals(id)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public List<AbstractState<T>> getCurrentStates() {
+		List<AbstractState<T>> states = new ArrayList<AbstractState<T>>();
+		AbstractState<T> s = getCurrentSimpleState();
+		while (s != null) {
+			states.add(s);
+			s = s.getParent();
+		}
+		return states;
 	}
 
 }

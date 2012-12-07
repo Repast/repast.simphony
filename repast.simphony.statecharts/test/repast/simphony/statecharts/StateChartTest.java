@@ -630,13 +630,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.1;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("four", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 
 	/**
@@ -651,13 +651,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.8;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 
 	/**
@@ -672,13 +672,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.6;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 	
 	/**
@@ -774,13 +774,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.1;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("four", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 
 	/**
@@ -795,13 +795,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.8;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 
 	/**
@@ -816,13 +816,13 @@ public class StateChartTest {
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.6;
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("three", a.st.getCurrentSimpleState().getId());
 		assertEquals(TransitionResolutionStrategy.RANDOM,
-				a.st.getTransitionResolutionStrategy());
+				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 	}
 
 	/**

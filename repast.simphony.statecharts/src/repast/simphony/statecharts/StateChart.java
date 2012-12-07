@@ -1,5 +1,7 @@
 package repast.simphony.statecharts;
 
+import java.util.List;
+
 
 public interface StateChart<T> {
 	
@@ -19,8 +21,10 @@ public interface StateChart<T> {
 	 */
 	public AbstractState<T> getCurrentSimpleState();
 	
-	public double getPriority();
-
-	public TransitionResolutionStrategy getTransitionResolutionStrategy();
+//	public double getPriority();
+	
+	public boolean withinState(String id);
+	
+	public List<AbstractState<T>> getCurrentStates();
 
 }
