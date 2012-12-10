@@ -1,0 +1,67 @@
+import scmodel;
+
+String filename(scmodel::StateMachine sm) : 
+    sm.package.trim().replaceAll("\\.", "/") + "/" + sm.className.trim() + ".java"; 
+    
+String actionFilename(String package, String actionType) :
+    package.trim().replaceAll("\\.", "/") + "/" + actionType.trim() + ".java";
+    
+String generatorClassName(scmodel::StateMachine sm) :
+    sm.className.trim() + "Generator"; 
+    
+String getPackageFromType(String agentType) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getPackageFromType(java.lang.String);
+    
+String getSimpleClassName(String agentType) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getSimpleClassName(java.lang.String);
+
+String generatorType(scmodel::StateMachine sm) : 
+    sm.package + "." + generatorClassName(sm);
+
+String generatorFile(scmodel::StateMachine sm) : 
+    sm.package.trim().replaceAll("\\.", "/") + "/" + generatorClassName(sm) + ".java";
+    
+List[AbstractState] getStatesWithActions(List[AbstractState] states) :
+    states.reject(e | (e.onEnter == null || e.onEnter.trim().length == 0) && 
+        (e.onExit == null || e.onExit.trim().length == 0));
+
+String getCSMethodName(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getCSMethodName(java.lang.String);
+
+List[CompositeState] compositeStates(List states) : JAVA 
+    repast.simphony.statecharts.generator.GeneratorUtil.filterForComposites(java.util.List);
+    
+List[State] simpleStates(List states) : JAVA 
+    repast.simphony.statecharts.generator.GeneratorUtil.filterForStates(java.util.List);
+    
+Void init() : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.init();
+ 
+String getSVar(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getSVar(java.lang.String);
+
+String getVar(AbstractState state) :
+    State.isInstance(state) ? getSVar(state.uuid) : getCSVar(state.uuid);
+    
+String getCSVar(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getCSVar(java.lang.String);
+    
+String getCSBVar(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getCSBVar(java.lang.String);
+
+String getSBVar(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getSBVar(java.lang.String);
+    
+String getOnEnterActionType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getOnEnterTypeName(java.lang.String);
+    
+String getOnExitActionType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getOnExitTypeName(java.lang.String);
+    
+AbstractState findInitialState(List states) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.findInitialState(java.util.List);
+    
+AbstractState findFirstState(List states) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.findFirstState(java.util.List);
+    
+    

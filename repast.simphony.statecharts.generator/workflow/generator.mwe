@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <workflow>
-    <property name="model" value="repast.simphony.statecharts.generator/test-data/sample.statechart_diagram" />
+    <property name="model" value="repast.simphony.statecharts.generator/test-data/composite_test.rsc" />
     <property name="src-gen" value="src-gen" />
     
     <!-- set up EMF for standalone execution -->
@@ -36,7 +36,7 @@
     <component class="org.eclipse.xpand2.Generator">
         <metaModel idRef="mm_emf"/>
         <expand
-            value="templates::generator::Main FOR model" />
+            value="src::generator::Main FOR model" />
         <outlet path="${src-gen}" >
             <postprocessor class="org.eclipse.xpand2.output.JavaBeautifier" />
         </outlet>
