@@ -39,6 +39,7 @@ public class ParameterSweepParser extends DefaultHandler2 {
   private static final String PARAMETER_NAME = "parameter";
   private static final String SWEEP = "sweep";
   private URL paramsURL;
+  private InputStream inputStream;
   private Stack<ParameterSetter> stack = new Stack<ParameterSetter>();
   private ParameterTreeSweeper sweeper = new ParameterTreeSweeper();
   private Map<String, ParameterSetterCreator> creators = new HashMap<String, ParameterSetterCreator>();
@@ -52,6 +53,15 @@ public class ParameterSweepParser extends DefaultHandler2 {
    */
   public ParameterSweepParser(URL paramsURL) {
     this.paramsURL = paramsURL;
+    init();
+  }
+  
+  public ParameterSweepParser(InputStream in) {
+    this.inputStream = in;
+    init();
+  }
+  
+  private void init() {
     creators.put("number", new NumberSetterCreator());
     creators.put("list", new ListSetterCreator());
 
@@ -74,7 +84,6 @@ public class ParameterSweepParser extends DefaultHandler2 {
     constantCreators.put("long", new ConstantNumberSetterCreator("java.lang.Long"));
     constantCreators.put("short", new ConstantNumberSetterCreator("java.lang.Short"));
     constantCreators.put("byte", new ConstantNumberSetterCreator("java.lang.Byte"));
-
   }
 
   /**
@@ -100,7 +109,10 @@ public class ParameterSweepParser extends DefaultHandler2 {
   public Pair<Parameters, ParameterTreeSweeper> parse() throws ParserConfigurationException,
       SAXException, IOException {
     SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-    InputStream inputStream = paramsURL.openStream();
+    if (this.inputStream == null) {
+      inputStream = paramsURL.openStream();
+    }
+    
     parser.parse(inputStream, this);
     inputStream.close();
     return new Pair<Parameters, ParameterTreeSweeper>(creator.createParameters(), sweeper);

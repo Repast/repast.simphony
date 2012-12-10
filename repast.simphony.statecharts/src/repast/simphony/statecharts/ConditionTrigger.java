@@ -2,6 +2,7 @@ package repast.simphony.statecharts;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 
 public class ConditionTrigger<T> extends AbstractTrigger<T> {
@@ -9,6 +10,17 @@ public class ConditionTrigger<T> extends AbstractTrigger<T> {
 	private final double pollingTime;
 	private double initializedTickCount;
 	private ConditionTriggerCondition<T> condition;
+	private Parameters params;
+
+	protected Parameters getParams() {
+		if (params == null) {
+			RunEnvironment re = RunEnvironment.getInstance();
+			if (re != null)
+				params = re.getParameters();
+		}
+		return params;
+	}
+
 
 	public ConditionTrigger(ConditionTriggerCondition<T> condition,
 			double pollingTime) {
@@ -49,7 +61,7 @@ public class ConditionTrigger<T> extends AbstractTrigger<T> {
 	public boolean isTriggerConditionTrue() {
 		boolean result = false;
 		try {
-			result = condition.condition(getAgent(), transition);
+			result = condition.condition(getAgent(), transition, getParams());
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error(
 					"Error encountered when calling condition: " + condition

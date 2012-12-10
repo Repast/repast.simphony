@@ -1,5 +1,6 @@
 package repast.simphony.parameter.xml;
 
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -18,6 +19,10 @@ public class XMLSweeperProducer extends AbstractXMLSweeperProducer  {
 	 */
 	public XMLSweeperProducer(URL paramsURL) {
 		parser = new ParameterSweepParser(paramsURL);
+	}
+	
+	public XMLSweeperProducer(InputStream in) {
+	  parser = new ParameterSweepParser(in);
 	}
 
 	public ParameterSweepParser getParser() {

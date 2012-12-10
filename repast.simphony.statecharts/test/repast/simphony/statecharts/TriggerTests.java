@@ -16,6 +16,7 @@ import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 import simphony.util.messages.MessageEvent;
 import simphony.util.messages.MessageEventListener;
@@ -54,7 +55,7 @@ public class TriggerTests {
 		AbstractTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
-			public boolean condition(Object agent, Transition<Object> transition)
+			public boolean condition(Object agent, Transition<Object> transition, Parameters params)
 					throws Exception {
 				return true;
 			}
@@ -87,7 +88,7 @@ public class TriggerTests {
 		AbstractTrigger<Object> tCondition = new ConditionTrigger<Object>(new ConditionTriggerCondition<Object>(){
 
 			@Override
-			public boolean condition(Object agent, Transition<Object> transition)
+			public boolean condition(Object agent, Transition<Object> transition, Parameters params)
 					throws Exception {
 				return true;
 			}
@@ -192,7 +193,7 @@ public class TriggerTests {
 			}
 			
 			@Override
-			public boolean condition(Object agent, Transition<Object> transition)
+			public boolean condition(Object agent, Transition<Object> transition, Parameters params)
 					throws Exception {
 				return true;
 			}

@@ -4,12 +4,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import simphony.util.messages.MessageCenter;
 
 public abstract class AbstractState<T> {
 	
-	private StateChart<T> stateChart;
+	private DefaultStateChart<T> stateChart;
 	private T agent;
+	
 	
 	protected T getAgent(){
 		if (agent == null){
@@ -27,8 +30,8 @@ public abstract class AbstractState<T> {
 		}
 		return agent;
 	}
-	
-	protected void setStateChart(StateChart<T> stateChart){
+		
+	protected void setStateChart(DefaultStateChart<T> stateChart){
 		this.stateChart = stateChart;
 	}
 	
@@ -60,10 +63,20 @@ public abstract class AbstractState<T> {
 		return id;
 	}
 
+	private Parameters params;
+	
+	protected Parameters getParams() {
+		if (params == null) {
+			RunEnvironment re = RunEnvironment.getInstance();
+			if (re != null)
+				params = re.getParameters();
+		}
+		return params;
+	}
 	
 	protected void onEnter() {
 		try {
-			onEnter.action(getAgent(),this);
+			onEnter.action(getAgent(),this,getParams());
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onEnter in state: " + id, e);
 			throw new RuntimeException(e);
@@ -73,7 +86,7 @@ public abstract class AbstractState<T> {
 	
 	protected void onExit() {
 		try {
-			onExit.action(getAgent(),this);
+			onExit.action(getAgent(),this,getParams());
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error("Error encountered when calling onExit in state: " + id, e);
 			throw new RuntimeException(e);

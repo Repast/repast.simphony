@@ -16,6 +16,8 @@ import repast.simphony.scenario.DescriptorActionLoader;
  */
 public class FileSinkControllerActionIO extends
     AbstractDescriptorControllerActionIO<FileSinkComponentControllerAction, FileSinkDescriptor> {
+  
+  public static final String SERIALIZATION_ID = "repast.simphony.action.file_sink";
 
   public static class FileSinkActionLoader extends DescriptorActionLoader<FileSinkDescriptor> {
 
@@ -51,7 +53,7 @@ public class FileSinkControllerActionIO extends
   }
 
   public String getSerializationID() {
-    return "repast.simphony.action.file_sink";
+    return SERIALIZATION_ID;
   }
 
   public ActionLoader getActionLoader(File actionFile, Object contextID) {

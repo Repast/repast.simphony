@@ -31,23 +31,22 @@ public class ClassFinder {
       loader = this.getClass().getClassLoader();
     }
 
-    public void add(String clazz)  {
-    	try{
-    		classes.add(Class.forName(clazz, false, loader));
-    	}
-    	catch(ClassNotFoundException e){
-    		return;
-    	}
+    public void add(String clazz) {
+      try {
+        classes.add(Class.forName(clazz, false, loader));
+      } 
+      
+      // if it won't load we don't care 
+      catch (ClassNotFoundException e) {} 
+      catch (NoClassDefFoundError e) {}
     }
   }
 
   private static class StringAdder implements Adder {
 
     Set<String> classes = new HashSet<String>();
-    ClassLoader loader;
 
     public StringAdder() {
-      loader = this.getClass().getClassLoader();
     }
 
     public void add(String clazz) throws ClassNotFoundException {
@@ -83,7 +82,7 @@ public class ClassFinder {
     for (ClassPathEntry entry : entries) {
       findClasses(entry, adder);
     }
-    
+
     return new ArrayList<Class<?>>(adder.classes);
   }
 
@@ -102,7 +101,8 @@ public class ClassFinder {
     }
   }
 
-  private void processDirectory(ClassPathEntry entry, File path, Adder adder, int index) throws ClassNotFoundException {
+  private void processDirectory(ClassPathEntry entry, File path, Adder adder, int index)
+      throws ClassNotFoundException {
     for (File child : path.listFiles()) {
       if (child.getName().endsWith(".class")) {
         String clazz = child.getAbsolutePath();
@@ -117,7 +117,8 @@ public class ClassFinder {
     }
   }
 
-  protected void processJar(ClassPathEntry entry, File path, Adder adder) throws IOException, ClassNotFoundException {
+  protected void processJar(ClassPathEntry entry, File path, Adder adder) throws IOException,
+      ClassNotFoundException {
     JarFile jar = new JarFile(path);
     for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
       JarEntry jEntry = entries.nextElement();

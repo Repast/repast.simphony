@@ -6,7 +6,7 @@
 	<classpathentry exported="true" kind="lib" path="testlib/junit-3.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/junit-addons-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/saf.core.runtime.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/saf.core.runtime.jar" sourcepath="/Users/nick/Documents/repos/simphony.app.framework/runtime/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf-boot.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

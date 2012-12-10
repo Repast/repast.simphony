@@ -78,10 +78,18 @@ public class ParameterTest extends TestCase {
 		bean.setStringVal(sVal);
 
 		assertEquals(val, parameters.getValue("intVal"));
+		assertEquals((Integer)val, parameters.getInteger("intVal"));
 		assertEquals(dVal, parameters.getValue("doubleVal"));
+		assertEquals(dVal, parameters.getDouble("doubleVal"));
 		assertEquals(sVal, parameters.getValue("stringVal"));
+		assertEquals(sVal, parameters.getString("stringVal"));
 		try {
 			parameters.getValue("foo");
+			// should never get here, ex should be thrown
+			assertTrue(false);
+		} catch (IllegalParameterException ex) {}
+		try {
+			parameters.getInteger("doubleVal");
 			// should never get here, ex should be thrown
 			assertTrue(false);
 		} catch (IllegalParameterException ex) {}

@@ -57,7 +57,6 @@ public class FileDataSinkBuilder implements SinkBuilder {
    */
   @Override
   public DataSink create(Collection<? extends DataSource> sources) {
-    
     String filename = fnameFormatter.getFilename();
     DataUtilities.renameFileIfExists(filename);
     

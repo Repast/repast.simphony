@@ -1,0 +1,7 @@
+<context id="jzombies" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context">
+  	
+	<projection type="continuous space" id="space"></projection>
+	<projection type="grid" id="grid"></projection>
+	<projection type="network" id="infection network"></projection>
+  	
+</context>

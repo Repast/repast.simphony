@@ -1,8 +1,20 @@
 /*CopyrightHere*/
 package repast.simphony.engine.controller;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+
 import repast.simphony.context.Context;
-import repast.simphony.engine.environment.*;
+import repast.simphony.engine.environment.ControllerAction;
+import repast.simphony.engine.environment.ControllerRegistry;
+import repast.simphony.engine.environment.DefaultControllerAction;
+import repast.simphony.engine.environment.DefaultScheduleRunner;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.environment.RunEnvironmentBuilder;
+import repast.simphony.engine.environment.RunInfo;
+import repast.simphony.engine.environment.RunState;
+import repast.simphony.engine.environment.Runner;
 import repast.simphony.parameter.DefaultParameters;
 import repast.simphony.parameter.ParameterSetter;
 import repast.simphony.parameter.Parameters;
@@ -10,11 +22,6 @@ import repast.simphony.random.DefaultRandomRegistry;
 import repast.simphony.util.collections.Tree;
 import repast.simphony.util.collections.TreeVisitor;
 import simphony.util.messages.MessageCenter;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A default implementation of a Controller. This performs all the functionality
@@ -82,7 +89,7 @@ public class DefaultController implements Controller {
           ControllerActionConstants.DATA_INIT_ROOT);
       if (dataInitRoot != null) {
         if (o1.equals(dataInitRoot))
-          return -1;
+          return 1;
         if (o2.equals(dataInitRoot))
           return -1;
       }

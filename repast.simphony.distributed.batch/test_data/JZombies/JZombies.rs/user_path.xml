@@ -1,0 +1,6 @@
+<model name="JZombies" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://repast.org/scenario/user_path">
+	<classpath>
+		<agents path="../lib/model.jar" />
+		<entry path="../lib" />
+	</classpath>
+</model>

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<sweep runs="1">
+	
+	<parameter name="human_count" type="list" value_type="int"
+		values="210 220 240">
+		<parameter name="zombie_count" type="number" number_type="int"
+			start="1" end="3" step="1"></parameter>
+	</parameter>
+</sweep>

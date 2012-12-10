@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.collections15.ListUtils;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.SimUtilities;
 import cern.jet.random.Uniform;
@@ -27,8 +28,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
-	@Override
-	public TransitionResolutionStrategy getTransitionResolutionStrategy() {
+	
+	protected TransitionResolutionStrategy getTransitionResolutionStrategy() {
 		return transitionResolutionStrategy;
 	}
 
@@ -515,8 +516,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	@Override
-	public double getPriority() {
+	
+	protected double getPriority() {
 		return priority;
 	}
 
@@ -524,18 +525,44 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		this.priority = priority;
 	}
 
-//	protected void addBranch(BranchState<T> branch) {
-//		branch.initializeBranch(this);
-//
-//	}
-
 	private T agent;
 
-	public T getAgent() {
+	protected T getAgent() {
 		if (agent == null) {
 			throw new IllegalStateException("The agent was not set in: " + this);
 		}
 		return agent;
+	}
+	
+	Parameters params;
+	
+	protected Parameters getParams() {
+		if (params == null) {
+			RunEnvironment re = RunEnvironment.getInstance();
+			if (re != null)
+				params = re.getParameters();
+		}
+		return params;
+	}
+
+	@Override
+	public boolean withinState(String id) {
+		List<AbstractState<T>> currentStates = getCurrentStates();
+		for (AbstractState<T> s : currentStates){
+			if (s.getId().equals(id)) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public List<AbstractState<T>> getCurrentStates() {
+		List<AbstractState<T>> states = new ArrayList<AbstractState<T>>();
+		AbstractState<T> s = getCurrentSimpleState();
+		while (s != null) {
+			states.add(s);
+			s = s.getParent();
+		}
+		return states;
 	}
 
 }

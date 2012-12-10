@@ -9,6 +9,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.parameter.Parameters;
 
 public class StateChartTest2 {
 
@@ -114,7 +115,7 @@ public class StateChartTest2 {
 
 				@Override
 				public void action(MyAgent2 agent,
-						Transition<MyAgent2> transition) throws Exception {
+						Transition<MyAgent2> transition, Parameters params) throws Exception {
 					agent.value++;
 
 				}
@@ -362,7 +363,7 @@ public class StateChartTest2 {
 			class MyHistoryStateAction implements StateAction<MyAgent4> {
 
 				@Override
-				public void action(MyAgent4 agent, AbstractState<MyAgent4> state)
+				public void action(MyAgent4 agent, AbstractState<MyAgent4> state, Parameters params)
 						throws Exception {
 					agent.lastHistoryDestination = ((HistoryState<MyAgent4>) state)
 							.getDestination().getId();
@@ -448,6 +449,8 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("oneA", a.st.getCurrentSimpleState().getId());
+		assertEquals(true, a.st.withinState("three"));
+		assertEquals(3, a.st.getCurrentStates().size());
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("oneB", a.st.getCurrentSimpleState().getId());
