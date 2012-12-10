@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Statecharts
+Bundle-SymbolicName: repast.simphony.statecharts
+Bundle-Version: 2.0.1
+Export-Package: repast.simphony.statecharts
+Require-Bundle: repast.simphony.core;bundle-version="2.0.1";visibility:=reexport
