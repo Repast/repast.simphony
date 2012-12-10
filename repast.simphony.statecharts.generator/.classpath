@@ -6,6 +6,5 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.statecharts"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
