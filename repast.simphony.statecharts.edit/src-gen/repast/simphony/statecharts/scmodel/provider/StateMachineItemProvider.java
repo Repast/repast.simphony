@@ -68,7 +68,7 @@ public class StateMachineItemProvider
       addClassNamePropertyDescriptor(object);
       addLanguagePropertyDescriptor(object);
       addNextIDPropertyDescriptor(object);
-      addIDPropertyDescriptor(object);
+      addIdPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -184,18 +184,18 @@ public class StateMachineItemProvider
   }
 
   /**
-   * This adds a property descriptor for the ID feature.
+   * This adds a property descriptor for the Id feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addIDPropertyDescriptor(Object object) {
+  protected void addIdPropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_StateMachine_ID_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_ID_feature", "_UI_StateMachine_type"),
+         getString("_UI_StateMachine_id_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_id_feature", "_UI_StateMachine_type"),
          StatechartPackage.Literals.STATE_MACHINE__ID,
          true,
          false,

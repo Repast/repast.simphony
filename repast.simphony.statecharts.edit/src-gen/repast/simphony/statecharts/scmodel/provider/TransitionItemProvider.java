@@ -75,7 +75,7 @@ public class TransitionItemProvider
       addTriggerProbCodePropertyDescriptor(object);
       addMessageCheckerCodePropertyDescriptor(object);
       addMessageCheckerConditionLanguagePropertyDescriptor(object);
-      addIDPropertyDescriptor(object);
+      addIdPropertyDescriptor(object);
       addGuardPropertyDescriptor(object);
       addTriggerTimedCodePropertyDescriptor(object);
       addTriggerExpRateCodePropertyDescriptor(object);
@@ -415,18 +415,18 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the ID feature.
+   * This adds a property descriptor for the Id feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addIDPropertyDescriptor(Object object) {
+  protected void addIdPropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_ID_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_ID_feature", "_UI_Transition_type"),
+         getString("_UI_Transition_id_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_id_feature", "_UI_Transition_type"),
          StatechartPackage.Literals.TRANSITION__ID,
          true,
          false,
@@ -543,7 +543,7 @@ public class TransitionItemProvider
    */
   @Override
   public String getText(Object object) {
-    String label = ((Transition)object).getID();
+    String label = ((Transition)object).getId();
     return label == null || label.length() == 0 ?
       getString("_UI_Transition_type") :
       getString("_UI_Transition_type") + " " + label;
