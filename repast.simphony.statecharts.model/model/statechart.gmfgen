@@ -798,13 +798,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.1/@expressions.14">
             <feature
-                href="statechart.genmodel#//scmodel/Transition/ID"/>
+                href="statechart.genmodel#//scmodel/Transition/uuid"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.1/@expressions.15">
             <feature
-                href="statechart.genmodel#//scmodel/Transition/uuid"/>
+                href="statechart.genmodel#//scmodel/Transition/id"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1423,9 +1423,9 @@
       <expressions
           body="EcoreUtil.generateUUID();"/>
       <expressions
-          body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"/>
-      <expressions
           body="EcoreUtil.generateUUID()"/>
+      <expressions
+          body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">

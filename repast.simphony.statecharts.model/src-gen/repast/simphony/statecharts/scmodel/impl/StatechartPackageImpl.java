@@ -255,7 +255,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getStateMachine_ID() {
+  public EAttribute getStateMachine_Id() {
     return (EAttribute)stateMachineEClass.getEStructuralFeatures().get(7);
   }
 
@@ -426,7 +426,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTransition_ID() {
+  public EAttribute getTransition_Id() {
     return (EAttribute)transitionEClass.getEStructuralFeatures().get(15);
   }
 
@@ -740,7 +740,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getStateMachine_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStateMachine_Language(), this.getLanguageTypes(), "language", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStateMachine_NextID(), ecorePackage.getEInt(), "nextID", "0", 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getStateMachine_ID(), ecorePackage.getEString(), "ID", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStateMachine_Id(), ecorePackage.getEString(), "id", null, 0, 1, StateMachine.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -762,7 +762,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getTransition_TriggerProbCode(), ecorePackage.getEString(), "triggerProbCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerCode(), ecorePackage.getEString(), "messageCheckerCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerConditionLanguage(), this.getLanguageTypes(), "messageCheckerConditionLanguage", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTransition_ID(), ecorePackage.getEString(), "ID", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTransition_Id(), ecorePackage.getEString(), "id", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_Guard(), ecorePackage.getEString(), "guard", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerTimedCode(), ecorePackage.getEString(), "triggerTimedCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerExpRateCode(), ecorePackage.getEString(), "triggerExpRateCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

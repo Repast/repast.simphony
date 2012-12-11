@@ -38,7 +38,7 @@ import repast.simphony.statecharts.scmodel.Transition;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getClassName <em>Class Name</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getNextID <em>Next ID</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getID <em>ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getId <em>Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -166,20 +166,20 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
   protected int nextID = NEXT_ID_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getID() <em>ID</em>}' attribute.
+   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getID()
+   * @see #getId()
    * @generated
    * @ordered
    */
   protected static final String ID_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getID() <em>ID</em>}' attribute.
+   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getID()
+   * @see #getId()
    * @generated
    * @ordered
    */
@@ -340,7 +340,7 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getID() {
+  public String getId() {
     return id;
   }
 
@@ -349,11 +349,11 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setID(String newID) {
-    String oldID = id;
-    id = newID;
+  public void setId(String newId) {
+    String oldId = id;
+    id = newId;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__ID, oldID, id));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__ID, oldId, id));
   }
 
   /**
@@ -395,7 +395,7 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__NEXT_ID:
         return getNextID();
       case StatechartPackage.STATE_MACHINE__ID:
-        return getID();
+        return getId();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -433,7 +433,7 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         setNextID((Integer)newValue);
         return;
       case StatechartPackage.STATE_MACHINE__ID:
-        setID((String)newValue);
+        setId((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -469,7 +469,7 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         setNextID(NEXT_ID_EDEFAULT);
         return;
       case StatechartPackage.STATE_MACHINE__ID:
-        setID(ID_EDEFAULT);
+        setId(ID_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -523,7 +523,7 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
     result.append(language);
     result.append(", nextID: ");
     result.append(nextID);
-    result.append(", ID: ");
+    result.append(", id: ");
     result.append(id);
     result.append(')');
     return result.toString();

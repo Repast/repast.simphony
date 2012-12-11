@@ -384,18 +384,18 @@
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="statechart.ecore#//Transition/ID"/>
+            href="statechart.ecore#//Transition/uuid"/>
         <value
-            body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"
+            body="EcoreUtil.generateUUID()"
             language="java"/>
       </initializers>
       <initializers
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="statechart.ecore#//Transition/uuid"/>
+            href="statechart.ecore#//Transition/id"/>
         <value
-            body="EcoreUtil.generateUUID()"
+            body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"
             language="java"/>
       </initializers>
     </domainInitializer>

@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getClassName <em>Class Name</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getId <em>Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -197,29 +197,29 @@ public interface StateMachine extends EObject {
   void setNextID(int value);
 
   /**
-   * Returns the value of the '<em><b>ID</b></em>' attribute.
+   * Returns the value of the '<em><b>Id</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>ID</em>' attribute isn't clear,
+   * If the meaning of the '<em>Id</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>ID</em>' attribute.
-   * @see #setID(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_ID()
+   * @return the value of the '<em>Id</em>' attribute.
+   * @see #setId(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_Id()
    * @model
    * @generated
    */
-  String getID();
+  String getId();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getId <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>ID</em>' attribute.
-   * @see #getID()
+   * @param value the new value of the '<em>Id</em>' attribute.
+   * @see #getId()
    * @generated
    */
-  void setID(String value);
+  void setId(String value);
 
 } // StateMachine

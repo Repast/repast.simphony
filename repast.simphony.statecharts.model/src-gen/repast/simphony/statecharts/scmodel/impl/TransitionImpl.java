@@ -39,7 +39,7 @@ import repast.simphony.statecharts.scmodel.TriggerTypes;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCode <em>Message Checker Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getID <em>ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getId <em>Id</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getGuard <em>Guard</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTimedCode <em>Trigger Timed Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}</li>
@@ -331,20 +331,20 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected LanguageTypes messageCheckerConditionLanguage = MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getID() <em>ID</em>}' attribute.
+   * The default value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getID()
+   * @see #getId()
    * @generated
    * @ordered
    */
   protected static final String ID_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getID() <em>ID</em>}' attribute.
+   * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getID()
+   * @see #getId()
    * @generated
    * @ordered
    */
@@ -804,7 +804,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getID() {
+  public String getId() {
     return id;
   }
 
@@ -813,11 +813,11 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setID(String newID) {
-    String oldID = id;
-    id = newID;
+  public void setId(String newId) {
+    String oldId = id;
+    id = newId;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ID, oldID, id));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ID, oldId, id));
   }
 
   /**
@@ -945,7 +945,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
         return getMessageCheckerConditionLanguage();
       case StatechartPackage.TRANSITION__ID:
-        return getID();
+        return getId();
       case StatechartPackage.TRANSITION__GUARD:
         return getGuard();
       case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
@@ -1012,7 +1012,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         setMessageCheckerConditionLanguage((LanguageTypes)newValue);
         return;
       case StatechartPackage.TRANSITION__ID:
-        setID((String)newValue);
+        setId((String)newValue);
         return;
       case StatechartPackage.TRANSITION__GUARD:
         setGuard((String)newValue);
@@ -1084,7 +1084,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         setMessageCheckerConditionLanguage(MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT);
         return;
       case StatechartPackage.TRANSITION__ID:
-        setID(ID_EDEFAULT);
+        setId(ID_EDEFAULT);
         return;
       case StatechartPackage.TRANSITION__GUARD:
         setGuard(GUARD_EDEFAULT);
@@ -1190,7 +1190,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
     result.append(messageCheckerCode);
     result.append(", messageCheckerConditionLanguage: ");
     result.append(messageCheckerConditionLanguage);
-    result.append(", ID: ");
+    result.append(", id: ");
     result.append(id);
     result.append(", guard: ");
     result.append(guard);

@@ -130,7 +130,7 @@ public interface StatechartPackage extends EPackage {
   int STATE_MACHINE__NEXT_ID = 6;
 
   /**
-   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * The feature id for the '<em><b>Id</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -485,7 +485,7 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = 14;
 
   /**
-   * The feature id for the '<em><b>ID</b></em>' attribute.
+   * The feature id for the '<em><b>Id</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -886,15 +886,15 @@ public interface StatechartPackage extends EPackage {
   EAttribute getStateMachine_NextID();
 
   /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getID <em>ID</em>}'.
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getId <em>Id</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>ID</em>'.
-   * @see repast.simphony.statecharts.scmodel.StateMachine#getID()
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getId()
    * @see #getStateMachine()
    * @generated
    */
-  EAttribute getStateMachine_ID();
+  EAttribute getStateMachine_Id();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.State <em>State</em>}'.
@@ -1092,15 +1092,15 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_MessageCheckerConditionLanguage();
 
   /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}'.
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getId <em>Id</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>ID</em>'.
-   * @see repast.simphony.statecharts.scmodel.Transition#getID()
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getId()
    * @see #getTransition()
    * @generated
    */
-  EAttribute getTransition_ID();
+  EAttribute getTransition_Id();
 
   /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getGuard <em>Guard</em>}'.
@@ -1403,12 +1403,12 @@ public interface StatechartPackage extends EPackage {
     EAttribute STATE_MACHINE__NEXT_ID = eINSTANCE.getStateMachine_NextID();
 
     /**
-     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute STATE_MACHINE__ID = eINSTANCE.getStateMachine_ID();
+    EAttribute STATE_MACHINE__ID = eINSTANCE.getStateMachine_Id();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.
@@ -1561,12 +1561,12 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = eINSTANCE.getTransition_MessageCheckerConditionLanguage();
 
     /**
-     * The meta object literal for the '<em><b>ID</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TRANSITION__ID = eINSTANCE.getTransition_ID();
+    EAttribute TRANSITION__ID = eINSTANCE.getTransition_Id();
 
     /**
      * The meta object literal for the '<em><b>Guard</b></em>' attribute feature.

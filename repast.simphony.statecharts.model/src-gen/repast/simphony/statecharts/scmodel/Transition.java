@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getId <em>Id</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getGuard <em>Guard</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCode <em>Trigger Timed Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}</li>
@@ -446,30 +446,30 @@ public interface Transition extends EObject {
   void setMessageCheckerConditionLanguage(LanguageTypes value);
 
   /**
-   * Returns the value of the '<em><b>ID</b></em>' attribute.
+   * Returns the value of the '<em><b>Id</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>ID</em>' attribute isn't clear,
+   * If the meaning of the '<em>Id</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>ID</em>' attribute.
-   * @see #setID(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_ID()
+   * @return the value of the '<em>Id</em>' attribute.
+   * @see #setId(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_Id()
    * @model
    * @generated
    */
-  String getID();
+  String getId();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getID <em>ID</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getId <em>Id</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>ID</em>' attribute.
-   * @see #getID()
+   * @param value the new value of the '<em>Id</em>' attribute.
+   * @see #getId()
    * @generated
    */
-  void setID(String value);
+  void setId(String value);
 
   /**
    * Returns the value of the '<em><b>Guard</b></em>' attribute.
