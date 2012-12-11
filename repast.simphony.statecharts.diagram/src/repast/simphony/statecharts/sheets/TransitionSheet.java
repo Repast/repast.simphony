@@ -113,7 +113,7 @@ public class TransitionSheet extends Composite {
 
     btnIsDefaultOut = new Button(composite_2, SWT.CHECK);
     toolkit.adapt(btnIsDefaultOut, true, true);
-    btnIsDefaultOut.setText("Is Default Out of Choice");
+    btnIsDefaultOut.setText("Default Transition");
 
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -450,6 +450,19 @@ public class TransitionSheet extends Composite {
         defaultOutChanged(btnIsDefaultOut.getSelection());
       }
     });
+    
+    /*
+    sctnGuard.addExpansionListener(new IExpansionListener() {
+
+      @Override
+      public void expansionStateChanging(ExpansionEvent e) {}
+
+      @Override
+      public void expansionStateChanged(ExpansionEvent e) {
+        sctnGuard.getParent().s
+      }
+    });
+    */
   }
 
   void defaultOutChanged(boolean isSelected) {
@@ -466,8 +479,14 @@ public class TransitionSheet extends Composite {
       String title = isSelected ? "Trigger Disabled" : "Trigger";
       sctnTrigger.setText(title);
       sctnTrigger.getParent().layout();
-      cmbTriggerType.setEnabled(isSelected);
       
+      sctnGuard.setEnabled(!isSelected);
+      sctnGuard.setExpanded(!isSelected);
+      title = isSelected ? "Guard Disabled" : "Guard";
+      sctnGuard.setText(title);
+      sctnGuard.getParent().layout();
+      
+      cmbTriggerType.setEnabled(isSelected);
     } else {
       // this block handles when we've switched to a non choice transition
       // from a choice transition.
@@ -476,6 +495,11 @@ public class TransitionSheet extends Composite {
       sctnTrigger.setExpanded(true);
       sctnTrigger.getParent().layout();
       sctnTrigger.setText("Trigger");
+      
+      sctnGuard.setEnabled(true);
+      sctnGuard.setExpanded(true);
+      sctnGuard.getParent().layout();
+      sctnGuard.setText("Guard");
     }
   }
 
