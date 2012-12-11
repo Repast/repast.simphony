@@ -240,10 +240,10 @@ public class ElementInitializers {
    */
   public void init_Transition_4001(Transition instance) {
     try {
-      Object value_0 = ID_Transition_4001(instance);
-      instance.setID((String) value_0);
-      Object value_1 = uuid_Transition_4001(instance);
-      instance.setUuid((String) value_1);
+      Object value_0 = uuid_Transition_4001(instance);
+      instance.setUuid((String) value_0);
+      Object value_1 = id_Transition_4001(instance);
+      instance.setId((String) value_1);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -480,20 +480,20 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
-  private String ID_Transition_4001(Transition self) {
+  private String uuid_Transition_4001(Transition self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String id_Transition_4001(Transition self) {
     try {
       return "Transition " + StatechartsModelUtil.getNextID(self);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
-  }
-
-  /**
-   * @generated NOT
-   */
-  private String uuid_Transition_4001(Transition self) {
-    return EcoreUtil.generateUUID();
   }
 
   /**
