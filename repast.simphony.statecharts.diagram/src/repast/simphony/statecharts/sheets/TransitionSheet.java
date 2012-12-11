@@ -29,6 +29,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
+import repast.simphony.statecharts.scmodel.PseudoState;
+import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
@@ -538,11 +540,21 @@ public class TransitionSheet extends Composite {
     strategy.setConverter(converter);
     return strategy;
   }
+  
+  private boolean isPseudoTransition(EObject eObject) {
+    EObject from = ((Transition)eObject).getFrom();
+    return !(from.eClass().equals(StatechartPackage.Literals.PSEUDO_STATE) && 
+        (((PseudoState)from).getType().equals(PseudoStateTypes.INITIAL) || ((PseudoState)from).getType().equals(PseudoStateTypes.ENTRY)));
+  }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     bindingContext = context;
     pollingBinding = null;
     object = eObject;
+    
+    if (isPseudoTransition(eObject)) {
+      
+    }
 
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
     bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);

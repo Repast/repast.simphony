@@ -231,8 +231,11 @@
          <propertySection
                class="repast.simphony.statecharts.sheets.TransitionPropertySection"
                id="property.section.domain.transition"
-               tab="property.tab.domain">
+               tab="property.tab.domain"
+               filter="repast.simphony.statecharts.filter.TransitionFilter">
+               <!--
             <input type="repast.simphony.statecharts.edit.parts.TransitionEditPart"/>
+            -->
          </propertySection>    
       
           <propertySection
