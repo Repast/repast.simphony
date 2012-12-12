@@ -675,7 +675,63 @@
    </extension>
 
    <extension point="org.eclipse.ui.handlers" id="menu-handlers">
-      <?gmfgen generated="true"?>
+    <?gmfgen generated="false"?>
+      <handler
+            class="repast.simphony.statecharts.handlers.CodeGenHandler"
+            commandId="repast.simphony.statecharts.diagram.gencode">
+      </handler>
+   </extension>
+   
+   <extension point="org.eclipse.ui.menus">
+         <?gmfgen generated="false"?>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <command
+               commandId="repast.simphony.statecharts.diagram.gencode"
+               label="Generate Statechart Code"
+               style="push"
+               tooltip="Generate the statechart source code from the diagram">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.extension"
+                              value="rsc">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.ui.commands">
+         <?gmfgen generated="false"?>
+      <command
+            id="repast.simphony.statecharts.diagram.gencode"
+            name="Statechart Code Builder">
+      </command>
+   </extension>
+   
+   <extension
+         id="builder"
+         point="org.eclipse.core.resources.builders"
+         name="Statechart Code Generation Builder">
+          <?gmfgen generated="false"?>
+      <builder
+            hasNature="false">
+         <run
+               class="repast.simphony.statecharts.handlers.StatechartBuilder">
+         </run>
+      </builder>
    </extension>
 
    <!-- optionally, specify keybindings -->
