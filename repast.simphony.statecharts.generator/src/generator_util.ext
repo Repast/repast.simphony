@@ -36,7 +36,7 @@ List[State] simpleStates(List states) : JAVA
     
 Void init() : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.init();
- 
+    
 String getSVar(String uuid) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getSVar(java.lang.String);
 
@@ -63,5 +63,15 @@ AbstractState findInitialState(List states) : JAVA
     
 AbstractState findFirstState(List states) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.findFirstState(java.util.List);
+    
+String getBranchVar(String uuid) : JAVA 
+    repast.simphony.statecharts.generator.GeneratorUtil.getBranchVar(java.lang.String);
+
+String getTransitionMethodName(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getTransitionMethodName(java.lang.String);
+    
+Boolean isValid(Transition transition) :
+    !(PseudoState.isInstance(transition.from) && (((PseudoState)transition.from).type == PseudoStateTypes::initial 
+    || ((PseudoState)transition.from).type == PseudoStateTypes::entry));
     
     

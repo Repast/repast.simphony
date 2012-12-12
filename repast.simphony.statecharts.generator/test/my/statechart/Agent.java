@@ -13,5 +13,10 @@ public class Agent {
   public void right() {}
   public void left() {}
   public void run() {}
+  
+  public void up(int val) {}
+  public void up() {}
+  
+  public void end() {}
 
 }

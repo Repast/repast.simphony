@@ -50,11 +50,50 @@ public class GeneratorUtil {
       ++counter;
     }
   }
+  
+  public static class TransitionBlock {
 
-  private static Map<String, StateBlock> csBlockMap = new HashMap<String, StateBlock>();
+    private static int counter = 1;
+
+    private String methodName;
+
+    public TransitionBlock() {
+      methodName = "createTransition" + counter;
+      ++counter;
+    }
+  }
+  
+  private static int bCounter = 1;
+  private static Map<String, StateBlock> blockMap = new HashMap<String, StateBlock>();
+  private static Map<String, TransitionBlock> transitionMap = new HashMap<String, TransitionBlock>();
+  private static Map<String, String> branchVarMap = new HashMap<String, String>();
 
   public static void init() {
-    csBlockMap.clear();
+    blockMap.clear();
+    branchVarMap.clear();
+    transitionMap.clear();
+    bCounter = 1;
+    StateBlock.counter = 1;
+    TransitionBlock.counter = 1;
+  }
+  
+  public static String getTransitionMethodName(String uuid) {
+    TransitionBlock block = transitionMap.get(uuid);
+    if (block == null) {
+      block = new TransitionBlock();
+      transitionMap.put(uuid, block);
+    }
+    return block.methodName;
+  }
+  
+  public static String getBranchVar(String uuid) {
+    String var = branchVarMap.get(uuid);
+    if (var == null) {
+      var = "branch" + bCounter;
+      branchVarMap.put(uuid, var);
+      ++bCounter;
+    }
+    return var;
   }
 
   public static String getCSMethodName(String uuid) {
@@ -88,10 +127,10 @@ public class GeneratorUtil {
   }
 
   private static StateBlock getCSBlock(String uuid) {
-    StateBlock block = csBlockMap.get(uuid);
+    StateBlock block = blockMap.get(uuid);
     if (block == null) {
       block = new StateBlock();
-      csBlockMap.put(uuid, block);
+      blockMap.put(uuid, block);
     }
     return block;
   }

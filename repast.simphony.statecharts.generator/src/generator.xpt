@@ -53,16 +53,38 @@ private static class «generatorClassName()» {
             MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)»);
             «EXPAND blockContent(agentType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
         «ENDLET»
+        createTransitions(mscb);
         return mscb.build();
     }
-    
     «EXPAND csBlock(agentType) FOREACH compositeStates(states)-»
+   
+   «LET transitions.reject(e| e.isValid()) AS links-»
+    private void createTransitions(MyStateChartBuilder mscb) {
+        «EXPAND transitionCreateCall FOREACH links» 
+    }
+    
+   «EXPAND transitionCreateMethod FOREACH links» 
+   «ENDLET»
 }
 }
 «ENDFILE»
 
 «EXPAND createActions(package.trim(), agentType.trim()) FOREACH states-»
 «ENDDEFINE»
+
+«REM» transitions «ENDREM»
+«DEFINE transitionCreateCall FOR Transition-»
+    // creates transition «this.id»
+    «getTransitionMethodName(this.uuid)»(mscb);
+«ENDDEFINE»
+
+«DEFINE transitionCreateMethod FOR Transition-»
+    // creates transition «this.id»
+    private void «getTransitionMethodName(this.uuid)»(MyStateChartBuilder mscb) {
+    
+    }
+«ENDDEFINE»
+
 
 «REM» expansions for creating state actions «ENDREM»
 «DEFINE createActionsCore(String package, String agentType) FOR AbstractState»
@@ -80,12 +102,17 @@ private static class «generatorClassName()» {
 	    package «package»;
 	    
 	    import repast.simphony.statecharts.*;
+	    import repast.simphony.parameter.Parameters;
+	    
 	    import «getPackageFromType(agentType)».*;
 	    
 	    «LET getSimpleClassName(agentType) AS simpleType»
+	    /**
+	     * Action for «this.id».
+	     */
 	    public class «actType» implements StateAction<«simpleType»> {
 	        @Override
-	        public void action(«simpleType» agent, AbstractState<«simpleType»> state) throws Exception {
+	        public void action(«simpleType» agent, AbstractState<«simpleType»> state, Parameters params) throws Exception {
 	            «body»
 	        }
 	    }
@@ -115,18 +142,33 @@ private static class «generatorClassName()» {
 «DEFINE blockContent(String agentType) FOR AbstractState-»
 «ENDDEFINE»
 
-«DEFINE blockContent(String agentType, String addMethod) FOR AbstractState-»
+«DEFINE blockContent(String agentType, String addMethod) FOR PseudoState-»
+    «IF this.type == PseudoStateTypes::choice»
+        «LET getBranchVar(this.uuid) AS bvar-»
+        BranchState<«agentType»> «bvar» = new BranchStateBuilder<«agentType»>("«this.id»").build();
+        stateMap.put("«this.uuid»", «bvar»);
+        «addMethod»(«bvar»);
+        «ENDLET»
+    «ENDIF»
 «ENDDEFINE»
 
-«DEFINE blockContent(String agentType, String addMethod) FOR CompositeState-»
-    «EXPAND blockContent(agentType) FOR this-»
+«DEFINE blockContent(String agentType, String addMethod) FOR AbstractState-»
+    «EXPAND blockContent(agentType)-»
     «addMethod»(«getVar(this)»);
-    
 «ENDDEFINE»
 
 «DEFINE blockContent(String agentType) FOR CompositeState-»
     // «this.id»
     CompositeState<«agentType»> «getVar(this)» = «getCSMethodName(this.uuid)»();
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR History-»
+     «LET getSBVar(this.uuid) AS bvar-»
+        HistoryStateBuilder<«agentType»> «bvar» = new HistoryStateBuilder<«agentType»>("«this.id»", «this.shallow»);
+        «EXPAND registerActions(agentType, bvar) FOR this-»
+        HistoryState<«agentType»> «getVar(this)» = «bvar».build();
+        stateMap.put("«this.uuid»", «getVar(this)»);
+     «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE blockContent(String agentType) FOR State-»
@@ -138,10 +180,13 @@ private static class «generatorClassName()» {
      «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE blockContent(String agentType, String addMethod) FOR State-»
-    «EXPAND blockContent(agentType)-»
-    «addMethod»(«getVar(this)»);
-    
+«DEFINE blockContent(String agentType) FOR FinalState-»
+     «LET getSBVar(this.uuid) AS bvar-»
+        FinalStateBuilder<«agentType»> «bvar» = new FinalStateBuilder<«agentType»>("«this.id»");
+        «EXPAND registerActions(agentType, bvar) FOR this-»
+        FinalState<«agentType»> «getVar(this)» = «bvar».build();
+        stateMap.put("«this.uuid»", «getVar(this)»);
+     «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE csBlock(String agentType) FOR CompositeState-»
@@ -153,7 +198,14 @@ private static class «generatorClassName()» {
    
                 CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «getVar(initialState)»);
                 «EXPAND registerActions(agentType, csbVar) FOR this-»
-                «EXPAND blockContent(agentType, csbVar + ".addChildState") FOREACH children.reject(e | e.uuid == initialState.uuid)-»
+                «FOREACH children.reject(e | e.uuid == initialState.uuid) AS child»
+                    «IF History.isInstance(child)-»
+                         «EXPAND blockContent(agentType, csbVar + ".addHistoryState") FOR child-»
+                     «ELSE»
+                         «EXPAND blockContent(agentType, csbVar + ".addChildState") FOR child-»
+                     «ENDIF»
+                «ENDFOREACH»
+               
             «ENDLET-»
             «LET getCSVar(this.uuid) AS csVar-»
                 CompositeState<«agentType»> «csVar» = «csbVar».build();
@@ -166,9 +218,5 @@ private static class «generatorClassName()» {
 «EXPAND csBlock(agentType) FOREACH compositeStates(children)-»
 «ENDDEFINE»
 
-«DEFINE blockContent(String agentType) FOR FinalState-»
-«ENDDEFINE»
 
-«DEFINE blockContent(String agentType, String addMethod) FOR FinalState-»
-«ENDDEFINE»
 
