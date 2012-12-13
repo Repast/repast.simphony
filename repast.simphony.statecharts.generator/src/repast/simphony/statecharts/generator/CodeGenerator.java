@@ -30,6 +30,7 @@ import org.eclipse.xpand2.output.OutputImpl;
 import org.eclipse.xtend.expression.Variable;
 import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel;
 
+import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
@@ -55,9 +56,16 @@ public class CodeGenerator {
     try {
       XMIResourceImpl resource = new XMIResourceImpl();
       resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
-      EObject obj = resource.getContents().get(0);
-
-      IPath srcPath = addSrcPath(project, monitor);
+      
+      StateMachine statemachine = null;
+      for (EObject obj : resource.getContents()) {
+        if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
+          statemachine = (StateMachine)obj;
+          break;
+        }
+      }
+      
+      IPath srcPath = addSrcPath(project, statemachine.getPackage(), monitor);
       IPath projectLocation = project.getLocation();
       srcPath = projectLocation.append(srcPath.lastSegment());
       
@@ -82,7 +90,7 @@ public class CodeGenerator {
       // generate
       XpandFacade facade = XpandFacade.create(execCtx);
       String templatePath = "src::generator::Main";
-      facade.evaluate(templatePath, obj);
+      facade.evaluate(templatePath, statemachine);
       
       project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, monitor);
     } catch (IOException ex) {
@@ -90,7 +98,7 @@ public class CodeGenerator {
     }
   }
   
-  private IPath addSrcPath(IProject project, IProgressMonitor monitor) throws CoreException {
+  private IPath addSrcPath(IProject project, String pkg, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     
     // workspace relative
@@ -120,8 +128,8 @@ public class CodeGenerator {
 
     } else {
       DirectoryCleaner cleaner = new DirectoryCleaner();
-      //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).toPortableString());
-      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString());
+      //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
+      cleaner.run(project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
     }
     
     return srcPath;
