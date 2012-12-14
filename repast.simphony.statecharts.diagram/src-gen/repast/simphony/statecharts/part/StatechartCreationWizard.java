@@ -338,10 +338,9 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
     }
 
     protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
-      System.out.println(modelPropsPage.getURI());
       diagram = StatechartDiagramEditorUtil.createDiagram(modelPropsPage.getURI(), monitor);
       initializeStateMachine();
-      processAgent(monitor);
+      if (agent != null) processAgent(monitor);
 
       if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
         try {
