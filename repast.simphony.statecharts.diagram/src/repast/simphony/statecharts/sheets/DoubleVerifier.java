@@ -28,9 +28,6 @@ public class DoubleVerifier implements VerifyListener {
       return;
     }
 
-    String txt = ((Text) evt.widget).getText();
-    boolean hasDec = txt.contains(".");
-
     try {
       Double.parseDouble(evt.text);
     } catch (NumberFormatException ex) {
@@ -40,9 +37,17 @@ public class DoubleVerifier implements VerifyListener {
       }
     }
 
-    if (hasDec && evt.text.contains(".")) {
-      evt.doit = false;
-      return;
+    String txt = ((Text) evt.widget).getText();
+    if (!isReplace(evt, txt.length())) {
+      boolean hasDec = txt.contains(".");
+      if (hasDec && evt.text.contains(".")) {
+        evt.doit = false;
+        return;
+      }
     }
+  }
+
+  private boolean isReplace(VerifyEvent evt, int textLength) {
+    return (evt.start <= 0 && evt.end >= textLength);
   }
 }
