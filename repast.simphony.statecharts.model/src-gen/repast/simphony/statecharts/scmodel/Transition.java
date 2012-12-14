@@ -230,6 +230,7 @@ public interface Transition extends EObject {
 
   /**
    * Returns the value of the '<em><b>Trigger Time</b></em>' attribute.
+   * The default value is <code>"1.0"</code>.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Trigger Time</em>' attribute isn't clear,
@@ -239,7 +240,7 @@ public interface Transition extends EObject {
    * @return the value of the '<em>Trigger Time</em>' attribute.
    * @see #setTriggerTime(double)
    * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerTime()
-   * @model
+   * @model default="1.0"
    * @generated
    */
   double getTriggerTime();

@@ -27,7 +27,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultTransition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="false"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerType" eType="#//TriggerTypes"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="1.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerCodeLanguage" eType="#//LanguageTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerType" eType="#//MessageCheckerTypes"/>

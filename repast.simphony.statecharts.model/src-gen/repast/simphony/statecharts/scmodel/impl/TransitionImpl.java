@@ -178,7 +178,7 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * @generated
    * @ordered
    */
-  protected static final double TRIGGER_TIME_EDEFAULT = 0.0;
+  protected static final double TRIGGER_TIME_EDEFAULT = 1.0;
 
   /**
    * The cached value of the '{@link #getTriggerTime() <em>Trigger Time</em>}' attribute.
