@@ -50,9 +50,12 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     if (bindingContext == null) {
       bindingContext = new EMFDataBindingContext();
       bindModel(bindingContext);
-    } else {
-      bindingContext.updateTargets();
     }
+    
+    //else {
+      // this seems to be unecessary
+      //bindingContext.updateTargets();
+    //}
     
     /*
      * this is the older version

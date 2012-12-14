@@ -119,12 +119,12 @@ public class FinalStateSheet extends Composite {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
     ISWTObservableValue observe = WidgetProperties.text(
-        new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(idTxt);
+        new int[] { SWT.Modify }).observeDelayed(400, idTxt);
     context.bindValue(observe, property.observe(eObject));
 
     context
         .bindValue(
-            WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(
+            WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400,
                 onEnterTxt),
             EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
                 StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));

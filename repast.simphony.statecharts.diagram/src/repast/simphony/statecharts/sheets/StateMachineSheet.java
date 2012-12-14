@@ -132,36 +132,30 @@ public class StateMachineSheet extends Composite {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.STATE_MACHINE__ID);
     ISWTObservableValue observe = WidgetProperties.text(
-        new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(idTxt);
+        new int[] { SWT.Modify }).observeDelayed(400, idTxt);
     context.bindValue(observe, property.observe(eObject));
 
     context
         .bindValue(
-            WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(
+            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
                 txtClass),
             EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
                 StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME).observe(eObject));
     
     context
     .bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
             txtPackage),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.STATE_MACHINE__PACKAGE).observe(eObject));
     
     context
     .bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
             txtAgent),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.STATE_MACHINE__AGENT_TYPE).observe(eObject));
-    
-    context
-    .bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(
-            txtClass),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME).observe(eObject));
+
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.STATE_MACHINE__LANGUAGE);
   }

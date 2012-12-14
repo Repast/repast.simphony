@@ -172,6 +172,7 @@ public class TransitionSheet extends Composite {
 
     guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    guardTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
     gd_onExitTxt.heightHint = 50;
     gd_onExitTxt.horizontalIndent = 1;
@@ -286,6 +287,7 @@ public class TransitionSheet extends Composite {
     lblMessage = toolkit.createLabel(composite, "Condition:", SWT.NONE);
 
     txtMessage = toolkit.createText(composite, "New Text", SWT.V_SCROLL | SWT.MULTI);
+    txtMessage.addTraverseListener(new CancelTraverseOnReturn());
     txtMessage.setText("");
     GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
     gd_text_1.heightHint = 40;
@@ -310,6 +312,7 @@ public class TransitionSheet extends Composite {
     new Label(cmpProb, SWT.NONE);
     txtProbProb = toolkit.createText(cmpProb, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    txtProbProb.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
     gd_txtTimedTime.heightHint = 40;
     txtProbProb.setLayoutData(gd_txtTimedTime);
@@ -333,6 +336,7 @@ public class TransitionSheet extends Composite {
     new Label(cmpCond, SWT.NONE);
     txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
     gd_txtTimedTime.heightHint = 40;
     txtCondCond.setLayoutData(gd_txtTimedTime);
@@ -347,6 +351,7 @@ public class TransitionSheet extends Composite {
     toolkit.createLabel(cmpTimed, "Time:", SWT.NONE);
     txtTimedTime = toolkit.createText(cmpTimed, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    txtTimedTime.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
     gd_txtTimedTime.heightHint = 40;
     txtTimedTime.setLayoutData(gd_txtTimedTime);
@@ -361,6 +366,7 @@ public class TransitionSheet extends Composite {
     toolkit.createLabel(cmpExp, "Exponential Decay Rate:", SWT.NONE);
     txtExpRate = toolkit.createText(cmpExp, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    txtExpRate.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
     gd_txtTimedTime.heightHint = 40;
     txtExpRate.setLayoutData(gd_txtTimedTime);
@@ -398,6 +404,7 @@ public class TransitionSheet extends Composite {
 
     onTransitionTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
         | SWT.CANCEL | SWT.MULTI);
+    onTransitionTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onTransitionTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     gd_onTransitionTxt.heightHint = 100;
     onTransitionTxt.setLayoutData(gd_onTransitionTxt);
@@ -640,7 +647,7 @@ public class TransitionSheet extends Composite {
 
   private Binding bindTextField(Text text, EAttribute attribute) {
     return bindingContext.bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(text),
+        WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
             .observe(object));
   }
@@ -648,9 +655,9 @@ public class TransitionSheet extends Composite {
   private Binding bindTextField(Text text, EAttribute attribute, UpdateValueStrategy targetToModel,
       UpdateValueStrategy modelToTarget) {
     return bindingContext.bindValue(
-        WidgetProperties.text(new int[] { SWT.FocusOut, SWT.DefaultSelection }).observe(text),
+        WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
-            .observe(object));
+            .observe(object), targetToModel, modelToTarget);
   }
 
   private static class TriggerTypeToString implements IConverter {
@@ -729,6 +736,15 @@ public class TransitionSheet extends Composite {
         }
       }
       return null;
+    }
+  }
+  
+  private static class CancelTraverseOnReturn implements TraverseListener {
+    public void keyTraversed(TraverseEvent e) {
+      if (e.detail == SWT.TRAVERSE_RETURN) {
+        e.doit = false;
+        e.detail = SWT.TRAVERSE_NONE;
+      }
     }
   }
 }
