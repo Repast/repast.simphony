@@ -34,6 +34,15 @@
               body="EcoreUtil.generateUUID()"
               language="java"/>
         </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/language"/>
+          <value
+              body="StatechartsModelUtil.getDefaultLanguage()"
+              language="java"/>
+        </initializers>
       </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
@@ -73,6 +82,15 @@
               href="statechart.ecore#//AbstractState/uuid"/>
           <value
               body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/language"/>
+          <value
+              body="StatechartsModelUtil.getDefaultLanguage()"
               language="java"/>
         </initializers>
       </domainInitializer>
@@ -157,6 +175,15 @@
                   body="EcoreUtil.generateUUID();"
                   language="java"/>
             </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/language"/>
+              <value
+                  body="StatechartsModelUtil.getDefaultLanguage()"
+                  language="java"/>
+            </initializers>
           </domainInitializer>
           <tool
               xsi:type="gmftool:CreationTool"
@@ -201,6 +228,15 @@
                   href="statechart.ecore#//AbstractState/uuid"/>
               <value
                   body="EcoreUtil.generateUUID();"
+                  language="java"/>
+            </initializers>
+            <initializers
+                xsi:type="gmfmap:FeatureValueSpec">
+              <feature
+                  xsi:type="ecore:EAttribute"
+                  href="statechart.ecore#//AbstractState/language"/>
+              <value
+                  body="StatechartsModelUtil.getDefaultLanguage()"
                   language="java"/>
             </initializers>
           </domainInitializer>
@@ -367,6 +403,15 @@
               body="EcoreUtil.generateUUID()"
               language="java"/>
         </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="statechart.ecore#//AbstractState/language"/>
+          <value
+              body="StatechartsModelUtil.getDefaultLanguage()"
+              language="java"/>
+        </initializers>
       </domainInitializer>
       <tool
           xsi:type="gmftool:CreationTool"
@@ -396,6 +441,24 @@
             href="statechart.ecore#//Transition/id"/>
         <value
             body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"
+            language="java"/>
+      </initializers>
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
+        <value
+            body="StatechartsModelUtil.getDefaultLanguage()"
+            language="java"/>
+      </initializers>
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="statechart.ecore#//Transition/triggerCodeLanguage"/>
+        <value
+            body="StatechartsModelUtil.getDefaultLanguage()"
             language="java"/>
       </initializers>
     </domainInitializer>

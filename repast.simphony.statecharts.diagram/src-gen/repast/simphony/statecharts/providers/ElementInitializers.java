@@ -8,6 +8,7 @@ import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.CompositeState;
 import repast.simphony.statecharts.scmodel.FinalState;
 import repast.simphony.statecharts.scmodel.History;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.PseudoState;
 import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.State;
@@ -33,6 +34,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_State_2003(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_State_2003(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -47,6 +53,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_CompositeState_2004(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_CompositeState_2004(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -118,6 +129,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_FinalState_2008(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_FinalState_2008(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -132,6 +148,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_State_3001(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_State_3001(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -146,6 +167,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_CompositeState_3002(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_CompositeState_3002(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -200,6 +226,11 @@ public class ElementInitializers {
       instance.setId((String) value_0);
       Object value_1 = uuid_FinalState_3007(instance);
       instance.setUuid((String) value_1);
+      Object value_2 = language_FinalState_3007(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_2);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -215,6 +246,11 @@ public class ElementInitializers {
       instance.setId((String) value_1);
       Object value_2 = uuid_History_3008(instance);
       instance.setUuid((String) value_2);
+      Object value_3 = language_History_3008(instance);
+
+      value_3 = StatechartAbstractExpression.performCast(value_3,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_3);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -230,6 +266,11 @@ public class ElementInitializers {
       instance.setId((String) value_1);
       Object value_2 = uuid_History_3009(instance);
       instance.setUuid((String) value_2);
+      Object value_3 = language_History_3009(instance);
+
+      value_3 = StatechartAbstractExpression.performCast(value_3,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setLanguage((LanguageTypes) value_3);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -244,6 +285,16 @@ public class ElementInitializers {
       instance.setUuid((String) value_0);
       Object value_1 = id_Transition_4001(instance);
       instance.setId((String) value_1);
+      Object value_2 = messageCheckerConditionLanguage_Transition_4001(instance);
+
+      value_2 = StatechartAbstractExpression.performCast(value_2,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setMessageCheckerConditionLanguage((LanguageTypes) value_2);
+      Object value_3 = triggerCodeLanguage_Transition_4001(instance);
+
+      value_3 = StatechartAbstractExpression.performCast(value_3,
+          StatechartPackage.eINSTANCE.getLanguageTypes());
+      instance.setTriggerCodeLanguage((LanguageTypes) value_3);
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }
@@ -271,6 +322,18 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private LanguageTypes language_State_2003(State self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_CompositeState_2004(CompositeState self) {
     try {
       return "Composite State " + StatechartsModelUtil.getNextID(self);
@@ -285,6 +348,18 @@ public class ElementInitializers {
    */
   private String uuid_CompositeState_2004(CompositeState self) {
     return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
+  private LanguageTypes language_CompositeState_2004(CompositeState self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
   }
 
   /**
@@ -347,6 +422,18 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private LanguageTypes language_FinalState_2008(FinalState self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_State_3001(State self) {
     try {
       return "State " + StatechartsModelUtil.getNextID(self);
@@ -366,6 +453,18 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private LanguageTypes language_State_3001(State self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_CompositeState_3002(CompositeState self) {
     try {
       return "Composite State " + StatechartsModelUtil.getNextID(self);
@@ -380,6 +479,18 @@ public class ElementInitializers {
    */
   private String uuid_CompositeState_3002(CompositeState self) {
     return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
+  private LanguageTypes language_CompositeState_3002(CompositeState self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
   }
 
   /**
@@ -442,6 +553,18 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private LanguageTypes language_FinalState_3007(FinalState self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+  }
+
+  /**
+   * @generated NOT
+   */
   private String id_History_3008(History self) {
     try {
       return "Shallow History " + StatechartsModelUtil.getNextID(self);
@@ -456,6 +579,18 @@ public class ElementInitializers {
    */
   private String uuid_History_3008(History self) {
     return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
+  private LanguageTypes language_History_3008(History self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
   }
 
   /**
@@ -480,6 +615,19 @@ public class ElementInitializers {
   /**
    * @generated NOT
    */
+  private LanguageTypes language_History_3009(History self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+    
+  }
+
+  /**
+   * @generated NOT
+   */
   private String uuid_Transition_4001(Transition self) {
     return EcoreUtil.generateUUID();
   }
@@ -494,6 +642,30 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return "";
+  }
+
+  /**
+   * @generated NOT
+   */
+  private LanguageTypes messageCheckerConditionLanguage_Transition_4001(Transition self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
+  }
+
+  /**
+   * @generated NOT
+   */
+  private LanguageTypes triggerCodeLanguage_Transition_4001(Transition self) {
+    try {
+      return StatechartsModelUtil.getDefaultLanguage(self);
+    } catch (RuntimeException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
+    }
+    return LanguageTypes.JAVA;
   }
 
   /**

@@ -15,6 +15,7 @@
       itemSemanticEditPolicyClassName="StateMachineItemSemanticEditPolicy"
       canonicalEditPolicyClassName="StateMachineCanonicalEditPolicy"
       iconProviderPriority="Low"
+      creationWizardCategoryID="repast.eclipse.ide.wizards"
       validationProviderPriority="Low">
     <diagramRunTimeClass
         href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Diagram"/>
@@ -66,6 +67,12 @@
               value="//@expressionProviders/@providers.1/@expressions.1">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.2">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -123,15 +130,21 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.2">
+              value="//@expressionProviders/@providers.1/@expressions.3">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.1/@expressions.4">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.5">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -197,13 +210,13 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.4">
+              value="//@expressionProviders/@providers.1/@expressions.6">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.5">
+              value="//@expressionProviders/@providers.1/@expressions.7">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
@@ -253,13 +266,13 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.6">
+              value="//@expressionProviders/@providers.1/@expressions.8">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.7">
+              value="//@expressionProviders/@providers.1/@expressions.9">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
@@ -302,15 +315,21 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.8">
+              value="//@expressionProviders/@providers.1/@expressions.10">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.9">
+              value="//@expressionProviders/@providers.1/@expressions.11">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.12">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -358,15 +377,21 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.10">
+              value="//@expressionProviders/@providers.1/@expressions.13">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.11">
+              value="//@expressionProviders/@providers.1/@expressions.14">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.15">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -414,15 +439,21 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.12">
+              value="//@expressionProviders/@providers.1/@expressions.16">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.13">
+              value="//@expressionProviders/@providers.1/@expressions.17">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.18">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -466,6 +497,12 @@
               value="//@expressionProviders/@providers.1/@expressions.1">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.2">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -522,15 +559,21 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.2">
+              value="//@expressionProviders/@providers.1/@expressions.3">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.1/@expressions.4">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.5">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -599,13 +642,13 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.4">
+              value="//@expressionProviders/@providers.1/@expressions.6">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.5">
+              value="//@expressionProviders/@providers.1/@expressions.7">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
@@ -654,13 +697,13 @@
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.6">
+              value="//@expressionProviders/@providers.1/@expressions.8">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.7">
+              value="//@expressionProviders/@providers.1/@expressions.9">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
           </initializers>
@@ -751,15 +794,21 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.8">
+              value="//@expressionProviders/@providers.1/@expressions.10">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/id"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.9">
+              value="//@expressionProviders/@providers.1/@expressions.11">
             <feature
                 href="statechart.genmodel#//scmodel/AbstractState/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.12">
+            <feature
+                href="statechart.genmodel#//scmodel/AbstractState/language"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -796,15 +845,27 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.14">
+              value="//@expressionProviders/@providers.1/@expressions.19">
             <feature
                 href="statechart.genmodel#//scmodel/Transition/uuid"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.15">
+              value="//@expressionProviders/@providers.1/@expressions.20">
             <feature
                 href="statechart.genmodel#//scmodel/Transition/id"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.21">
+            <feature
+                href="statechart.genmodel#//scmodel/Transition/messageCheckerConditionLanguage"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.22">
+            <feature
+                href="statechart.genmodel#//scmodel/Transition/triggerCodeLanguage"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1399,9 +1460,13 @@
       <expressions
           body="EcoreUtil.generateUUID()"/>
       <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
+      <expressions
           body="&quot;Composite State &quot; + StatechartsModelUtil.getNextID()"/>
       <expressions
           body="EcoreUtil.generateUUID()"/>
+      <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
       <expressions
           body="&quot;Initial State Pointer &quot; + StatechartsModelUtil.getNextID()"/>
       <expressions
@@ -1415,17 +1480,27 @@
       <expressions
           body="EcoreUtil.generateUUID()"/>
       <expressions
-          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
-      <expressions
-          body="EcoreUtil.generateUUID();"/>
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
       <expressions
           body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
       <expressions
           body="EcoreUtil.generateUUID();"/>
+      <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
+      <expressions
+          body="&quot;History &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID();"/>
+      <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
       <expressions
           body="EcoreUtil.generateUUID()"/>
       <expressions
           body="&quot;Transition &quot; + StatechartsModelUtil.getNextID()"/>
+      <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
+      <expressions
+          body="StatechartsModelUtil.getDefaultLanguage()"/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">
