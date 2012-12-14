@@ -1,10 +1,27 @@
 package repast.simphony.statecharts.part;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.CommandParameter;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -13,6 +30,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+import repast.simphony.statecharts.scmodel.StateMachine;
+import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
  * @generated
@@ -35,6 +55,11 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
   protected StatechartCreationWizardPage diagramModelFilePage;
 
   /**
+   * @generated NOT
+   */
+  protected StatechartCreationWizardPage0 modelPropsPage;
+
+  /**
    * @generated
    */
   protected Resource diagram;
@@ -43,6 +68,11 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
    * @generated
    */
   private boolean openNewlyCreatedDiagramEditor = true;
+
+  /**
+   * @generated NOT
+   */
+  private ICompilationUnit agent;
 
   /**
    * @generated
@@ -91,36 +121,119 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
     setNeedsProgressMonitor(true);
   }
 
-  /**
-   * @generated
-   */
-  public void addPages() {
-    diagramModelFilePage = new StatechartCreationWizardPage(
-        "DiagramModelFile", getSelection(), "rsc"); //$NON-NLS-1$ //$NON-NLS-2$
-    diagramModelFilePage.setTitle(Messages.StatechartCreationWizard_DiagramModelFilePageTitle);
-    diagramModelFilePage
-        .setDescription(Messages.StatechartCreationWizard_DiagramModelFilePageDescription);
-    addPage(diagramModelFilePage);
+  private IJavaElement getJavaElement() {
+    IJavaElement jelem = null;
+    if (selection != null && !selection.isEmpty()) {
+      Object selectedElement = selection.getFirstElement();
+      if (selectedElement instanceof IAdaptable) {
+        IAdaptable adaptable = (IAdaptable) selectedElement;
+        jelem = (IJavaElement) adaptable.getAdapter(IJavaElement.class);
+      }
+    }
+    return jelem;
   }
 
   /**
-   * @generated
+   * @generated NOT
+   * 
+   */
+  private IResource extractSelection() {
+    if (!(selection instanceof IStructuredSelection))
+      return null;
+    IStructuredSelection ss = (IStructuredSelection) selection;
+    Object element = ss.getFirstElement();
+    if (element instanceof IResource)
+      return (IResource) element;
+    if (!(element instanceof IAdaptable))
+      return null;
+    IAdaptable adaptable = (IAdaptable) element;
+    Object adapter = adaptable.getAdapter(IResource.class);
+    return (IResource) adapter;
+  }
+  
+  private String getFile() {
+    IResource resource = extractSelection();
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    String file = "";
+    IProject project = null;
+    
+    if (resource != null) {
+      project = resource.getProject();
+    } else {
+      IProject[] projects = root.getProjects();
+      if (projects != null && projects.length > 0) {
+        project = projects[0];
+      }
+    }
+    
+    if (project != null) {
+      IPath path = project.getProjectRelativePath().append(project.getName() + "/statecharts/statechart.rsc");
+      int counter = 1;
+      while(root.getFile(path).exists()) {
+        path = path.removeLastSegments(1).append("statechart" + counter + ".rsc");
+        ++counter;
+      }
+      file = path.toPortableString();
+    }
+    
+    
+    return file;
+  }
+
+  /**
+   * @generated NOT
+   */
+  public void addPages() {
+    // is the selection an
+    IResource resource = extractSelection();
+    IProject project = null;
+    if (resource != null) {
+      project = resource.getProject();
+    }
+
+    IJavaElement javaE = getJavaElement();
+    String agentType = "";
+    if (javaE != null && javaE.getElementType() == IJavaElement.COMPILATION_UNIT) {
+      agent = (ICompilationUnit) javaE;
+      try {
+        if (agent.getTypes().length == 0)
+          agent = null;
+        else {
+          IType aType = agent.getTypes()[0];
+          agentType = javaE.getParent().getElementName() + "." + aType.getElementName();
+        }
+      } catch (JavaModelException ex) {
+        agent = null;
+        // we don't need to worry about this,
+        // as it indicates that the .java / .groovy file doesn't
+        // contain a valid type, so we can just ignore then.
+      }
+    }
+
+    modelPropsPage = new StatechartCreationWizardPage0("DiagramModelProps", project, agentType, getFile());
+    modelPropsPage.setTitle("Statechart Diagram");
+    modelPropsPage.setDescription("Create a new Statechart diagram.");
+    addPage(modelPropsPage);
+
+    // if the user selected an agent then the wizard should ask the user
+    // where to put the statechart.
+    /*
+    IStructuredSelection selection = agent == null ? getSelection() : new StructuredSelection();
+    diagramModelFilePage = new StatechartCreationWizardPage("DiagramModelFile", selection, "rsc"); //$NON-NLS-1$ //$NON-NLS-2$
+    diagramModelFilePage.setTitle(Messages.StatechartCreationWizard_DiagramModelFilePageTitle);
+    diagramModelFilePage
+        .setDescription(Messages.StatechartCreationWizard_DiagramModelFilePageDescription);
+
+    addPage(diagramModelFilePage);
+    */
+  }
+
+  /**
+   * @generated NOT
    */
   public boolean performFinish() {
-    IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
+    IRunnableWithProgress op = new OnFinish();
 
-      protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
-        diagram = StatechartDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(), monitor);
-        if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
-          try {
-            StatechartDiagramEditorUtil.openDiagram(diagram);
-          } catch (PartInitException e) {
-            ErrorDialog.openError(getContainer().getShell(),
-                Messages.StatechartCreationWizardOpenEditorError, null, e.getStatus());
-          }
-        }
-      }
-    };
     try {
       getContainer().run(false, true, op);
     } catch (InterruptedException e) {
@@ -136,6 +249,108 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
       }
       return false;
     }
+
     return diagram != null;
+  }
+
+  private class OnFinish extends WorkspaceModifyOperation {
+
+    public OnFinish() {
+      super(null);
+    }
+
+    private void initializeStateMachine() {
+      StateMachine statemachine = null;
+      for (EObject obj : diagram.getContents()) {
+        if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
+          statemachine = (StateMachine) obj;
+          break;
+        }
+      }
+
+      if (statemachine != null) {
+        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(statemachine);
+        Command cmd = domain.createCommand(SetCommand.class, new CommandParameter(statemachine,
+            StatechartPackage.Literals.STATE_MACHINE__ID, modelPropsPage.getStatechartName()));
+        domain.getCommandStack().execute(cmd);
+
+        cmd = domain.createCommand(SetCommand.class, new CommandParameter(statemachine,
+            StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME, modelPropsPage.getClassName()));
+        domain.getCommandStack().execute(cmd);
+
+        cmd = domain.createCommand(
+            SetCommand.class,
+            new CommandParameter(statemachine,
+                StatechartPackage.Literals.STATE_MACHINE__AGENT_TYPE, modelPropsPage
+                    .getAgentClassName()));
+        domain.getCommandStack().execute(cmd);
+
+        cmd = domain.createCommand(SetCommand.class, new CommandParameter(statemachine,
+            StatechartPackage.Literals.STATE_MACHINE__PACKAGE, modelPropsPage.getPackage()));
+        domain.getCommandStack().execute(cmd);
+
+        cmd = domain.createCommand(SetCommand.class, new CommandParameter(statemachine,
+            StatechartPackage.Literals.STATE_MACHINE__LANGUAGE, modelPropsPage.getLanguage()));
+        domain.getCommandStack().execute(cmd);
+
+        try {
+          diagram.save(repast.simphony.statecharts.part.StatechartDiagramEditorUtil
+              .getSaveOptions());
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
+    private void processAgent(IProgressMonitor monitor) {
+      boolean agentIsOK = false;
+      try {
+        agentIsOK = agent.isStructureKnown();
+      } catch (JavaModelException ex) {
+        agentIsOK = false;
+      }
+      if (agent != null && agentIsOK) {
+        try {
+          agent.createImport(modelPropsPage.getPackage() + "." + 
+              modelPropsPage.getClassName(), null, monitor);
+          String agentTypeFromProps = modelPropsPage.getAgentClassName();
+          IType aType = agent.getTypes()[0];
+          String agentType = agent.getParent().getElementName() + "." + aType.getElementName();
+          if (agentType.equals(agentTypeFromProps)) {
+            StringBuilder buf = new StringBuilder("\t");
+            String className = modelPropsPage.getClassName();
+            buf.append(className);
+            buf.append(" ");
+            buf.append(className.substring(0, 1).toLowerCase());
+            buf.append(className.subSequence(1, className.length()));
+            buf.append(" = ");
+            buf.append(className);
+            buf.append(".createStateChart(this, 1);");
+            aType.createField(buf.toString(), null, true, monitor);
+          }
+        } catch (Throwable ex) {
+          // ignore any code creation errors as re-throwing the error causes the rest of the 
+          // chart creation to abort.
+          //new CoreException(new Status(IStatus., StatechartDiagramEditorPlugin.ID, "Error while inserting statechart code into agent.", 
+          //    ex));
+        } 
+      }
+    }
+
+    protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
+      System.out.println(modelPropsPage.getURI());
+      diagram = StatechartDiagramEditorUtil.createDiagram(modelPropsPage.getURI(), monitor);
+      initializeStateMachine();
+      processAgent(monitor);
+
+      if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
+        try {
+          StatechartDiagramEditorUtil.openDiagram(diagram);
+        } catch (PartInitException e) {
+          ErrorDialog.openError(getContainer().getShell(),
+              Messages.StatechartCreationWizardOpenEditorError, null, e.getStatus());
+        }
+      }
+    }
   }
 }

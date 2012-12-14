@@ -44,7 +44,7 @@
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/StatechartDiagramFile.gif"
-  	     category="org.eclipse.ui.Examples"
+  	     category="repast.eclipse.ide.wizards"
   	     class="repast.simphony.statecharts.part.StatechartCreationWizard"
   	     id="repast.simphony.statecharts.part.StatechartCreationWizardID">
   	  	 <description>%newWizardDesc</description>  

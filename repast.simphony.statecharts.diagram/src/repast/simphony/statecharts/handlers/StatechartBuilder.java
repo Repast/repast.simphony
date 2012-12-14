@@ -67,7 +67,7 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
     public boolean visit(IResourceDelta delta) throws CoreException {
       IPath path = delta.getResource().getRawLocation();
       System.out.println("statechart builder running: " + delta);
-      if (delta.getKind() == IResourceDelta.CHANGED && path != null
+      if ((delta.getKind() == IResourceDelta.CHANGED || delta.getKind() == IResourceDelta.ADDED) && path != null
           && path.getFileExtension() != null
           && path.getFileExtension().equals(STATECHART_EXTENSION)) {
         new CodeGenerator().run(project, path, monitor);

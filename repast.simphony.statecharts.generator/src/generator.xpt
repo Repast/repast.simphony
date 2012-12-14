@@ -48,13 +48,17 @@ private static class «generatorClassName()» {
     private Map<String, AbstractState<«agentType»>> stateMap = new HashMap<String, AbstractState<«agentType»>>();
 
     public «className» build(«agentType» agent) {
+        «IF this.states.size == 0-»
+        throw new UnsupportedOperationException("Statechart has not been defined.");
+        «ELSE-»
         «LET findFirstState(this.states) AS firstState -»
             «EXPAND blockContent(agentType) FOR firstState-»
             MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)»);
             «EXPAND blockContent(agentType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
-        «ENDLET»
+        «ENDLET-»
         createTransitions(mscb);
         return mscb.build();
+        «ENDIF»
     }
     «EXPAND csBlock(agentType) FOREACH compositeStates(states)-»
    
