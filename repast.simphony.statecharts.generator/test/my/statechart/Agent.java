@@ -10,6 +10,8 @@ package my.statechart;
  */
 public class Agent {
   
+  private int x = 0;
+  
   public void right() {}
   public void left() {}
   public void run() {}
@@ -18,5 +20,21 @@ public class Agent {
   public void up() {}
   
   public void end() {}
+  
+  public int getX() {
+    return x;
+  }
+  
+  public void setX(int val) {
+    x = val;
+  }
+  
+  public double getProbability() {
+    return 3.14;
+  }
+  
+  public String getMessage() {
+    return "my message";
+  }
 
 }

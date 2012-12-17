@@ -55,14 +55,22 @@ public class GeneratorUtil {
 
     private static int counter = 1;
 
-    private String methodName;
+    private String methodName, guardType, onTransType,
+      tdfType, ctcType, mcType, meType;
 
     public TransitionBlock() {
       methodName = "createTransition" + counter;
+      guardType = "Guard" + counter;
+      onTransType = "OnTransition" + counter;
+      tdfType = "TriggerDoubleFunction" + counter;
+      ctcType = "ConditionTriggerCondition" + counter;
+      mcType = "MessageCondition" + counter;
+      meType = "MessageEquals" + counter;
       ++counter;
     }
   }
   
+  private static CodeExpander expander = new CodeExpander();
   private static int bCounter = 1;
   private static Map<String, StateBlock> blockMap = new HashMap<String, StateBlock>();
   private static Map<String, TransitionBlock> transitionMap = new HashMap<String, TransitionBlock>();
@@ -77,13 +85,46 @@ public class GeneratorUtil {
     TransitionBlock.counter = 1;
   }
   
-  public static String getTransitionMethodName(String uuid) {
+  public static String getTDFType(String uuid) {
+    return getTBlock(uuid).tdfType;
+  }
+  
+  public static String getCTCType(String uuid) {
+    return getTBlock(uuid).ctcType;
+  }
+  
+  public static String getMCType(String uuid) {
+    return getTBlock(uuid).mcType;
+  }
+  
+  public static String getMEType(String uuid) {
+    return getTBlock(uuid).meType;
+  }
+  
+  public static String getGuardType(String uuid) {
+    return getTBlock(uuid).guardType;
+  }
+  
+  public static String getOnTransType(String uuid) {
+    return getTBlock(uuid).onTransType;
+  }
+  
+  public static String expandBody(String body, Boolean addReturn) {
+    return expander.expand(body, addReturn);
+  }
+  
+  private static TransitionBlock getTBlock(String uuid) {
     TransitionBlock block = transitionMap.get(uuid);
     if (block == null) {
       block = new TransitionBlock();
       transitionMap.put(uuid, block);
     }
-    return block.methodName;
+    return block;
+    
+  }
+  
+  public static String getTransitionMethodName(String uuid) {
+    return getTBlock(uuid).methodName;
   }
   
   public static String getBranchVar(String uuid) {
@@ -133,6 +174,17 @@ public class GeneratorUtil {
       blockMap.put(uuid, block);
     }
     return block;
+  }
+  
+  public static String getClassNameFor(String type) {
+    if (type == null) return "";
+    else if (type.equals("int")) return Integer.class.getSimpleName();
+    else if (type.equals("long")) return Long.class.getSimpleName();
+    else if (type.equals("float")) return Float.class.getSimpleName();
+    else if (type.equals("double")) return Double.class.getSimpleName();
+    else if (type.equals("boolean")) return Boolean.class.getSimpleName();
+    
+    return type;
   }
 
   public static String getPackageFromType(String type) {

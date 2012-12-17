@@ -11,6 +11,8 @@ import repast.simphony.statecharts.*;
 import java.util.Map;
 import java.util.HashMap;
 
+import «getPackageFromType(agentType)».*;
+
 public class «className» extends DefaultStateChart<«this.agentType»> {
 
     public static «className» createStateChart(«agentType» agent, double begin) {
@@ -45,49 +47,299 @@ public class «className» extends DefaultStateChart<«this.agentType»> {
 
 private static class «generatorClassName()» {
 
-    private Map<String, AbstractState<«agentType»>> stateMap = new HashMap<String, AbstractState<«agentType»>>();
+    «LET getSimpleClassName(agentType.trim()) AS simpleType-»
+    private Map<String, AbstractState<«simpleType»>> stateMap = new HashMap<String, AbstractState<«simpleType»>>();
 
-    public «className» build(«agentType» agent) {
+   
+    public «className» build(«simpleType» agent) {
         «IF this.states.size == 0-»
         throw new UnsupportedOperationException("Statechart has not been defined.");
         «ELSE-»
         «LET findFirstState(this.states) AS firstState -»
-            «EXPAND blockContent(agentType) FOR firstState-»
+            «EXPAND blockContent(simpleType) FOR firstState-»
             MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)»);
-            «EXPAND blockContent(agentType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
+            «EXPAND blockContent(simpleType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
         «ENDLET-»
         createTransitions(mscb);
         return mscb.build();
         «ENDIF»
     }
-    «EXPAND csBlock(agentType) FOREACH compositeStates(states)-»
+    «EXPAND csBlock(simpleType) FOREACH compositeStates(states)-»
    
-   «LET transitions.reject(e| e.isValid()) AS links-»
+   «LET transitions.reject(e | e.isInvalid()) AS links-»
     private void createTransitions(MyStateChartBuilder mscb) {
-        «EXPAND transitionCreateCall FOREACH links» 
+        «EXPAND transitionCreateCall(simpleType) FOREACH links» 
     }
     
-   «EXPAND transitionCreateMethod FOREACH links» 
+   «EXPAND transitionCreateMethod(simpleType) FOREACH links» 
+   «ENDLET»
    «ENDLET»
 }
 }
 «ENDFILE»
 
-«EXPAND createActions(package.trim(), agentType.trim()) FOREACH states-»
+«LET agentType.trim() AS trimmedType-»
+«EXPAND createActions(package.trim(), trimmedType) FOREACH states-»
+«FOREACH transitions.reject(e | e.isInvalid()) AS link»
+    «EXPAND createGuard(package.trim(), trimmedType) FOR link-»
+    «EXPAND createOnTransitionAction(package.trim(), trimmedType) FOR link-»
+    «EXPAND createTDF(package.trim(), trimmedType) FOR link-»
+    «EXPAND createCTC(package.trim(), trimmedType) FOR link-»
+    «EXPAND createMC(package.trim(), trimmedType) FOR link-»
+    «EXPAND createME(package.trim(), trimmedType) FOR link-»
+«ENDFOREACH»
+«ENDLET»
 «ENDDEFINE»
 
 «REM» transitions «ENDREM»
-«DEFINE transitionCreateCall FOR Transition-»
+«DEFINE transitionCreateCall(String agentType) FOR Transition-»
     // creates transition «this.id»
     «getTransitionMethodName(this.uuid)»(mscb);
 «ENDDEFINE»
 
-«DEFINE transitionCreateMethod FOR Transition-»
-    // creates transition «this.id»
+«DEFINE transitionCreateMethod(String agentType) FOR Transition-»
+    // creates transition «this.id», from = «this.from.id», to = «this.to.id»
     private void «getTransitionMethodName(this.uuid)»(MyStateChartBuilder mscb) {
-    
+    «IF isBranch(this.from)-»
+	     «IF this.defaultTransition-»
+	        DefaultOutOfBranchTransitionBuilder<«agentType»> tb = new DefaultOutOfBranchTransitionBuilder<«agentType»>("«this.id»",
+	            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+	        «EXPAND registerTransition("tb")-»
+	        tb.setPriority(«priority»);
+	        mscb.addRegularTransition(tb.build());
+	     «ELSE»
+	        OutOfBranchTransitionBuilder<«agentType»> tb = new OutOfBranchTransitionBuilder<«agentType»>("«this.id»",
+	            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+	            «EXPAND createAllTransProps(agentType)-»
+	            mscb.addRegularTransition(tb.build());
+	     «ENDIF-»
+    «ELSEIF this.from.uuid == this.to.uuid-»
+        SelfTransitionBuilder<«agentType»> tb = new SelfTransitionBuilder<«agentType»>("«this.id»",
+                stateMap.get("«this.from.uuid»"));
+        «EXPAND createAllTransProps(agentType)-»
+        mscb.addRegularTransition(tb.build());
+    «ELSE-»
+        TransitionBuilder<«agentType»> tb = new TransitionBuilder<«agentType»>("«this.id»",
+            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+            «EXPAND createAllTransProps(agentType)-»
+            mscb.addRegularTransition(tb.build());
+    «ENDIF-»
     }
 «ENDDEFINE»
+
+«DEFINE createAllTransProps(String agentType) FOR Transition-»
+	«EXPAND registerGuard("tb")-»
+	«EXPAND registerTransition("tb")-»
+	«EXPAND createTrigger("tb", agentType)-»
+	tb.setPriority(«priority»);
+«ENDDEFINE»
+
+«DEFINE createTrigger(String bvar, String agentType) FOR Transition-»
+    «IF this.triggerType == TriggerTypes::always-»
+        «bvar».addTrigger(new AlwaysTrigger(«this.triggerTime»));
+    «ELSEIF this.triggerType == TriggerTypes::timed-»
+        «bvar».addTrigger(new TimedTrigger<«agentType»>(new «getTDFType(this.uuid)»()));
+     «ELSEIF this.triggerType == TriggerTypes::probability-»
+        «bvar».addTrigger(new ProbabilityTrigger<«agentType»>(new «getTDFType(this.uuid)»(), «this.triggerTime»));
+     «ELSEIF this.triggerType == TriggerTypes::exponential-»
+        «bvar».addTrigger(new ExponentialDecayRateTrigger<«agentType»>(new «getTDFType(this.uuid)»()));
+     «ELSEIF this.triggerType == TriggerTypes::condition-»
+        «bvar».addTrigger(new ConditionTrigger<«agentType»>(new «getCTCType(this.uuid)»(), «this.triggerTime»));
+     «ELSEIF this.triggerType == TriggerTypes::message-»
+        «bvar».addTrigger(new MessageTrigger<«agentType»>(new «EXPAND createMessageChecker(agentType) FOR this-», «this.triggerTime»));
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE createMessageChecker(String agentType) FOR Transition-»
+    «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
+    «IF this.messageCheckerType == MessageCheckerTypes::conditional-»
+        MessageConditionMessageChecker<«agentType», «ctype»>(new «getMCType(uuid)»(), «ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::equals-»
+        MessageEqualsMessageChecker<«agentType», «ctype»>(new «getMEType(uuid)»(), «ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::unconditional-»
+        UnconditionalByClassMessageChecker(«ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::always-»
+        UnconditionalMessageChecker()
+    «ENDIF-»
+    «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE registerGuard(String bvar) FOR Transition-»
+    «IF this.guard != null && this.guard.trim().length > 0-»
+        «bvar».registerGuard(new «getGuardType(this.uuid)»());
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE registerTransition(String bvar) FOR Transition-»
+    «IF this.onTransition != null && this.onTransition.trim().length > 0-»
+            «bvar».registerOnTransition(new «getOnTransType(this.uuid)»());
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE createME(String package, String agentType) FOR Transition-»
+    «IF getMECode(this).length > 0-»
+    «FILE actionFilename(package, getMEType(this.uuid))-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         *  MessageEquals for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getMEType(this.uuid)» implements MessageEquals<«simpleType»> {
+            @Override
+            public Object messageValue(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «expandCodeBody(getMECode(this), true)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createMC(String package, String agentType) FOR Transition-»
+    «IF getMCCode(this).length > 0-»
+    «FILE actionFilename(package, getMCType(this.uuid))-»
+    «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        «IF ctype.contains(".")-»
+        import ctype;
+        «ENDIF»
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        «LET getSimpleClassName(ctype) AS simpleCType»
+        /**
+         *  MessageCondition for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getMCType(this.uuid)» implements MessageCondition<«simpleType», «simpleCType»> {
+            @Override
+            public boolean isTrue(«simpleType» agent, Transition<«simpleType»> transition, «simpleCType» message, Parameters params) throws Exception {
+                «expandCodeBody(getMCCode(this), true)»
+            }
+        }
+        «ENDLET»
+        «ENDLET»
+     «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createCTC(String package, String agentType) FOR Transition»
+    «IF getCTCCode(this).length > 0-»
+    «FILE actionFilename(package, getCTCType(this.uuid))-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Condition trigger condition for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getCTCType(this.uuid)» implements ConditionTriggerCondition<«simpleType»> {
+            @Override
+            public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «expandCodeBody(getCTCCode(this), true)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createTDF(String package, String agentType) FOR Transition»
+    «IF getTDFCode(this).length > 0-»
+    «FILE actionFilename(package, getTDFType(this.uuid))-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Trigger Function for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getTDFType(this.uuid)» implements TriggerDoubleFunction<«simpleType»> {
+            @Override
+            public double value(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «expandCodeBody(getTDFCode(this), true)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+
+«DEFINE createGuard(String package, String agentType) FOR Transition»
+    «IF this.guard != null && this.guard.trim().length > 0-»
+    «FILE actionFilename(package, getGuardType(this.uuid))-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Guard for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getGuardType(this.uuid)» implements GuardCondition<«simpleType»> {
+            @Override
+            public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «expandCodeBody(this.guard.trim(), true)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createOnTransitionAction(String package, String agentType) FOR Transition»
+    «IF this.onTransition != null && this.onTransition.trim().length > 0-»
+    «FILE actionFilename(package, getOnTransType(this.uuid))-»
+        package «package»;
+        
+        import repast.simphony.statecharts.*;
+        import repast.simphony.parameter.Parameters;
+        import repast.simphony.random.RandomHelper.*;
+        
+        import «getPackageFromType(agentType)».*;
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * OnTransition action for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        public class «getOnTransType(this.uuid)» implements TransitionAction<«simpleType»> {
+            @Override
+            public void action(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «expandCodeBody(this.onTransition.trim(), false)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
 
 
 «REM» expansions for creating state actions «ENDREM»
@@ -107,6 +359,7 @@ private static class «generatorClassName()» {
 	    
 	    import repast.simphony.statecharts.*;
 	    import repast.simphony.parameter.Parameters;
+	    import repast.simphony.random.RandomHelper.*;
 	    
 	    import «getPackageFromType(agentType)».*;
 	    

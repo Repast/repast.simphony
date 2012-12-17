@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <workflow>
-    <property name="model" value="repast.simphony.statecharts.generator/test-data/composite_test.rsc" />
+    <property name="model" value="repast.simphony.statecharts.generator/test-data/transition_example.rsc" />
     <property name="src-gen" value="src-gen" />
     
     <!-- set up EMF for standalone execution -->

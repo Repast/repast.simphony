@@ -58,6 +58,27 @@ String getOnEnterActionType(String uuid) : JAVA
 String getOnExitActionType(String uuid) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getOnExitTypeName(java.lang.String);
     
+String getGuardType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getGuardType(java.lang.String);
+    
+String getOnTransType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getOnTransType(java.lang.String);
+    
+String getTDFType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getTDFType(java.lang.String);
+    
+String getCTCType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getCTCType(java.lang.String);
+    
+String getMCType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getMCType(java.lang.String);
+    
+String getMEType(String uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getMEType(java.lang.String);
+    
+String expandCodeBody(String body, Boolean addReturn) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.expandBody(java.lang.String, java.lang.Boolean);
+    
 AbstractState findInitialState(List states) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.findInitialState(java.util.List);
     
@@ -70,8 +91,31 @@ String getBranchVar(String uuid) : JAVA
 String getTransitionMethodName(String uuid) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getTransitionMethodName(java.lang.String);
     
-Boolean isValid(Transition transition) :
-    !(PseudoState.isInstance(transition.from) && (((PseudoState)transition.from).type == PseudoStateTypes::initial 
+Boolean isInvalid(Transition transition) :
+    (PseudoState.isInstance(transition.from) && (((PseudoState)transition.from).type == PseudoStateTypes::initial 
     || ((PseudoState)transition.from).type == PseudoStateTypes::entry));
+
+Boolean isBranch(AbstractState state) :
+    PseudoState.isInstance(state) && ((PseudoState)state).type == PseudoStateTypes::choice; 
+    
+String nullToEmpty(String val) :
+    val == null ? "" : val;
+    
+String getMessageCheckerClass(String type) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getClassNameFor(java.lang.String);
+    
+String getCTCCode(Transition transition) :
+    (transition.triggerType == TriggerTypes::condition ? nullToEmpty(transition.triggerConditionCode) : "");
+    
+String getMCCode(Transition transition) :
+    transition.messageCheckerType == MessageCheckerTypes::conditional ? nullToEmpty(transition.messageCheckerCode) : "";
+    
+String getMECode(Transition transition) :
+    transition.messageCheckerType == MessageCheckerTypes::equals ? nullToEmpty(transition.messageCheckerCode) : "";
+    
+String getTDFCode(Transition transition) :
+    (transition.triggerType == TriggerTypes::timed ? nullToEmpty(transition.triggerTimedCode) :
+    (transition.triggerType == TriggerTypes::exponential ? nullToEmpty(transition.triggerExpRateCode) : 
+    (transition.triggerType == TriggerTypes::probability ? nullToEmpty(transition.triggerProbCode) : "")));
     
     
