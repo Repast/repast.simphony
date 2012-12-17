@@ -638,7 +638,7 @@ public class TransitionSheet extends Composite {
         createUpdateValueStrategy(new MessageTypeToString()));
 
     context.bindValue(
-        WidgetProperties.selection().observe(cmbMessageClass),
+        WidgetProperties.text().observe(cmbMessageClass),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CLASS).observe(eObject));
 
