@@ -16,7 +16,9 @@
       canonicalEditPolicyClassName="StateMachineCanonicalEditPolicy"
       iconProviderPriority="Low"
       creationWizardCategoryID="repast.eclipse.ide.wizards"
-      validationProviderPriority="Low">
+      validationProviderPriority="Low"
+      validationDecorators="true"
+      liveValidationUIFeedback="true">
     <diagramRunTimeClass
         href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Diagram"/>
     <elementType
