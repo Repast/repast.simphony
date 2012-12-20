@@ -16,7 +16,7 @@ import com.jcraft.jsch.UserInfo;
  */
 public class ConsoleUserInfo implements UserInfo {
 
-  private String passphrase;
+  private String passphrase = "";
   
   /*
    * (non-Javadoc)

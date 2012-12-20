@@ -27,7 +27,7 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class GUIUserInfo implements UserInfo {
 
-  private String passphrase;
+  private String passphrase = "";
   private Window window;
   private JPasswordField fld;
   private boolean canceled;
