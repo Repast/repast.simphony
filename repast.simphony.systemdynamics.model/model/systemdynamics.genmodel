@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/repast.simphony.systemdynamics.model/src-gen"
+    editDirectory="/repast.simphony.systemdynamics.edit/src-gen" modelPluginID="repast.simphony.systemdynamics.model"
+    modelName="Systemdynamics" importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>systemdynamics.ecore</foreignModel>
+  <genPackages prefix="SDModel" basePackage="repast.simphony.systemdynamics" disposableProviderFactory="true"
+      ecorePackage="systemdynamics.ecore#/">
+    <genClasses ecoreClass="systemdynamics.ecore#//SystemModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//SystemModel/links"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//SystemModel/variables"/>
+    </genClasses>
+    <genClasses ecoreClass="systemdynamics.ecore#//CausalLink">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//CausalLink/id"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//CausalLink/from"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//CausalLink/to"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="systemdynamics.ecore#//AbstractVariable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//AbstractVariable/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//AbstractVariable/name"/>
+    </genClasses>
+    <genClasses ecoreClass="systemdynamics.ecore#//Variable"/>
+    <genClasses ecoreClass="systemdynamics.ecore#//Cloud"/>
+    <genClasses ecoreClass="systemdynamics.ecore#//Stock"/>
+    <genClasses ecoreClass="systemdynamics.ecore#//Rate">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//Rate/to"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//Rate/from"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,0 +1,7 @@
+# Tracing options for the repast.simphony.systemdynamics.diagram plug-in
+
+# Common issues
+repast.simphony.systemdynamics.diagram/debug=false
+
+# Visual IDs
+repast.simphony.systemdynamics.diagram/debug/visualID=false

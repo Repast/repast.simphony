@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+gmf_dashboard/domainGenerationModel=platform\:/resource/repast.simphony.systemdynamics.model/model/systemdynamics.genmodel
+gmf_dashboard/domainModel=platform\:/resource/repast.simphony.systemdynamics.model/model/systemdynamics.ecore
+gmf_dashboard/graphicalDefinitionModel=platform\:/resource/repast.simphony.systemdynamics.model/model/systemdynamics.gmfgraph
+gmf_dashboard/mappingModel=platform\:/resource/repast.simphony.systemdynamics.model/model/systemdynamics.gmfmap
+gmf_dashboard/toolingDefinitionModel=platform\:/resource/repast.simphony.systemdynamics.model/model/systemdynamics.gmftool
