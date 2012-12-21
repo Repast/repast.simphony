@@ -69,6 +69,7 @@ public class StateMachineItemProvider
       addLanguagePropertyDescriptor(object);
       addNextIDPropertyDescriptor(object);
       addIdPropertyDescriptor(object);
+      addUuidPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -206,6 +207,28 @@ public class StateMachineItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Uuid feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUuidPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_StateMachine_uuid_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_uuid_feature", "_UI_StateMachine_type"),
+         StatechartPackage.Literals.STATE_MACHINE__UUID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
    * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
    * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -279,6 +302,7 @@ public class StateMachineItemProvider
       case StatechartPackage.STATE_MACHINE__LANGUAGE:
       case StatechartPackage.STATE_MACHINE__NEXT_ID:
       case StatechartPackage.STATE_MACHINE__ID:
+      case StatechartPackage.STATE_MACHINE__UUID:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
       case StatechartPackage.STATE_MACHINE__STATES:

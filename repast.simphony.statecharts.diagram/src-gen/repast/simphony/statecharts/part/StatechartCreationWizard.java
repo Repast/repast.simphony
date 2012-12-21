@@ -150,13 +150,13 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
     Object adapter = adaptable.getAdapter(IResource.class);
     return (IResource) adapter;
   }
-  
+
   private String getFile() {
     IResource resource = extractSelection();
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     String file = "";
     IProject project = null;
-    
+
     if (resource != null) {
       project = resource.getProject();
     } else {
@@ -165,18 +165,18 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
         project = projects[0];
       }
     }
-    
+
     if (project != null) {
-      IPath path = project.getProjectRelativePath().append(project.getName() + "/statecharts/statechart.rsc");
+      IPath path = project.getProjectRelativePath().append(
+          project.getName() + "/statecharts/statechart.rsc");
       int counter = 1;
-      while(root.getFile(path).exists()) {
+      while (root.getFile(path).exists()) {
         path = path.removeLastSegments(1).append("statechart" + counter + ".rsc");
         ++counter;
       }
       file = path.toPortableString();
     }
-    
-    
+
     return file;
   }
 
@@ -210,7 +210,8 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
       }
     }
 
-    modelPropsPage = new StatechartCreationWizardPage0("DiagramModelProps", project, agentType, getFile());
+    modelPropsPage = new StatechartCreationWizardPage0("DiagramModelProps", project, agentType,
+        getFile());
     modelPropsPage.setTitle("Statechart Diagram");
     modelPropsPage.setDescription("Create a new Statechart diagram.");
     addPage(modelPropsPage);
@@ -225,7 +226,7 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
         .setDescription(Messages.StatechartCreationWizard_DiagramModelFilePageDescription);
 
     addPage(diagramModelFilePage);
-    */
+     */
   }
 
   /**
@@ -311,8 +312,8 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
       }
       if (agent != null && agentIsOK) {
         try {
-          agent.createImport(modelPropsPage.getPackage() + "." + 
-              modelPropsPage.getClassName(), null, monitor);
+          agent.createImport(modelPropsPage.getPackage() + "." + modelPropsPage.getClassName(),
+              null, monitor);
           String agentTypeFromProps = modelPropsPage.getAgentClassName();
           IType aType = agent.getTypes()[0];
           String agentType = agent.getParent().getElementName() + "." + aType.getElementName();
@@ -333,14 +334,15 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
           // chart creation to abort.
           //new CoreException(new Status(IStatus., StatechartDiagramEditorPlugin.ID, "Error while inserting statechart code into agent.", 
           //    ex));
-        } 
+        }
       }
     }
 
     protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
       diagram = StatechartDiagramEditorUtil.createDiagram(modelPropsPage.getURI(), monitor);
       initializeStateMachine();
-      if (agent != null) processAgent(monitor);
+      if (agent != null)
+        processAgent(monitor);
 
       if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
         try {

@@ -622,7 +622,7 @@ public class ElementInitializers {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$                                           
     }
     return LanguageTypes.JAVA;
-    
+
   }
 
   /**
