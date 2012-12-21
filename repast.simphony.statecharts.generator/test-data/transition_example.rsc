@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="http://repast.sf.net/statecharts" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation">
-  <StateMachine xmi:id="_D2lTYEYTEeKjT5SzDPIp2w" agentType="my.statechart.Agent" package="anl.transition" className="TransitionExample" nextID="56" id="Transition Example">
+  <StateMachine xmi:id="_D2lTYEYTEeKjT5SzDPIp2w" agentType="my.statechart.Agent" package="anl.transition" className="TransitionExample" nextID="56" id="Transition Example" uuid="_zJObcEuHEeKvJ9BPAY79Ig">
     <states xmi:type="State" xmi:id="_HZeyYEYTEeKjT5SzDPIp2w" id="State 0" uuid="_HZqYkEYTEeKjT5SzDPIp2w"/>
     <states xmi:type="State" xmi:id="_H3FUYEYTEeKjT5SzDPIp2w" id="State 1" uuid="_H3FUYUYTEeKjT5SzDPIp2w"/>
     <states xmi:type="State" xmi:id="_MAZTIEYTEeKjT5SzDPIp2w" id="State 2" uuid="_MAZTIUYTEeKjT5SzDPIp2w"/>

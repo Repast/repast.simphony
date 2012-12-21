@@ -64,8 +64,7 @@ public class CodeGenerator {
           break;
         }
       }
-      
-      IPath srcPath = addSrcPath(project, statemachine.getPackage(), monitor);
+      IPath srcPath = addSrcPath(project, statemachine.getUuid(), monitor);
       IPath projectLocation = project.getLocation();
       srcPath = projectLocation.append(srcPath.lastSegment());
       
@@ -98,7 +97,7 @@ public class CodeGenerator {
     }
   }
   
-  private IPath addSrcPath(IProject project, String pkg, IProgressMonitor monitor) throws CoreException {
+  private IPath addSrcPath(IProject project, String uuid, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     
     // workspace relative
@@ -129,7 +128,7 @@ public class CodeGenerator {
     } else {
       DirectoryCleaner cleaner = new DirectoryCleaner();
       //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
-      cleaner.run(project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
+      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString(), uuid);
     }
     
     return srcPath;

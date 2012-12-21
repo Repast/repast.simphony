@@ -7,12 +7,15 @@
 
 package «this.package»;
 
-import repast.simphony.statecharts.*;
 import java.util.Map;
 import java.util.HashMap;
 
+import repast.simphony.statecharts.*;
+import repast.simphony.statecharts.generator.GeneratedFor;
+
 import «getPackageFromType(agentType)».*;
 
+@GeneratedFor("«this.uuid»")
 public class «className» extends DefaultStateChart<«this.agentType»> {
 
     public static «className» createStateChart(«agentType» agent, double begin) {
@@ -79,14 +82,14 @@ private static class «generatorClassName()» {
 «ENDFILE»
 
 «LET agentType.trim() AS trimmedType-»
-«EXPAND createActions(package.trim(), trimmedType) FOREACH states-»
+«EXPAND createActions(package.trim(), trimmedType, this.uuid) FOREACH states-»
 «FOREACH transitions.reject(e | e.isInvalid()) AS link»
-    «EXPAND createGuard(package.trim(), trimmedType) FOR link-»
-    «EXPAND createOnTransitionAction(package.trim(), trimmedType) FOR link-»
-    «EXPAND createTDF(package.trim(), trimmedType) FOR link-»
-    «EXPAND createCTC(package.trim(), trimmedType) FOR link-»
-    «EXPAND createMC(package.trim(), trimmedType) FOR link-»
-    «EXPAND createME(package.trim(), trimmedType) FOR link-»
+    «EXPAND createGuard(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createOnTransitionAction(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createTDF(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createCTC(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createMC(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createME(package.trim(), trimmedType, this.uuid) FOR link-»
 «ENDFOREACH»
 «ENDLET»
 «ENDDEFINE»
@@ -176,7 +179,7 @@ private static class «generatorClassName()» {
     «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE createME(String package, String agentType) FOR Transition-»
+«DEFINE createME(String package, String agentType, String smUUID) FOR Transition-»
     «IF getMECode(this).length > 0-»
     «FILE actionFilename(package, getMEType(this.uuid))-»
         package «package»;
@@ -184,6 +187,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         
         import «getPackageFromType(agentType)».*;
         
@@ -191,6 +195,7 @@ private static class «generatorClassName()» {
         /**
          *  MessageEquals for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getMEType(this.uuid)» implements MessageEquals<«simpleType»> {
             @Override
             public Object messageValue(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
@@ -202,7 +207,7 @@ private static class «generatorClassName()» {
     «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createMC(String package, String agentType) FOR Transition-»
+«DEFINE createMC(String package, String agentType, String smUUID) FOR Transition-»
     «IF getMCCode(this).length > 0-»
     «FILE actionFilename(package, getMCType(this.uuid))-»
     «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
@@ -211,6 +216,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         «IF ctype.contains(".")-»
         import ctype;
         «ENDIF»
@@ -222,6 +228,7 @@ private static class «generatorClassName()» {
         /**
          *  MessageCondition for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getMCType(this.uuid)» implements MessageCondition<«simpleType», «simpleCType»> {
             @Override
             public boolean isTrue(«simpleType» agent, Transition<«simpleType»> transition, «simpleCType» message, Parameters params) throws Exception {
@@ -235,7 +242,7 @@ private static class «generatorClassName()» {
     «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createCTC(String package, String agentType) FOR Transition»
+«DEFINE createCTC(String package, String agentType, String smUUID) FOR Transition»
     «IF getCTCCode(this).length > 0-»
     «FILE actionFilename(package, getCTCType(this.uuid))-»
         package «package»;
@@ -243,6 +250,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         
         import «getPackageFromType(agentType)».*;
         
@@ -250,6 +258,7 @@ private static class «generatorClassName()» {
         /**
          * Condition trigger condition for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getCTCType(this.uuid)» implements ConditionTriggerCondition<«simpleType»> {
             @Override
             public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
@@ -261,7 +270,7 @@ private static class «generatorClassName()» {
     «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createTDF(String package, String agentType) FOR Transition»
+«DEFINE createTDF(String package, String agentType, String smUUID) FOR Transition»
     «IF getTDFCode(this).length > 0-»
     «FILE actionFilename(package, getTDFType(this.uuid))-»
         package «package»;
@@ -269,6 +278,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         
         import «getPackageFromType(agentType)».*;
         
@@ -276,6 +286,7 @@ private static class «generatorClassName()» {
         /**
          * Trigger Function for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getTDFType(this.uuid)» implements TriggerDoubleFunction<«simpleType»> {
             @Override
             public double value(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
@@ -288,7 +299,7 @@ private static class «generatorClassName()» {
 «ENDDEFINE»
 
 
-«DEFINE createGuard(String package, String agentType) FOR Transition»
+«DEFINE createGuard(String package, String agentType, String smUUID) FOR Transition»
     «IF this.guard != null && this.guard.trim().length > 0-»
     «FILE actionFilename(package, getGuardType(this.uuid))-»
         package «package»;
@@ -296,6 +307,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         
         import «getPackageFromType(agentType)».*;
         
@@ -303,6 +315,7 @@ private static class «generatorClassName()» {
         /**
          * Guard for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getGuardType(this.uuid)» implements GuardCondition<«simpleType»> {
             @Override
             public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
@@ -314,7 +327,7 @@ private static class «generatorClassName()» {
     «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createOnTransitionAction(String package, String agentType) FOR Transition»
+«DEFINE createOnTransitionAction(String package, String agentType, String smUUID) FOR Transition»
     «IF this.onTransition != null && this.onTransition.trim().length > 0-»
     «FILE actionFilename(package, getOnTransType(this.uuid))-»
         package «package»;
@@ -322,6 +335,7 @@ private static class «generatorClassName()» {
         import repast.simphony.statecharts.*;
         import repast.simphony.parameter.Parameters;
         import repast.simphony.random.RandomHelper.*;
+        import repast.simphony.statecharts.generator.GeneratedFor;
         
         import «getPackageFromType(agentType)».*;
         
@@ -329,6 +343,7 @@ private static class «generatorClassName()» {
         /**
          * OnTransition action for «this.id», from = «this.from.id», to = «this.to.id».
          */
+        @GeneratedFor("«smUUID»")
         public class «getOnTransType(this.uuid)» implements TransitionAction<«simpleType»> {
             @Override
             public void action(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
@@ -343,23 +358,24 @@ private static class «generatorClassName()» {
 
 
 «REM» expansions for creating state actions «ENDREM»
-«DEFINE createActionsCore(String package, String agentType) FOR AbstractState»
+«DEFINE createActionsCore(String package, String agentType, String smUUID) FOR AbstractState»
 «IF this.onEnter != null && this.onEnter.trim().length > 0-»
-    «EXPAND createAction(package.trim(), getOnEnterActionType(this.uuid), agentType.trim(), this.onEnter.trim()) FOR this-»
+    «EXPAND createAction(package.trim(), getOnEnterActionType(this.uuid), agentType.trim(), this.onEnter.trim(), smUUID) FOR this-»
 «ENDIF»
 
 «IF this.onExit != null && this.onExit.trim().length > 0-»
-    «EXPAND createAction(package.trim(), getOnExitActionType(this.uuid), agentType.trim(), this.onExit.trim()) FOR this-»
+    «EXPAND createAction(package.trim(), getOnExitActionType(this.uuid), agentType.trim(), this.onExit.trim(), smUUID) FOR this-»
 «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createAction(String package, String actType, String agentType, String body) FOR AbstractState»
+«DEFINE createAction(String package, String actType, String agentType, String body, String smUUID) FOR AbstractState»
     «FILE actionFilename(package, actType)-»
 	    package «package»;
 	    
 	    import repast.simphony.statecharts.*;
 	    import repast.simphony.parameter.Parameters;
 	    import repast.simphony.random.RandomHelper.*;
+	    import repast.simphony.statecharts.generator.GeneratedFor;
 	    
 	    import «getPackageFromType(agentType)».*;
 	    
@@ -367,6 +383,7 @@ private static class «generatorClassName()» {
 	    /**
 	     * Action for «this.id».
 	     */
+	    @GeneratedFor("«smUUID»")
 	    public class «actType» implements StateAction<«simpleType»> {
 	        @Override
 	        public void action(«simpleType» agent, AbstractState<«simpleType»> state, Parameters params) throws Exception {
@@ -377,13 +394,13 @@ private static class «generatorClassName()» {
     «ENDFILE»
 «ENDDEFINE»
 
-«DEFINE createActions(String package, String agentType) FOR AbstractState-»
-    «EXPAND createActionsCore(package, agentType) FOR this-»
+«DEFINE createActions(String package, String agentType, String smUUID) FOR AbstractState-»
+    «EXPAND createActionsCore(package, agentType, smUUID) FOR this-»
 «ENDDEFINE»
 
-«DEFINE createActions(String package, String agentType) FOR CompositeState-»
-    «EXPAND createActionsCore(package, agentType) FOR this-»
-    «EXPAND createActions(package, agentType) FOREACH children-»
+«DEFINE createActions(String package, String agentType, String smUUID) FOR CompositeState-»
+    «EXPAND createActionsCore(package, agentType, smUUID) FOR this-»
+    «EXPAND createActions(package, agentType, smUUID) FOREACH children-»
 «ENDDEFINE»
 
 «REM» expansions for create states «ENDREM»

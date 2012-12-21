@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="http://repast.sf.net/statecharts" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation">
-  <StateMachine xmi:id="_HER2UECgEeKuNabxF1X6mw" agentType="my.statechart.Agent" package="anl.statechart" className="CompositeExample" nextID="70" id="Composite State Example 3">
+  <StateMachine xmi:id="_HER2UECgEeKuNabxF1X6mw" agentType="my.statechart.Agent" package="anl.statechart" className="CompositeExample" nextID="91" id="Composite State Example 5" uuid="_SU2fEEuKEeKMOrrCZmOFLw">
     <states xmi:type="CompositeState" xmi:id="_HgyMIECgEeKuNabxF1X6mw" id="Composite State 0" uuid="_Hg2dkECgEeKuNabxF1X6mw">
       <children xmi:type="CompositeState" xmi:id="_Kc-QcECgEeKuNabxF1X6mw" id="Composite State 2" onEnter="agent.run();" uuid="_Kc-QcUCgEeKuNabxF1X6mw">
         <children xmi:type="CompositeState" xmi:id="_TtUacECgEeKuNabxF1X6mw" id="Composite State 7" uuid="_TtUacUCgEeKuNabxF1X6mw">
@@ -18,8 +18,8 @@
           <children xmi:type="PseudoState" xmi:id="_WqqFMELYEeKp6c68Mc9ylQ" id="Initial State Pointer 37" uuid="_WqqFMULYEeKp6c68Mc9ylQ"/>
         </children>
         <children xmi:type="CompositeState" xmi:id="_QLQo8ECgEeKuNabxF1X6mw" id="Composite State 5" uuid="_QLQo8UCgEeKuNabxF1X6mw">
-          <children xmi:type="State" xmi:id="_SFl-kELYEeKp6c68Mc9ylQ" id="State 35" uuid="_SFl-kULYEeKp6c68Mc9ylQ"/>
-          <children xmi:type="State" xmi:id="_ScTOYELYEeKp6c68Mc9ylQ" id="State 36" uuid="_ScTOYULYEeKp6c68Mc9ylQ"/>
+          <children xmi:type="State" xmi:id="_SFl-kELYEeKp6c68Mc9ylQ" id="State 35" onEnter="agent.up();" uuid="_SFl-kULYEeKp6c68Mc9ylQ"/>
+          <children xmi:type="State" xmi:id="_ScTOYELYEeKp6c68Mc9ylQ" id="State 36" onEnter="agent.down();" uuid="_ScTOYULYEeKp6c68Mc9ylQ"/>
           <children xmi:type="PseudoState" xmi:id="_XCevUELYEeKp6c68Mc9ylQ" id="Initial State Pointer 38" uuid="_XCevUULYEeKp6c68Mc9ylQ"/>
         </children>
         <children xmi:type="PseudoState" xmi:id="_OEZSAEC_EeKGv_UdGig-Kw" id="Initial State Pointer 23" uuid="_OEbHMEC_EeKGv_UdGig-Kw"/>
@@ -50,12 +50,12 @@
     <transitions xmi:type="Transition" xmi:id="_Lhc8IELYEeKp6c68Mc9ylQ" from="_GH3BQELYEeKp6c68Mc9ylQ" to="_KS_k8ELYEeKp6c68Mc9ylQ" id="Transition 32" uuid="_Lhc8IULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_Xj4zQELYEeKp6c68Mc9ylQ" from="_XCevUELYEeKp6c68Mc9ylQ" to="_ScTOYELYEeKp6c68Mc9ylQ" id="Transition 39" uuid="_Xj4zQULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_YRNMQELYEeKp6c68Mc9ylQ" from="_WqqFMELYEeKp6c68Mc9ylQ" to="_RrrCsELYEeKp6c68Mc9ylQ" id="Transition 40" uuid="_YRNMQULYEeKp6c68Mc9ylQ"/>
-    <transitions xmi:type="Transition" xmi:id="_YuBEEELYEeKp6c68Mc9ylQ" from="_RrrCsELYEeKp6c68Mc9ylQ" to="_RJkbMELYEeKp6c68Mc9ylQ" id="Transition 41" uuid="_YuBEEULYEeKp6c68Mc9ylQ"/>
+    <transitions xmi:type="Transition" xmi:id="_YuBEEELYEeKp6c68Mc9ylQ" from="_RrrCsELYEeKp6c68Mc9ylQ" to="_RJkbMELYEeKp6c68Mc9ylQ" triggerType="probability" id="Transition 41" uuid="_YuBEEULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_ZJs6gELYEeKp6c68Mc9ylQ" from="_ScTOYELYEeKp6c68Mc9ylQ" to="_SFl-kELYEeKp6c68Mc9ylQ" id="Transition 42" uuid="_ZJs6gULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_aDxWEELYEeKp6c68Mc9ylQ" from="_7lOhoEC2EeKuNabxF1X6mw" to="_8HjyoEC2EeKuNabxF1X6mw" id="Transition 43" uuid="_aDxWEULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_af8UsELYEeKp6c68Mc9ylQ" from="_8HjyoEC2EeKuNabxF1X6mw" to="_TtUacECgEeKuNabxF1X6mw" id="Transition 44" uuid="_af8UsULYEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_PyoSEEMHEeKp6c68Mc9ylQ" from="_HgyMIECgEeKuNabxF1X6mw" to="_MRwzYEMHEeKp6c68Mc9ylQ" id="Transition 52" uuid="_Pyo5IEMHEeKp6c68Mc9ylQ"/>
-    <transitions xmi:type="Transition" xmi:id="_QuW6gEMHEeKp6c68Mc9ylQ" from="_MRwzYEMHEeKp6c68Mc9ylQ" to="_PDPcgEMHEeKp6c68Mc9ylQ" outOfBranch="true" triggerType="condition" id="Transition 53" uuid="_QuXhkEMHEeKp6c68Mc9ylQ"/>
+    <transitions xmi:type="Transition" xmi:id="_QuW6gEMHEeKp6c68Mc9ylQ" from="_MRwzYEMHEeKp6c68Mc9ylQ" to="_PDPcgEMHEeKp6c68Mc9ylQ" outOfBranch="true" defaultTransition="true" triggerType="condition" id="Transition 53" uuid="_QuXhkEMHEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_R0hRUEMHEeKp6c68Mc9ylQ" from="_MRwzYEMHEeKp6c68Mc9ylQ" to="_IWUtAECgEeKuNabxF1X6mw" outOfBranch="true" triggerType="condition" id="Transition 54" uuid="_R0hRUUMHEeKp6c68Mc9ylQ"/>
     <transitions xmi:type="Transition" xmi:id="_98wnQEMHEeKp6c68Mc9ylQ" from="_IWUtAECgEeKuNabxF1X6mw" to="_9edhsEMHEeKp6c68Mc9ylQ" id="Transition 61" uuid="_98wnQUMHEeKp6c68Mc9ylQ"/>
   </StateMachine>
@@ -71,7 +71,7 @@
               <children xmi:type="notation:DecorationNode" xmi:id="_WHTJkUCgEeKuNabxF1X6mw" type="7002">
                 <children xmi:type="notation:Shape" xmi:id="_IXbBwEC3EeKuNabxF1X6mw" type="3001" element="_IXZzoEC3EeKuNabxF1X6mw" fontName="Lucida Grande">
                   <children xmi:type="notation:DecorationNode" xmi:id="_IXbo0EC3EeKuNabxF1X6mw" type="5002"/>
-                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_IXbBwUC3EeKuNabxF1X6mw" x="43" y="16"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_IXbBwUC3EeKuNabxF1X6mw" x="42" y="12"/>
                 </children>
                 <children xmi:type="notation:Shape" xmi:id="_JWnN4EC3EeKuNabxF1X6mw" type="3003" element="_JWl_wEC3EeKuNabxF1X6mw" fontName="Lucida Grande">
                   <layoutConstraint xmi:type="notation:Bounds" xmi:id="_JWnN4UC3EeKuNabxF1X6mw" x="129" y="12"/>
@@ -105,7 +105,7 @@
                 </children>
                 <children xmi:type="notation:Shape" xmi:id="_RrrpwELYEeKp6c68Mc9ylQ" type="3001" element="_RrrCsELYEeKp6c68Mc9ylQ" fontName="Lucida Grande">
                   <children xmi:type="notation:DecorationNode" xmi:id="_RrsQ0ELYEeKp6c68Mc9ylQ" type="5002"/>
-                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RrrpwULYEeKp6c68Mc9ylQ" x="96" y="46"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RrrpwULYEeKp6c68Mc9ylQ" x="96" y="35"/>
                 </children>
                 <children xmi:type="notation:Shape" xmi:id="_WqqsQELYEeKp6c68Mc9ylQ" type="3003" element="_WqqFMELYEeKp6c68Mc9ylQ" fontName="Lucida Grande">
                   <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WqrTUELYEeKp6c68Mc9ylQ" x="112" y="12"/>
@@ -122,7 +122,7 @@
                 </children>
                 <children xmi:type="notation:Shape" xmi:id="_ScT1cELYEeKp6c68Mc9ylQ" type="3001" element="_ScTOYELYEeKp6c68Mc9ylQ" fontName="Lucida Grande">
                   <children xmi:type="notation:DecorationNode" xmi:id="_ScUcgULYEeKp6c68Mc9ylQ" type="5002"/>
-                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ScUcgELYEeKp6c68Mc9ylQ" x="97" y="26"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_ScUcgELYEeKp6c68Mc9ylQ" x="96" y="20"/>
                 </children>
                 <children xmi:type="notation:Shape" xmi:id="_XCfWYELYEeKp6c68Mc9ylQ" type="3003" element="_XCevUELYEeKp6c68Mc9ylQ" fontName="Lucida Grande">
                   <layoutConstraint xmi:type="notation:Bounds" xmi:id="_XCf9cELYEeKp6c68Mc9ylQ" x="185" y="28"/>
@@ -172,17 +172,17 @@
           <layoutConstraint xmi:type="notation:Bounds" xmi:id="_RWRScUC_EeKGv_UdGig-Kw" x="168" y="286"/>
         </children>
       </children>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_IWWiMUCgEeKuNabxF1X6mw" x="792" y="81" width="244" height="568"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_IWWiMUCgEeKuNabxF1X6mw" x="796" y="72" width="244" height="568"/>
     </children>
-    <children xmi:type="notation:Shape" xmi:id="_wG1ywEC2EeKuNabxF1X6mw" type="2007" element="_wG0koEC2EeKuNabxF1X6mw" fontName="Lucida Grande">
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wG1ywUC2EeKuNabxF1X6mw" x="270"/>
+    <children xmi:type="notation:Shape" xmi:id="_wG1ywEC2EeKuNabxF1X6mw" type="2007" element="_wG0koEC2EeKuNabxF1X6mw" fontName="Lucida Grande" fillColor="12621752">
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_wG1ywUC2EeKuNabxF1X6mw" x="234" y="15"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_MRyBgEMHEeKp6c68Mc9ylQ" type="2006" element="_MRwzYEMHEeKp6c68Mc9ylQ" fontName="Lucida Grande">
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_MRyBgUMHEeKp6c68Mc9ylQ" x="749" y="108"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_PDQqoEMHEeKp6c68Mc9ylQ" type="2003" element="_PDPcgEMHEeKp6c68Mc9ylQ" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_PDQqokMHEeKp6c68Mc9ylQ" type="5001"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PDQqoUMHEeKp6c68Mc9ylQ" x="749" y="37"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_PDQqoUMHEeKp6c68Mc9ylQ" x="735" y="33"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_9ejoUEMHEeKp6c68Mc9ylQ" type="2008" element="_9edhsEMHEeKp6c68Mc9ylQ" fontName="Lucida Grande">
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_9ejoUUMHEeKp6c68Mc9ylQ" x="948" y="31"/>

@@ -7,6 +7,19 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAnnotation;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+
 /**
  * Cleans out a tree of directories.
  * 
@@ -22,23 +35,46 @@ public class DirectoryCleaner {
     excludes.add(".gitignore");
   }
 
-  public void run(String root) {
+  public void run(String root, String uuid) {
     File f = new File(root);
-    delete(f);
+    process(f, uuid);
   }
 
-  private void delete(File file) {
+  private IFile getIFile(File file) {
+    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    IPath location = Path.fromOSString(file.getAbsolutePath());
+    return workspace.getRoot().getFileForLocation(location);
+  }
+
+  private void process(File file, String uuid) {
     if (!excludes.contains(file.getName())) {
       if (file.isDirectory()) {
         for (File child : file.listFiles()) {
-          delete(child);
+          process(child, uuid);
           if (file.list().length == 0) {
             file.delete();
           }
         }
       } else {
-        // file is not a directory
-        file.delete();
+        IFile ifile = getIFile(file);
+        IJavaElement element = JavaCore.create(ifile);
+        if (element != null && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
+          try {
+            if (((ICompilationUnit) element).getTypes() != null
+                && ((ICompilationUnit) element).getTypes().length > 0) {
+              IType type = ((ICompilationUnit) element).getTypes()[0];
+              IAnnotation ann = type.getAnnotation("GeneratedFor");
+              if (ann != null && ann.getMemberValuePairs()[0].getValue().equals(uuid)) {
+                element = null;
+                ifile.delete(true, null);
+              }
+            }
+          } catch (JavaModelException e) {
+            // just ignore any errors and continue.
+          } catch (CoreException ex) {
+            // just ignore and continue
+          }
+        }
       }
     }
   }
