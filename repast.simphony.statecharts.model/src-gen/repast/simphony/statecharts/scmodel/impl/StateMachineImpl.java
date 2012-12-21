@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import repast.simphony.statecharts.scmodel.AbstractState;
@@ -39,6 +40,7 @@ import repast.simphony.statecharts.scmodel.Transition;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getNextID <em>Next ID</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getId <em>Id</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getUuid <em>Uuid</em>}</li>
  * </ul>
  * </p>
  *
@@ -184,6 +186,26 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * @ordered
    */
   protected String id = ID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUuid()
+   * @generated NOT
+   * @ordered
+   */
+  protected static final String UUID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUuid()
+   * @generated NOT
+   * @ordered
+   */
+  protected String uuid = EcoreUtil.generateUUID();
 
   /**
    * <!-- begin-user-doc -->
@@ -361,6 +383,27 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getUuid() {
+    return uuid;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setUuid(String newUuid) {
+    String oldUuid = uuid;
+    uuid = newUuid;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__UUID, oldUuid, uuid));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
     switch (featureID) {
@@ -396,6 +439,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return getNextID();
       case StatechartPackage.STATE_MACHINE__ID:
         return getId();
+      case StatechartPackage.STATE_MACHINE__UUID:
+        return getUuid();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -435,6 +480,9 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__ID:
         setId((String)newValue);
         return;
+      case StatechartPackage.STATE_MACHINE__UUID:
+        setUuid((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -471,6 +519,9 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__ID:
         setId(ID_EDEFAULT);
         return;
+      case StatechartPackage.STATE_MACHINE__UUID:
+        setUuid(UUID_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -499,6 +550,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return nextID != NEXT_ID_EDEFAULT;
       case StatechartPackage.STATE_MACHINE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case StatechartPackage.STATE_MACHINE__UUID:
+        return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
     }
     return super.eIsSet(featureID);
   }
@@ -525,6 +578,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
     result.append(nextID);
     result.append(", id: ");
     result.append(id);
+    result.append(", uuid: ");
+    result.append(uuid);
     result.append(')');
     return result.toString();
   }

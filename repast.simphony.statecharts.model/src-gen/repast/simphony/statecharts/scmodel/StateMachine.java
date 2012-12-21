@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getId <em>Id</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getUuid <em>Uuid</em>}</li>
  * </ul>
  * </p>
  *
@@ -221,5 +222,31 @@ public interface StateMachine extends EObject {
    * @generated
    */
   void setId(String value);
+
+  /**
+   * Returns the value of the '<em><b>Uuid</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Uuid</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Uuid</em>' attribute.
+   * @see #setUuid(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_Uuid()
+   * @model
+   * @generated
+   */
+  String getUuid();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getUuid <em>Uuid</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Uuid</em>' attribute.
+   * @see #getUuid()
+   * @generated
+   */
+  void setUuid(String value);
 
 } // StateMachine

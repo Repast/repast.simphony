@@ -40,6 +40,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/language"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/nextID"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StateMachine/uuid"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//State"/>
     <genClasses ecoreClass="statechart.ecore#//FinalState"/>
