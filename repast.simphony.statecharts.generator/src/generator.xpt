@@ -181,15 +181,10 @@ private static class «generatorClassName()» {
 
 «DEFINE createME(String package, String agentType, String smUUID) FOR Transition-»
     «IF getMECode(this).length > 0-»
-    «FILE actionFilename(package, getMEType(this.uuid))-»
+    «FILE actionFilename(package, getMEType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
-        
-        import «getPackageFromType(agentType)».*;
+        «EXPAND imports(agentType, getMECode(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -199,7 +194,7 @@ private static class «generatorClassName()» {
         public class «getMEType(this.uuid)» implements MessageEquals<«simpleType»> {
             @Override
             public Object messageValue(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
-                «expandCodeBody(getMECode(this), true)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getMECode(this)»
             }
         }
         «ENDLET»
@@ -209,19 +204,14 @@ private static class «generatorClassName()» {
 
 «DEFINE createMC(String package, String agentType, String smUUID) FOR Transition-»
     «IF getMCCode(this).length > 0-»
-    «FILE actionFilename(package, getMCType(this.uuid))-»
+    «FILE actionFilename(package, getMCType(this.uuid), this.triggerCodeLanguage)-»
     «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
+        «EXPAND imports(agentType, getMCCode(this)) FOR this.triggerCodeLanguage-»
         «IF ctype.contains(".")-»
-        import ctype;
+        import «ctype»;
         «ENDIF»
-        
-        import «getPackageFromType(agentType)».*;
         
         «LET getSimpleClassName(agentType) AS simpleType»
         «LET getSimpleClassName(ctype) AS simpleCType»
@@ -232,7 +222,7 @@ private static class «generatorClassName()» {
         public class «getMCType(this.uuid)» implements MessageCondition<«simpleType», «simpleCType»> {
             @Override
             public boolean isTrue(«simpleType» agent, Transition<«simpleType»> transition, «simpleCType» message, Parameters params) throws Exception {
-                «expandCodeBody(getMCCode(this), true)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getMCCode(this)»
             }
         }
         «ENDLET»
@@ -244,15 +234,10 @@ private static class «generatorClassName()» {
 
 «DEFINE createCTC(String package, String agentType, String smUUID) FOR Transition»
     «IF getCTCCode(this).length > 0-»
-    «FILE actionFilename(package, getCTCType(this.uuid))-»
+    «FILE actionFilename(package, getCTCType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
-        
-        import «getPackageFromType(agentType)».*;
+       «EXPAND imports(agentType, getCTCCode(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -262,7 +247,7 @@ private static class «generatorClassName()» {
         public class «getCTCType(this.uuid)» implements ConditionTriggerCondition<«simpleType»> {
             @Override
             public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
-                «expandCodeBody(getCTCCode(this), true)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getCTCCode(this)»
             }
         }
         «ENDLET»
@@ -272,15 +257,10 @@ private static class «generatorClassName()» {
 
 «DEFINE createTDF(String package, String agentType, String smUUID) FOR Transition»
     «IF getTDFCode(this).length > 0-»
-    «FILE actionFilename(package, getTDFType(this.uuid))-»
+    «FILE actionFilename(package, getTDFType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
-        
-        import «getPackageFromType(agentType)».*;
+       «EXPAND imports(agentType, getTDFCode(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -290,7 +270,7 @@ private static class «generatorClassName()» {
         public class «getTDFType(this.uuid)» implements TriggerDoubleFunction<«simpleType»> {
             @Override
             public double value(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
-                «expandCodeBody(getTDFCode(this), true)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getTDFCode(this)»
             }
         }
         «ENDLET»
@@ -301,15 +281,10 @@ private static class «generatorClassName()» {
 
 «DEFINE createGuard(String package, String agentType, String smUUID) FOR Transition»
     «IF this.guard != null && this.guard.trim().length > 0-»
-    «FILE actionFilename(package, getGuardType(this.uuid))-»
+    «FILE actionFilename(package, getGuardType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
-        
-        import «getPackageFromType(agentType)».*;
+      «EXPAND imports(agentType, this.guard.trim()) FOR this.triggerCodeLanguage-» 
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -319,7 +294,7 @@ private static class «generatorClassName()» {
         public class «getGuardType(this.uuid)» implements GuardCondition<«simpleType»> {
             @Override
             public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
-                «expandCodeBody(this.guard.trim(), true)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR this.guard.trim()»
             }
         }
         «ENDLET»
@@ -329,15 +304,10 @@ private static class «generatorClassName()» {
 
 «DEFINE createOnTransitionAction(String package, String agentType, String smUUID) FOR Transition»
     «IF this.onTransition != null && this.onTransition.trim().length > 0-»
-    «FILE actionFilename(package, getOnTransType(this.uuid))-»
+    «FILE actionFilename(package, getOnTransType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        import repast.simphony.statecharts.*;
-        import repast.simphony.parameter.Parameters;
-        import repast.simphony.random.RandomHelper.*;
-        import repast.simphony.statecharts.generator.GeneratedFor;
-        
-        import «getPackageFromType(agentType)».*;
+        «EXPAND imports(agentType, this.onTransition.trim()) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -347,7 +317,7 @@ private static class «generatorClassName()» {
         public class «getOnTransType(this.uuid)» implements TransitionAction<«simpleType»> {
             @Override
             public void action(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
-                «expandCodeBody(this.onTransition.trim(), false)»
+                «EXPAND codeBlock(this.triggerCodeLanguage, false) FOR this.onTransition.trim()»
             }
         }
         «ENDLET»
@@ -369,15 +339,10 @@ private static class «generatorClassName()» {
 «ENDDEFINE»
 
 «DEFINE createAction(String package, String actType, String agentType, String body, String smUUID) FOR AbstractState»
-    «FILE actionFilename(package, actType)-»
+    «FILE actionFilename(package, actType, this.language)-»
 	    package «package»;
 	    
-	    import repast.simphony.statecharts.*;
-	    import repast.simphony.parameter.Parameters;
-	    import repast.simphony.random.RandomHelper.*;
-	    import repast.simphony.statecharts.generator.GeneratedFor;
-	    
-	    import «getPackageFromType(agentType)».*;
+	   «EXPAND imports(agentType, body) FOR this.language-»
 	    
 	    «LET getSimpleClassName(agentType) AS simpleType»
 	    /**
@@ -387,7 +352,7 @@ private static class «generatorClassName()» {
 	    public class «actType» implements StateAction<«simpleType»> {
 	        @Override
 	        public void action(«simpleType» agent, AbstractState<«simpleType»> state, Parameters params) throws Exception {
-	            «body»
+	            «EXPAND codeBlock(this.language, false) FOR body»
 	        }
 	    }
 	    «ENDLET»
@@ -490,6 +455,42 @@ private static class «generatorClassName()» {
   }
   
 «EXPAND csBlock(agentType) FOREACH compositeStates(children)-»
+«ENDDEFINE»
+
+«DEFINE imports(String agentType, String code) FOR LanguageTypes»
+import repast.simphony.statecharts.*;
+import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper.*;
+import repast.simphony.statecharts.generator.GeneratedFor;
+
+«IF this == LanguageTypes::groovy || this == LanguageTypes::relogo-»
+import static repast.simphony.relogo.Utility.*; 
+import static repast.simphony.relogo.UtilityG.*; 
+import repast.simphony.relogo.BaseTurtle; 
+import repast.simphony.relogo.BasePatch; 
+import repast.simphony.relogo.Plural; 
+import repast.simphony.relogo.Stop; 
+import repast.simphony.relogo.Utility; 
+import repast.simphony.relogo.UtilityG;
+«ENDIF-» 
+import repast.simphony.essentials.RepastEssentials;
+
+«parseCodeForImports(code)»
+        
+import «getPackageFromType(agentType)».*;
+«ENDDEFINE»
+
+«DEFINE codeBlock(LanguageTypes type, boolean needsRet) FOR String-»
+    «IF type == LanguageTypes::java-»
+        «expandCodeBody(this, needsRet)-»
+    «ELSEIF type == LanguageTypes::groovy-»
+        «expandCodeBody(this, false)-»
+    «ELSE-»
+        Closure cl = {«expandCodeBody(this, false)»}
+        cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+        cl.setDelegate(agent);
+        cl.call(agent);
+    «ENDIF-»
 «ENDDEFINE»
 
 

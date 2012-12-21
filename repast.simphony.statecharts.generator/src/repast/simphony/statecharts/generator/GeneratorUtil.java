@@ -305,6 +305,10 @@ public class GeneratorUtil {
     return ret;
   }
   
+  public static String parseImports(String code) {
+    return expander.parseForImports(code);
+  }
+  
   public static String expandBody(String body, Boolean addReturn) {
     return expander.expand(body, addReturn);
   }

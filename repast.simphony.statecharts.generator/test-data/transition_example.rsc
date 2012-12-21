@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns="http://repast.sf.net/statecharts" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation">
-  <StateMachine xmi:id="_D2lTYEYTEeKjT5SzDPIp2w" agentType="my.statechart.Agent" package="anl.transition" className="TransitionExample" nextID="56" id="Transition Example" uuid="_zJObcEuHEeKvJ9BPAY79Ig">
-    <states xmi:type="State" xmi:id="_HZeyYEYTEeKjT5SzDPIp2w" id="State 0" uuid="_HZqYkEYTEeKjT5SzDPIp2w"/>
+  <StateMachine xmi:id="_D2lTYEYTEeKjT5SzDPIp2w" agentType="my.statechart.Agent" package="anl.statechart" className="TransitionExample" nextID="63" id="Transition Example" uuid="_bU75IEuCEeKrs8RvqYg5mg">
+    <states xmi:type="State" xmi:id="_HZeyYEYTEeKjT5SzDPIp2w" id="State 0" onEnter="import java.lang.String&#xA;import java.lang.Math;&#xA;&#xA;setX(12)&#x9;" onExit="setX(0)" language="relogo" uuid="_HZqYkEYTEeKjT5SzDPIp2w"/>
     <states xmi:type="State" xmi:id="_H3FUYEYTEeKjT5SzDPIp2w" id="State 1" uuid="_H3FUYUYTEeKjT5SzDPIp2w"/>
     <states xmi:type="State" xmi:id="_MAZTIEYTEeKjT5SzDPIp2w" id="State 2" uuid="_MAZTIUYTEeKjT5SzDPIp2w"/>
     <states xmi:type="State" xmi:id="_MXI_MEYTEeKjT5SzDPIp2w" id="State 3" uuid="_MXJmQEYTEeKjT5SzDPIp2w"/>
@@ -17,8 +17,8 @@
     <states xmi:type="PseudoState" xmi:id="_tr5moEYiEeKP-5e9L8zoPg" id="Choice 39" uuid="_tr8C4EYiEeKP-5e9L8zoPg" type="choice"/>
     <states xmi:type="State" xmi:id="_vrCz4EYiEeKP-5e9L8zoPg" id="State 41" uuid="_vrDa8EYiEeKP-5e9L8zoPg"/>
     <states xmi:type="State" xmi:id="_wBIYoEYiEeKP-5e9L8zoPg" id="State 42" uuid="_wBIYoUYiEeKP-5e9L8zoPg"/>
-    <transitions xmi:type="Transition" xmi:id="_S_fMMEYTEeKjT5SzDPIp2w" from="_HZeyYEYTEeKjT5SzDPIp2w" to="_H3FUYEYTEeKjT5SzDPIp2w" onTransition="agent.setX(3)" id="Always Trigger" guard="agent.getX() > 0" uuid="_S_fMMUYTEeKjT5SzDPIp2w"/>
-    <transitions xmi:type="Transition" xmi:id="_dYlG8EYTEeKjT5SzDPIp2w" from="_MAZTIEYTEeKjT5SzDPIp2w" to="_MXI_MEYTEeKjT5SzDPIp2w" triggerType="timed" id="Timed Trigger" triggerTimedCode="return params.getDouble(&quot;time&quot;);" uuid="_dYm8IEYTEeKjT5SzDPIp2w"/>
+    <transitions xmi:type="Transition" xmi:id="_S_fMMEYTEeKjT5SzDPIp2w" from="_HZeyYEYTEeKjT5SzDPIp2w" to="_H3FUYEYTEeKjT5SzDPIp2w" onTransition="setX(3)" triggerCodeLanguage="relogo" id="Always Trigger" guard="getX() > 0" uuid="_S_fMMUYTEeKjT5SzDPIp2w"/>
+    <transitions xmi:type="Transition" xmi:id="_dYlG8EYTEeKjT5SzDPIp2w" from="_MAZTIEYTEeKjT5SzDPIp2w" to="_MXI_MEYTEeKjT5SzDPIp2w" triggerType="timed" triggerCodeLanguage="groovy" id="Timed Trigger" triggerTimedCode="params.getDouble(&quot;time&quot;);" uuid="_dYm8IEYTEeKjT5SzDPIp2w"/>
     <transitions xmi:type="Transition" xmi:id="_kDKIkEYTEeKjT5SzDPIp2w" from="_PausAEYTEeKjT5SzDPIp2w" to="_QP29MEYTEeKjT5SzDPIp2w" priority="1.0" triggerType="probability" triggerTime="0.1" triggerProbCode="return agent.getProbability();" id="Prob Trigger" uuid="_kDL9wEYTEeKjT5SzDPIp2w"/>
     <transitions xmi:type="Transition" xmi:id="_p0Kd4EYTEeKjT5SzDPIp2w" from="_QzIpYEYTEeKjT5SzDPIp2w" to="_RW3BgEYTEeKjT5SzDPIp2w" triggerType="condition" triggerTime="1.5" triggerConditionCode="return agent.getX() > params.getDouble(&quot;condition&quot;);" id="Condition Trigger" uuid="_p0M6IEYTEeKjT5SzDPIp2w"/>
     <transitions xmi:type="Transition" xmi:id="_yKAugEYTEeKjT5SzDPIp2w" from="_H3FUYEYTEeKjT5SzDPIp2w" to="_xObQAEYTEeKjT5SzDPIp2w" priority="24.0" triggerType="exponential" id="Exp Trigger" triggerExpRateCode="return params.getDouble(&quot;exp_rate&quot;);" uuid="_yKAugUYTEeKjT5SzDPIp2w"/>
@@ -35,11 +35,11 @@
   <notation:Diagram xmi:id="_D20j8EYTEeKjT5SzDPIp2w" type="Statechart" element="_D2lTYEYTEeKjT5SzDPIp2w" name="transition_example.rsc" measurementUnit="Pixel">
     <children xmi:type="notation:Shape" xmi:id="_HZuqAEYTEeKjT5SzDPIp2w" type="2003" element="_HZeyYEYTEeKjT5SzDPIp2w" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_HZvREEYTEeKjT5SzDPIp2w" type="5001"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HZuqAUYTEeKjT5SzDPIp2w" x="180" y="98"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_HZuqAUYTEeKjT5SzDPIp2w" x="120" y="98"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_H3GigEYTEeKjT5SzDPIp2w" type="2003" element="_H3FUYEYTEeKjT5SzDPIp2w" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_H3GigkYTEeKjT5SzDPIp2w" type="5001"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_H3GigUYTEeKjT5SzDPIp2w" x="297" y="98"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_H3GigUYTEeKjT5SzDPIp2w" x="297" y="90"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_MAahQEYTEeKjT5SzDPIp2w" type="2003" element="_MAZTIEYTEeKjT5SzDPIp2w" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_MAahQkYTEeKjT5SzDPIp2w" type="5001"/>
@@ -59,7 +59,7 @@
     </children>
     <children xmi:type="notation:Shape" xmi:id="_QzJ3gEYTEeKjT5SzDPIp2w" type="2003" element="_QzIpYEYTEeKjT5SzDPIp2w" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_QzJ3gkYTEeKjT5SzDPIp2w" type="5001"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_QzJ3gUYTEeKjT5SzDPIp2w" x="190" y="334"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_QzJ3gUYTEeKjT5SzDPIp2w" x="162" y="334"/>
     </children>
     <children xmi:type="notation:Shape" xmi:id="_RW4PoEYTEeKjT5SzDPIp2w" type="2003" element="_RW3BgEYTEeKjT5SzDPIp2w" fontName="Lucida Grande">
       <children xmi:type="notation:DecorationNode" xmi:id="_RW4PokYTEeKjT5SzDPIp2w" type="5001"/>

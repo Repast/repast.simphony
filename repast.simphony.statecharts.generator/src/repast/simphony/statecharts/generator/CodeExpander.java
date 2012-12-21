@@ -21,6 +21,26 @@ public class CodeExpander {
   
   private Pattern pt = Pattern.compile("((?:(?:\"[^\"]*\")|[^;])*);");
   
+  public String parseForImports(String code) {
+    StringBuilder buf = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new StringReader(code));
+    String line = null;
+    try {
+      while ((line = reader.readLine()) != null) {
+        line = line.trim();
+        if (line.length() > 0 && line.startsWith("import ")) {
+          buf.append(line);
+          if (!line.endsWith(";")) buf.append(";");
+          buf.append("\n");
+        }
+      }
+    } catch (IOException ex) {
+      // ignore because its a string reader.
+    }
+    
+    return buf.toString();
+  }
+  
   public String expand(String code, boolean addReturn) {
     BufferedReader reader = new BufferedReader(new StringReader(code));
     String line = null;
@@ -28,7 +48,7 @@ public class CodeExpander {
     try {
       while ((line = reader.readLine()) != null) {
         line = line.trim();
-        if (line.length() > 0) {
+        if (line.length() > 0 && !line.startsWith("import ")) {
           if (!line.endsWith(";")) {
             line = line + ";";
           }
