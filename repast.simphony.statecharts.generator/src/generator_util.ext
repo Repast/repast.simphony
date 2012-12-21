@@ -34,8 +34,8 @@ List[CompositeState] compositeStates(List states) : JAVA
 List[State] simpleStates(List states) : JAVA 
     repast.simphony.statecharts.generator.GeneratorUtil.filterForStates(java.util.List);
     
-Void init() : JAVA
-    repast.simphony.statecharts.generator.GeneratorUtil.init();
+Void init(String sm_uuid) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.init(java.lang.String);
     
 String getSVar(String uuid) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getSVar(java.lang.String);

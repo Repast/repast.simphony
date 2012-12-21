@@ -32,57 +32,105 @@ public class GeneratorUtil {
     NULL_STATE.setId("NULL");
     NULL_STATE.setUuid("NULL");
   }
-
-  public static class StateBlock {
-
-    private static int counter = 1;
+  
+  private static class StateBlock {
 
     private String csVar, sVar, methodName, sbVar, csbVar, onEnterTypeName, onExitTypeName;
 
-    public StateBlock() {
+    public StateBlock(int namesId, int counter) {
       csVar = "cs" + counter;
       sVar = "s" + counter;
       methodName = "createCS" + counter;
       sbVar = "ssBuilder" + counter;
       csbVar = "csBuilder" + counter;
-      onEnterTypeName = "OnEnterAction" + counter;
-      onExitTypeName = "OnExitAction" + counter;
-      ++counter;
+      onEnterTypeName = "SC" + namesId + "OnEnterAction" + counter;
+      onExitTypeName = "SC" + namesId + "OnExitAction" + counter;
     }
   }
   
   public static class TransitionBlock {
-
-    private static int counter = 1;
-
+    
     private String methodName, guardType, onTransType,
       tdfType, ctcType, mcType, meType;
 
-    public TransitionBlock() {
+    public TransitionBlock(int namesId, int counter) {
       methodName = "createTransition" + counter;
-      guardType = "Guard" + counter;
-      onTransType = "OnTransition" + counter;
-      tdfType = "TriggerDoubleFunction" + counter;
-      ctcType = "ConditionTriggerCondition" + counter;
-      mcType = "MessageCondition" + counter;
-      meType = "MessageEquals" + counter;
-      ++counter;
+      guardType = "SC" + namesId + "Guard" + counter;
+      onTransType = "SC" + namesId + "OnTransition" + counter;
+      tdfType = "SC" + namesId + "TriggerDoubleFunction" + counter;
+      ctcType = "SC" + namesId + "ConditionTriggerCondition" + counter;
+      mcType = "SC" + namesId + "MessageCondition" + counter;
+      meType = "SC" + namesId + "MessageEquals" + counter;
     }
   }
   
-  private static CodeExpander expander = new CodeExpander();
-  private static int bCounter = 1;
-  private static Map<String, StateBlock> blockMap = new HashMap<String, StateBlock>();
-  private static Map<String, TransitionBlock> transitionMap = new HashMap<String, TransitionBlock>();
-  private static Map<String, String> branchVarMap = new HashMap<String, String>();
+  private static class Names {
+    
+    private static int nameCounter = 1;
+    
+    private int stateCounter = 1;
+    private int transCounter = 1;
+    private int branchCounter = 1;
+    private int id;
+    
+    private Map<String, StateBlock> stateBlockMap = new HashMap<String, StateBlock>();
+    private Map<String, TransitionBlock> transitionMap = new HashMap<String, TransitionBlock>();
+    private Map<String, String> branchVarMap = new HashMap<String, String>();
+    
+    public Names() {
+      this.id = nameCounter++;
+    }
+    
+    public StateBlock getStateBlock(String uuid) {
+      StateBlock block = stateBlockMap.get(uuid);
+      if (block == null) {
+        block = new StateBlock(id, stateCounter);
+        stateBlockMap.put(uuid, block);
+        stateCounter++;
+      }
+      return block;
+    }
+    
+    public TransitionBlock getTransitionBlock(String uuid) {
+      TransitionBlock block = transitionMap.get(uuid);
+      if (block == null) {
+        block = new TransitionBlock(id, transCounter);
+        transitionMap.put(uuid, block);
+        transCounter++;
+      }
+      return block;
+    }
+    
+    public String getBranchVar(String uuid) {
+      String var = branchVarMap.get(uuid);
+      if (var == null) {
+        var = "branch" + branchCounter;
+        branchVarMap.put(uuid, var);
+        ++branchCounter;
+      }
+      return var;
+    }
+    
+    public void reset() {
+      stateBlockMap.clear();
+      transitionMap.clear();
+      branchVarMap.clear();
+      stateCounter = transCounter = branchCounter = 1;
+    }
+  }
 
-  public static void init() {
-    blockMap.clear();
-    branchVarMap.clear();
-    transitionMap.clear();
-    bCounter = 1;
-    StateBlock.counter = 1;
-    TransitionBlock.counter = 1;
+  private static CodeExpander expander = new CodeExpander();
+  private static Map<String, Names> namesMap = new HashMap<String, Names>();
+  private static Names curNames = null;
+
+  public static void init(String uuid) {
+    Names names = namesMap.get(uuid);
+    if (names == null) {
+      names = new Names();
+      namesMap.put(uuid, names);
+    }
+    names.reset();
+    curNames = names;
   }
   
   public static String getTDFType(String uuid) {
@@ -109,32 +157,16 @@ public class GeneratorUtil {
     return getTBlock(uuid).onTransType;
   }
   
-  public static String expandBody(String body, Boolean addReturn) {
-    return expander.expand(body, addReturn);
-  }
-  
-  private static TransitionBlock getTBlock(String uuid) {
-    TransitionBlock block = transitionMap.get(uuid);
-    if (block == null) {
-      block = new TransitionBlock();
-      transitionMap.put(uuid, block);
-    }
-    return block;
-    
-  }
-  
   public static String getTransitionMethodName(String uuid) {
     return getTBlock(uuid).methodName;
   }
   
+  private static TransitionBlock getTBlock(String uuid) {
+    return curNames.getTransitionBlock(uuid);
+  }
+  
   public static String getBranchVar(String uuid) {
-    String var = branchVarMap.get(uuid);
-    if (var == null) {
-      var = "branch" + bCounter;
-      branchVarMap.put(uuid, var);
-      ++bCounter;
-    }
-    return var;
+    return curNames.getBranchVar(uuid);
   }
 
   public static String getCSMethodName(String uuid) {
@@ -168,12 +200,7 @@ public class GeneratorUtil {
   }
 
   private static StateBlock getCSBlock(String uuid) {
-    StateBlock block = blockMap.get(uuid);
-    if (block == null) {
-      block = new StateBlock();
-      blockMap.put(uuid, block);
-    }
-    return block;
+    return curNames.getStateBlock(uuid);
   }
   
   public static String getClassNameFor(String type) {
@@ -277,4 +304,9 @@ public class GeneratorUtil {
     }
     return ret;
   }
+  
+  public static String expandBody(String body, Boolean addReturn) {
+    return expander.expand(body, addReturn);
+  }
+ 
 }

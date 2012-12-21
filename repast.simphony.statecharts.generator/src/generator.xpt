@@ -2,7 +2,7 @@
 «EXTENSION  generator_util»
 
 «DEFINE Main FOR StateMachine-»
-«init()»
+«init(uuid)»
 «FILE filename()-»
 
 package «this.package»;
