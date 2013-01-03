@@ -1,14 +1,17 @@
 package repast.simphony.statecharts.edit.parts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -107,11 +110,10 @@ public class FinalStateEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected NodeFigure createNodePlate() {
-    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(15, 15);
-    return result;
+    return new DefaultSizeNodeFigureFixedAnchors(15, 15, AnchorLocationFactory.createNSEW());
   }
 
   /**

@@ -117,8 +117,7 @@ public class History2EditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected NodeFigure createNodePlate() {
-    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(15, 15);
-    return result;
+    return new DefaultSizeNodeFigureFixedAnchors(15, 15, AnchorLocationFactory.createNSEW());
   }
 
   /**

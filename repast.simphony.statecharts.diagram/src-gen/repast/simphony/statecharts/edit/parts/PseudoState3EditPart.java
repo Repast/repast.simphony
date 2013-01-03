@@ -107,11 +107,10 @@ public class PseudoState3EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected NodeFigure createNodePlate() {
-    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(15, 15);
-    return result;
+    return new DefaultSizeNodeFigureFixedAnchors(15, 15, AnchorLocationFactory.createCenter());
   }
 
   /**
