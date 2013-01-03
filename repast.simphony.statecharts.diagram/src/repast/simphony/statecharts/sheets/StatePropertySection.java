@@ -13,11 +13,9 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class StatePropertySection extends AbstractEditorPropertySection {
 
-  private StateSheet sheet;
-
   public void createControls(Composite parent) {
     sheet = new StateSheet(getToolkit(), parent);
-    GridDataFactory.fillDefaults().grab(true, true).applyTo(sheet);
+    GridDataFactory.fillDefaults().grab(true, true).applyTo((Composite)sheet);
   }
 
   @Override

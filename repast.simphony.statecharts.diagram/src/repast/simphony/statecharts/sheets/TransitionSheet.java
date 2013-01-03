@@ -35,7 +35,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
 
-public class TransitionSheet extends Composite {
+public class TransitionSheet extends Composite implements BindableFocusableSheet {
 
   private static final String[] MESSAGE_TYPES = { "When Message Meets a Condition",
       "When Message Equals ...", "When Message is of the Specified Class", "Always" };
@@ -84,6 +84,14 @@ public class TransitionSheet extends Composite {
     triggerLayout.topControl = triggerComps[0];
     addListeners();
   }
+  
+  /* (non-Javadoc)
+   * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
+   */
+  @Override
+  public void resetFocus() {
+    idTxt.setFocus();
+  }
 
   private void createHeaderSection(FormToolkit toolkit) {
     Composite composite_2 = toolkit.createComposite(this, SWT.NO_FOCUS | SWT.NO_MERGE_PAINTS);
@@ -108,8 +116,7 @@ public class TransitionSheet extends Composite {
     GridData gd_priorityTxt = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_priorityTxt.widthHint = 120;
     priorityTxt.setLayoutData(gd_priorityTxt);
-    new Label(composite_2, SWT.NONE);
-    new Label(composite_2, SWT.NONE);
+    Bug383650Fix.applyFix(priorityTxt);
 
     btnIsDefaultOut = new Button(composite_2, SWT.CHECK);
     toolkit.adapt(btnIsDefaultOut, true, true);
@@ -241,6 +248,7 @@ public class TransitionSheet extends Composite {
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
     txtMessagePolling.setLayoutData(gd_txtAlwaysPolling);
+    Bug383650Fix.applyFix(txtMessagePolling);
 
     Label lblTriggerWhen = new Label(cmpMessage, SWT.NONE);
     GridData gd_lblTriggerWhen = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
@@ -307,6 +315,7 @@ public class TransitionSheet extends Composite {
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
     txtProbPolling.setLayoutData(gd_txtAlwaysPolling);
+    Bug383650Fix.applyFix(txtProbPolling);
 
     toolkit.createLabel(cmpProb, "Probability:", SWT.NONE);
     new Label(cmpProb, SWT.NONE);
@@ -331,6 +340,7 @@ public class TransitionSheet extends Composite {
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
     txtCondPolling.setLayoutData(gd_txtAlwaysPolling);
+    Bug383650Fix.applyFix(txtCondPolling);
 
     toolkit.createLabel(cmpCond, "Condition:", SWT.NONE);
     new Label(cmpCond, SWT.NONE);
@@ -386,8 +396,9 @@ public class TransitionSheet extends Composite {
     GridData gd_txtAlwaysPolling = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
     txtAlwaysPolling.setLayoutData(gd_txtAlwaysPolling);
+    Bug383650Fix.applyFix(txtAlwaysPolling);
   }
-
+ 
   private void createTransitionSection(FormToolkit toolkit) {
     sctnOnTransition = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
     sctnOnTransition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));

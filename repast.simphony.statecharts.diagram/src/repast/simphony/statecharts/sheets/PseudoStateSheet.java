@@ -17,7 +17,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-public class PseudoStateSheet extends Composite {
+public class PseudoStateSheet extends Composite implements BindableFocusableSheet {
   
   private Text idTxt;
   
@@ -45,5 +45,11 @@ public class PseudoStateSheet extends Composite {
         new int[] { SWT.Modify }).observeDelayed(400, idTxt);
     context.bindValue(observe, property.observe(eObject));
   }
-
+  /* (non-Javadoc)
+   * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
+   */
+  @Override
+  public void resetFocus() {
+    idTxt.setFocus();
+  }
 }

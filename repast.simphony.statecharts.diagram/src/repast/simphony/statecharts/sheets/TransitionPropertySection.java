@@ -6,6 +6,7 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
@@ -18,11 +19,9 @@ import repast.simphony.statecharts.scmodel.Transition;
  */
 public class TransitionPropertySection extends AbstractEditorPropertySection {
 
-  private TransitionSheet sheet;
-
   public void createControls(Composite parent) {
     sheet = new TransitionSheet(getToolkit(), parent);
-    GridDataFactory.fillDefaults().grab(true, true).applyTo(sheet);
+    GridDataFactory.fillDefaults().grab(true, true).applyTo((Control)sheet);
   }
 
   @Override
@@ -34,8 +33,8 @@ public class TransitionPropertySection extends AbstractEditorPropertySection {
   public void update(Notification notification, EObject element) {
     super.update(notification, element);
     if (StatechartPackage.eINSTANCE.getTransition_OutOfBranch().equals(notification.getFeature())) {
-      sheet.doOutOfChoiceCheck();
-      sheet.defaultOutChanged(((Transition)element).isDefaultTransition());
+      ((TransitionSheet)sheet).doOutOfChoiceCheck();
+      ((TransitionSheet)sheet).defaultOutChanged(((Transition)element).isDefaultTransition());
     }
   }
 }

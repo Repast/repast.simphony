@@ -23,7 +23,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  * 
  * @author Nick Collier
  */
-public class StateMachineSheet extends Composite {
+public class StateMachineSheet extends Composite implements BindableFocusableSheet {
 
   private Text idTxt;
   private LanguageButtonsGroup buttonGroup;
@@ -31,7 +31,6 @@ public class StateMachineSheet extends Composite {
   private Text txtClass;
   private Text txtPackage;
   private Text txtAgent;
-
   public StateMachineSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
     toolkit.adapt(this);
@@ -47,12 +46,10 @@ public class StateMachineSheet extends Composite {
     gd_idFld.widthHint = 200;
     idTxt.setLayoutData(gd_idFld);
     toolkit.adapt(idTxt, true, true);
-    new Label(this, SWT.NONE);
 
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
     toolkit.adapt(label, true, true);
-    new Label(this, SWT.NONE);
 
     Composite composite = new Composite(this, SWT.H_SCROLL);
     GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1);
@@ -107,6 +104,7 @@ public class StateMachineSheet extends Composite {
     txtClass = new Text(composite, SWT.BORDER);
     txtClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtClass, true, true);
+    Bug383650Fix.applyFix(txtClass);
     
     Label lblAgent = new Label(composite, SWT.NONE);
     lblAgent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -116,6 +114,7 @@ public class StateMachineSheet extends Composite {
     txtPackage = new Text(composite, SWT.BORDER);
     txtPackage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtPackage, true, true);
+    Bug383650Fix.applyFix(txtPackage);
     
     Label lblAgentType = new Label(composite, SWT.NONE);
     lblAgentType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -125,9 +124,17 @@ public class StateMachineSheet extends Composite {
     txtAgent = new Text(composite, SWT.BORDER);
     txtAgent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtAgent, true, true);
+    Bug383650Fix.applyFix(txtAgent);
   }
-
- 
+  
+  /* (non-Javadoc)
+   * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
+   */
+  @Override
+  public void resetFocus() {
+    idTxt.setFocus();
+  }
+  
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.STATE_MACHINE__ID);

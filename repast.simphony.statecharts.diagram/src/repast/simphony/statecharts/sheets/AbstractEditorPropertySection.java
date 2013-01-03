@@ -41,8 +41,9 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
   public abstract void bindModel(EMFDataBindingContext context);
 
   private FormToolkit toolkit;
-
   private EMFDataBindingContext bindingContext;
+  private boolean doResetFocus;
+  protected BindableFocusableSheet sheet;
 
   @Override
   public void refresh() {
@@ -50,6 +51,11 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     if (bindingContext == null) {
       bindingContext = new EMFDataBindingContext();
       bindModel(bindingContext);
+    }
+    
+    if (doResetFocus) {
+      doResetFocus = false;
+      resetFocus();
     }
     
     //else {
@@ -66,6 +72,11 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     */
   }
   
+  // default empty implementation
+  protected void resetFocus() {
+    if (sheet != null) sheet.resetFocus();
+  }
+  
   @Override
   protected void setEObject(EObject object) {
     super.setEObject(object);
@@ -74,8 +85,13 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     }
     bindingContext = new EMFDataBindingContext();
     bindModel(bindingContext);
+    doResetFocus = true;
   }
-
+  
+  public void aboutToBeShown() {
+    doResetFocus = true;
+  }
+  
   @Override
   public void dispose() {
     super.dispose();
@@ -84,11 +100,13 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     if (toolkit != null)
       toolkit.dispose();
   }
+  
+  
 
   @Override
   public final void createControls(Composite parent,
-      TabbedPropertySheetPage aTabbedPropertySheetPage) {
-    super.createControls(parent, aTabbedPropertySheetPage);
+      TabbedPropertySheetPage tabPage) {
+    super.createControls(parent, tabPage);
     
     toolkit = new FormToolkit(parent.getDisplay());
     toolkit.setBorderStyle(SWT.BORDER);

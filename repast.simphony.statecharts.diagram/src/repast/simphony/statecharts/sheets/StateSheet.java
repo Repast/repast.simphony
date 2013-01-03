@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-public class StateSheet extends Composite {
+public class StateSheet extends Composite implements BindableFocusableSheet {
 
   private Text idTxt;
   private Text onEnterTxt;
@@ -134,6 +134,13 @@ public class StateSheet extends Composite {
     });
   }
 
+  /* (non-Javadoc)
+   * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
+   */
+  @Override
+  public void resetFocus() {
+    idTxt.setFocus();
+  }
  
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),

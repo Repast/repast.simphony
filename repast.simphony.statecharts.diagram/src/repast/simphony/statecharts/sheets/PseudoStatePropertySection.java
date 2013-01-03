@@ -13,11 +13,9 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class PseudoStatePropertySection extends AbstractEditorPropertySection {
 
-  private PseudoStateSheet sheet;
-
   public void createControls(Composite parent) {
     sheet = new PseudoStateSheet(getToolkit(), parent);
-    GridDataFactory.fillDefaults().grab(true, true).applyTo(sheet);
+    GridDataFactory.fillDefaults().grab(true, true).applyTo((Composite)sheet);
   }
 
   @Override
