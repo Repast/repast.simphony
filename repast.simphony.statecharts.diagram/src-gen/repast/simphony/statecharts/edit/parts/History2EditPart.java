@@ -347,6 +347,15 @@ public class History2EditPart extends ShapeNodeEditPart {
     /**
      * @generated NOT
      */
+    public DeepHistoryFigure() {
+      //this.setPreferredSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
+      //this.setMaximumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
+      //this.setMinimumSize(new Dimension(getMapMode().DPtoLP(15), getMapMode().DPtoLP(15)));
+    }
+
+    /**
+     * @generated NOT
+     */
     public DeepHistoryFigure(IMapMode mode) {
       this.setPreferredSize(new Dimension(mode.DPtoLP(15), mode.DPtoLP(15)));
       this.setMaximumSize(new Dimension(mode.DPtoLP(15), mode.DPtoLP(15)));

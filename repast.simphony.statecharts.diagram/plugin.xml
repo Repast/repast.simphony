@@ -733,6 +733,85 @@
          </run>
       </builder>
    </extension>
+<extension point="org.eclipse.gmf.runtime.common.ui.services.markerNavigationProviders" id="markers-navigation">
+      <?gmfgen generated="true"?>
+      <MarkerNavigationProvider class="repast.simphony.statecharts.providers.StatechartMarkerNavigationProvider">
+         <MarkerType name="repast.simphony.statecharts.diagram.diagnostic"/>
+         <Priority name="Lowest"/>
+      </MarkerNavigationProvider>
+   </extension>
+
+<extension id="diagnostic" name="Statechart Plugin problems" point="org.eclipse.core.resources.markers">
+      <?gmfgen generated="true"?>
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.gmf.runtime.common.ui.services.marker"/>
+      <persistent value="true"/>
+   </extension><extension id="validationDecoratorProvider" name="ValidationDecorations" point="org.eclipse.gmf.runtime.diagram.ui.decoratorProviders">
+      <?gmfgen generated="true"?>
+      <decoratorProvider class="repast.simphony.statecharts.providers.StatechartValidationDecoratorProvider">
+         <Priority name="Lowest"/>
+         <object class="org.eclipse.gmf.runtime.diagram.ui.editparts.IPrimaryEditPart(org.eclipse.gmf.runtime.diagram.ui)" id="PRIMARY_VIEW"/>
+         <context decoratorTargets="PRIMARY_VIEW"/>
+      </decoratorProvider>
+   </extension>
+
+<extension point="org.eclipse.emf.validation.constraintProviders">
+      <?gmfgen generated="true"?>
+            <category id="statechart.audits" mandatory="false" name="Statechart Audits">
+         <![CDATA[Validation audits for statechart elements]]>
+      </category>
+      <constraintProvider cache="true">
+         <package namespaceUri="http://repast.sf.net/statecharts"/>
+         <package namespaceUri="http://www.eclipse.org/gmf/runtime/1.0.2/notation"/>
+               <constraints categories="statechart.audits">
+                  <constraint id="agent.type.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter1"
+            name="Agent type check"
+            mode="Live"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Check for bad types and packages]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="scmodel.StateMachine"/>
+         </constraint>
+                  <constraint id="choice.branch.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter2"
+            name="Choice Branch Check"
+            mode="Batch"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Checks that a choice has a single default branch ]]></description>
+            <message><![CDATA[Choice must have a single default branch]]></message>
+            <target class="notation.Node"/>
+         </constraint>
+                  </constraints>
+      </constraintProvider>
+   </extension>
+
+<extension point="org.eclipse.emf.validation.constraintBindings">
+      <?gmfgen generated="true"?>
+      <clientContext default="false" id="repast.simphony.statecharts.diagramDefaultCtx">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$DefaultCtx"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramDefaultCtx">
+                  <constraint ref="repast.simphony.statecharts.diagram.agent.type.check"/>
+               </binding>
+
+      <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_2006_3006">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_2006_3006"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramCtx_2006_3006">
+                  <constraint ref="repast.simphony.statecharts.diagram.choice.branch.check"/>
+               </binding>
+
+   </extension>
+
+<extension point="org.eclipse.emf.validation.ui.UIRegisteredClientContext">
+      <?gmfgen generated="true"?>
+      <clientContext id="repast.simphony.statecharts.diagramDefaultCtx"/>
+      <clientContext id="repast.simphony.statecharts.diagramCtx_2006_3006"/>
+   </extension>
+
 
    <!-- optionally, specify keybindings -->
 </plugin>

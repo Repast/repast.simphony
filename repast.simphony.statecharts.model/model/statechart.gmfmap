@@ -492,4 +492,36 @@
     <palette
         href="statechart.gmftool#//@palette"/>
   </diagram>
+  <audits
+      id="statechart.audits"
+      name="Statechart Audits"
+      description="Validation audits for statechart elements">
+    <audits
+        name="Agent type check"
+        description="Check for null agent type string"
+        id="agent.type.check"
+        useInLiveMode="true"
+        message="{0}">
+      <rule
+          body=""
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DomainElementTarget">
+        <element
+            href="statechart.ecore#//StateMachine"/>
+      </target>
+    </audits>
+    <audits
+        name="Choice Branch Check"
+        description="Checks that a choice has a single default branch "
+        id="choice.branch.check"
+        message="Choice must have a single default branch">
+      <rule
+          body="  "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@nodes.3/@ownedChild"/>
+    </audits>
+  </audits>
 </gmfmap:Mapping>

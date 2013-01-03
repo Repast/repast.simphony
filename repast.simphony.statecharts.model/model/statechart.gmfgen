@@ -9,6 +9,46 @@
     diagramFileExtension="rsc"
     domainFileExtension="rsc"
     pluginDirectory="/repast.simphony.statecharts.diagram/src-gen">
+  <audits>
+    <categories
+        id="statechart.audits"
+        name="Statechart Audits"
+        description="Validation audits for statechart elements"
+        path="//@audits/@categories.0"
+        audits="//@audits/@rules.0 //@audits/@rules.1"/>
+    <rules
+        name="Agent type check"
+        description="Check for null agent type string"
+        id="agent.type.check"
+        rule="//@expressionProviders/@providers.1/@expressions.23"
+        message="{0} property is missing "
+        useInLiveMode="true"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDomainElementTarget"
+          contextSelector="//@audits/@clientContexts.0">
+        <element
+            href="statechart.genmodel#//scmodel/StateMachine"/>
+      </target>
+    </rules>
+    <rules
+        name="Choice Branch Check"
+        description="Checks that a choice has a single default branch "
+        id="choice.branch.check"
+        rule="//@expressionProviders/@providers.1/@expressions.24"
+        message="Choice must have a single default branch"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.1"
+          element="//@diagram/@topLevelNodes.3 //@diagram/@childNodes.3"/>
+    </rules>
+    <clientContexts
+        ruleTargets="//@audits/@rules.0/@target"/>
+    <clientContexts
+        id="Ctx_2006_3006"
+        ruleTargets="//@audits/@rules.1/@target"/>
+  </audits>
   <diagram
       visualID="1000"
       editPartClassName="StateMachineEditPart"
@@ -17,6 +57,7 @@
       iconProviderPriority="Low"
       creationWizardCategoryID="repast.eclipse.ide.wizards"
       validationProviderPriority="Low"
+      validationEnabled="true"
       validationDecorators="true"
       liveValidationUIFeedback="true">
     <diagramRunTimeClass
@@ -1503,6 +1544,12 @@
           body="StatechartsModelUtil.getDefaultLanguage()"/>
       <expressions
           body="StatechartsModelUtil.getDefaultLanguage()"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=""/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="  "/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">
