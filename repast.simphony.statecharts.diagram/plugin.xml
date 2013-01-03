@@ -767,7 +767,7 @@
                   <constraint id="agent.type.check"
             lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter1"
             name="Agent type check"
-            mode="Live"
+            mode="Batch"
             severity="ERROR" statusCode="200">
             
             <description><![CDATA[Check for bad types and packages]]></description>

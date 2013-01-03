@@ -500,7 +500,6 @@
         name="Agent type check"
         description="Check for null agent type string"
         id="agent.type.check"
-        useInLiveMode="true"
         message="{0}">
       <rule
           body=""
