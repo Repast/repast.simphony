@@ -36,7 +36,6 @@ public class StatechartSheetLabelProvider extends BaseLabelProvider implements I
     IElementType etype = getElementType(getView(unwrap(element)));
     return etype == null ? null : StatechartElementTypes.getImage(etype);
   }
-  
 
   /**
    * @generated

@@ -212,10 +212,11 @@ public class StatechartElementTypes {
    */
   public static Image getImage(IAdaptable hint) {
     // hint should be a IElementType
-    IElementType etype = (IElementType)hint.getAdapter(IElementType.class);
-  
-    if (etype == null) return null;
-    
+    IElementType etype = (IElementType) hint.getAdapter(IElementType.class);
+
+    if (etype == null)
+      return null;
+
     ImageRegistry registry = getImageRegistry();
     Image image = registry.get(etype.getIconURL().toString());
     if (image == null) {

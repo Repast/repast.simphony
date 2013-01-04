@@ -246,24 +246,30 @@ public class StatechartValidationProvider {
    * @generated
    */
   public static class Adapter1 extends AbstractModelConstraint {
-    
+
     /**
      * @generated NOT
      */
     public IStatus validate(IValidationContext ctx) {
       StateMachine context = (StateMachine) ctx.getTarget();
-      IStatus status = JavaConventions.validateJavaTypeName(context.getAgentType(), JavaCore.getOption(JavaCore.COMPILER_SOURCE),
+      IStatus status = JavaConventions.validateJavaTypeName(context.getAgentType(),
+          JavaCore.getOption(JavaCore.COMPILER_SOURCE),
           JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Agent Class Property: " + status.getMessage());
-      
-      status = JavaConventions.validatePackageName(context.getPackage(),JavaCore.getOption(JavaCore.COMPILER_SOURCE),
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Agent Class Property: " + status.getMessage());
+
+      status = JavaConventions.validatePackageName(context.getPackage(),
+          JavaCore.getOption(JavaCore.COMPILER_SOURCE),
           JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Package Property: " + status.getMessage());
-        
-      status = JavaConventions.validateJavaTypeName(context.getClassName(), JavaCore.getOption(JavaCore.COMPILER_SOURCE),
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Package Property: " + status.getMessage());
+
+      status = JavaConventions.validateJavaTypeName(context.getClassName(),
+          JavaCore.getOption(JavaCore.COMPILER_SOURCE),
           JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Class Name Property: " + status.getMessage());
-      
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Class Name Property: " + status.getMessage());
+
       return ctx.createSuccessStatus();
     }
   }
