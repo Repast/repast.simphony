@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import repast.simphony.statecharts.generator.CodeGenerator;
+import repast.simphony.statecharts.svg.NotationReader;
 
 /**
  * @author Nick Collier
@@ -70,7 +71,10 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
       if ((delta.getKind() == IResourceDelta.CHANGED || delta.getKind() == IResourceDelta.ADDED) && path != null
           && path.getFileExtension() != null
           && path.getFileExtension().equals(STATECHART_EXTENSION)) {
+    	  // create svg file here
+//    	  new NotationReader().readNotation();
         new CodeGenerator().run(project, path, monitor);
+        // write svg file here
       }
       return true;
     }

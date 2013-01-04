@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import repast.simphony.statecharts.generator.CodeGenerator;
+import repast.simphony.statecharts.svg.NotationReader;
 
 /**
  * @author Nick Collier
@@ -44,6 +45,7 @@ public class CodeGenHandler extends AbstractHandler {
         
         if (path.getFileExtension().equals(StatechartBuilder.STATECHART_EXTENSION)) {
           try {
+        	new NotationReader().readNotation(path);
             new CodeGenerator().run(project, path, null);
           } catch (CoreException e) {
             throw new ExecutionException("Error executing generate code handler", e);
