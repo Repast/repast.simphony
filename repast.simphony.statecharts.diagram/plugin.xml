@@ -340,12 +340,13 @@
    </extension>
 
    <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypes" id="element-types">
-      <?gmfgen generated="true"?>
+      <?gmfgen generated="false"?>
       <metamodel nsURI="http://repast.sf.net/statecharts">
          <metamodelType
                id="repast.simphony.statecharts.diagram.StateMachine_1000"
                name="%metatype.name.StateMachine_1000"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               icon="icons/obj16/logo-16.png"
                eclass="StateMachine"
                edithelper="repast.simphony.statecharts.edit.helpers.StateMachineEditHelper">
             <param name="semanticHint" value="1000"/>
@@ -355,6 +356,7 @@
          <metamodelType
                id="repast.simphony.statecharts.diagram.State_2003"
                name="%metatype.name.State_2003"
+               icon="icons/obj16/State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="State"
                edithelper="repast.simphony.statecharts.edit.helpers.StateEditHelper">
@@ -366,6 +368,7 @@
                id="repast.simphony.statecharts.diagram.CompositeState_2004"
                name="%metatype.name.CompositeState_2004"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
+               icon="icons/obj16/Composite-State-16.png"
                eclass="CompositeState"
                edithelper="repast.simphony.statecharts.edit.helpers.CompositeStateEditHelper">
             <param name="semanticHint" value="2004"/>
@@ -375,6 +378,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.PseudoState_2005"
                name="%metatype.name.PseudoState_2005"
+               icon="icons/obj16/Initial-State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.PseudoState_3003"/>
             <param name="semanticHint" value="2005"/>
@@ -384,6 +388,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.PseudoState_2006"
                name="%metatype.name.PseudoState_2006"
+               icon="icons/obj16/Choice-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.PseudoState_3003"/>
             <param name="semanticHint" value="2006"/>
@@ -393,6 +398,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.PseudoState_2007"
                name="%metatype.name.PseudoState_2007"
+               icon="icons/obj16/First-State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.PseudoState_3003"/>
             <param name="semanticHint" value="2007"/>
@@ -402,6 +408,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.FinalState_2008"
                name="%metatype.name.FinalState_2008"
+               icon="icons/obj16/Final-State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.FinalState_3007"/>
             <param name="semanticHint" value="2008"/>
@@ -411,6 +418,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.State_3001"
                name="%metatype.name.State_3001"
+               icon="icons/obj16/State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.State_2003"/>
             <param name="semanticHint" value="3001"/>
@@ -420,6 +428,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.CompositeState_3002"
                name="%metatype.name.CompositeState_3002"
+               icon="icons/obj16/Composite-State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.CompositeState_2004"/>
             <param name="semanticHint" value="3002"/>
@@ -429,6 +438,7 @@
          <metamodelType
                id="repast.simphony.statecharts.diagram.PseudoState_3003"
                name="%metatype.name.PseudoState_3003"
+               icon="icons/obj16/Initial-State-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="PseudoState"
                edithelper="repast.simphony.statecharts.edit.helpers.PseudoStateEditHelper">
@@ -439,6 +449,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.PseudoState_3006"
                name="%metatype.name.PseudoState_3006"
+               icon="icons/obj16/Choice-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.PseudoState_3003"/>
             <param name="semanticHint" value="3006"/>
@@ -450,6 +461,7 @@
                name="%metatype.name.FinalState_3007"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="FinalState"
+               icon="icons/obj16/Final-State-16.png"
                edithelper="repast.simphony.statecharts.edit.helpers.FinalStateEditHelper">
             <param name="semanticHint" value="3007"/>
          </metamodelType>
@@ -460,6 +472,7 @@
                name="%metatype.name.History_3008"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="History"
+               icon="icons/obj16/Shallow-History-16.png"
                edithelper="repast.simphony.statecharts.edit.helpers.HistoryEditHelper">
             <param name="semanticHint" value="3008"/>
          </metamodelType>
@@ -468,6 +481,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.History_3009"
                name="%metatype.name.History_3009"
+               icon="icons/obj16/Shallow-History-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.History_3008"/>
             <param name="semanticHint" value="3009"/>
@@ -477,6 +491,7 @@
          <metamodelType
                id="repast.simphony.statecharts.diagram.Transition_4001"
                name="%metatype.name.Transition_4001"
+               icon="icons/obj16/transition-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="Transition"
                edithelper="repast.simphony.statecharts.edit.helpers.TransitionEditHelper">

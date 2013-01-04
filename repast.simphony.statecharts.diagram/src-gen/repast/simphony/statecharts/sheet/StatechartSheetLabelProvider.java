@@ -3,6 +3,8 @@ package repast.simphony.statecharts.sheet;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -16,6 +18,10 @@ import repast.simphony.statecharts.providers.StatechartElementTypes;
  * @generated
  */
 public class StatechartSheetLabelProvider extends BaseLabelProvider implements ILabelProvider {
+  /**
+   * @generated NOT
+   */
+  private ImageRegistry imageRegistry;
 
   /**
    * @generated
@@ -30,11 +36,32 @@ public class StatechartSheetLabelProvider extends BaseLabelProvider implements I
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   public Image getImage(Object element) {
     IElementType etype = getElementType(getView(unwrap(element)));
-    return etype == null ? null : StatechartElementTypes.getImage(etype);
+    // new code from here on
+    if (etype == null) return null;
+    ImageRegistry registry = getImageRegistry();
+    Image image = registry.get(etype.getIconURL().toString());
+    if (image == null) {
+      ImageDescriptor desc = ImageDescriptor.createFromURL(etype.getIconURL());
+      image = desc.createImage();
+      registry.put(etype.getIconURL().toString(), image);
+    }
+    return image;
+    
+    // old codereturn etype == null ? null : StatechartElementTypes.getImage(etype);
+  }
+  
+  /**
+   * @generated
+   */
+  private ImageRegistry getImageRegistry() {
+    if (imageRegistry == null) {
+      imageRegistry = new ImageRegistry();
+    }
+    return imageRegistry;
   }
 
   /**
