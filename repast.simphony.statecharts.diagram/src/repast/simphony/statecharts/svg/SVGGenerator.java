@@ -16,6 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.batik.svggen.DOMTreeManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
@@ -166,9 +167,9 @@ public class SVGGenerator {
 	 */
 	final protected void renderToGraphics(Graphics graphics, Graphics mapModeGraphics,
 			Point translateOffset, List editparts) {
-
 		GraphicsSVG svgG = (GraphicsSVG) graphics;
-		Document doc = svgG.getDocument();
+//		Document doc = svgG.getDocument();
+		DOMTreeManager dtm = svgG.getSVGGraphics2D().getDOMTreeManager();
 		
 		// List sortedEditparts = sortSelection(editparts);
 
@@ -192,7 +193,9 @@ public class SVGGenerator {
 				// paint shape figure
 				IFigure figure = editPart.getFigure();
 				paintFigure(mapModeGraphics, figure);
-				NodeList nl = doc.getElementsByTagNameNS("*", "rect");
+				Element topLevelGroup = dtm.getTopLevelGroup();
+				
+				NodeList nl = topLevelGroup.getElementsByTagNameNS("*", "rect");
 				
 				System.out.println("Beginning of printout:");
 				for(int i = 0; i < nl.getLength(); i++) {
