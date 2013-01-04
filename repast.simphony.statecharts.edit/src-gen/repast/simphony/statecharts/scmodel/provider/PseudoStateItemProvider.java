@@ -20,6 +20,7 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import repast.simphony.statecharts.scmodel.PseudoState;
+import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 /**
@@ -88,11 +89,15 @@ public class PseudoStateItemProvider
    * This returns PseudoState.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
   @Override
   public Object getImage(Object object) {
-    return overlayImage(object, getResourceLocator().getImage("full/obj16/PseudoState"));
+    PseudoStateTypes type = ((PseudoState)object).getType();
+    String img = "full/obj16/Choice-16.png";
+    if (type == PseudoStateTypes.ENTRY) img = "full/obj16/First-State-16.png";
+    else if (type == PseudoStateTypes.INITIAL) img = "full/obj16/Initial-State-16.png";
+    return overlayImage(object, getResourceLocator().getImage(img));
   }
 
   /**

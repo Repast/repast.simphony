@@ -61,11 +61,11 @@ public class StateItemProvider
    * This returns State.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
   @Override
   public Object getImage(Object object) {
-    return overlayImage(object, getResourceLocator().getImage("full/obj16/State"));
+    return overlayImage(object, getResourceLocator().getImage("full/obj16/State-16.png"));
   }
 
   /**
