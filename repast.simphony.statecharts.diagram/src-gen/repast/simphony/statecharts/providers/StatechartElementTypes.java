@@ -208,14 +208,22 @@ public class StatechartElementTypes {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   public static Image getImage(IAdaptable hint) {
-    ENamedElement element = getElement(hint);
-    if (element == null) {
-      return null;
+    // hint should be a IElementType
+    IElementType etype = (IElementType)hint.getAdapter(IElementType.class);
+  
+    if (etype == null) return null;
+    
+    ImageRegistry registry = getImageRegistry();
+    Image image = registry.get(etype.getIconURL().toString());
+    if (image == null) {
+      ImageDescriptor desc = ImageDescriptor.createFromURL(etype.getIconURL());
+      image = desc.createImage();
+      registry.put(etype.getIconURL().toString(), image);
     }
-    return getImage(element);
+    return image;
   }
 
   /**
