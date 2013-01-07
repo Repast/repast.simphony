@@ -2,6 +2,7 @@ package repast.simphony.statecharts.edit.parts;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DiagramPopupBarEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
@@ -48,7 +49,7 @@ public class CompositeStateCompositeStateCompartment2EditPart extends ShapeCompa
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
@@ -59,6 +60,8 @@ public class CompositeStateCompositeStateCompartment2EditPart extends ShapeCompa
     installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
     installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
         new CompositeStateCompositeStateCompartment2CanonicalEditPolicy());
+    removeEditPolicy(EditPolicyRoles.POPUPBAR_ROLE);
+    installEditPolicy(EditPolicyRoles.POPUPBAR_ROLE, new CompositeStatePopupBarEditPolicy());
   }
 
   /**

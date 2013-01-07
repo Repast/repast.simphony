@@ -86,8 +86,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       toolkit.dispose();
   }
   
-  
-
   @Override
   public final void createControls(Composite parent,
       TabbedPropertySheetPage tabPage) {

@@ -15,4 +15,6 @@ public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage 
   public DiagramRulersAndGridPreferencePage() {
     setPreferenceStore(StatechartDiagramEditorPlugin.getInstance().getPreferenceStore());
   }
+  
+  
 }
