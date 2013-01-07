@@ -16,6 +16,8 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gmf.runtime.common.ui.services.marker.MarkerNavigationService;
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.ui.actions.ActionIds;
+import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocumentProvider;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
@@ -275,6 +278,14 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     getDiagramGraphicalViewer().setContextMenu(provider);
     getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
         getDiagramGraphicalViewer());
+    
+    if (getDiagramGraphicalViewer() instanceof DiagramGraphicalViewer) {
+      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
+      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
+      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDORDER, false);
+      ((DiagramGraphicalViewer) getDiagramGraphicalViewer()).hookWorkspacePreferenceStore(getWorkspaceViewerPreferenceStore());
+      
+    }
   }
 
 }
