@@ -26,6 +26,7 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -50,6 +51,11 @@ import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
  * @generated
  */
 public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
+  
+  /**
+   * Generated NOT
+   */
+  private static final int LIGHT_GRAY_RGB = 12632256;
 
   /**
    * @generated
@@ -269,8 +275,9 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
+  @SuppressWarnings("restriction")
   protected void configureGraphicalViewer() {
     super.configureGraphicalViewer();
     DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
@@ -279,10 +286,18 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
         getDiagramGraphicalViewer());
     
+    // idea here is to replace the poor defaults with something reasonable
+    // unless the user has changed them him or herself.
     if (getDiagramGraphicalViewer() instanceof DiagramGraphicalViewer) {
-      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
-      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
-      getWorkspaceViewerPreferenceStore().setDefault(WorkspaceViewerProperties.GRIDORDER, false);
+      PreferenceStore prefStore = getWorkspaceViewerPreferenceStore();
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINECOLOR) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR)  == LIGHT_GRAY_RGB ) {
+        prefStore.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
+      }
+      
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINESTYLE) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINESTYLE)  == SWT.LINE_CUSTOM) {
+        prefStore.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
+      }
+      getWorkspaceViewerPreferenceStore().setValue(WorkspaceViewerProperties.GRIDORDER, false);
       ((DiagramGraphicalViewer) getDiagramGraphicalViewer()).hookWorkspacePreferenceStore(getWorkspaceViewerPreferenceStore());
       
     }
