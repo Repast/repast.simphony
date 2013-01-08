@@ -481,7 +481,7 @@
          <specializationType
                id="repast.simphony.statecharts.diagram.History_3009"
                name="%metatype.name.History_3009"
-               icon="icons/obj16/Shallow-History-16.png"
+               icon="icons/obj16/Deep-History-16.png"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
             <specializes id="repast.simphony.statecharts.diagram.History_3008"/>
             <param name="semanticHint" value="3009"/>
