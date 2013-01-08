@@ -24,7 +24,6 @@ public class DiagramPreferenceInitializer extends AbstractPreferenceInitializer 
     store.setDefault(IPreferenceConstants.PREF_SHOW_GRID, true);
     store.setDefault(IPreferenceConstants.PREF_SNAP_TO_GRID, true);
     store.setDefault(IPreferenceConstants.PREF_SNAP_TO_GEOMETRY, true);
-    store.setDefault(IPreferenceConstants.PREF_GRID_SPACING, 0.125);
     
     //store.setDefault(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
     //store.setDefault(WorkspaceViewerProperties.GRIDORDER, false);
