@@ -5,7 +5,6 @@ package repast.simphony.statecharts.edit.parts;
 
 import org.eclipse.gmf.runtime.diagram.ui.tools.PopupBarTool;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import repast.simphony.statecharts.providers.StatechartElementTypes;
@@ -23,8 +22,7 @@ public class StateMachinePopupBarTool extends PopupBarTool {
       String description) {
     super(policy.getHost(), elementType);
 
-    ImageDescriptor imageDescriptor = StatechartElementTypes.getImageDescriptor(elementType);
-    this.image = imageDescriptor.createImage();
+    this.image = StatechartElementTypes.getImage(elementType);
     this.description = description;
   }
 
