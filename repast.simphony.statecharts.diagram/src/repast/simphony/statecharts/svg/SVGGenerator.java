@@ -16,7 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.batik.svggen.DOMTreeManager;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
@@ -24,6 +24,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PrecisionRectangle;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPart;
@@ -31,6 +32,7 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gmf.runtime.common.core.util.Log;
+import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -42,11 +44,26 @@ import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.draw2d.ui.mapmode.MapModeUtil;
 import org.eclipse.gmf.runtime.draw2d.ui.render.awt.internal.svg.export.GraphicsSVG;
 import org.eclipse.gmf.runtime.draw2d.ui.render.internal.graphics.RenderedMapModeGraphics;
-import org.eclipse.gmf.runtime.notation.Diagram;
-import org.w3c.dom.Document;
+import org.eclipse.gmf.runtime.notation.View;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGRectElement;
+
+import repast.simphony.statecharts.edit.parts.CompositeState2EditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateCompositeStateCompartment2EditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateCompositeStateCompartmentEditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateEditPart;
+import repast.simphony.statecharts.edit.parts.FinalState2EditPart;
+import repast.simphony.statecharts.edit.parts.FinalStateEditPart;
+import repast.simphony.statecharts.edit.parts.History2EditPart;
+import repast.simphony.statecharts.edit.parts.HistoryEditPart;
+import repast.simphony.statecharts.edit.parts.PseudoState3EditPart;
+import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
+import repast.simphony.statecharts.edit.parts.State2EditPart;
+import repast.simphony.statecharts.edit.parts.StateEditPart;
+import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
+import repast.simphony.statecharts.scmodel.impl.AbstractStateImpl;
 
 public class SVGGenerator {
 
@@ -78,21 +95,8 @@ public class SVGGenerator {
 		populateUUIDMap();
 	}
 
-	
 	private void populateUUIDMap() {
-		Diagram diag = _dgrmEP.getDiagramView();
-		EObject eo = diag.getElement();
-		System.out.println(eo.getClass());
-		List editParts = _dgrmEP.getPrimaryEditParts();
-		for (Object editPart : editParts){
-//			list.clear();
-			if (editPart instanceof GraphicalEditPart){ 
-				EObject o = (EObject)((GraphicalEditPart) editPart).getAdapter(EObject.class);
-//				System.out.println(o);
-//				System.out.println(o.getClass());
-				
-			}
-		}
+
 	}
 
 	public void renderPartsToGraphics(List editparts,
@@ -165,13 +169,13 @@ public class SVGGenerator {
 	 *            the list of <code>IGraphicalEditParts</code> that will be
 	 *            rendered to the graphics object
 	 */
-	final protected void renderToGraphics(Graphics graphics, Graphics mapModeGraphics,
-			Point translateOffset, List editparts) {
+	final protected void renderToGraphics(Graphics graphics,
+			Graphics mapModeGraphics, Point translateOffset, List editparts) {
 		GraphicsSVG svgG = (GraphicsSVG) graphics;
-//		Document doc = svgG.getDocument();
-		DOMTreeManager dtm = svgG.getSVGGraphics2D().getDOMTreeManager();
-		
-		// List sortedEditparts = sortSelection(editparts);
+		// Document doc = svgG.getDocument();
+		SVGGraphics2D svg2d = svgG.getSVGGraphics2D();
+		Element tlg = svg2d.getTopLevelGroup();
+		svg2d.setTopLevelGroup(tlg);
 
 		mapModeGraphics.translate((-translateOffset.x), (-translateOffset.y));
 		mapModeGraphics.pushState();
@@ -179,7 +183,7 @@ public class SVGGenerator {
 		List<GraphicalEditPart> connectionsToPaint = new LinkedList<GraphicalEditPart>();
 
 		Map decorations = findDecorations(editparts);
-
+		int oldLength = 0;
 		for (Iterator editPartsItr = editparts.listIterator(); editPartsItr
 				.hasNext();) {
 			IGraphicalEditPart editPart = (IGraphicalEditPart) editPartsItr
@@ -192,20 +196,40 @@ public class SVGGenerator {
 				connectionsToPaint.addAll(findConnectionsToPaint(editPart));
 				// paint shape figure
 				IFigure figure = editPart.getFigure();
-				paintFigure(mapModeGraphics, figure);
-				Element topLevelGroup = dtm.getTopLevelGroup();
-				
-				NodeList nl = topLevelGroup.getElementsByTagNameNS("*", "rect");
-				
-				System.out.println("Beginning of printout:");
-				for(int i = 0; i < nl.getLength(); i++) {
-					SVGRectElement rect = (SVGRectElement)nl.item(i);
-					System.out.println(rect.toString());
-					rect.setAttributeNS(null, "id", "hello");
-				}
-				System.out.println("End of printout:");
 
+				paintFigure(mapModeGraphics, figure);
 				paintDecorations(mapModeGraphics, figure, decorations);
+
+				tlg = svg2d.getTopLevelGroup();
+
+				NodeList nl = tlg.getChildNodes();
+				int newLength = nl.getLength();
+
+				// if the new nodelist contains more children, process them
+				if (newLength > oldLength) {
+					if (newLength - oldLength == 3) { // defs1 is included so skip first
+						oldLength++;
+					}
+					switch (StatechartVisualIDRegistry.getVisualID(editPart
+							.getNotationView())) {
+
+					case CompositeStateEditPart.VISUAL_ID:
+						processBaseCompositeState(oldLength, nl, editPart);
+						break;
+					case StateEditPart.VISUAL_ID:
+						processBaseSimpleState(oldLength, nl, editPart);
+						break;
+					case FinalStateEditPart.VISUAL_ID:
+						processBaseFinalState(oldLength, nl);
+						break;
+					default:
+						// Nothing to do otherwise
+
+					}
+
+				}
+				svg2d.setTopLevelGroup(tlg);
+				oldLength = newLength;
 			}
 		}
 
@@ -218,6 +242,427 @@ public class SVGGenerator {
 			paintFigure(graphics, figure);
 			paintDecorations(graphics, figure, decorations);
 		}
+	}
+
+	/**
+	 * Fixes the final state appearance by adding a fill="black" attribute.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 */
+	private void processBaseFinalState(int oldLength, NodeList nl) {
+		Node g = nl.item(oldLength);
+		((Element) g.getFirstChild()).setAttribute("fill", "black");
+
+	}
+
+	/**
+	 * Adds uuid attribute to base simple state svg elements.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 */
+	private void processBaseSimpleState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
+		Element firstElement = processAndGetFirstStateElement(oldLength, nl);
+		String uuid = findUUID(editPart);
+		firstElement.setAttribute("uuid", uuid);
+	}
+
+	/**
+	 * Adds uuid attribute to base composite state svg elements
+	 * and recursively processes the sub-elements.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 * @param editPart
+	 */
+	private void processBaseCompositeState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
+		Element firstElement = processAndGetFirstStateElement(oldLength, nl);
+		if (!firstElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The first svg element of a composite state should be 'rect'.");
+		}
+		String uuid = findUUID(editPart);
+		firstElement.setAttribute("uuid", uuid);
+		Element nextElement = getNextElementComposite(firstElement);
+		// Look through subparts
+		List baseCompositeStateEditPartChildren = editPart.getChildren();
+		CompositeStateCompositeStateCompartmentEditPart compartmentEditPart = null;
+		for (Object child : baseCompositeStateEditPartChildren) {
+			if (child instanceof CompositeStateCompositeStateCompartmentEditPart) {
+				compartmentEditPart = (CompositeStateCompositeStateCompartmentEditPart) child;
+				break;
+			}
+		}
+		if (compartmentEditPart != null) {
+			List baseCompositeStateCompartmentEditPartChildren = compartmentEditPart
+					.getChildren();
+			// CompositeStateCompositeStateCompartmentEditPart
+			// process in a depth first manner the EditParts contained within
+			nextElement = processSubElements(nextElement,
+					baseCompositeStateCompartmentEditPartChildren);
+			if (!nextElement.getNodeName().equals("line")) {
+				throw new IllegalStateException(
+						"The final svg element of a composite state should be 'line'.");
+			}
+
+		}
+
+	}
+
+	/**
+	 * Processing the svg child elements of a composite state.
+	 * @param nextElement
+	 * @param childrenEditParts
+	 * @return
+	 */
+	private Element processSubElements(Element nextElement,
+			List childrenEditParts) {
+		for (Object child : childrenEditParts) {
+			if (child instanceof IGraphicalEditPart) {
+				IGraphicalEditPart childGraphicalEditPart = (IGraphicalEditPart) child;
+				switch (StatechartVisualIDRegistry
+						.getVisualID(childGraphicalEditPart
+								.getNotationView())) {
+
+				case CompositeState2EditPart.VISUAL_ID: // Sub Composite
+														// State
+					nextElement = processSubCompositeState(nextElement,
+							childGraphicalEditPart);
+					break;
+				case State2EditPart.VISUAL_ID: // Sub Simple State
+					nextElement = processSubSimpleState(nextElement,
+							childGraphicalEditPart);
+					break;
+				case PseudoState3EditPart.VISUAL_ID: // Initial State Marker
+					nextElement = processInitialStateMarker(nextElement);
+					break;
+				case PseudoState4EditPart.VISUAL_ID: // Sub Branching State
+					nextElement = processSubBranchingState(nextElement);
+					break;
+				case FinalState2EditPart.VISUAL_ID: // Sub Final State
+					nextElement = processSubFinalState(nextElement);
+					break;
+				case HistoryEditPart.VISUAL_ID: // Shallow History State
+					nextElement = processShallowHistoryState(nextElement);
+					break;
+				case History2EditPart.VISUAL_ID: // Deep History State
+					nextElement = processDeepHistoryState(nextElement);
+					break;
+				default:
+					// Nothing to do otherwise
+
+				}
+			}
+		}
+		return nextElement;
+	}
+
+	/**
+	 * Adds uuid attribute to sub composite state svg elements
+	 * and recursively processes the sub-elements.
+	 * 
+	 * @param nextElement
+	 * @param editPart
+	 * @return the next svg element
+	 */
+	private Element processSubCompositeState(Element nextElement,
+			IGraphicalEditPart editPart) {
+
+		
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The first svg element of a composite state should be 'rect'.");
+		}
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
+		
+
+		nextElement = getNextElementComposite(nextElement);
+		// Look through subparts
+		List baseCompositeStateEditPartChildren = editPart.getChildren();
+		CompositeStateCompositeStateCompartment2EditPart compartment2EditPart = null;
+		for (Object child : baseCompositeStateEditPartChildren) {
+			if (child instanceof CompositeStateCompositeStateCompartment2EditPart) {
+				compartment2EditPart = (CompositeStateCompositeStateCompartment2EditPart) child;
+				break;
+			}
+		}
+		if (compartment2EditPart != null) {
+			List baseCompositeStateCompartment2EditPartChildren = compartment2EditPart
+					.getChildren();
+			nextElement = processSubElements(nextElement,
+					baseCompositeStateCompartment2EditPartChildren);
+			if (!nextElement.getNodeName().equals("line")) {
+				throw new IllegalStateException(
+						"The final svg element of a composite state should be 'line'.");
+			}
+			return (Element)nextElement.getNextSibling();
+		}
+		else {
+			throw new IllegalStateException("Composite state diagram element did not contain a CompositeStateCompositeStateCompartment2EditPart.");
+		}
+
+	}
+
+	/**
+	 * Shallow history state svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processShallowHistoryState(Element nextElement) {
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The first svg element of a shallow history state should be 'circle'.");
+		}
+		nextElement.setAttribute("fill", "black");
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The second svg element of a shallow history state should be 'circle'.");
+		}
+		nextElement.setAttribute("stroke", "black");
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The third svg element of a shallow history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The fourth svg element of a shallow history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The fifth svg element of a shallow history state should be 'line'.");
+		}
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Deep history state svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processDeepHistoryState(Element nextElement) {
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The first svg element of a deep history state should be 'circle'.");
+		}
+		nextElement.setAttribute("fill", "black");
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The second svg element of a deep history state should be 'circle'.");
+		}
+		nextElement.setAttribute("stroke", "black");
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The third svg element of a deep history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The fourth svg element of a deep history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The fifth svg element of a deep history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The sixth svg element of a deep history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The seventh svg element of a deep history state should be 'line'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The eighth svg element of a deep history state should be 'line'.");
+		}
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Initial state marker svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processInitialStateMarker(Element nextElement) {
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The first svg element of an initial state marker should be 'circle'.");
+		}
+		nextElement.setAttribute("fill", "black");
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Sub branching state svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processSubBranchingState(Element nextElement) {
+		if (!nextElement.getNodeName().equals("polygon")) {
+			throw new IllegalStateException(
+					"The first svg element of a branching state should be 'polygon'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("polygon")) {
+			throw new IllegalStateException(
+					"The second svg element of a branching state should be 'polygon'.");
+		}
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Sub final state svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processSubFinalState(Element nextElement) {
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The first svg element of a final state should be 'circle'.");
+		}
+		nextElement.setAttribute("fill", "black");
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The second svg element of a branching state should be 'circle'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("circle")) {
+			throw new IllegalStateException(
+					"The third svg element of a branching state should be 'circle'.");
+		}
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Sub simple state svg element processing.
+	 * 
+	 * @param nextElement
+	 * @return
+	 */
+	private Element processSubSimpleState(Element nextElement,
+			IGraphicalEditPart editPart) {
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The first svg element of a simple state should be 'rect'.");
+		}
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The second svg element of a simple state should be 'rect'.");
+		}
+		nextElement = (Element) nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("text")) {
+			throw new IllegalStateException(
+					"The third svg element of a simple state should be 'text'.");
+		}
+		return (Element) nextElement.getNextSibling();
+	}
+
+	/**
+	 * Advances to the next element within a composite state.
+	 * 
+	 * @param firstElement
+	 * @return
+	 */
+	private Element getNextElementComposite(Element firstElement) {
+		// check to see if this element is part of the single g element
+		// singleton corner case
+		Node nextElement = firstElement.getNextSibling();
+		if (nextElement == null) {
+			Node parentNode = firstElement.getParentNode();
+			if (parentNode == null) {
+				throw new IllegalStateException(
+						"The parent of the first svg element of a composite state should not be null.");
+			} else {
+				Node nextParentNode = parentNode.getNextSibling();
+				if (nextParentNode == null) {
+					throw new IllegalStateException(
+							"The svg sibling of the parent in the corner case should exist.");
+				} else {
+					nextElement = nextParentNode.getFirstChild();
+				}
+			}
+		}
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The second svg element of a composite state should be a 'rect'.");
+		}
+		nextElement = nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("text")) {
+			throw new IllegalStateException(
+					"The third svg element of a composite state should be a 'text'.");
+		}
+		nextElement = nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The fourth svg element of a composite state should be a 'rect'.");
+		}
+		nextElement = nextElement.getNextSibling();
+		if (!nextElement.getNodeName().equals("rect")) {
+			throw new IllegalStateException(
+					"The fifth svg element of a composite state should be a 'rect'.");
+		}
+		nextElement = nextElement.getNextSibling();
+
+		return (Element) nextElement;
+	}
+
+	/**
+	 * Gets the first svg element for a base simple or composite state and adds
+	 * stroke-width attribute if necessary.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 * @return
+	 */
+	private Element processAndGetFirstStateElement(int oldLength, NodeList nl) {
+		Node g = nl.item(oldLength);
+		Element firstElement = (Element) g.getFirstChild();
+		// Two cases here.
+		// g element is split into two parts
+		if (nl.getLength() - oldLength == 2) {
+			// Need to add a non-zero stroke-width
+			firstElement.setAttribute("stroke-width", "1.1");
+		}
+		return firstElement;
+	}
+
+	/**
+	 * Returns the AbstractStateImpl uuid property of the editPart
+	 * or an empty string if it can't be found.
+	 * @param editPart
+	 * @return
+	 */
+	private String findUUID(IGraphicalEditPart editPart) {
+		EObject stateObject = ViewUtil.resolveSemanticElement(editPart
+				.getNotationView());
+		String result = "";
+		if (stateObject instanceof AbstractStateImpl) {
+			result = ((AbstractStateImpl) stateObject).getUuid();
+		}
+		return result;
 	}
 
 	/**
@@ -508,7 +953,7 @@ public class SVGGenerator {
 		}
 		return connections;
 	}
-	
+
 	/**
 	 * Writes the SVG Model out to a file.
 	 * 
@@ -520,14 +965,14 @@ public class SVGGenerator {
 
 			// Define the view box
 			svgRoot.setAttributeNS(null,
-				"viewBox", String.valueOf(viewBox.x) + " " + //$NON-NLS-1$ //$NON-NLS-2$
-					String.valueOf(viewBox.y) + " " + //$NON-NLS-1$
-					String.valueOf(viewBox.width) + " " + //$NON-NLS-1$
-					String.valueOf(viewBox.height));
+					"viewBox", String.valueOf(viewBox.x) + " " + //$NON-NLS-1$ //$NON-NLS-2$
+							String.valueOf(viewBox.y) + " " + //$NON-NLS-1$
+							String.valueOf(viewBox.width) + " " + //$NON-NLS-1$
+							String.valueOf(viewBox.height));
 
 			// Write the document to the stream
 			Transformer transformer = TransformerFactory.newInstance()
-				.newTransformer();
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -536,36 +981,27 @@ public class SVGGenerator {
 			StreamResult result = new StreamResult(outputStream);
 			transformer.transform(source, result);
 		} catch (Exception ex) {
-			Log.error(DiagramUIRenderPlugin.getInstance(), IStatus.ERROR, ex
-				.getMessage(), ex);
+			Log.error(DiagramUIRenderPlugin.getInstance(), IStatus.ERROR,
+					ex.getMessage(), ex);
 		}
 	}
-	
-	/* 
-	 * Example of how to access svgRoot.
+
+	/*
+	 * Set the svgRoot.
 	 */
 	protected void setSVGRoot(Graphics g) {
-
-			GraphicsSVG svgG = (GraphicsSVG) g;
-			// Get the root element (the svg element)
-			svgRoot = svgG.getRoot();
-			NodeList nl = svgRoot.getElementsByTagNameNS("*", "rect");
-			System.out.println("length of nl is:" + nl.getLength());
-			for(int i = 0; i < nl.getLength(); i++) {
-				SVGRectElement rect = (SVGRectElement)nl.item(i);
-				System.out.println(rect.toString());
-				rect.setAttributeNS(null, "id", "hello");
-			}
+		GraphicsSVG svgG = (GraphicsSVG) g;
+		svgRoot = svgG.getRoot();
 	}
-	
+
 	/**
 	 * Determine the minimal rectangle required to bound the list of editparts.
 	 * A margin is used around each of the editpart's figures when calculating
 	 * the size.
 	 * 
 	 * @param editparts
-	 *            the list of <code>IGraphicalEditParts</code> from which
-	 *            their figure bounds will be used
+	 *            the list of <code>IGraphicalEditParts</code> from which their
+	 *            figure bounds will be used
 	 * @return Rectangle the minimal rectangle that can bound the figures of the
 	 *         list of editparts
 	 */
@@ -576,7 +1012,7 @@ public class SVGGenerator {
 		return new org.eclipse.swt.graphics.Rectangle(rect.x, rect.y,
 				rect.width, rect.height);
 	}
-	
+
 	/**
 	 * @return <code>int</code> value that is the margin around the generated
 	 *         image in logical coordinates.
@@ -585,6 +1021,5 @@ public class SVGGenerator {
 	public int getImageMargin() {
 		return image_margin;
 	}
-    
 
 }

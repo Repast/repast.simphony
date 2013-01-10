@@ -66,7 +66,6 @@ public class NotationReader {
 		Diagram diagram = null;
 
 		for (EObject obj : resource.getContents()) {
-			System.out.println(obj.eClass());
 
 			if (obj.eClass().equals(NotationPackage.Literals.DIAGRAM)) {
 				diagram = (Diagram) obj;
@@ -76,28 +75,14 @@ public class NotationReader {
 
 		DiagramEditPart dep = OffscreenEditPartFactory.getInstance()
 				.createDiagramEditPart(diagram, new Shell());
-//		List editParts = dep.getPrimaryEditParts();
-//		SVGGenerator sg = new SVGGenerator(dep);
-//		DiagramGenerator dg = new DiagramSVGGenerator(dep);
-//		try {
-//			new CopyToImageUtil().copyToImage(dep, new Path(
-//					"/Users/jozik/Desktop/temp/hellotest.svg"),
-//					ImageFileFormat.SVG, new NullProgressMonitor());
-//
-//		} catch (CoreException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-
-			try {
-				new ExportToSVGUtil().copyToImage(dep, new Path(
-						"/Users/jozik/Desktop/temp/customhellotest.svg"), new NullProgressMonitor());
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		try {
+			new ExportToSVGUtil().copyToImage(dep, new Path(
+					"/Users/jozik/Desktop/temp/customhellotest.svg"),
+					new NullProgressMonitor());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
