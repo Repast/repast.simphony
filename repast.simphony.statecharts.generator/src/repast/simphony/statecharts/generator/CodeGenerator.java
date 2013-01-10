@@ -52,7 +52,7 @@ public class CodeGenerator {
    * @param monitor
    * @throws CoreException 
    */
-  public void run(IProject project, IPath path, IProgressMonitor monitor) throws CoreException {
+  public IPath run(IProject project, IPath path, IProgressMonitor monitor) throws CoreException {
     try {
       XMIResourceImpl resource = new XMIResourceImpl();
       resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
@@ -91,10 +91,12 @@ public class CodeGenerator {
       String templatePath = "src::generator::Main";
       facade.evaluate(templatePath, statemachine);
       
-      project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, monitor);
+      return srcPath;
     } catch (IOException ex) {
       ex.printStackTrace();
+      return null;
     }
+
   }
   
   private IPath addSrcPath(IProject project, String uuid, IProgressMonitor monitor) throws CoreException {

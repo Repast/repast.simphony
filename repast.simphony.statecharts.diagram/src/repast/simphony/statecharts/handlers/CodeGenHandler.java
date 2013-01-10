@@ -8,6 +8,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -16,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import repast.simphony.statecharts.generator.CodeGenerator;
-import repast.simphony.statecharts.svg.NotationReader;
+import repast.simphony.statecharts.svg.SVGExporter;
 
 /**
  * @author Nick Collier
@@ -45,8 +46,10 @@ public class CodeGenHandler extends AbstractHandler {
         
         if (path.getFileExtension().equals(StatechartBuilder.STATECHART_EXTENSION)) {
           try {
-        	new NotationReader().readNotation(path);
-            new CodeGenerator().run(project, path, null);
+        	
+            IPath srcPath = new CodeGenerator().run(project, path, null);
+            new SVGExporter().run(path, srcPath, null);
+            project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, null);
           } catch (CoreException e) {
             throw new ExecutionException("Error executing generate code handler", e);
           }

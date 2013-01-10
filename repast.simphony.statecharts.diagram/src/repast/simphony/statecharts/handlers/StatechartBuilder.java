@@ -6,6 +6,7 @@ package repast.simphony.statecharts.handlers;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -14,7 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import repast.simphony.statecharts.generator.CodeGenerator;
-import repast.simphony.statecharts.svg.NotationReader;
+import repast.simphony.statecharts.svg.SVGExporter;
 
 /**
  * @author Nick Collier
@@ -72,9 +73,9 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
           && path.getFileExtension() != null
           && path.getFileExtension().equals(STATECHART_EXTENSION)) {
     	  // create svg file here
-//    	  new NotationReader().readNotation();
-        new CodeGenerator().run(project, path, monitor);
-        // write svg file here
+        IPath srcPath = new CodeGenerator().run(project, path, monitor);
+        new SVGExporter().run(path, srcPath, monitor);
+        project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, monitor);
       }
       return true;
     }

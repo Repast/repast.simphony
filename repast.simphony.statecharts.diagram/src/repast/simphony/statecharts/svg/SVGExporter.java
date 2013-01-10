@@ -3,13 +3,15 @@ package repast.simphony.statecharts.svg;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
@@ -17,17 +19,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 import org.eclipse.gmf.runtime.diagram.ui.OffscreenEditPartFactory;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.image.ImageFileFormat;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.diagram.ui.render.clipboard.DiagramGenerator;
 import org.eclipse.gmf.runtime.diagram.ui.render.clipboard.DiagramImageGenerator;
-import org.eclipse.gmf.runtime.diagram.ui.render.clipboard.DiagramSVGGenerator;
-import org.eclipse.gmf.runtime.diagram.ui.render.util.CopyToImageUtil;
 import org.eclipse.gmf.runtime.diagram.ui.util.DiagramEditorUtil;
 import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.gmf.runtime.notation.Diagram;
@@ -37,9 +35,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
-public class NotationReader {
+import repast.simphony.statecharts.scmodel.StateMachine;
+import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-	public void readNotation(IPath path) {
+public class SVGExporter {
+
+	public void run(IPath path, IPath srcPath,
+			IProgressMonitor monitor) {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		ResourceSet resourceSet = new ResourceSetImpl();
 		GMFEditingDomainFactory.getInstance().createEditingDomain(resourceSet);
 		Resource resource = resourceSet
@@ -53,37 +58,71 @@ public class NotationReader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		readNotation(resource);
-	}
 
-	public void readNotation(Resource resource) {
-
-		ResourceSet rset = resource.getResourceSet(); // this is null
-		TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE
-				.createEditingDomain(rset);
-		editingDomain
-				.setID("repast.simphony.statecharts.diagram.EditingDomain");
-		Diagram diagram = null;
-
-		for (EObject obj : resource.getContents()) {
-
-			if (obj.eClass().equals(NotationPackage.Literals.DIAGRAM)) {
-				diagram = (Diagram) obj;
-				break;
-			}
-		}
-
+		OutPathInfo outPathInfo = new OutPathInfo();
+		Diagram diagram = readNotation(resource, monitor, outPathInfo);
 		DiagramEditPart dep = OffscreenEditPartFactory.getInstance()
 				.createDiagramEditPart(diagram, new Shell());
+
+		IPath outPath = getOutPath(srcPath, outPathInfo);
 		try {
-			new ExportToSVGUtil().copyToImage(dep, new Path(
-					"/Users/jozik/Desktop/temp/customhellotest.svg"),
-					new NullProgressMonitor());
+			new ExportToSVGUtil().copyToImage(dep, outPath, monitor);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
 
+	private IPath getOutPath(IPath srcPath, OutPathInfo outPathInfo) {
+		IPath result = srcPath;
+		String pkg = outPathInfo.pkg;
+		if (pkg != null) {
+			for (String segment : pkg.split("\\.")) {
+				result = result.append(segment);
+			}
+		}
+		String className = outPathInfo.className;
+		result = result.append(className + ".svg");
+		return result;
+	}
+
+	/**
+	 * Utility class to retrieve package and class name information.
+	 * 
+	 * @author jozik
+	 * 
+	 */
+	private static class OutPathInfo {
+		String pkg, className;
+	}
+
+	private Diagram readNotation(Resource resource, IProgressMonitor monitor,
+			OutPathInfo names) {
+
+		ResourceSet rset = resource.getResourceSet();
+		TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE
+				.createEditingDomain(rset);
+		editingDomain
+				.setID("repast.simphony.statecharts.diagram.EditingDomain");
+		StateMachine statemachine = null;
+		Diagram diagram = null;
+
+		for (EObject obj : resource.getContents()) {
+
+			if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
+				statemachine = (StateMachine) obj;
+				continue;
+			}
+
+			if (obj.eClass().equals(NotationPackage.Literals.DIAGRAM)) {
+				diagram = (Diagram) obj;
+			}
+		}
+
+		names.className = statemachine.getClassName();
+		names.pkg = statemachine.getPackage();
+
+		return diagram;
 	}
 
 	public static Image getDiagramImage(Diagram diagram,
