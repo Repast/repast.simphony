@@ -28,9 +28,7 @@ public class CodeBeautifier implements PostProcessor {
 
   @Override
   public void beforeWriteAndClose(FileHandle file) {
-    // TODO groovy formatting
-    // TODO do we want to catch these errors for any reason
-    if (file.getAbsolutePath() != null && file.getAbsolutePath().endsWith("java")) {
+    if (file.getAbsolutePath() != null && (file.getAbsolutePath().endsWith("java") || file.getAbsolutePath().endsWith(".groovy"))) {
       IDocument doc = new Document(file.getBuffer().toString());
       TextEdit edit = getCodeFormatter().format(CodeFormatter.K_COMPILATION_UNIT, doc.get(), 0,
           doc.get().length(), 0, null);

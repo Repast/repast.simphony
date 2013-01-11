@@ -88,11 +88,13 @@ public class HistoryItemProvider
    * This returns History.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @generated
+   * @generated NOT
    */
   @Override
   public Object getImage(Object object) {
-    return overlayImage(object, getResourceLocator().getImage("full/obj16/History"));
+    boolean shallow = ((History)object).isShallow();
+    String img = shallow ? "full/obj16/Shallow-History-16.png" : "full/obj16/Deep-History-16.png"; 
+    return overlayImage(object, getResourceLocator().getImage(img));
   }
 
   /**

@@ -40,7 +40,7 @@ public class StateMachineEditPart extends DiagramEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
@@ -48,7 +48,12 @@ public class StateMachineEditPart extends DiagramEditPart {
     installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new StateMachineCanonicalEditPolicy());
     installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicyWithCustomReparent(
         StatechartVisualIDRegistry.TYPED_INSTANCE));
-    // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
+    // removes the popup bar
+    removeEditPolicy(EditPolicyRoles.POPUPBAR_ROLE);
+    installEditPolicy(EditPolicyRoles.POPUPBAR_ROLE, new StateMachinePopupBarEditPolicy());
+
+    // removes the prompt etc. when a connection is made with no end point
+    removeEditPolicy(org.eclipse.gef.EditPolicy.GRAPHICAL_NODE_ROLE);
   }
 
   /**

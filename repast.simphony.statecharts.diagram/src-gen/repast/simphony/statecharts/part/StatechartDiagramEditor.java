@@ -16,6 +16,8 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gmf.runtime.common.ui.services.marker.MarkerNavigationService;
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint;
 import org.eclipse.gmf.runtime.diagram.ui.actions.ActionIds;
+import org.eclipse.gmf.runtime.diagram.ui.internal.properties.WorkspaceViewerProperties;
+import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDiagramDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocumentProvider;
@@ -24,10 +26,12 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
@@ -47,6 +51,11 @@ import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
  * @generated
  */
 public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
+  
+  /**
+   * Generated NOT
+   */
+  private static final int LIGHT_GRAY_RGB = 12632256;
 
   /**
    * @generated
@@ -266,8 +275,9 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
+  @SuppressWarnings("restriction")
   protected void configureGraphicalViewer() {
     super.configureGraphicalViewer();
     DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
@@ -275,6 +285,22 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     getDiagramGraphicalViewer().setContextMenu(provider);
     getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
         getDiagramGraphicalViewer());
+    
+    // idea here is to replace the poor defaults with something reasonable
+    // unless the user has changed them him or herself.
+    if (getDiagramGraphicalViewer() instanceof DiagramGraphicalViewer) {
+      PreferenceStore prefStore = getWorkspaceViewerPreferenceStore();
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINECOLOR) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR)  == LIGHT_GRAY_RGB ) {
+        prefStore.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
+      }
+      
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINESTYLE) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINESTYLE)  == SWT.LINE_CUSTOM) {
+        prefStore.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
+      }
+      getWorkspaceViewerPreferenceStore().setValue(WorkspaceViewerProperties.GRIDORDER, false);
+      ((DiagramGraphicalViewer) getDiagramGraphicalViewer()).hookWorkspacePreferenceStore(getWorkspaceViewerPreferenceStore());
+      
+    }
   }
 
 }

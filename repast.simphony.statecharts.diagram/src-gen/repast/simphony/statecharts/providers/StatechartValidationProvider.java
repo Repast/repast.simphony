@@ -15,13 +15,13 @@ import org.eclipse.emf.validation.service.ITraversalStrategy;
 import org.eclipse.gmf.runtime.emf.core.util.EMFCoreUtil;
 import org.eclipse.gmf.runtime.notation.Node;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 
 import repast.simphony.statecharts.edit.parts.PseudoState2EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
 import repast.simphony.statecharts.edit.parts.StateMachineEditPart;
+import repast.simphony.statecharts.generator.StateMachineValidator;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
 import repast.simphony.statecharts.scmodel.PseudoState;
@@ -246,24 +246,25 @@ public class StatechartValidationProvider {
    * @generated
    */
   public static class Adapter1 extends AbstractModelConstraint {
-    
+
     /**
      * @generated NOT
      */
     public IStatus validate(IValidationContext ctx) {
-      StateMachine context = (StateMachine) ctx.getTarget();
-      IStatus status = JavaConventions.validateJavaTypeName(context.getAgentType(), JavaCore.getOption(JavaCore.COMPILER_SOURCE),
-          JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Agent Class Property: " + status.getMessage());
-      
-      status = JavaConventions.validatePackageName(context.getPackage(),JavaCore.getOption(JavaCore.COMPILER_SOURCE),
-          JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Package Property: " + status.getMessage());
-        
-      status = JavaConventions.validateJavaTypeName(context.getClassName(), JavaCore.getOption(JavaCore.COMPILER_SOURCE),
-          JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE));
-      if (status.getSeverity() == IStatus.ERROR) return ctx.createFailureStatus("Error in Class Name Property: " + status.getMessage());
-      
+      StateMachineValidator validator = new StateMachineValidator();
+      StateMachine machine = (StateMachine) ctx.getTarget();
+      IStatus status = validator.validateAgentType(machine);
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Agent Type Property: " + status.getMessage());
+
+      status = validator.validatePackage(machine);
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Package Property: " + status.getMessage());
+
+      status = validator.validateClassName(machine);
+      if (status.getSeverity() == IStatus.ERROR)
+        return ctx.createFailureStatus("Error in Class Name Property: " + status.getMessage());
+
       return ctx.createSuccessStatus();
     }
   }

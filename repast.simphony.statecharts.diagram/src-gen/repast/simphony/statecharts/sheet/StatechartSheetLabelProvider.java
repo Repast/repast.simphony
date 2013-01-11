@@ -30,7 +30,7 @@ public class StatechartSheetLabelProvider extends BaseLabelProvider implements I
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   public Image getImage(Object element) {
     IElementType etype = getElementType(getView(unwrap(element)));

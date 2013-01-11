@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -64,6 +65,12 @@ public class CodeGenerator {
           break;
         }
       }
+      
+      // don't continue the code generation when there machine is missing
+      // properties that will cause the generation to fail badly (e.g. there is
+      // no class name so we can't construct a file name to write the code to).
+      if (new StateMachineValidator().validate(statemachine).getSeverity() == IStatus.ERROR) return null;
+      
       IPath srcPath = addSrcPath(project, statemachine.getUuid(), monitor);
       IPath projectLocation = project.getLocation();
       srcPath = projectLocation.append(srcPath.lastSegment());

@@ -48,7 +48,7 @@ public class CompositeStateCompositeStateCompartmentEditPart extends ShapeCompar
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
@@ -59,6 +59,8 @@ public class CompositeStateCompositeStateCompartmentEditPart extends ShapeCompar
     installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
     installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
         new CompositeStateCompositeStateCompartmentCanonicalEditPolicy());
+    removeEditPolicy(EditPolicyRoles.POPUPBAR_ROLE);
+    installEditPolicy(EditPolicyRoles.POPUPBAR_ROLE, new CompositeStatePopupBarEditPolicy());
   }
 
   /**

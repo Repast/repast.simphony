@@ -42,7 +42,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
 
   private FormToolkit toolkit;
   private EMFDataBindingContext bindingContext;
-  private boolean doResetFocus;
   protected BindableFocusableSheet sheet;
 
   @Override
@@ -53,10 +52,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       bindModel(bindingContext);
     }
     
-    if (doResetFocus) {
-      doResetFocus = false;
-      resetFocus();
-    }
     
     //else {
       // this seems to be unecessary
@@ -72,11 +67,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     */
   }
   
-  // default empty implementation
-  protected void resetFocus() {
-    if (sheet != null) sheet.resetFocus();
-  }
-  
   @Override
   protected void setEObject(EObject object) {
     super.setEObject(object);
@@ -85,11 +75,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     }
     bindingContext = new EMFDataBindingContext();
     bindModel(bindingContext);
-    doResetFocus = true;
-  }
-  
-  public void aboutToBeShown() {
-    doResetFocus = true;
   }
   
   @Override
@@ -101,8 +86,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       toolkit.dispose();
   }
   
-  
-
   @Override
   public final void createControls(Composite parent,
       TabbedPropertySheetPage tabPage) {
