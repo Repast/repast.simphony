@@ -9,13 +9,20 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.ResourceLocator;
+
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
+import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 
 /**
@@ -25,7 +32,7 @@ import repast.simphony.systemdynamics.sdmodel.Variable;
  * @generated
  */
 public class VariableItemProvider
-  extends AbstractVariableItemProvider
+  extends ItemProviderAdapter
   implements
     IEditingDomainItemProvider,
     IStructuredItemContentProvider,
@@ -53,8 +60,123 @@ public class VariableItemProvider
     if (itemPropertyDescriptors == null) {
       super.getPropertyDescriptors(object);
 
+      addUuidPropertyDescriptor(object);
+      addNamePropertyDescriptor(object);
+      addTypePropertyDescriptor(object);
+      addUnitsPropertyDescriptor(object);
+      addEquationPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
+  }
+
+  /**
+   * This adds a property descriptor for the Uuid feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUuidPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_uuid_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_uuid_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__UUID,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Name feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addNamePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_name_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_name_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__NAME,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Type feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addTypePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_type_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_type_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__TYPE,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Units feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUnitsPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_units_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_units_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__UNITS,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Equation feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addEquationPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_equation_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_equation_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__EQUATION,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
   }
 
   /**
@@ -92,6 +214,16 @@ public class VariableItemProvider
   @Override
   public void notifyChanged(Notification notification) {
     updateChildren(notification);
+
+    switch (notification.getFeatureID(Variable.class)) {
+      case SDModelPackage.VARIABLE__UUID:
+      case SDModelPackage.VARIABLE__NAME:
+      case SDModelPackage.VARIABLE__TYPE:
+      case SDModelPackage.VARIABLE__UNITS:
+      case SDModelPackage.VARIABLE__EQUATION:
+        fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+        return;
+    }
     super.notifyChanged(notification);
   }
 
@@ -105,6 +237,17 @@ public class VariableItemProvider
   @Override
   protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
     super.collectNewChildDescriptors(newChildDescriptors, object);
+  }
+
+  /**
+   * Return the resource locator for this item provider's resources.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ResourceLocator getResourceLocator() {
+    return SystemdynamicsEditPlugin.INSTANCE;
   }
 
 }

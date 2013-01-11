@@ -9,9 +9,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import repast.simphony.systemdynamics.sdmodel.AbstractVariable;
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.Stock;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,7 +27,7 @@ import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
  *
  * @generated
  */
-public class RateImpl extends AbstractVariableImpl implements Rate {
+public class RateImpl extends VariableImpl implements Rate {
   /**
    * The cached value of the '{@link #getTo() <em>To</em>}' reference.
    * <!-- begin-user-doc -->
@@ -36,7 +36,7 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * @generated
    * @ordered
    */
-  protected AbstractVariable to;
+  protected Stock to;
 
   /**
    * The cached value of the '{@link #getFrom() <em>From</em>}' reference.
@@ -46,7 +46,7 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * @generated
    * @ordered
    */
-  protected AbstractVariable from;
+  protected Stock from;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,10 +72,10 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public AbstractVariable getTo() {
+  public Stock getTo() {
     if (to != null && to.eIsProxy()) {
       InternalEObject oldTo = (InternalEObject)to;
-      to = (AbstractVariable)eResolveProxy(oldTo);
+      to = (Stock)eResolveProxy(oldTo);
       if (to != oldTo) {
         if (eNotificationRequired())
           eNotify(new ENotificationImpl(this, Notification.RESOLVE, SDModelPackage.RATE__TO, oldTo, to));
@@ -89,7 +89,7 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public AbstractVariable basicGetTo() {
+  public Stock basicGetTo() {
     return to;
   }
 
@@ -98,8 +98,8 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTo(AbstractVariable newTo) {
-    AbstractVariable oldTo = to;
+  public void setTo(Stock newTo) {
+    Stock oldTo = to;
     to = newTo;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.RATE__TO, oldTo, to));
@@ -110,10 +110,10 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public AbstractVariable getFrom() {
+  public Stock getFrom() {
     if (from != null && from.eIsProxy()) {
       InternalEObject oldFrom = (InternalEObject)from;
-      from = (AbstractVariable)eResolveProxy(oldFrom);
+      from = (Stock)eResolveProxy(oldFrom);
       if (from != oldFrom) {
         if (eNotificationRequired())
           eNotify(new ENotificationImpl(this, Notification.RESOLVE, SDModelPackage.RATE__FROM, oldFrom, from));
@@ -127,7 +127,7 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public AbstractVariable basicGetFrom() {
+  public Stock basicGetFrom() {
     return from;
   }
 
@@ -136,8 +136,8 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setFrom(AbstractVariable newFrom) {
-    AbstractVariable oldFrom = from;
+  public void setFrom(Stock newFrom) {
+    Stock oldFrom = from;
     from = newFrom;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.RATE__FROM, oldFrom, from));
@@ -170,10 +170,10 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
       case SDModelPackage.RATE__TO:
-        setTo((AbstractVariable)newValue);
+        setTo((Stock)newValue);
         return;
       case SDModelPackage.RATE__FROM:
-        setFrom((AbstractVariable)newValue);
+        setFrom((Stock)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -188,10 +188,10 @@ public class RateImpl extends AbstractVariableImpl implements Rate {
   public void eUnset(int featureID) {
     switch (featureID) {
       case SDModelPackage.RATE__TO:
-        setTo((AbstractVariable)null);
+        setTo((Stock)null);
         return;
       case SDModelPackage.RATE__FROM:
-        setFrom((AbstractVariable)null);
+        setFrom((Stock)null);
         return;
     }
     super.eUnset(featureID);

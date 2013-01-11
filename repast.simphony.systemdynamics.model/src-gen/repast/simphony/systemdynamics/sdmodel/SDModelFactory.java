@@ -31,22 +31,13 @@ public interface SDModelFactory extends EFactory {
   SystemModel createSystemModel();
 
   /**
-   * Returns a new object of class '<em>Causal Link</em>'.
+   * Returns a new object of class '<em>Influence Link</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Causal Link</em>'.
+   * @return a new object of class '<em>Influence Link</em>'.
    * @generated
    */
-  CausalLink createCausalLink();
-
-  /**
-   * Returns a new object of class '<em>Variable</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Variable</em>'.
-   * @generated
-   */
-  Variable createVariable();
+  InfluenceLink createInfluenceLink();
 
   /**
    * Returns a new object of class '<em>Cloud</em>'.
@@ -74,6 +65,15 @@ public interface SDModelFactory extends EFactory {
    * @generated
    */
   Rate createRate();
+
+  /**
+   * Returns a new object of class '<em>Variable</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Variable</em>'.
+   * @generated
+   */
+  Variable createVariable();
 
   /**
    * Returns the package supported by this factory.

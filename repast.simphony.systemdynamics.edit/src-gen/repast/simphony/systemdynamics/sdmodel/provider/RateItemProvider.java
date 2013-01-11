@@ -27,7 +27,7 @@ import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
  * @generated
  */
 public class RateItemProvider
-  extends AbstractVariableItemProvider
+  extends VariableItemProvider
   implements
     IEditingDomainItemProvider,
     IStructuredItemContentProvider,

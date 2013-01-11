@@ -72,16 +72,8 @@ public class SDModelAdapterFactory extends AdapterFactoryImpl {
         return createSystemModelAdapter();
       }
       @Override
-      public Adapter caseCausalLink(CausalLink object) {
-        return createCausalLinkAdapter();
-      }
-      @Override
-      public Adapter caseAbstractVariable(AbstractVariable object) {
-        return createAbstractVariableAdapter();
-      }
-      @Override
-      public Adapter caseVariable(Variable object) {
-        return createVariableAdapter();
+      public Adapter caseInfluenceLink(InfluenceLink object) {
+        return createInfluenceLinkAdapter();
       }
       @Override
       public Adapter caseCloud(Cloud object) {
@@ -94,6 +86,10 @@ public class SDModelAdapterFactory extends AdapterFactoryImpl {
       @Override
       public Adapter caseRate(Rate object) {
         return createRateAdapter();
+      }
+      @Override
+      public Adapter caseVariable(Variable object) {
+        return createVariableAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object) {
@@ -130,44 +126,16 @@ public class SDModelAdapterFactory extends AdapterFactoryImpl {
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.systemdynamics.sdmodel.CausalLink <em>Causal Link</em>}'.
+   * Creates a new adapter for an object of class '{@link repast.simphony.systemdynamics.sdmodel.InfluenceLink <em>Influence Link</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see repast.simphony.systemdynamics.sdmodel.CausalLink
+   * @see repast.simphony.systemdynamics.sdmodel.InfluenceLink
    * @generated
    */
-  public Adapter createCausalLinkAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.systemdynamics.sdmodel.AbstractVariable <em>Abstract Variable</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.systemdynamics.sdmodel.AbstractVariable
-   * @generated
-   */
-  public Adapter createAbstractVariableAdapter() {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link repast.simphony.systemdynamics.sdmodel.Variable <em>Variable</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see repast.simphony.systemdynamics.sdmodel.Variable
-   * @generated
-   */
-  public Adapter createVariableAdapter() {
+  public Adapter createInfluenceLinkAdapter() {
     return null;
   }
 
@@ -210,6 +178,20 @@ public class SDModelAdapterFactory extends AdapterFactoryImpl {
    * @generated
    */
   public Adapter createRateAdapter() {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link repast.simphony.systemdynamics.sdmodel.Variable <em>Variable</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see repast.simphony.systemdynamics.sdmodel.Variable
+   * @generated
+   */
+  public Adapter createVariableAdapter() {
     return null;
   }
 

@@ -12,16 +12,38 @@
     <ownedChild>
       <domainMetaElement
           href="systemdynamics.ecore#//Variable"/>
+      <domainSpecialization
+          body="not self.oclIsKindOf(Stock) and not self.oclIsKindOf(Rate) and self.type = VariableType::auxiliary"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/type"/>
+          <value
+              body="VariableType::auxiliary"/>
+        </initializers>
+      </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
             href="systemdynamics.gmfgraph#VariableName"/>
         <features
-            href="systemdynamics.ecore#//AbstractVariable/name"/>
+            href="systemdynamics.ecore#//Variable/name"/>
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
-          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.2"/>
+          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.4"/>
       <diagramNode
           href="systemdynamics.gmfgraph#Variable"/>
     </ownedChild>
@@ -34,7 +56,7 @@
           href="systemdynamics.ecore#//Cloud"/>
       <tool
           xsi:type="gmftool:CreationTool"
-          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.3"/>
+          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.5"/>
       <diagramNode
           href="systemdynamics.gmfgraph#Cloud"/>
     </ownedChild>
@@ -45,29 +67,113 @@
     <ownedChild>
       <domainMetaElement
           href="systemdynamics.ecore#//Stock"/>
+      <domainSpecialization
+          body="not self.oclIsKindOf(Cloud) and self.type = VariableType::stock"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/type"/>
+          <value
+              body="VariableType::stock"/>
+        </initializers>
+      </domainInitializer>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
             href="systemdynamics.gmfgraph#StockName"/>
         <features
-            href="systemdynamics.ecore#//AbstractVariable/name"/>
+            href="systemdynamics.ecore#//Variable/name"/>
       </labelMappings>
       <tool
           xsi:type="gmftool:CreationTool"
-          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.4"/>
+          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.2"/>
       <diagramNode
           href="systemdynamics.gmfgraph#Stock"/>
+    </ownedChild>
+  </nodes>
+  <nodes>
+    <containmentFeature
+        href="systemdynamics.ecore#//SystemModel/variables"/>
+    <ownedChild>
+      <domainMetaElement
+          href="systemdynamics.ecore#//Variable"/>
+      <domainSpecialization
+          body="self.type = VariableType::constant"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/type"/>
+          <value
+              body="VariableType::constant"/>
+        </initializers>
+      </domainInitializer>
+      <labelMappings
+          xsi:type="gmfmap:FeatureLabelMapping">
+        <diagramLabel
+            href="systemdynamics.gmfgraph#VariableName"/>
+        <features
+            href="systemdynamics.ecore#//Variable/name"/>
+      </labelMappings>
+      <tool
+          xsi:type="gmftool:CreationTool"
+          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.3"/>
+      <diagramNode
+          href="systemdynamics.gmfgraph#Constant"/>
     </ownedChild>
   </nodes>
   <links>
     <domainMetaElement
         href="systemdynamics.ecore#//Rate"/>
+    <domainInitializer
+        xsi:type="gmfmap:FeatureSeqInitializer">
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="systemdynamics.ecore#//Variable/uuid"/>
+        <value
+            body="EcoreUtil.generateUUID()"
+            language="java"/>
+      </initializers>
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="systemdynamics.ecore#//Variable/type"/>
+        <value
+            body="VariableType::rate"/>
+      </initializers>
+    </domainInitializer>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="systemdynamics.gmfgraph#RateName"/>
       <features
-          href="systemdynamics.ecore#//AbstractVariable/name"/>
+          href="systemdynamics.ecore#//Variable/name"/>
     </labelMappings>
     <containmentFeature
         href="systemdynamics.ecore#//SystemModel/variables"/>
@@ -91,20 +197,20 @@
   </links>
   <links>
     <domainMetaElement
-        href="systemdynamics.ecore#//CausalLink"/>
+        href="systemdynamics.ecore#//InfluenceLink"/>
     <containmentFeature
         href="systemdynamics.ecore#//SystemModel/links"/>
     <tool
         xsi:type="gmftool:CreationTool"
         href="systemdynamics.gmftool#//@palette/@tools.0/@tools.0"/>
     <diagramLink
-        href="systemdynamics.gmfgraph#CausalLink"/>
+        href="systemdynamics.gmfgraph#InfluenceLink"/>
     <sourceMetaFeature
         xsi:type="ecore:EReference"
-        href="systemdynamics.ecore#//CausalLink/from"/>
+        href="systemdynamics.ecore#//InfluenceLink/from"/>
     <linkMetaFeature
         xsi:type="ecore:EReference"
-        href="systemdynamics.ecore#//CausalLink/to"/>
+        href="systemdynamics.ecore#//InfluenceLink/to"/>
     <creationConstraints>
       <sourceEnd
           body="not self.oclIsKindOf(Cloud)"/>

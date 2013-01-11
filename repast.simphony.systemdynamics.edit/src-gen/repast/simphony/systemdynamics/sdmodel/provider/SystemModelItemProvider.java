@@ -13,12 +13,14 @@ import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
@@ -61,8 +63,100 @@ public class SystemModelItemProvider
     if (itemPropertyDescriptors == null) {
       super.getPropertyDescriptors(object);
 
+      addStartTimePropertyDescriptor(object);
+      addEndTimePropertyDescriptor(object);
+      addTimeStepPropertyDescriptor(object);
+      addUnitsPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
+  }
+
+  /**
+   * This adds a property descriptor for the Start Time feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addStartTimePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_startTime_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_startTime_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__START_TIME,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the End Time feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addEndTimePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_endTime_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_endTime_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__END_TIME,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Time Step feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addTimeStepPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_timeStep_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_timeStep_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__TIME_STEP,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Units feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addUnitsPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_units_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_units_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__UNITS,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
   }
 
   /**
@@ -115,7 +209,8 @@ public class SystemModelItemProvider
    */
   @Override
   public String getText(Object object) {
-    return getString("_UI_SystemModel_type");
+    SystemModel systemModel = (SystemModel)object;
+    return getString("_UI_SystemModel_type") + " " + systemModel.getStartTime();
   }
 
   /**
@@ -130,6 +225,12 @@ public class SystemModelItemProvider
     updateChildren(notification);
 
     switch (notification.getFeatureID(SystemModel.class)) {
+      case SDModelPackage.SYSTEM_MODEL__START_TIME:
+      case SDModelPackage.SYSTEM_MODEL__END_TIME:
+      case SDModelPackage.SYSTEM_MODEL__TIME_STEP:
+      case SDModelPackage.SYSTEM_MODEL__UNITS:
+        fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+        return;
       case SDModelPackage.SYSTEM_MODEL__LINKS:
       case SDModelPackage.SYSTEM_MODEL__VARIABLES:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -152,7 +253,7 @@ public class SystemModelItemProvider
     newChildDescriptors.add
       (createChildParameter
         (SDModelPackage.Literals.SYSTEM_MODEL__LINKS,
-         SDModelFactory.eINSTANCE.createCausalLink()));
+         SDModelFactory.eINSTANCE.createInfluenceLink()));
 
     newChildDescriptors.add
       (createChildParameter
@@ -162,12 +263,12 @@ public class SystemModelItemProvider
     newChildDescriptors.add
       (createChildParameter
         (SDModelPackage.Literals.SYSTEM_MODEL__VARIABLES,
-         SDModelFactory.eINSTANCE.createCloud()));
+         SDModelFactory.eINSTANCE.createStock()));
 
     newChildDescriptors.add
       (createChildParameter
         (SDModelPackage.Literals.SYSTEM_MODEL__VARIABLES,
-         SDModelFactory.eINSTANCE.createStock()));
+         SDModelFactory.eINSTANCE.createCloud()));
 
     newChildDescriptors.add
       (createChildParameter

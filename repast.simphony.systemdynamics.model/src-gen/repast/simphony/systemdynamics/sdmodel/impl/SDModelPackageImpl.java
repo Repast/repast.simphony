@@ -4,20 +4,21 @@ package repast.simphony.systemdynamics.sdmodel.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import repast.simphony.systemdynamics.sdmodel.AbstractVariable;
-import repast.simphony.systemdynamics.sdmodel.CausalLink;
 import repast.simphony.systemdynamics.sdmodel.Cloud;
+import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
+import repast.simphony.systemdynamics.sdmodel.VariableType;
 
 /**
  * <!-- begin-user-doc -->
@@ -38,21 +39,7 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass causalLinkEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass abstractVariableEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass variableEClass = null;
+  private EClass influenceLinkEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -74,6 +61,20 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * @generated
    */
   private EClass rateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass variableEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum variableTypeEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -168,8 +169,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCausalLink() {
-    return causalLinkEClass;
+  public EAttribute getSystemModel_StartTime() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -177,8 +178,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCausalLink_Id() {
-    return (EAttribute)causalLinkEClass.getEStructuralFeatures().get(0);
+  public EAttribute getSystemModel_EndTime() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -186,8 +187,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCausalLink_From() {
-    return (EReference)causalLinkEClass.getEStructuralFeatures().get(1);
+  public EAttribute getSystemModel_TimeStep() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -195,8 +196,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCausalLink_To() {
-    return (EReference)causalLinkEClass.getEStructuralFeatures().get(2);
+  public EAttribute getSystemModel_Units() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -204,8 +205,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAbstractVariable() {
-    return abstractVariableEClass;
+  public EClass getInfluenceLink() {
+    return influenceLinkEClass;
   }
 
   /**
@@ -213,8 +214,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAbstractVariable_Id() {
-    return (EAttribute)abstractVariableEClass.getEStructuralFeatures().get(0);
+  public EAttribute getInfluenceLink_Uuid() {
+    return (EAttribute)influenceLinkEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -222,8 +223,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAbstractVariable_Name() {
-    return (EAttribute)abstractVariableEClass.getEStructuralFeatures().get(1);
+  public EReference getInfluenceLink_From() {
+    return (EReference)influenceLinkEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -231,8 +232,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getVariable() {
-    return variableEClass;
+  public EReference getInfluenceLink_To() {
+    return (EReference)influenceLinkEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -251,6 +252,15 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    */
   public EClass getStock() {
     return stockEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getStock_InitialValue() {
+    return (EAttribute)stockEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -285,6 +295,69 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getVariable() {
+    return variableEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVariable_Uuid() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVariable_Name() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVariable_Type() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVariable_Units() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVariable_Equation() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EEnum getVariableType() {
+    return variableTypeEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public SDModelFactory getSDModelFactory() {
     return (SDModelFactory)getEFactoryInstance();
   }
@@ -311,25 +384,34 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     systemModelEClass = createEClass(SYSTEM_MODEL);
     createEReference(systemModelEClass, SYSTEM_MODEL__LINKS);
     createEReference(systemModelEClass, SYSTEM_MODEL__VARIABLES);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__START_TIME);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__END_TIME);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__TIME_STEP);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__UNITS);
 
-    causalLinkEClass = createEClass(CAUSAL_LINK);
-    createEAttribute(causalLinkEClass, CAUSAL_LINK__ID);
-    createEReference(causalLinkEClass, CAUSAL_LINK__FROM);
-    createEReference(causalLinkEClass, CAUSAL_LINK__TO);
-
-    abstractVariableEClass = createEClass(ABSTRACT_VARIABLE);
-    createEAttribute(abstractVariableEClass, ABSTRACT_VARIABLE__ID);
-    createEAttribute(abstractVariableEClass, ABSTRACT_VARIABLE__NAME);
-
-    variableEClass = createEClass(VARIABLE);
+    influenceLinkEClass = createEClass(INFLUENCE_LINK);
+    createEAttribute(influenceLinkEClass, INFLUENCE_LINK__UUID);
+    createEReference(influenceLinkEClass, INFLUENCE_LINK__FROM);
+    createEReference(influenceLinkEClass, INFLUENCE_LINK__TO);
 
     cloudEClass = createEClass(CLOUD);
 
     stockEClass = createEClass(STOCK);
+    createEAttribute(stockEClass, STOCK__INITIAL_VALUE);
 
     rateEClass = createEClass(RATE);
     createEReference(rateEClass, RATE__TO);
     createEReference(rateEClass, RATE__FROM);
+
+    variableEClass = createEClass(VARIABLE);
+    createEAttribute(variableEClass, VARIABLE__UUID);
+    createEAttribute(variableEClass, VARIABLE__NAME);
+    createEAttribute(variableEClass, VARIABLE__TYPE);
+    createEAttribute(variableEClass, VARIABLE__UNITS);
+    createEAttribute(variableEClass, VARIABLE__EQUATION);
+
+    // Create enums
+    variableTypeEEnum = createEEnum(VARIABLE_TYPE);
   }
 
   /**
@@ -360,34 +442,46 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    variableEClass.getESuperTypes().add(this.getAbstractVariable());
-    cloudEClass.getESuperTypes().add(this.getAbstractVariable());
-    stockEClass.getESuperTypes().add(this.getAbstractVariable());
-    rateEClass.getESuperTypes().add(this.getAbstractVariable());
+    cloudEClass.getESuperTypes().add(this.getStock());
+    stockEClass.getESuperTypes().add(this.getVariable());
+    rateEClass.getESuperTypes().add(this.getVariable());
 
     // Initialize classes and features; add operations and parameters
     initEClass(systemModelEClass, SystemModel.class, "SystemModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getSystemModel_Links(), this.getCausalLink(), null, "links", null, 0, -1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSystemModel_Variables(), this.getAbstractVariable(), null, "variables", null, 0, -1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSystemModel_Links(), this.getInfluenceLink(), null, "links", null, 0, -1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSystemModel_Variables(), this.getVariable(), null, "variables", null, 0, -1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_StartTime(), ecorePackage.getEDouble(), "startTime", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_EndTime(), ecorePackage.getEDouble(), "endTime", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_TimeStep(), ecorePackage.getEDouble(), "timeStep", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_Units(), ecorePackage.getEString(), "units", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(causalLinkEClass, CausalLink.class, "CausalLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCausalLink_Id(), ecorePackage.getEString(), "id", null, 0, 1, CausalLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCausalLink_From(), this.getAbstractVariable(), null, "from", null, 1, 1, CausalLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCausalLink_To(), this.getAbstractVariable(), null, "to", null, 1, 1, CausalLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(abstractVariableEClass, AbstractVariable.class, "AbstractVariable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAbstractVariable_Id(), ecorePackage.getEString(), "id", null, 0, 1, AbstractVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAbstractVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(variableEClass, Variable.class, "Variable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(influenceLinkEClass, InfluenceLink.class, "InfluenceLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getInfluenceLink_Uuid(), ecorePackage.getEString(), "uuid", null, 0, 1, InfluenceLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getInfluenceLink_From(), this.getVariable(), null, "from", null, 1, 1, InfluenceLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getInfluenceLink_To(), this.getVariable(), null, "to", null, 1, 1, InfluenceLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(cloudEClass, Cloud.class, "Cloud", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(stockEClass, Stock.class, "Stock", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getStock_InitialValue(), ecorePackage.getEDouble(), "initialValue", "0", 0, 1, Stock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(rateEClass, Rate.class, "Rate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getRate_To(), this.getAbstractVariable(), null, "to", null, 1, 1, Rate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRate_From(), this.getAbstractVariable(), null, "from", null, 1, 1, Rate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRate_To(), this.getStock(), null, "to", null, 1, 1, Rate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRate_From(), this.getStock(), null, "from", null, 1, 1, Rate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(variableEClass, Variable.class, "Variable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getVariable_Uuid(), ecorePackage.getEString(), "uuid", null, 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getVariable_Type(), this.getVariableType(), "type", "", 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getVariable_Units(), ecorePackage.getEString(), "units", null, 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getVariable_Equation(), ecorePackage.getEString(), "equation", null, 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    // Initialize enums and add enum literals
+    initEEnum(variableTypeEEnum, VariableType.class, "VariableType");
+    addEEnumLiteral(variableTypeEEnum, VariableType.CONSTANT);
+    addEEnumLiteral(variableTypeEEnum, VariableType.AUXILIARY);
+    addEEnumLiteral(variableTypeEEnum, VariableType.STOCK);
+    addEEnumLiteral(variableTypeEEnum, VariableType.RATE);
 
     // Create resource
     createResource(eNS_URI);

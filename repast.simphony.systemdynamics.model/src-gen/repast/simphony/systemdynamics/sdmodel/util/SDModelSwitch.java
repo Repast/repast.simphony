@@ -72,43 +72,37 @@ public class SDModelSwitch<T> extends Switch<T> {
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SDModelPackage.CAUSAL_LINK: {
-        CausalLink causalLink = (CausalLink)theEObject;
-        T result = caseCausalLink(causalLink);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case SDModelPackage.ABSTRACT_VARIABLE: {
-        AbstractVariable abstractVariable = (AbstractVariable)theEObject;
-        T result = caseAbstractVariable(abstractVariable);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case SDModelPackage.VARIABLE: {
-        Variable variable = (Variable)theEObject;
-        T result = caseVariable(variable);
-        if (result == null) result = caseAbstractVariable(variable);
+      case SDModelPackage.INFLUENCE_LINK: {
+        InfluenceLink influenceLink = (InfluenceLink)theEObject;
+        T result = caseInfluenceLink(influenceLink);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
       case SDModelPackage.CLOUD: {
         Cloud cloud = (Cloud)theEObject;
         T result = caseCloud(cloud);
-        if (result == null) result = caseAbstractVariable(cloud);
+        if (result == null) result = caseStock(cloud);
+        if (result == null) result = caseVariable(cloud);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
       case SDModelPackage.STOCK: {
         Stock stock = (Stock)theEObject;
         T result = caseStock(stock);
-        if (result == null) result = caseAbstractVariable(stock);
+        if (result == null) result = caseVariable(stock);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
       case SDModelPackage.RATE: {
         Rate rate = (Rate)theEObject;
         T result = caseRate(rate);
-        if (result == null) result = caseAbstractVariable(rate);
+        if (result == null) result = caseVariable(rate);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case SDModelPackage.VARIABLE: {
+        Variable variable = (Variable)theEObject;
+        T result = caseVariable(variable);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -132,47 +126,17 @@ public class SDModelSwitch<T> extends Switch<T> {
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Causal Link</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Influence Link</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Causal Link</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Influence Link</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCausalLink(CausalLink object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Abstract Variable</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Abstract Variable</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAbstractVariable(AbstractVariable object) {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Variable</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Variable</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseVariable(Variable object) {
+  public T caseInfluenceLink(InfluenceLink object) {
     return null;
   }
 
@@ -218,6 +182,21 @@ public class SDModelSwitch<T> extends Switch<T> {
    * @generated
    */
   public T caseRate(Rate object) {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Variable</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Variable</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseVariable(Variable object) {
     return null;
   }
 

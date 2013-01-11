@@ -4,6 +4,7 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:gmfgen="http://www.eclipse.org/gmf/2009/GenModel"
+    packageNamePrefix="repast.simphony.systemdynamics.diagram"
     sameFileForDiagramAndModel="true"
     diagramFileExtension="rsd"
     domainFileExtension="rsd"
@@ -40,23 +41,37 @@
           editHelperClassName="VariableEditHelper"/>
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
-          layoutType="FLOW_LAYOUT"
           className="VariableFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class VariableFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureVariableNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public VariableFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.FlowLayout layoutThis = new org.eclipse.draw2d.FlowLayout();&#xA;&#x9;layoutThis.setStretchMinorAxis(false);&#xA;&#x9;layoutThis.setMinorAlignment(org.eclipse.draw2d.FlowLayout.ALIGN_LEFTTOP&#xA;);&#xA;&#xA;&#x9;layoutThis.setMajorAlignment(org.eclipse.draw2d.FlowLayout.ALIGN_LEFTTOP&#xA;);&#xA;&#x9;layoutThis.setMajorSpacing(5);&#xA;&#x9;layoutThis.setMinorSpacing(5);&#xA;&#x9;layoutThis.setHorizontal(true);&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureVariableNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureVariableNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureVariableNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureVariableNameFigure() {&#xA;&#x9;&#x9;return fFigureVariableNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
-      <modelFacet>
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class VariableFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureVariableNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public VariableFigure() {&#xA;&#x9;&#x9;this.setLayoutManager(new org.eclipse.gmf.tooling.runtime.draw2d.CenterLayout());&#xA;&#x9;&#x9;this.setOutline(false);&#xA;this.setFill(false);&#xA;this.setOpaque(false);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureVariableNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureVariableNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureVariableNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureVariableNameFigure() {&#xA;&#x9;&#x9;return fFigureVariableNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
+      <modelFacet
+          modelElementSelector="//@expressionProviders/@providers.0/@expressions.0">
         <metaClass
             href="systemdynamics.genmodel#//sdmodel/Variable"/>
         <containmentMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
         <childMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.0">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.1">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5001"
           editPartClassName="VariableNameEditPart"
           itemSemanticEditPolicyClassName="VariableNameItemSemanticEditPolicy"
-          notationViewFactoryClassName="VariableNameViewFactory"
-          elementIcon="true">
+          notationViewFactoryClassName="VariableNameViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -67,7 +82,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="systemdynamics.genmodel#//sdmodel/AbstractVariable/name"/>
+              href="systemdynamics.genmodel#//sdmodel/Variable/name"/>
         </modelFacet>
       </labels>
     </topLevelNodes>
@@ -85,8 +100,14 @@
           xsi:type="gmfgen:MetamodelType"
           editHelperClassName="CloudEditHelper"/>
       <viewmap
-          xsi:type="gmfgen:FigureViewmap"
-          figureQualifiedClassName="org.eclipse.draw2d.RectangleFigure"/>
+          xsi:type="gmfgen:InnerClassViewmap"
+          className="CloudFigure"
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CloudFigure extends org.eclipse.draw2d.Ellipse {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CloudFigure() {&#xA;&#x9;&#x9;&#x9;&#x9;this.setLineStyle(org.eclipse.draw2d.Graphics.LINE_DASH);&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(12)&#xA;, getMapMode().DPtoLP(12)&#xA;));&#xA;this.setMaximumSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(12)&#xA;, getMapMode().DPtoLP(12)&#xA;));&#xA;this.setMinimumSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(12)&#xA;, getMapMode().DPtoLP(12)&#xA;));&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
+        <attributes
+            xsi:type="gmfgen:DefaultSizeAttributes"
+            width="12"
+            height="12"/>
+      </viewmap>
       <modelFacet>
         <metaClass
             href="systemdynamics.genmodel#//sdmodel/Cloud"/>
@@ -111,23 +132,37 @@
           editHelperClassName="StockEditHelper"/>
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
-          layoutType="FLOW_LAYOUT"
           className="StockFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class StockFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureStockNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public StockFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;org.eclipse.draw2d.FlowLayout layoutThis = new org.eclipse.draw2d.FlowLayout();&#xA;&#x9;layoutThis.setStretchMinorAxis(false);&#xA;&#x9;layoutThis.setMinorAlignment(org.eclipse.draw2d.FlowLayout.ALIGN_LEFTTOP&#xA;);&#xA;&#xA;&#x9;layoutThis.setMajorAlignment(org.eclipse.draw2d.FlowLayout.ALIGN_LEFTTOP&#xA;);&#xA;&#x9;layoutThis.setMajorSpacing(5);&#xA;&#x9;layoutThis.setMinorSpacing(5);&#xA;&#x9;layoutThis.setHorizontal(true);&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureStockNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureStockNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureStockNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureStockNameFigure() {&#xA;&#x9;&#x9;return fFigureStockNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
-      <modelFacet>
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class StockFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureStockNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public StockFigure() {&#xA;&#x9;&#x9;this.setLayoutManager(new org.eclipse.gmf.tooling.runtime.draw2d.CenterLayout());&#xA;&#x9;&#x9;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(0)&#xA;, getMapMode().DPtoLP(6)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureStockNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureStockNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureStockNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureStockNameFigure() {&#xA;&#x9;&#x9;return fFigureStockNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
+      <modelFacet
+          modelElementSelector="//@expressionProviders/@providers.0/@expressions.2">
         <metaClass
             href="systemdynamics.genmodel#//sdmodel/Stock"/>
         <containmentMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
         <childMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.1">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.3">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
+          </initializers>
+        </modelElementInitializer>
       </modelFacet>
       <labels
           visualID="5002"
           editPartClassName="StockNameEditPart"
           itemSemanticEditPolicyClassName="StockNameItemSemanticEditPolicy"
-          notationViewFactoryClassName="StockNameViewFactory"
-          elementIcon="true">
+          notationViewFactoryClassName="StockNameViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -138,7 +173,67 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="systemdynamics.genmodel#//sdmodel/AbstractVariable/name"/>
+              href="systemdynamics.genmodel#//sdmodel/Variable/name"/>
+        </modelFacet>
+      </labels>
+    </topLevelNodes>
+    <topLevelNodes
+        visualID="2004"
+        editPartClassName="Variable2EditPart"
+        itemSemanticEditPolicyClassName="Variable2ItemSemanticEditPolicy"
+        notationViewFactoryClassName="VariableViewFactory"
+        canonicalEditPolicyClassName="Variable2CanonicalEditPolicy"
+        graphicalNodeEditPolicyClassName="Variable2GraphicalNodeEditPolicy"
+        createCommandClassName="Variable2CreateCommand">
+      <diagramRunTimeClass
+          href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
+      <elementType
+          xsi:type="gmfgen:SpecializationType"
+          metamodelType="//@diagram/@topLevelNodes.0/@elementType"/>
+      <viewmap
+          xsi:type="gmfgen:InnerClassViewmap"
+          className="VariableFigure"
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class VariableFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureVariableNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public VariableFigure() {&#xA;&#x9;&#x9;this.setLayoutManager(new org.eclipse.gmf.tooling.runtime.draw2d.CenterLayout());&#xA;&#x9;&#x9;this.setOutline(false);&#xA;this.setFill(false);&#xA;this.setOpaque(false);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureVariableNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureVariableNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureVariableNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureVariableNameFigure() {&#xA;&#x9;&#x9;return fFigureVariableNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
+      <modelFacet
+          modelElementSelector="//@expressionProviders/@providers.0/@expressions.4">
+        <metaClass
+            href="systemdynamics.genmodel#//sdmodel/Variable"/>
+        <containmentMetaFeature
+            href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <childMetaFeature
+            href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.2">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.5">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
+          </initializers>
+        </modelElementInitializer>
+      </modelFacet>
+      <labels
+          visualID="5003"
+          editPartClassName="VariableName2EditPart"
+          itemSemanticEditPolicyClassName="VariableName2ItemSemanticEditPolicy"
+          notationViewFactoryClassName="VariableNameViewFactory">
+        <diagramRunTimeClass
+            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
+        <viewmap
+            xsi:type="gmfgen:ParentAssignedViewmap"
+            getterName="getFigureVariableNameFigure"
+            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel"/>
+        <modelFacet
+            xsi:type="gmfgen:FeatureLabelModelFacet"
+            parser="//@labelParsers/@implementations.0">
+          <metaFeatures
+              href="systemdynamics.genmodel#//sdmodel/Variable/name"/>
         </modelFacet>
       </labels>
     </topLevelNodes>
@@ -147,6 +242,7 @@
         editPartClassName="RateEditPart"
         itemSemanticEditPolicyClassName="RateItemSemanticEditPolicy"
         notationViewFactoryClassName="RateViewFactory"
+        incomingCreationAllowed="true"
         createCommandClassName="RateCreateCommand"
         reorientCommandClassName="RateReorientCommand">
       <diagramRunTimeClass
@@ -157,7 +253,11 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="RateLinkFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class RateLinkFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureRateName; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public RateLinkFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureRateName = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureRateName.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureRateName);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureRateName() {&#xA;&#x9;&#x9;return fFigureRateName;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class RateLinkFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureRateName; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public RateLinkFigure() {&#xA;&#x9;&#x9;this.setLineWidth(4);&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.black);&#xA;&#xA;&#x9;&#x9;createContents();&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureRateName = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureRateName.setText(&quot;&lt;…>&quot;);&#xA;&#xA;this.add(fFigureRateName);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(4);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureRateName() {&#xA;&#x9;&#x9;return fFigureRateName;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;">
+        <attributes
+            xsi:type="gmfgen:StyleAttributes"
+            fixedForeground="true"/>
+      </viewmap>
       <modelFacet
           xsi:type="gmfgen:TypeLinkModelFacet">
         <metaClass
@@ -166,6 +266,21 @@
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
         <childMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.3">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.6">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
+          </initializers>
+        </modelElementInitializer>
         <sourceMetaFeature
             href="systemdynamics.genmodel#//sdmodel/Rate/from"/>
         <targetMetaFeature
@@ -175,8 +290,7 @@
           visualID="6001"
           editPartClassName="RateNameEditPart"
           itemSemanticEditPolicyClassName="RateNameItemSemanticEditPolicy"
-          notationViewFactoryClassName="RateNameViewFactory"
-          elementIcon="true">
+          notationViewFactoryClassName="RateNameViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -185,36 +299,36 @@
             figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
           <attributes
               xsi:type="gmfgen:LabelOffsetAttributes"
-              x="4"
-              y="4"/>
+              x="12"
+              y="12"/>
         </viewmap>
         <modelFacet
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="systemdynamics.genmodel#//sdmodel/AbstractVariable/name"/>
+              href="systemdynamics.genmodel#//sdmodel/Variable/name"/>
         </modelFacet>
       </labels>
       <creationConstraints
-          sourceEnd="//@expressionProviders/@providers.0/@expressions.0"
-          targetEnd="//@expressionProviders/@providers.0/@expressions.1"/>
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.7"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.8"/>
     </links>
     <links
-        visualID="4002"
-        editPartClassName="CausalLinkEditPart"
-        itemSemanticEditPolicyClassName="CausalLinkItemSemanticEditPolicy"
-        notationViewFactoryClassName="CausalLinkViewFactory"
-        createCommandClassName="CausalLinkCreateCommand"
-        reorientCommandClassName="CausalLinkReorientCommand">
+        visualID="4004"
+        editPartClassName="InfluenceLinkEditPart"
+        itemSemanticEditPolicyClassName="InfluenceLinkItemSemanticEditPolicy"
+        notationViewFactoryClassName="InfluenceLinkViewFactory"
+        createCommandClassName="InfluenceLinkCreateCommand"
+        reorientCommandClassName="InfluenceLinkReorientCommand">
       <diagramRunTimeClass
           href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Edge"/>
       <elementType
           xsi:type="gmfgen:MetamodelType"
-          editHelperClassName="CausalLinkEditHelper"/>
+          editHelperClassName="InfluenceLinkEditHelper"/>
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
-          className="CausalLinkFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class CausalLinkFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public CausalLinkFigure() {&#xA;&#x9;&#x9;this.setLineWidth(2);&#xA;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.blue);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;df.setLineWidth(2);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
+          className="InfluenceLinkFigure"
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class InfluenceLinkFigure extends org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx {&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public InfluenceLinkFigure() {&#xA;&#x9;&#x9;&#x9;this.setForegroundColor(org.eclipse.draw2d.ColorConstants.blue);&#xA;&#xA;&#x9;&#x9;setTargetDecoration(createTargetDecoration());&#xA;&#x9;}&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.draw2d.RotatableDecoration createTargetDecoration() {&#xA;&#x9;&#x9;org.eclipse.draw2d.PolygonDecoration df = new org.eclipse.draw2d.PolygonDecoration();&#xA;df.setFill(true);&#xA;&#x9;&#x9;return df;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;}&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"/>
@@ -222,33 +336,43 @@
       <modelFacet
           xsi:type="gmfgen:TypeLinkModelFacet">
         <metaClass
-            href="systemdynamics.genmodel#//sdmodel/CausalLink"/>
+            href="systemdynamics.genmodel#//sdmodel/InfluenceLink"/>
         <containmentMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/links"/>
         <childMetaFeature
             href="systemdynamics.genmodel#//sdmodel/SystemModel/links"/>
         <sourceMetaFeature
-            href="systemdynamics.genmodel#//sdmodel/CausalLink/from"/>
+            href="systemdynamics.genmodel#//sdmodel/InfluenceLink/from"/>
         <targetMetaFeature
-            href="systemdynamics.genmodel#//sdmodel/CausalLink/to"/>
+            href="systemdynamics.genmodel#//sdmodel/InfluenceLink/to"/>
       </modelFacet>
       <creationConstraints
-          sourceEnd="//@expressionProviders/@providers.0/@expressions.2"
-          targetEnd="//@expressionProviders/@providers.0/@expressions.3"/>
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.9"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.10"/>
     </links>
     <palette>
       <groups
           title="sdmodel">
         <entries
             xsi:type="gmfgen:ToolEntry"
-            title="CausalLink"
-            description="Create new CausalLink"
+            title="Influence Arrow"
+            description="Create new Influence Arrow"
             genLinks="//@diagram/@links.1"/>
         <entries
             xsi:type="gmfgen:ToolEntry"
-            title="RateLink"
-            description="Create new RateLink"
+            title="Rate"
+            description="Create new Rate"
             genLinks="//@diagram/@links.0"/>
+        <entries
+            xsi:type="gmfgen:ToolEntry"
+            title="Stock"
+            description="Create new Stock"
+            genNodes="//@diagram/@topLevelNodes.2"/>
+        <entries
+            xsi:type="gmfgen:ToolEntry"
+            title="Constant"
+            description="Create new Constant"
+            genNodes="//@diagram/@topLevelNodes.3"/>
         <entries
             xsi:type="gmfgen:ToolEntry"
             title="Variable"
@@ -259,11 +383,6 @@
             title="Cloud"
             description="Create new Cloud"
             genNodes="//@diagram/@topLevelNodes.1"/>
-        <entries
-            xsi:type="gmfgen:ToolEntry"
-            title="Stock"
-            description="Create new Stock"
-            genNodes="//@diagram/@topLevelNodes.2"/>
       </groups>
     </palette>
     <preferencePages
@@ -312,23 +431,14 @@
         child="//@diagram/@topLevelNodes.2"/>
     <childReferences
         parent="//@diagram"
+        child="//@diagram/@topLevelNodes.3"/>
+    <childReferences
+        parent="//@diagram"
         child="//@diagram/@links.0"
         groupName="links"
         groupIcon="icons/linksNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@links.0"
-        child="//@diagram/@topLevelNodes.0"
-        referenceType="out_target"
-        groupName="target"
-        groupIcon="icons/linkTargetNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@topLevelNodes.0"
-        child="//@diagram/@links.0"
-        referenceType="in_source"
-        groupName="incoming links"
-        groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
         child="//@diagram/@topLevelNodes.1"
         referenceType="out_target"
         groupName="target"
@@ -353,30 +463,6 @@
         groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@links.0"
-        child="//@diagram/@links.0"
-        referenceType="out_target"
-        groupName="target"
-        groupIcon="icons/linkTargetNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
-        child="//@diagram/@links.0"
-        referenceType="in_source"
-        groupName="incoming links"
-        groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
-        child="//@diagram/@topLevelNodes.0"
-        referenceType="in_source"
-        groupName="source"
-        groupIcon="icons/linkSourceNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@topLevelNodes.0"
-        child="//@diagram/@links.0"
-        referenceType="out_target"
-        groupName="outgoing links"
-        groupIcon="icons/outgoingLinksNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
         child="//@diagram/@topLevelNodes.1"
         referenceType="in_source"
         groupName="source"
@@ -395,18 +481,6 @@
         groupIcon="icons/linkSourceNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@topLevelNodes.2"
-        child="//@diagram/@links.0"
-        referenceType="out_target"
-        groupName="outgoing links"
-        groupIcon="icons/outgoingLinksNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
-        child="//@diagram/@links.0"
-        referenceType="in_source"
-        groupName="source"
-        groupIcon="icons/linkSourceNavigatorGroup.gif"/>
-    <childReferences
-        parent="//@diagram/@links.0"
         child="//@diagram/@links.0"
         referenceType="out_target"
         groupName="outgoing links"
@@ -454,6 +528,18 @@
         groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@links.1"
+        child="//@diagram/@topLevelNodes.3"
+        referenceType="out_target"
+        groupName="target"
+        groupIcon="icons/linkTargetNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@topLevelNodes.3"
+        child="//@diagram/@links.1"
+        referenceType="in_source"
+        groupName="incoming links"
+        groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@links.1"
         child="//@diagram/@links.0"
         referenceType="out_target"
         groupName="target"
@@ -502,6 +588,18 @@
         groupIcon="icons/outgoingLinksNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@links.1"
+        child="//@diagram/@topLevelNodes.3"
+        referenceType="in_source"
+        groupName="source"
+        groupIcon="icons/linkSourceNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@topLevelNodes.3"
+        child="//@diagram/@links.1"
+        referenceType="out_target"
+        groupName="outgoing links"
+        groupIcon="icons/outgoingLinksNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@links.1"
         child="//@diagram/@links.0"
         referenceType="in_source"
         groupName="source"
@@ -540,6 +638,23 @@
         xsi:type="gmfgen:GenExpressionInterpreter">
       <expressions
           xsi:type="gmfgen:GenConstraint"
+          body="not self.oclIsKindOf(Stock) and not self.oclIsKindOf(Rate) and self.type = VariableType::auxiliary"/>
+      <expressions
+          body="VariableType::auxiliary"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="not self.oclIsKindOf(Cloud) and self.type = VariableType::stock"/>
+      <expressions
+          body="VariableType::stock"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="self.type = VariableType::constant"/>
+      <expressions
+          body="VariableType::constant"/>
+      <expressions
+          body="VariableType::rate"/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
           body="self.oclIsKindOf(Cloud) or self.oclIsKindOf(Stock)"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
@@ -551,12 +666,23 @@
           xsi:type="gmfgen:GenConstraint"
           body="self &lt;> oppositeEnd and not self.oclIsKindOf(Cloud)"/>
     </providers>
+    <providers
+        xsi:type="gmfgen:GenJavaExpressionProvider">
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
+    </providers>
   </expressionProviders>
   <labelParsers
       extensibleViaService="true">
     <implementations
         xsi:type="gmfgen:PredefinedParser"
-        uses="//@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.2/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet"/>
+        uses="//@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.2/@labels.0/@modelFacet //@diagram/@topLevelNodes.3/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet"/>
   </labelParsers>
   <contextMenus
       context="//@diagram">

@@ -95,49 +95,26 @@ public class SDModelItemProviderAdapterFactory extends SDModelAdapterFactory imp
   }
 
   /**
-   * This keeps track of the one adapter used for all {@link repast.simphony.systemdynamics.sdmodel.CausalLink} instances.
+   * This keeps track of the one adapter used for all {@link repast.simphony.systemdynamics.sdmodel.InfluenceLink} instances.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected CausalLinkItemProvider causalLinkItemProvider;
+  protected InfluenceLinkItemProvider influenceLinkItemProvider;
 
   /**
-   * This creates an adapter for a {@link repast.simphony.systemdynamics.sdmodel.CausalLink}.
+   * This creates an adapter for a {@link repast.simphony.systemdynamics.sdmodel.InfluenceLink}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
   @Override
-  public Adapter createCausalLinkAdapter() {
-    if (causalLinkItemProvider == null) {
-      causalLinkItemProvider = new CausalLinkItemProvider(this);
+  public Adapter createInfluenceLinkAdapter() {
+    if (influenceLinkItemProvider == null) {
+      influenceLinkItemProvider = new InfluenceLinkItemProvider(this);
     }
 
-    return causalLinkItemProvider;
-  }
-
-  /**
-   * This keeps track of the one adapter used for all {@link repast.simphony.systemdynamics.sdmodel.Variable} instances.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  protected VariableItemProvider variableItemProvider;
-
-  /**
-   * This creates an adapter for a {@link repast.simphony.systemdynamics.sdmodel.Variable}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Adapter createVariableAdapter() {
-    if (variableItemProvider == null) {
-      variableItemProvider = new VariableItemProvider(this);
-    }
-
-    return variableItemProvider;
+    return influenceLinkItemProvider;
   }
 
   /**
@@ -207,6 +184,29 @@ public class SDModelItemProviderAdapterFactory extends SDModelAdapterFactory imp
     }
 
     return rateItemProvider;
+  }
+
+  /**
+   * This keeps track of the one adapter used for all {@link repast.simphony.systemdynamics.sdmodel.Variable} instances.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected VariableItemProvider variableItemProvider;
+
+  /**
+   * This creates an adapter for a {@link repast.simphony.systemdynamics.sdmodel.Variable}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Adapter createVariableAdapter() {
+    if (variableItemProvider == null) {
+      variableItemProvider = new VariableItemProvider(this);
+    }
+
+    return variableItemProvider;
   }
 
   /**
@@ -309,11 +309,11 @@ public class SDModelItemProviderAdapterFactory extends SDModelAdapterFactory imp
    */
   public void dispose() {
     if (systemModelItemProvider != null) systemModelItemProvider.dispose();
-    if (causalLinkItemProvider != null) causalLinkItemProvider.dispose();
-    if (variableItemProvider != null) variableItemProvider.dispose();
+    if (influenceLinkItemProvider != null) influenceLinkItemProvider.dispose();
     if (cloudItemProvider != null) cloudItemProvider.dispose();
     if (stockItemProvider != null) stockItemProvider.dispose();
     if (rateItemProvider != null) rateItemProvider.dispose();
+    if (variableItemProvider != null) variableItemProvider.dispose();
   }
 
 }

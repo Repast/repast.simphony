@@ -20,7 +20,7 @@ package repast.simphony.systemdynamics.sdmodel;
  * @model
  * @generated
  */
-public interface Rate extends AbstractVariable {
+public interface Rate extends Variable {
   /**
    * Returns the value of the '<em><b>To</b></em>' reference.
    * <!-- begin-user-doc -->
@@ -30,12 +30,12 @@ public interface Rate extends AbstractVariable {
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>To</em>' reference.
-   * @see #setTo(AbstractVariable)
+   * @see #setTo(Stock)
    * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getRate_To()
    * @model required="true"
    * @generated
    */
-  AbstractVariable getTo();
+  Stock getTo();
 
   /**
    * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.Rate#getTo <em>To</em>}' reference.
@@ -45,7 +45,7 @@ public interface Rate extends AbstractVariable {
    * @see #getTo()
    * @generated
    */
-  void setTo(AbstractVariable value);
+  void setTo(Stock value);
 
   /**
    * Returns the value of the '<em><b>From</b></em>' reference.
@@ -56,12 +56,12 @@ public interface Rate extends AbstractVariable {
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>From</em>' reference.
-   * @see #setFrom(AbstractVariable)
+   * @see #setFrom(Stock)
    * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getRate_From()
    * @model required="true"
    * @generated
    */
-  AbstractVariable getFrom();
+  Stock getFrom();
 
   /**
    * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.Rate#getFrom <em>From</em>}' reference.
@@ -71,6 +71,6 @@ public interface Rate extends AbstractVariable {
    * @see #getFrom()
    * @generated
    */
-  void setFrom(AbstractVariable value);
+  void setFrom(Stock value);
 
 } // Rate

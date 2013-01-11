@@ -3,24 +3,40 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sdmodel" nsURI="http://repast.sf.net/systemdynamics" nsPrefix="">
   <eClassifiers xsi:type="ecore:EClass" name="SystemModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="links" upperBound="-1"
-        eType="#//CausalLink" containment="true"/>
+        eType="#//InfluenceLink" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
-        eType="#//AbstractVariable" containment="true"/>
+        eType="#//Variable" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeStep" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="units" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CausalLink">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//AbstractVariable"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//AbstractVariable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InfluenceLink">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//Variable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//Variable"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AbstractVariable" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Cloud" eSuperTypes="#//Stock"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Stock" eSuperTypes="#//Variable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Rate" eSuperTypes="#//Variable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//Stock"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//Stock"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="VariableType">
+    <eLiterals name="constant"/>
+    <eLiterals name="auxiliary" value="1"/>
+    <eLiterals name="stock" value="2"/>
+    <eLiterals name="rate" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Variable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//AbstractVariable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Cloud" eSuperTypes="#//AbstractVariable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Stock" eSuperTypes="#//AbstractVariable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Rate" eSuperTypes="#//AbstractVariable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="to" lowerBound="1" eType="#//AbstractVariable"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="from" lowerBound="1" eType="#//AbstractVariable"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//VariableType"
+        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="units" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="equation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

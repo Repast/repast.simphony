@@ -18,14 +18,14 @@
    <extension point="org.eclipse.ui.editors" id="gmf-editor">
       <?gmfgen generated="true"?>
       <editor
-         id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID"
+         id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID"
          name="%editorName"
          icon="icons/obj16/SDModelDiagramFile.gif"
          extensions="rsd"
          default="true"
-         class="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditor"
-         matchingStrategy="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsMatchingStrategy"
-         contributorClass="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramActionBarContributor">
+         class="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditor"
+         matchingStrategy="repast.simphony.systemdynamics.diagram.part.SystemdynamicsMatchingStrategy"
+         contributorClass="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramActionBarContributor">
       </editor>
    </extension>
    
@@ -33,7 +33,7 @@
       <?gmfgen generated="true"?>
       <context
          description="%context.description"
-         id="repast.simphony.systemdynamics.sdmodel.diagram.ui.diagramContext"
+         id="repast.simphony.systemdynamics.diagram.ui.diagramContext"
          name="%context.name"
          parentId="org.eclipse.gmf.runtime.diagram.ui.diagramContext">
       </context>
@@ -45,8 +45,8 @@
   	     name="%newWizardName"
   	     icon="icons/obj16/SDModelDiagramFile.gif"
   	     category="org.eclipse.ui.Examples"
-  	     class="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsCreationWizard"
-  	     id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsCreationWizardID">
+  	     class="repast.simphony.systemdynamics.diagram.part.SystemdynamicsCreationWizard"
+  	     id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsCreationWizardID">
   	  	 <description>%newWizardDesc</description>  
       </wizard>
    </extension>
@@ -59,7 +59,7 @@
             objectClass="org.eclipse.core.resources.IFile">
          <action
                label="%initDiagramActionLabel"
-               class="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsInitDiagramFileAction"
+               class="repast.simphony.systemdynamics.diagram.part.SystemdynamicsInitDiagramFileAction"
                menubarPath="additions"
                enablesFor="1"
                id="repast.simphony.systemdynamics.diagram.InitDiagramAction">
@@ -73,7 +73,7 @@
          class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramGlobalActionHandlerProvider"
          id="SystemdynamicsPresentation">
          <Priority name="Lowest"/>
-         <ViewId id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID">
+         <ViewId id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID">
             <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
                <GlobalActionId actionId="delete"/>
             </ElementType>
@@ -90,7 +90,7 @@
          class="org.eclipse.gmf.runtime.diagram.ui.providers.ide.providers.DiagramIDEGlobalActionHandlerProvider"
          id="SystemdynamicsPresentationIDE">
          <Priority name="Lowest"/>
-         <ViewId id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID">
+         <ViewId id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID">
             <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
                <GlobalActionId actionId="bookmark"/>
             </ElementType>
@@ -100,7 +100,7 @@
             class="org.eclipse.gmf.runtime.diagram.ui.render.providers.DiagramUIRenderGlobalActionHandlerProvider"
             id="SystemdynamicsRender">
          <Priority name="Lowest"/>
-         <ViewId id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID">
+         <ViewId id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID">
             <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
                <GlobalActionId actionId="cut"/>
                <GlobalActionId actionId="copy"/>
@@ -113,7 +113,7 @@
 
    <extension point="org.eclipse.core.runtime.preferences" id="prefs">
       <?gmfgen generated="true"?>
-      <initializer class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramPreferenceInitializer"/>
+      <initializer class="repast.simphony.systemdynamics.diagram.preferences.DiagramPreferenceInitializer"/>
    </extension>
 
    <extension point="org.eclipse.ui.preferencePages" id="prefpages">
@@ -121,31 +121,31 @@
       <page
             id="repast.simphony.systemdynamics.diagram.general"
             name="%prefpage.repast.simphony.systemdynamics.diagram.general"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramGeneralPreferencePage">
+            class="repast.simphony.systemdynamics.diagram.preferences.DiagramGeneralPreferencePage">
       </page>
       <page
             id="repast.simphony.systemdynamics.diagram.appearance"
             name="%prefpage.repast.simphony.systemdynamics.diagram.appearance"
             category="repast.simphony.systemdynamics.diagram.general"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramAppearancePreferencePage">
+            class="repast.simphony.systemdynamics.diagram.preferences.DiagramAppearancePreferencePage">
       </page>
       <page
             id="repast.simphony.systemdynamics.diagram.connections"
             name="%prefpage.repast.simphony.systemdynamics.diagram.connections"
             category="repast.simphony.systemdynamics.diagram.general"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramConnectionsPreferencePage">
+            class="repast.simphony.systemdynamics.diagram.preferences.DiagramConnectionsPreferencePage">
       </page>
       <page
             id="repast.simphony.systemdynamics.diagram.printing"
             name="%prefpage.repast.simphony.systemdynamics.diagram.printing"
             category="repast.simphony.systemdynamics.diagram.general"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramPrintingPreferencePage">
+            class="repast.simphony.systemdynamics.diagram.preferences.DiagramPrintingPreferencePage">
       </page>
       <page
             id="repast.simphony.systemdynamics.diagram.rulersAndGrid"
             name="%prefpage.repast.simphony.systemdynamics.diagram.rulersAndGrid"
             category="repast.simphony.systemdynamics.diagram.general"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.preferences.DiagramRulersAndGridPreferencePage">
+            class="repast.simphony.systemdynamics.diagram.preferences.DiagramRulersAndGridPreferencePage">
       </page>
    </extension>
 
@@ -153,7 +153,7 @@
       <?gmfgen generated="true"?>
       <propertyContributor
             contributorId="repast.simphony.systemdynamics.diagram"
-            labelProvider="repast.simphony.systemdynamics.sdmodel.diagram.sheet.SystemdynamicsSheetLabelProvider">
+            labelProvider="repast.simphony.systemdynamics.diagram.sheet.SystemdynamicsSheetLabelProvider">
          <propertyCategory category="domain"/>
          <propertyCategory category="visual"/>
          <propertyCategory category="extra"/>
@@ -179,7 +179,7 @@
    </extension>
 
    <extension point="org.eclipse.ui.views.properties.tabbed.propertySections" id="propsections">
-      <?gmfgen generated="true"?>   
+      <?gmfgen generated="false"?>   
       <propertySections contributorId="repast.simphony.systemdynamics.diagram">
          <propertySection id="property.section.ConnectorAppearancePropertySection" 
             filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.ConnectionEditPartPropertySectionFilter" 
@@ -200,43 +200,56 @@
             filter="org.eclipse.gmf.runtime.diagram.ui.properties.filters.DiagramEditPartPropertySectionFilter" 
             class="org.eclipse.gmf.runtime.diagram.ui.properties.sections.grid.RulerGridPropertySection" 
             tab="property.tab.DiagramPropertySection">
-         </propertySection>     
+         </propertySection>
+         
+          <propertySection
+               class="repast.simphony.systemdynamics.sheets.VariablePropertySection"
+               id="property.section.domain.variable"
+               tab="property.tab.domain">
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart"/>
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart"/>
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart"/>
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart"/>
+         </propertySection>       
+         
+         <!--
          <propertySection
             id="property.section.domain" 
             tab="property.tab.domain"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.sheet.SystemdynamicsPropertySection">
+            class="repast.simphony.systemdynamics.diagram.sheet.SystemdynamicsPropertySection">
             <input type="org.eclipse.gmf.runtime.notation.View"/>
             <input type="org.eclipse.gef.EditPart"/>
-            <input type="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+            <input type="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
          </propertySection>
+         -->
       </propertySections>
    </extension>
 
    <extension point="org.eclipse.gmf.runtime.diagram.core.viewProviders" id="view-provider">
       <?gmfgen generated="true"?>
-      <viewProvider class="repast.simphony.systemdynamics.sdmodel.diagram.providers.SystemdynamicsViewProvider">
+      <viewProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsViewProvider">
          <Priority name="Lowest"/>
          <context viewClass="org.eclipse.gmf.runtime.notation.Diagram" semanticHints="Systemdynamics"/>
-         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,2003"/>
-         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints="4003,4002"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,2003,2004"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints="4003,4004"/>
       </viewProvider>
    </extension>
 
    <extension point="org.eclipse.gmf.runtime.diagram.ui.editpartProviders" id="ep-provider">
       <?gmfgen generated="true"?>
-      <editpartProvider class="repast.simphony.systemdynamics.sdmodel.diagram.providers.SystemdynamicsEditPartProvider">
+      <editpartProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsEditPartProvider">
          <Priority name="Lowest"/>
          <object class="org.eclipse.gmf.runtime.notation.Diagram" id="generated-diagram">
             <method name="getType()" value="Systemdynamics"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-nodes">
-            <method name="getType()" value="2001,2002,2003"/>
+            <method name="getType()" value="2001,2002,2003,2004"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Edge" id="generated-links">
-            <method name="getType()" value="4003,4002"/>
+            <method name="getType()" value="4003,4004"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-labels">
-            <method name="getType()" value="5001,5002"/>
+            <method name="getType()" value="5001,5002,5003"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-compartments">
             <method name="getType()" value=""/>
@@ -247,26 +260,27 @@
 
    <extension point="org.eclipse.gmf.runtime.emf.ui.modelingAssistantProviders" id="modelassist-provider">
       <?gmfgen generated="true"?>
-      <modelingAssistantProvider class="repast.simphony.systemdynamics.sdmodel.diagram.providers.SystemdynamicsModelingAssistantProvider">
+      <modelingAssistantProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsModelingAssistantProvider">
          <Priority name="Lowest"/>
-         <object class="repast.simphony.systemdynamics.sdmodel.diagram.edit.parts.SystemModelEditPart" id="SystemModel_1000"/>
-         <object class="repast.simphony.systemdynamics.sdmodel.diagram.edit.parts.VariableEditPart" id="Variable_2001"/>
-         <object class="repast.simphony.systemdynamics.sdmodel.diagram.edit.parts.CloudEditPart" id="Cloud_2002"/>
-         <object class="repast.simphony.systemdynamics.sdmodel.diagram.edit.parts.StockEditPart" id="Stock_2003"/>
-         <context elements="SystemModel_1000,Variable_2001,Cloud_2002,Stock_2003,"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart" id="SystemModel_1000"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart" id="Variable_2001"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.CloudEditPart" id="Cloud_2002"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart" id="Stock_2003"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart" id="Variable_2004"/>
+         <context elements="SystemModel_1000,Variable_2001,Cloud_2002,Stock_2003,Variable_2004,"/>
       </modelingAssistantProvider>
    </extension>
 
    <extension point="org.eclipse.gmf.runtime.common.ui.services.iconProviders" id="icon-provider">
       <?gmfgen generated="true"?>
-      <IconProvider class="repast.simphony.systemdynamics.sdmodel.diagram.providers.SystemdynamicsIconProvider">
+      <IconProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsIconProvider">
          <Priority name="Low"/>
       </IconProvider>
    </extension>
 
    <extension point="org.eclipse.gmf.runtime.common.ui.services.parserProviders" id="parser-provider">
       <?gmfgen generated="true"?>
-      <ParserProvider class="repast.simphony.systemdynamics.sdmodel.diagram.providers.SystemdynamicsParserProvider">
+      <ParserProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsParserProvider">
          <Priority name="Lowest"/>
       </ParserProvider>
    </extension>
@@ -279,7 +293,7 @@
                name="%metatype.name.SystemModel_1000"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="SystemModel"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.SystemModelEditHelper">
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.SystemModelEditHelper">
             <param name="semanticHint" value="1000"/>
          </metamodelType>
       </metamodel>
@@ -289,7 +303,7 @@
                name="%metatype.name.Variable_2001"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="Variable"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.VariableEditHelper">
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.VariableEditHelper">
             <param name="semanticHint" value="2001"/>
          </metamodelType>
       </metamodel>
@@ -299,7 +313,7 @@
                name="%metatype.name.Cloud_2002"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="Cloud"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.CloudEditHelper">
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.CloudEditHelper">
             <param name="semanticHint" value="2002"/>
          </metamodelType>
       </metamodel>
@@ -309,9 +323,18 @@
                name="%metatype.name.Stock_2003"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="Stock"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.StockEditHelper">
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.StockEditHelper">
             <param name="semanticHint" value="2003"/>
          </metamodelType>
+      </metamodel>
+      <metamodel nsURI="http://repast.sf.net/systemdynamics">
+         <specializationType
+               id="repast.simphony.systemdynamics.diagram.Variable_2004"
+               name="%metatype.name.Variable_2004"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="repast.simphony.systemdynamics.diagram.Variable_2001"/>
+            <param name="semanticHint" value="2004"/>
+         </specializationType>
       </metamodel>
       <metamodel nsURI="http://repast.sf.net/systemdynamics">
          <metamodelType
@@ -319,18 +342,18 @@
                name="%metatype.name.Rate_4003"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
                eclass="Rate"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.RateEditHelper">
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.RateEditHelper">
             <param name="semanticHint" value="4003"/>
          </metamodelType>
       </metamodel>
       <metamodel nsURI="http://repast.sf.net/systemdynamics">
          <metamodelType
-               id="repast.simphony.systemdynamics.diagram.CausalLink_4002"
-               name="%metatype.name.CausalLink_4002"
+               id="repast.simphony.systemdynamics.diagram.InfluenceLink_4004"
+               name="%metatype.name.InfluenceLink_4004"
                kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType"
-               eclass="CausalLink"
-               edithelper="repast.simphony.systemdynamics.sdmodel.diagram.edit.helpers.CausalLinkEditHelper">
-            <param name="semanticHint" value="4002"/>
+               eclass="InfluenceLink"
+               edithelper="repast.simphony.systemdynamics.diagram.edit.helpers.InfluenceLinkEditHelper">
+            <param name="semanticHint" value="4004"/>
          </metamodelType>
       </metamodel>
    </extension>
@@ -349,8 +372,9 @@
          <elementType ref="repast.simphony.systemdynamics.diagram.Variable_2001"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Cloud_2002"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Stock_2003"/>
+         <elementType ref="repast.simphony.systemdynamics.diagram.Variable_2004"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Rate_4003"/>
-         <elementType ref="repast.simphony.systemdynamics.diagram.CausalLink_4002"/>
+         <elementType ref="repast.simphony.systemdynamics.diagram.InfluenceLink_4004"/>
          <advice ref="org.eclipse.gmf.runtime.diagram.core.advice.notationDepdendents"/>
       </binding>
    </extension>
@@ -361,7 +385,7 @@
            type="org.eclipse.emf.common.ui.URIEditorInput"
            namespace="repast.simphony.systemdynamics.diagram"
            properties="isURIEditorInput"
-           class="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsUriEditorInputTester">
+           class="repast.simphony.systemdynamics.diagram.part.SystemdynamicsUriEditorInputTester">
        </propertyTester>
    </extension>
 
@@ -387,8 +411,8 @@
             id="repast.simphony.systemdynamics.diagram.resourceContent" 
             name="%navigatorContentName" 
             priority="normal" 
-            contentProvider="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsNavigatorContentProvider" 
-            labelProvider="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsNavigatorLabelProvider"
+            contentProvider="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsNavigatorContentProvider" 
+            labelProvider="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsNavigatorLabelProvider"
             icon="icons/obj16/SDModelDiagramFile.gif"
             activeByDefault="true">
          <triggerPoints>
@@ -397,24 +421,24 @@
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
         	      <test property="org.eclipse.core.resources.extension" value="rsd"/>
                </and>
-               <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+               <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
             </or>
          </triggerPoints>
          <possibleChildren>
             <or>
-         	   <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+         	   <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
             </or>
          </possibleChildren>
          <commonSorter 
                id="repast.simphony.systemdynamics.diagram.navigatorSorter" 
-               class="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsNavigatorSorter">
+               class="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsNavigatorSorter">
             <parentExpression>
                <or>
 	              <and>
     	             <instanceof value="org.eclipse.core.resources.IFile"/>
         	         <test property="org.eclipse.core.resources.extension" value="rsd"/>
                   </and>
-                  <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+                  <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
                </or>
             </parentExpression>
          </commonSorter>
@@ -423,8 +447,8 @@
             id="repast.simphony.systemdynamics.diagram.domainResourceContent" 
             name="%domainNavigatorContentName" 
             priority="normal" 
-            contentProvider="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsDomainNavigatorContentProvider" 
-            labelProvider="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsDomainNavigatorLabelProvider"
+            contentProvider="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsDomainNavigatorContentProvider" 
+            labelProvider="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsDomainNavigatorLabelProvider"
             icon="icons/obj16/SDModelDiagramFile.gif"
             activeByDefault="true">
          <triggerPoints>
@@ -433,19 +457,19 @@
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
         	      <test property="org.eclipse.core.resources.extension" value="rsd"/>
                </and>
-               <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsDomainNavigatorItem"/>
+               <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsDomainNavigatorItem"/>
             </or>
          </triggerPoints>
          <possibleChildren>
-            <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsDomainNavigatorItem"/>
+            <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsDomainNavigatorItem"/>
          </possibleChildren>
       </navigatorContent>
       <actionProvider
             id="repast.simphony.systemdynamics.diagram.navigatorActionProvider"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsNavigatorActionProvider">
+            class="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsNavigatorActionProvider">
          <enablement>
             <or>
-               <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+               <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
             </or>
          </enablement>
       </actionProvider>
@@ -455,7 +479,7 @@
       <?gmfgen generated="true"?>
       <linkHelper
             id="repast.simphony.systemdynamics.diagram.navigatorLinkHelper"
-            class="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsNavigatorLinkHelper">
+            class="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsNavigatorLinkHelper">
          <editorInputEnablement>
             <and>
                <instanceof value="org.eclipse.emf.common.ui.URIEditorInput"/>
@@ -463,7 +487,7 @@
             </and>
          </editorInputEnablement>
          <selectionEnablement>
-            <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
+            <instanceof value="repast.simphony.systemdynamics.diagram.navigator.SystemdynamicsAbstractNavigatorItem"/>
          </selectionEnablement>
       </linkHelper>
    </extension>
@@ -471,17 +495,17 @@
       <?gmfgen generated="true"?>
       <command
          categoryId="org.eclipse.ui.category.edit"
-         defaultHandler="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramUpdateCommand"
+         defaultHandler="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramUpdateCommand"
          description="%update.diagram.description"
-         id="repast.simphony.systemdynamics.sdmodel.diagram.updateDiagram"
+         id="repast.simphony.systemdynamics.diagram.updateDiagram"
          name="%update.diagram.name"/>
    </extension>
    
    <extension point="org.eclipse.ui.bindings" id="update-cmd-binding">
       <?gmfgen generated="true"?>
       <key 
-         commandId="repast.simphony.systemdynamics.sdmodel.diagram.updateDiagram"
-         contextId="repast.simphony.systemdynamics.sdmodel.diagram.ui.diagramContext"
+         commandId="repast.simphony.systemdynamics.diagram.updateDiagram"
+         contextId="repast.simphony.systemdynamics.diagram.ui.diagramContext"
          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
          sequence="F5"/>
    </extension>
@@ -496,9 +520,9 @@
          <command commandId="repast.simphony.systemdynamics.diagram.LoadResourceAction">
             <visibleWhen>
                <and>
-                  <with variable="activePartId"><equals value="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID"/></with>
+                  <with variable="activePartId"><equals value="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID"/></with>
                   <with variable="selection"><iterate ifEmpty="false"> 
-                     <instanceof value="repast.simphony.systemdynamics.sdmodel.diagram.edit.parts.SystemModelEditPart"/>
+                     <instanceof value="repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart"/>
                   </iterate></with>
                </and>
             </visibleWhen>
@@ -508,11 +532,11 @@
 
    <extension point="org.eclipse.ui.commands" id="menu-commands">
       <?gmfgen generated="true"?>
-      <category id="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID" name="%cmdcategory.name" description="%cmdcategory.desc"/>
+      <category id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID" name="%cmdcategory.name" description="%cmdcategory.desc"/>
       <command id="repast.simphony.systemdynamics.diagram.LoadResourceAction"
          name="Load Resource"
-         categoryId="repast.simphony.systemdynamics.sdmodel.diagram.part.SystemdynamicsDiagramEditorID"
-         defaultHandler="repast.simphony.systemdynamics.sdmodel.diagram.part.LoadResourceAction"/>
+         categoryId="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID"
+         defaultHandler="repast.simphony.systemdynamics.diagram.part.LoadResourceAction"/>
    </extension>
 
    <extension point="org.eclipse.ui.handlers" id="menu-handlers">

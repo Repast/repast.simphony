@@ -4,8 +4,6 @@ package repast.simphony.systemdynamics.sdmodel.impl;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.emf.ecore.impl.EObjectImpl;
-
 import repast.simphony.systemdynamics.sdmodel.Cloud;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 
@@ -18,7 +16,7 @@ import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
  *
  * @generated
  */
-public class CloudImpl extends AbstractVariableImpl implements Cloud {
+public class CloudImpl extends StockImpl implements Cloud {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

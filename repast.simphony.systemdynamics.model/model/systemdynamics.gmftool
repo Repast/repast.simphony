@@ -11,8 +11,8 @@
         title="sdmodel">
       <tools
           xsi:type="gmftool:CreationTool"
-          title="CausalLink"
-          description="Create new CausalLink">
+          title="Influence Arrow"
+          description="Create new Influence Arrow">
         <smallIcon
             xsi:type="gmftool:DefaultImage"/>
         <largeIcon
@@ -20,8 +20,26 @@
       </tools>
       <tools
           xsi:type="gmftool:CreationTool"
-          title="RateLink"
-          description="Create new RateLink">
+          title="Rate"
+          description="Create new Rate">
+        <smallIcon
+            xsi:type="gmftool:DefaultImage"/>
+        <largeIcon
+            xsi:type="gmftool:DefaultImage"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Stock"
+          description="Create new Stock">
+        <smallIcon
+            xsi:type="gmftool:DefaultImage"/>
+        <largeIcon
+            xsi:type="gmftool:DefaultImage"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Constant"
+          description="Create new Constant">
         <smallIcon
             xsi:type="gmftool:DefaultImage"/>
         <largeIcon
@@ -40,15 +58,6 @@
           xsi:type="gmftool:CreationTool"
           title="Cloud"
           description="Create new Cloud">
-        <smallIcon
-            xsi:type="gmftool:DefaultImage"/>
-        <largeIcon
-            xsi:type="gmftool:DefaultImage"/>
-      </tools>
-      <tools
-          xsi:type="gmftool:CreationTool"
-          title="Stock"
-          description="Create new Stock">
         <smallIcon
             xsi:type="gmftool:DefaultImage"/>
         <largeIcon

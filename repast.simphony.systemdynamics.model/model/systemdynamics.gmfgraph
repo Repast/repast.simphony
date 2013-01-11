@@ -8,30 +8,37 @@
   <figures
       name="Default">
     <descriptors
-        name="CausalLinkFigure">
+        name="InfluenceLinkFigure">
       <actualFigure
           xsi:type="gmfgraph:PolylineConnection"
-          name="CausalLinkFigure"
-          lineWidth="2"
+          name="InfluenceLinkFigure"
           targetDecoration="//@figures.0/@descriptors.0/@actualFigure/@children.0">
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="blue"/>
         <children
             xsi:type="gmfgraph:PolygonDecoration"
-            name="FilledTriangle"
-            lineWidth="2"/>
+            name="FilledTriangle"/>
       </actualFigure>
     </descriptors>
     <descriptors
         name="RateLinkFigure">
       <actualFigure
           xsi:type="gmfgraph:PolylineConnection"
-          name="RateLinkFigure">
+          name="RateLinkFigure"
+          lineWidth="4"
+          targetDecoration="//@figures.0/@descriptors.1/@actualFigure/@children.1">
+        <foregroundColor
+            xsi:type="gmfgraph:ConstantColor"
+            value="black"/>
         <children
             xsi:type="gmfgraph:Label"
             name="RateName"
             text="&lt;…>"/>
+        <children
+            xsi:type="gmfgraph:PolygonDecoration"
+            name="FilledTriangle"
+            lineWidth="4"/>
       </actualFigure>
       <accessors
           figure="//@figures.0/@descriptors.1/@actualFigure/@children.0"/>
@@ -39,10 +46,15 @@
     <descriptors
         name="VariableFigure">
       <actualFigure
-          xsi:type="gmfgraph:Rectangle"
+          xsi:type="gmfgraph:InvisibleRectangle"
           name="VariableFigure">
         <layout
-            xsi:type="gmfgraph:FlowLayout"/>
+            xsi:type="gmfgraph:CenterLayout"/>
+        <insets
+            top="6"
+            left="6"
+            bottom="6"
+            right="6"/>
         <children
             xsi:type="gmfgraph:Label"
             name="VariableNameFigure"
@@ -54,8 +66,19 @@
     <descriptors
         name="CloudFigure">
       <actualFigure
-          xsi:type="gmfgraph:Rectangle"
-          name="CloudFigure"/>
+          xsi:type="gmfgraph:Ellipse"
+          name="CloudFigure"
+          lineKind="LINE_DASH">
+        <maximumSize
+            dx="12"
+            dy="12"/>
+        <minimumSize
+            dx="12"
+            dy="12"/>
+        <preferredSize
+            dx="12"
+            dy="12"/>
+      </actualFigure>
     </descriptors>
     <descriptors
         name="StockFigure">
@@ -63,7 +86,10 @@
           xsi:type="gmfgraph:Rectangle"
           name="StockFigure">
         <layout
-            xsi:type="gmfgraph:FlowLayout"/>
+            xsi:type="gmfgraph:CenterLayout"/>
+        <insets
+            left="6"
+            right="6"/>
         <children
             xsi:type="gmfgraph:Label"
             name="StockNameFigure"
@@ -82,27 +108,33 @@
   <nodes
       name="Stock"
       figure="StockFigure"/>
+  <nodes
+      name="Constant"
+      figure="VariableFigure"/>
   <connections
-      name="CausalLink"
-      figure="CausalLinkFigure"/>
+      name="InfluenceLink"
+      figure="InfluenceLinkFigure"/>
   <connections
       name="RateLink"
       figure="RateLinkFigure"/>
   <labels
       name="RateName"
       figure="RateLinkFigure"
+      elementIcon="false"
       accessor="//@figures.0/@descriptors.1/@accessors.0">
     <facets
         xsi:type="gmfgraph:LabelOffsetFacet"
-        x="4"
-        y="4"/>
+        x="12"
+        y="12"/>
   </labels>
   <labels
       name="VariableName"
       figure="VariableFigure"
+      elementIcon="false"
       accessor="//@figures.0/@descriptors.2/@accessors.0"/>
   <labels
       name="StockName"
       figure="StockFigure"
+      elementIcon="false"
       accessor="//@figures.0/@descriptors.4/@accessors.0"/>
 </gmfgraph:Canvas>
