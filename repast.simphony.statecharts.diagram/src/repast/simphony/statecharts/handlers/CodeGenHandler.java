@@ -24,39 +24,49 @@ import repast.simphony.statecharts.svg.SVGExporter;
  */
 public class CodeGenHandler extends AbstractHandler {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
-   * ExecutionEvent)
-   */
-  @Override
-  public Object execute(ExecutionEvent event) throws ExecutionException {
-    ISelection selection = HandlerUtil.getCurrentSelection(event);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
+	 * ExecutionEvent)
+	 */
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
 
-    if (selection instanceof IStructuredSelection) {
-      IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-      Object firstElement = structuredSelection.getFirstElement();
-      
-      if (firstElement instanceof IFile) {
-        IFile file = (IFile) firstElement;
-        
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(file.getFullPath().segment(0));
-        IPath path = project.getLocation().append(file.getFullPath().removeFirstSegments(1));
-        
-        if (path.getFileExtension().equals(StatechartBuilder.STATECHART_EXTENSION)) {
-          try {
-        	
-            IPath srcPath = new CodeGenerator().run(project, path, null);
-            new SVGExporter().run(path, srcPath, null);
-            project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, null);
-          } catch (CoreException e) {
-            throw new ExecutionException("Error executing generate code handler", e);
-          }
-        }
-      }
-    }
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			Object firstElement = structuredSelection.getFirstElement();
 
-    return null;
-  }
+			if (firstElement instanceof IFile) {
+				IFile file = (IFile) firstElement;
+
+				IProject project = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(file.getFullPath().segment(0));
+				IPath path = project.getLocation().append(
+						file.getFullPath().removeFirstSegments(1));
+
+				if (path.getFileExtension().equals(
+						StatechartBuilder.STATECHART_EXTENSION)) {
+					try {
+
+						IPath srcPath = new CodeGenerator().run(project, path,
+								null);
+						if (srcPath != null) {
+							new SVGExporter().run(path, srcPath, null);
+							project.getFolder(srcPath.lastSegment())
+									.refreshLocal(IResource.DEPTH_INFINITE,
+											null);
+						}
+					} catch (CoreException e) {
+						throw new ExecutionException(
+								"Error executing generate code handler", e);
+					}
+				}
+			}
+		}
+
+		return null;
+	}
 }
