@@ -83,7 +83,9 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
     public boolean visit(IResource resource) throws CoreException {
       IPath path = resource.getRawLocation();
       if (path != null && path.getFileExtension() != null && path.getFileExtension().equals(STATECHART_EXTENSION)) {
-        generator.run(project, path, monitor);
+        IPath srcPath = generator.run(project, path, monitor);
+        new SVGExporter().run(path, srcPath, monitor);
+        project.getFolder(srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, monitor);
       }
       return true;
     }
