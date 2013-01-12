@@ -21,10 +21,14 @@ public interface StateChart<T> {
 	 */
 	public AbstractState<T> getCurrentSimpleState();
 	
-//	public double getPriority();
-	
 	public boolean withinState(String id);
 	
 	public List<AbstractState<T>> getCurrentStates();
+	
+	public String getUuidForState(AbstractState<T> state);
+	
+	public void registerStateChartListener(StateChartListener scl);
+	
+	public void removeStateChartListener(StateChartListener scl);
 
 }

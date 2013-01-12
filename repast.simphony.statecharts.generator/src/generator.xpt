@@ -35,8 +35,8 @@ public class «className» extends DefaultStateChart<«this.agentType»> {
     
     private static class MyStateChartBuilder extends StateChartBuilder<«agentType»> {
 
-        public MyStateChartBuilder(«agentType» agent, AbstractState<«agentType»> entryState) {
-            super(agent, entryState);
+        public MyStateChartBuilder(«agentType» agent, AbstractState<«agentType»> entryState, String entryStateUuid) {
+            super(agent, entryState, entryStateUuid);
         }
 
         @Override
@@ -60,7 +60,7 @@ private static class «generatorClassName()» {
         «ELSE-»
         «LET findFirstState(this.states) AS firstState -»
             «EXPAND blockContent(simpleType) FOR firstState-»
-            MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)»);
+            MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)», "«firstState.uuid»");
             «EXPAND blockContent(simpleType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
         «ENDLET-»
         createTransitions(mscb);
@@ -386,14 +386,14 @@ private static class «generatorClassName()» {
         «LET getBranchVar(this.uuid) AS bvar-»
         BranchState<«agentType»> «bvar» = new BranchStateBuilder<«agentType»>("«this.id»").build();
         stateMap.put("«this.uuid»", «bvar»);
-        «addMethod»(«bvar»);
+        «addMethod»(«bvar»,"«this.uuid»");
         «ENDLET»
     «ENDIF»
 «ENDDEFINE»
 
 «DEFINE blockContent(String agentType, String addMethod) FOR AbstractState-»
     «EXPAND blockContent(agentType)-»
-    «addMethod»(«getVar(this)»);
+    «addMethod»(«getVar(this)»,"«this.uuid»");
 «ENDDEFINE»
 
 «DEFINE blockContent(String agentType) FOR CompositeState-»
@@ -435,7 +435,7 @@ private static class «generatorClassName()» {
             «LET findInitialState(this.children) AS initialState -»
                 «EXPAND blockContent(agentType) FOR initialState-»
    
-                CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «getVar(initialState)»);
+                CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «getVar(initialState)», "«initialState.uuid»");
                 «EXPAND registerActions(agentType, csbVar) FOR this-»
                 «FOREACH children.reject(e | e.uuid == initialState.uuid) AS child»
                     «IF History.isInstance(child)-»

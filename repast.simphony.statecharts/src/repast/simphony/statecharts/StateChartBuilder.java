@@ -2,9 +2,13 @@ package repast.simphony.statecharts;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.Map.Entry;
 
 public class StateChartBuilder<T> {
 	private double priority = 0;
@@ -12,27 +16,50 @@ public class StateChartBuilder<T> {
 
 	private List<BranchState<T>> branches = new ArrayList<BranchState<T>>();
 	private AbstractState<T> entryState;
-	private Set<AbstractState<T>> states = new HashSet<AbstractState<T>>();
+	private Set<AbstractState<T>> states = new LinkedHashSet<AbstractState<T>>();
 	private List<SelfTransition<T>> selfTransitions = new ArrayList<SelfTransition<T>>();
 	private List<Transition<T>> regularTransitions = new ArrayList<Transition<T>>();
 	private T agent;
+	private Map<AbstractState<T>,String> stateUuidMap = new HashMap<AbstractState<T>,String>();
 
 	protected T getAgent() {
 		return agent;
 	}
 
-	public StateChartBuilder(T agent, AbstractState<T> entryState) {
+	public StateChartBuilder(T agent, AbstractState<T> entryState, String entryStateUuid) {
 		this.agent = agent;
-		registerEntryState(entryState);
+		registerEntryState(entryState,entryStateUuid);
+	}
+	
+	public StateChartBuilder(T agent, AbstractState<T> entryState) {
+		this(agent,entryState,null);
 	}
 
-	public void registerEntryState(AbstractState<T> entryState) {
+	// TODO: Does this need to be public?
+	protected void registerEntryState(AbstractState<T> entryState, String uuid) {
 		this.entryState = entryState;
-		states.add(entryState);
+		addStateToStates(entryState,uuid);
+	}
+	
+	protected void addStateToStates(AbstractState<T> state, String uuid){
+		if (states.add(state)){
+			if (uuid == null){
+				uuid = UUID.randomUUID().toString();
+			}
+			stateUuidMap.put(state, uuid);
+		}
+	}
+	
+	protected void registerEntryState(AbstractState<T> entryState) {
+		registerEntryState(entryState,null);
 	}
 
+	public void addRootState(AbstractState<T> state, String uuid) {
+		addStateToStates(state,uuid);
+	}
+	
 	public void addRootState(AbstractState<T> state) {
-		states.add(state);
+		addRootState(state,null);
 	}
 
 	public void addSelfTransition(SelfTransition<T> transition) {
@@ -79,6 +106,19 @@ public class StateChartBuilder<T> {
 		findBranches(states);
 		for (BranchState<T> b : branches) {
 			b.initializeBranch(stateChart);
+		}
+		
+		stateChart.setStateUuidMap(stateUuidMap);
+		// Get all the state uuid mappings from any composite states
+		for (AbstractState<T> state : states) {
+			if (state instanceof CompositeState){
+				CompositeState compositeState = (CompositeState)state;
+				Map<AbstractState<T>,String> map = compositeState.getStateUuidMap();
+				for(Entry<AbstractState<T>,String> entry : map.entrySet()){
+					stateChart.putStateUuid(entry.getKey(), entry.getValue());
+				}
+				compositeState.clearStateUuidMap();
+			}
 		}
 		
 	}

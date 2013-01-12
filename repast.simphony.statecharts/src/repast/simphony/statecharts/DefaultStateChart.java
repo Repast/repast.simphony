@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
-	
 	protected TransitionResolutionStrategy getTransitionResolutionStrategy() {
 		return transitionResolutionStrategy;
 	}
@@ -50,6 +50,16 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	protected List<Transition<T>> activeSelfTransitions = new ArrayList<Transition<T>>();
 
 	protected SimpleState<T> currentSimpleState;
+
+	private Map<AbstractState<T>, String> stateUuidMap;
+
+	protected void setStateUuidMap(Map<AbstractState<T>, String> stateUuidMap) {
+		this.stateUuidMap = stateUuidMap;
+	}
+	
+	protected void putStateUuid(AbstractState<T> state, String uuid){
+		stateUuidMap.put(state, uuid);
+	}
 
 	protected void registerEntryState(AbstractState<T> state) {
 		entryState = state;
@@ -85,7 +95,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	private void stateInit(List<AbstractState<T>> statesToEnter) {
-
+		notifyChangeListeners();
 		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter
 				.size() - 1);
 		if (currentSimpleState instanceof FinalState) {
@@ -210,6 +220,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			}
 		}
 	}
+
+
 
 	private void clearTransitions(AbstractState<T> as) {
 		// deactivate and clear all active transitions
@@ -494,8 +506,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	protected void scheduleResolveTime(double nextTime) {
-		StateChartCombinedActionScheduler.INSTANCE.scheduleResolveTime(nextTime,
-				this);
+		StateChartCombinedActionScheduler.INSTANCE.scheduleResolveTime(
+				nextTime, this);
 	}
 
 	protected void removeResolveTime(double nextTime) {
@@ -516,7 +528,6 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	
 	protected double getPriority() {
 		return priority;
 	}
@@ -533,9 +544,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		}
 		return agent;
 	}
-	
+
 	Parameters params;
-	
+
 	protected Parameters getParams() {
 		if (params == null) {
 			RunEnvironment re = RunEnvironment.getInstance();
@@ -548,8 +559,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	@Override
 	public boolean withinState(String id) {
 		List<AbstractState<T>> currentStates = getCurrentStates();
-		for (AbstractState<T> s : currentStates){
-			if (s.getId().equals(id)) return true;
+		for (AbstractState<T> s : currentStates) {
+			if (s.getId().equals(id))
+				return true;
 		}
 		return false;
 	}
@@ -563,6 +575,31 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			s = s.getParent();
 		}
 		return states;
+	}
+
+	@Override
+	public String getUuidForState(AbstractState<T> state) {
+		String result = stateUuidMap.get(state);
+		return result;
+	}
+
+	private Set<StateChartListener> stateChartListeners = new LinkedHashSet<StateChartListener>();
+	
+	@Override
+	public void registerStateChartListener(StateChartListener scl) {
+		stateChartListeners.add(scl);
+	}
+
+	@Override
+	public void removeStateChartListener(StateChartListener scl) {
+		stateChartListeners.remove(scl);
+	}
+	
+	private void notifyChangeListeners() {
+		for (StateChartListener scl : stateChartListeners){
+			scl.update();
+		}
+		
 	}
 
 }

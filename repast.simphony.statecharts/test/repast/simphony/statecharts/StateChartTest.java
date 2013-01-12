@@ -573,7 +573,7 @@ public class StateChartTest {
 
 			};
 
-			StateChartBuilder<MyAgent6> scb = new StateChartBuilder<StateChartTest.MyAgent6>(agent, one);
+			StateChartBuilder<MyAgent6> scb = new StateChartBuilder<StateChartTest.MyAgent6>(agent, one, "onetestuuid");
 			BranchState<MyAgent6> bs = new BranchStateBuilder<StateChartTest.MyAgent6>("branch").build();
 			scb.addRootState(bs);
 			scb.addRootState(two);
@@ -629,6 +629,7 @@ public class StateChartTest {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("one", a.st.getCurrentSimpleState().getId());
+		assertEquals("onetestuuid",a.st.getUuidForState(a.st.getCurrentSimpleState()));
 		assertEquals(TransitionResolutionStrategy.RANDOM,
 				((DefaultStateChart) a.st).getTransitionResolutionStrategy());
 		a.value = 0.1;

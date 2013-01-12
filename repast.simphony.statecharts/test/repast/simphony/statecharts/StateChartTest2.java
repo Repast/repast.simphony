@@ -530,8 +530,8 @@ public class StateChartTest2 {
 			FinalState<MyAgent5> fState = new FinalStateBuilder<MyAgent5>("final").build();
 			
 			CompositeStateBuilder<MyAgent5> csb1 = new CompositeStateBuilder<MyAgent5>(
-					"one",two);
-			csb1.addChildState(fState);
+					"one",two,"twotestuuid");
+			csb1.addChildState(fState,"fstatetestuuid");
 			
 			CompositeState<MyAgent5> one = csb1.build();
 			
@@ -596,11 +596,13 @@ public class StateChartTest2 {
 		schedule.execute();
 		assertEquals(1, schedule.getTickCount(), 0.0001);
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
+		assertEquals("twotestuuid", a.st.getUuidForState(a.st.getCurrentSimpleState()));
 		assertEquals(false,a.st.activeRegularTransitions.isEmpty());
 		assertEquals(true,StateChartCombinedActionScheduler.INSTANCE.resolveActions.containsKey(3d));
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("final", a.st.getCurrentSimpleState().getId());
+		assertEquals("fstatetestuuid", a.st.getUuidForState(a.st.getCurrentSimpleState()));
 		assertEquals(true,a.st.activeRegularTransitions.isEmpty());
 		assertEquals(false,StateChartCombinedActionScheduler.INSTANCE.resolveActions.containsKey(3d));
 	}
