@@ -9,7 +9,8 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: repast.simphony.systemdynamics.sdmodel,
  repast.simphony.systemdynamics.sdmodel.impl,
- repast.simphony.systemdynamics.sdmodel.util
+ repast.simphony.systemdynamics.sdmodel.util,
+ repast.simphony.systemdynamics.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy
