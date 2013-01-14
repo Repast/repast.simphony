@@ -109,6 +109,7 @@ public interface Variable extends EObject {
 
   /**
    * Returns the value of the '<em><b>Units</b></em>' attribute.
+   * The default value is <code>""</code>.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Units</em>' attribute isn't clear,
@@ -118,7 +119,7 @@ public interface Variable extends EObject {
    * @return the value of the '<em>Units</em>' attribute.
    * @see #setUnits(String)
    * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getVariable_Units()
-   * @model
+   * @model default=""
    * @generated
    */
   String getUnits();
@@ -135,6 +136,7 @@ public interface Variable extends EObject {
 
   /**
    * Returns the value of the '<em><b>Equation</b></em>' attribute.
+   * The default value is <code>""</code>.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Equation</em>' attribute isn't clear,
@@ -144,7 +146,7 @@ public interface Variable extends EObject {
    * @return the value of the '<em>Equation</em>' attribute.
    * @see #setEquation(String)
    * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getVariable_Equation()
-   * @model
+   * @model default=""
    * @generated
    */
   String getEquation();

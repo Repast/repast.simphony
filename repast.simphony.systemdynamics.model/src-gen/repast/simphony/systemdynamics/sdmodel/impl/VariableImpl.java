@@ -99,7 +99,7 @@ public class VariableImpl extends EObjectImpl implements Variable {
    * @generated
    * @ordered
    */
-  protected static final String UNITS_EDEFAULT = null;
+  protected static final String UNITS_EDEFAULT = "";
 
   /**
    * The cached value of the '{@link #getUnits() <em>Units</em>}' attribute.
@@ -119,7 +119,7 @@ public class VariableImpl extends EObjectImpl implements Variable {
    * @generated
    * @ordered
    */
-  protected static final String EQUATION_EDEFAULT = null;
+  protected static final String EQUATION_EDEFAULT = "";
 
   /**
    * The cached value of the '{@link #getEquation() <em>Equation</em>}' attribute.
