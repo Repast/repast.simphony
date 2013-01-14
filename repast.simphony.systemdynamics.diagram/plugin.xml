@@ -209,7 +209,20 @@
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart"/>
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart"/>
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart"/>
+         </propertySection>      
+         
+          <propertySection
+               class="repast.simphony.systemdynamics.sheets.StockPropertySection"
+               id="property.section.domain.stock"
+               tab="property.tab.domain">
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart"/>
+         </propertySection>  
+         
+          <propertySection
+               class="repast.simphony.systemdynamics.sheets.SystemModelPropertySection"
+               id="property.section.domain.systemmodel"
+               tab="property.tab.domain">
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart"/>
          </propertySection>       
          
          <!--

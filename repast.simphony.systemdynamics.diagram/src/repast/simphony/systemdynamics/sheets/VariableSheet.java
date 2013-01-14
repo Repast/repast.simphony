@@ -1,113 +1,307 @@
 package repast.simphony.systemdynamics.sheets;
 
+import java.util.Collections;
+
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.util.TransactionUtil;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.Variable;
+import repast.simphony.systemdynamics.sdmodel.VariableType;
+import repast.simphony.systemdynamics.util.SDModelUtils;
 
 public class VariableSheet extends Composite {
 
-  private Text idTxt;
-  private Text txtNewText;
+  private Text txtId;
+  protected StyledText txtEquation;
+  private Combo cmbUnits;
+  private Combo cmbType;
+  protected List lstVar;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
-    setLayout(new GridLayout(4, false));
+    setLayout(new GridLayout(1, false));
 
-    Label lblName = new Label(this, SWT.NONE);
-    lblName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    Composite composite_1 = new Composite(this, SWT.NONE);
+    composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    toolkit.adapt(composite_1);
+    toolkit.paintBordersFor(composite_1);
+    composite_1.setLayout(new GridLayout(4, false));
+    addHeader(toolkit, composite_1);
+  
+    Composite grpEquation = new Composite(this, SWT.NONE);
+    grpEquation.setLayout(new GridLayout(2, false));
+    grpEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    toolkit.adapt(grpEquation);
+    toolkit.paintBordersFor(grpEquation);
+
+    Label lblEquation_1 = new Label(grpEquation, SWT.NONE);
+    toolkit.adapt(lblEquation_1, true, true);
+    lblEquation_1.setText("Equation");
+
+    Label label = new Label(grpEquation, SWT.SEPARATOR | SWT.HORIZONTAL);
+    label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    toolkit.adapt(label, true, true);
+
+    SashForm sashForm = new SashForm(grpEquation, SWT.NONE);
+    sashForm.setSashWidth(6);
+    sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+    toolkit.adapt(sashForm);
+    toolkit.paintBordersFor(sashForm);
+
+    
+    txtEquation = new StyledText(sashForm, SWT.BORDER | SWT.V_SCROLL);
+    txtEquation.setAlwaysShowScrollBars(false);
+    txtEquation.setTopMargin(4);
+    txtEquation.setLeftMargin(4);
+    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    txtEquation.setText("");
+    toolkit.adapt(txtEquation);
+
+    Composite composite = new Composite(sashForm, SWT.NONE);
+    GridLayout gl_composite = new GridLayout(1, false);
+    gl_composite.marginWidth = 0;
+    gl_composite.marginHeight = 0;
+    composite.setLayout(gl_composite);
+    toolkit.adapt(composite);
+    toolkit.paintBordersFor(composite);
+
+    lstVar = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+    lstVar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    toolkit.adapt(lstVar, true, true);
+    sashForm.setWeights(new int[] { 4, 1 });
+    
+    addListeners();
+  }
+  
+  protected void addHeader(FormToolkit toolkit, Composite parent) {
+    Label lblName = new Label(parent, SWT.NONE);
     toolkit.adapt(lblName, true, true);
     lblName.setText("Name:");
 
-    idTxt = new Text(this, SWT.BORDER);
-    idTxt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-    toolkit.adapt(idTxt, true, true);
-    
-    Label lblType = new Label(this, SWT.NONE);
-    lblType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    txtId = new Text(parent, SWT.BORDER);
+    GridData gd_txtId = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1);
+    gd_txtId.widthHint = 378;
+    txtId.setLayoutData(gd_txtId);
+    toolkit.adapt(txtId, true, true);
+
+    Label lblType = new Label(parent, SWT.NONE);
     toolkit.adapt(lblType, true, true);
     lblType.setText("Type:");
-    
-    Combo combo = new Combo(this, SWT.READ_ONLY);
-    GridData gd_combo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-    gd_combo.widthHint = 205;
-    combo.setLayoutData(gd_combo);
-    toolkit.adapt(combo);
-    toolkit.paintBordersFor(combo);
-    
-    Label lblUnits = new Label(this, SWT.NONE);
-    lblUnits.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+    cmbType = new Combo(parent, SWT.READ_ONLY);
+    GridData gd_cmbType = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+    gd_cmbType.widthHint = 140;
+    cmbType.setLayoutData(gd_cmbType);
+    cmbType.setItems(new String[] { getVarTypeString(VariableType.AUXILIARY),
+        getVarTypeString(VariableType.CONSTANT), getVarTypeString(VariableType.RATE),
+        getVarTypeString(VariableType.STOCK) });
+
+    toolkit.adapt(cmbType);
+    toolkit.paintBordersFor(cmbType);
+
+    Label lblUnits = new Label(parent, SWT.NONE);
     toolkit.adapt(lblUnits, true, true);
     lblUnits.setText("Units:");
+
+    cmbUnits = new Combo(parent, SWT.NONE);
+    GridData gd_cmbUnits = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+    gd_cmbUnits.widthHint = 200;
+    cmbUnits.setLayoutData(gd_cmbUnits);
+    toolkit.adapt(cmbUnits);
+    toolkit.paintBordersFor(cmbUnits);
+  }
+  
+  private void addListeners() {
+    DragSource src = new DragSource(lstVar, DND.DROP_COPY);
+    Transfer[] types = new Transfer[]{TextTransfer.getInstance()};
+    src.setTransfer(types);
+    src.addDragListener(new DragSourceListener() {
+      @Override
+      public void dragStart(DragSourceEvent event) {
+        if (lstVar.getSelectionIndex() == -1) event.doit = false;
+      }
+
+      @Override
+      public void dragSetData(DragSourceEvent event) {
+        if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+          event.data = lstVar.getSelection()[0];
+        }
+      }
+
+      @Override
+      public void dragFinished(DragSourceEvent event) {
+      }
+    });
     
-    Combo combo_1 = new Combo(this, SWT.NONE);
-    combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-    toolkit.adapt(combo_1);
-    toolkit.paintBordersFor(combo_1);
-    
-    Group grpEquation = new Group(this, SWT.NONE);
-    grpEquation.setText("Equation");
-    grpEquation.setLayout(new GridLayout(2, false));
-    grpEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-    toolkit.adapt(grpEquation);
-    toolkit.paintBordersFor(grpEquation);
-    
-    txtNewText = toolkit.createText(grpEquation, "New Text", SWT.MULTI);
-    txtNewText.setText("");
-    GridData gd_txtNewText = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-    gd_txtNewText.heightHint = 200;
-    txtNewText.setLayoutData(gd_txtNewText);
-    
-    Composite composite = new Composite(grpEquation, SWT.NONE);
-    composite.setLayout(new GridLayout(1, false));
-    composite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
-    toolkit.adapt(composite);
-    toolkit.paintBordersFor(composite);
-    
-    Label lblVariables = new Label(composite, SWT.NONE);
-    toolkit.adapt(lblVariables, true, true);
-    lblVariables.setText("Variables");
-    
-    List lstVar = new List(composite, SWT.BORDER);
-    lstVar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
-    toolkit.adapt(lstVar, true, true);
+    DropTarget target = new DropTarget(txtEquation, DND.DROP_COPY | DND.DROP_DEFAULT);
+    target.setTransfer(types);
+    target.addDropListener(new DropTargetAdapter() {
+      
+      @Override
+      public void dragEnter(DropTargetEvent event) {
+        if (event.detail == DND.DROP_DEFAULT) event.detail = DND.DROP_COPY;
+      }
+
+      @Override
+      public void drop(DropTargetEvent event) {
+        txtEquation.insert(event.data.toString());
+      }
+    });
   }
 
- 
-  public void bindModel(EMFDataBindingContext context, EObject eObject) {
-    /*
-    IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-        StatechartPackage.Literals.ABSTRACT_STATE__ID);
-    ISWTObservableValue observe = WidgetProperties.
-        text(new int[] {SWT.Modify }).observeDelayed(400, idTxt);
-    context.bindValue(observe, property.observe(eObject));
+  private String getVarTypeString(VariableType type) {
+    String str = type.getLiteral();
+    return str.substring(0, 1).toUpperCase() + str.substring(1, str.length());
+  }
 
-    context
-        .bindValue(
-            WidgetProperties.text(new int[] {SWT.Modify }).observeDelayed(400,
-                onEnterTxt),
-            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-                StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
+  protected void bind(EMFDataBindingContext context, EObject eObject, EAttribute attribute,
+      Widget widget) {
+    context.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, widget),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject), attribute).observe(
+            eObject));
+  }
+  
+  protected UpdateValueStrategy createUpdateValueStrategy(IConverter converter) {
+    UpdateValueStrategy strategy = new UpdateValueStrategy();
+    strategy.setConverter(converter);
+    return strategy;
+  }
+
+  public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    java.util.List<String> allUnits = SDModelUtils.getAllUnits(eObject);
+    Collections.sort(allUnits);
+    cmbUnits.setItems(allUnits.toArray(new String[0]));
+    
+    bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
+    bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
+    context.bindValue(
+        WidgetProperties.text().observe(cmbUnits),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            SDModelPackage.Literals.VARIABLE__UNITS).observe(eObject));
 
     context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400, onExitTxt),
+        WidgetProperties.selection().observe(cmbType),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
-    
-    buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
-    */
+            SDModelPackage.Literals.VARIABLE__TYPE).observe(eObject), createUpdateValueStrategy(new StringToVarType()), 
+            createUpdateValueStrategy(new VarTypeToString()));
+
+    updateVariables(eObject);
+  }
+
+  protected void updateVariables(EObject eObj) {
+    Variable var = ((Variable) eObj);
+    lstVar.setItems(new String[] {});
+
+    if (var.getType() == VariableType.RATE || var.getType() == VariableType.AUXILIARY) {
+      java.util.List<Variable> vars = SDModelUtils.getIncomingVariables(var);
+      String[] items = new String[vars.size()];
+      int i = 0;
+      for (Variable v : vars) {
+        items[i++] = v.getName();
+      }
+      lstVar.setItems(items);
+    }
+  }
+
+  private class StringToVarType implements IConverter {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.databinding.conversion.IConverter#getFromType()
+     */
+    @Override
+    public Object getFromType() {
+      return String.class;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.databinding.conversion.IConverter#getToType()
+     */
+    @Override
+    public Object getToType() {
+      return VariableType.class;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.
+     * Object)
+     */
+    @Override
+    public Object convert(Object fromObject) {
+      return VariableType.get(fromObject.toString().toLowerCase());
+    }
+  }
+
+  private class VarTypeToString implements IConverter {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.databinding.conversion.IConverter#getFromType()
+     */
+    @Override
+    public Object getFromType() {
+      return VariableType.class;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.databinding.conversion.IConverter#getToType()
+     */
+    @Override
+    public Object getToType() {
+      return String.class;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.
+     * Object)
+     */
+    @Override
+    public Object convert(Object fromObject) {
+      return getVarTypeString((VariableType) fromObject);
+    }
   }
 }
