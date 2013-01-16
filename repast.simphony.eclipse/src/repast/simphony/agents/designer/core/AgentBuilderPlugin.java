@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2003, Alexander Greif All rights reserved. (Adapted by Michael
- * J. North for Use in Repast Simphony from Alexander Greif’s Flow4J-Eclipse
+ * J. North for Use in Repast Simphony from Alexander Greifs Flow4J-Eclipse
  * (http://flow4jeclipse.sourceforge.net/docs/index.html), with Thanks to the
- * Original Author) (Michael J. North’s Modifications are Copyright 2007 Under
+ * Original Author) (Michael J. Norths Modifications are Copyright 2007 Under
  * the Repast Simphony License, All Rights Reserved)
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -148,12 +148,8 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
   public static final String DEBUG_JAR_PROJECT = "repast.simphony.bin_and_src";
   public static final String DEBUG_JAR_PATH_RELATIVE = DEBUG_JAR_PROJECT + "/" + JAR_FILE;
   
+  private static final String ECLIPSE_PROJECT = "repast.simphony.eclipse";
   
-
-  public static final String ECLIPSE_PROJECT = "repast.simphony.eclipse";
-  public static final String SCORE_AGENTS_PROJECT = "repast.simphony.eclipse_"
-      + AGENT_BUILDER_PLUGIN_VERSION;
-
   // The shared instance.
   private static AgentBuilderPlugin plugin;
   // Resource bundle.
@@ -370,7 +366,21 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
       resourceBundle = null;
       x.printStackTrace();
     }
-
+  }
+  
+  /**
+   * Gets the directory name of the eclipse project.For example,
+   * repast.simphony.eclipse_2.0.1 when running the release version
+   * or just repast.simphony.eclipse when launched as an eclipse application.
+   * 
+   * @return the directory name of the eclipse project.
+   */
+  public static String getEclipseProject() {
+    if (isRunningInDevEnv()) {
+      return ECLIPSE_PROJECT;
+    } else {
+      return ECLIPSE_PROJECT + "_" + AGENT_BUILDER_PLUGIN_VERSION;
+    }
   }
 
   // @@ @Override
@@ -1155,13 +1165,37 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
     return finalJarClassPathList;
 
   }
+  
+  public static boolean isRunningInDevEnv() {
+    String mainDataSourcePluginDirectory = AgentBuilderPlugin.getPluginInstallationDirectory();
+    File file;
+    if (mainDataSourcePluginDirectory.trim().equals("")) {
+      file = new Path(JAR_PATH_RELATIVE).toFile();
+    } else {
+      file = new Path(mainDataSourcePluginDirectory + JAR_PATH_RELATIVE).toFile();
+    }
+   
+    return !file.exists();
+  }
 
   static public String[] getJarPathListForLauncher() {
 
     if (finalJarClassPathListForLauncher == null) {
 
       try {
-
+        // this looks for the bin_and_src.jar in the bin_and_src_VERSION directory
+        // if we are running in the development enviroment this won't exist so we can
+        // use its existence as a flag.
+        String mainDataSourcePluginDirectory = AgentBuilderPlugin.getPluginInstallationDirectory();
+        File file;
+        if (mainDataSourcePluginDirectory.trim().equals("")) {
+          file = new Path(JAR_PATH_RELATIVE).toFile();
+        } else {
+          file = new Path(mainDataSourcePluginDirectory + JAR_PATH_RELATIVE).toFile();
+        }
+       
+        boolean inDevEnv = !file.exists();
+        
         finalJarClassPathListForLauncher = new String[finalJarClassPathListForLauncherBasics.length
             + AGENT_BUILDER_EXTRA_JARS.size()];
         int i = 0;
@@ -1172,6 +1206,17 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
           } else {
             finalJarClassPathListForLauncher[i] = jarElement;
           }
+          
+          if (inDevEnv) {
+            // rewrite the jar element
+            String item = finalJarClassPathListForLauncher[i];
+            item = item.replace("_" +  AGENT_BUILDER_PLUGIN_VERSION, "");
+            item = item.replace(JavaCore.getClasspathVariable("ECLIPSE_HOME") + "/plugins/",  
+                mainDataSourcePluginDirectory);
+            item = item.replace("ECLIPSE_HOME/plugins/", mainDataSourcePluginDirectory);
+            finalJarClassPathListForLauncher[i] = item;
+          }
+          
           i++;
         }
         for (int j = 0; j < AGENT_BUILDER_EXTRA_JARS.size(); j++) {
@@ -1182,6 +1227,7 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
           } else {
             finalJarClassPathListForLauncher[i] = extraJar;
           }
+          //System.out.println("Extra jar: " + finalJarClassPathListForLauncher[i]);
           i++;
         }
       } catch (Exception e) {
