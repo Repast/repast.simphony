@@ -555,6 +555,19 @@
    <extension point="org.eclipse.ui.handlers" id="menu-handlers">
       <?gmfgen generated="true"?>
    </extension>
+   
+   <extension
+         id="builder"
+         point="org.eclipse.core.resources.builders"
+         name="System Dynamics Code Generation Builder">
+          <?gmfgen generated="false"?>
+      <builder
+            hasNature="false">
+         <run
+               class="repast.simphony.systemdynamics.handlers.SystemDynamicsBuilder">
+         </run>
+      </builder>
+      </extension>
 
    <!-- optionally, specify keybindings -->
 </plugin>
