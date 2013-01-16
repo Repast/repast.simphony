@@ -476,6 +476,16 @@
 			<fileset dir="../repast.simphony.terracotta/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+			
+			<!-- Statechart projects -->
+			<fileset dir="../repast.simphony.statecharts/src" casesensitive="no">
+							<include name="**/*.java" />
+							<include name="**/*.groovy" />
+						</fileset>
+			<fileset dir="../repast.simphony.statecharts/bin" casesensitive="no">
+							<include name="**/*.class" />
+						</fileset>
+						
 
 		</jar>
 	</target>
