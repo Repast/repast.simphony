@@ -22,7 +22,6 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.FigureUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EMFCoreUtil;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.emf.type.core.IHintedType;
-import org.eclipse.gmf.runtime.notation.Connector;
 import org.eclipse.gmf.runtime.notation.DecorationNode;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Edge;
@@ -34,7 +33,9 @@ import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 import org.eclipse.gmf.runtime.notation.Routing;
+import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Shape;
+import org.eclipse.gmf.runtime.notation.Smoothness;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -441,12 +442,14 @@ public class SystemdynamicsViewProvider extends AbstractProvider implements IVie
   }
 
   /**
-   * @generated
+   * @generated NOT -- added smoothness to routing style
    */
   public Edge createInfluenceLink_4004(EObject domainElement, View containerView, int index,
       boolean persisted, PreferencesHint preferencesHint) {
     Edge edge = NotationFactory.eINSTANCE.createEdge();
-    edge.getStyles().add(NotationFactory.eINSTANCE.createRoutingStyle());
+    RoutingStyle routingStyle = NotationFactory.eINSTANCE.createRoutingStyle();
+    routingStyle.setSmoothness(Smoothness.get(Smoothness.NORMAL));
+    edge.getStyles().add(routingStyle);
     edge.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
     RelativeBendpoints bendpoints = NotationFactory.eINSTANCE.createRelativeBendpoints();
     ArrayList<RelativeBendpoint> points = new ArrayList<RelativeBendpoint>(2);
