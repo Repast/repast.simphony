@@ -94,13 +94,11 @@
 			<exclude name="**/Repast extras/**" />
 			<exclude name="**/RepastFeature/**" />
 			<exclude name="**/RepastSiteUpdate/**" />
-			<exclude name="**/repast.simphony.distributedBatch/transferFiles/**" />
 			<exclude name="**/watcher_test.jar" />
 			<exclude name="**/groovy-all-*.jar" />
 			<exclude name="**/xmltask.jar" />
 			
 			<exclude name="**/repast.simphony.distributed.batch/**" />
-			<exclude name="**/repast.simphony.hadoop/**" />
 		</fileset>
 		
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
@@ -138,14 +136,6 @@
 			<fileset dir="../repast.simphony.batch/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
-			<fileset dir="../repast.simphony.distributedBatch/src" casesensitive="no">
-							<include name="**/*.java" />
-							<include name="**/*.groovy" />
-						</fileset>
-						<fileset dir="../repast.simphony.distributedBatch/bin" casesensitive="no">
-							<include name="**/*.class" />
-						</fileset>
 
 			<fileset dir="../repast.simphony.chart/src" casesensitive="no">
 				<include name="**/*.java" />

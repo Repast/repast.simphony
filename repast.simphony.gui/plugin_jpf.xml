@@ -33,7 +33,7 @@
       <export prefix="*"/>
     </library>
 
-    <library id="jide-oss" path="lib/jide-oss-2.7.0.jar" type="code">
+    <library id="jide-oss" path="lib/jide-oss-3.4.9.jar" type="code">
       <export prefix="*"/>
     </library>
     
