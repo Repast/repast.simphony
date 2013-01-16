@@ -76,10 +76,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		clearTransitions(null);
 		List<AbstractState<T>> statesToEnter = getStatesToEnter(null,
 				entryState);
-		// Entering states from the top down
-		for (AbstractState<T> as : statesToEnter) {
-			as.onEnter();
-		}
+		
 		stateInit(statesToEnter);
 	}
 
@@ -98,6 +95,10 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		notifyChangeListeners();
 		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter
 				.size() - 1);
+		// Entering states from the top down
+		for (AbstractState<T> as : statesToEnter) {
+			as.onEnter();
+		}
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
 		} else if (currentSimpleState instanceof BranchState) {
@@ -360,11 +361,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		transition.onTransition();
 
 		List<AbstractState<T>> statesToEnter = getStatesToEnter(lca, target);
-		// Entering states from the top down
-		for (AbstractState<T> as : statesToEnter) {
-			as.onEnter();
-		}
-
+		
 		stateInit(statesToEnter);
 	}
 

@@ -40,8 +40,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class SVGExporter {
 
-	public void run(IPath path, IPath srcPath,
-			IProgressMonitor monitor) {
+	public void run(IPath path, IPath srcPath, IProgressMonitor monitor) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
