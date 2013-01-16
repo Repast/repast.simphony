@@ -623,7 +623,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			}
 			
 			// All svg default shapes
-			File templateShapesFolder = new File(AgentBuilderPlugin.getPluginInstallationDirectory() + AgentBuilderPlugin.SCORE_AGENTS_PROJECT + "/setupfiles/shapes/svg");
+			File templateShapesFolder = new File(AgentBuilderPlugin.getPluginInstallationDirectory() + AgentBuilderPlugin.getEclipseProject() + "/setupfiles/shapes/svg");
 			List<String> shapeFiles = WizardUtilities.getFileNamesInDirectory(templateShapesFolder);
 			for (String shapeFileName : shapeFiles){
 				Util.copyFileFromPluginInstallation("shapes/svg/" + shapeFileName,

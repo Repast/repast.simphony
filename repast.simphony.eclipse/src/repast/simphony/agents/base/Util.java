@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2003, Alexander Greif All rights reserved. (Adapted by Michael
- * J. North for Use in Repast Simphony from Alexander Greif’s Flow4J-Eclipse
+ * J. North for Use in Repast Simphony from Alexander Greifï¿½s Flow4J-Eclipse
  * (http://flow4jeclipse.sourceforge.net/docs/index.html), with Thanks to the
- * Original Author) (Michael J. North’s Modifications are Copyright 2007 Under
+ * Original Author) (Michael J. Northï¿½s Modifications are Copyright 2007 Under
  * the Repast Simphony License, All Rights Reserved)
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,7 @@ import repast.simphony.agents.designer.ui.editors.AgentEditor;
 
 /**
  * @author agreif (Adapted by Michael J. North for Use in Repast Simphony from
- *         Alexander Greif’s Flow4J-Eclipse
+ *         Alexander Greifï¿½s Flow4J-Eclipse
  *         (http://flow4jeclipse.sourceforge.net/docs/index.html), with Thanks
  *         to the Original Author)
  * 
@@ -320,42 +320,32 @@ public class Util {
     try {
 
       File projPath = new File(AgentBuilderPlugin.getPluginInstallationDirectory()
-          + AgentBuilderPlugin.SCORE_AGENTS_PROJECT);
-      if (!projPath.exists()) {
-        // this can happen when running in a development environment
-        projPath = new File(AgentBuilderPlugin.getPluginInstallationDirectory()
-            +  AgentBuilderPlugin.ECLIPSE_PROJECT);
-      }
+          + AgentBuilderPlugin.getEclipseProject());
 
-      InputStream input = new BufferedInputStream(new FileInputStream(
-          projPath.getAbsolutePath() + "/setupfiles/" + sourceFileName));
+      InputStream input = new BufferedInputStream(new FileInputStream(projPath.getAbsolutePath()
+          + "/setupfiles/" + sourceFileName));
 
-      if (input != null) {
+      IFile output = destinationFolder.getFile(destinationFileName);
 
-        IFile output = destinationFolder.getFile(destinationFileName);
+      InputStream filteredInput = input;
 
-        InputStream filteredInput = input;
+      if (variableMap != null) {
 
-        if (variableMap != null) {
+        String inputString = "";
+        while (input.available() > 0)
+          inputString += ((char) input.read());
 
-          String inputString = "";
-          while (input.available() > 0)
-            inputString += ((char) input.read());
-
-          for (int i = 0; i < variableMap.length; i++) {
-            inputString = inputString.replace(variableMap[i][0], variableMap[i][1]);
-          }
-
-          filteredInput = new ByteArrayInputStream(inputString.getBytes());
-
+        for (int i = 0; i < variableMap.length; i++) {
+          inputString = inputString.replace(variableMap[i][0], variableMap[i][1]);
         }
-        if (output.exists())
-          output.delete(true, monitor);
-        output.create(filteredInput, true, monitor);
 
-      } else {
-        System.err.println("Error: Could not find \"" + "/setupfiles/" + sourceFileName + "\"");
+        filteredInput = new ByteArrayInputStream(inputString.getBytes());
+
       }
+      if (output.exists())
+        output.delete(true, monitor);
+      output.create(filteredInput, true, monitor);
+
     } catch (Exception e) {
       System.err.println("Error: Could not find \"" + "/setupfiles/" + sourceFileName + "\"");
     }
