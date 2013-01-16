@@ -55,10 +55,10 @@ public class CodeGenerator {
       XMIResourceImpl resource = new XMIResourceImpl();
       resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
       
-      SystemModel statemachine = null;
+      SystemModel systemModel = null;
       for (EObject obj : resource.getContents()) {
         if (obj.eClass().equals(SDModelPackage.Literals.SYSTEM_MODEL)) {
-          statemachine = (SystemModel)obj;
+          systemModel = (SystemModel)obj;
           break;
         }
       }
@@ -129,7 +129,7 @@ public class CodeGenerator {
     } else {
       DirectoryCleaner cleaner = new DirectoryCleaner();
       //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
-      cleaner.run(project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
+      //cleaner.run(project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString(), systemModel.getUuid());
     }
     
     return srcPath;
