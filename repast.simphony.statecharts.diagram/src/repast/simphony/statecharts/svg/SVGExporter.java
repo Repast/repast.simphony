@@ -6,14 +6,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -33,6 +30,7 @@ import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import repast.simphony.statecharts.scmodel.StateMachine;
@@ -40,36 +38,44 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class SVGExporter {
 
-	public void run(IPath path, IPath srcPath, IProgressMonitor monitor) {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
+	public void run(IPath path, final IPath srcPath, final IProgressMonitor monitor) {
+
 		ResourceSet resourceSet = new ResourceSetImpl();
 		GMFEditingDomainFactory.getInstance().createEditingDomain(resourceSet);
-		Resource resource = resourceSet
-				.createResource(org.eclipse.emf.common.util.URI
-						.createPlatformResourceURI(path.toString(), true));
+		Resource resource = resourceSet.createResource(org.eclipse.emf.common.util.URI
+				.createPlatformResourceURI(path.toString(), true));
 		try {
-			resource.load(new FileInputStream(path.toFile()),
-					new HashMap<Object, Object>());
+			resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		OutPathInfo outPathInfo = new OutPathInfo();
-		Diagram diagram = readNotation(resource, monitor, outPathInfo);
-		DiagramEditPart dep = OffscreenEditPartFactory.getInstance()
-				.createDiagramEditPart(diagram, new Shell());
+		final OutPathInfo outPathInfo = new OutPathInfo();
+		final Diagram diagram = readNotation(resource, monitor, outPathInfo);
 
-		IPath outPath = getOutPath(srcPath, outPathInfo);
-		try {
-			new ExportToSVGUtil().copyToImage(dep, outPath, monitor);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Display.getDefault().syncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				DiagramEditPart dep = OffscreenEditPartFactory.getInstance().createDiagramEditPart(diagram,
+						new Shell());
+
+				IPath outPath = getOutPath(srcPath, outPathInfo);
+				try {
+					if (monitor == null) {
+						new ExportToSVGUtil().copyToImage(dep, outPath, new NullProgressMonitor());
+					} else {
+						new ExportToSVGUtil().copyToImage(dep, outPath, monitor);
+					}
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+
 	}
 
 	private IPath getOutPath(IPath srcPath, OutPathInfo outPathInfo) {
@@ -95,14 +101,12 @@ public class SVGExporter {
 		String pkg, className;
 	}
 
-	private Diagram readNotation(Resource resource, IProgressMonitor monitor,
-			OutPathInfo names) {
+	private Diagram readNotation(Resource resource, IProgressMonitor monitor, OutPathInfo names) {
 
 		ResourceSet rset = resource.getResourceSet();
 		TransactionalEditingDomain editingDomain = TransactionalEditingDomain.Factory.INSTANCE
 				.createEditingDomain(rset);
-		editingDomain
-				.setID("repast.simphony.statecharts.diagram.EditingDomain");
+		editingDomain.setID("repast.simphony.statecharts.diagram.EditingDomain");
 		StateMachine statemachine = null;
 		Diagram diagram = null;
 
@@ -124,18 +128,16 @@ public class SVGExporter {
 		return diagram;
 	}
 
-	public static Image getDiagramImage(Diagram diagram,
-			PreferencesHint preferencesHint) {
+	public static Image getDiagramImage(Diagram diagram, PreferencesHint preferencesHint) {
 		Image image = null;
-		DiagramEditor openedDiagramEditor = DiagramEditorUtil
-				.findOpenedDiagramEditorForID(ViewUtil.getIdStr(diagram));
+		DiagramEditor openedDiagramEditor = DiagramEditorUtil.findOpenedDiagramEditorForID(ViewUtil
+				.getIdStr(diagram));
 
 		if (openedDiagramEditor != null) {
 			image = getDiagramImage(openedDiagramEditor.getDiagramEditPart());
 		} else {
-			DiagramEditPart diagramEditPart = OffscreenEditPartFactory
-					.getInstance().createDiagramEditPart(diagram, new Shell(),
-							preferencesHint);
+			DiagramEditPart diagramEditPart = OffscreenEditPartFactory.getInstance()
+					.createDiagramEditPart(diagram, new Shell(), preferencesHint);
 			Assert.isNotNull(diagramEditPart);
 			image = getDiagramImage(diagramEditPart);
 			diagramEditPart.deactivate();
@@ -148,8 +150,7 @@ public class SVGExporter {
 		DiagramGenerator gen = new DiagramImageGenerator(diagramEP);
 		List<?> editParts = diagramEP.getPrimaryEditParts();
 		Rectangle rectangle = gen.calculateImageRectangle(editParts);
-		ImageDescriptor descriptor = gen.createSWTImageDescriptorForParts(
-				editParts, rectangle);
+		ImageDescriptor descriptor = gen.createSWTImageDescriptorForParts(editParts, rectangle);
 		return descriptor.createImage();
 	}
 
