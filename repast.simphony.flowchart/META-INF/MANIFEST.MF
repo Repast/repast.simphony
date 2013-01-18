@@ -4,7 +4,6 @@ Bundle-Name: repast.simphony.flowchart
 Bundle-SymbolicName: repast.simphony.flowchart;singleton:=true
 Bundle-Version: 2.0.1
 Bundle-ClassPath: bin/,
- lib/commons-lang-2.6.jar,
  .
 Bundle-Activator: repast.simphony.agents.designer.core.AgentBuilderPlugin
 Bundle-Vendor: Provider
@@ -69,3 +68,4 @@ Export-Package: repast.simphony.agents,
  repast.simphony.agents.model.codegen,
  repast.simphony.agents.scenario.ui.editors,
  repast.simphony.agents.tools.ant
+Plugin-Class: repast.simphony.agents.designer.core.AgentBuilderPlugin
