@@ -89,7 +89,7 @@
 <!-- =================================================================================== -->
    <extension
          id="repast_simphony_flowchart_builder"
-         name="Repast Simphony Agent Builder"
+         name="Repast Simphony Flowchart Builder"
          point="org.eclipse.core.resources.builders">
       <builder>
          <run
@@ -121,7 +121,7 @@
             id="repast.simphony.eclipse.insertcode"
             label="Insert Repast Code">
            <action
-              class="repast.simphony.ide.RepastCodeWizardAction"
+              class="repast.simphony.agents.designer.ui.actions.RepastCodeWizardAction"
               id="repast.simphony.eclipse.insertrepastcode"
               label="Insert Repast Code"
               toolbarPath="Normal/repastSimphony"
@@ -140,6 +140,14 @@
                id="repast.simphony.eclipse.insertcode">
          </actionSet>
       </perspectiveExtension>
+   </extension>
+   <extension
+         id="repast.simphony.flowchart.project_config"
+         name="RepastSimphonyFlowchartProjectConfig"
+         point="repast.simphony.project.config">
+      <configurator
+            class="repast.simphony.agents.designer.core.FlowchartProjectConfigurator">
+      </configurator>
    </extension>
    
 <!-- =================================================================================== -->
