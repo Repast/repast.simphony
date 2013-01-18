@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.3"?>
 <plugin>
+   <extension-point id="repast.simphony.project.config" name="RepastSimphonyProjectConfig" schema="schema/repast.simphony.project.config.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension: Repast Simphony Variables                                                -->
 <!-- =================================================================================== -->
+   <extension
+         id="repast_simphony_nature"
+         name="RepastSimphonyNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="repast.simphony.eclipse.RepastSimphonyNature">
+         </run>
+      </runtime>
+   </extension>
    <extension point="org.eclipse.core.variables.valueVariables">
       <variable name="REPAST_VERSION" initialValue="2.0.1">
       </variable>
@@ -118,7 +129,7 @@
          <visibility>
             <not>
                <objectState
-                     name="nature"
+                     name="projectNature"
                      value="repast.simphony.eclipse.repast_simphony_nature">
                </objectState>
             </not>
@@ -126,7 +137,7 @@
          <action
                label="Add Repast Simphony to this Project"
                icon="icons/full/ctool16/add.gif"
-               class="repast.simphony.ide.AddSimphonyNatures"
+               class="repast.simphony.eclipse.ide.AddSimphony"
                menubarPath="rs_main/natureGroup"
                id="addAction">
          </action>
@@ -142,7 +153,7 @@
          <action
                label="Remove Repast Simphony from this Project"
                icon="icons/full/ctool16/remove.gif"
-               class="repast.simphony.ide.RemoveSimphonyNatures"
+               class="repast.simphony.eclipse.ide.RemoveSimphony"
                menubarPath="rs_main/natureGroup"
                id="removeAction">
          </action>

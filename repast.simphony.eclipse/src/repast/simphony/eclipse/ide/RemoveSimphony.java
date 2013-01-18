@@ -52,37 +52,37 @@ import repast.simphony.eclipse.action.FileSystemSelectionAction;
  * 
  */
 @SuppressWarnings("unchecked")
-public class RemoveSimphonyNatures extends FileSystemSelectionAction {
+public class RemoveSimphony extends FileSystemSelectionAction {
 
-	/**
-	 * Constructs this action instance and specifies that the selected objects
-	 * should be of type <code>IProject</code>
-	 */
-	public RemoveSimphonyNatures() {
-		super(IProject.class);
-	}
+  /**
+   * Constructs this action instance and specifies that the selected objects
+   * should be of type <code>IProject</code>
+   */
+  public RemoveSimphony() {
+    super(IProject.class);
+  }
 
-	/**
-	 * Runs the action for the selected objects
-	 * 
-	 * @param selectedProjects
-	 *            the selected projects
-	 * @see repast.simphony.agents.designer.ui.actions.FileSystemSelectionAction#run(org.eclipse.jface.action.IAction,
-	 *      java.util.List)
-	 */
-	@Override
-	public void run(IAction action, List selectedProjects) {
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext();) {
-		  // TODO remove all the natures for repast simphony
-//			IProject project = (IProject) iter.next();
-//			try {
-//				AgentBuilderPlugin.removeRepastSimphonyNature(project, null,
-//						true);
-//			} catch (CoreException e) {
-//				AgentBuilderPlugin.log(e);
-//				AgentBuilderPlugin.message(e.getMessage());
-//			}
-		}
-	}
+  /**
+   * Runs the action for the selected objects
+   * 
+   * @param selectedProjects
+   *          the selected projects
+   * @see repast.simphony.agents.designer.ui.actions.FileSystemSelectionAction#run(org.eclipse.jface.action.IAction,
+   *      java.util.List)
+   */
+  @Override
+  public void run(IAction action, List selectedProjects) {
+    for (Iterator iter = selectedProjects.iterator(); iter.hasNext();) {
+      // TODO remove all the natures for repast simphony
+      // IProject project = (IProject) iter.next();
+      // try {
+      // AgentBuilderPlugin.removeRepastSimphonyNature(project, null,
+      // true);
+      // } catch (CoreException e) {
+      // AgentBuilderPlugin.log(e);
+      // AgentBuilderPlugin.message(e.getMessage());
+      // }
+    }
+  }
 
 }

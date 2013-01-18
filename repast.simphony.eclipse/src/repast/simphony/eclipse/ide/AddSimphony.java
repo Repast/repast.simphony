@@ -50,13 +50,13 @@ import repast.simphony.eclipse.action.FileSystemSelectionAction;
  *         to the Original Author)
  * 
  */
-public class AddSimphonyNatures extends FileSystemSelectionAction {
+public class AddSimphony extends FileSystemSelectionAction {
 
   /**
    * Constructs this action instance and specifies that the selected objects
    * should be of type <code>IProject</code>
    */
-  public AddSimphonyNatures() {
+  public AddSimphony() {
     super(IProject.class);
   }
 
@@ -71,8 +71,10 @@ public class AddSimphonyNatures extends FileSystemSelectionAction {
    */
   @Override
   public void run(IAction action, List selectedProjects) {
-    // TODO add all the simphony natures here
     for (Iterator iter = selectedProjects.iterator(); iter.hasNext();) {
+      IProject project = (IProject) iter.next();
+      
+      
 //      IProject project = (IProject) iter.next();
 //      if (!AgentBuilderPlugin.hasJavaNature(project))
 //        continue;

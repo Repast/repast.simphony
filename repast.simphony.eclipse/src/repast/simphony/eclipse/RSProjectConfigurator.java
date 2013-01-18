@@ -12,6 +12,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,8 +46,7 @@ public class RSProjectConfigurator {
   public final static String LOCAL_JAVA_LAUNCH_DELEGATE = "org.eclipse.jdt.launching.localJavaApplication";
   public final static String LAUNCH_DELEGATE_RUN = "[run]";
   public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
-
-
+  
   /**
    * Configures a new project for Repast Simphony. This adds the GroovyRuntime to the project,
    * updates the classpath with the Repast Simphony classpath
@@ -57,18 +58,18 @@ public class RSProjectConfigurator {
     
     GroovyRuntime.addGroovyRuntime(project.getProject());
     updateClasspath(project);
-   
-    // TODO update the natures
-//    IProjectDescription description = project.getProject().getDescription();
-//    String[] prevNatures = description.getNatureIds();
-//    String[] newNatures = new String[prevNatures.length + 1];
-//    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-//    newNatures[prevNatures.length] = AgentBuilderPlugin.AGENT_BUILDER_NATURE_ID;
-//    description.setNatureIds(newNatures);
-//    project.setDescription(description, IResource.FORCE, monitor);
-
+    
+    // add the RepastSimphony nature which will use the repast config extension point
+    // to give other plugins (e.g. flowchart) the chance to configure their project
+    IProjectDescription description = project.getProject().getDescription();
+    String[] prevNatures = description.getNatureIds();
+    String[] newNatures = new String[prevNatures.length + 1];
+    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+    newNatures[prevNatures.length] = RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID;
+    description.setNatureIds(newNatures);
+    project.getProject().setDescription(description, IResource.FORCE, null);
+    
     project.save(monitor, true);
-
   }
   
   private void updateClasspath(IJavaProject project) throws JavaModelException {

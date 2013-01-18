@@ -34,6 +34,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class RepastSimphonyPlugin extends AbstractUIPlugin {
 
   public static final String REPAST_SIMPHONY_PLUGIN_ID = "repast.simphony.eclipse";
+  public static final String REPAST_SIMPHONY_NATURE_ID = REPAST_SIMPHONY_PLUGIN_ID + ".repast_simphony_nature";
+  
   public static final String REPAST_SIMPHONY_PLUGIN_VERSION = "2.0.1";
 
   public static final String JAR_FILE = "repast.simphony.bin_and_src.jar";
