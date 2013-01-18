@@ -50,6 +50,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
+import repast.simphony.eclipse.RSProjectConfigurator;
 import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.eclipse.util.Utilities;
 import repast.simphony.eclipse.util.WorkspaceRunnableAdapter;
@@ -64,7 +65,6 @@ import repast.simphony.eclipse.util.WorkspaceRunnableAdapter;
  *         to the Original Author)
  * 
  */
-@SuppressWarnings("unchecked")
 public class NewProjectCreationWizard extends BasicNewResourceWizard implements INewWizard {
 
   public WizardNewProjectCreationPage mainPage;
@@ -199,19 +199,23 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       String mainDataSourcePluginDirectory = RepastSimphonyPlugin.getInstance()
           .getPluginInstallationDirectory();
 
-      String[][] variableMap = { { "%MODEL_NAME%", mainPage.getProjectName() },
-          { "%PROJECT_NAME%", javaProject.getElementName() },
-          { "%SCENARIO_DIRECTORY%", scenarioDirectory },
-          { "%PACKAGE%", mainPage.getProjectName() },
-          { "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
+      
       IFolder srcFolder = javaProject.getProject().getFolder(srcPath.removeFirstSegments(1));
       // IFolder packageFolder = srcFolder.getFolder(this.contextPage
       // .getPackage());
-      IFolder packageFolder = srcFolder.getFolder(mainPage.getProjectName().replace(" ", "_"));
+      String packageName = mainPage.getProjectName().replace(" ", "_");
+      packageName = packageName.substring(0, 1).toLowerCase() + packageName.substring(1, packageName.length());
+      IFolder packageFolder = srcFolder.getFolder(packageName);
       packageFolder.create(true, false, monitor);
+      
+      String[][] variableMap = { { "%MODEL_NAME%", mainPage.getProjectName() },
+          { "%PROJECT_NAME%", javaProject.getElementName() },
+          { "%SCENARIO_DIRECTORY%", scenarioDirectory },
+          { "%PACKAGE%", packageName },
+          { "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
 
       if (this.configureGroovyAndVisualEditing) {
-        repast.simphony.eclipse.util.Utilities
+        Utilities
             .copyFileFromPluginInstallation("ModelInitializer.agent", packageFolder,
                 "ModelInitializer.agent", variableMap, monitor);
         Utilities.copyFileFromPluginInstallation("ModelInitializer.txt", packageFolder,
@@ -225,11 +229,6 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
           variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("docs/index.html", newFolder, "index.html",
           variableMap, monitor);
-
-      // for distributed batch (see SIM-459)
-      newFolder = srcFolder.getFolder("../transferFiles");
-      if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
 
       // for distributed batch (see SIM-459)
       newFolder = srcFolder.getFolder("../output");
@@ -425,10 +424,9 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,
           monitor);
 
-      // TODO add allthe natures for repast sim projects
-//      RepastSimphonyPlugin.getInstance().addRepastSimphonyNature(javaProject.getProject(),
-//          new SubProgressMonitor(monitor, 1), false, this.configureGroovyAndVisualEditing);
-
+      RSProjectConfigurator configurator = new RSProjectConfigurator();
+      configurator.configureNewProject(javaProject, new SubProgressMonitor(monitor, 1));
+      
       try {
         selectAndReveal(javaProject.findPackageFragment(packageFolder.getFullPath())
             .getCorrespondingResource(), this.getWorkbench().getActiveWorkbenchWindow());

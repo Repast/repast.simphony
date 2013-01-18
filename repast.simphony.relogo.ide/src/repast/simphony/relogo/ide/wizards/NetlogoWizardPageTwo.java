@@ -58,21 +58,15 @@ import org.eclipse.jdt.internal.ui.util.CoreUtility;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.internal.ui.wizards.ClassPathDetector;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
-import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
-import repast.simphony.agents.designer.core.AgentBuilderPlugin;
+import repast.simphony.eclipse.RSProjectConfigurator;
 
 
 
@@ -260,20 +254,22 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 			}
 			
 			
+			
 			initializeBuildPath(JavaCore.create(fCurrProject), new SubProgressMonitor(monitor, 2));
 			configureJavaProject(new SubProgressMonitor(monitor, 3)); // create the Java project to allow the use of the new source folder page
-			GroovyRuntime.addGroovyRuntime(fCurrProject);
+			RSProjectConfigurator configurator = new RSProjectConfigurator();
+			configurator.configureNewProject(JavaCore.create(fCurrProject), new SubProgressMonitor(monitor, 1));
 						
-			Display.getDefault().syncExec(new Runnable() {
-			      public void run() {
-			    	  try {
-						AgentBuilderPlugin.addRepastSimphonyNature(fCurrProject, null, false, false);
-					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			      }
-			});
+//			Display.getDefault().syncExec(new Runnable() {
+//			      public void run() {
+//			    	  try {
+//						AgentBuilderPlugin.addRepastSimphonyNature(fCurrProject, null, false, false);
+//					} catch (CoreException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//			      }
+//			});
 			
 			
 
