@@ -373,7 +373,8 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
-      Utilities.createLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
+      RSProjectConfigurator configurator = new RSProjectConfigurator();
+      configurator.createLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
 
       newFolder = srcFolder.getFolder("../batch");
       if (!newFolder.exists())
@@ -424,7 +425,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,
           monitor);
 
-      RSProjectConfigurator configurator = new RSProjectConfigurator();
+      
       configurator.configureNewProject(javaProject, new SubProgressMonitor(monitor, 1));
       
       try {

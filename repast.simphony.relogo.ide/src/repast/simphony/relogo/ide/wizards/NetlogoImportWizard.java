@@ -57,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
+import repast.simphony.eclipse.RSProjectConfigurator;
 import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.eclipse.util.Utilities;
 import repast.simphony.relogo.ide.ReLogoFilter;
@@ -400,7 +401,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
       Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
-      Utilities.createReLogoLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
+      new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
       // loadStringTemplates();
       // exportLauncherTemplates(newFolder, projectName);
 
