@@ -36,8 +36,12 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 
+import repast.simphony.eclipse.RSProjectConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.eclipse.action.FileSystemSelectionAction;
 
 /**
@@ -51,7 +55,6 @@ import repast.simphony.eclipse.action.FileSystemSelectionAction;
  *         to the Original Author)
  * 
  */
-@SuppressWarnings("unchecked")
 public class RemoveSimphony extends FileSystemSelectionAction {
 
   /**
@@ -70,19 +73,22 @@ public class RemoveSimphony extends FileSystemSelectionAction {
    * @see repast.simphony.agents.designer.ui.actions.FileSystemSelectionAction#run(org.eclipse.jface.action.IAction,
    *      java.util.List)
    */
+  @SuppressWarnings("rawtypes")
   @Override
   public void run(IAction action, List selectedProjects) {
     for (Iterator iter = selectedProjects.iterator(); iter.hasNext();) {
-      // TODO remove all the natures for repast simphony
-      // IProject project = (IProject) iter.next();
-      // try {
-      // AgentBuilderPlugin.removeRepastSimphonyNature(project, null,
-      // true);
-      // } catch (CoreException e) {
-      // AgentBuilderPlugin.log(e);
-      // AgentBuilderPlugin.message(e.getMessage());
-      // }
+
+      try {
+        IProject project = (IProject) iter.next();
+        if (project.hasNature(RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID)) {
+          new RSProjectConfigurator().deconfigureProject(JavaCore.create(project),
+              new NullProgressMonitor());
+        }
+      } catch (CoreException ex) {
+        RepastSimphonyPlugin.getInstance().log(ex);
+      }
     }
+
   }
 
 }

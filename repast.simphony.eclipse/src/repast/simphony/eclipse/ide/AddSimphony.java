@@ -35,8 +35,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 
+import repast.simphony.eclipse.RSProjectConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.eclipse.action.FileSystemSelectionAction;
 
 /**
@@ -69,26 +74,18 @@ public class AddSimphony extends FileSystemSelectionAction {
    * @see repast.simphony.agents.designer.ui.actions.FileSystemSelectionAction#run(org.eclipse.jface.action.IAction,
    *      java.util.List)
    */
+  @SuppressWarnings("rawtypes")
   @Override
   public void run(IAction action, List selectedProjects) {
     for (Iterator iter = selectedProjects.iterator(); iter.hasNext();) {
-      IProject project = (IProject) iter.next();
-      
-      
-//      IProject project = (IProject) iter.next();
-//      if (!AgentBuilderPlugin.hasJavaNature(project))
-//        continue;
-//      try {
-//        // add Repast Simphony nature
-//        AgentBuilderPlugin.addRepastSimphonyNature(project, null, true, true);
-//        // add flow4j runtime library
-//        // TODO: Add repast.jar for the runtime (1)
-//        // AgentBuilderPlugin.addFlow4jRuntimeLibrary(AgentBuilderPlugin.getJavaProject(project));
-//
-//      } catch (CoreException e) {
-//        AgentBuilderPlugin.log(e);
-//        AgentBuilderPlugin.message(e.getMessage());
-//      }
+      try {
+        IProject project = (IProject) iter.next();
+        if ((!project.hasNature(RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID)) && project.hasNature(JavaCore.NATURE_ID) ) {
+          new RSProjectConfigurator().configureNewProject(JavaCore.create(project), new NullProgressMonitor());
+        }
+      } catch (CoreException ex) {
+        RepastSimphonyPlugin.getInstance().log(ex);
+      }
     }
   }
 

@@ -309,7 +309,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
 
   public void log(Throwable e) {
     getLog().log(
-        new Status(IStatus.ERROR, getBundle().getSymbolicName(), IStatus.ERROR, "Error", e));
+        new Status(IStatus.ERROR, getBundle().getSymbolicName(), IStatus.ERROR, "Error: " + e.getMessage(), e));
   }
   
   /**

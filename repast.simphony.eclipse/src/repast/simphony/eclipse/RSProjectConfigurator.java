@@ -33,6 +33,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import repast.simphony.eclipse.util.Utilities;
+
 /**
  * Configures a Repast Simphony project by setting the classpath, adding the
  * natures, etc.
@@ -61,15 +63,35 @@ public class RSProjectConfigurator {
     
     // add the RepastSimphony nature which will use the repast config extension point
     // to give other plugins (e.g. flowchart) the chance to configure their project
-    IProjectDescription description = project.getProject().getDescription();
-    String[] prevNatures = description.getNatureIds();
-    String[] newNatures = new String[prevNatures.length + 1];
-    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-    newNatures[prevNatures.length] = RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID;
-    description.setNatureIds(newNatures);
-    project.getProject().setDescription(description, IResource.FORCE, null);
-    
+    Utilities.addNature(project.getProject(), RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID);
     project.save(monitor, true);
+  }
+  
+  /**
+   * Removes the repast simphony from the specified project. This removes the nature
+   * and the classpath container.
+   * 
+   * @param project
+   * @param monitor
+   * @throws CoreException
+   */
+  public void deconfigureProject(IJavaProject project, IProgressMonitor monitor) throws CoreException {
+    GroovyRuntime.removeGroovyNature(project.getProject());
+    removeClasspath(project);
+    
+    Utilities.removeNature(project.getProject(), RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID);
+    project.save(monitor, true);
+  }
+  
+  private void removeClasspath(IJavaProject project) throws JavaModelException {
+    IClasspathEntry rsEntry = JavaCore.newContainerEntry(new Path(RepastProjectClasspathContainer.JAR_CLASSPATH_DEFAULT));
+    IClasspathEntry[] entries = project.getRawClasspath();
+    List<IClasspathEntry> newEntries = new ArrayList<IClasspathEntry>();
+    for (IClasspathEntry entry : entries) {
+      if (!entry.equals(rsEntry)) newEntries.add(entry);
+    }
+    project.setRawClasspath(newEntries.toArray(new IClasspathEntry[0]), null);
+    
   }
   
   private void updateClasspath(IJavaProject project) throws JavaModelException {

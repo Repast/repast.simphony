@@ -23,18 +23,21 @@ public class RepastSimphonyNature implements IProjectNature {
   private IProject project;
 
   @Override
+  /**
+   * Calls configure on all the repast.simphony.project.config extensions.
+   */
   public void configure() throws CoreException {
     IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(CONFIG_EXTENSION_ID);
     for (IConfigurationElement element : configs) {
       IContributor contrib = element.getContributor();
       Object obj = element.createExecutableExtension("class");
       if (obj instanceof IRepastProjectConfigurator) {
-        runExtension((IRepastProjectConfigurator) obj, project, contrib.getName());
+        callConfig((IRepastProjectConfigurator) obj, project, contrib.getName());
       }
     }
   }
 
-  private void runExtension(IRepastProjectConfigurator config, IProject project,
+  private void callConfig(IRepastProjectConfigurator config, IProject project,
       String contribName) {
     try {
       config.configureProject(project);
@@ -44,10 +47,31 @@ public class RepastSimphonyNature implements IProjectNature {
               "Error during project configuration", ex)));
     }
   }
+  
+  private void callDeconfig(IRepastProjectConfigurator config, IProject project,
+      String contribName) {
+    try {
+      config.deconfigureProject(project);
+    } catch (Exception ex) {
+      RepastSimphonyPlugin.getInstance().log(
+          new CoreException(new Status(Status.ERROR, contribName,
+              "Error during project deconfiguration", ex)));
+    }
+  }
 
+  /**
+   * Calls deconfigure on all the the repast.simphony.project.config extensions.
+   */
   @Override
   public void deconfigure() throws CoreException {
-
+    IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(CONFIG_EXTENSION_ID);
+    for (IConfigurationElement element : configs) {
+      IContributor contrib = element.getContributor();
+      Object obj = element.createExecutableExtension("class");
+      if (obj instanceof IRepastProjectConfigurator) {
+        callDeconfig((IRepastProjectConfigurator) obj, project, contrib.getName());
+      }
+    }
   }
 
   @Override

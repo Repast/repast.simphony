@@ -34,9 +34,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import repast.simphony.eclipse.RepastSimphonyPlugin;
@@ -48,6 +54,31 @@ import repast.simphony.eclipse.RepastSimphonyPlugin;
  *         to the Original Author)
  */
 public class Utilities {
+  
+  public static void addNature(IProject project, String natureId) throws CoreException {
+    
+    IProjectDescription description = project.getProject().getDescription();
+    String[] prevNatures = description.getNatureIds();
+    String[] newNatures = new String[prevNatures.length + 1];
+    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+    newNatures[prevNatures.length] = natureId;
+    description.setNatureIds(newNatures);
+    project.getProject().setDescription(description, IResource.FORCE, null);
+  }
+  
+  public static void removeNature(IProject project, String natureId) throws CoreException {
+    IProjectDescription description = project.getDescription();
+    String[] prevNatures = description.getNatureIds();
+    List<String> newNatures = new ArrayList<String>();
+    for (String nature : prevNatures) {
+      if (!nature.equals(natureId)) {
+        newNatures.add(nature);
+      }
+    }
+    
+    description.setNatureIds(newNatures.toArray(new String[0]));
+    project.getProject().setDescription(description, IResource.FORCE, null);
+  }
 
   
   public static void copyFileFromPluginInstallation(String sourceFileName,
