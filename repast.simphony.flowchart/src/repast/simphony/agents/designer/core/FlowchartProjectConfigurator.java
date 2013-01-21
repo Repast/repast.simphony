@@ -4,11 +4,10 @@
 package repast.simphony.agents.designer.core;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import repast.simphony.eclipse.IRepastProjectConfigurator;
+import repast.simphony.eclipse.util.Utilities;
 
 /**
  * @author Nick Collier
@@ -24,13 +23,7 @@ public class FlowchartProjectConfigurator implements IRepastProjectConfigurator 
    */
   @Override
   public void configureProject(IProject project) throws CoreException {
-    IProjectDescription description = project.getProject().getDescription();
-    String[] prevNatures = description.getNatureIds();
-    String[] newNatures = new String[prevNatures.length + 1];
-    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-    newNatures[prevNatures.length] = AgentBuilderPlugin.AGENT_BUILDER_NATURE_ID;
-    description.setNatureIds(newNatures);
-    project.setDescription(description, IResource.FORCE, null);
+    Utilities.addNature(project, AgentBuilderPlugin.AGENT_BUILDER_NATURE_ID);
   }
 
   /*
@@ -42,8 +35,6 @@ public class FlowchartProjectConfigurator implements IRepastProjectConfigurator 
    */
   @Override
   public void deconfigureProject(IProject project)  throws CoreException {
-    System.out.println("deconfigure");
-
+    Utilities.removeNature(project, AgentBuilderPlugin.AGENT_BUILDER_NATURE_ID);
   }
-
 }
