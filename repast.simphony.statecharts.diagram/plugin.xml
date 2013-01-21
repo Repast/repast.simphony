@@ -827,6 +827,24 @@
       <clientContext id="repast.simphony.statecharts.diagramDefaultCtx"/>
       <clientContext id="repast.simphony.statecharts.diagramCtx_2006_3006"/>
    </extension>
+<extension
+      id="repast_simphony_statechart_nature"
+      name="Repast Simphony Statechart Nature"
+      point="org.eclipse.core.resources.natures">
+   <runtime>
+      <run
+            class="repast.simphony.statecharts.handlers.StatechartNature">
+      </run>
+   </runtime>
+</extension>
+<extension
+      id="statechart_config"
+      name="Repast Simphony Statechart Configurator"
+      point="repast.simphony.project.config">
+   <configurator
+         class="repast.simphony.statecharts.handlers.StatechartConfigurator">
+   </configurator>
+</extension>
 
 
 
