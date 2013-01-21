@@ -328,12 +328,14 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
             buf.append(className);
             buf.append(".createStateChart(this, 1);");
             aType.createField(buf.toString(), null, true, monitor);
+            agent.save(monitor, true);
           }
         } catch (Throwable ex) {
           // ignore any code creation errors as re-throwing the error causes the rest of the 
           // chart creation to abort.
           //new CoreException(new Status(IStatus., StatechartDiagramEditorPlugin.ID, "Error while inserting statechart code into agent.", 
           //    ex));
+          ex.printStackTrace();
         }
       }
     }
