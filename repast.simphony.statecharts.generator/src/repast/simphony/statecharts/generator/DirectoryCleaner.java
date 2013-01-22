@@ -3,7 +3,10 @@
  */
 package repast.simphony.statecharts.generator;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +16,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IAnnotation;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * Cleans out a tree of directories.
@@ -35,7 +32,10 @@ public class DirectoryCleaner {
     excludes.add(".gitignore");
   }
 
+  private String match;
+
   public void run(String root, String uuid) {
+    this.match = "@GeneratedFor(\"" + uuid + "\")";
     File f = new File(root);
     process(f, uuid);
   }
@@ -44,6 +44,28 @@ public class DirectoryCleaner {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     IPath location = Path.fromOSString(file.getAbsolutePath());
     return workspace.getRoot().getFileForLocation(location);
+  }
+
+  private boolean doDelete(File file, String uuid) {
+    BufferedReader in = null;
+    try {
+      in = new BufferedReader(new FileReader(file));
+      String line = null;
+      while ((line = in.readLine()) != null) {
+        if (line.contains(match))
+          return true;
+      }
+    } catch (IOException ex) {
+
+    } finally {
+      try {
+        if (in != null)
+          in.close();
+      } catch (IOException e) {
+      }
+    }
+
+    return false;
   }
 
   private void process(File file, String uuid) {
@@ -57,23 +79,12 @@ public class DirectoryCleaner {
         }
       } else {
         IFile ifile = getIFile(file);
-        IJavaElement element = JavaCore.create(ifile);
-        if (element != null && element.getElementType() == IJavaElement.COMPILATION_UNIT) {
-          try {
-            if (((ICompilationUnit) element).getTypes() != null
-                && ((ICompilationUnit) element).getTypes().length > 0) {
-              IType type = ((ICompilationUnit) element).getTypes()[0];
-              IAnnotation ann = type.getAnnotation("GeneratedFor");
-              if (ann != null && ann.getMemberValuePairs()[0].getValue().equals(uuid)) {
-                element = null;
-                ifile.delete(true, null);
-              }
+        if (ifile.getFileExtension().equals("java") || ifile.getFileExtension().equals("groovy")) {
+          if (doDelete(file, uuid))
+            try {
+              ifile.delete(true, null);
+            } catch (CoreException e) {
             }
-          } catch (JavaModelException e) {
-            // just ignore any errors and continue.
-          } catch (CoreException ex) {
-            // just ignore and continue
-          }
         }
       }
     }
