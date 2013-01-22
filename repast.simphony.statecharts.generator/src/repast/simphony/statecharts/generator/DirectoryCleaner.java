@@ -33,9 +33,19 @@ public class DirectoryCleaner {
   }
 
   private String match;
+  private String svgPath;
 
-  public void run(String root, String uuid) {
+  /**
+   * Cleans the directories starting at root of all the java and groovy with 
+   * the specified uuid and any svg files that match svgPath
+   * 
+   * @param root
+   * @param svgPath
+   * @param uuid
+   */
+  public void run(String root, String svgPath, String uuid) {
     this.match = "@GeneratedFor(\"" + uuid + "\")";
+    this.svgPath = svgPath;
     File f = new File(root);
     process(f, uuid);
   }
@@ -85,6 +95,11 @@ public class DirectoryCleaner {
               ifile.delete(true, null);
             } catch (CoreException e) {
             }
+        } else if (ifile.getProjectRelativePath().toString().equals(svgPath)) {
+          try {
+            ifile.delete(true, null);
+          } catch (CoreException e) {
+          }
         }
       }
     }

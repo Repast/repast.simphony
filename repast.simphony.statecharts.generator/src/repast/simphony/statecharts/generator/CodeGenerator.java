@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,7 +70,7 @@ public class CodeGenerator {
       // no class name so we can't construct a file name to write the code to).
       if (new StateMachineValidator().validate(statemachine).getSeverity() == IStatus.ERROR) return null;
       
-      IPath srcPath = addSrcPath(project, statemachine.getUuid(), monitor);
+      IPath srcPath = addSrcPath(project, statemachine, monitor);
       IPath projectLocation = project.getLocation();
       srcPath = projectLocation.append(srcPath.lastSegment());
       
@@ -106,7 +105,7 @@ public class CodeGenerator {
 
   }
   
-  private IPath addSrcPath(IProject project, String uuid, IProgressMonitor monitor) throws CoreException {
+  private IPath addSrcPath(IProject project, StateMachine statemachine, IProgressMonitor monitor) throws CoreException {
     IJavaProject javaProject = JavaCore.create(project);
     
     // workspace relative
@@ -137,7 +136,8 @@ public class CodeGenerator {
     } else {
       DirectoryCleaner cleaner = new DirectoryCleaner();
       //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
-      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString(), uuid);
+      String svgPath = SRC_GEN + "/" + ((statemachine.getPackage() + "." + statemachine.getClassName()).replace(".", "/")) + ".svg";
+      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString(), svgPath, statemachine.getUuid());
     }
     
     return srcPath;

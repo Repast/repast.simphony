@@ -31,6 +31,8 @@ import org.junit.Test;
 public class DirectoryCleanerTests {
   
   private static String UUID = "_L8QJ0GPqEeK6zsoQEt4knA";
+  private static String PATH = "src-gen/anl/chart";
+  private static String SVG_PATH = "src-gen/anl/chart/Chart.svg";
   
   public IProject resetFolder() throws CoreException, IOException {
     IWorkspace workspace =  ResourcesPlugin.getWorkspace();
@@ -38,8 +40,15 @@ public class DirectoryCleanerTests {
     if (!project.exists()) project.create(null);
     project.open(null);
     
-    IFolder folder = project.getFolder("test_out");
-    if (folder.exists()) folder.delete(true, null);
+    IFolder folder = project.getFolder(PATH);
+    if (folder.exists()) {
+      folder.delete(true, null);
+    } 
+    
+    if (!folder.getParent().exists()) {
+      project.getFolder("src-gen").create(true, true, null);
+      project.getFolder("src-gen/anl").create(true, true, null);
+    }
     folder.create(true, true, null);
     
     return project;
@@ -53,21 +62,22 @@ public class DirectoryCleanerTests {
     IPath p = new Path(path + "/test_data/" + fromName);
     
     File from = p.toFile();
-    IFile file = project.getFile("test_out/" + toName);
+    IFile file = project.getFile(PATH +"/" + toName);
     file.create(new FileInputStream(from), true, null);
   }
 
   @Test
   public void testJava() throws IOException, CoreException {
     IProject proj = resetFolder();
-    IFolder folder = proj.getFolder("test_out");
+    IFolder folder = proj.getFolder(PATH);
     copyFile(proj, "Y.j", "Y.java");
     copyFile(proj, "dummy.txt", "dummy.txt");
     assertTrue(folder.getFile("Y.java").exists());
     assertTrue(folder.getFile("dummy.txt").exists());
     
     DirectoryCleaner cleaner = new DirectoryCleaner();
-    cleaner.run(proj.getLocation().toFile().getAbsolutePath(), UUID);
+    String rootPath = proj.getLocation().append("src-gen").toFile().getAbsolutePath();
+    cleaner.run(rootPath, SVG_PATH, UUID);
     
     assertTrue(!folder.getFile("Y.java").exists());
     assertTrue(folder.getFile("dummy.txt").exists());
@@ -76,23 +86,45 @@ public class DirectoryCleanerTests {
   @Test
   public void testGroovy() throws IOException, CoreException {
     IProject proj = resetFolder();
-    IFolder folder = proj.getFolder("test_out");
+    IFolder folder = proj.getFolder(PATH);
     copyFile(proj, "X.g", "X.groovy");
     copyFile(proj, "dummy.txt", "dummy.txt");
     assertTrue(folder.getFile("X.groovy").exists());
     assertTrue(folder.getFile("dummy.txt").exists());
     
     DirectoryCleaner cleaner = new DirectoryCleaner();
-    cleaner.run(proj.getLocation().toFile().getAbsolutePath(), UUID);
+    String rootPath = proj.getLocation().append("src-gen").toFile().getAbsolutePath();
+    cleaner.run(rootPath, SVG_PATH, UUID);
     
     assertTrue(!folder.getFile("X.groovy").exists());
     assertTrue(folder.getFile("dummy.txt").exists());
   }
   
   @Test
+  public void testSVG() throws IOException, CoreException {
+    IProject proj = resetFolder();
+    IFolder folder = proj.getFolder(PATH);
+    copyFile(proj, "Chart.svg", "Chart.svg");
+    copyFile(proj, "X.g", "X.groovy");
+    copyFile(proj, "dummy.txt", "dummy.txt");
+    
+    assertTrue(folder.getFile("X.groovy").exists());
+    assertTrue(folder.getFile("dummy.txt").exists());
+    assertTrue(folder.getFile("Chart.svg").exists());
+    
+    DirectoryCleaner cleaner = new DirectoryCleaner();
+    String rootPath = proj.getLocation().append("src-gen").toFile().getAbsolutePath();
+    cleaner.run(rootPath, SVG_PATH, UUID);
+    
+    assertTrue(!folder.getFile("X.groovy").exists());
+    assertTrue(!folder.getFile("Chart.svg").exists());
+    assertTrue(folder.getFile("dummy.txt").exists());
+  }
+  
+  @Test
   public void testBoth() throws IOException, CoreException {
     IProject proj = resetFolder();
-    IFolder folder = proj.getFolder("test_out");
+    IFolder folder = proj.getFolder(PATH);
     copyFile(proj, "X.g", "X.groovy");
     copyFile(proj, "Y.j", "Y.java");
     copyFile(proj, "dummy.txt", "dummy.txt");
@@ -101,7 +133,8 @@ public class DirectoryCleanerTests {
     assertTrue(folder.getFile("Y.java").exists());
     
     DirectoryCleaner cleaner = new DirectoryCleaner();
-    cleaner.run(proj.getLocation().toFile().getAbsolutePath(), UUID);
+    String rootPath = proj.getLocation().append("src-gen").toFile().getAbsolutePath();
+    cleaner.run(rootPath, SVG_PATH, UUID);
     
     assertTrue(!folder.getFile("X.groovy").exists());
     assertTrue(!folder.getFile("Y.java").exists());
@@ -111,7 +144,7 @@ public class DirectoryCleanerTests {
   @Test
   public void testUUID() throws IOException, CoreException {
     IProject proj = resetFolder();
-    IFolder folder = proj.getFolder("test_out");
+    IFolder folder = proj.getFolder(PATH);
     copyFile(proj, "X.g", "X.groovy");
     copyFile(proj, "Y.j", "Y.java");
     copyFile(proj, "dummy.txt", "dummy.txt");
@@ -120,7 +153,8 @@ public class DirectoryCleanerTests {
     assertTrue(folder.getFile("Y.java").exists());
     
     DirectoryCleaner cleaner = new DirectoryCleaner();
-    cleaner.run(proj.getLocation().toFile().getAbsolutePath(), "ab");
+    String rootPath = proj.getLocation().append("src-gen").toFile().getAbsolutePath();
+    cleaner.run(rootPath, SVG_PATH, "ab");
     
     // bad uuid so all should exist
     assertTrue(folder.getFile("X.groovy").exists());
