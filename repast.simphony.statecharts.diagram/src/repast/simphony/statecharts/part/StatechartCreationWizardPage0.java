@@ -1,5 +1,6 @@
 package repast.simphony.statecharts.part;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -139,8 +140,24 @@ public class StatechartCreationWizardPage0 extends WizardPage {
     btnRelogo = new Button(grpDefaultLanguage, SWT.RADIO);
     btnRelogo.setText("ReLogo");
     agentClassText.addModifyListener(validator);
-
+    
+    generateDefaultNames();
     setPageComplete(validatePage());
+  }
+  
+  private void generateDefaultNames() {
+    nameTxt.setText("Statechart");
+    classNameTxt.setText("Statechart");
+    if (agentType != null && agentType.length() > 0) {
+      int index = agentType.lastIndexOf(".");
+      if (index != -1) {
+        packageTxt.setText(agentType.substring(0, index) + ".chart");
+      } else {
+        packageTxt.setText("chart");
+      }
+    } else {
+      packageTxt.setText("chart");
+    }
   }
 
   protected String getStatechartName() {
@@ -259,6 +276,13 @@ public class StatechartCreationWizardPage0 extends WizardPage {
         setErrorMessage("Agent class is not valid. '" + val + "' is not a valid identifier.");
         return false;
       }
+    }
+    
+    String fqn = getPackage() + "." + getClassName();
+    IFile file = javaProject.getProject().getFile("src-gen/" + fqn.replace(".", "/") + ".java");
+    if (file.exists()) {
+      setErrorMessage("Chart class already exists in the specified package. Change the chart name or the package.");
+      return false;
     }
     
     setErrorMessage(null);
