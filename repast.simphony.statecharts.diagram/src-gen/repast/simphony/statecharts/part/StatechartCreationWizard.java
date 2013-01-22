@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -306,36 +307,21 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
     private void processAgent(IProgressMonitor monitor) {
       boolean agentIsOK = false;
       try {
-        agentIsOK = agent.isStructureKnown();
+        agentIsOK = agent != null && agent.isStructureKnown();
       } catch (JavaModelException ex) {
         agentIsOK = false;
       }
-      if (agent != null && agentIsOK) {
+      
+      if (agentIsOK) {
         try {
-          agent.createImport(modelPropsPage.getPackage() + "." + modelPropsPage.getClassName(),
-              null, monitor);
-          String agentTypeFromProps = modelPropsPage.getAgentClassName();
-          IType aType = agent.getTypes()[0];
-          String agentType = agent.getParent().getElementName() + "." + aType.getElementName();
-          if (agentType.equals(agentTypeFromProps)) {
-            StringBuilder buf = new StringBuilder("\t");
-            String className = modelPropsPage.getClassName();
-            buf.append(className);
-            buf.append(" ");
-            buf.append(className.substring(0, 1).toLowerCase());
-            buf.append(className.subSequence(1, className.length()));
-            buf.append(" = ");
-            buf.append(className);
-            buf.append(".createStateChart(this, 1);");
-            aType.createField(buf.toString(), null, true, monitor);
-            agent.save(monitor, true);
-          }
+          StatechartCodeAdder adder = StatechartCodeAdderFactory.createCodeAdder(agent, monitor);
+          adder.run(modelPropsPage.getPackage(), modelPropsPage.getClassName(), modelPropsPage.getAgentClassName());
         } catch (Throwable ex) {
           // ignore any code creation errors as re-throwing the error causes the rest of the 
           // chart creation to abort.
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while inserting statechart code into agent", ex);
           //new CoreException(new Status(IStatus., StatechartDiagramEditorPlugin.ID, "Error while inserting statechart code into agent.", 
           //    ex));
-          ex.printStackTrace();
         }
       }
     }
