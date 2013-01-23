@@ -36,6 +36,7 @@ Export-Package:
  com.l2fprod.common.util,
  com.l2fprod.common.util.converter,
  info.clearthought.layout,
+ javax.media.opengl,
  org.pietschy.wizard,
  org.pietschy.wizard.models,
  org.pietschy.wizard.pane,
@@ -55,7 +56,9 @@ Export-Package:
  saf.v3d.render,
  saf.v3d.scene,
  saf.v3d.util
-Bundle-ClassPath: lib/dockingFrames-1.0.8p3a-saf.jar,
+Bundle-ClassPath: lib/jogl-all.jar,
+ lib/gluegen-rt.jar,
+ lib/dockingFrames-1.0.8p3a-saf.jar,
  lib/forms-1.0.5.jar,
  lib/jh.jar,
  lib/l2fprod-common-all.jar,
