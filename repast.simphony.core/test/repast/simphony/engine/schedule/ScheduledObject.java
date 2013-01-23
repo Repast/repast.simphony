@@ -11,23 +11,9 @@ import java.util.List;
  * @version $Revision: 1.1 $ $Date: 2005/12/21 22:26:02 $
  */
 public class ScheduledObject  {
-
-  public enum MethodName {
-    START, INTERVAL, PRIORITY, START_PARAMS, END
-  };
   
   List<Result> results = new ArrayList<Result>();
   ISchedule schedule;
-
-  public class Result {
-    MethodName methodName;
-    double tick;
-
-    public Result(MethodName methodName, double tick) {
-      this.methodName = methodName;
-      this.tick = tick;
-    }
-  }
 
   public ScheduledObject(ISchedule schedule) {
     this.schedule = schedule;

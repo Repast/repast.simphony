@@ -657,87 +657,87 @@ public class ScheduleTest extends TestCase {
   public void testScheduledMethodII() {
     ScheduledObject obj = new ScheduledObject(schedule);
     ScheduleParameters sp = ScheduleParameters.createOneTime(2);
-    schedule.schedule(sp, obj, ScheduledObject.MethodName.START_PARAMS, "3.14");
+    schedule.schedule(sp, obj, MethodName.START_PARAMS, "3.14");
     schedule.execute();
     assertEquals(3.14, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(0).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(0).methodName);
   }
 
   public void testScheduledMethod() {
     ScheduledObject obj = new ScheduledObject(schedule);
     schedule.schedule(obj);
-    schedule.schedule(obj, ScheduledObject.MethodName.START_PARAMS);
+    schedule.schedule(obj, MethodName.START_PARAMS);
     // obj has a startOnly method scheduled to start at 3.0
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
 
     // method executes at 3.5 and an inserts the parameter above into
     // results
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
 
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(4, obj.results.size());
 
     schedule.execute();
     // obj has a priority method scheduled to start at 8.0 with priority of -INF
     // and interval of 2.0
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(8.0, obj.results.get(4).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(4).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(4).methodName);
     assertEquals(8.0, obj.results.get(5).tick);
     // comes last because priority was -INF
-    assertEquals(ScheduledObject.MethodName.PRIORITY, obj.results.get(5).methodName);
+    assertEquals(MethodName.PRIORITY, obj.results.get(5).methodName);
 
     assertEquals(6, obj.results.size());
 
     schedule.executeEndActions();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(8.0, obj.results.get(4).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(4).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(4).methodName);
     assertEquals(8.0, obj.results.get(5).tick);
     // comes last because priority was -INF
-    assertEquals(ScheduledObject.MethodName.PRIORITY, obj.results.get(5).methodName);
+    assertEquals(MethodName.PRIORITY, obj.results.get(5).methodName);
 
-    assertEquals(ScheduledObject.MethodName.END, obj.results.get(6).methodName);
+    assertEquals(MethodName.END, obj.results.get(6).methodName);
     assertEquals(Double.POSITIVE_INFINITY, obj.results.get(6).tick);
 
     assertEquals(7, obj.results.size());
