@@ -40,6 +40,7 @@ public class ChartPropertiesStep extends PanelWizardStep  {
   private JButton bkColorBtn = new JButton();
   private JButton gridColorBtn = new JButton();
   private JCheckBox showGridChk = new JCheckBox();
+  private JCheckBox showLegendChk = new JCheckBox();
   private JSpinner rangeSpn = new JSpinner();
   private JLabel gridLineLabel;
 
@@ -48,7 +49,7 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     this.setLayout(new BorderLayout());
     FormLayout layout = new FormLayout("4dlu, pref, 3dlu, pref, pref:grow", 
         "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, " +
-        "pref, 3dlu, pref, 3dlu, pref");
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
     builder.addSeparator("Chart Labels", cc.xyw(1, 1, 5));
@@ -73,6 +74,10 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     builder.addLabel("X-Axis Range:", cc.xy(2, 17));
     builder.add(rangeSpn, cc.xy(4, 17));
     rangeSpn.setModel(new SpinnerNumberModel(-1, -1, 9000, 1));
+    
+    builder.addLabel("Show Legend:", cc.xy(2, 19));
+    builder.add(showLegendChk, cc.xy(4, 19));
+    
     
     add(builder.getPanel(), BorderLayout.CENTER);
     addListeners();
@@ -117,6 +122,8 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     showGridChk.setSelected(descriptor.isShowGrid());
     gridColorBtn.setIcon(new SquareIcon(20, 10, descriptor.getGridLineColor()));
     rangeSpn.setValue(descriptor.getPlotRangeLength());
+    System.out.println(descriptor.doShowLegend());
+    showLegendChk.setSelected(descriptor.doShowLegend());
     
     if (!descriptor.isShowGrid()) {
       gridColorBtn.setEnabled(false);
@@ -135,6 +142,7 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     descriptor.setBackground(((SquareIcon)bkColorBtn.getIcon()).getColor());
     descriptor.setGridLineColor(((SquareIcon)gridColorBtn.getIcon()).getColor());
     descriptor.setShowGrid(showGridChk.isSelected());
+    descriptor.setShowLegend(showLegendChk.isSelected());
     descriptor.setPlotRangeLength(((Integer)rangeSpn.getValue()).intValue());
   }
 }

@@ -19,6 +19,10 @@ public class ChartDescriptor implements Descriptor {
   protected ChartType type = ChartType.TIME_SERIES;
   protected Color background, gridLineColor;
   protected boolean showGrid = true;
+  protected boolean showLegend = true;
+  
+  // used by xstream serialization
+  protected ChartDescriptor() {}
 
   public ChartDescriptor(String name) {
     this.name = name;
@@ -150,5 +154,13 @@ public class ChartDescriptor implements Descriptor {
    */
   public void setChartTitle(String chartTitle) {
     this.chartTitle = chartTitle;
+  }
+  
+  public boolean doShowLegend() {
+    return showLegend;
+  }
+  
+  public void setShowLegend(boolean val) {
+    this.showLegend = val;
   }
 }
