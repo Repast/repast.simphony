@@ -213,7 +213,6 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
 
   private void scheduleMethods(Context context, ISchedule schedule) {
     for (PickData data : pickData) {
-      System.out.println(data.annotation + ": " + data.method);
       if (Modifier.isStatic(data.method.getModifiers())) {
         StaticMethodAction action = new StaticMethodAction(new DynamicTargetAction(data.method));
         schedule.schedule(data.getParameters(), action);
