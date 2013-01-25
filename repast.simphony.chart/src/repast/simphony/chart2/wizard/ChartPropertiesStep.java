@@ -122,7 +122,6 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     showGridChk.setSelected(descriptor.isShowGrid());
     gridColorBtn.setIcon(new SquareIcon(20, 10, descriptor.getGridLineColor()));
     rangeSpn.setValue(descriptor.getPlotRangeLength());
-    System.out.println(descriptor.doShowLegend());
     showLegendChk.setSelected(descriptor.doShowLegend());
     
     if (!descriptor.isShowGrid()) {
