@@ -40,7 +40,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
 	protected URI locateSVGResource() {
 		StringBuilder sb = new StringBuilder();
 		sb.append('/');
-		String path = stateChart.getClass().toString().replace('.', '/');
+		String path = stateChart.getClass().getName().replace('.', '/');
 		sb.append(path);
 		sb.append(".svg");
 		URL resource = this.getClass().getResource(sb.toString());
@@ -106,7 +106,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
 	public void initializeModel(SVGDocument svgDoc) {
 		model = new StateChartSVGModel(svgDoc);
 		svgDisplay.setModel(model);
-		update(); // First point where active uuids are considered.
+		//update(); // First point where active uuids are considered.
 		stateChart.registerStateChartListener(this);
 	}
 
