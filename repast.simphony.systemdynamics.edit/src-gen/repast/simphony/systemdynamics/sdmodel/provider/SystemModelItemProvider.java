@@ -196,6 +196,7 @@ public class SystemModelItemProvider
       super.getChildrenFeatures(object);
       childrenFeatures.add(SDModelPackage.Literals.SYSTEM_MODEL__LINKS);
       childrenFeatures.add(SDModelPackage.Literals.SYSTEM_MODEL__VARIABLES);
+      childrenFeatures.add(SDModelPackage.Literals.SYSTEM_MODEL__SUBSCRIPTS);
     }
     return childrenFeatures;
   }
@@ -257,6 +258,7 @@ public class SystemModelItemProvider
         return;
       case SDModelPackage.SYSTEM_MODEL__LINKS:
       case SDModelPackage.SYSTEM_MODEL__VARIABLES:
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
         return;
     }
@@ -298,6 +300,11 @@ public class SystemModelItemProvider
       (createChildParameter
         (SDModelPackage.Literals.SYSTEM_MODEL__VARIABLES,
          SDModelFactory.eINSTANCE.createRate()));
+
+    newChildDescriptors.add
+      (createChildParameter
+        (SDModelPackage.Literals.SYSTEM_MODEL__SUBSCRIPTS,
+         SDModelFactory.eINSTANCE.createSubscript()));
   }
 
   /**

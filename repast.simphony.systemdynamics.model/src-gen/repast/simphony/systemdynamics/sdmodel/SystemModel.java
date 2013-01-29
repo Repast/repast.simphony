@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getTimeStep <em>Time Step</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval <em>Reporting Interval</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getSubscripts <em>Subscripts</em>}</li>
  * </ul>
  * </p>
  *
@@ -189,5 +190,21 @@ public interface SystemModel extends EObject {
    * @generated
    */
   void setReportingInterval(double value);
+
+  /**
+   * Returns the value of the '<em><b>Subscripts</b></em>' containment reference list.
+   * The list contents are of type {@link repast.simphony.systemdynamics.sdmodel.Subscript}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Subscripts</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Subscripts</em>' containment reference list.
+   * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getSystemModel_Subscripts()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Subscript> getSubscripts();
 
 } // SystemModel

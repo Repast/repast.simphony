@@ -130,13 +130,22 @@ public interface SDModelPackage extends EPackage {
   int SYSTEM_MODEL__REPORTING_INTERVAL = 6;
 
   /**
+   * The feature id for the '<em><b>Subscripts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SYSTEM_MODEL__SUBSCRIPTS = 7;
+
+  /**
    * The number of structural features of the '<em>System Model</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SYSTEM_MODEL_FEATURE_COUNT = 7;
+  int SYSTEM_MODEL_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.
@@ -477,6 +486,43 @@ public interface SDModelPackage extends EPackage {
   int RATE_FEATURE_COUNT = VARIABLE_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl <em>Subscript</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl
+   * @see repast.simphony.systemdynamics.sdmodel.impl.SDModelPackageImpl#getSubscript()
+   * @generated
+   */
+  int SUBSCRIPT = 6;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SUBSCRIPT__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SUBSCRIPT__ELEMENTS = 1;
+
+  /**
+   * The number of structural features of the '<em>Subscript</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SUBSCRIPT_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.VariableType <em>Variable Type</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -484,7 +530,7 @@ public interface SDModelPackage extends EPackage {
    * @see repast.simphony.systemdynamics.sdmodel.impl.SDModelPackageImpl#getVariableType()
    * @generated
    */
-  int VARIABLE_TYPE = 6;
+  int VARIABLE_TYPE = 7;
 
 
   /**
@@ -573,6 +619,17 @@ public interface SDModelPackage extends EPackage {
    * @generated
    */
   EAttribute getSystemModel_ReportingInterval();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getSubscripts <em>Subscripts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Subscripts</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.SystemModel#getSubscripts()
+   * @see #getSystemModel()
+   * @generated
+   */
+  EReference getSystemModel_Subscripts();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.InfluenceLink <em>Influence Link</em>}'.
@@ -746,6 +803,38 @@ public interface SDModelPackage extends EPackage {
   EAttribute getVariable_Equation();
 
   /**
+   * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.Subscript <em>Subscript</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Subscript</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.Subscript
+   * @generated
+   */
+  EClass getSubscript();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.Subscript#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.Subscript#getName()
+   * @see #getSubscript()
+   * @generated
+   */
+  EAttribute getSubscript_Name();
+
+  /**
+   * Returns the meta object for the attribute list '{@link repast.simphony.systemdynamics.sdmodel.Subscript#getElements <em>Elements</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Elements</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.Subscript#getElements()
+   * @see #getSubscript()
+   * @generated
+   */
+  EAttribute getSubscript_Elements();
+
+  /**
    * Returns the meta object for enum '{@link repast.simphony.systemdynamics.sdmodel.VariableType <em>Variable Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -842,6 +931,14 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EAttribute SYSTEM_MODEL__REPORTING_INTERVAL = eINSTANCE.getSystemModel_ReportingInterval();
+
+    /**
+     * The meta object literal for the '<em><b>Subscripts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SYSTEM_MODEL__SUBSCRIPTS = eINSTANCE.getSystemModel_Subscripts();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.
@@ -980,6 +1077,32 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EAttribute VARIABLE__EQUATION = eINSTANCE.getVariable_Equation();
+
+    /**
+     * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl <em>Subscript</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl
+     * @see repast.simphony.systemdynamics.sdmodel.impl.SDModelPackageImpl#getSubscript()
+     * @generated
+     */
+    EClass SUBSCRIPT = eINSTANCE.getSubscript();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SUBSCRIPT__NAME = eINSTANCE.getSubscript_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Elements</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SUBSCRIPT__ELEMENTS = eINSTANCE.getSubscript_Elements();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.VariableType <em>Variable Type</em>}' enum.

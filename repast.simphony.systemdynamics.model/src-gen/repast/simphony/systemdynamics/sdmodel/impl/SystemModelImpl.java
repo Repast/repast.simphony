@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 
@@ -32,6 +33,7 @@ import repast.simphony.systemdynamics.sdmodel.Variable;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getTimeStep <em>Time Step</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getReportingInterval <em>Reporting Interval</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getSubscripts <em>Subscripts</em>}</li>
  * </ul>
  * </p>
  *
@@ -147,6 +149,16 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
    * @ordered
    */
   protected double reportingInterval = REPORTING_INTERVAL_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getSubscripts() <em>Subscripts</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSubscripts()
+   * @generated
+   * @ordered
+   */
+  protected EList<Subscript> subscripts;
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -285,6 +297,18 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
   }
 
   /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Subscript> getSubscripts() {
+    if (subscripts == null) {
+      subscripts = new EObjectContainmentEList<Subscript>(Subscript.class, this, SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS);
+    }
+    return subscripts;
+  }
+
+  /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @generated
    */
@@ -296,6 +320,8 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         return ((InternalEList<?>)getLinks()).basicRemove(otherEnd, msgs);
       case SDModelPackage.SYSTEM_MODEL__VARIABLES:
         return ((InternalEList<?>)getVariables()).basicRemove(otherEnd, msgs);
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
+        return ((InternalEList<?>)getSubscripts()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -321,6 +347,8 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         return getUnits();
       case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
         return getReportingInterval();
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
+        return getSubscripts();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -356,6 +384,10 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
       case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
         setReportingInterval((Double)newValue);
         return;
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
+        getSubscripts().clear();
+        getSubscripts().addAll((Collection<? extends Subscript>)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -388,6 +420,9 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
       case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
         setReportingInterval(REPORTING_INTERVAL_EDEFAULT);
         return;
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
+        getSubscripts().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -413,6 +448,8 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         return UNITS_EDEFAULT == null ? units != null : !UNITS_EDEFAULT.equals(units);
       case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
         return reportingInterval != REPORTING_INTERVAL_EDEFAULT;
+      case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
+        return subscripts != null && !subscripts.isEmpty();
     }
     return super.eIsSet(featureID);
   }

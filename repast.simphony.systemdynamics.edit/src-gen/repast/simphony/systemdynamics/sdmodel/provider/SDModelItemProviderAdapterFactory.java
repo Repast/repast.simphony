@@ -210,6 +210,29 @@ public class SDModelItemProviderAdapterFactory extends SDModelAdapterFactory imp
   }
 
   /**
+   * This keeps track of the one adapter used for all {@link repast.simphony.systemdynamics.sdmodel.Subscript} instances.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected SubscriptItemProvider subscriptItemProvider;
+
+  /**
+   * This creates an adapter for a {@link repast.simphony.systemdynamics.sdmodel.Subscript}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Adapter createSubscriptAdapter() {
+    if (subscriptItemProvider == null) {
+      subscriptItemProvider = new SubscriptItemProvider(this);
+    }
+
+    return subscriptItemProvider;
+  }
+
+  /**
    * This returns the root adapter factory that contains this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -314,6 +337,7 @@ public class SDModelItemProviderAdapterFactory extends SDModelAdapterFactory imp
     if (stockItemProvider != null) stockItemProvider.dispose();
     if (rateItemProvider != null) rateItemProvider.dispose();
     if (variableItemProvider != null) variableItemProvider.dispose();
+    if (subscriptItemProvider != null) subscriptItemProvider.dispose();
   }
 
 }

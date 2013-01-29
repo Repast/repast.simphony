@@ -63,6 +63,7 @@ public class SDModelFactoryImpl extends EFactoryImpl implements SDModelFactory {
       case SDModelPackage.STOCK: return createStock();
       case SDModelPackage.RATE: return createRate();
       case SDModelPackage.VARIABLE: return createVariable();
+      case SDModelPackage.SUBSCRIPT: return createSubscript();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -156,6 +157,16 @@ public class SDModelFactoryImpl extends EFactoryImpl implements SDModelFactory {
   public Variable createVariable() {
     VariableImpl variable = new VariableImpl();
     return variable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Subscript createSubscript() {
+    SubscriptImpl subscript = new SubscriptImpl();
+    return subscript;
   }
 
   /**

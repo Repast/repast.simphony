@@ -76,6 +76,15 @@ public interface SDModelFactory extends EFactory {
   Variable createVariable();
 
   /**
+   * Returns a new object of class '<em>Subscript</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Subscript</em>'.
+   * @generated
+   */
+  Subscript createSubscript();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

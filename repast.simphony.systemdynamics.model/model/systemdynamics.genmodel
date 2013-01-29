@@ -21,6 +21,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/timeStep"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/units"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/reportingInterval"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//SystemModel/subscripts"/>
     </genClasses>
     <genClasses ecoreClass="systemdynamics.ecore#//InfluenceLink">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//InfluenceLink/uuid"/>
@@ -41,6 +42,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/units"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/equation"/>
+    </genClasses>
+    <genClasses ecoreClass="systemdynamics.ecore#//Subscript">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Subscript/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Subscript/elements"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
