@@ -16,6 +16,8 @@ import repast.simphony.scenario.ActionSaver;
 import repast.simphony.scenario.DescriptorActionLoader;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 
 /**
  * @author Nick Collier
@@ -48,6 +50,17 @@ public class TimeSeriesControllerActionIO extends
     @Override
     protected void prepare(XStream xstream) {
       xstream.alias("SeriesData", TimeSeriesChartDescriptor.SeriesData.class);
+      // this is necessary to call the constructor of the TimeSeriesChartDescriptor. We
+      // want to run the constructor so that the new showLegend field will be set to true
+      // rather than default to false which it would otherwise if the constructor was not called.
+      // We want this to default to true because showing the legend was the default before we 
+      // made it optional
+      xstream.registerConverter(new ReflectionConverter(xstream.getMapper(), new PureJavaReflectionProvider()) {
+        @SuppressWarnings("rawtypes")
+        public boolean canConvert(Class type) {
+          return type != null && type.equals(TimeSeriesChartDescriptor.class);
+        }
+      });
     }
 
     /*

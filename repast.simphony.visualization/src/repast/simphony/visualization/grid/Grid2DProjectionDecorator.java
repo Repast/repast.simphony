@@ -30,7 +30,7 @@ public class Grid2DProjectionDecorator extends AbstractProjectionDecorator<Grid<
     GridDimensions dims = projection.getDimensions();
     GridShape2D grid = new GridShape2D(unitSize, dims.getDimension(0), dims.getDimension(1));
     VShape shape = new VShape(grid);
-    shape.translate(-unitSize / 2, -unitSize / 2, 0);
+    //shape.translate(-unitSize / 2, -unitSize / 2, 0);
     shape.setAppearance(AppearanceFactory.createColorAppearance(color));
     parent.addChild(shape);
     shape.putProperty(AbstractProjectionDecorator.TYPE_KEY, TYPE);

@@ -13,8 +13,8 @@ in a directory other than the one that contains the various r.s.* projects.
 4. In r.s.eclipse, change the REPAST_VERSION to the new version number. If using the
 plugin editor, this is in the plugin.xml tab.
 
-5. In repast.simphony.agents.designer.core.AgentBuilderPlugin.java in r.s.eclipse,
-change the AGENT_BUILDER_PLUGIN_VERSION to the new version number.
+5. In repast.simphony.eclipse.RepastSimphonyPlugin.java in r.s.eclipse
+change the REPAST_SIMPHONY_PLUGIN_VERSION to the new version number.
 
 6. Update the plugin_jpf.xmls to the new version number: use the update_jpf_plugins.xml 
 in r.s.deployment. FIRST change the rs.version number in this file. Note that this

@@ -68,12 +68,12 @@ public class DynamicHistogramDataset extends AbstractHistogramDataset {
   protected void doUpdate() {
     notifyListeners = false;
     if (buffer.size() > 0) {
-      double curMin = 0, curMax = 0;
+      double curMin = -1, curMax = -1;
       int itemCount = getItemCount(0);
-      if (itemCount > 0) {
+      if (itemCount > 1) {
         curMin = getStartXValue(0, 0);
         curMax = getEndXValue(0, itemCount - 1);
-      }
+      } 
 
       if (curMin != min || curMax != max) {
         removeAllBins();

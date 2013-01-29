@@ -35,6 +35,12 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
   private Map<String, SeriesData> seriesIds = new HashMap<String, SeriesData>();
   private String dataValueId;
   private int plotRangeLength = -1;
+  
+  // used by xstream to deserialize uisng the JavaReflectionProvider
+  @SuppressWarnings("unused")
+  private TimeSeriesChartDescriptor() {
+    super();
+  }
 
   public TimeSeriesChartDescriptor(String name) {
     super(name);
