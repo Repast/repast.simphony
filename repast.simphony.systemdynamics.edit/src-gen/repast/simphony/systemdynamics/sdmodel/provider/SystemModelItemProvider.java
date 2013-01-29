@@ -67,6 +67,7 @@ public class SystemModelItemProvider
       addEndTimePropertyDescriptor(object);
       addTimeStepPropertyDescriptor(object);
       addUnitsPropertyDescriptor(object);
+      addReportingIntervalPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -160,6 +161,28 @@ public class SystemModelItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Reporting Interval feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addReportingIntervalPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_reportingInterval_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_reportingInterval_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__REPORTING_INTERVAL,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
    * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
    * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -229,6 +252,7 @@ public class SystemModelItemProvider
       case SDModelPackage.SYSTEM_MODEL__END_TIME:
       case SDModelPackage.SYSTEM_MODEL__TIME_STEP:
       case SDModelPackage.SYSTEM_MODEL__UNITS:
+      case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
       case SDModelPackage.SYSTEM_MODEL__LINKS:

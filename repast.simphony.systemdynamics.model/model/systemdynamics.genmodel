@@ -20,6 +20,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/endTime"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/timeStep"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/units"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/reportingInterval"/>
     </genClasses>
     <genClasses ecoreClass="systemdynamics.ecore#//InfluenceLink">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//InfluenceLink/uuid"/>

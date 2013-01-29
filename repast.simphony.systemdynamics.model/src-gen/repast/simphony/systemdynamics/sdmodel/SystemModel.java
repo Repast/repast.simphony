@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getEndTime <em>End Time</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getTimeStep <em>Time Step</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getUnits <em>Units</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval <em>Reporting Interval</em>}</li>
  * </ul>
  * </p>
  *
@@ -162,5 +163,31 @@ public interface SystemModel extends EObject {
    * @generated
    */
   void setUnits(String value);
+
+  /**
+   * Returns the value of the '<em><b>Reporting Interval</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Reporting Interval</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Reporting Interval</em>' attribute.
+   * @see #setReportingInterval(double)
+   * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getSystemModel_ReportingInterval()
+   * @model
+   * @generated
+   */
+  double getReportingInterval();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval <em>Reporting Interval</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Reporting Interval</em>' attribute.
+   * @see #getReportingInterval()
+   * @generated
+   */
+  void setReportingInterval(double value);
 
 } // SystemModel

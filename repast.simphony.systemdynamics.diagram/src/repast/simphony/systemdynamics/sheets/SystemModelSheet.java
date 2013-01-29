@@ -28,7 +28,7 @@ public class SystemModelSheet extends Composite {
   private Combo cmbUnits;
   private Text txtStart;
   private Text txtEnd;
-  private Text txtStep;
+  private Text txtStep, txtInterval;
 
   public SystemModelSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.H_SCROLL);
@@ -61,13 +61,24 @@ public class SystemModelSheet extends Composite {
     Label lblTimeStep = new Label(this, SWT.NONE);
     lblTimeStep.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblTimeStep, true, true);
-    lblTimeStep.setText("Time Step:");
+    lblTimeStep.setText("Integration Interval:");
     
     txtStep = new Text(this, SWT.BORDER);
     txtStep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtStep, true, true);
     txtStep.addVerifyListener(new DoubleVerifier());
     Bug383650Fix.applyFix(txtStep);
+    
+    Label lblInterval = new Label(this, SWT.NONE);
+    lblInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    toolkit.adapt(lblInterval, true, true);
+    lblInterval.setText("Reporting Interval:");
+    
+    txtInterval = new Text(this, SWT.BORDER);
+    txtInterval.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    toolkit.adapt(txtInterval, true, true);
+    txtInterval.addVerifyListener(new DoubleVerifier());
+    Bug383650Fix.applyFix(txtInterval);
     
     Label lblUnits = new Label(this, SWT.NONE);
     lblUnits.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -110,7 +121,6 @@ public class SystemModelSheet extends Composite {
     bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__START_TIME, txtStart);
     bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__END_TIME, txtEnd);
     bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__TIME_STEP, txtStep);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__REPORTING_INTERVAL, txtInterval);
   }
-
-  
 }

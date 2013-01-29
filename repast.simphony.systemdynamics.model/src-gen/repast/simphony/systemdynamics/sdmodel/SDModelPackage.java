@@ -121,13 +121,22 @@ public interface SDModelPackage extends EPackage {
   int SYSTEM_MODEL__UNITS = 5;
 
   /**
+   * The feature id for the '<em><b>Reporting Interval</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SYSTEM_MODEL__REPORTING_INTERVAL = 6;
+
+  /**
    * The number of structural features of the '<em>System Model</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SYSTEM_MODEL_FEATURE_COUNT = 6;
+  int SYSTEM_MODEL_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.
@@ -555,6 +564,17 @@ public interface SDModelPackage extends EPackage {
   EAttribute getSystemModel_Units();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval <em>Reporting Interval</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Reporting Interval</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval()
+   * @see #getSystemModel()
+   * @generated
+   */
+  EAttribute getSystemModel_ReportingInterval();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.InfluenceLink <em>Influence Link</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -814,6 +834,14 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EAttribute SYSTEM_MODEL__UNITS = eINSTANCE.getSystemModel_Units();
+
+    /**
+     * The meta object literal for the '<em><b>Reporting Interval</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SYSTEM_MODEL__REPORTING_INTERVAL = eINSTANCE.getSystemModel_ReportingInterval();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.

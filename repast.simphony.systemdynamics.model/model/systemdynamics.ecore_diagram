@@ -19,6 +19,10 @@
         <element xmi:type="ecore:EAttribute" href="systemdynamics.ecore#//SystemModel/units"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_zvQWYVv-EeKE__MBFiRkFw"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_XIWn0GoqEeKtK7u1-P8DMg" type="3001">
+        <element xmi:type="ecore:EAttribute" href="systemdynamics.ecore#//SystemModel/reportingInterval"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_XIWn0WoqEeKtK7u1-P8DMg"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_fhF6QUlCEeKH4dP5Q7PEeg"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_fhF6QklCEeKH4dP5Q7PEeg"/>
     </children>
@@ -31,7 +35,7 @@
       <styles xmi:type="notation:FilteringStyle" xmi:id="_fhGhUElCEeKH4dP5Q7PEeg"/>
     </children>
     <element xmi:type="ecore:EClass" href="systemdynamics.ecore#//SystemModel"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fhAasElCEeKH4dP5Q7PEeg" x="261" y="9"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fhAasElCEeKH4dP5Q7PEeg" x="261"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_N55_IElYEeKUXYldCYKYgQ" type="2001" fontName="Lucida Grande" fontHeight="10">
     <children xmi:type="notation:DecorationNode" xmi:id="_N55_IklYEeKUXYldCYKYgQ" type="5001"/>
@@ -182,10 +186,10 @@
   <element xmi:type="ecore:EPackage" href="systemdynamics.ecore#/"/>
   <edges xmi:type="notation:Connector" xmi:id="_eCh9oElaEeKUXYldCYKYgQ" type="4003" source="_fg_zoElCEeKH4dP5Q7PEeg" target="_N55_IElYEeKUXYldCYKYgQ">
     <children xmi:type="notation:DecorationNode" xmi:id="_eCiksElaEeKUXYldCYKYgQ" type="6002">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_eCiksUlaEeKUXYldCYKYgQ" x="-21" y="15"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_eCiksUlaEeKUXYldCYKYgQ" x="-8" y="14"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_eCiksklaEeKUXYldCYKYgQ" type="6004">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_eCiks0laEeKUXYldCYKYgQ" x="-28" y="17"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_eCiks0laEeKUXYldCYKYgQ" x="-14" y="20"/>
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_eCh9oUlaEeKUXYldCYKYgQ" fontName="Lucida Grande" fontHeight="10"/>
     <element xmi:type="ecore:EReference" href="systemdynamics.ecore#//SystemModel/links"/>
