@@ -556,6 +556,27 @@
       <?gmfgen generated="true"?>
    </extension>
    
+   <extension point="org.eclipse.ui.menus" id="custom-menus">
+      <?gmfgen generated="false"?>
+      <!-- menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=">
+      </menuContribution>
+      <menuContribution locationURI="toolbar:org.eclipse.ui.main.toolbar?after=">
+      </menuContribution -->
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=compartmentMenu">
+            <command commandId="repast.simphony.systemdynamics.diagram.EditSubscripts"/>
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.ui.commands" id="custom-commands">
+      <?gmfgen generated="false"?>
+      <command id="repast.simphony.systemdynamics.diagram.EditSubscripts"
+         name="Edit Subscripts"
+         categoryId="repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorID"
+         defaultHandler="repast.simphony.systemdynamics.handlers.EditSubscriptsAction"/>
+   </extension>
+   
    <extension
          id="builder"
          point="org.eclipse.core.resources.builders"
