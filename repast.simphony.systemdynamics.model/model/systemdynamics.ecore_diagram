@@ -135,6 +135,10 @@
         <element xmi:type="ecore:EEnumLiteral" href="systemdynamics.ecore#//VariableType/rate"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_bToxgVv9EeKE__MBFiRkFw"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_xs2goGvfEeKi5rrCu7edHQ" type="3009">
+        <element xmi:type="ecore:EEnumLiteral" href="systemdynamics.ecore#//VariableType/lookup"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_xs2goWvfEeKi5rrCu7edHQ"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_RrPT4Vv9EeKE__MBFiRkFw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_RrPT4lv9EeKE__MBFiRkFw"/>
     </children>

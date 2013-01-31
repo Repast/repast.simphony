@@ -12,6 +12,7 @@
       <genEnumLiterals ecoreEnumLiteral="systemdynamics.ecore#//VariableType/auxiliary"/>
       <genEnumLiterals ecoreEnumLiteral="systemdynamics.ecore#//VariableType/stock"/>
       <genEnumLiterals ecoreEnumLiteral="systemdynamics.ecore#//VariableType/rate"/>
+      <genEnumLiterals ecoreEnumLiteral="systemdynamics.ecore#//VariableType/lookup"/>
     </genEnums>
     <genClasses ecoreClass="systemdynamics.ecore#//SystemModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//SystemModel/links"/>

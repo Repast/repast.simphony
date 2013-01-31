@@ -56,7 +56,15 @@ public enum VariableType implements Enumerator {
    * @generated
    * @ordered
    */
-  RATE(3, "rate", "rate");
+  RATE(3, "rate", "rate"), /**
+   * The '<em><b>Lookup</b></em>' literal object.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #LOOKUP_VALUE
+   * @generated
+   * @ordered
+   */
+  LOOKUP(0, "lookup", "lookup");
 
   /**
    * The '<em><b>Constant</b></em>' literal value.
@@ -119,6 +127,21 @@ public enum VariableType implements Enumerator {
   public static final int RATE_VALUE = 3;
 
   /**
+   * The '<em><b>Lookup</b></em>' literal value.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of '<em><b>Lookup</b></em>' literal object isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @see #LOOKUP
+   * @model name="lookup"
+   * @generated
+   * @ordered
+   */
+  public static final int LOOKUP_VALUE = 0;
+
+  /**
    * An array of all the '<em><b>Variable Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -130,6 +153,7 @@ public enum VariableType implements Enumerator {
       AUXILIARY,
       STOCK,
       RATE,
+      LOOKUP,
     };
 
   /**

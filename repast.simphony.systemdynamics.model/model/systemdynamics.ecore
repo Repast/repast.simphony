@@ -33,6 +33,7 @@
     <eLiterals name="auxiliary" value="1"/>
     <eLiterals name="stock" value="2"/>
     <eLiterals name="rate" value="3"/>
+    <eLiterals name="lookup"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Variable">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="uuid" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

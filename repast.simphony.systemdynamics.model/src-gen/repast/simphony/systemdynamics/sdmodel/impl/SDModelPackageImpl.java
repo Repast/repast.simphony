@@ -547,6 +547,7 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     addEEnumLiteral(variableTypeEEnum, VariableType.AUXILIARY);
     addEEnumLiteral(variableTypeEEnum, VariableType.STOCK);
     addEEnumLiteral(variableTypeEEnum, VariableType.RATE);
+    addEEnumLiteral(variableTypeEEnum, VariableType.LOOKUP);
 
     // Create resource
     createResource(eNS_URI);
