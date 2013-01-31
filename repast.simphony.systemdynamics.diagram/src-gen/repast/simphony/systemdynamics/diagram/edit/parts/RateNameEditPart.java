@@ -86,7 +86,7 @@ public class RateNameEditPart extends LabelEditPart implements ITextAwareEditPar
   private ILabelDelegate labelDelegate;
 
   /**
-   * @generated
+   * @generated NOT
    */
   static {
     registerSnapBackPosition(

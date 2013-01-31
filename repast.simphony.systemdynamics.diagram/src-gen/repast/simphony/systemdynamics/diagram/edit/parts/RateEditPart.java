@@ -2,8 +2,13 @@ package repast.simphony.systemdynamics.diagram.edit.parts;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Connection;
+import org.eclipse.draw2d.ConnectionLocator;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Polygon;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.RotatableDecoration;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ITreeBranchEditPart;
@@ -13,6 +18,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.View;
 
 import repast.simphony.systemdynamics.diagram.edit.policies.RateItemSemanticEditPolicy;
+import repast.simphony.systemdynamics.figure.HourglassDecoration;
 
 /**
  * @generated
@@ -83,8 +89,8 @@ public class RateEditPart extends ConnectionNodeEditPart implements ITreeBranchE
   /**
    * Creates figure for this edit part.
    * 
-   * Body of this method does not depend on settings in generation model
-   * so you may safely remove <i>generated</i> tag and modify it.
+   * Body of this method does not depend on settings in generation model so you
+   * may safely remove <i>generated</i> tag and modify it.
    * 
    * @generated
    */
@@ -111,7 +117,7 @@ public class RateEditPart extends ConnectionNodeEditPart implements ITreeBranchE
     private WrappingLabel fFigureRateName;
 
     /**
-     * @generated
+     * @generated NOT
      */
     public RateLinkFigure() {
       this.setLineWidth(4);
@@ -119,6 +125,12 @@ public class RateEditPart extends ConnectionNodeEditPart implements ITreeBranchE
 
       createContents();
       setTargetDecoration(createTargetDecoration());
+      add(new HourglassDecoration(), new ConnectionLocator(this) {
+        public void relocate(IFigure target) {
+          PointList points = getConnection().getPoints();
+          target.setLocation(getLocation(points));
+        }
+      });
     }
 
     /**
