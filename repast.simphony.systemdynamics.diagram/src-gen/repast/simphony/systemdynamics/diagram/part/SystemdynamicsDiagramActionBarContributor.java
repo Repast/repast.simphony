@@ -1,8 +1,6 @@
 package repast.simphony.systemdynamics.diagram.part;
 
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramActionBarContributor;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -40,14 +38,6 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
     assert fileMenu != null;
     fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
     
-    bars.getToolBarManager().add(new PluginActionContributionItem(new EditSubscriptsAction(page)));
-  }
-
-  private class PluginActionContributionItem extends ActionContributionItem {
-
-    public PluginActionContributionItem(IAction action) {
-      super(action);
-    }
-
+    bars.getToolBarManager().add(new EditSubscriptsAction(page));
   }
 }
