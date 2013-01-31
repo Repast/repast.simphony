@@ -13,15 +13,8 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetAdapter;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -44,7 +37,7 @@ public class VariableSheet extends Composite {
   protected StyledText txtEquation;
   private Combo cmbUnits;
   private Combo cmbType;
-  protected List lstVar;
+  protected List lstVar, lstFunc;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -58,7 +51,7 @@ public class VariableSheet extends Composite {
     toolkit.paintBordersFor(composite_1);
     composite_1.setLayout(new GridLayout(4, false));
     addHeader(toolkit, composite_1);
-  
+
     Composite grpEquation = new Composite(this, SWT.NONE);
     grpEquation.setLayout(new GridLayout(2, false));
     grpEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -74,13 +67,27 @@ public class VariableSheet extends Composite {
     toolkit.adapt(label, true, true);
 
     SashForm sashForm = new SashForm(grpEquation, SWT.NONE);
-    sashForm.setSashWidth(6);
     sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
     toolkit.adapt(sashForm);
     toolkit.paintBordersFor(sashForm);
 
-    
-    txtEquation = new StyledText(sashForm, SWT.BORDER | SWT.V_SCROLL);
+    Composite composite_2 = toolkit.createComposite(sashForm, SWT.NONE);
+    toolkit.paintBordersFor(composite_2);
+    GridLayout gl_composite_2 = new GridLayout(1, false);
+    gl_composite_2.marginHeight = 0;
+    gl_composite_2.marginWidth = 0;
+    composite_2.setLayout(gl_composite_2);
+
+    lstFunc = new List(composite_2, SWT.BORDER);
+    lstFunc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    toolkit.adapt(lstFunc, true, true);
+    fillListFunc();
+
+    SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
+    toolkit.adapt(sashForm_1);
+    toolkit.paintBordersFor(sashForm_1);
+
+    txtEquation = new StyledText(sashForm_1, SWT.BORDER | SWT.V_SCROLL);
     txtEquation.setAlwaysShowScrollBars(false);
     txtEquation.setTopMargin(4);
     txtEquation.setLeftMargin(4);
@@ -88,7 +95,7 @@ public class VariableSheet extends Composite {
     txtEquation.setText("");
     toolkit.adapt(txtEquation);
 
-    Composite composite = new Composite(sashForm, SWT.NONE);
+    Composite composite = new Composite(sashForm_1, SWT.NONE);
     GridLayout gl_composite = new GridLayout(1, false);
     gl_composite.marginWidth = 0;
     gl_composite.marginHeight = 0;
@@ -99,11 +106,41 @@ public class VariableSheet extends Composite {
     lstVar = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     lstVar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     toolkit.adapt(lstVar, true, true);
-    sashForm.setWeights(new int[] { 4, 1 });
     
+    sashForm_1.setWeights(new int[] { 4, 1 });
+    sashForm.setWeights(new int[] { 1, 4 });
+
     addListeners();
   }
   
+  private void fillListFunc() {
+    FunctionManager fm = FunctionManager.getInstance();
+    lstFunc.setItems(fm.getFunctionNames());
+  }
+  
+  private void funcSelected() {
+    if (lstFunc.getSelectionIndex() != -1) {
+      String name = lstFunc.getSelection()[0];
+      String pattern = FunctionManager.getInstance().getFunctionPattern(name); 
+      String txt = name + pattern;
+      int offset = txtEquation.getSelection().x;
+      txtEquation.insert(txt);
+      int selectionIndex = offset + name.length() + 1;
+      txtEquation.setFocus();
+      txtEquation.setSelection(selectionIndex, selectionIndex + 1);
+    }
+  }
+  
+  private void varSelected() {
+    if (lstVar.getSelectionIndex() != -1) {
+      String var = lstVar.getSelection()[0];
+      int offset = txtEquation.getSelection().x;
+      txtEquation.insert(var);
+      txtEquation.setCaretOffset(offset + var.length());
+      txtEquation.setFocus();
+    }
+  }
+
   protected void addHeader(FormToolkit toolkit, Composite parent) {
     Label lblName = new Label(parent, SWT.NONE);
     toolkit.adapt(lblName, true, true);
@@ -141,15 +178,46 @@ public class VariableSheet extends Composite {
     toolkit.adapt(cmbUnits);
     toolkit.paintBordersFor(cmbUnits);
   }
-  
+
   private void addListeners() {
+    lstFunc.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        funcSelected();
+      }
+    });
+    
+    lstVar.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        varSelected();
+      }
+    });
+    /*
+    Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+    DropTarget target = new DropTarget(txtEquation, DND.DROP_COPY | DND.DROP_DEFAULT);
+    target.setTransfer(types);
+    target.addDropListener(new DropTargetAdapter() {
+
+      @Override
+      public void dragEnter(DropTargetEvent event) {
+        if (event.detail == DND.DROP_DEFAULT)
+          event.detail = DND.DROP_COPY;
+      }
+
+      @Override
+      public void drop(DropTargetEvent event) {
+        txtEquation.insert(event.data.toString());
+      }
+    });
+    
     DragSource src = new DragSource(lstVar, DND.DROP_COPY);
-    Transfer[] types = new Transfer[]{TextTransfer.getInstance()};
     src.setTransfer(types);
     src.addDragListener(new DragSourceListener() {
       @Override
       public void dragStart(DragSourceEvent event) {
-        if (lstVar.getSelectionIndex() == -1) event.doit = false;
+        if (lstVar.getSelectionIndex() == -1)
+          event.doit = false;
       }
 
       @Override
@@ -163,21 +231,8 @@ public class VariableSheet extends Composite {
       public void dragFinished(DragSourceEvent event) {
       }
     });
+    */
     
-    DropTarget target = new DropTarget(txtEquation, DND.DROP_COPY | DND.DROP_DEFAULT);
-    target.setTransfer(types);
-    target.addDropListener(new DropTargetAdapter() {
-      
-      @Override
-      public void dragEnter(DropTargetEvent event) {
-        if (event.detail == DND.DROP_DEFAULT) event.detail = DND.DROP_COPY;
-      }
-
-      @Override
-      public void drop(DropTargetEvent event) {
-        txtEquation.insert(event.data.toString());
-      }
-    });
   }
 
   private String getVarTypeString(VariableType type) {
@@ -192,7 +247,7 @@ public class VariableSheet extends Composite {
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject), attribute).observe(
             eObject));
   }
-  
+
   protected UpdateValueStrategy createUpdateValueStrategy(IConverter converter) {
     UpdateValueStrategy strategy = new UpdateValueStrategy();
     strategy.setConverter(converter);
@@ -203,7 +258,7 @@ public class VariableSheet extends Composite {
     java.util.List<String> allUnits = SDModelUtils.getAllUnits(eObject);
     Collections.sort(allUnits);
     cmbUnits.setItems(allUnits.toArray(new String[0]));
-    
+
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
     context.bindValue(
@@ -214,8 +269,9 @@ public class VariableSheet extends Composite {
     context.bindValue(
         WidgetProperties.selection().observe(cmbType),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            SDModelPackage.Literals.VARIABLE__TYPE).observe(eObject), createUpdateValueStrategy(new StringToVarType()), 
-            createUpdateValueStrategy(new VarTypeToString()));
+            SDModelPackage.Literals.VARIABLE__TYPE).observe(eObject),
+        createUpdateValueStrategy(new StringToVarType()),
+        createUpdateValueStrategy(new VarTypeToString()));
 
     updateVariables(eObject);
   }

@@ -1,0 +1,5 @@
+# NAME : PATTERN
+ABS : (A)
+DELAY FIXED : (X, T, I)
+DELAY1 : (X, T)
+EXP : (X)

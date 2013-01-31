@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditor;
+import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 
@@ -30,16 +31,12 @@ public class EditSubscriptsAction extends AbstractActionHandler  {
   
   public EditSubscriptsAction(IWorkbenchPage workbenchPage) {
     super(workbenchPage);
-  }
-  
-  @Override
-  public void init() {
-    super.init();
     setText("Edit Subscripts");
     setId(ID);
     setToolTipText("Edit Subscripts");
+    setImageDescriptor(SystemdynamicsDiagramEditorPlugin.getBundledImageDescriptor("icons/obj16/elements_obj.gif"));
   }
-
+  
   /* (non-Javadoc)
    * @see org.eclipse.gmf.runtime.common.ui.action.IActionWithProgress#refresh()
    */
