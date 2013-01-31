@@ -64,7 +64,7 @@ public enum VariableType implements Enumerator {
    * @generated
    * @ordered
    */
-  LOOKUP(0, "lookup", "lookup");
+  LOOKUP(4, "lookup", "lookup");
 
   /**
    * The '<em><b>Constant</b></em>' literal value.
@@ -139,7 +139,7 @@ public enum VariableType implements Enumerator {
    * @generated
    * @ordered
    */
-  public static final int LOOKUP_VALUE = 0;
+  public static final int LOOKUP_VALUE = 4;
 
   /**
    * An array of all the '<em><b>Variable Type</b></em>' enumerators.
@@ -208,6 +208,7 @@ public enum VariableType implements Enumerator {
       case AUXILIARY_VALUE: return AUXILIARY;
       case STOCK_VALUE: return STOCK;
       case RATE_VALUE: return RATE;
+      case LOOKUP_VALUE: return LOOKUP;
     }
     return null;
   }
