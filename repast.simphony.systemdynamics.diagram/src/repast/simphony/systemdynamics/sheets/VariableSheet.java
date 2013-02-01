@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -39,6 +40,7 @@ public class VariableSheet extends Composite {
   private Combo cmbUnits;
   private Combo cmbType, cmbFuncType;
   protected List lstVar, lstFunc;
+  private Text txtComment;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -118,6 +120,24 @@ public class VariableSheet extends Composite {
     
     sashForm_1.setWeights(new int[] { 4, 1 });
     sashForm.setWeights(new int[] { 1, 4 });
+    
+    ExpandableComposite xpndblcmpstNewExpandablecomposite = toolkit.createExpandableComposite(this, ExpandableComposite.TWISTIE);
+    xpndblcmpstNewExpandablecomposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+    xpndblcmpstNewExpandablecomposite.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.NORMAL));
+    toolkit.paintBordersFor(xpndblcmpstNewExpandablecomposite);
+    xpndblcmpstNewExpandablecomposite.setText("Comment");
+    xpndblcmpstNewExpandablecomposite.setExpanded(true);
+    
+    Composite composite_3 = toolkit.createComposite(xpndblcmpstNewExpandablecomposite, SWT.NONE);
+    toolkit.paintBordersFor(composite_3);
+    xpndblcmpstNewExpandablecomposite.setClient(composite_3);
+    composite_3.setLayout(new GridLayout(1, false));
+    
+    txtComment = toolkit.createText(composite_3, "New Text", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+    txtComment.setText("");
+    GridData gd_txtComment = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+    gd_txtComment.heightHint = 40;
+    txtComment.setLayoutData(gd_txtComment);
 
     addListeners();
   }
@@ -288,6 +308,7 @@ public class VariableSheet extends Composite {
 
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
+    bind(context, eObject, SDModelPackage.Literals.VARIABLE__COMMENT, txtComment);
     context.bindValue(
         WidgetProperties.text().observe(cmbUnits),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
