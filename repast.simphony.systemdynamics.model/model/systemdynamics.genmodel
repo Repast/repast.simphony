@@ -23,6 +23,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/units"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/reportingInterval"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference systemdynamics.ecore#//SystemModel/subscripts"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/className"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//SystemModel/package"/>
     </genClasses>
     <genClasses ecoreClass="systemdynamics.ecore#//InfluenceLink">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//InfluenceLink/uuid"/>

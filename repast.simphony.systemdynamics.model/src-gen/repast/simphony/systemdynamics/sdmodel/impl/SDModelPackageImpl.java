@@ -231,6 +231,24 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getSystemModel_ClassName() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSystemModel_Package() {
+    return (EAttribute)systemModelEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getInfluenceLink() {
     return influenceLinkEClass;
   }
@@ -452,6 +470,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     createEAttribute(systemModelEClass, SYSTEM_MODEL__UNITS);
     createEAttribute(systemModelEClass, SYSTEM_MODEL__REPORTING_INTERVAL);
     createEReference(systemModelEClass, SYSTEM_MODEL__SUBSCRIPTS);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__CLASS_NAME);
+    createEAttribute(systemModelEClass, SYSTEM_MODEL__PACKAGE);
 
     influenceLinkEClass = createEClass(INFLUENCE_LINK);
     createEAttribute(influenceLinkEClass, INFLUENCE_LINK__UUID);
@@ -525,6 +545,8 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     initEAttribute(getSystemModel_Units(), ecorePackage.getEString(), "units", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSystemModel_ReportingInterval(), ecorePackage.getEDouble(), "reportingInterval", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSystemModel_Subscripts(), this.getSubscript(), null, "subscripts", null, 0, -1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSystemModel_Package(), ecorePackage.getEString(), "package", null, 0, 1, SystemModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(influenceLinkEClass, InfluenceLink.class, "InfluenceLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getInfluenceLink_Uuid(), ecorePackage.getEString(), "uuid", null, 0, 1, InfluenceLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

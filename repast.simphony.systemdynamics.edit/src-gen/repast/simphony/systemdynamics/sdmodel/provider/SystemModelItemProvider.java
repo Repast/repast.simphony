@@ -68,6 +68,8 @@ public class SystemModelItemProvider
       addTimeStepPropertyDescriptor(object);
       addUnitsPropertyDescriptor(object);
       addReportingIntervalPropertyDescriptor(object);
+      addClassNamePropertyDescriptor(object);
+      addPackagePropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -183,6 +185,50 @@ public class SystemModelItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Class Name feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addClassNamePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_className_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_className_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__CLASS_NAME,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the Package feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addPackagePropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_SystemModel_package_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_SystemModel_package_feature", "_UI_SystemModel_type"),
+         SDModelPackage.Literals.SYSTEM_MODEL__PACKAGE,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
    * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
    * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -233,8 +279,10 @@ public class SystemModelItemProvider
    */
   @Override
   public String getText(Object object) {
-    SystemModel systemModel = (SystemModel)object;
-    return getString("_UI_SystemModel_type") + " " + systemModel.getStartTime();
+    String label = ((SystemModel)object).getClassName();
+    return label == null || label.length() == 0 ?
+      getString("_UI_SystemModel_type") :
+      getString("_UI_SystemModel_type") + " " + label;
   }
 
   /**
@@ -254,6 +302,8 @@ public class SystemModelItemProvider
       case SDModelPackage.SYSTEM_MODEL__TIME_STEP:
       case SDModelPackage.SYSTEM_MODEL__UNITS:
       case SDModelPackage.SYSTEM_MODEL__REPORTING_INTERVAL:
+      case SDModelPackage.SYSTEM_MODEL__CLASS_NAME:
+      case SDModelPackage.SYSTEM_MODEL__PACKAGE:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
       case SDModelPackage.SYSTEM_MODEL__LINKS:

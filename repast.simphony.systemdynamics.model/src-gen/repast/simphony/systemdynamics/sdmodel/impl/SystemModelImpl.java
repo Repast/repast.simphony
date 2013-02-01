@@ -34,6 +34,8 @@ import repast.simphony.systemdynamics.sdmodel.Variable;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getReportingInterval <em>Reporting Interval</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getSubscripts <em>Subscripts</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getClassName <em>Class Name</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.SystemModelImpl#getPackage <em>Package</em>}</li>
  * </ul>
  * </p>
  *
@@ -159,6 +161,46 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
    * @ordered
    */
   protected EList<Subscript> subscripts;
+
+  /**
+   * The default value of the '{@link #getClassName() <em>Class Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getClassName()
+   * @generated
+   * @ordered
+   */
+  protected static final String CLASS_NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getClassName() <em>Class Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getClassName()
+   * @generated
+   * @ordered
+   */
+  protected String className = CLASS_NAME_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getPackage() <em>Package</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPackage()
+   * @generated
+   * @ordered
+   */
+  protected static final String PACKAGE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getPackage() <em>Package</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPackage()
+   * @generated
+   * @ordered
+   */
+  protected String package_ = PACKAGE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -309,6 +351,48 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
   }
 
   /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getClassName() {
+    return className;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setClassName(String newClassName) {
+    String oldClassName = className;
+    className = newClassName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.SYSTEM_MODEL__CLASS_NAME, oldClassName, className));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getPackage() {
+    return package_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPackage(String newPackage) {
+    String oldPackage = package_;
+    package_ = newPackage;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.SYSTEM_MODEL__PACKAGE, oldPackage, package_));
+  }
+
+  /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @generated
    */
@@ -349,6 +433,10 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         return getReportingInterval();
       case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
         return getSubscripts();
+      case SDModelPackage.SYSTEM_MODEL__CLASS_NAME:
+        return getClassName();
+      case SDModelPackage.SYSTEM_MODEL__PACKAGE:
+        return getPackage();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -388,6 +476,12 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         getSubscripts().clear();
         getSubscripts().addAll((Collection<? extends Subscript>)newValue);
         return;
+      case SDModelPackage.SYSTEM_MODEL__CLASS_NAME:
+        setClassName((String)newValue);
+        return;
+      case SDModelPackage.SYSTEM_MODEL__PACKAGE:
+        setPackage((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -423,6 +517,12 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
       case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
         getSubscripts().clear();
         return;
+      case SDModelPackage.SYSTEM_MODEL__CLASS_NAME:
+        setClassName(CLASS_NAME_EDEFAULT);
+        return;
+      case SDModelPackage.SYSTEM_MODEL__PACKAGE:
+        setPackage(PACKAGE_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -450,6 +550,10 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
         return reportingInterval != REPORTING_INTERVAL_EDEFAULT;
       case SDModelPackage.SYSTEM_MODEL__SUBSCRIPTS:
         return subscripts != null && !subscripts.isEmpty();
+      case SDModelPackage.SYSTEM_MODEL__CLASS_NAME:
+        return CLASS_NAME_EDEFAULT == null ? className != null : !CLASS_NAME_EDEFAULT.equals(className);
+      case SDModelPackage.SYSTEM_MODEL__PACKAGE:
+        return PACKAGE_EDEFAULT == null ? package_ != null : !PACKAGE_EDEFAULT.equals(package_);
     }
     return super.eIsSet(featureID);
   }
@@ -473,6 +577,10 @@ public class SystemModelImpl extends EObjectImpl implements SystemModel {
     result.append(units);
     result.append(", reportingInterval: ");
     result.append(reportingInterval);
+    result.append(", className: ");
+    result.append(className);
+    result.append(", package: ");
+    result.append(package_);
     result.append(')');
     return result.toString();
   }

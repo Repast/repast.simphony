@@ -21,6 +21,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getReportingInterval <em>Reporting Interval</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getSubscripts <em>Subscripts</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getClassName <em>Class Name</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getPackage <em>Package</em>}</li>
  * </ul>
  * </p>
  *
@@ -206,5 +208,57 @@ public interface SystemModel extends EObject {
    * @generated
    */
   EList<Subscript> getSubscripts();
+
+  /**
+   * Returns the value of the '<em><b>Class Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Class Name</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Class Name</em>' attribute.
+   * @see #setClassName(String)
+   * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getSystemModel_ClassName()
+   * @model
+   * @generated
+   */
+  String getClassName();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getClassName <em>Class Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Class Name</em>' attribute.
+   * @see #getClassName()
+   * @generated
+   */
+  void setClassName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Package</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Package</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Package</em>' attribute.
+   * @see #setPackage(String)
+   * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getSystemModel_Package()
+   * @model
+   * @generated
+   */
+  String getPackage();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getPackage <em>Package</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Package</em>' attribute.
+   * @see #getPackage()
+   * @generated
+   */
+  void setPackage(String value);
 
 } // SystemModel

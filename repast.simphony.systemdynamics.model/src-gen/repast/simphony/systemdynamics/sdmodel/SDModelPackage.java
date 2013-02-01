@@ -139,13 +139,31 @@ public interface SDModelPackage extends EPackage {
   int SYSTEM_MODEL__SUBSCRIPTS = 7;
 
   /**
+   * The feature id for the '<em><b>Class Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SYSTEM_MODEL__CLASS_NAME = 8;
+
+  /**
+   * The feature id for the '<em><b>Package</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SYSTEM_MODEL__PACKAGE = 9;
+
+  /**
    * The number of structural features of the '<em>System Model</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SYSTEM_MODEL_FEATURE_COUNT = 8;
+  int SYSTEM_MODEL_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.
@@ -668,6 +686,28 @@ public interface SDModelPackage extends EPackage {
   EReference getSystemModel_Subscripts();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getClassName <em>Class Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Class Name</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.SystemModel#getClassName()
+   * @see #getSystemModel()
+   * @generated
+   */
+  EAttribute getSystemModel_ClassName();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.SystemModel#getPackage <em>Package</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Package</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.SystemModel#getPackage()
+   * @see #getSystemModel()
+   * @generated
+   */
+  EAttribute getSystemModel_Package();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.InfluenceLink <em>Influence Link</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -986,6 +1026,22 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EReference SYSTEM_MODEL__SUBSCRIPTS = eINSTANCE.getSystemModel_Subscripts();
+
+    /**
+     * The meta object literal for the '<em><b>Class Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SYSTEM_MODEL__CLASS_NAME = eINSTANCE.getSystemModel_ClassName();
+
+    /**
+     * The meta object literal for the '<em><b>Package</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SYSTEM_MODEL__PACKAGE = eINSTANCE.getSystemModel_Package();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.InfluenceLinkImpl <em>Influence Link</em>}' class.
