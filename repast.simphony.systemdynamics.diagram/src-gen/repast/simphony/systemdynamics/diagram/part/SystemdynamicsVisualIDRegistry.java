@@ -15,8 +15,10 @@ import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockNameEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableName2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.VariableName3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableNameEditPart;
 import repast.simphony.systemdynamics.diagram.expressions.SystemdynamicsOCLFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
@@ -144,6 +146,10 @@ public class SystemdynamicsVisualIDRegistry {
           && isVariable_2004((Variable) domainElement)) {
         return Variable2EditPart.VISUAL_ID;
       }
+      if (SDModelPackage.eINSTANCE.getVariable().isSuperTypeOf(domainElement.eClass())
+          && isVariable_2005((Variable) domainElement)) {
+        return Variable3EditPart.VISUAL_ID;
+      }
       break;
     }
     return -1;
@@ -183,6 +189,9 @@ public class SystemdynamicsVisualIDRegistry {
       if (Variable2EditPart.VISUAL_ID == nodeVisualID) {
         return true;
       }
+      if (Variable3EditPart.VISUAL_ID == nodeVisualID) {
+        return true;
+      }
       break;
     case VariableEditPart.VISUAL_ID:
       if (VariableNameEditPart.VISUAL_ID == nodeVisualID) {
@@ -196,6 +205,11 @@ public class SystemdynamicsVisualIDRegistry {
       break;
     case Variable2EditPart.VISUAL_ID:
       if (VariableName2EditPart.VISUAL_ID == nodeVisualID) {
+        return true;
+      }
+      break;
+    case Variable3EditPart.VISUAL_ID:
+      if (VariableName3EditPart.VISUAL_ID == nodeVisualID) {
         return true;
       }
       break;
@@ -264,6 +278,15 @@ public class SystemdynamicsVisualIDRegistry {
   /**
    * @generated
    */
+  private static boolean isVariable_2005(Variable domainElement) {
+    Object result = SystemdynamicsOCLFactory.getExpression(6,
+        SDModelPackage.eINSTANCE.getVariable(), null).evaluate(domainElement);
+    return result instanceof Boolean && ((Boolean) result).booleanValue();
+  }
+
+  /**
+   * @generated
+   */
   public static boolean checkNodeVisualID(View containerView, EObject domainElement, int candidate) {
     if (candidate == -1) {
       //unrecognized id is always bad
@@ -291,6 +314,7 @@ public class SystemdynamicsVisualIDRegistry {
     case CloudEditPart.VISUAL_ID:
     case StockEditPart.VISUAL_ID:
     case Variable2EditPart.VISUAL_ID:
+    case Variable3EditPart.VISUAL_ID:
       return true;
     default:
       break;

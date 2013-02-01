@@ -342,7 +342,7 @@ public class SystemdynamicsBaseItemSemanticEditPolicy extends SemanticEditPolicy
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", SDModelPackage.eINSTANCE.getStock()); //$NON-NLS-1$
-          Object sourceVal = SystemdynamicsOCLFactory.getExpression(7,
+          Object sourceVal = SystemdynamicsOCLFactory.getExpression(9,
               SDModelPackage.eINSTANCE.getStock(), env).evaluate(source,
               Collections.singletonMap("oppositeEnd", target)); //$NON-NLS-1$
           if (false == sourceVal instanceof Boolean || !((Boolean) sourceVal).booleanValue()) {
@@ -354,7 +354,7 @@ public class SystemdynamicsBaseItemSemanticEditPolicy extends SemanticEditPolicy
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", SDModelPackage.eINSTANCE.getStock()); //$NON-NLS-1$
-          Object targetVal = SystemdynamicsOCLFactory.getExpression(8,
+          Object targetVal = SystemdynamicsOCLFactory.getExpression(10,
               SDModelPackage.eINSTANCE.getStock(), env).evaluate(target,
               Collections.singletonMap("oppositeEnd", source)); //$NON-NLS-1$
           if (false == targetVal instanceof Boolean || !((Boolean) targetVal).booleanValue()) {
@@ -380,7 +380,7 @@ public class SystemdynamicsBaseItemSemanticEditPolicy extends SemanticEditPolicy
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", SDModelPackage.eINSTANCE.getVariable()); //$NON-NLS-1$
-          Object sourceVal = SystemdynamicsOCLFactory.getExpression(9,
+          Object sourceVal = SystemdynamicsOCLFactory.getExpression(11,
               SDModelPackage.eINSTANCE.getVariable(), env).evaluate(source,
               Collections.singletonMap("oppositeEnd", target)); //$NON-NLS-1$
           if (false == sourceVal instanceof Boolean || !((Boolean) sourceVal).booleanValue()) {
@@ -392,7 +392,7 @@ public class SystemdynamicsBaseItemSemanticEditPolicy extends SemanticEditPolicy
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", SDModelPackage.eINSTANCE.getVariable()); //$NON-NLS-1$
-          Object targetVal = SystemdynamicsOCLFactory.getExpression(10,
+          Object targetVal = SystemdynamicsOCLFactory.getExpression(12,
               SDModelPackage.eINSTANCE.getVariable(), env).evaluate(target,
               Collections.singletonMap("oppositeEnd", source)); //$NON-NLS-1$
           if (false == targetVal instanceof Boolean || !((Boolean) targetVal).booleanValue()) {

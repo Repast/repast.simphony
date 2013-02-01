@@ -37,7 +37,7 @@ public class SystemdynamicsOCLFactory {
    * @generated
    */
   protected SystemdynamicsOCLFactory() {
-    this.expressions = new SystemdynamicsAbstractExpression[11];
+    this.expressions = new SystemdynamicsAbstractExpression[13];
     this.expressionBodies = new String[] {
         "not self.oclIsKindOf(Stock) and not self.oclIsKindOf(Rate) and self.type = VariableType::auxiliary", //$NON-NLS-1$
         "VariableType::auxiliary", //$NON-NLS-1$
@@ -45,11 +45,13 @@ public class SystemdynamicsOCLFactory {
         "VariableType::stock", //$NON-NLS-1$
         "self.type = VariableType::constant", //$NON-NLS-1$
         "VariableType::constant", //$NON-NLS-1$
+        "self.type = VariableType::lookup", //$NON-NLS-1$
+        "VariableType::lookup", //$NON-NLS-1$
         "VariableType::rate", //$NON-NLS-1$
         "self.oclIsKindOf(Cloud) or self.oclIsKindOf(Stock)", //$NON-NLS-1$
         "self <> oppositeEnd and (self.oclIsKindOf(Stock) or (self.oclIsKindOf(Cloud) and not oppositeEnd.oclIsKindOf(Cloud)))", //$NON-NLS-1$
         "not self.oclIsKindOf(Cloud)", //$NON-NLS-1$
-        "self <> oppositeEnd and not self.oclIsKindOf(Cloud)", //$NON-NLS-1$
+        "self <> oppositeEnd and not self.oclIsKindOf(Cloud) and self.type <> VariableType::lookup", //$NON-NLS-1$
     };
   }
 

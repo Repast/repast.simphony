@@ -1,5 +1,5 @@
-# NAME : PATTERN
-ABS : (A)
-DELAY FIXED : (X, T, I)
-DELAY1 : (X, T)
-EXP : (X)
+# NAME : PATTERN : set1, set2, ...
+ABS : (A) : common
+DELAY FIXED : (X, T, I) : common
+DELAY1 : (X, T) : common
+EXP : (X) : common

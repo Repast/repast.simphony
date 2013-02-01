@@ -16,7 +16,7 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
   /**
    * @generated
    */
-  protected Class <?>getEditorClass() {
+  protected Class<?> getEditorClass() {
     return SystemdynamicsDiagramEditor.class;
   }
 
@@ -37,7 +37,7 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
         IWorkbenchActionConstants.M_FILE);
     assert fileMenu != null;
     fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
-    
+
     bars.getToolBarManager().add(new EditSubscriptsAction(page));
   }
 }

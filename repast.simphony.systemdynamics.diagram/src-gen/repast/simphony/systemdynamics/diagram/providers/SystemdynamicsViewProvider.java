@@ -51,8 +51,10 @@ import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockNameEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableName2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.VariableName3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableNameEditPart;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsVisualIDRegistry;
 
@@ -146,6 +148,7 @@ public class SystemdynamicsViewProvider extends AbstractProvider implements IVie
         case CloudEditPart.VISUAL_ID:
         case StockEditPart.VISUAL_ID:
         case Variable2EditPart.VISUAL_ID:
+        case Variable3EditPart.VISUAL_ID:
           if (domainElement == null
               || visualID != SystemdynamicsVisualIDRegistry.getNodeVisualID(op.getContainerView(),
                   domainElement)) {
@@ -158,7 +161,8 @@ public class SystemdynamicsViewProvider extends AbstractProvider implements IVie
       }
     }
     return VariableEditPart.VISUAL_ID == visualID || CloudEditPart.VISUAL_ID == visualID
-        || StockEditPart.VISUAL_ID == visualID || Variable2EditPart.VISUAL_ID == visualID;
+        || StockEditPart.VISUAL_ID == visualID || Variable2EditPart.VISUAL_ID == visualID
+        || Variable3EditPart.VISUAL_ID == visualID;
   }
 
   /**
@@ -218,6 +222,8 @@ public class SystemdynamicsViewProvider extends AbstractProvider implements IVie
       return createStock_2003(domainElement, containerView, index, persisted, preferencesHint);
     case Variable2EditPart.VISUAL_ID:
       return createVariable_2004(domainElement, containerView, index, persisted, preferencesHint);
+    case Variable3EditPart.VISUAL_ID:
+      return createVariable_2005(domainElement, containerView, index, persisted, preferencesHint);
     }
     // can't happen, provided #provides(CreateNodeViewOperation) is correct
     return null;
@@ -393,6 +399,45 @@ public class SystemdynamicsViewProvider extends AbstractProvider implements IVie
         FigureUtilities.RGBToInteger(fillRGB));
     Node label5003 = createLabel(node,
         SystemdynamicsVisualIDRegistry.getType(VariableName2EditPart.VISUAL_ID));
+    return node;
+  }
+
+  /**
+   * @generated
+   */
+  public Node createVariable_2005(EObject domainElement, View containerView, int index,
+      boolean persisted, PreferencesHint preferencesHint) {
+    Shape node = NotationFactory.eINSTANCE.createShape();
+    node.setLayoutConstraint(NotationFactory.eINSTANCE.createBounds());
+    node.setType(SystemdynamicsVisualIDRegistry.getType(Variable3EditPart.VISUAL_ID));
+    ViewUtil.insertChildView(containerView, node, index, persisted);
+    node.setElement(domainElement);
+    stampShortcut(containerView, node);
+    // initializeFromPreferences 
+    final IPreferenceStore prefStore = (IPreferenceStore) preferencesHint.getPreferenceStore();
+
+    org.eclipse.swt.graphics.RGB lineRGB = PreferenceConverter.getColor(prefStore,
+        IPreferenceConstants.PREF_LINE_COLOR);
+    ViewUtil.setStructuralFeatureValue(node, NotationPackage.eINSTANCE.getLineStyle_LineColor(),
+        FigureUtilities.RGBToInteger(lineRGB));
+    FontStyle nodeFontStyle = (FontStyle) node.getStyle(NotationPackage.Literals.FONT_STYLE);
+    if (nodeFontStyle != null) {
+      FontData fontData = PreferenceConverter.getFontData(prefStore,
+          IPreferenceConstants.PREF_DEFAULT_FONT);
+      nodeFontStyle.setFontName(fontData.getName());
+      nodeFontStyle.setFontHeight(fontData.getHeight());
+      nodeFontStyle.setBold((fontData.getStyle() & SWT.BOLD) != 0);
+      nodeFontStyle.setItalic((fontData.getStyle() & SWT.ITALIC) != 0);
+      org.eclipse.swt.graphics.RGB fontRGB = PreferenceConverter.getColor(prefStore,
+          IPreferenceConstants.PREF_FONT_COLOR);
+      nodeFontStyle.setFontColor(FigureUtilities.RGBToInteger(fontRGB).intValue());
+    }
+    org.eclipse.swt.graphics.RGB fillRGB = PreferenceConverter.getColor(prefStore,
+        IPreferenceConstants.PREF_FILL_COLOR);
+    ViewUtil.setStructuralFeatureValue(node, NotationPackage.eINSTANCE.getFillStyle_FillColor(),
+        FigureUtilities.RGBToInteger(fillRGB));
+    Node label5004 = createLabel(node,
+        SystemdynamicsVisualIDRegistry.getType(VariableName3EditPart.VISUAL_ID));
     return node;
   }
 

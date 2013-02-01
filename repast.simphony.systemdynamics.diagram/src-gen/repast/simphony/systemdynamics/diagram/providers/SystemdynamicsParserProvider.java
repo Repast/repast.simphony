@@ -16,6 +16,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import repast.simphony.systemdynamics.diagram.edit.parts.RateNameEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockNameEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableName2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.VariableName3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableNameEditPart;
 import repast.simphony.systemdynamics.diagram.parsers.MessageFormatParser;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsVisualIDRegistry;
@@ -80,6 +81,23 @@ public class SystemdynamicsParserProvider extends AbstractProvider implements IP
   /**
    * @generated
    */
+  private IParser variableName_5004Parser;
+
+  /**
+   * @generated
+   */
+  private IParser getVariableName_5004Parser() {
+    if (variableName_5004Parser == null) {
+      EAttribute[] features = new EAttribute[] { SDModelPackage.eINSTANCE.getVariable_Name() };
+      MessageFormatParser parser = new MessageFormatParser(features);
+      variableName_5004Parser = parser;
+    }
+    return variableName_5004Parser;
+  }
+
+  /**
+   * @generated
+   */
   private IParser rateName_6001Parser;
 
   /**
@@ -105,6 +123,8 @@ public class SystemdynamicsParserProvider extends AbstractProvider implements IP
       return getStockName_5002Parser();
     case VariableName2EditPart.VISUAL_ID:
       return getVariableName_5003Parser();
+    case VariableName3EditPart.VISUAL_ID:
+      return getVariableName_5004Parser();
     case RateNameEditPart.VISUAL_ID:
       return getRateName_6001Parser();
     }

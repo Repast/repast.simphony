@@ -29,6 +29,7 @@ import repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.part.Messages;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsVisualIDRegistry;
@@ -216,37 +217,6 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
   private Object[] getViewChildren(View view, Object parentElement) {
     switch (SystemdynamicsVisualIDRegistry.getVisualID(view)) {
 
-    case StockEditPart.VISUAL_ID: {
-      LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
-      Node sv = (Node) view;
-      SystemdynamicsNavigatorGroup incominglinks = new SystemdynamicsNavigatorGroup(
-          Messages.NavigatorGroupName_Stock_2003_incominglinks,
-          "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-      SystemdynamicsNavigatorGroup outgoinglinks = new SystemdynamicsNavigatorGroup(
-          Messages.NavigatorGroupName_Stock_2003_outgoinglinks,
-          "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-      Collection<View> connectedViews;
-      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
-      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
-      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
-      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
-      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
-      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
-      if (!incominglinks.isEmpty()) {
-        result.add(incominglinks);
-      }
-      if (!outgoinglinks.isEmpty()) {
-        result.add(outgoinglinks);
-      }
-      return result.toArray();
-    }
-
     case CloudEditPart.VISUAL_ID: {
       LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
       Node sv = (Node) view;
@@ -278,27 +248,36 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
       return result.toArray();
     }
 
-    case VariableEditPart.VISUAL_ID: {
+    case SystemModelEditPart.VISUAL_ID: {
       LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
-      Node sv = (Node) view;
-      SystemdynamicsNavigatorGroup incominglinks = new SystemdynamicsNavigatorGroup(
-          Messages.NavigatorGroupName_Variable_2001_incominglinks,
-          "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-      SystemdynamicsNavigatorGroup outgoinglinks = new SystemdynamicsNavigatorGroup(
-          Messages.NavigatorGroupName_Variable_2001_outgoinglinks,
-          "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      Diagram sv = (Diagram) view;
+      SystemdynamicsNavigatorGroup links = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_SystemModel_1000_links,
+          "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
       Collection<View> connectedViews;
-      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+      connectedViews = getChildrenByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(VariableEditPart.VISUAL_ID));
+      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+      connectedViews = getChildrenByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(CloudEditPart.VISUAL_ID));
+      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+      connectedViews = getChildrenByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(StockEditPart.VISUAL_ID));
+      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+      connectedViews = getChildrenByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(Variable2EditPart.VISUAL_ID));
+      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+      connectedViews = getChildrenByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(Variable3EditPart.VISUAL_ID));
+      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+      connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
+      links.addChildren(createNavigatorItems(connectedViews, links, false));
+      connectedViews = getDiagramLinksByType(Collections.singleton(sv),
           SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
-      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
-      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
-      if (!incominglinks.isEmpty()) {
-        result.add(incominglinks);
-      }
-      if (!outgoinglinks.isEmpty()) {
-        result.add(outgoinglinks);
+      links.addChildren(createNavigatorItems(connectedViews, links, false));
+      if (!links.isEmpty()) {
+        result.add(links);
       }
       return result.toArray();
     }
@@ -346,6 +325,56 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
       return result.toArray();
     }
 
+    case VariableEditPart.VISUAL_ID: {
+      LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
+      Node sv = (Node) view;
+      SystemdynamicsNavigatorGroup incominglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Variable_2001_incominglinks,
+          "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      SystemdynamicsNavigatorGroup outgoinglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Variable_2001_outgoinglinks,
+          "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      Collection<View> connectedViews;
+      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
+      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+      if (!incominglinks.isEmpty()) {
+        result.add(incominglinks);
+      }
+      if (!outgoinglinks.isEmpty()) {
+        result.add(outgoinglinks);
+      }
+      return result.toArray();
+    }
+
+    case Variable3EditPart.VISUAL_ID: {
+      LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
+      Node sv = (Node) view;
+      SystemdynamicsNavigatorGroup incominglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Variable_2005_incominglinks,
+          "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      SystemdynamicsNavigatorGroup outgoinglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Variable_2005_outgoinglinks,
+          "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      Collection<View> connectedViews;
+      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
+      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+      if (!incominglinks.isEmpty()) {
+        result.add(incominglinks);
+      }
+      if (!outgoinglinks.isEmpty()) {
+        result.add(outgoinglinks);
+      }
+      return result.toArray();
+    }
+
     case InfluenceLinkEditPart.VISUAL_ID: {
       LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
       Edge sv = (Edge) view;
@@ -368,6 +397,9 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
       connectedViews = getLinksTargetByType(Collections.singleton(sv),
           SystemdynamicsVisualIDRegistry.getType(Variable2EditPart.VISUAL_ID));
       target.addChildren(createNavigatorItems(connectedViews, target, true));
+      connectedViews = getLinksTargetByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(Variable3EditPart.VISUAL_ID));
+      target.addChildren(createNavigatorItems(connectedViews, target, true));
       connectedViews = getLinksSourceByType(Collections.singleton(sv),
           SystemdynamicsVisualIDRegistry.getType(VariableEditPart.VISUAL_ID));
       source.addChildren(createNavigatorItems(connectedViews, source, true));
@@ -379,43 +411,15 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
       source.addChildren(createNavigatorItems(connectedViews, source, true));
       connectedViews = getLinksSourceByType(Collections.singleton(sv),
           SystemdynamicsVisualIDRegistry.getType(Variable2EditPart.VISUAL_ID));
+      source.addChildren(createNavigatorItems(connectedViews, source, true));
+      connectedViews = getLinksSourceByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(Variable3EditPart.VISUAL_ID));
       source.addChildren(createNavigatorItems(connectedViews, source, true));
       if (!target.isEmpty()) {
         result.add(target);
       }
       if (!source.isEmpty()) {
         result.add(source);
-      }
-      return result.toArray();
-    }
-
-    case SystemModelEditPart.VISUAL_ID: {
-      LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
-      Diagram sv = (Diagram) view;
-      SystemdynamicsNavigatorGroup links = new SystemdynamicsNavigatorGroup(
-          Messages.NavigatorGroupName_SystemModel_1000_links,
-          "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-      Collection<View> connectedViews;
-      connectedViews = getChildrenByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(VariableEditPart.VISUAL_ID));
-      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-      connectedViews = getChildrenByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(CloudEditPart.VISUAL_ID));
-      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-      connectedViews = getChildrenByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(StockEditPart.VISUAL_ID));
-      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-      connectedViews = getChildrenByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(Variable2EditPart.VISUAL_ID));
-      result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-      connectedViews = getDiagramLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
-      links.addChildren(createNavigatorItems(connectedViews, links, false));
-      connectedViews = getDiagramLinksByType(Collections.singleton(sv),
-          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
-      links.addChildren(createNavigatorItems(connectedViews, links, false));
-      if (!links.isEmpty()) {
-        result.add(links);
       }
       return result.toArray();
     }
@@ -430,6 +434,37 @@ public class SystemdynamicsNavigatorContentProvider implements ICommonContentPro
           Messages.NavigatorGroupName_Variable_2004_outgoinglinks,
           "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
       Collection<View> connectedViews;
+      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
+      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
+      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+      if (!incominglinks.isEmpty()) {
+        result.add(incominglinks);
+      }
+      if (!outgoinglinks.isEmpty()) {
+        result.add(outgoinglinks);
+      }
+      return result.toArray();
+    }
+
+    case StockEditPart.VISUAL_ID: {
+      LinkedList<SystemdynamicsAbstractNavigatorItem> result = new LinkedList<SystemdynamicsAbstractNavigatorItem>();
+      Node sv = (Node) view;
+      SystemdynamicsNavigatorGroup incominglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Stock_2003_incominglinks,
+          "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      SystemdynamicsNavigatorGroup outgoinglinks = new SystemdynamicsNavigatorGroup(
+          Messages.NavigatorGroupName_Stock_2003_outgoinglinks,
+          "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+      Collection<View> connectedViews;
+      connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
+      incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
+      connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+          SystemdynamicsVisualIDRegistry.getType(RateEditPart.VISUAL_ID));
+      outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
       connectedViews = getIncomingLinksByType(Collections.singleton(sv),
           SystemdynamicsVisualIDRegistry.getType(InfluenceLinkEditPart.VISUAL_ID));
       incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));

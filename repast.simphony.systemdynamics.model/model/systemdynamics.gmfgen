@@ -237,6 +237,64 @@
         </modelFacet>
       </labels>
     </topLevelNodes>
+    <topLevelNodes
+        visualID="2005"
+        editPartClassName="Variable3EditPart"
+        itemSemanticEditPolicyClassName="Variable3ItemSemanticEditPolicy"
+        canonicalEditPolicyClassName="Variable3CanonicalEditPolicy"
+        graphicalNodeEditPolicyClassName="Variable3GraphicalNodeEditPolicy"
+        createCommandClassName="Variable3CreateCommand">
+      <diagramRunTimeClass
+          href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
+      <elementType
+          xsi:type="gmfgen:SpecializationType"
+          metamodelType="//@diagram/@topLevelNodes.0/@elementType"/>
+      <viewmap
+          xsi:type="gmfgen:InnerClassViewmap"
+          className="VariableFigure"
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class VariableFigure extends org.eclipse.draw2d.RectangleFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureVariableNameFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public VariableFigure() {&#xA;&#x9;&#x9;this.setLayoutManager(new org.eclipse.gmf.tooling.runtime.draw2d.CenterLayout());&#xA;&#x9;&#x9;this.setOutline(false);&#xA;this.setFill(false);&#xA;this.setOpaque(false);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;, getMapMode().DPtoLP(6)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureVariableNameFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;&#xA;fFigureVariableNameFigure.setText(&quot;&lt;...>&quot;);&#xA;&#xA;this.add(fFigureVariableNameFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureVariableNameFigure() {&#xA;&#x9;&#x9;return fFigureVariableNameFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;"/>
+      <modelFacet
+          modelElementSelector="//@expressionProviders/@providers.0/@expressions.6">
+        <metaClass
+            href="systemdynamics.genmodel#//sdmodel/Variable"/>
+        <containmentMetaFeature
+            href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <childMetaFeature
+            href="systemdynamics.genmodel#//sdmodel/SystemModel/variables"/>
+        <modelElementInitializer
+            xsi:type="gmfgen:GenFeatureSeqInitializer">
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.1/@expressions.3">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
+          </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.7">
+            <feature
+                href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
+          </initializers>
+        </modelElementInitializer>
+      </modelFacet>
+      <labels
+          visualID="5004"
+          editPartClassName="VariableName3EditPart"
+          itemSemanticEditPolicyClassName="VariableName3ItemSemanticEditPolicy">
+        <diagramRunTimeClass
+            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
+        <viewmap
+            xsi:type="gmfgen:ParentAssignedViewmap"
+            getterName="getFigureVariableNameFigure"
+            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel"/>
+        <modelFacet
+            xsi:type="gmfgen:FeatureLabelModelFacet"
+            parser="//@labelParsers/@implementations.0">
+          <metaFeatures
+              href="systemdynamics.genmodel#//sdmodel/Variable/name"/>
+        </modelFacet>
+      </labels>
+    </topLevelNodes>
     <links
         visualID="4003"
         editPartClassName="RateEditPart"
@@ -270,13 +328,13 @@
             xsi:type="gmfgen:GenFeatureSeqInitializer">
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.1/@expressions.3">
+              value="//@expressionProviders/@providers.1/@expressions.4">
             <feature
                 href="systemdynamics.genmodel#//sdmodel/Variable/uuid"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
-              value="//@expressionProviders/@providers.0/@expressions.6">
+              value="//@expressionProviders/@providers.0/@expressions.8">
             <feature
                 href="systemdynamics.genmodel#//sdmodel/Variable/type"/>
           </initializers>
@@ -310,8 +368,8 @@
         </modelFacet>
       </labels>
       <creationConstraints
-          sourceEnd="//@expressionProviders/@providers.0/@expressions.7"
-          targetEnd="//@expressionProviders/@providers.0/@expressions.8"/>
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.9"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.10"/>
     </links>
     <links
         visualID="4004"
@@ -347,8 +405,8 @@
             href="systemdynamics.genmodel#//sdmodel/InfluenceLink/to"/>
       </modelFacet>
       <creationConstraints
-          sourceEnd="//@expressionProviders/@providers.0/@expressions.9"
-          targetEnd="//@expressionProviders/@providers.0/@expressions.10"/>
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.11"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.12"/>
     </links>
     <palette>
       <groups
@@ -383,6 +441,11 @@
             title="Cloud"
             description="Create new Cloud"
             genNodes="//@diagram/@topLevelNodes.1"/>
+        <entries
+            xsi:type="gmfgen:ToolEntry"
+            title="Lookup"
+            description="Create new Lookup Variable"
+            genNodes="//@diagram/@topLevelNodes.4"/>
       </groups>
     </palette>
     <preferencePages
@@ -434,6 +497,9 @@
         child="//@diagram/@topLevelNodes.3"/>
     <childReferences
         parent="//@diagram"
+        child="//@diagram/@topLevelNodes.4"/>
+    <childReferences
+        parent="//@diagram"
         child="//@diagram/@links.0"
         groupName="links"
         groupIcon="icons/linksNavigatorGroup.gif"/>
@@ -540,6 +606,18 @@
         groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@links.1"
+        child="//@diagram/@topLevelNodes.4"
+        referenceType="out_target"
+        groupName="target"
+        groupIcon="icons/linkTargetNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@topLevelNodes.4"
+        child="//@diagram/@links.1"
+        referenceType="in_source"
+        groupName="incoming links"
+        groupIcon="icons/incomingLinksNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@links.1"
         child="//@diagram/@links.0"
         referenceType="out_target"
         groupName="target"
@@ -594,6 +672,18 @@
         groupIcon="icons/linkSourceNavigatorGroup.gif"/>
     <childReferences
         parent="//@diagram/@topLevelNodes.3"
+        child="//@diagram/@links.1"
+        referenceType="out_target"
+        groupName="outgoing links"
+        groupIcon="icons/outgoingLinksNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@links.1"
+        child="//@diagram/@topLevelNodes.4"
+        referenceType="in_source"
+        groupName="source"
+        groupIcon="icons/linkSourceNavigatorGroup.gif"/>
+    <childReferences
+        parent="//@diagram/@topLevelNodes.4"
         child="//@diagram/@links.1"
         referenceType="out_target"
         groupName="outgoing links"
@@ -652,6 +742,11 @@
       <expressions
           body="VariableType::constant"/>
       <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body="self.type = VariableType::lookup"/>
+      <expressions
+          body="VariableType::lookup"/>
+      <expressions
           body="VariableType::rate"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
@@ -664,10 +759,12 @@
           body="not self.oclIsKindOf(Cloud)"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self &lt;> oppositeEnd and not self.oclIsKindOf(Cloud)"/>
+          body="self &lt;> oppositeEnd and not self.oclIsKindOf(Cloud) and self.type &lt;> VariableType::lookup"/>
     </providers>
     <providers
         xsi:type="gmfgen:GenJavaExpressionProvider">
+      <expressions
+          body="EcoreUtil.generateUUID()"/>
       <expressions
           body="EcoreUtil.generateUUID()"/>
       <expressions
@@ -682,7 +779,7 @@
       extensibleViaService="true">
     <implementations
         xsi:type="gmfgen:PredefinedParser"
-        uses="//@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.2/@labels.0/@modelFacet //@diagram/@topLevelNodes.3/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet"/>
+        uses="//@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.2/@labels.0/@modelFacet //@diagram/@topLevelNodes.3/@labels.0/@modelFacet //@diagram/@topLevelNodes.4/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet"/>
   </labelParsers>
   <contextMenus
       context="//@diagram">

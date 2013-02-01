@@ -100,6 +100,9 @@
     </descriptors>
   </figures>
   <nodes
+      name="Lookup"
+      figure="VariableFigure"/>
+  <nodes
       name="Variable"
       figure="VariableFigure"/>
   <nodes

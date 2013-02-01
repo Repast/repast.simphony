@@ -39,6 +39,7 @@ public class SystemdynamicsPaletteFactory {
     paletteContainer.add(createConstant4CreationTool());
     paletteContainer.add(createVariable5CreationTool());
     paletteContainer.add(createCloud6CreationTool());
+    paletteContainer.add(createLookup7CreationTool());
     return paletteContainer;
   }
 
@@ -122,6 +123,20 @@ public class SystemdynamicsPaletteFactory {
     entry.setId("createCloud6CreationTool"); //$NON-NLS-1$
     entry.setSmallIcon(SystemdynamicsElementTypes
         .getImageDescriptor(SystemdynamicsElementTypes.Cloud_2002));
+    entry.setLargeIcon(entry.getSmallIcon());
+    return entry;
+  }
+
+  /**
+   * @generated
+   */
+  private ToolEntry createLookup7CreationTool() {
+    NodeToolEntry entry = new NodeToolEntry(Messages.Lookup7CreationTool_title,
+        Messages.Lookup7CreationTool_desc,
+        Collections.singletonList(SystemdynamicsElementTypes.Variable_2005));
+    entry.setId("createLookup7CreationTool"); //$NON-NLS-1$
+    entry.setSmallIcon(SystemdynamicsElementTypes
+        .getImageDescriptor(SystemdynamicsElementTypes.Variable_2005));
     entry.setLargeIcon(entry.getSmallIcon());
     return entry;
   }

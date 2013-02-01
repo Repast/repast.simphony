@@ -25,6 +25,7 @@ import repast.simphony.systemdynamics.diagram.edit.parts.CloudEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.part.Messages;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
@@ -40,11 +41,12 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
   public List getTypesForPopupBar(IAdaptable host) {
     IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
     if (editPart instanceof SystemModelEditPart) {
-      ArrayList<IElementType> types = new ArrayList<IElementType>(4);
+      ArrayList<IElementType> types = new ArrayList<IElementType>(5);
       types.add(SystemdynamicsElementTypes.Variable_2001);
       types.add(SystemdynamicsElementTypes.Cloud_2002);
       types.add(SystemdynamicsElementTypes.Stock_2003);
       types.add(SystemdynamicsElementTypes.Variable_2004);
+      types.add(SystemdynamicsElementTypes.Variable_2005);
       return types;
     }
     return Collections.EMPTY_LIST;
@@ -68,6 +70,9 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
     if (sourceEditPart instanceof Variable2EditPart) {
       return ((Variable2EditPart) sourceEditPart).getMARelTypesOnSource();
     }
+    if (sourceEditPart instanceof Variable3EditPart) {
+      return ((Variable3EditPart) sourceEditPart).getMARelTypesOnSource();
+    }
     return Collections.EMPTY_LIST;
   }
 
@@ -88,6 +93,9 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
     }
     if (targetEditPart instanceof Variable2EditPart) {
       return ((Variable2EditPart) targetEditPart).getMARelTypesOnTarget();
+    }
+    if (targetEditPart instanceof Variable3EditPart) {
+      return ((Variable3EditPart) targetEditPart).getMARelTypesOnTarget();
     }
     return Collections.EMPTY_LIST;
   }
@@ -112,6 +120,9 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
     if (sourceEditPart instanceof Variable2EditPart) {
       return ((Variable2EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
     }
+    if (sourceEditPart instanceof Variable3EditPart) {
+      return ((Variable3EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+    }
     return Collections.EMPTY_LIST;
   }
 
@@ -133,6 +144,9 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
     if (targetEditPart instanceof Variable2EditPart) {
       return ((Variable2EditPart) targetEditPart).getMATypesForSource(relationshipType);
     }
+    if (targetEditPart instanceof Variable3EditPart) {
+      return ((Variable3EditPart) targetEditPart).getMATypesForSource(relationshipType);
+    }
     return Collections.EMPTY_LIST;
   }
 
@@ -153,6 +167,9 @@ public class SystemdynamicsModelingAssistantProvider extends ModelingAssistantPr
     }
     if (sourceEditPart instanceof Variable2EditPart) {
       return ((Variable2EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+    }
+    if (sourceEditPart instanceof Variable3EditPart) {
+      return ((Variable3EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
     }
     return Collections.EMPTY_LIST;
   }

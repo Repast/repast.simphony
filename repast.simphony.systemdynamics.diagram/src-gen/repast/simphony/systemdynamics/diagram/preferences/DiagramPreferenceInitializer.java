@@ -23,8 +23,9 @@ public class DiagramPreferenceInitializer extends AbstractPreferenceInitializer 
     DiagramConnectionsPreferencePage.initDefaults(store);
     DiagramPrintingPreferencePage.initDefaults(store);
     DiagramRulersAndGridPreferencePage.initDefaults(store);
-    
-    store.setDefault(IPreferenceConstants.PREF_DEFAULT_FONT, new FontData("", SWT.NORMAL, 12).toString());
+
+    store.setDefault(IPreferenceConstants.PREF_DEFAULT_FONT,
+        new FontData("", SWT.NORMAL, 12).toString());
 
   }
 

@@ -19,6 +19,7 @@ import repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.providers.SystemdynamicsElementTypes;
 import repast.simphony.systemdynamics.sdmodel.Cloud;
@@ -73,6 +74,10 @@ public class SystemdynamicsDiagramUpdater {
         result.add(new SystemdynamicsNodeDescriptor(childElement, visualID));
         continue;
       }
+      if (visualID == Variable3EditPart.VISUAL_ID) {
+        result.add(new SystemdynamicsNodeDescriptor(childElement, visualID));
+        continue;
+      }
     }
     return result;
   }
@@ -92,6 +97,8 @@ public class SystemdynamicsDiagramUpdater {
       return getStock_2003ContainedLinks(view);
     case Variable2EditPart.VISUAL_ID:
       return getVariable_2004ContainedLinks(view);
+    case Variable3EditPart.VISUAL_ID:
+      return getVariable_2005ContainedLinks(view);
     case RateEditPart.VISUAL_ID:
       return getRate_4003ContainedLinks(view);
     case InfluenceLinkEditPart.VISUAL_ID:
@@ -113,6 +120,8 @@ public class SystemdynamicsDiagramUpdater {
       return getStock_2003IncomingLinks(view);
     case Variable2EditPart.VISUAL_ID:
       return getVariable_2004IncomingLinks(view);
+    case Variable3EditPart.VISUAL_ID:
+      return getVariable_2005IncomingLinks(view);
     case RateEditPart.VISUAL_ID:
       return getRate_4003IncomingLinks(view);
     case InfluenceLinkEditPart.VISUAL_ID:
@@ -134,6 +143,8 @@ public class SystemdynamicsDiagramUpdater {
       return getStock_2003OutgoingLinks(view);
     case Variable2EditPart.VISUAL_ID:
       return getVariable_2004OutgoingLinks(view);
+    case Variable3EditPart.VISUAL_ID:
+      return getVariable_2005OutgoingLinks(view);
     case RateEditPart.VISUAL_ID:
       return getRate_4003OutgoingLinks(view);
     case InfluenceLinkEditPart.VISUAL_ID:
@@ -178,6 +189,13 @@ public class SystemdynamicsDiagramUpdater {
    * @generated
    */
   public static List<SystemdynamicsLinkDescriptor> getVariable_2004ContainedLinks(View view) {
+    return Collections.emptyList();
+  }
+
+  /**
+   * @generated
+   */
+  public static List<SystemdynamicsLinkDescriptor> getVariable_2005ContainedLinks(View view) {
     return Collections.emptyList();
   }
 
@@ -248,6 +266,18 @@ public class SystemdynamicsDiagramUpdater {
   /**
    * @generated
    */
+  public static List<SystemdynamicsLinkDescriptor> getVariable_2005IncomingLinks(View view) {
+    Variable modelElement = (Variable) view.getElement();
+    Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
+        .find(view.eResource().getResourceSet().getResources());
+    LinkedList<SystemdynamicsLinkDescriptor> result = new LinkedList<SystemdynamicsLinkDescriptor>();
+    result.addAll(getIncomingTypeModelFacetLinks_InfluenceLink_4004(modelElement, crossReferences));
+    return result;
+  }
+
+  /**
+   * @generated
+   */
   public static List<SystemdynamicsLinkDescriptor> getRate_4003IncomingLinks(View view) {
     Rate modelElement = (Rate) view.getElement();
     Map<EObject, Collection<EStructuralFeature.Setting>> crossReferences = EcoreUtil.CrossReferencer
@@ -300,6 +330,16 @@ public class SystemdynamicsDiagramUpdater {
    * @generated
    */
   public static List<SystemdynamicsLinkDescriptor> getVariable_2004OutgoingLinks(View view) {
+    Variable modelElement = (Variable) view.getElement();
+    LinkedList<SystemdynamicsLinkDescriptor> result = new LinkedList<SystemdynamicsLinkDescriptor>();
+    result.addAll(getOutgoingTypeModelFacetLinks_InfluenceLink_4004(modelElement));
+    return result;
+  }
+
+  /**
+   * @generated
+   */
+  public static List<SystemdynamicsLinkDescriptor> getVariable_2005OutgoingLinks(View view) {
     Variable modelElement = (Variable) view.getElement();
     LinkedList<SystemdynamicsLinkDescriptor> result = new LinkedList<SystemdynamicsLinkDescriptor>();
     result.addAll(getOutgoingTypeModelFacetLinks_InfluenceLink_4004(modelElement));

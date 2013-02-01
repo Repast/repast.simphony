@@ -286,6 +286,9 @@ public class StockEditPart extends ShapeNodeEditPart {
     if (targetEditPart instanceof Variable2EditPart) {
       types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     }
+    if (targetEditPart instanceof Variable3EditPart) {
+      types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
+    }
     return types;
   }
 
@@ -302,6 +305,7 @@ public class StockEditPart extends ShapeNodeEditPart {
       types.add(SystemdynamicsElementTypes.Cloud_2002);
       types.add(SystemdynamicsElementTypes.Stock_2003);
       types.add(SystemdynamicsElementTypes.Variable_2004);
+      types.add(SystemdynamicsElementTypes.Variable_2005);
     }
     return types;
   }
@@ -329,6 +333,7 @@ public class StockEditPart extends ShapeNodeEditPart {
       types.add(SystemdynamicsElementTypes.Cloud_2002);
       types.add(SystemdynamicsElementTypes.Stock_2003);
       types.add(SystemdynamicsElementTypes.Variable_2004);
+      types.add(SystemdynamicsElementTypes.Variable_2005);
     }
     return types;
   }

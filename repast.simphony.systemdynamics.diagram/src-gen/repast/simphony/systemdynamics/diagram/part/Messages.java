@@ -298,6 +298,16 @@ public class Messages extends NLS {
   /**
    * @generated
    */
+  public static String Lookup7CreationTool_title;
+
+  /**
+   * @generated
+   */
+  public static String Lookup7CreationTool_desc;
+
+  /**
+   * @generated
+   */
   public static String CommandName_OpenDiagram;
 
   /**
@@ -309,6 +319,16 @@ public class Messages extends NLS {
    * @generated
    */
   public static String NavigatorGroupName_Variable_2001_outgoinglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_Variable_2005_incominglinks;
+
+  /**
+   * @generated
+   */
+  public static String NavigatorGroupName_Variable_2005_outgoinglinks;
 
   /**
    * @generated

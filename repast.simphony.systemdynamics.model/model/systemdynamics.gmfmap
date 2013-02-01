@@ -145,6 +145,48 @@
           href="systemdynamics.gmfgraph#Constant"/>
     </ownedChild>
   </nodes>
+  <nodes>
+    <containmentFeature
+        href="systemdynamics.ecore#//SystemModel/variables"/>
+    <ownedChild>
+      <domainMetaElement
+          href="systemdynamics.ecore#//Variable"/>
+      <domainSpecialization
+          body="self.type = VariableType::lookup"/>
+      <domainInitializer
+          xsi:type="gmfmap:FeatureSeqInitializer">
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/uuid"/>
+          <value
+              body="EcoreUtil.generateUUID()"
+              language="java"/>
+        </initializers>
+        <initializers
+            xsi:type="gmfmap:FeatureValueSpec">
+          <feature
+              xsi:type="ecore:EAttribute"
+              href="systemdynamics.ecore#//Variable/type"/>
+          <value
+              body="VariableType::lookup"/>
+        </initializers>
+      </domainInitializer>
+      <labelMappings
+          xsi:type="gmfmap:FeatureLabelMapping">
+        <diagramLabel
+            href="systemdynamics.gmfgraph#VariableName"/>
+        <features
+            href="systemdynamics.ecore#//Variable/name"/>
+      </labelMappings>
+      <tool
+          xsi:type="gmftool:CreationTool"
+          href="systemdynamics.gmftool#//@palette/@tools.0/@tools.6"/>
+      <diagramNode
+          href="systemdynamics.gmfgraph#Lookup"/>
+    </ownedChild>
+  </nodes>
   <links>
     <domainMetaElement
         href="systemdynamics.ecore#//Rate"/>
@@ -215,7 +257,7 @@
       <sourceEnd
           body="not self.oclIsKindOf(Cloud)"/>
       <targetEnd
-          body="self &lt;> oppositeEnd and not self.oclIsKindOf(Cloud)"/>
+          body="self &lt;> oppositeEnd and not self.oclIsKindOf(Cloud) and self.type &lt;> VariableType::lookup"/>
     </creationConstraints>
   </links>
   <diagram>

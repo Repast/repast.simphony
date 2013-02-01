@@ -1,5 +1,6 @@
 package repast.simphony.systemdynamics.sheets;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -36,7 +37,7 @@ public class VariableSheet extends Composite {
   private Text txtId;
   protected StyledText txtEquation;
   private Combo cmbUnits;
-  private Combo cmbType;
+  private Combo cmbType, cmbFuncType;
   protected List lstVar, lstFunc;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
@@ -74,9 +75,17 @@ public class VariableSheet extends Composite {
     Composite composite_2 = toolkit.createComposite(sashForm, SWT.NONE);
     toolkit.paintBordersFor(composite_2);
     GridLayout gl_composite_2 = new GridLayout(1, false);
+    gl_composite_2.verticalSpacing = 3;
     gl_composite_2.marginHeight = 0;
     gl_composite_2.marginWidth = 0;
     composite_2.setLayout(gl_composite_2);
+    
+    cmbFuncType = new Combo(composite_2, SWT.READ_ONLY);
+    GridData gd_cmbFuncType = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+    gd_cmbFuncType.verticalIndent = 4;
+    cmbFuncType.setLayoutData(gd_cmbFuncType);
+    cmbFuncType.setItems(FunctionManager.getInstance().getFunctionSetNames());
+    cmbFuncType.select(0);
 
     lstFunc = new List(composite_2, SWT.BORDER);
     lstFunc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -115,7 +124,7 @@ public class VariableSheet extends Composite {
   
   private void fillListFunc() {
     FunctionManager fm = FunctionManager.getInstance();
-    lstFunc.setItems(fm.getFunctionNames());
+    lstFunc.setItems(fm.getFunctionNames(cmbFuncType.getItem(cmbFuncType.getSelectionIndex())));
   }
   
   private void funcSelected() {
@@ -140,6 +149,13 @@ public class VariableSheet extends Composite {
       txtEquation.setFocus();
     }
   }
+  
+  private void funcTypeSelected() {
+    int index = cmbFuncType.getSelectionIndex();
+    if (index != -1) {
+      lstFunc.setItems(FunctionManager.getInstance().getFunctionNames(cmbFuncType.getItem(index)));
+    }
+  }
 
   protected void addHeader(FormToolkit toolkit, Composite parent) {
     Label lblName = new Label(parent, SWT.NONE);
@@ -162,7 +178,7 @@ public class VariableSheet extends Composite {
     cmbType.setLayoutData(gd_cmbType);
     cmbType.setItems(new String[] { getVarTypeString(VariableType.AUXILIARY),
         getVarTypeString(VariableType.CONSTANT), getVarTypeString(VariableType.RATE),
-        getVarTypeString(VariableType.STOCK) });
+        getVarTypeString(VariableType.STOCK), getVarTypeString(VariableType.LOOKUP) });
 
     toolkit.adapt(cmbType);
     toolkit.paintBordersFor(cmbType);
@@ -191,6 +207,13 @@ public class VariableSheet extends Composite {
       @Override
       public void widgetSelected(SelectionEvent e) {
         varSelected();
+      }
+    });
+    
+    cmbFuncType.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        funcTypeSelected();
       }
     });
     /*
@@ -258,6 +281,10 @@ public class VariableSheet extends Composite {
     java.util.List<String> allUnits = SDModelUtils.getAllUnits(eObject);
     Collections.sort(allUnits);
     cmbUnits.setItems(allUnits.toArray(new String[0]));
+    
+    FunctionManager.getInstance().clearLookups();
+    cmbFuncType.select(0);
+    fillListFunc();
 
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
@@ -273,21 +300,27 @@ public class VariableSheet extends Composite {
         createUpdateValueStrategy(new StringToVarType()),
         createUpdateValueStrategy(new VarTypeToString()));
 
+    lstFunc.setEnabled(!((Variable)eObject).getType().equals(VariableType.LOOKUP));
     updateVariables(eObject);
   }
 
   protected void updateVariables(EObject eObj) {
+    FunctionManager.getInstance().clearLookups();
     Variable var = ((Variable) eObj);
     lstVar.setItems(new String[] {});
 
     if (var.getType() == VariableType.RATE || var.getType() == VariableType.AUXILIARY) {
       java.util.List<Variable> vars = SDModelUtils.getIncomingVariables(var);
-      String[] items = new String[vars.size()];
-      int i = 0;
+      java.util.List<String> items = new ArrayList<String>();
+      
       for (Variable v : vars) {
-        items[i++] = v.getName();
+        if (v.getType().equals(VariableType.LOOKUP)) {
+          FunctionManager.getInstance().addLookup(v.getName());
+        } else {
+          items.add(v.getName());
+        }
       }
-      lstVar.setItems(items);
+      lstVar.setItems(items.toArray(new String[0]));
     }
   }
 

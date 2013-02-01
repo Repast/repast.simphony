@@ -10,6 +10,9 @@
   <nodeTraces visualID="2004" queryText="(let _eClass_:ecore::EClass = modelFacet.metaClass.ecoreClass in _eClass_.ePackage.nsURI = 'http://repast.sf.net/systemdynamics' and _eClass_.name = 'Variable') and (let _containmentMF_:ecore::EStructuralFeature = modelFacet.containmentMetaFeature.ecoreFeature in (let _eClass_:ecore::EClass = _containmentMF_.eContainingClass in _eClass_.ePackage.nsURI = 'http://repast.sf.net/systemdynamics' and _eClass_.name = 'SystemModel') and _containmentMF_.name = 'variables')">
     <nodeLabelTraces visualID="5003" queryText="true"/>
   </nodeTraces>
+  <nodeTraces visualID="2005" queryText="(let _eClass_:ecore::EClass = modelFacet.metaClass.ecoreClass in _eClass_.ePackage.nsURI = 'http://repast.sf.net/systemdynamics' and _eClass_.name = 'Variable') and (let _containmentMF_:ecore::EStructuralFeature = modelFacet.containmentMetaFeature.ecoreFeature in (let _eClass_:ecore::EClass = _containmentMF_.eContainingClass in _eClass_.ePackage.nsURI = 'http://repast.sf.net/systemdynamics' and _eClass_.name = 'SystemModel') and _containmentMF_.name = 'variables')">
+    <nodeLabelTraces visualID="5004" queryText="true"/>
+  </nodeTraces>
   <linkTraces visualID="4003" queryText="modelFacet.oclIsKindOf(gmfgen::TypeLinkModelFacet) and (let _eClass_:ecore::EClass = modelFacet.oclAsType(gmfgen::TypeLinkModelFacet).metaClass.ecoreClass in _eClass_.ePackage.nsURI = 'http://repast.sf.net/systemdynamics' and _eClass_.name = 'Rate')">
     <linkLabelTraces visualID="6001" queryText="true"/>
   </linkTraces>

@@ -22,6 +22,7 @@ import repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
@@ -72,6 +73,11 @@ public class SystemdynamicsElementTypes {
    * @generated
    */
   public static final IElementType Variable_2004 = getElementType("repast.simphony.systemdynamics.diagram.Variable_2004"); //$NON-NLS-1$
+  /**
+   * @generated
+   */
+  public static final IElementType Variable_2005 = getElementType("repast.simphony.systemdynamics.diagram.Variable_2005"); //$NON-NLS-1$
+
   /**
    * @generated
    */
@@ -198,6 +204,8 @@ public class SystemdynamicsElementTypes {
 
       elements.put(Variable_2004, SDModelPackage.eINSTANCE.getVariable());
 
+      elements.put(Variable_2005, SDModelPackage.eINSTANCE.getVariable());
+
       elements.put(Rate_4003, SDModelPackage.eINSTANCE.getRate());
 
       elements.put(InfluenceLink_4004, SDModelPackage.eINSTANCE.getInfluenceLink());
@@ -223,6 +231,7 @@ public class SystemdynamicsElementTypes {
       KNOWN_ELEMENT_TYPES.add(Cloud_2002);
       KNOWN_ELEMENT_TYPES.add(Stock_2003);
       KNOWN_ELEMENT_TYPES.add(Variable_2004);
+      KNOWN_ELEMENT_TYPES.add(Variable_2005);
       KNOWN_ELEMENT_TYPES.add(Rate_4003);
       KNOWN_ELEMENT_TYPES.add(InfluenceLink_4004);
     }
@@ -244,6 +253,8 @@ public class SystemdynamicsElementTypes {
       return Stock_2003;
     case Variable2EditPart.VISUAL_ID:
       return Variable_2004;
+    case Variable3EditPart.VISUAL_ID:
+      return Variable_2005;
     case RateEditPart.VISUAL_ID:
       return Rate_4003;
     case InfluenceLinkEditPart.VISUAL_ID:

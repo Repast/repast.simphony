@@ -44,6 +44,7 @@ import repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.SystemModelEditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart;
+import repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart;
 import repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramUpdater;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsLinkDescriptor;
@@ -107,6 +108,7 @@ public class SystemModelCanonicalEditPolicy extends CanonicalEditPolicy {
     case CloudEditPart.VISUAL_ID:
     case StockEditPart.VISUAL_ID:
     case Variable2EditPart.VISUAL_ID:
+    case Variable3EditPart.VISUAL_ID:
       return true;
     }
     return false;
@@ -317,6 +319,13 @@ public class SystemModelCanonicalEditPolicy extends CanonicalEditPolicy {
     case Variable2EditPart.VISUAL_ID: {
       if (!domain2NotationMap.containsKey(view.getElement())) {
         result.addAll(SystemdynamicsDiagramUpdater.getVariable_2004ContainedLinks(view));
+      }
+      domain2NotationMap.putView(view.getElement(), view);
+      break;
+    }
+    case Variable3EditPart.VISUAL_ID: {
+      if (!domain2NotationMap.containsKey(view.getElement())) {
+        result.addAll(SystemdynamicsDiagramUpdater.getVariable_2005ContainedLinks(view));
       }
       domain2NotationMap.putView(view.getElement(), view);
       break;

@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.draw2d.Ellipse;
-import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -21,24 +19,28 @@ import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.gmf.tooling.runtime.draw2d.CenterLayout;
 import org.eclipse.swt.graphics.Color;
 
-import repast.simphony.systemdynamics.diagram.edit.policies.CloudItemSemanticEditPolicy;
+import repast.simphony.systemdynamics.diagram.edit.policies.Variable3ItemSemanticEditPolicy;
+import repast.simphony.systemdynamics.diagram.part.SystemdynamicsVisualIDRegistry;
 import repast.simphony.systemdynamics.diagram.providers.SystemdynamicsElementTypes;
 
 /**
  * @generated
  */
-public class CloudEditPart extends ShapeNodeEditPart {
+public class Variable3EditPart extends ShapeNodeEditPart {
 
   /**
    * @generated
    */
-  public static final int VISUAL_ID = 2002;
+  public static final int VISUAL_ID = 2005;
 
   /**
    * @generated
@@ -53,7 +55,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
   /**
    * @generated
    */
-  public CloudEditPart(View view) {
+  public Variable3EditPart(View view) {
     super(view);
   }
 
@@ -62,7 +64,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
-    installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new CloudItemSemanticEditPolicy());
+    installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Variable3ItemSemanticEditPolicy());
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
     // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
     // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -97,21 +99,70 @@ public class CloudEditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected IFigure createNodeShape() {
-    return primaryShape = new CloudFigure();
+    return primaryShape = new VariableFigure();
   }
 
   /**
    * @generated
    */
-  public CloudFigure getPrimaryShape() {
-    return (CloudFigure) primaryShape;
+  public VariableFigure getPrimaryShape() {
+    return (VariableFigure) primaryShape;
+  }
+
+  /**
+   * @generated
+   */
+  protected boolean addFixedChild(EditPart childEditPart) {
+    if (childEditPart instanceof VariableName3EditPart) {
+      ((VariableName3EditPart) childEditPart).setLabel(getPrimaryShape()
+          .getFigureVariableNameFigure());
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @generated
+   */
+  protected boolean removeFixedChild(EditPart childEditPart) {
+    if (childEditPart instanceof VariableName3EditPart) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @generated
+   */
+  protected void addChildVisual(EditPart childEditPart, int index) {
+    if (addFixedChild(childEditPart)) {
+      return;
+    }
+    super.addChildVisual(childEditPart, -1);
+  }
+
+  /**
+   * @generated
+   */
+  protected void removeChildVisual(EditPart childEditPart) {
+    if (removeFixedChild(childEditPart)) {
+      return;
+    }
+    super.removeChildVisual(childEditPart);
+  }
+
+  /**
+   * @generated
+   */
+  protected IFigure getContentPaneFor(IGraphicalEditPart editPart) {
+    return getContentPane();
   }
 
   /**
    * @generated
    */
   protected NodeFigure createNodePlate() {
-    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(12, 12);
+    DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(40, 40);
     return result;
   }
 
@@ -139,6 +190,11 @@ public class CloudEditPart extends ShapeNodeEditPart {
    * @generated
    */
   protected IFigure setupContentPane(IFigure nodeShape) {
+    if (nodeShape.getLayoutManager() == null) {
+      ConstrainedToolbarLayout layout = new ConstrainedToolbarLayout();
+      layout.setSpacing(5);
+      nodeShape.setLayoutManager(layout);
+    }
     return nodeShape; // use nodeShape itself as contentPane
   }
 
@@ -191,9 +247,16 @@ public class CloudEditPart extends ShapeNodeEditPart {
   /**
    * @generated
    */
+  public EditPart getPrimaryChildEditPart() {
+    return getChildBySemanticHint(SystemdynamicsVisualIDRegistry
+        .getType(VariableName3EditPart.VISUAL_ID));
+  }
+
+  /**
+   * @generated
+   */
   public List<IElementType> getMARelTypesOnSource() {
-    ArrayList<IElementType> types = new ArrayList<IElementType>(2);
-    types.add(SystemdynamicsElementTypes.Rate_4003);
+    ArrayList<IElementType> types = new ArrayList<IElementType>(1);
     types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     return types;
   }
@@ -203,16 +266,10 @@ public class CloudEditPart extends ShapeNodeEditPart {
    */
   public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
     LinkedList<IElementType> types = new LinkedList<IElementType>();
-    if (targetEditPart instanceof repast.simphony.systemdynamics.diagram.edit.parts.CloudEditPart) {
-      types.add(SystemdynamicsElementTypes.Rate_4003);
-    }
-    if (targetEditPart instanceof StockEditPart) {
-      types.add(SystemdynamicsElementTypes.Rate_4003);
-    }
     if (targetEditPart instanceof VariableEditPart) {
       types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     }
-    if (targetEditPart instanceof repast.simphony.systemdynamics.diagram.edit.parts.CloudEditPart) {
+    if (targetEditPart instanceof CloudEditPart) {
       types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     }
     if (targetEditPart instanceof StockEditPart) {
@@ -221,7 +278,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
     if (targetEditPart instanceof Variable2EditPart) {
       types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     }
-    if (targetEditPart instanceof Variable3EditPart) {
+    if (targetEditPart instanceof repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart) {
       types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     }
     return types;
@@ -232,10 +289,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
    */
   public List<IElementType> getMATypesForTarget(IElementType relationshipType) {
     LinkedList<IElementType> types = new LinkedList<IElementType>();
-    if (relationshipType == SystemdynamicsElementTypes.Rate_4003) {
-      types.add(SystemdynamicsElementTypes.Cloud_2002);
-      types.add(SystemdynamicsElementTypes.Stock_2003);
-    } else if (relationshipType == SystemdynamicsElementTypes.InfluenceLink_4004) {
+    if (relationshipType == SystemdynamicsElementTypes.InfluenceLink_4004) {
       types.add(SystemdynamicsElementTypes.Variable_2001);
       types.add(SystemdynamicsElementTypes.Cloud_2002);
       types.add(SystemdynamicsElementTypes.Stock_2003);
@@ -249,8 +303,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
    * @generated
    */
   public List<IElementType> getMARelTypesOnTarget() {
-    ArrayList<IElementType> types = new ArrayList<IElementType>(2);
-    types.add(SystemdynamicsElementTypes.Rate_4003);
+    ArrayList<IElementType> types = new ArrayList<IElementType>(1);
     types.add(SystemdynamicsElementTypes.InfluenceLink_4004);
     return types;
   }
@@ -260,10 +313,7 @@ public class CloudEditPart extends ShapeNodeEditPart {
    */
   public List<IElementType> getMATypesForSource(IElementType relationshipType) {
     LinkedList<IElementType> types = new LinkedList<IElementType>();
-    if (relationshipType == SystemdynamicsElementTypes.Rate_4003) {
-      types.add(SystemdynamicsElementTypes.Cloud_2002);
-      types.add(SystemdynamicsElementTypes.Stock_2003);
-    } else if (relationshipType == SystemdynamicsElementTypes.InfluenceLink_4004) {
+    if (relationshipType == SystemdynamicsElementTypes.InfluenceLink_4004) {
       types.add(SystemdynamicsElementTypes.Variable_2001);
       types.add(SystemdynamicsElementTypes.Cloud_2002);
       types.add(SystemdynamicsElementTypes.Stock_2003);
@@ -276,16 +326,45 @@ public class CloudEditPart extends ShapeNodeEditPart {
   /**
    * @generated
    */
-  public class CloudFigure extends Ellipse {
+  public class VariableFigure extends RectangleFigure {
 
     /**
      * @generated
      */
-    public CloudFigure() {
-      this.setLineStyle(Graphics.LINE_DASH);
-      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(12), getMapMode().DPtoLP(12)));
-      this.setMaximumSize(new Dimension(getMapMode().DPtoLP(12), getMapMode().DPtoLP(12)));
-      this.setMinimumSize(new Dimension(getMapMode().DPtoLP(12), getMapMode().DPtoLP(12)));
+    private WrappingLabel fFigureVariableNameFigure;
+
+    /**
+     * @generated
+     */
+    public VariableFigure() {
+      this.setLayoutManager(new CenterLayout());
+      this.setOutline(false);
+      this.setFill(false);
+      this.setOpaque(false);
+
+      this.setBorder(new MarginBorder(getMapMode().DPtoLP(6), getMapMode().DPtoLP(6), getMapMode()
+          .DPtoLP(6), getMapMode().DPtoLP(6)));
+      createContents();
+    }
+
+    /**
+     * @generated
+     */
+    private void createContents() {
+
+      fFigureVariableNameFigure = new WrappingLabel();
+
+      fFigureVariableNameFigure.setText("<...>");
+
+      this.add(fFigureVariableNameFigure);
+
+    }
+
+    /**
+     * @generated
+     */
+    public WrappingLabel getFigureVariableNameFigure() {
+      return fFigureVariableNameFigure;
     }
 
   }

@@ -208,6 +208,7 @@
                tab="property.tab.domain">
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.VariableEditPart"/>
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart"/>
+            <input type="repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart"/>
             <input type="repast.simphony.systemdynamics.diagram.edit.parts.RateEditPart"/>
          </propertySection>      
          
@@ -243,7 +244,7 @@
       <viewProvider class="repast.simphony.systemdynamics.diagram.providers.SystemdynamicsViewProvider">
          <Priority name="Lowest"/>
          <context viewClass="org.eclipse.gmf.runtime.notation.Diagram" semanticHints="Systemdynamics"/>
-         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,2003,2004"/>
+         <context viewClass="org.eclipse.gmf.runtime.notation.Node" semanticHints="2001,2002,2003,2004,2005"/>
          <context viewClass="org.eclipse.gmf.runtime.notation.Edge" semanticHints="4003,4004"/>
       </viewProvider>
    </extension>
@@ -256,13 +257,13 @@
             <method name="getType()" value="Systemdynamics"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-nodes">
-            <method name="getType()" value="2001,2002,2003,2004"/>
+            <method name="getType()" value="2001,2002,2003,2004,2005"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Edge" id="generated-links">
             <method name="getType()" value="4003,4004"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-labels">
-            <method name="getType()" value="5001,5002,5003"/>
+            <method name="getType()" value="5001,5002,5003,5004"/>
          </object>
          <object class="org.eclipse.gmf.runtime.notation.Node" id="generated-compartments">
             <method name="getType()" value=""/>
@@ -280,7 +281,8 @@
          <object class="repast.simphony.systemdynamics.diagram.edit.parts.CloudEditPart" id="Cloud_2002"/>
          <object class="repast.simphony.systemdynamics.diagram.edit.parts.StockEditPart" id="Stock_2003"/>
          <object class="repast.simphony.systemdynamics.diagram.edit.parts.Variable2EditPart" id="Variable_2004"/>
-         <context elements="SystemModel_1000,Variable_2001,Cloud_2002,Stock_2003,Variable_2004,"/>
+         <object class="repast.simphony.systemdynamics.diagram.edit.parts.Variable3EditPart" id="Variable_2005"/>
+         <context elements="SystemModel_1000,Variable_2001,Cloud_2002,Stock_2003,Variable_2004,Variable_2005,"/>
       </modelingAssistantProvider>
    </extension>
 
@@ -350,6 +352,15 @@
          </specializationType>
       </metamodel>
       <metamodel nsURI="http://repast.sf.net/systemdynamics">
+         <specializationType
+               id="repast.simphony.systemdynamics.diagram.Variable_2005"
+               name="%metatype.name.Variable_2005"
+               kind="org.eclipse.gmf.runtime.emf.type.core.IHintedType">
+            <specializes id="repast.simphony.systemdynamics.diagram.Variable_2001"/>
+            <param name="semanticHint" value="2005"/>
+         </specializationType>
+      </metamodel>
+      <metamodel nsURI="http://repast.sf.net/systemdynamics">
          <metamodelType
                id="repast.simphony.systemdynamics.diagram.Rate_4003"
                name="%metatype.name.Rate_4003"
@@ -386,6 +397,7 @@
          <elementType ref="repast.simphony.systemdynamics.diagram.Cloud_2002"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Stock_2003"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Variable_2004"/>
+         <elementType ref="repast.simphony.systemdynamics.diagram.Variable_2005"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.Rate_4003"/>
          <elementType ref="repast.simphony.systemdynamics.diagram.InfluenceLink_4004"/>
          <advice ref="org.eclipse.gmf.runtime.diagram.core.advice.notationDepdendents"/>

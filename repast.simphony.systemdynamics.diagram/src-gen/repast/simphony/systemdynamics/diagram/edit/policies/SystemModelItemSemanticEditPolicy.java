@@ -10,6 +10,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.DuplicateElementsRequest;
 import repast.simphony.systemdynamics.diagram.edit.commands.CloudCreateCommand;
 import repast.simphony.systemdynamics.diagram.edit.commands.StockCreateCommand;
 import repast.simphony.systemdynamics.diagram.edit.commands.Variable2CreateCommand;
+import repast.simphony.systemdynamics.diagram.edit.commands.Variable3CreateCommand;
 import repast.simphony.systemdynamics.diagram.edit.commands.VariableCreateCommand;
 import repast.simphony.systemdynamics.diagram.providers.SystemdynamicsElementTypes;
 
@@ -40,6 +41,9 @@ public class SystemModelItemSemanticEditPolicy extends SystemdynamicsBaseItemSem
     }
     if (SystemdynamicsElementTypes.Variable_2004 == req.getElementType()) {
       return getGEFWrapper(new Variable2CreateCommand(req));
+    }
+    if (SystemdynamicsElementTypes.Variable_2005 == req.getElementType()) {
+      return getGEFWrapper(new Variable3CreateCommand(req));
     }
     return super.getCreateCommand(req);
   }

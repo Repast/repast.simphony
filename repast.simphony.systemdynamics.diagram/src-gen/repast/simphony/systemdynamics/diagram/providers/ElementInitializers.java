@@ -77,11 +77,29 @@ public class ElementInitializers {
   /**
    * @generated
    */
+  public void init_Variable_2005(Variable instance) {
+    try {
+      Object value_0 = uuid_Variable_2005(instance);
+      instance.setUuid((String) value_0);
+      Object value_1 = SystemdynamicsOCLFactory.getExpression(7,
+          SDModelPackage.eINSTANCE.getVariable(), null).evaluate(instance);
+
+      value_1 = SystemdynamicsAbstractExpression.performCast(value_1,
+          SDModelPackage.eINSTANCE.getVariableType());
+      instance.setType((VariableType) value_1);
+    } catch (RuntimeException e) {
+      SystemdynamicsDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
+    }
+  }
+
+  /**
+   * @generated
+   */
   public void init_Rate_4003(Rate instance) {
     try {
       Object value_0 = uuid_Rate_4003(instance);
       instance.setUuid((String) value_0);
-      Object value_1 = SystemdynamicsOCLFactory.getExpression(6,
+      Object value_1 = SystemdynamicsOCLFactory.getExpression(8,
           SDModelPackage.eINSTANCE.getRate(), null).evaluate(instance);
 
       value_1 = SystemdynamicsAbstractExpression.performCast(value_1,
@@ -110,6 +128,13 @@ public class ElementInitializers {
    * @generated NOT
    */
   private String uuid_Variable_2004(Variable self) {
+    return EcoreUtil.generateUUID();
+  }
+
+  /**
+   * @generated NOT
+   */
+  private String uuid_Variable_2005(Variable self) {
     return EcoreUtil.generateUUID();
   }
 

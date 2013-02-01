@@ -46,6 +46,12 @@ public class SystemdynamicsEditPartFactory implements EditPartFactory {
       case VariableName2EditPart.VISUAL_ID:
         return new VariableName2EditPart(view);
 
+      case Variable3EditPart.VISUAL_ID:
+        return new Variable3EditPart(view);
+
+      case VariableName3EditPart.VISUAL_ID:
+        return new VariableName3EditPart(view);
+
       case RateEditPart.VISUAL_ID:
         return new RateEditPart(view);
 
