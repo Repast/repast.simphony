@@ -27,6 +27,7 @@ import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPl
 public class SystemDynamicsBuilder extends IncrementalProjectBuilder {
   
   public static final String SYSTEM_DYNAMICS_EXTENSION = "rsd";
+  public static final String SYSTEM_DYNAMICS_BUILDER_ID = SystemdynamicsDiagramEditorPlugin.ID + ".builder";
 
   /*
    * (non-Javadoc)
