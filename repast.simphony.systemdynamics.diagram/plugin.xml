@@ -601,6 +601,24 @@
          </run>
       </builder>
       </extension>
+   <extension
+         id="repast.simphony.systemdynamics.project_config"
+         name="Repast Simphony Systemdynamics Project Config"
+         point="repast.simphony.project.config">
+      <configurator
+            class="repast.simphony.systemdynamics.diagram.ProjectConfigurator">
+      </configurator>
+   </extension>
+   <extension
+         id="repast_simphony_systemdynamics_nature"
+         name="Repast Simphony System Dynamics Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="repast.simphony.systemdynamics.SystemDynamicsProjectNature">
+         </run>
+      </runtime>
+   </extension>
 
    <!-- optionally, specify keybindings -->
 </plugin>
