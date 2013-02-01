@@ -7,6 +7,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 
 import repast.simphony.systemdynamics.handlers.EditSubscriptsAction;
+import repast.simphony.systemdynamics.handlers.GenerateCodeAction;
+import repast.simphony.systemdynamics.handlers.ValidateDiagramAction;
 
 /**
  * @generated
@@ -39,5 +41,7 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
     fileMenu.remove("pageSetupAction"); //$NON-NLS-1$
 
     bars.getToolBarManager().add(new EditSubscriptsAction(page));
+    bars.getToolBarManager().add(new GenerateCodeAction(page));
+    bars.getToolBarManager().add(new ValidateDiagramAction(page));
   }
 }
