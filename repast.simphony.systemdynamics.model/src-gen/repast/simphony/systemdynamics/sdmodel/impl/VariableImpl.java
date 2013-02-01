@@ -23,6 +23,7 @@ import repast.simphony.systemdynamics.sdmodel.VariableType;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getType <em>Type</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getEquation <em>Equation</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getComment <em>Comment</em>}</li>
  * </ul>
  * </p>
  *
@@ -128,6 +129,26 @@ public class VariableImpl extends EObjectImpl implements Variable {
    * @ordered
    */
   protected String equation = EQUATION_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getComment() <em>Comment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComment()
+   * @generated
+   * @ordered
+   */
+  protected static final String COMMENT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getComment() <em>Comment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComment()
+   * @generated
+   * @ordered
+   */
+  protected String comment = COMMENT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -258,6 +279,27 @@ public class VariableImpl extends EObjectImpl implements Variable {
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getComment() {
+    return comment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setComment(String newComment) {
+    String oldComment = comment;
+    comment = newComment;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__COMMENT, oldComment, comment));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
@@ -271,6 +313,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
         return getUnits();
       case SDModelPackage.VARIABLE__EQUATION:
         return getEquation();
+      case SDModelPackage.VARIABLE__COMMENT:
+        return getComment();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -297,6 +341,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
         return;
       case SDModelPackage.VARIABLE__EQUATION:
         setEquation((String)newValue);
+        return;
+      case SDModelPackage.VARIABLE__COMMENT:
+        setComment((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -325,6 +372,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
       case SDModelPackage.VARIABLE__EQUATION:
         setEquation(EQUATION_EDEFAULT);
         return;
+      case SDModelPackage.VARIABLE__COMMENT:
+        setComment(COMMENT_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -347,6 +397,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
         return UNITS_EDEFAULT == null ? units != null : !UNITS_EDEFAULT.equals(units);
       case SDModelPackage.VARIABLE__EQUATION:
         return EQUATION_EDEFAULT == null ? equation != null : !EQUATION_EDEFAULT.equals(equation);
+      case SDModelPackage.VARIABLE__COMMENT:
+        return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
     }
     return super.eIsSet(featureID);
   }
@@ -371,6 +423,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
     result.append(units);
     result.append(", equation: ");
     result.append(equation);
+    result.append(", comment: ");
+    result.append(comment);
     result.append(')');
     return result.toString();
   }

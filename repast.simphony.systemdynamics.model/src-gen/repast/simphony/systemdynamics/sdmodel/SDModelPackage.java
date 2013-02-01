@@ -249,13 +249,22 @@ public interface SDModelPackage extends EPackage {
   int VARIABLE__EQUATION = 4;
 
   /**
+   * The feature id for the '<em><b>Comment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VARIABLE__COMMENT = 5;
+
+  /**
    * The number of structural features of the '<em>Variable</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VARIABLE_FEATURE_COUNT = 5;
+  int VARIABLE_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.StockImpl <em>Stock</em>}' class.
@@ -311,6 +320,15 @@ public interface SDModelPackage extends EPackage {
    * @ordered
    */
   int STOCK__EQUATION = VARIABLE__EQUATION;
+
+  /**
+   * The feature id for the '<em><b>Comment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STOCK__COMMENT = VARIABLE__COMMENT;
 
   /**
    * The feature id for the '<em><b>Initial Value</b></em>' attribute.
@@ -386,6 +404,15 @@ public interface SDModelPackage extends EPackage {
   int CLOUD__EQUATION = STOCK__EQUATION;
 
   /**
+   * The feature id for the '<em><b>Comment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLOUD__COMMENT = STOCK__COMMENT;
+
+  /**
    * The feature id for the '<em><b>Initial Value</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -457,6 +484,15 @@ public interface SDModelPackage extends EPackage {
    * @ordered
    */
   int RATE__EQUATION = VARIABLE__EQUATION;
+
+  /**
+   * The feature id for the '<em><b>Comment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RATE__COMMENT = VARIABLE__COMMENT;
 
   /**
    * The feature id for the '<em><b>To</b></em>' reference.
@@ -803,6 +839,17 @@ public interface SDModelPackage extends EPackage {
   EAttribute getVariable_Equation();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.Variable#getComment <em>Comment</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Comment</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.Variable#getComment()
+   * @see #getVariable()
+   * @generated
+   */
+  EAttribute getVariable_Comment();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.Subscript <em>Subscript</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1077,6 +1124,14 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EAttribute VARIABLE__EQUATION = eINSTANCE.getVariable_Equation();
+
+    /**
+     * The meta object literal for the '<em><b>Comment</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VARIABLE__COMMENT = eINSTANCE.getVariable_Comment();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl <em>Subscript</em>}' class.
