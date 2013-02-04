@@ -53,15 +53,15 @@ public class ScheduleParameters {
     this.duration = duration;
 
     if (pType == null) {
-      if (priority == RANDOM_PRIORITY)
+      if (Double.isNaN(priority))
         this.pType = PriorityType.RANDOM;
       else if (priority == FIRST_PRIORITY)
         this.pType = PriorityType.FIRST;
       else if (priority == LAST_PRIORITY)
         this.pType = PriorityType.LAST;
-      else {
+      else 
         this.pType = PriorityType.OTHER;
-      }
+      
     } else {
       this.pType = pType;
     }
@@ -74,7 +74,7 @@ public class ScheduleParameters {
     hashCode = 31 * hashCode + (int)(l ^ (l >>> 32));
     l = Double.doubleToLongBits(duration);
     hashCode = 31 * hashCode + frequency.hashCode();
-    hashCode = 31 * hashCode + pType.hashCode();
+    hashCode = 31 * hashCode + this.pType.hashCode();
   }
 
   /**
