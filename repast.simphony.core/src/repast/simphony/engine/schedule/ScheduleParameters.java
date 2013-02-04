@@ -38,22 +38,56 @@ public class ScheduleParameters {
   public static final double LAST_PRIORITY = Double.NEGATIVE_INFINITY;
 
   private double start, interval, priority;
+  private PriorityType pType;
   // be explicit.
   private double duration = 0;
   private Frequency frequency = Frequency.REPEAT;
+  private int hashCode = 17;
 
-  // creates a ScheduleParameters object from the specified parameters.
   protected ScheduleParameters(double start, Frequency frequency, double interval, double priority,
-      double duration) {
+      PriorityType pType, double duration) {
     this.start = start;
     this.frequency = frequency;
     this.interval = interval;
     this.priority = priority;
     this.duration = duration;
+
+    if (pType == null) {
+      if (priority == RANDOM_PRIORITY)
+        this.pType = PriorityType.RANDOM;
+      else if (priority == FIRST_PRIORITY)
+        this.pType = PriorityType.FIRST;
+      else if (priority == LAST_PRIORITY)
+        this.pType = PriorityType.LAST;
+      else {
+        this.pType = PriorityType.OTHER;
+      }
+    } else {
+      this.pType = pType;
+    }
+    
+    long l = Double.doubleToLongBits(start);
+    hashCode = 31 * hashCode + (int)(l ^ (l >>> 32));
+    l = Double.doubleToLongBits(interval);
+    hashCode = 31 * hashCode + (int)(l ^ (l >>> 32));
+    l = Double.doubleToLongBits(priority);
+    hashCode = 31 * hashCode + (int)(l ^ (l >>> 32));
+    l = Double.doubleToLongBits(duration);
+    hashCode = 31 * hashCode + frequency.hashCode();
+    hashCode = 31 * hashCode + pType.hashCode();
   }
 
+  /**
+   * Gets whether or not the specified parameters are scheduled with a Random
+   * priority.
+   * 
+   * @param params
+   * 
+   * @return true if the specified parameters are scheduled with a random
+   *         priority, otherwise false.
+   */
   public static boolean isRandomPriority(ScheduleParameters params) {
-    return Double.isNaN(params.getPriority());
+    return params.getPriorityType() == PriorityType.RANDOM;
   }
 
   /**
@@ -68,7 +102,28 @@ public class ScheduleParameters {
    * @return a ScheduleParameters appropriate for scheduling a repeating action
    */
   public static ScheduleParameters createRepeating(double start, double interval) {
-    return new ScheduleParameters(start, Frequency.REPEAT, interval, RANDOM_PRIORITY, NO_DURATION);
+    return new ScheduleParameters(start, Frequency.REPEAT, interval, RANDOM_PRIORITY, 
+        null, NO_DURATION);
+  }
+
+  /**
+   * Creates a ScheduleParameters appropriate for scheduling a repeating action
+   * of the first, last, random, or first of last priority type. The action will
+   * repeat at the specified interval. Use ScheduleParameters
+   * createRepeating(double start, double interval, double priority) to schedule
+   * an action with a numeric priority.
+   * 
+   * @param start
+   *          the start time
+   * @param interval
+   *          the interval at which the execution of the action should repeat
+   * @param priorityType
+   *          the priority type of the action
+   * @return a ScheduleParameters appropriate for scheduling a repeating action
+   */
+  public static ScheduleParameters createRepeating(double start, double interval,
+      PriorityType priorityType) {
+    return new ScheduleParameters(start, Frequency.REPEAT, interval, 0, priorityType, NO_DURATION);
   }
 
   /**
@@ -216,7 +271,8 @@ public class ScheduleParameters {
    * @return a ScheduleParameters appropriate for scheduling a repeating action
    */
   public static ScheduleParameters createRepeating(double start, double interval, double priority) {
-    return new ScheduleParameters(start, Frequency.REPEAT, interval, priority, NO_DURATION);
+    return new ScheduleParameters(start, Frequency.REPEAT, interval, priority, 
+        null, NO_DURATION);
   }
 
   /**
@@ -250,7 +306,8 @@ public class ScheduleParameters {
    */
   public static ScheduleParameters createRepeating(double start, double interval, double priority,
       double duration) {
-    return new ScheduleParameters(start, Frequency.REPEAT, interval, priority, duration);
+    return new ScheduleParameters(start, Frequency.REPEAT, interval, priority, null,
+        duration);
   }
 
   /**
@@ -263,7 +320,25 @@ public class ScheduleParameters {
    *         action
    */
   public static ScheduleParameters createOneTime(double start) {
-    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, RANDOM_PRIORITY, NO_DURATION);
+    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, RANDOM_PRIORITY, 
+        null, NO_DURATION);
+  }
+
+  /**
+   * Creates a ScheduleParameters for scheduling a non-repeating action of the
+   * specified PriorityType. This method is appropriate for scheduling one time
+   * with a priority of first, last, random, and first of last. Use
+   * createOneTime(double, double) to schedule a one time action with numeric
+   * priority.
+   * 
+   * @param start
+   *          the start type
+   * @param type
+   *          the type of priority the action should have.
+   * @return the created ScheduleParameters.
+   */
+  public static ScheduleParameters createOneTime(double start, PriorityType type) {
+    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, 0, type, NO_DURATION);
   }
 
   /**
@@ -290,7 +365,8 @@ public class ScheduleParameters {
    *         action
    */
   public static ScheduleParameters createOneTime(double start, double priority) {
-    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, priority, NO_DURATION);
+    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, priority, null,
+        NO_DURATION);
   }
 
   /**
@@ -320,7 +396,7 @@ public class ScheduleParameters {
    * @return a ScheduleParameters appropriate for scheduling a repeating action
    */
   public static ScheduleParameters createOneTime(double start, double priority, double duration) {
-    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, priority, duration);
+    return new ScheduleParameters(start, Frequency.ONE_TIME, 0, priority,  null, duration);
   }
 
   /**
@@ -344,7 +420,7 @@ public class ScheduleParameters {
    *         at the end of the simulation.
    */
   public static ScheduleParameters createAtEnd(double priority) {
-    return new ScheduleParameters(END, Frequency.ONE_TIME, 0, priority, NO_DURATION);
+    return new ScheduleParameters(END, Frequency.ONE_TIME, 0, priority, null, NO_DURATION);
   }
 
   /**
@@ -354,6 +430,15 @@ public class ScheduleParameters {
    */
   public double getStart() {
     return start;
+  }
+
+  /**
+   * Gets the priority type of this ScheduleParameter.
+   * 
+   * @return the priority type of this ScheduleParameter.
+   */
+  public PriorityType getPriorityType() {
+    return pType;
   }
 
   /**
@@ -395,34 +480,19 @@ public class ScheduleParameters {
   }
 
   /**
-   * Gets the hash code for this schedule parameters. This hashCode is
-   * equivalent to: <code>
-   * (int) Double.doubleToLongBits(getStart()) 
-				^ getFrequency().hashCode()
-				^ Double.doubleToLongBits(getInterval())
-				^ Double.doubleToLongBits(getPriority())
-				^ Double.doubleToLongBits(getDuration()))
-   * </code>
+   * Gets the hash code for this schedule parameters.
    * 
    * @return this schedule parameters hash code
    */
   @Override
   public int hashCode() {
-    // TODO: make sure the hash code works right
-    return (int) (Double.doubleToLongBits(start) ^ frequency.hashCode()
-        ^ Double.doubleToLongBits(interval) ^ Double.doubleToLongBits(priority) ^ Double
-          .doubleToLongBits(duration));
+    return hashCode;
   }
 
   /**
-   * Checks if this ScheduleParamters equals the passed in object. This is
-   * equivalent to the object being a ScheduleParameters, and: <code>
-   * obj.getStart() == this.getStart() &&
-   * obj.getFrequency().equals(this.getFrequency()) &&
-   * obj.getInterval() == this.getInterval() &&
-   * obj.getDuration() == this.getDuration() &&
-   * obj.getPriority() == this.getPriority() &&
-   * </code>
+   * Checks if this ScheduleParamters equals the passed in object. The passed
+   * object is equal to this one if all its parameters (start, end, etc.)
+   * are equal to this one.
    * 
    * @return if the object is equal to the current one as defined above
    */
@@ -437,12 +507,13 @@ public class ScheduleParameters {
     return otherParams.start == this.start && otherParams.frequency.equals(this.frequency)
         && otherParams.interval == this.interval
         && ((Double) otherParams.priority).equals(this.priority)
-        && otherParams.duration == this.duration;
+        && otherParams.duration == this.duration && otherParams.pType == this.pType;
   }
 
   public String toString() {
-    return String.format(
-        "ScheduleParameters[start: %f, frequency: %s, interval: %f, priority: %f, duration: %f]",
-        start, frequency, interval, priority, duration);
+    return String
+        .format(
+            "ScheduleParameters[start: %f, frequency: %s, interval: %f, priority: %f, priorityType: %s, duration: %f]",
+            start, frequency, interval, priority, pType, duration);
   }
 }
