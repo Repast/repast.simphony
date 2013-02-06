@@ -21,6 +21,8 @@ public class Probe {
   private static long UPDATE_INTERVAL = 17;
 
   private JPanel panel;
+  // TODO change to list of ProbeModels when parameter
+  // code is updated
   private List<? extends PresentationModel<?>> models;
   private boolean buffered = false;
   private Updater updater;
@@ -31,7 +33,7 @@ public class Probe {
   private class Updater implements Runnable {
     public void run() {
       for (PresentationModel<?> model : models) {
-        ((ProbeModel) model.getBean()).update();
+        ((ProbeModel)model).update();
       }
     }
   }
@@ -118,7 +120,7 @@ public class Probe {
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     for (PresentationModel<?> model : models) {
-      ((ProbeModel) model.getBean()).addPropertyChangeListener(listener);
+      ((ProbeModel)model).addPropertyChangeListener(listener);
     }
   }
 
@@ -129,7 +131,7 @@ public class Probe {
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     for (PresentationModel<?> model : models) {
-      ((ProbeModel) model.getBean()).removePropertyChangeListener(listener);
+      ((ProbeModel)model).removePropertyChangeListener(listener);
     }
   }
 }

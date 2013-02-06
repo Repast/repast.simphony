@@ -1,5 +1,8 @@
 package repast.simphony.ui.probe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.value.ValueModel;
@@ -14,6 +17,44 @@ import com.jgoodies.binding.value.ValueModel;
 @SuppressWarnings("serial")
 public class ProbeModel extends PresentationModel<Object> {
   
+  private static class ProbeBeanAdapter extends BeanAdapter<Object> {
+
+    private List<SimplePropertyAdapter> adapters = new ArrayList<SimplePropertyAdapter>();
+
+    public ProbeBeanAdapter(ValueModel beanChannel) {
+      super(beanChannel, false);
+    }
+
+    @Override
+    protected SimplePropertyAdapter createPropertyAdapter(String propertyName, String getterName,
+        String setterName) {
+      SimplePropertyAdapter adapter = new SimplePropertyAdapter(propertyName, getterName, setterName);
+      adapters.add(adapter);
+      return adapter;
+    }
+    
+    public void fireChange() {
+      for (SimplePropertyAdapter spa : adapters) {
+        spa.fireChange();
+      }
+    }
+    
+    public class SimplePropertyAdapter extends BeanAdapter<Object>.SimplePropertyAdapter {
+
+      protected SimplePropertyAdapter(String propertyName, String getterName, String setterName) {
+        super(propertyName, getterName, setterName);
+      }
+      
+      void fireChange() {
+        fireChange(getBean());
+      }
+    }
+  }
+  
+  
+  private ProbeBeanAdapter adapter;
+  
+  
   public ProbeModel(Object probedObject) {
     super(probedObject);
   }
@@ -26,7 +67,8 @@ public class ProbeModel extends PresentationModel<Object> {
   // We are working with arbitrary objects that most likely don't conform to the bean spec.
   @Override
   protected BeanAdapter<Object> createBeanAdapter(ValueModel beanChannel) {
-    return new BeanAdapter<Object>(beanChannel, false);
+    adapter = new ProbeBeanAdapter(beanChannel);
+    return adapter;
   }
   
   /**
@@ -35,7 +77,7 @@ public class ProbeModel extends PresentationModel<Object> {
    * 
    */
   public void update() {
-    fireMultiplePropertiesChanged();
+    adapter.fireChange();
   }
 }
 

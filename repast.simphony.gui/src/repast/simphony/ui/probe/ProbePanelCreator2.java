@@ -72,6 +72,7 @@ public class ProbePanelCreator2 {
     builder.nextLine();
 
     ProbeModel model = new ProbeModel(target);
+    models.add(model);
     for (ProbedProperty prop : props) {
       JComponent component = prop.getComponent(model, buffered);
       if (component instanceof JFormattedTextField) {
