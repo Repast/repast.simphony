@@ -17,6 +17,12 @@ import com.jgoodies.binding.value.ValueModel;
 @SuppressWarnings("serial")
 public class ProbeModel extends PresentationModel<Object> {
   
+  // This adapter is necessary because under normal use, the bindings
+  // framework expects the bean that it binds the gui components to
+  // to implements property change event firing when one of its properties
+  // change. Our beans (the agents) can be anything so we need to be able
+  // to programmatically fire updates in order to update the probe GUI
+  // to reflect the current state.
   private static class ProbeBeanAdapter extends BeanAdapter<Object> {
 
     private List<SimplePropertyAdapter> adapters = new ArrayList<SimplePropertyAdapter>();
@@ -39,6 +45,7 @@ public class ProbeModel extends PresentationModel<Object> {
       }
     }
     
+    // This is necessary to expose the fireChange(Object) method.
     public class SimplePropertyAdapter extends BeanAdapter<Object>.SimplePropertyAdapter {
 
       protected SimplePropertyAdapter(String propertyName, String getterName, String setterName) {
