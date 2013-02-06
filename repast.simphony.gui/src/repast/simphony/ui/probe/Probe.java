@@ -33,7 +33,9 @@ public class Probe {
   private class Updater implements Runnable {
     public void run() {
       for (PresentationModel<?> model : models) {
-        ((ProbeModel)model).update();
+        // TODO remove check when parameter code is updated
+        if (model instanceof ProbeModel) ((ProbeModel)model).update();
+        else ((OldProbeModel)model.getBean()).update();
       }
     }
   }
