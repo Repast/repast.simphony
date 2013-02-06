@@ -18,6 +18,7 @@ public class SampleObject {
   }
   
   private int intVal = 3;
+  private String code = "code";
   
   @ProbeProperty(usageName="intVal", displayName="Integer Value", 
       converter="repast.simphony.parameter.StringConverterFactory$IntConverter")
@@ -32,11 +33,11 @@ public class SampleObject {
   
   @ProbeProperty(usageName="code", displayName="Code")
   public String getCode() {
-    return "code";
+    return code;
   }
   
   @ProbeProperty(usageName="code")
   public void setCode(String val) {
-    
+    this.code = val;
   }
 }

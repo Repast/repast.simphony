@@ -9,12 +9,17 @@ import static org.junit.Assert.assertTrue;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JLabel;
 
 import org.junit.Test;
 
 import repast.simphony.parameter.StringConverterFactory;
 
 import com.jgoodies.binding.PresentationModel;
+import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.value.ValueModel;
 
@@ -22,11 +27,49 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  */
 public class ProbeTests {
+  
+  private static class MyBeanAdapter extends BeanAdapter<Object> {
+
+    private List<SimplePropertyAdapter> adapters = new ArrayList<SimplePropertyAdapter>();
+
+    public MyBeanAdapter(ValueModel beanChannel) {
+      super(beanChannel, false);
+    }
+
+    @Override
+    protected SimplePropertyAdapter createPropertyAdapter(String propertyName, String getterName,
+        String setterName) {
+      SimplePropertyAdapter adapter = new SimplePropertyAdapter(propertyName, getterName, setterName);
+      adapters.add(adapter);
+      return adapter;
+    }
+    
+    public void fireUpdate() {
+      for (SimplePropertyAdapter spa : adapters) {
+        spa.fireChanged();
+      }
+    }
+    
+    public class SimplePropertyAdapter extends BeanAdapter.SimplePropertyAdapter {
+
+      protected SimplePropertyAdapter(String propertyName, String getterName, String setterName) {
+        super(propertyName, getterName, setterName);
+      }
+      
+      void fireChanged() {
+        fireChange(getBean());
+      }
+     
+    }
+
+  }
 
   @SuppressWarnings("serial")
-  public static class MyModel<B> extends PresentationModel<B> {
+  public static class MyModel extends PresentationModel<Object> {
 
-    public MyModel(B bean) {
+    private MyBeanAdapter adapter;
+
+    public MyModel(Object bean) {
       super(bean);
     }
 
@@ -38,12 +81,13 @@ public class ProbeTests {
      * .binding.value.ValueModel)
      */
     @Override
-    protected BeanAdapter<B> createBeanAdapter(ValueModel beanChannel) {
-      return new BeanAdapter<B>(beanChannel, false);
+    protected BeanAdapter<Object> createBeanAdapter(ValueModel beanChannel) {
+      adapter = new MyBeanAdapter(beanChannel);
+      return adapter;
     }
 
     public void update() {
-      fireMultiplePropertiesChanged();
+      adapter.fireUpdate();
     }
   }
 
@@ -52,7 +96,7 @@ public class ProbeTests {
     // this more to help figure out how it works than
     // testing to make sure it works.
     SampleObject obj = new SampleObject();
-    MyModel<SampleObject> model = new MyModel<SampleObject>(obj);
+    MyModel model = new MyModel(obj);
     ValueModel bModel = model.getModel("intVal");
     assertEquals(new Integer(obj.getIntVal()), bModel.getValue());
 
@@ -67,18 +111,17 @@ public class ProbeTests {
     model.update();
     assertEquals(new Integer(obj.getIntVal()), bModel.getValue());
 
-    /*
-     * JTextField fld = new JTextField(); NumberFormat nf =
-     * NumberFormat.getIntegerInstance(); Bindings.bind(fld,
-     * ConverterFactory.createStringConverter(bModel, nf)); assertEquals("10",
-     * fld.getText());
-     * 
-     * fld.setText("12"); assertEquals(12, obj.getIntVal());
-     */
+    ValueModel vModel = model.getModel("code");
+    JLabel label = BasicComponentFactory.createLabel(vModel);
+    System.out.println(label.getText());
+    obj.setCode("A");
+    model.update();
+    System.out.println(label.getText());
   }
 
   @Test
-  public void testProbeIntrospector() throws IntrospectionException, IllegalArgumentException, IllegalAccessException {
+  public void testProbeIntrospector() throws IntrospectionException, IllegalArgumentException,
+      IllegalAccessException {
     ProbeIntrospector introspector = ProbeIntrospector.getInstance();
     ProbeInfo pi = introspector.getProbeInfo(SampleObject.class);
 
