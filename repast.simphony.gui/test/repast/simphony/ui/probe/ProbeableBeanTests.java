@@ -126,7 +126,7 @@ public class ProbeableBeanTests extends TestCase {
 
     MutableNumberConverter conv = new MutableNumberConverter();
 
-    ProbeableBean bean = info.getBean();
+    ProbeModel bean = info.getBean();
     PListener listener = new PListener();
     bean.addPropertyChangeListener(listener);
 
@@ -146,7 +146,7 @@ public class ProbeableBeanTests extends TestCase {
 
   public void testGet() {
 		try {
-			ProbeableBean bean = new ParameterProbeBeanCreator().createProbeableBean(params).getBean();
+			ProbeModel bean = new ParameterProbeBeanCreator().createProbeableBean(params).getBean();
 			Class clazz = bean.getClass();
 
 			Method m = clazz.getMethod("getIntVal");
@@ -174,7 +174,7 @@ public class ProbeableBeanTests extends TestCase {
 
 	public void testSet() {
 		try {
-			ProbeableBean bean = new ParameterProbeBeanCreator().createProbeableBean(params).getBean();
+			ProbeModel bean = new ParameterProbeBeanCreator().createProbeableBean(params).getBean();
 			Class clazz = bean.getClass();
 			// System.out.println("bean.getClass().getMethods() = " + Arrays.asList(bean.getClass().getMethods()));
 

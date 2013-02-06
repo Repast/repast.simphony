@@ -30,7 +30,7 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
   private Map<Object, DockableFrame> probeViewMap = new HashMap<Object, DockableFrame>();
   private Map<Object, Probe> probeMap = new HashMap<Object, Probe>();
   private RSGui gui;
-  private List probesToRemove = new ArrayList();
+  private List<Object> probesToRemove = new ArrayList<Object>();
   private Map<Object, Probe> probesToAdd = new HashMap<Object, Probe>();
 
 
@@ -85,11 +85,10 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
     if (view != null) {
       gui.setActiveView(view);
     } else {
-      String title = createTitle(obj);
-      ProbePanelCreator creator = new ProbePanelCreator(obj);
-      Probe probe = creator.getProbe(title, true);
+      ProbePanelCreator2 creator = new ProbePanelCreator2(obj);
+      Probe probe = creator.getProbe(true);
       probesToAdd.put(obj, probe);
-      view = gui.addProbeView("probe_" + probeCount++, title, probe.getPanel());
+      view = gui.addProbeView("probe_" + probeCount++, probe.getTitle(), probe.getPanel());
       view.putClientProperty(PROBED_OBJ_KEY, obj);
       probeViewMap.put(obj, view);
       gui.setActiveView(view);

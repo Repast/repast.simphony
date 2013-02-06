@@ -44,7 +44,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ProbePanelCreator {
 
   private MessageCenter msgCenter = MessageCenter.getMessageCenter(ProbePanelCreator.class);
-  private List<PresentationModel> models = new ArrayList<PresentationModel>();
+  private List<PresentationModel<?>> models = new ArrayList<PresentationModel<?>>();
   private Map<String, List> listContstraints = new HashMap<String, List>();
   private ProbeableBeanInfo pbInfo;
   private Object targetBean;
@@ -75,16 +75,6 @@ public class ProbePanelCreator {
     }
   }
 
-  public ProbePanelCreator(Object targetBean) {
-    this.targetBean = targetBean;
-    try {
-      pbInfo = ProbeableBeanCreator.getInstance().createProbeableBean(targetBean);
-      models.add(new PresentationModel(pbInfo.getBean()));
-    } catch (Exception ex) {
-      msgCenter.warn("Error creating probe panel.", ex);
-    }
-  }
-
   private boolean needsConversion(ParameterSchema details) {
     Class type = details.getType();
     return details.getConverter() != null
@@ -92,7 +82,7 @@ public class ProbePanelCreator {
 	    || type.equals(Boolean.class) || type.equals(String.class));
   }
 
-  private List<ProbedProperty> createProperties(BeanInfo info, ProbeableBean bean, boolean wrap) {
+  private List<ProbedProperty> createProperties(BeanInfo info, OldProbeModel bean, boolean wrap) {
     PropertyDescriptor[] pds = info.getPropertyDescriptors();
     List<ProbedProperty> props = new ArrayList<ProbedProperty>();
     for (PropertyDescriptor pd : pds) {
@@ -248,7 +238,7 @@ public class ProbePanelCreator {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
 
-      List<ProbedProperty> props = createProperties(info, (ProbeableBean) model.getBean(), false);
+      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), false);
 
       Collections.sort(props, new Comparator<ProbedProperty>() {
 	public int compare(ProbedProperty o1, ProbedProperty o2) {
@@ -272,9 +262,9 @@ public class ProbePanelCreator {
     try {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-      List<ProbedProperty> props = createProperties(info, (ProbeableBean) model.getBean(), wrap);
+      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
       JPanel panel = createPanel(props, title, false);
-      return new Probe(models, panel);
+      return new Probe(models, panel, title);
     } catch (IntrospectionException e) {
       msgCenter.warn("Error creating probe.", e);
     }
@@ -285,9 +275,9 @@ public class ProbePanelCreator {
     try {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-      List<ProbedProperty> props = createProperties(info, (ProbeableBean) model.getBean(), wrap);
+      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
       JPanel panel = createPanel(props, title, true);
-      return new Probe(models, panel, true);
+      return new Probe(models, panel, title, true);
     } catch (IntrospectionException e) {
       msgCenter.warn("Error creating probe.", e);
     }
