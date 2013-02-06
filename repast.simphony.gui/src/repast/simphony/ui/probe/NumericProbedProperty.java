@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -108,10 +109,10 @@ public class NumericProbedProperty extends ProbedProperty {
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case INT: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Integer.valueOf(0));
+      //EmptyNumberFormat formatter = new EmptyNumberFormat(NumberFormat.getIntegerInstance(),
+       //   Integer.valueOf(0));
       return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createIntegerField(valueModel, 0));
     }
     case DOUBLE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
@@ -120,10 +121,8 @@ public class NumericProbedProperty extends ProbedProperty {
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case LONG: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Long.valueOf(0));
       return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createLongField(valueModel, 0L));
     }
     case FLOAT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
