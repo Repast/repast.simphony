@@ -120,7 +120,7 @@ private static class «generatorClassName()» {
         SelfTransitionBuilder<«agentType»> tb = new SelfTransitionBuilder<«agentType»>("«this.id»",
                 stateMap.get("«this.from.uuid»"));
         «EXPAND createAllTransProps(agentType)-»
-        mscb.addRegularTransition(tb.build());
+        mscb.addSelfTransition(tb.build());
     «ELSE-»
         TransitionBuilder<«agentType»> tb = new TransitionBuilder<«agentType»>("«this.id»",
             stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
