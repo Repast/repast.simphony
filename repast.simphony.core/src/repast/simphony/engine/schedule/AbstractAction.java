@@ -20,6 +20,8 @@ public abstract class AbstractAction implements ISchedulableAction {
    * The next clock tick that this AbstractAction should be executed.
    */ 
   protected double nextTime = Double.NaN;
+  
+  protected PriorityType pType;
 
   /**
    * The interval at which to execute this action.
@@ -95,6 +97,7 @@ public abstract class AbstractAction implements ISchedulableAction {
     nextTime = params.getStart();
     priority = params.getPriority();
     interval = params.getInterval();
+    pType = params.getPriorityType();
   }
 
   /**
@@ -158,6 +161,13 @@ public abstract class AbstractAction implements ISchedulableAction {
     return priority;
   }
   
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.schedule.ISchedulableAction#getPriorityType()
+   */
+  public PriorityType getPriorityType() {
+    return pType;
+  }
+
   /**
    * Gets an index indicating where this IAction was added to a schedule w/r to all other
    * actions added to a schedule.
