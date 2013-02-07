@@ -38,6 +38,11 @@ public class StateChartResolveAction implements IAction {
 		
 	}
 	
+	// To be used by initialization routines
+	public void removeAllListeners(){
+		scCountsMap.clear();
+	}
+	
 	
 	
 	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();

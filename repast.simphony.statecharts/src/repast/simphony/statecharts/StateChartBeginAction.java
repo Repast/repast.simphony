@@ -16,10 +16,15 @@ public class StateChartBeginAction implements IAction {
 	Set<DefaultStateChart<?>> scSet = new LinkedHashSet<DefaultStateChart<?>>();
 
 	// register listeners
-	public void registerListener(DefaultStateChart<?> sc){
+	public void registerListener(DefaultStateChart<?> sc) {
 		scSet.add(sc);
 	}
-		
+
+	// To be used by initialization routines
+	public void removeAllListeners() {
+		scSet.clear();
+	}
+
 	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
 
 	/**
@@ -33,22 +38,22 @@ public class StateChartBeginAction implements IAction {
 			return index1 < index2 ? 1 : index1 == index2 ? 0 : -1;
 		}
 	}
-	
+
 	// notify listeners
-	protected void notifyListeners(){
+	protected void notifyListeners() {
 		List<DefaultStateChart<?>> temp = new ArrayList<DefaultStateChart<?>>(scSet);
 		SimUtilities.shuffle(temp, RandomHelper.getUniform());
-		Collections.sort(temp,pComp);
-		
-		for(DefaultStateChart<?> sc : temp){
+		Collections.sort(temp, pComp);
+
+		for (DefaultStateChart<?> sc : temp) {
 			sc.begin();
 		}
 	}
-	
-	public boolean hasListeners(){
+
+	public boolean hasListeners() {
 		return !scSet.isEmpty();
 	}
-	
+
 	@Override
 	public void execute() {
 		notifyListeners();

@@ -44,6 +44,15 @@ public enum StateChartScheduler {
 				remove = true;
 			}
 		}
+		
+		protected void nullify(){
+			scra.removeAllListeners();
+			RunEnvironment.getInstance().getCurrentSchedule()
+			.removeAction(isa);
+			isa = null;
+			scra = null;
+			remove = true;
+		}
 
 		protected boolean toRemove() {
 			return remove;
@@ -52,20 +61,39 @@ public enum StateChartScheduler {
 	
 	static class BeginActionsMapValue {
 		private StateChartBeginAction scba;
+		private ISchedulableAction isa;
 
-		protected BeginActionsMapValue(StateChartBeginAction scba) {
+		protected BeginActionsMapValue(StateChartBeginAction scba, ISchedulableAction isa) {
 			this.scba = scba;
+			this.isa = isa;
 		}
 
 		protected void registerListener(DefaultStateChart<?> sc) {
 			scba.registerListener(sc);
+		}
+		
+		protected void nullify(){
+			scba.removeAllListeners();
+			RunEnvironment.getInstance().getCurrentSchedule()
+			.removeAction(isa);
+			isa = null;
+			scba = null;
 		}
 	}
 
 	public void initialize() {
 		resolveClearCounter = 0;
 		beginClearCounter = 0;
+
+		// remove resolveActions from schedule
+		for (ResolveActionsMapValue ramv : resolveActions.values()){
+			ramv.nullify();
+		}
 		resolveActions.clear();
+		
+		for (BeginActionsMapValue bamv : beginActions.values()){
+			bamv.nullify();
+		}
 		beginActions.clear();
 	}
 
@@ -133,10 +161,10 @@ public enum StateChartScheduler {
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();
 			StateChartBeginAction scba = new StateChartBeginAction();
-			schedule.schedule(ScheduleParameters
+			ISchedulableAction ia = schedule.schedule(ScheduleParameters
 					.createOneTime(nextTime, ScheduleParameters.FIRST_PRIORITY),
 					scba);
-			bamv = new BeginActionsMapValue(scba);
+			bamv = new BeginActionsMapValue(scba, ia);
 			beginActions.put(nextTime, bamv);
 		}
 		bamv.registerListener(sc);
