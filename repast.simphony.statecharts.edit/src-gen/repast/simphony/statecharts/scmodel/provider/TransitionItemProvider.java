@@ -532,7 +532,7 @@ public class TransitionItemProvider
    */
   @Override
   public Object getImage(Object object) {
-    return overlayImage(object, getResourceLocator().getImage("full/obj16/transition-16.png"));
+    return overlayImage(object, getResourceLocator().getImage("full/obj16/Transition"));
   }
 
   /**

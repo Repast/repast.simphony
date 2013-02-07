@@ -90,7 +90,6 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
   public final void createControls(Composite parent,
       TabbedPropertySheetPage tabPage) {
     super.createControls(parent, tabPage);
-    
     toolkit = new FormToolkit(parent.getDisplay());
     toolkit.setBorderStyle(SWT.BORDER);
     GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);

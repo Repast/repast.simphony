@@ -41,6 +41,7 @@ import repast.simphony.statecharts.scmodel.Transition;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getNextID <em>Next ID</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getId <em>Id</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.StateMachineImpl#getPriority <em>Priority</em>}</li>
  * </ul>
  * </p>
  *
@@ -206,6 +207,26 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * @ordered
    */
   protected String uuid = EcoreUtil.generateUUID();
+
+  /**
+   * The default value of the '{@link #getPriority() <em>Priority</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPriority()
+   * @generated
+   * @ordered
+   */
+  protected static final double PRIORITY_EDEFAULT = 0.0;
+
+  /**
+   * The cached value of the '{@link #getPriority() <em>Priority</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPriority()
+   * @generated
+   * @ordered
+   */
+  protected double priority = PRIORITY_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -404,6 +425,27 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
    * <!-- end-user-doc -->
    * @generated
    */
+  public double getPriority() {
+    return priority;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPriority(double newPriority) {
+    double oldPriority = priority;
+    priority = newPriority;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.STATE_MACHINE__PRIORITY, oldPriority, priority));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
     switch (featureID) {
@@ -441,6 +483,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return getId();
       case StatechartPackage.STATE_MACHINE__UUID:
         return getUuid();
+      case StatechartPackage.STATE_MACHINE__PRIORITY:
+        return getPriority();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -483,6 +527,9 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__UUID:
         setUuid((String)newValue);
         return;
+      case StatechartPackage.STATE_MACHINE__PRIORITY:
+        setPriority((Double)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -522,6 +569,9 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
       case StatechartPackage.STATE_MACHINE__UUID:
         setUuid(UUID_EDEFAULT);
         return;
+      case StatechartPackage.STATE_MACHINE__PRIORITY:
+        setPriority(PRIORITY_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -552,6 +602,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case StatechartPackage.STATE_MACHINE__UUID:
         return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
+      case StatechartPackage.STATE_MACHINE__PRIORITY:
+        return priority != PRIORITY_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -580,6 +632,8 @@ public class StateMachineImpl extends EObjectImpl implements StateMachine {
     result.append(id);
     result.append(", uuid: ");
     result.append(uuid);
+    result.append(", priority: ");
+    result.append(priority);
     result.append(')');
     return result.toString();
   }

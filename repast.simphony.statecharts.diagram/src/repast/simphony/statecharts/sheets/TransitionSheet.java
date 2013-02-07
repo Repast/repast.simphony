@@ -12,8 +12,6 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -27,6 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -70,6 +70,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   public TransitionSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NO_FOCUS);
+    
     setLayout(new GridLayout(1, false));
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
@@ -158,9 +159,8 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
-
+  
   private void createGuardSection(FormToolkit toolkit) {
-
     sctnGuard = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
     sctnGuard.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnGuard);
@@ -181,16 +181,6 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
     guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     guardTxt.addTraverseListener(new CancelTraverseOnReturn());
-    guardTxt.addMouseListener(new MouseAdapter() {
-
-      @Override
-      public void mouseUp(MouseEvent e) {
-        if (!guardTxt.isFocusControl()) {
-          guardTxt.setFocus();
-        }
-      }
-      
-    });
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
     gd_onExitTxt.heightHint = 50;
     gd_onExitTxt.horizontalIndent = 1;
@@ -199,7 +189,6 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   }
 
   private void createTriggerSection(FormToolkit toolkit) {
-
     sctnTrigger = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
     sctnTrigger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnTrigger);
@@ -415,6 +404,14 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     sctnOnTransition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnOnTransition);
     sctnOnTransition.setText("On Transition");
+    sctnOnTransition.addExpansionListener(new ExpansionAdapter() {
+      @Override
+      public void expansionStateChanged(ExpansionEvent e) {
+        if (e.getState()) {
+          onTransitionTxt.setFocus();
+        }
+      }
+    });
 
     Composite composite = new Composite(sctnOnTransition, SWT.NO_BACKGROUND);
     sctnOnTransition.setClient(composite);
@@ -432,7 +429,6 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     onTransitionTxt.setLayoutData(gd_onTransitionTxt);
     onTransitionTxt.setText("");
     toolkit.adapt(onTransitionTxt, true, true);
-
   }
 
   private void addListeners() {
