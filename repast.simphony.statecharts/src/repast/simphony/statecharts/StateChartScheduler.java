@@ -156,6 +156,10 @@ public enum StateChartScheduler {
 	}
 	
 	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
+		double currentTickCount = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		if (currentTickCount >= nextTime){
+			nextTime = currentTickCount + nextTime;
+		}
 		BeginActionsMapValue bamv = beginActions.get(nextTime);
 		if (bamv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
