@@ -503,12 +503,12 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	protected void scheduleResolveTime(double nextTime) {
-		StateChartCombinedActionScheduler.INSTANCE.scheduleResolveTime(
+		StateChartScheduler.INSTANCE.scheduleResolveTime(
 				nextTime, this);
 	}
 
 	protected void removeResolveTime(double nextTime) {
-		StateChartCombinedActionScheduler.INSTANCE.removeResolveTime(nextTime,
+		StateChartScheduler.INSTANCE.removeResolveTime(nextTime,
 				this);
 	}
 

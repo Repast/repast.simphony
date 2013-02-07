@@ -38,6 +38,8 @@ public class StateChartResolveAction implements IAction {
 		
 	}
 	
+	
+	
 	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
 
 	/**
@@ -70,7 +72,7 @@ public class StateChartResolveAction implements IAction {
 	@Override
 	public void execute() {
 		notifyListeners();
-		StateChartCombinedActionScheduler.INSTANCE.clearOldResolveActions();
+		StateChartScheduler.INSTANCE.clearOldResolveActions();
 	}
 
 }

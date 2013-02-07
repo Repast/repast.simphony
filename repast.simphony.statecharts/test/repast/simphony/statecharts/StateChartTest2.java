@@ -16,7 +16,7 @@ public class StateChartTest2 {
 	@Before
 	public void setUp() throws Exception {
 		RunEnvironment.init(new Schedule(), null, null, false);
-		StateChartCombinedActionScheduler.INSTANCE.initialize();
+		StateChartScheduler.INSTANCE.initialize();
 	}
 
 	/**
@@ -598,13 +598,13 @@ public class StateChartTest2 {
 		assertEquals("two", a.st.getCurrentSimpleState().getId());
 		assertEquals("twotestuuid", a.st.getUuidForState(a.st.getCurrentSimpleState()));
 		assertEquals(false,a.st.activeRegularTransitions.isEmpty());
-		assertEquals(true,StateChartCombinedActionScheduler.INSTANCE.resolveActions.containsKey(3d));
+		assertEquals(true,StateChartScheduler.INSTANCE.resolveActions.containsKey(3d));
 		schedule.execute();
 		assertEquals(2, schedule.getTickCount(), 0.0001);
 		assertEquals("final", a.st.getCurrentSimpleState().getId());
 		assertEquals("fstatetestuuid", a.st.getUuidForState(a.st.getCurrentSimpleState()));
 		assertEquals(true,a.st.activeRegularTransitions.isEmpty());
-		assertEquals(false,StateChartCombinedActionScheduler.INSTANCE.resolveActions.containsKey(3d));
+		assertEquals(false,StateChartScheduler.INSTANCE.resolveActions.containsKey(3d));
 	}
 
 }

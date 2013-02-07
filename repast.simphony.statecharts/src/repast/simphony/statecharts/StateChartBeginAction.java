@@ -52,7 +52,7 @@ public class StateChartBeginAction implements IAction {
 	@Override
 	public void execute() {
 		notifyListeners();
-		StateChartCombinedActionScheduler.INSTANCE.clearOldBeginActions();
+		StateChartScheduler.INSTANCE.clearOldBeginActions();
 	}
 
 }

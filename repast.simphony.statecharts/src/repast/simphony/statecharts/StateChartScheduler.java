@@ -10,7 +10,7 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-public enum StateChartCombinedActionScheduler {
+public enum StateChartScheduler {
 
 	INSTANCE;
 
@@ -73,6 +73,9 @@ public enum StateChartCombinedActionScheduler {
 	long beginClearCounter = 0;
 	
 
+	// called by StateChartResolveAction after notifying listeners
+	// this allows for the rTime.compareTo(time) <= 0 expression
+	// since the current time resolve actions have all been run
 	protected void clearOldResolveActions() {
 		resolveClearCounter++;
 		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
