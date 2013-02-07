@@ -12,6 +12,8 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -29,8 +31,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
-import repast.simphony.statecharts.scmodel.PseudoState;
-import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
@@ -69,7 +69,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   private Section sctnTrigger;
 
   public TransitionSheet(FormToolkit toolkit, Composite parent) {
-    super(parent, SWT.NONE);
+    super(parent, SWT.NO_FOCUS);
     setLayout(new GridLayout(1, false));
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
@@ -94,7 +94,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   }
 
   private void createHeaderSection(FormToolkit toolkit) {
-    Composite composite_2 = toolkit.createComposite(this, SWT.NO_FOCUS | SWT.NO_MERGE_PAINTS);
+    Composite composite_2 = toolkit.createComposite(this, SWT.NONE);
     composite_2.setLayout(new GridLayout(7, false));
     composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
@@ -121,6 +121,8 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     btnIsDefaultOut = new Button(composite_2, SWT.CHECK);
     toolkit.adapt(btnIsDefaultOut, true, true);
     btnIsDefaultOut.setText("Default Transition");
+    new Label(composite_2, SWT.NONE);
+    new Label(composite_2, SWT.NONE);
 
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -177,9 +179,18 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     toolkit.adapt(lblGuard, true, true);
     lblGuard.setText("Guard:");
 
-    guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
+    guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     guardTxt.addTraverseListener(new CancelTraverseOnReturn());
+    guardTxt.addMouseListener(new MouseAdapter() {
+
+      @Override
+      public void mouseUp(MouseEvent e) {
+        if (!guardTxt.isFocusControl()) {
+          guardTxt.setFocus();
+        }
+      }
+      
+    });
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
     gd_onExitTxt.heightHint = 50;
     gd_onExitTxt.horizontalIndent = 1;
@@ -582,22 +593,12 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     strategy.setConverter(converter);
     return strategy;
   }
-  
-  private boolean isPseudoTransition(EObject eObject) {
-    EObject from = ((Transition)eObject).getFrom();
-    return !(from.eClass().equals(StatechartPackage.Literals.PSEUDO_STATE) && 
-        (((PseudoState)from).getType().equals(PseudoStateTypes.INITIAL) || ((PseudoState)from).getType().equals(PseudoStateTypes.ENTRY)));
-  }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     bindingContext = context;
     pollingBinding = null;
     object = eObject;
     
-    if (isPseudoTransition(eObject)) {
-      
-    }
-
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
     bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
     bindTextField(guardTxt, StatechartPackage.Literals.TRANSITION__GUARD);
@@ -623,6 +624,13 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
             StatechartPackage.Literals.TRANSITION__DEFAULT_TRANSITION).observe(eObject));
     doOutOfChoiceCheck();
     defaultOutChanged(((Transition)eObject).isDefaultTransition());
+    
+    // set the focus to the first component
+    // whenever the binding changes. This prevents
+    // bad focus change when clicking in a multi line text
+    // control
+    idTxt.setFocus();
+    idTxt.setSelection(0, 0);
   }
 
   private void bindTriggerComponents(EMFDataBindingContext context, EObject eObject) {
