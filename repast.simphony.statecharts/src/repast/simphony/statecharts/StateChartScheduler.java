@@ -8,6 +8,7 @@ import java.util.Map;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.PriorityType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
 public enum StateChartScheduler {
@@ -146,7 +147,7 @@ public enum StateChartScheduler {
 					.getCurrentSchedule();
 			StateChartResolveAction scra = new StateChartResolveAction();
 			ISchedulableAction ia = schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, ScheduleParameters.LAST_PRIORITY),
+					.createOneTime(nextTime, PriorityType.FIRST_OF_LAST),
 					scra);
 			ramv = new ResolveActionsMapValue(scra, ia);
 			resolveActions.put(nextTime, ramv);
@@ -166,7 +167,7 @@ public enum StateChartScheduler {
 					.getCurrentSchedule();
 			StateChartBeginAction scba = new StateChartBeginAction();
 			ISchedulableAction ia = schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, ScheduleParameters.FIRST_PRIORITY),
+					.createOneTime(nextTime, PriorityType.FIRST),
 					scba);
 			bamv = new BeginActionsMapValue(scba, ia);
 			beginActions.put(nextTime, bamv);
