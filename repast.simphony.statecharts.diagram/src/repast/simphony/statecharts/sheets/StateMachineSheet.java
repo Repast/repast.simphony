@@ -1,5 +1,6 @@
 package repast.simphony.statecharts.sheets;
 
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -31,28 +32,48 @@ public class StateMachineSheet extends Composite implements BindableFocusableShe
   private Text txtClass;
   private Text txtPackage;
   private Text txtAgent;
+  private Text priorityTxt;
+
   public StateMachineSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
-    setLayout(new GridLayout(3, false));
+    setLayout(new GridLayout(1, false));
 
-    Label lblId = new Label(this, SWT.NONE);
+    Composite composite_2 = new Composite(this, SWT.NONE);
+    toolkit.adapt(composite_2);
+    toolkit.paintBordersFor(composite_2);
+    composite_2.setLayout(new GridLayout(4, false));
+
+    Label lblId = new Label(composite_2, SWT.NONE);
     toolkit.adapt(lblId, true, true);
     lblId.setText("Name:");
 
-    idTxt = new Text(this, SWT.BORDER);
-    GridData gd_idFld = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+    idTxt = new Text(composite_2, SWT.BORDER);
+    GridData gd_idFld = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_idFld.widthHint = 200;
     idTxt.setLayoutData(gd_idFld);
     toolkit.adapt(idTxt, true, true);
 
+    Label lblPriority = new Label(composite_2, SWT.NONE);
+    lblPriority.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+    toolkit.adapt(lblPriority, true, true);
+    lblPriority.setText("Priority:");
+
+    priorityTxt = new Text(composite_2, SWT.BORDER);
+    GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+    gd_text.widthHint = 60;
+    priorityTxt.setLayoutData(gd_text);
+    toolkit.adapt(priorityTxt, true, true);
+    Bug383650Fix.applyFix(priorityTxt);
+    priorityTxt.addVerifyListener(new DoubleVerifier());
+
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
-    label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+    label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(label, true, true);
 
-    Composite composite = new Composite(this, SWT.H_SCROLL);
-    GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1);
+    Composite composite = new Composite(this, SWT.NONE);
+    GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
     gd_composite.heightHint = 183;
     composite.setLayoutData(gd_composite);
     GridLayout gl_composite = new GridLayout(2, false);
@@ -93,76 +114,79 @@ public class StateMachineSheet extends Composite implements BindableFocusableShe
     Button btnGroovy = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnGroovy, true, true);
     btnGroovy.setText("Groovy");
-    
+
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
 
     Label lblOnEnter = new Label(composite, SWT.NONE);
     lblOnEnter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblOnEnter, true, true);
     lblOnEnter.setText("Class Name:");
-    
+
     txtClass = new Text(composite, SWT.BORDER);
     txtClass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtClass, true, true);
     Bug383650Fix.applyFix(txtClass);
-    
+
     Label lblAgent = new Label(composite, SWT.NONE);
     lblAgent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblAgent, true, true);
     lblAgent.setText("Package:");
-    
+
     txtPackage = new Text(composite, SWT.BORDER);
     txtPackage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtPackage, true, true);
     Bug383650Fix.applyFix(txtPackage);
-    
+
     Label lblAgentType = new Label(composite, SWT.NONE);
     lblAgentType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblAgentType, true, true);
     lblAgentType.setText("Agent Class:");
-    
+
     txtAgent = new Text(composite, SWT.BORDER);
     txtAgent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     toolkit.adapt(txtAgent, true, true);
     Bug383650Fix.applyFix(txtAgent);
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
    */
   @Override
   public void resetFocus() {
     idTxt.setFocus();
   }
-  
+
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.STATE_MACHINE__ID);
-    ISWTObservableValue observe = WidgetProperties.text(
-        new int[] { SWT.Modify }).observeDelayed(400, idTxt);
+    ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
+        400, idTxt);
     context.bindValue(observe, property.observe(eObject));
-
-    context
-        .bindValue(
-            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
-                txtClass),
-            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-                StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME).observe(eObject));
     
-    context
-    .bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
-            txtPackage),
+    UpdateValueStrategy mToT = new UpdateValueStrategy();
+    mToT.setConverter(new DoubleToStringConverter());
+    UpdateValueStrategy tToM = new UpdateValueStrategy();
+    tToM.setConverter(new StringToDoubleConverter());
+    context.bindValue(WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, priorityTxt),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            StatechartPackage.Literals.STATE_MACHINE__PRIORITY).observe(eObject), tToM, mToT);
+
+    context.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, txtClass),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            StatechartPackage.Literals.STATE_MACHINE__CLASS_NAME).observe(eObject));
+
+    context.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, txtPackage),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.STATE_MACHINE__PACKAGE).observe(eObject));
-    
-    context
-    .bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
-            txtAgent),
+
+    context.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, txtAgent),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.STATE_MACHINE__AGENT_TYPE).observe(eObject));
-
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.STATE_MACHINE__LANGUAGE);
   }

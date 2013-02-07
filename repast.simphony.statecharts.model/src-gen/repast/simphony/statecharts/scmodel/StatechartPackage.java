@@ -148,13 +148,22 @@ public interface StatechartPackage extends EPackage {
   int STATE_MACHINE__UUID = 8;
 
   /**
+   * The feature id for the '<em><b>Priority</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE_MACHINE__PRIORITY = 9;
+
+  /**
    * The number of structural features of the '<em>State Machine</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATE_MACHINE_FEATURE_COUNT = 9;
+  int STATE_MACHINE_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl <em>Abstract State</em>}' class.
@@ -917,6 +926,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getStateMachine_Uuid();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.StateMachine#getPriority <em>Priority</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Priority</em>'.
+   * @see repast.simphony.statecharts.scmodel.StateMachine#getPriority()
+   * @see #getStateMachine()
+   * @generated
+   */
+  EAttribute getStateMachine_Priority();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.State <em>State</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1437,6 +1457,14 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute STATE_MACHINE__UUID = eINSTANCE.getStateMachine_Uuid();
+
+    /**
+     * The meta object literal for the '<em><b>Priority</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STATE_MACHINE__PRIORITY = eINSTANCE.getStateMachine_Priority();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.

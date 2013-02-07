@@ -37,6 +37,7 @@ public class «className» extends DefaultStateChart<«this.agentType»> {
 
         public MyStateChartBuilder(«agentType» agent, AbstractState<«agentType»> entryState, String entryStateUuid) {
             super(agent, entryState, entryStateUuid);
+            setPriority(«this.priority»);
         }
 
         @Override

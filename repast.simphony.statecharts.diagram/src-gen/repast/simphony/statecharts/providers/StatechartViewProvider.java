@@ -32,7 +32,9 @@ import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 import org.eclipse.gmf.runtime.notation.Routing;
+import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Shape;
+import org.eclipse.gmf.runtime.notation.Smoothness;
 import org.eclipse.gmf.runtime.notation.TitleStyle;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.gmf.runtime.notation.datatype.RelativeBendpoint;
@@ -764,12 +766,14 @@ public class StatechartViewProvider extends AbstractProvider implements IViewPro
   }
 
   /**
-   * @generated
+   * @generated NOT -- added smoothness 
    */
   public Edge createTransition_4001(EObject domainElement, View containerView, int index,
       boolean persisted, PreferencesHint preferencesHint) {
     Edge edge = NotationFactory.eINSTANCE.createEdge();
-    edge.getStyles().add(NotationFactory.eINSTANCE.createRoutingStyle());
+    RoutingStyle routingStyle = NotationFactory.eINSTANCE.createRoutingStyle();
+    routingStyle.setSmoothness(Smoothness.get(Smoothness.NORMAL));
+    edge.getStyles().add(routingStyle);
     edge.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
     RelativeBendpoints bendpoints = NotationFactory.eINSTANCE.createRelativeBendpoints();
     ArrayList<RelativeBendpoint> points = new ArrayList<RelativeBendpoint>(2);

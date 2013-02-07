@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getNextID <em>Next ID</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getId <em>Id</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.StateMachine#getPriority <em>Priority</em>}</li>
  * </ul>
  * </p>
  *
@@ -248,5 +249,31 @@ public interface StateMachine extends EObject {
    * @generated
    */
   void setUuid(String value);
+
+  /**
+   * Returns the value of the '<em><b>Priority</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Priority</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Priority</em>' attribute.
+   * @see #setPriority(double)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getStateMachine_Priority()
+   * @model
+   * @generated
+   */
+  double getPriority();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.StateMachine#getPriority <em>Priority</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Priority</em>' attribute.
+   * @see #getPriority()
+   * @generated
+   */
+  void setPriority(double value);
 
 } // StateMachine

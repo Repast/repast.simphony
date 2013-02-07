@@ -70,6 +70,7 @@ public class StateMachineItemProvider
       addNextIDPropertyDescriptor(object);
       addIdPropertyDescriptor(object);
       addUuidPropertyDescriptor(object);
+      addPriorityPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -229,6 +230,28 @@ public class StateMachineItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Priority feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addPriorityPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_StateMachine_priority_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_StateMachine_priority_feature", "_UI_StateMachine_type"),
+         StatechartPackage.Literals.STATE_MACHINE__PRIORITY,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.REAL_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
    * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
    * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -303,6 +326,7 @@ public class StateMachineItemProvider
       case StatechartPackage.STATE_MACHINE__NEXT_ID:
       case StatechartPackage.STATE_MACHINE__ID:
       case StatechartPackage.STATE_MACHINE__UUID:
+      case StatechartPackage.STATE_MACHINE__PRIORITY:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
       case StatechartPackage.STATE_MACHINE__STATES:

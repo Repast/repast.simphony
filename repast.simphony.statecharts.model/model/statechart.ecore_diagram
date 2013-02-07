@@ -23,6 +23,18 @@
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/nextID"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_0FpuYT1YEeKKxrXsLEWJQQ"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_7CCNcHFoEeK0Ndvvxluyhw" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/id"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_7CCNcXFoEeK0Ndvvxluyhw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_7CC0gHFoEeK0Ndvvxluyhw" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/uuid"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_7CC0gXFoEeK0Ndvvxluyhw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_8Ed60HFoEeK0Ndvvxluyhw" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//StateMachine/priority"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_8Ed60XFoEeK0Ndvvxluyhw"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_rvHUcS9mEeKhRft3018vxw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_rvHUci9mEeKhRft3018vxw"/>
     </children>
