@@ -8,9 +8,10 @@ import java.util.Map;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
+import repast.simphony.engine.schedule.PriorityType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
-public enum StateChartCombinedActionScheduler {
+public enum StateChartScheduler {
 
 	INSTANCE;
 
@@ -44,6 +45,15 @@ public enum StateChartCombinedActionScheduler {
 				remove = true;
 			}
 		}
+		
+		protected void nullify(){
+			scra.removeAllListeners();
+			RunEnvironment.getInstance().getCurrentSchedule()
+			.removeAction(isa);
+			isa = null;
+			scra = null;
+			remove = true;
+		}
 
 		protected boolean toRemove() {
 			return remove;
@@ -52,20 +62,39 @@ public enum StateChartCombinedActionScheduler {
 	
 	static class BeginActionsMapValue {
 		private StateChartBeginAction scba;
+		private ISchedulableAction isa;
 
-		protected BeginActionsMapValue(StateChartBeginAction scba) {
+		protected BeginActionsMapValue(StateChartBeginAction scba, ISchedulableAction isa) {
 			this.scba = scba;
+			this.isa = isa;
 		}
 
 		protected void registerListener(DefaultStateChart<?> sc) {
 			scba.registerListener(sc);
+		}
+		
+		protected void nullify(){
+			scba.removeAllListeners();
+			RunEnvironment.getInstance().getCurrentSchedule()
+			.removeAction(isa);
+			isa = null;
+			scba = null;
 		}
 	}
 
 	public void initialize() {
 		resolveClearCounter = 0;
 		beginClearCounter = 0;
+
+		// remove resolveActions from schedule
+		for (ResolveActionsMapValue ramv : resolveActions.values()){
+			ramv.nullify();
+		}
 		resolveActions.clear();
+		
+		for (BeginActionsMapValue bamv : beginActions.values()){
+			bamv.nullify();
+		}
 		beginActions.clear();
 	}
 
@@ -73,6 +102,9 @@ public enum StateChartCombinedActionScheduler {
 	long beginClearCounter = 0;
 	
 
+	// called by StateChartResolveAction after notifying listeners
+	// this allows for the rTime.compareTo(time) <= 0 expression
+	// since the current time resolve actions have all been run
 	protected void clearOldResolveActions() {
 		resolveClearCounter++;
 		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
@@ -115,7 +147,7 @@ public enum StateChartCombinedActionScheduler {
 					.getCurrentSchedule();
 			StateChartResolveAction scra = new StateChartResolveAction();
 			ISchedulableAction ia = schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, ScheduleParameters.LAST_PRIORITY),
+					.createOneTime(nextTime, PriorityType.FIRST_OF_LAST),
 					scra);
 			ramv = new ResolveActionsMapValue(scra, ia);
 			resolveActions.put(nextTime, ramv);
@@ -125,15 +157,19 @@ public enum StateChartCombinedActionScheduler {
 	}
 	
 	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
+		double currentTickCount = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		if (currentTickCount >= nextTime){
+			nextTime = currentTickCount + nextTime;
+		}
 		BeginActionsMapValue bamv = beginActions.get(nextTime);
 		if (bamv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();
 			StateChartBeginAction scba = new StateChartBeginAction();
-			schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, ScheduleParameters.FIRST_PRIORITY),
+			ISchedulableAction ia = schedule.schedule(ScheduleParameters
+					.createOneTime(nextTime, PriorityType.FIRST),
 					scba);
-			bamv = new BeginActionsMapValue(scba);
+			bamv = new BeginActionsMapValue(scba, ia);
 			beginActions.put(nextTime, bamv);
 		}
 		bamv.registerListener(sc);

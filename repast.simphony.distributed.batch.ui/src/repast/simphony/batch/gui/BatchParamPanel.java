@@ -313,8 +313,12 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       changedParams.remove(parameterData.getName());
     }
 
-    if (changedParams.size() == 0)
+    if (changedParams.size() == 0) {
       bpFileFld.setForeground(Color.BLACK);
+      mediator.updateStatusBar(Color.BLACK, "");
+    } else {
+      mediator.updateStatusBar(Color.RED, "Batch Parameter file needs to be generated.");
+    }
   }
 
   private void browse(JTextField fld, String title, boolean showHidden) {
@@ -334,14 +338,15 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       fld.setText(chooser.getSelectedFile().getAbsolutePath());
   }
 
-  private boolean validateBatchInput() {
-    ValidationResult result = validateInput();
-
-    boolean passed = ValidationResult.SUCCESS.equals(result);
-    if (!passed)
-      mediator.updateStatusBar(Color.RED, result.getMessage());
-
-    return passed;
+  private ValidationResult validateBatchInput() {
+    for (ParameterInputPanel panel : inputPanels) {
+      ValidationResult vResult = panel.validateInput();
+      if (vResult != ValidationResult.SUCCESS) {
+        return vResult;
+      }
+    }
+    
+    return ValidationResult.SUCCESS;
   }
 
   /*
@@ -351,20 +356,17 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
    */
   @Override
   public ValidationResult validateInput() {
-    for (ParameterInputPanel panel : inputPanels) {
-      ValidationResult vResult = panel.validateInput();
-      if (vResult != ValidationResult.SUCCESS) {
-        return vResult;
-      }
-    }
-    
+    ValidationResult result = validateBatchInput();
+    if (!result.equals(ValidationResult.SUCCESS)) return result;
+  
     if (bpFileFld.getForeground().equals(Color.RED)) return new ValidationResult("Batch parameter file needs to be generated.");
     return ValidationResult.SUCCESS;
   }
 
   private void generate() {
-    if (validateBatchInput()) {
-      mediator.updateStatusBar(Color.BLACK, "");
+    ValidationResult result = validateBatchInput();
+    if (result.equals(ValidationResult.SUCCESS)) {
+      mediator.updateStatusBar(Color.BLACK, " ");
       List<ParameterInputPanel> constants = new ArrayList<ParameterInputPanel>();
       List<ParameterInputPanel> nonConsts = new ArrayList<ParameterInputPanel>();
 
@@ -418,6 +420,8 @@ public class BatchParamPanel extends JPanel implements BatchRunPanel {
       }
       changedParams.clear();
       bpFileFld.setForeground(Color.BLACK);
+    } else {
+      mediator.updateStatusBar(Color.RED, result.getMessage());
     }
   }
 

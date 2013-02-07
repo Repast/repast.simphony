@@ -27,15 +27,15 @@ import repast.simphony.parameter.Parameters;
  * @author Nick Collier
  * @version $Revision: 1.2 $ $Date: 2006/01/10 16:59:05 $
  */
-public class ScheduledMethodControllerAction implements ControllerAction, ContextListener{
+public class ScheduledMethodControllerAction implements ControllerAction, ContextListener {
 
   static class PickData {
     Object target;
     Method method;
     ScheduledMethod annotation;
-    long pickValue;
     long pickCount = 0;
     boolean shuffle = true;
+    Set<Class<?>> excludes = new HashSet<Class<?>>();
 
     public PickData(Method method, ScheduledMethod annotation) {
       this.method = method;
@@ -60,8 +60,8 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
   }
 
   private List<PickData> pickData = new ArrayList<PickData>();
-  private Set<Class> processedClasses = new HashSet();
-  private Set<Method> processedMethods = new HashSet();
+  private Set<Class<?>> processedClasses = new HashSet<Class<?>>();
+  private Set<Method> processedMethods = new HashSet<Method>();
 
   private ISchedule schedule;
   // we have to track that actions added for contexts and subcontexts
@@ -92,11 +92,11 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
    * @param clazzes
    */
   public void processAnnotations(List<Class<?>> clazzes) {
-    for (Class clazz : clazzes) {
+    for (Class<?> clazz : clazzes) {
       processAnnotations(clazz);
     }
-    
-    for (Class clazz : clazzes) {
+
+    for (Class<?> clazz : clazzes) {
       Set<Class<?>> interfaces = new HashSet<Class<?>>();
       gatherInterfaces(clazz, interfaces);
       for (Class<?> inter : interfaces) {
@@ -106,16 +106,18 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
       }
     }
   }
-  
+
   private void gatherInterfaces(Class<?> clazz, Set<Class<?>> interfaces) {
-    if (clazz.equals(Object.class)) return;
+    if (clazz.equals(Object.class))
+      return;
     Class<?>[] inters = clazz.getInterfaces();
     for (Class<?> inter : inters) {
       interfaces.add(inter);
       gatherInterfaces(inter, interfaces);
     }
-    
-    if (clazz.getSuperclass() != null) gatherInterfaces(clazz.getSuperclass(), interfaces);
+
+    if (clazz.getSuperclass() != null)
+      gatherInterfaces(clazz.getSuperclass(), interfaces);
   }
 
   public void processAnnotations(Class<?> clazz) {
@@ -179,7 +181,34 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
     Context context = runState.getMasterContext();
     processContext(context);
     schedule = runState.getScheduleRegistry().getModelSchedule();
+    findClassesToExclude();
     scheduleMethods(context, schedule);
+  }
+
+  /**
+   * Finds subclasses to exclude when their superclass has a scheduled method.
+   * An exclusion is necessary, for example, when B extends A and overrides a
+   * scheduled method with its own ScheduledMethod. In that case, any instances
+   * of B should not be called when A is called.
+   */
+  private void findClassesToExclude() {
+    for (PickData data : pickData) {
+      Class<?> clazz = data.method.getDeclaringClass();
+      for (PickData other : pickData) {
+        Class<?> otherClass = other.method.getDeclaringClass();
+        if (clazz.isAssignableFrom(otherClass) && !clazz.equals(otherClass)
+            && data.method.getName().equals(other.method.getName())
+            && data.method.getReturnType().equals(other.method.getReturnType())) {
+
+          data.excludes.add(otherClass);
+        }
+      }
+    }
+  }
+
+  private ClassFilter createFilter(PickData data) {
+    Class<?>[] classes = data.excludes.toArray(new Class<?>[0]);
+    return ClassFilter.getNotEqualsFilter(classes);
   }
 
   private void scheduleMethods(Context context, ISchedule schedule) {
@@ -192,13 +221,15 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
         action.setTarget(data.target);
         ISchedulableAction schAction = schedule.schedule(data.getParameters(), action);
         contextActions.put(data.target, schAction);
-      } else if (data.pickValue == ScheduledMethod.ALL) {
+      } else if (data.annotation.pick() == ScheduledMethod.ALL) {
+        ClassFilter filter = createFilter(data);
         IAction action = new ScheduleMethodAllAction(context, data.method.getDeclaringClass(),
-            data.method, data.shuffle);
+            data.method, data.shuffle, filter);
         schedule.schedule(data.getParameters(), action);
       } else {
+        ClassFilter filter = createFilter(data);
         IAction action = new ScheduleMethodAction(context, data.method.getDeclaringClass(),
-            data.method, data.annotation.pick(), data.shuffle);
+            data.method, data.annotation.pick(), data.shuffle, filter);
         schedule.schedule(data.getParameters(), action);
       }
     }
@@ -223,23 +254,21 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
    */
   private static class ScheduleMethodAction implements IAction {
 
-    private Context context;
+    private Context<Object> context;
     private Class<?> targetClass;
     private DynamicTargetAction action;
     private long count;
     boolean shuffle;
+    ClassFilter filter;
 
-    public ScheduleMethodAction(Context context, Class<?> targetClass, Method method, long count) {
-      this(context, targetClass, method, count, true);
-    }
-
-    public ScheduleMethodAction(Context context, Class<?> targetClass, Method method, long count,
-        boolean shuffle) {
+    public ScheduleMethodAction(Context<Object> context, Class<?> targetClass, Method method,
+        long count, boolean shuffle, ClassFilter filter) {
       this.context = context;
       this.targetClass = targetClass;
       action = new DynamicTargetAction(method);
       this.count = count;
       this.shuffle = shuffle;
+      this.filter = filter;
     }
 
     /**
@@ -249,13 +278,17 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
     public void execute() {
       if (this.shuffle) {
         for (Object obj : context.getRandomObjects(targetClass, count)) {
-          action.setTarget(obj);
-          action.execute();
+          if (filter.apply(obj.getClass())) {
+            action.setTarget(obj);
+            action.execute();
+          }
         }
       } else {
         for (Object obj : context.getObjects(targetClass)) {
-          action.setTarget(obj);
-          action.execute();
+          if (filter.apply(obj.getClass())) {
+            action.setTarget(obj);
+            action.execute();
+          }
         }
       }
     }
@@ -267,21 +300,19 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
    */
   private static class ScheduleMethodAllAction implements IAction {
 
-    private Context context;
+    private Context<Object> context;
     private Class<?> targetClass;
     private DynamicTargetAction action;
     private boolean shuffle;
+    private ClassFilter filter;
 
-    public ScheduleMethodAllAction(Context context, Class<?> targetClass, Method method) {
-      this(context, targetClass, method, true);
-    }
-
-    public ScheduleMethodAllAction(Context context, Class<?> targetClass, Method method,
-        boolean shuffle) {
+    public ScheduleMethodAllAction(Context<Object> context, Class<?> targetClass, Method method,
+        boolean shuffle, ClassFilter filter) {
       this.context = context;
       this.targetClass = targetClass;
       action = new DynamicTargetAction(method);
       this.shuffle = shuffle;
+      this.filter = filter;
     }
 
     /**
@@ -289,15 +320,18 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
      * executing the method on each one.
      */
     public void execute() {
-      Iterable iter;
+      Iterable<Object> iter;
       if (this.shuffle) {
         iter = context.getRandomObjects(targetClass, context.size());
       } else {
         iter = context.getObjects(targetClass);
       }
+
       for (Object obj : iter) {
-        action.setTarget(obj);
-        action.execute();
+        if (filter.apply(obj.getClass())) {
+          action.setTarget(obj);
+          action.execute();
+        }
       }
     }
   }

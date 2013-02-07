@@ -20,7 +20,7 @@ public class «className» extends DefaultStateChart<«this.agentType»> {
 
     public static «className» createStateChart(«agentType» agent, double begin) {
         «className» result = createStateChart(agent);
-        StateChartCombinedActionScheduler.INSTANCE.scheduleBeginTime(begin,result);
+        StateChartScheduler.INSTANCE.scheduleBeginTime(begin,result);
         return result;
     }
 

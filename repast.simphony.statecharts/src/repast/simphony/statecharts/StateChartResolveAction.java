@@ -38,6 +38,13 @@ public class StateChartResolveAction implements IAction {
 		
 	}
 	
+	// To be used by initialization routines
+	public void removeAllListeners(){
+		scCountsMap.clear();
+	}
+	
+	
+	
 	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
 
 	/**
@@ -70,7 +77,7 @@ public class StateChartResolveAction implements IAction {
 	@Override
 	public void execute() {
 		notifyListeners();
-		StateChartCombinedActionScheduler.INSTANCE.clearOldResolveActions();
+		StateChartScheduler.INSTANCE.clearOldResolveActions();
 	}
 
 }
