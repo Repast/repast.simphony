@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCode <em>Trigger Timed Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#isSelfTransition <em>Self Transition</em>}</li>
  * </ul>
  * </p>
  *
@@ -575,5 +576,31 @@ public interface Transition extends EObject {
    * @generated
    */
   void setUuid(String value);
+
+  /**
+   * Returns the value of the '<em><b>Self Transition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Self Transition</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Self Transition</em>' attribute.
+   * @see #setSelfTransition(boolean)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_SelfTransition()
+   * @model
+   * @generated
+   */
+  boolean isSelfTransition();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#isSelfTransition <em>Self Transition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Self Transition</em>' attribute.
+   * @see #isSelfTransition()
+   * @generated
+   */
+  void setSelfTransition(boolean value);
 
 } // Transition

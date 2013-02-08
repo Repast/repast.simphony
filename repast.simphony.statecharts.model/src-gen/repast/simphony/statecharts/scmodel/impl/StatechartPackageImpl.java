@@ -489,6 +489,15 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getTransition_SelfTransition() {
+    return (EAttribute)transitionEClass.getEStructuralFeatures().get(20);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getCompositeState() {
     return compositeStateEClass;
   }
@@ -693,6 +702,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_TIMED_CODE);
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_EXP_RATE_CODE);
     createEAttribute(transitionEClass, TRANSITION__UUID);
+    createEAttribute(transitionEClass, TRANSITION__SELF_TRANSITION);
 
     compositeStateEClass = createEClass(COMPOSITE_STATE);
     createEReference(compositeStateEClass, COMPOSITE_STATE__CHILDREN);
@@ -789,6 +799,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getTransition_TriggerTimedCode(), ecorePackage.getEString(), "triggerTimedCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerExpRateCode(), ecorePackage.getEString(), "triggerExpRateCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_Uuid(), ecorePackage.getEString(), "uuid", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTransition_SelfTransition(), ecorePackage.getEBoolean(), "selfTransition", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(compositeStateEClass, CompositeState.class, "CompositeState", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCompositeState_Children(), this.getAbstractState(), null, "children", null, 0, -1, CompositeState.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

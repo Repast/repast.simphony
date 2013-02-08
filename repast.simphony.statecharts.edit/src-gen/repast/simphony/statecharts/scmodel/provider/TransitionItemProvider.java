@@ -80,6 +80,7 @@ public class TransitionItemProvider
       addTriggerTimedCodePropertyDescriptor(object);
       addTriggerExpRateCodePropertyDescriptor(object);
       addUuidPropertyDescriptor(object);
+      addSelfTransitionPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -525,6 +526,28 @@ public class TransitionItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Self Transition feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addSelfTransitionPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Transition_selfTransition_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_selfTransition_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__SELF_TRANSITION,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns Transition.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -579,6 +602,7 @@ public class TransitionItemProvider
       case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
       case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
       case StatechartPackage.TRANSITION__UUID:
+      case StatechartPackage.TRANSITION__SELF_TRANSITION:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

@@ -548,13 +548,22 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__UUID = 19;
 
   /**
+   * The feature id for the '<em><b>Self Transition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__SELF_TRANSITION = 20;
+
+  /**
    * The number of structural features of the '<em>Transition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION_FEATURE_COUNT = 20;
+  int TRANSITION_FEATURE_COUNT = 21;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
@@ -1187,6 +1196,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_Uuid();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#isSelfTransition <em>Self Transition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Self Transition</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#isSelfTransition()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_SelfTransition();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.CompositeState <em>Composite State</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1655,6 +1675,14 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute TRANSITION__UUID = eINSTANCE.getTransition_Uuid();
+
+    /**
+     * The meta object literal for the '<em><b>Self Transition</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__SELF_TRANSITION = eINSTANCE.getTransition_SelfTransition();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.

@@ -909,6 +909,12 @@
             <feature
                 href="statechart.genmodel#//scmodel/Transition/triggerCodeLanguage"/>
           </initializers>
+          <initializers
+              xsi:type="gmfgen:GenFeatureValueSpec"
+              value="//@expressionProviders/@providers.0/@expressions.9">
+            <feature
+                href="statechart.genmodel#//scmodel/Transition/selfTransition"/>
+          </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
             href="statechart.genmodel#//scmodel/Transition/from"/>
@@ -916,8 +922,8 @@
             href="statechart.genmodel#//scmodel/Transition/to"/>
       </modelFacet>
       <creationConstraints
-          sourceEnd="//@expressionProviders/@providers.0/@expressions.9"
-          targetEnd="//@expressionProviders/@providers.0/@expressions.10"/>
+          sourceEnd="//@expressionProviders/@providers.0/@expressions.10"
+          targetEnd="//@expressionProviders/@providers.0/@expressions.11"/>
     </links>
     <compartments
         visualID="7001"
@@ -1488,6 +1494,8 @@
           body="self.type = PseudoStateTypes::entry"/>
       <expressions
           body="PseudoStateTypes::entry"/>
+      <expressions
+          body="self.from = self.to"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
           body="not self.oclIsKindOf(FinalState) and not self.oclIsKindOf(History)"/>

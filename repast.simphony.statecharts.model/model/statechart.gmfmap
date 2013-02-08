@@ -461,6 +461,14 @@
             body="StatechartsModelUtil.getDefaultLanguage()"
             language="java"/>
       </initializers>
+      <initializers
+          xsi:type="gmfmap:FeatureValueSpec">
+        <feature
+            xsi:type="ecore:EAttribute"
+            href="statechart.ecore#//Transition/selfTransition"/>
+        <value
+            body="self.from = self.to"/>
+      </initializers>
     </domainInitializer>
     <containmentFeature
         href="statechart.ecore#//StateMachine/transitions"/>
