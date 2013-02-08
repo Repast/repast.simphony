@@ -56,7 +56,7 @@ public class HistoryStateSheet extends FocusFixComposite implements BindableFocu
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
     toolkit.adapt(label, true, true);
 
-    Composite composite = new Composite(this, SWT.H_SCROLL);
+    Composite composite = new Composite(this, SWT.NONE);
     GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
     gd_composite.heightHint = 183;
     composite.setLayoutData(gd_composite);
