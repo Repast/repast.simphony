@@ -117,7 +117,8 @@ private static class «generatorClassName()» {
 	            «EXPAND createAllTransProps(agentType)-»
 	            mscb.addRegularTransition(tb.build());
 	     «ENDIF-»
-    «ELSEIF this.from.uuid == this.to.uuid-»
+    «ELSEIF this.from.uuid == this.to.uuid && this.selfTransition -»
+        // «this.selfTransition»
         SelfTransitionBuilder<«agentType»> tb = new SelfTransitionBuilder<«agentType»>("«this.id»",
                 stateMap.get("«this.from.uuid»"));
         «EXPAND createAllTransProps(agentType)-»
