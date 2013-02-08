@@ -68,9 +68,11 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   private Button btnIsDefaultOut;
   private Section sctnTrigger;
 
+  private Button btnSelfTransition;
+
   public TransitionSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NO_FOCUS);
-    
+
     setLayout(new GridLayout(1, false));
     toolkit.adapt(this);
     toolkit.paintBordersFor(this);
@@ -85,8 +87,10 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     triggerLayout.topControl = triggerComps[0];
     addListeners();
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
    */
   @Override
@@ -96,7 +100,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   private void createHeaderSection(FormToolkit toolkit) {
     Composite composite_2 = toolkit.createComposite(this, SWT.NONE);
-    composite_2.setLayout(new GridLayout(7, false));
+    composite_2.setLayout(new GridLayout(8, false));
     composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
     Label lblId = new Label(composite_2, SWT.NONE);
@@ -122,8 +126,10 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     btnIsDefaultOut = new Button(composite_2, SWT.CHECK);
     toolkit.adapt(btnIsDefaultOut, true, true);
     btnIsDefaultOut.setText("Default Transition");
-    new Label(composite_2, SWT.NONE);
-    new Label(composite_2, SWT.NONE);
+
+    btnSelfTransition = new Button(composite_2, SWT.CHECK);
+    toolkit.adapt(btnSelfTransition, true, true);
+    btnSelfTransition.setText("Self Transition");
 
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -159,7 +165,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
-  
+
   private void createGuardSection(FormToolkit toolkit) {
     sctnGuard = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
     sctnGuard.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -398,7 +404,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     txtAlwaysPolling.setLayoutData(gd_txtAlwaysPolling);
     Bug383650Fix.applyFix(txtAlwaysPolling);
   }
- 
+
   private void createTransitionSection(FormToolkit toolkit) {
     sctnOnTransition = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
     sctnOnTransition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -475,19 +481,15 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
         defaultOutChanged(btnIsDefaultOut.getSelection());
       }
     });
-    
+
     /*
-    sctnGuard.addExpansionListener(new IExpansionListener() {
-
-      @Override
-      public void expansionStateChanging(ExpansionEvent e) {}
-
-      @Override
-      public void expansionStateChanged(ExpansionEvent e) {
-        sctnGuard.getParent().s
-      }
-    });
-    */
+     * sctnGuard.addExpansionListener(new IExpansionListener() {
+     * 
+     * @Override public void expansionStateChanging(ExpansionEvent e) {}
+     * 
+     * @Override public void expansionStateChanged(ExpansionEvent e) {
+     * sctnGuard.getParent().s } });
+     */
   }
 
   void defaultOutChanged(boolean isSelected) {
@@ -504,13 +506,13 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
       String title = isSelected ? "Trigger Disabled" : "Trigger";
       sctnTrigger.setText(title);
       sctnTrigger.getParent().layout();
-      
+
       sctnGuard.setEnabled(!isSelected);
       sctnGuard.setExpanded(!isSelected);
       title = isSelected ? "Guard Disabled" : "Guard";
       sctnGuard.setText(title);
       sctnGuard.getParent().layout();
-      
+
       cmbTriggerType.setEnabled(isSelected);
     } else {
       // this block handles when we've switched to a non choice transition
@@ -520,7 +522,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
       sctnTrigger.setExpanded(true);
       sctnTrigger.getParent().layout();
       sctnTrigger.setText("Trigger");
-      
+
       sctnGuard.setEnabled(true);
       sctnGuard.setExpanded(true);
       sctnGuard.getParent().layout();
@@ -531,6 +533,21 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   void doOutOfChoiceCheck() {
     boolean outOfChoice = (object != null && ((Transition) object).isOutOfBranch());
     btnIsDefaultOut.setVisible(outOfChoice);
+  }
+
+  void doSelfCheck() {
+    if (object != null) {
+      Transition transition = (Transition) object;
+      if (transition.getFrom() != null && transition.getTo() != null) 
+        btnSelfTransition.setVisible(transition.getFrom().equals(transition.getTo()));
+      else {
+        btnSelfTransition.setVisible(false);
+        btnSelfTransition.setSelection(false);
+      }
+    } else {
+      btnSelfTransition.setSelection(false);
+      btnSelfTransition.setVisible(false);
+    }
   }
 
   private void messageTypeChanged() {
@@ -594,7 +611,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     bindingContext = context;
     pollingBinding = null;
     object = eObject;
-    
+
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
     bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
     bindTextField(guardTxt, StatechartPackage.Literals.TRANSITION__GUARD);
@@ -619,8 +636,14 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__DEFAULT_TRANSITION).observe(eObject));
     doOutOfChoiceCheck();
-    defaultOutChanged(((Transition)eObject).isDefaultTransition());
+    defaultOutChanged(((Transition) eObject).isDefaultTransition());
     
+    context.bindValue(
+        WidgetProperties.selection().observe(btnSelfTransition),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            StatechartPackage.Literals.TRANSITION__SELF_TRANSITION).observe(eObject));
+    doSelfCheck();
+
     // set the focus to the first component
     // whenever the binding changes. This prevents
     // bad focus change when clicking in a multi line text
@@ -662,7 +685,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   private Binding bindTextField(Text text, EAttribute attribute) {
     return bindingContext.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400, text),
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
             .observe(object));
   }
@@ -670,7 +693,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
   private Binding bindTextField(Text text, EAttribute attribute, UpdateValueStrategy targetToModel,
       UpdateValueStrategy modelToTarget) {
     return bindingContext.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400, text),
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
             .observe(object), targetToModel, modelToTarget);
   }
@@ -753,7 +776,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
       return null;
     }
   }
-  
+
   private static class CancelTraverseOnReturn implements TraverseListener {
     public void keyTraversed(TraverseEvent e) {
       if (e.detail == SWT.TRAVERSE_RETURN) {

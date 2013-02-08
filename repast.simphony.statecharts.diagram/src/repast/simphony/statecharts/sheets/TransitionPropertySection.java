@@ -35,6 +35,8 @@ public class TransitionPropertySection extends AbstractEditorPropertySection {
     if (StatechartPackage.eINSTANCE.getTransition_OutOfBranch().equals(notification.getFeature())) {
       ((TransitionSheet)sheet).doOutOfChoiceCheck();
       ((TransitionSheet)sheet).defaultOutChanged(((Transition)element).isDefaultTransition());
+    } else if (StatechartPackage.eINSTANCE.getTransition_SelfTransition().equals(notification.getFeature())) {
+      ((TransitionSheet)sheet).doSelfCheck();
     }
   }
 }
