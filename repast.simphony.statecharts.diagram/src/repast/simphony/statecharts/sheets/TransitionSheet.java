@@ -429,7 +429,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
       @Override
       public void expansionStateChanged(ExpansionEvent e) {
         if (e.getState()) {
-          onTransitionTxt.setFocus();
+          TransitionSheet.this.getParent().layout(true, true);
         }
       }
     });
