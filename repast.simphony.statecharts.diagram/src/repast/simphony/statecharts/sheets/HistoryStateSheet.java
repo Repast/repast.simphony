@@ -120,7 +120,9 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
     });
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.statecharts.sheets.BindableFocusableSheet#resetFocus()
    */
   @Override
@@ -131,8 +133,8 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
-    ISWTObservableValue observe = WidgetProperties.text(
-        new int[] { SWT.Modify }).observeDelayed(400, idTxt);
+    ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
+        400, idTxt);
     context.bindValue(observe, property.observe(eObject));
 
     context.bindValue(
@@ -140,13 +142,18 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.HISTORY__SHALLOW).observe(eObject));
 
-    context
-        .bindValue(
-            WidgetProperties.text(new int[] { SWT.Modify}).observeDelayed(400,
-                onEnterTxt),
-            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-                StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
+    context.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onEnterTxt),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
+
+    // set the focus to the first component
+    // whenever the binding changes. This prevents
+    // bad focus change when clicking in a multi line text
+    // control
+    idTxt.setFocus();
+    idTxt.setSelection(0, 0);
   }
 }
