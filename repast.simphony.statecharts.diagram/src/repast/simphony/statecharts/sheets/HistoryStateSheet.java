@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-public class HistoryStateSheet extends Composite implements BindableFocusableSheet {
+public class HistoryStateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
   private Text idTxt;
   private Text onEnterTxt;
@@ -39,6 +39,7 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
     lblId.setText("ID:");
 
     idTxt = new Text(this, SWT.BORDER);
+    focusableControls.add(idTxt);
     GridData gd_idTxt = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_idTxt.widthHint = 200;
     idTxt.setLayoutData(gd_idTxt);
@@ -104,6 +105,7 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
     lblOnEnter.setText("On Enter:");
 
     onEnterTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+    focusableControls.add(onEnterTxt);
     onEnterTxt.setText("");
     GridData data = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     data.heightHint = 120;
@@ -148,12 +150,5 @@ public class HistoryStateSheet extends Composite implements BindableFocusableShe
             StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
-
-    // set the focus to the first component
-    // whenever the binding changes. This prevents
-    // bad focus change when clicking in a multi line text
-    // control
-    idTxt.setFocus();
-    idTxt.setSelection(0, 0);
   }
 }

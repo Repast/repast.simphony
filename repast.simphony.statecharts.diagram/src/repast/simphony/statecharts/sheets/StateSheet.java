@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
-public class StateSheet extends Composite implements BindableFocusableSheet {
+public class StateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
   private Text idTxt;
   private Text onEnterTxt;
@@ -38,6 +38,7 @@ public class StateSheet extends Composite implements BindableFocusableSheet {
     lblId.setText("ID:");
 
     idTxt = new Text(this, SWT.BORDER);
+    focusableControls.add(idTxt);
     GridData gd_idFld = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
     gd_idFld.widthHint = 200;
     idTxt.setLayoutData(gd_idFld);
@@ -103,12 +104,14 @@ public class StateSheet extends Composite implements BindableFocusableSheet {
 
     onEnterTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     onEnterTxt.setText("");
+    focusableControls.add(onEnterTxt);
     GridData data = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     data.heightHint = 120;
     onEnterTxt.setLayoutData(data);
     toolkit.adapt(onEnterTxt, true, true);
 
     onExitTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+    focusableControls.add(onExitTxt);
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     gd_onExitTxt.heightHint = 120;
     gd_onExitTxt.horizontalIndent = 1;
@@ -162,12 +165,5 @@ public class StateSheet extends Composite implements BindableFocusableSheet {
             StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
-
-    // set the focus to the first component
-    // whenever the binding changes. This prevents
-    // bad focus change when clicking in a multi line text
-    // control
-    idTxt.setFocus();
-    idTxt.setSelection(0, 0);
   }
 }

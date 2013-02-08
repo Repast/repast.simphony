@@ -35,7 +35,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
 
-public class TransitionSheet extends Composite implements BindableFocusableSheet {
+public class TransitionSheet extends FocusFixComposite implements BindableFocusableSheet {
 
   private static final String[] MESSAGE_TYPES = { "When Message Meets a Condition",
       "When Message Equals ...", "When Message is of the Specified Class", "Always" };
@@ -108,6 +108,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     lblId.setText("ID:");
 
     idTxt = toolkit.createText(composite_2, "", SWT.NONE);
+    focusableControls.add(idTxt);
     GridData gd_idTxt = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_idTxt.widthHint = 200;
     idTxt.setLayoutData(gd_idTxt);
@@ -118,6 +119,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     lblPriority.setText("Priority:");
 
     priorityTxt = toolkit.createText(composite_2, "", SWT.NONE);
+    focusableControls.add(priorityTxt);
     GridData gd_priorityTxt = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_priorityTxt.widthHint = 120;
     priorityTxt.setLayoutData(gd_priorityTxt);
@@ -168,6 +170,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   private void createGuardSection(FormToolkit toolkit) {
     sctnGuard = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
+    focusableControls.add(sctnGuard);
     sctnGuard.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnGuard);
     sctnGuard.setText("Guard");
@@ -186,6 +189,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     lblGuard.setText("Guard:");
 
     guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+    focusableControls.add(guardTxt);
     guardTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
     gd_onExitTxt.heightHint = 50;
@@ -196,6 +200,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   private void createTriggerSection(FormToolkit toolkit) {
     sctnTrigger = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
+    focusableControls.add(sctnTrigger);
     sctnTrigger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnTrigger);
     sctnTrigger.setText("Trigger");
@@ -250,6 +255,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 
     txtMessagePolling = toolkit.createText(cmpMessage, "1", SWT.NONE);
+    focusableControls.add(txtMessagePolling);
     txtMessagePolling.addVerifyListener(new DoubleVerifier());
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
@@ -301,6 +307,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     lblMessage = toolkit.createLabel(composite, "Condition:", SWT.NONE);
 
     txtMessage = toolkit.createText(composite, "New Text", SWT.V_SCROLL | SWT.MULTI);
+    focusableControls.add(txtMessage);
     txtMessage.addTraverseListener(new CancelTraverseOnReturn());
     txtMessage.setText("");
     GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -317,6 +324,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     toolkit.createLabel(cmpProb, "Polling Time:", SWT.NONE);
 
     txtProbPolling = toolkit.createText(cmpProb, "1", SWT.NONE);
+    focusableControls.add(txtProbPolling);
     txtProbPolling.addVerifyListener(new DoubleVerifier());
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
@@ -327,6 +335,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     new Label(cmpProb, SWT.NONE);
     txtProbProb = toolkit.createText(cmpProb, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    focusableControls.add(txtProbProb);
     txtProbProb.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
     gd_txtTimedTime.heightHint = 40;
@@ -342,6 +351,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     toolkit.createLabel(cmpCond, "Polling Time:", SWT.NONE);
 
     txtCondPolling = toolkit.createText(cmpCond, "1", SWT.NONE);
+    focusableControls.add(txtCondPolling);
     txtCondPolling.addVerifyListener(new DoubleVerifier());
     GridData gd_txtAlwaysPolling = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
@@ -352,6 +362,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     new Label(cmpCond, SWT.NONE);
     txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    focusableControls.add(txtCondCond);
     txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
     gd_txtTimedTime.heightHint = 40;
@@ -367,6 +378,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     toolkit.createLabel(cmpTimed, "Time:", SWT.NONE);
     txtTimedTime = toolkit.createText(cmpTimed, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    focusableControls.add(txtTimedTime);
     txtTimedTime.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
     gd_txtTimedTime.heightHint = 40;
@@ -382,6 +394,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     toolkit.createLabel(cmpExp, "Exponential Decay Rate:", SWT.NONE);
     txtExpRate = toolkit.createText(cmpExp, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
         | SWT.MULTI);
+    focusableControls.add(txtExpRate);
     txtExpRate.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
     gd_txtTimedTime.heightHint = 40;
@@ -398,6 +411,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
     lblPollingTime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
     txtAlwaysPolling = toolkit.createText(cmpAlways, "1", SWT.NONE);
+    focusableControls.add(txtAlwaysPolling);
     txtAlwaysPolling.addVerifyListener(new DoubleVerifier());
     GridData gd_txtAlwaysPolling = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_txtAlwaysPolling.widthHint = 120;
@@ -407,6 +421,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
   private void createTransitionSection(FormToolkit toolkit) {
     sctnOnTransition = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
+    focusableControls.add(sctnOnTransition);
     sctnOnTransition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
     toolkit.paintBordersFor(sctnOnTransition);
     sctnOnTransition.setText("On Transition");
@@ -429,6 +444,7 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
 
     onTransitionTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
         | SWT.CANCEL | SWT.MULTI);
+    focusableControls.add(onTransitionTxt);
     onTransitionTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onTransitionTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     gd_onTransitionTxt.heightHint = 100;
@@ -643,13 +659,6 @@ public class TransitionSheet extends Composite implements BindableFocusableSheet
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__SELF_TRANSITION).observe(eObject));
     doSelfCheck();
-
-    // set the focus to the first component
-    // whenever the binding changes. This prevents
-    // bad focus change when clicking in a multi line text
-    // control
-    idTxt.setFocus();
-    idTxt.setSelection(0, 0);
   }
 
   private void bindTriggerComponents(EMFDataBindingContext context, EObject eObject) {
