@@ -295,6 +295,9 @@ public class ElementInitializers {
       value_3 = StatechartAbstractExpression.performCast(value_3,
           StatechartPackage.eINSTANCE.getLanguageTypes());
       instance.setTriggerCodeLanguage((LanguageTypes) value_3);
+      Object value_4 = StatechartOCLFactory.getExpression(9,
+          StatechartPackage.eINSTANCE.getTransition(), null).evaluate(instance);
+      instance.setSelfTransition(((Boolean) value_4).booleanValue());
     } catch (RuntimeException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Element initialization failed", e); //$NON-NLS-1$						
     }

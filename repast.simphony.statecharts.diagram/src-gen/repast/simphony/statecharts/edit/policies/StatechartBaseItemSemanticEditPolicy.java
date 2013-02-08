@@ -333,7 +333,7 @@ public class StatechartBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", StatechartPackage.eINSTANCE.getAbstractState()); //$NON-NLS-1$
-          Object sourceVal = StatechartOCLFactory.getExpression(9,
+          Object sourceVal = StatechartOCLFactory.getExpression(10,
               StatechartPackage.eINSTANCE.getAbstractState(), env).evaluate(source,
               Collections.singletonMap("oppositeEnd", target)); //$NON-NLS-1$
           if (false == sourceVal instanceof Boolean || !((Boolean) sourceVal).booleanValue()) {
@@ -345,7 +345,7 @@ public class StatechartBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         } else {
           Map<String, EClassifier> env = Collections.<String, EClassifier> singletonMap(
               "oppositeEnd", StatechartPackage.eINSTANCE.getAbstractState()); //$NON-NLS-1$
-          Object targetVal = StatechartOCLFactory.getExpression(10,
+          Object targetVal = StatechartOCLFactory.getExpression(11,
               StatechartPackage.eINSTANCE.getAbstractState(), env).evaluate(target,
               Collections.singletonMap("oppositeEnd", source)); //$NON-NLS-1$
           if (false == targetVal instanceof Boolean || !((Boolean) targetVal).booleanValue()) {

@@ -37,7 +37,7 @@ public class StatechartOCLFactory {
    * @generated
    */
   protected StatechartOCLFactory() {
-    this.expressions = new StatechartAbstractExpression[11];
+    this.expressions = new StatechartAbstractExpression[12];
     this.expressionBodies = new String[] {
         "not self.oclIsKindOf(History) and not self.oclIsKindOf(FinalState)", //$NON-NLS-1$
         "self.type = PseudoStateTypes::initial", //$NON-NLS-1$
@@ -48,6 +48,7 @@ public class StatechartOCLFactory {
         "shallow = false", //$NON-NLS-1$
         "self.type = PseudoStateTypes::entry", //$NON-NLS-1$
         "PseudoStateTypes::entry", //$NON-NLS-1$
+        "self.from = self.to", //$NON-NLS-1$
         "not self.oclIsKindOf(FinalState) and not self.oclIsKindOf(History)", //$NON-NLS-1$
         "not self.oclIsKindOf(PseudoState) or (self.oclAsType(PseudoState).type = PseudoStateTypes::choice)", //$NON-NLS-1$
     };

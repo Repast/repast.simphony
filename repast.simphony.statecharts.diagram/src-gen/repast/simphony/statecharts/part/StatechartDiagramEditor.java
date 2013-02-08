@@ -51,7 +51,7 @@ import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
  * @generated
  */
 public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
-  
+
   /**
    * Generated NOT
    */
@@ -285,21 +285,24 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     getDiagramGraphicalViewer().setContextMenu(provider);
     getSite().registerContextMenu(ActionIds.DIAGRAM_EDITOR_CONTEXT_MENU, provider,
         getDiagramGraphicalViewer());
-    
+
     // idea here is to replace the poor defaults with something reasonable
     // unless the user has changed them him or herself.
     if (getDiagramGraphicalViewer() instanceof DiagramGraphicalViewer) {
       PreferenceStore prefStore = getWorkspaceViewerPreferenceStore();
-      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINECOLOR) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR)  == LIGHT_GRAY_RGB ) {
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINECOLOR)
+          && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR) == LIGHT_GRAY_RGB) {
         prefStore.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
       }
-      
-      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINESTYLE) && prefStore.getInt(WorkspaceViewerProperties.GRIDLINESTYLE)  == SWT.LINE_CUSTOM) {
+
+      if (prefStore.contains(WorkspaceViewerProperties.GRIDLINESTYLE)
+          && prefStore.getInt(WorkspaceViewerProperties.GRIDLINESTYLE) == SWT.LINE_CUSTOM) {
         prefStore.setValue(WorkspaceViewerProperties.GRIDLINESTYLE, SWT.LINE_SOLID);
       }
       getWorkspaceViewerPreferenceStore().setValue(WorkspaceViewerProperties.GRIDORDER, false);
-      ((DiagramGraphicalViewer) getDiagramGraphicalViewer()).hookWorkspacePreferenceStore(getWorkspaceViewerPreferenceStore());
-      
+      ((DiagramGraphicalViewer) getDiagramGraphicalViewer())
+          .hookWorkspacePreferenceStore(getWorkspaceViewerPreferenceStore());
+
     }
   }
 

@@ -311,15 +311,17 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
       } catch (JavaModelException ex) {
         agentIsOK = false;
       }
-      
+
       if (agentIsOK) {
         try {
           StatechartCodeAdder adder = StatechartCodeAdderFactory.createCodeAdder(agent, monitor);
-          adder.run(modelPropsPage.getPackage(), modelPropsPage.getClassName(), modelPropsPage.getAgentClassName());
+          adder.run(modelPropsPage.getPackage(), modelPropsPage.getClassName(),
+              modelPropsPage.getAgentClassName());
         } catch (Throwable ex) {
           // ignore any code creation errors as re-throwing the error causes the rest of the 
           // chart creation to abort.
-          StatechartDiagramEditorPlugin.getInstance().logError("Error while inserting statechart code into agent", ex);
+          StatechartDiagramEditorPlugin.getInstance().logError(
+              "Error while inserting statechart code into agent", ex);
           //new CoreException(new Status(IStatus., StatechartDiagramEditorPlugin.ID, "Error while inserting statechart code into agent.", 
           //    ex));
         }
