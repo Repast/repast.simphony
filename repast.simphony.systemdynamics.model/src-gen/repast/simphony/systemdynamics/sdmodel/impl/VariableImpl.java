@@ -2,6 +2,9 @@
  */
 package repast.simphony.systemdynamics.sdmodel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -149,6 +152,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
    * @ordered
    */
   protected String comment = COMMENT_EDEFAULT;
+  
+  protected List<String> subscripts = new ArrayList<String>();
 
   /**
    * <!-- begin-user-doc -->
@@ -209,6 +214,7 @@ public class VariableImpl extends EObjectImpl implements Variable {
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__NAME, oldName, name));
+    parseSubscripts(equation);
   }
 
   /**
@@ -272,6 +278,48 @@ public class VariableImpl extends EObjectImpl implements Variable {
     equation = newEquation;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__EQUATION, oldEquation, equation));
+    parseSubscripts(equation);
+  }
+  
+  private void parseSubscripts(String equation) {
+    subscripts.clear();
+    if (name != null && name.length() > 0) {
+      int index = equation.indexOf(name);
+      if (index != -1) {
+        index = index + name.length();
+ 
+        while (index < equation.length()) {
+          if (!Character.isWhitespace(equation.charAt(index))) break;
+          ++index;
+        }
+        
+        if (equation.charAt(index) == '[') {
+          ++index;
+          boolean complete = false;
+          StringBuilder buf = new StringBuilder();
+          while (index < equation.length()) {
+            char c = equation.charAt(index);
+            if (c == ']') {
+              complete = true;
+              break;
+            }
+            buf.append(c);
+            ++index;
+          }
+          
+          
+          if (complete) {
+            String[] subs = buf.toString().split(",");
+            for (String sub : subs) {
+              subscripts.add(sub.trim());
+            }
+          }
+          
+          
+        }
+      }
+    }
+    
   }
 
   /**
@@ -429,4 +477,14 @@ public class VariableImpl extends EObjectImpl implements Variable {
     return result.toString();
   }
 
+  /* (non-Javadoc)
+   * @see repast.simphony.systemdynamics.sdmodel.Variable#getSubscripts()
+   */
+  /**
+   * @generated NOT
+   */
+  @Override
+  public List<String> getSubscripts() {
+    return new ArrayList<String>(subscripts);
+  }
 } //VariableImpl

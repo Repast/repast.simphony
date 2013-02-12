@@ -2,6 +2,8 @@
  */
 package repast.simphony.systemdynamics.sdmodel;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -187,5 +189,13 @@ public interface Variable extends EObject {
    * @generated
    */
   void setComment(String value);
+  
+  /**
+   * The list of subscripts used by this variable.
+   * 
+   * @return  list of subscripts used by this variable.
+   * @generated NOT
+   */
+  List<String> getSubscripts();
 
 } // Variable
