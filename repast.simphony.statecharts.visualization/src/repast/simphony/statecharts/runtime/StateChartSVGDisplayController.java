@@ -33,7 +33,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
 		sb.append(agent);
 		sb.append(", ");
 		sb.append("Statechart: ");
-		sb.append(stateChart.getClass());
+		sb.append(stateChart.getClass().getName());
 		return sb.toString();
 	}
 

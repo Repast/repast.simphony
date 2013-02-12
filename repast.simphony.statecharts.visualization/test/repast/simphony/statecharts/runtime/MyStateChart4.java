@@ -9,7 +9,7 @@ public class MyStateChart4 extends DefaultStateChart<MyAgent> {
 
 	public static MyStateChart4 createStateChart(MyAgent agent, double begin) {
 		MyStateChart4 result = createStateChart(agent);
-		StateChartCombinedActionScheduler.INSTANCE.scheduleBeginTime(begin,
+		StateChartScheduler.INSTANCE.scheduleBeginTime(begin,
 				result);
 		return result;
 	}

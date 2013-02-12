@@ -109,14 +109,17 @@ public class StateChartSVGModel {
 	
 	public SVGDocument getCurrentSVGDocument(){
 		SVGDocument svgDocLocal = deepCopySVGDocument(svgDoc);
+//		SVGUtils.printDocument(svgDocLocal, System.out);
 		Element svgDocLocalElement = svgDocLocal.getDocumentElement();
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		for (String uuid : activeUUIDs){
 			try {
-				Object result = xpath.evaluate("//*[@uuid="+uuid+"]",svgDocLocalElement,XPathConstants.NODE);
+				Object result = xpath.evaluate("//*[@uuid=\""+uuid+"\"]",svgDocLocalElement,XPathConstants.NODE);
 				if (result != null && result instanceof Element){
-					svgDocLocal.replaceChild(svgDocLocal.importNode(activeElementsMap.get(uuid), false), (Element)result);
+					Element resultElement = (Element) result;
+					Node parentNode = resultElement.getParentNode();
+					parentNode.replaceChild(svgDocLocal.importNode(activeElementsMap.get(uuid), true), resultElement);
 				}
 			} catch (XPathExpressionException e) {
 				e.printStackTrace();
