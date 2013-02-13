@@ -30,21 +30,33 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import repast.simphony.systemdynamics.handlers.SubscriptApplier;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.Subscript;
+import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
 import repast.simphony.systemdynamics.util.SDModelUtils;
 
 public class VariableSheet extends Composite {
 
+  protected static final String VARIABLES = "Variables";
+  protected static final int VAR_INDEX = 0;
+  private static final String SUBSCRIPTS = "Subscripts";
+  private static final int SUB_INDEX = 1;
+
   private Text txtId;
   protected StyledText txtEquation;
   private Combo cmbUnits;
-  private Combo cmbType, cmbFuncType;
+  protected Combo cmbType, cmbFuncType, cmbVarSub;
   protected List lstVar, lstFunc;
   private Text txtComment;
-  private Map<String, Variable> varMap = new HashMap<String, Variable>();
-  
+  protected Map<String, Variable> varMap = new HashMap<String, Variable>();
+  protected java.util.List<String> subList = new ArrayList<String>();
+  protected java.util.List<String> varList = new ArrayList<String>();
+  protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
+  private EObject eObj;
+
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
     toolkit.adapt(this);
@@ -84,7 +96,7 @@ public class VariableSheet extends Composite {
     gl_composite_2.marginHeight = 0;
     gl_composite_2.marginWidth = 0;
     composite_2.setLayout(gl_composite_2);
-    
+
     cmbFuncType = new Combo(composite_2, SWT.READ_ONLY);
     GridData gd_cmbFuncType = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_cmbFuncType.verticalIndent = 4;
@@ -117,25 +129,35 @@ public class VariableSheet extends Composite {
     toolkit.adapt(composite);
     toolkit.paintBordersFor(composite);
 
+    cmbVarSub = new Combo(composite, SWT.READ_ONLY);
+    GridData cmbData = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+    cmbData.verticalIndent = 4;
+    cmbVarSub.setLayoutData(cmbData);
+    cmbVarSub.setItems(new String[] { VARIABLES, SUBSCRIPTS });
+    cmbVarSub.select(0);
+
     lstVar = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     lstVar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     toolkit.adapt(lstVar, true, true);
-    
+
     sashForm_1.setWeights(new int[] { 4, 1 });
     sashForm.setWeights(new int[] { 1, 4 });
-    
-    ExpandableComposite xpndblcmpstNewExpandablecomposite = toolkit.createExpandableComposite(this, ExpandableComposite.TWISTIE);
-    xpndblcmpstNewExpandablecomposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-    xpndblcmpstNewExpandablecomposite.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.NORMAL));
+
+    ExpandableComposite xpndblcmpstNewExpandablecomposite = toolkit.createExpandableComposite(this,
+        ExpandableComposite.TWISTIE);
+    xpndblcmpstNewExpandablecomposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+        false, 1, 1));
+    xpndblcmpstNewExpandablecomposite.setFont(SWTResourceManager.getFont("Lucida Grande", 11,
+        SWT.NORMAL));
     toolkit.paintBordersFor(xpndblcmpstNewExpandablecomposite);
     xpndblcmpstNewExpandablecomposite.setText("Comment");
     xpndblcmpstNewExpandablecomposite.setExpanded(true);
-    
+
     Composite composite_3 = toolkit.createComposite(xpndblcmpstNewExpandablecomposite, SWT.NONE);
     toolkit.paintBordersFor(composite_3);
     xpndblcmpstNewExpandablecomposite.setClient(composite_3);
     composite_3.setLayout(new GridLayout(1, false));
-    
+
     txtComment = toolkit.createText(composite_3, "New Text", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     txtComment.setText("");
     GridData gd_txtComment = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
@@ -144,16 +166,16 @@ public class VariableSheet extends Composite {
 
     addListeners();
   }
-  
+
   private void fillListFunc() {
     FunctionManager fm = FunctionManager.getInstance();
     lstFunc.setItems(fm.getFunctionNames(cmbFuncType.getItem(cmbFuncType.getSelectionIndex())));
   }
-  
+
   private void funcSelected() {
     if (lstFunc.getSelectionIndex() != -1) {
       String name = lstFunc.getSelection()[0];
-      String pattern = FunctionManager.getInstance().getFunctionPattern(name); 
+      String pattern = FunctionManager.getInstance().getFunctionPattern(name);
       String txt = name + pattern;
       int offset = txtEquation.getSelection().x;
       txtEquation.insert(txt);
@@ -162,19 +184,21 @@ public class VariableSheet extends Composite {
       txtEquation.setSelection(selectionIndex, selectionIndex + 1);
     }
   }
-  
+
   private String formatSubscripts(Variable var) {
     java.util.List<String> subs = var.getSubscripts();
-    if (subs.isEmpty()) return "";
+    if (subs.isEmpty())
+      return "";
     StringBuilder buf = new StringBuilder("[");
     for (int i = 0; i < subs.size(); ++i) {
-      if (i > 0) buf.append(", ");
+      if (i > 0)
+        buf.append(", ");
       buf.append(subs.get(i));
     }
     buf.append("]");
     return buf.toString();
   }
-  
+
   private void varSelected() {
     if (lstVar.getSelectionIndex() != -1) {
       String name = lstVar.getSelection()[0];
@@ -186,7 +210,26 @@ public class VariableSheet extends Composite {
       txtEquation.setFocus();
     }
   }
-  
+
+  private void subSelected() {
+    java.util.List<Variable> vars = new ArrayList<Variable>();
+    vars.add((Variable)eObj);
+    
+    java.util.List<Subscript> subscripts = new ArrayList<Subscript>();
+    subscripts.add(subMap.get(lstVar.getSelection()[0]));
+    
+    SubscriptApplier applier = new SubscriptApplier(subscripts, vars);
+    applier.run();
+  }
+
+  private void subVarSelected() {
+    if (cmbVarSub.getSelectionIndex() == VAR_INDEX) {
+      lstVar.setItems(varList.toArray(new String[0]));
+    } else {
+      lstVar.setItems(subList.toArray(new String[0]));
+    }
+  }
+
   private void funcTypeSelected() {
     int index = cmbFuncType.getSelectionIndex();
     if (index != -1) {
@@ -239,60 +282,54 @@ public class VariableSheet extends Composite {
         funcSelected();
       }
     });
-    
+
     lstVar.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        varSelected();
+        if (cmbVarSub.getSelectionIndex() == VAR_INDEX)
+          varSelected();
+        else
+          subSelected();
       }
     });
-    
+
     cmbFuncType.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
         funcTypeSelected();
       }
     });
+
+    cmbVarSub.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        subVarSelected();
+      }
+    });
     /*
-    Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
-    DropTarget target = new DropTarget(txtEquation, DND.DROP_COPY | DND.DROP_DEFAULT);
-    target.setTransfer(types);
-    target.addDropListener(new DropTargetAdapter() {
+     * Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+     * DropTarget target = new DropTarget(txtEquation, DND.DROP_COPY |
+     * DND.DROP_DEFAULT); target.setTransfer(types); target.addDropListener(new
+     * DropTargetAdapter() {
+     * 
+     * @Override public void dragEnter(DropTargetEvent event) { if (event.detail
+     * == DND.DROP_DEFAULT) event.detail = DND.DROP_COPY; }
+     * 
+     * @Override public void drop(DropTargetEvent event) {
+     * txtEquation.insert(event.data.toString()); } });
+     * 
+     * DragSource src = new DragSource(lstVar, DND.DROP_COPY);
+     * src.setTransfer(types); src.addDragListener(new DragSourceListener() {
+     * 
+     * @Override public void dragStart(DragSourceEvent event) { if
+     * (lstVar.getSelectionIndex() == -1) event.doit = false; }
+     * 
+     * @Override public void dragSetData(DragSourceEvent event) { if
+     * (TextTransfer.getInstance().isSupportedType(event.dataType)) { event.data
+     * = lstVar.getSelection()[0]; } }
+     * 
+     * @Override public void dragFinished(DragSourceEvent event) { } });
+     */
 
-      @Override
-      public void dragEnter(DropTargetEvent event) {
-        if (event.detail == DND.DROP_DEFAULT)
-          event.detail = DND.DROP_COPY;
-      }
-
-      @Override
-      public void drop(DropTargetEvent event) {
-        txtEquation.insert(event.data.toString());
-      }
-    });
-    
-    DragSource src = new DragSource(lstVar, DND.DROP_COPY);
-    src.setTransfer(types);
-    src.addDragListener(new DragSourceListener() {
-      @Override
-      public void dragStart(DragSourceEvent event) {
-        if (lstVar.getSelectionIndex() == -1)
-          event.doit = false;
-      }
-
-      @Override
-      public void dragSetData(DragSourceEvent event) {
-        if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-          event.data = lstVar.getSelection()[0];
-        }
-      }
-
-      @Override
-      public void dragFinished(DragSourceEvent event) {
-      }
-    });
-    */
-    
   }
 
   private String getVarTypeString(VariableType type) {
@@ -315,10 +352,11 @@ public class VariableSheet extends Composite {
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    eObj = eObject;
     java.util.List<String> allUnits = SDModelUtils.getAllUnits(eObject);
     Collections.sort(allUnits);
     cmbUnits.setItems(allUnits.toArray(new String[0]));
-    
+
     FunctionManager.getInstance().clearLookups();
     cmbFuncType.select(0);
     fillListFunc();
@@ -338,30 +376,48 @@ public class VariableSheet extends Composite {
         createUpdateValueStrategy(new StringToVarType()),
         createUpdateValueStrategy(new VarTypeToString()));
 
-    lstFunc.setEnabled(!((Variable)eObject).getType().equals(VariableType.LOOKUP));
+    lstFunc.setEnabled(!((Variable) eObject).getType().equals(VariableType.LOOKUP));
     updateVariables(eObject);
+    updateSubscripts(eObject);
   }
 
   protected void updateVariables(EObject eObj) {
     FunctionManager.getInstance().clearLookups();
     varMap.clear();
-    
+    varList.clear();
+
     Variable var = ((Variable) eObj);
-    lstVar.setItems(new String[] {});
 
     if (var.getType() == VariableType.RATE || var.getType() == VariableType.AUXILIARY) {
       java.util.List<Variable> vars = SDModelUtils.getIncomingVariables(var);
-      java.util.List<String> items = new ArrayList<String>();
-      
+
       for (Variable v : vars) {
         if (v.getType().equals(VariableType.LOOKUP)) {
           FunctionManager.getInstance().addLookup(v.getName());
         } else {
-          items.add(v.getName());
+          varList.add(v.getName());
           varMap.put(v.getName(), v);
         }
       }
-      lstVar.setItems(items.toArray(new String[0]));
+
+      if (cmbVarSub.getSelectionIndex() == VAR_INDEX) {
+        lstVar.setItems(varList.toArray(new String[0]));
+      }
+    }
+  }
+
+  protected void updateSubscripts(EObject eObj) {
+    java.util.List<Subscript> subs = ((SystemModel) eObj.eContainer()).getSubscripts();
+    subList.clear();
+    subMap.clear();
+    for (Subscript sub : subs) {
+      subList.add(sub.getName());
+      subMap.put(sub.getName(), sub);
+    }
+    
+    Collections.sort(subList);
+    if (cmbVarSub.getSelectionIndex() == SUB_INDEX) {
+      lstVar.setItems(subList.toArray(new String[0]));
     }
   }
 

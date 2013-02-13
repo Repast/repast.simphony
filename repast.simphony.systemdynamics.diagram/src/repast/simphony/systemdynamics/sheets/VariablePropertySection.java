@@ -24,4 +24,6 @@ public class VariablePropertySection extends AbstractEditorPropertySection {
   public void bindModel(EMFDataBindingContext context) {
     sheet.bindModel(context, getEObject());
   }
+  
+  
 }
