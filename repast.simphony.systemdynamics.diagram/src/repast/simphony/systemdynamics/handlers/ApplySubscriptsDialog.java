@@ -29,7 +29,7 @@ public class ApplySubscriptsDialog extends TitleAreaDialog {
   private Button btnAdd;
   private Button btnAddAll;
   private Button btnRemove;
-  private Button btnRemoveAll;
+  private Button btnRemoveAll, btnOK;
   private List lstTo;
   private List lstFrom;
 
@@ -140,6 +140,7 @@ public class ApplySubscriptsDialog extends TitleAreaDialog {
     btnAddAll.setEnabled(lstFrom.getItems().length > 0);
     btnRemove.setEnabled(lstTo.getItems().length > 0 && lstFrom.getSelectionCount() > 0);
     btnRemoveAll.setEnabled(lstTo.getItems().length > 0);
+    btnOK.setEnabled(lstTo.getItems().length > 0);
     
     subscripts.clear();
     subscripts.addAll(Arrays.asList(lstTo.getItems()));
@@ -195,7 +196,8 @@ public class ApplySubscriptsDialog extends TitleAreaDialog {
    */
   @Override
   protected void createButtonsForButtonBar(Composite parent) {
-    createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    btnOK = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    btnOK.setEnabled(false);
     createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
   }
 
