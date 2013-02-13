@@ -2,6 +2,8 @@ package repast.simphony.systemdynamics.sheets;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -41,7 +43,8 @@ public class VariableSheet extends Composite {
   private Combo cmbType, cmbFuncType;
   protected List lstVar, lstFunc;
   private Text txtComment;
-
+  private Map<String, Variable> varMap = new HashMap<String, Variable>();
+  
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
     toolkit.adapt(this);
@@ -160,12 +163,26 @@ public class VariableSheet extends Composite {
     }
   }
   
+  private String formatSubscripts(Variable var) {
+    java.util.List<String> subs = var.getSubscripts();
+    if (subs.isEmpty()) return "";
+    StringBuilder buf = new StringBuilder("[");
+    for (int i = 0; i < subs.size(); ++i) {
+      if (i > 0) buf.append(", ");
+      buf.append(subs.get(i));
+    }
+    buf.append("]");
+    return buf.toString();
+  }
+  
   private void varSelected() {
     if (lstVar.getSelectionIndex() != -1) {
-      String var = lstVar.getSelection()[0];
+      String name = lstVar.getSelection()[0];
+      Variable var = varMap.get(name);
       int offset = txtEquation.getSelection().x;
-      txtEquation.insert(var);
-      txtEquation.setCaretOffset(offset + var.length());
+      String txtToInsert = name + formatSubscripts(var);
+      txtEquation.insert(txtToInsert);
+      txtEquation.setCaretOffset(offset + txtToInsert.length());
       txtEquation.setFocus();
     }
   }
@@ -327,6 +344,8 @@ public class VariableSheet extends Composite {
 
   protected void updateVariables(EObject eObj) {
     FunctionManager.getInstance().clearLookups();
+    varMap.clear();
+    
     Variable var = ((Variable) eObj);
     lstVar.setItems(new String[] {});
 
@@ -339,6 +358,7 @@ public class VariableSheet extends Composite {
           FunctionManager.getInstance().addLookup(v.getName());
         } else {
           items.add(v.getName());
+          varMap.put(v.getName(), v);
         }
       }
       lstVar.setItems(items.toArray(new String[0]));
