@@ -22,6 +22,6 @@ public class StockPropertySection extends AbstractEditorPropertySection {
 
   @Override
   public void bindModel(EMFDataBindingContext context) {
-    sheet.bindModel(context, getEObject());
+    if (sheet != null) sheet.bindModel(context, getEObject());
   }
 }

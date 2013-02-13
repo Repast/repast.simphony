@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
+import repast.simphony.systemdynamics.subscripts.VariableBlock;
+import repast.simphony.systemdynamics.subscripts.VariableFinder;
 
 /**
  * <!-- begin-user-doc -->
@@ -284,42 +286,10 @@ public class VariableImpl extends EObjectImpl implements Variable {
   private void parseSubscripts(String equation) {
     subscripts.clear();
     if (name != null && name.length() > 0) {
-      int index = equation.indexOf(name);
-      if (index != -1) {
-        index = index + name.length();
- 
-        while (index < equation.length()) {
-          if (!Character.isWhitespace(equation.charAt(index))) break;
-          ++index;
-        }
-        
-        if (equation.charAt(index) == '[') {
-          ++index;
-          boolean complete = false;
-          StringBuilder buf = new StringBuilder();
-          while (index < equation.length()) {
-            char c = equation.charAt(index);
-            if (c == ']') {
-              complete = true;
-              break;
-            }
-            buf.append(c);
-            ++index;
-          }
-          
-          
-          if (complete) {
-            String[] subs = buf.toString().split(",");
-            for (String sub : subs) {
-              subscripts.add(sub.trim());
-            }
-          }
-          
-          
-        }
-      }
+      VariableFinder finder = new VariableFinder(equation);
+      List<VariableBlock> blocks = finder.findBlock(name);
+      if (blocks.size() > 0) subscripts.addAll(blocks.get(0).getSubscripts());
     }
-    
   }
 
   /**
