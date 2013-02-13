@@ -12,6 +12,7 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
+import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
@@ -98,6 +99,7 @@ public class SubscriptApplier {
 
     SystemModel model = (SystemModel) var.eContainer();
     for (Variable v : model.getVariables()) {
+      if (!(v.getType().equals(VariableType.LOOKUP) || v.eClass().equals(SDModelFactory.eINSTANCE.getSDModelPackage().getCloud())))
       varNames.add(v.getName());
     }
     return varNames;
