@@ -32,16 +32,10 @@
 		<library id="js" path="lib/js.jar" type="code"/>
 	</runtime>
 
-	<!--<extension plugin-id="saf.core.ui" point-id="ui.Actions" id="weka.actions">
-		<parameter id="actionSpec">
-			<parameter id="actionID" value="repast.simphony.weka.runWeka"/>
-			<parameter id="label" value="Run Weka"/>
-			<parameter id="class" value="repast.simphony.weka.RunWekaModel"/>
-			<parameter id="icon" value="weka.png" />
-			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
-			<parameter id="groupID" value="runTools" />
-			<parameter id="tooltip" value="Run Weka" />
-		</parameter>
-	</extension>-->
+	<extension id="statechart.probe" plugin-id="repast.simphony.gui"
+        point-id="field.probe">
+        <parameter id="probedObjectClass" value="repast.simphony.statecharts.DefaultStateChart" />
+        <parameter id="creatorClass" value="jzombies.JZUICreator" />
+    </extension>
 
 </plugin>
