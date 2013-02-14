@@ -11,7 +11,7 @@ package repast.simphony.ui.probe;
  */
 public class SampleObject2 {
   
-  @ProbeProperty(usageName="foo", displayName="My Foo")
+  @ProbedProperty(usageName="foo", displayName="My Foo")
   private long foo = 3;
   
   public String id() {

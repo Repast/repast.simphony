@@ -15,7 +15,7 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class BooleanProbedProperty extends ProbedProperty {
+public class BooleanProbedProperty extends AbstractProbedProperty {
 
 	public BooleanProbedProperty(PropertyDescriptor desc) {
 		super(desc);

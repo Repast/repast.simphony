@@ -15,7 +15,7 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class StringProbedProperty extends ProbedProperty {
+public class StringProbedProperty extends AbstractProbedProperty {
 
   private List vals;
 

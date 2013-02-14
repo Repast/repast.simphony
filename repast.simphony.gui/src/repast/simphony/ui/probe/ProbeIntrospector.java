@@ -83,7 +83,7 @@ public class ProbeIntrospector {
     while (!clazz.equals(Object.class)) {
       Field[] fs = clazz.getDeclaredFields();
       for (Field field : fs) {
-        if (field.isAnnotationPresent(ProbeProperty.class))
+        if (field.isAnnotationPresent(ProbedProperty.class))
           fields.add(field);
       }
       clazz = clazz.getSuperclass();
@@ -95,7 +95,7 @@ public class ProbeIntrospector {
     gatherFields(fields, info.getProbedClass());
     for (Field field : fields) {
       field.setAccessible(true);
-      ProbeProperty pprop = field.getAnnotation(ProbeProperty.class);
+      ProbedProperty pprop = field.getAnnotation(ProbedProperty.class);
       FieldPropertyDescriptor fp = new FieldPropertyDescriptor(field, pprop.usageName().trim());
       if (pprop.displayName().trim().length() > 0)
         fp.setDisplayName(pprop.displayName().trim());
@@ -112,7 +112,7 @@ public class ProbeIntrospector {
     return MethodType.INVALID;
   }
 
-  private StringConverter<?> createStringConverter(ProbeProperty param) {
+  private StringConverter<?> createStringConverter(ProbedProperty param) {
     if (param.converter().trim().length() > 0) {
       try {
         Class<?> clazz = Class.forName(param.converter().trim());
@@ -134,7 +134,7 @@ public class ProbeIntrospector {
 
   @SuppressWarnings("unchecked")
   private void findProperties(PBI info) throws IntrospectionException {
-    Method[] methods = ClassUtilities.findMethods(info.getProbedClass(), ProbeProperty.class);
+    Method[] methods = ClassUtilities.findMethods(info.getProbedClass(), ProbedProperty.class);
     if (methods.length > 0) {
       Map<String, MethodPropertyDescriptor> pdMap = new HashMap<String, MethodPropertyDescriptor>();
       for (Method method : methods) {
@@ -146,7 +146,7 @@ public class ProbeIntrospector {
           continue;
         }
 
-        ProbeProperty pprop = method.getAnnotation(ProbeProperty.class);
+        ProbedProperty pprop = method.getAnnotation(ProbedProperty.class);
         MethodPropertyDescriptor pd = pdMap.get(pprop.usageName().trim());
         if (pd == null) {
           pd = new MethodPropertyDescriptor(pprop.usageName().trim(), info.getProbedClass());

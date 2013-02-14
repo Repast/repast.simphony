@@ -26,7 +26,7 @@ import com.jgoodies.common.format.EmptyNumberFormat;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class NumericProbedProperty extends ProbedProperty {
+public class NumericProbedProperty extends AbstractProbedProperty {
 
   private enum NumType {
     BYTE, INT, DOUBLE, LONG, FLOAT, BIGINTEGER, BIGDECIMAL, SHORT

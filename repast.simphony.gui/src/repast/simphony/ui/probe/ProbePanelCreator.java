@@ -82,9 +82,9 @@ public class ProbePanelCreator {
 	    || type.equals(Boolean.class) || type.equals(String.class));
   }
 
-  private List<ProbedProperty> createProperties(BeanInfo info, OldProbeModel bean, boolean wrap) {
+  private List<AbstractProbedProperty> createProperties(BeanInfo info, OldProbeModel bean, boolean wrap) {
     PropertyDescriptor[] pds = info.getPropertyDescriptors();
-    List<ProbedProperty> props = new ArrayList<ProbedProperty>();
+    List<AbstractProbedProperty> props = new ArrayList<AbstractProbedProperty>();
     for (PropertyDescriptor pd : pds) {
       String name = pd.getName();
       String displayName = pbInfo.getDisplayName(name);
@@ -95,7 +95,7 @@ public class ProbePanelCreator {
       }
       pd.setDisplayName(displayName);
       List constraints = listContstraints.get(pd.getName());
-      ProbedProperty prop;
+      AbstractProbedProperty prop;
       if (constraints == null)
 	prop = ProbedPropertyFactory.createProbedProperty(pd, wrap);
       else
@@ -106,9 +106,9 @@ public class ProbePanelCreator {
     return props;
   }
 
-  private JPanel createPanel(List<ProbedProperty> props, String title, boolean buffered) {
-    Collections.sort(props, new Comparator<ProbedProperty>() {
-      public int compare(ProbedProperty o1, ProbedProperty o2) {
+  private JPanel createPanel(List<AbstractProbedProperty> props, String title, boolean buffered) {
+    Collections.sort(props, new Comparator<AbstractProbedProperty>() {
+      public int compare(AbstractProbedProperty o1, AbstractProbedProperty o2) {
 	return o1.getDisplayName().compareTo(o2.getDisplayName());
       }
     });
@@ -119,7 +119,7 @@ public class ProbePanelCreator {
     builder.setLeadingColumnOffset(1);
     builder.nextLine();
     PresentationModel model = models.get(0);
-    for (ProbedProperty prop : props) {
+    for (AbstractProbedProperty prop : props) {
       JComponent component = prop.getComponent(model, buffered);
       if (component instanceof JFormattedTextField) {
 	component.addFocusListener(tempFocusCommitter);
@@ -238,15 +238,15 @@ public class ProbePanelCreator {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
 
-      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), false);
+      List<AbstractProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), false);
 
-      Collections.sort(props, new Comparator<ProbedProperty>() {
-	public int compare(ProbedProperty o1, ProbedProperty o2) {
+      Collections.sort(props, new Comparator<AbstractProbedProperty>() {
+	public int compare(AbstractProbedProperty o1, AbstractProbedProperty o2) {
 	  return o1.getDisplayName().compareTo(o2.getDisplayName());
 	}
       });
 
-      for (ProbedProperty prop : props) {
+      for (AbstractProbedProperty prop : props) {
 	valuesMap.put(prop.getName(), model.getValue(prop.getName()));
       }
 
@@ -262,7 +262,7 @@ public class ProbePanelCreator {
     try {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
+      List<AbstractProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
       JPanel panel = createPanel(props, title, false);
       return new Probe(models, panel, title);
     } catch (IntrospectionException e) {
@@ -275,7 +275,7 @@ public class ProbePanelCreator {
     try {
       PresentationModel model = models.get(0);
       BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-      List<ProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
+      List<AbstractProbedProperty> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
       JPanel panel = createPanel(props, title, true);
       return new Probe(models, panel, title, true);
     } catch (IntrospectionException e) {

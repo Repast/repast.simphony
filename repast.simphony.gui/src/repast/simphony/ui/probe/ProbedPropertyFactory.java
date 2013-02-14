@@ -21,7 +21,7 @@ public class ProbedPropertyFactory {
    *          whether or not to wrap with a sparkline button
    * @return the created ProbedProperty.
    */
-  public static ProbedProperty createProbedProperty(PropertyDescriptor desc, boolean wrap) {
+  public static AbstractProbedProperty createProbedProperty(PropertyDescriptor desc, boolean wrap) {
     Class<?> propType = desc.getPropertyType();
     if (ClassUtilities.isNumericType(propType))
       return new NumericProbedProperty(desc, wrap);
@@ -42,7 +42,7 @@ public class ProbedPropertyFactory {
    *          a list of possible values for the property
    * @return the created ProbedProperty.
    */
-  public static ProbedProperty createProbedProperty(PropertyDescriptor desc,
+  public static AbstractProbedProperty createProbedProperty(PropertyDescriptor desc,
       List<?> possibleValues, boolean wrap) {
     Class<?> propType = desc.getPropertyType();
     if (ClassUtilities.isNumericType(propType))

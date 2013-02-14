@@ -20,23 +20,23 @@ public class SampleObject {
   private int intVal = 3;
   private String code = "code";
   
-  @ProbeProperty(usageName="intVal", displayName="Integer Value", 
+  @ProbedProperty(usageName="intVal", displayName="Integer Value", 
       converter="repast.simphony.parameter.StringConverterFactory$IntConverter")
   public int getIntVal() {
     return intVal;
   }
   
-  @ProbeProperty(usageName="intVal")
+  @ProbedProperty(usageName="intVal")
   public void setIntVal(int val) {
     this.intVal = val;
   }
   
-  @ProbeProperty(usageName="code", displayName="Code")
+  @ProbedProperty(usageName="code", displayName="Code")
   public String getCode() {
     return code;
   }
   
-  @ProbeProperty(usageName="code")
+  @ProbedProperty(usageName="code")
   public void setCode(String val) {
     this.code = val;
   }

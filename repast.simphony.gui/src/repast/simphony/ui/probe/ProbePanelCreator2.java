@@ -48,19 +48,19 @@ public class ProbePanelCreator2 {
     }
   }
 
-  private List<ProbedProperty> createProperties(boolean wrap) {
-    List<ProbedProperty> props = new ArrayList<ProbedProperty>();
+  private List<AbstractProbedProperty> createProperties(boolean wrap) {
+    List<AbstractProbedProperty> props = new ArrayList<AbstractProbedProperty>();
     for (MethodPropertyDescriptor pd : pbInfo.methodPropertyDescriptors()) {
-      ProbedProperty prop = ProbedPropertyFactory.createProbedProperty(pd, wrap);
+      AbstractProbedProperty prop = ProbedPropertyFactory.createProbedProperty(pd, wrap);
       if (prop != null)
         props.add(prop);
     }
     return props;
   }
 
-  private JPanel createPanel(List<ProbedProperty> props, String title, boolean buffered) {
-    Collections.sort(props, new Comparator<ProbedProperty>() {
-      public int compare(ProbedProperty o1, ProbedProperty o2) {
+  private JPanel createPanel(List<AbstractProbedProperty> props, String title, boolean buffered) {
+    Collections.sort(props, new Comparator<AbstractProbedProperty>() {
+      public int compare(AbstractProbedProperty o1, AbstractProbedProperty o2) {
         return o1.getDisplayName().compareTo(o2.getDisplayName());
       }
     });
@@ -73,7 +73,7 @@ public class ProbePanelCreator2 {
 
     ProbeModel model = new ProbeModel(target);
     models.add(model);
-    for (ProbedProperty prop : props) {
+    for (AbstractProbedProperty prop : props) {
       JComponent component = prop.getComponent(model, buffered);
       if (component instanceof JFormattedTextField) {
         component.addFocusListener(tempFocusCommitter);
@@ -188,7 +188,7 @@ public class ProbePanelCreator2 {
   };
 
   public Probe getProbe(boolean wrap) {
-    List<ProbedProperty> props = createProperties(wrap);
+    List<AbstractProbedProperty> props = createProperties(wrap);
     try {
       String title;
       if ( pbInfo.getIDProperty() == null) {
