@@ -12,6 +12,9 @@ import simphony.util.messages.MessageCenter;
 public abstract class RSGUIConstants {
 
   private static final MessageCenter LOG = MessageCenter.getMessageCenter(RSGUIConstants.class);
+  
+  public static String GUI_PLUGIN_ID = "repast.simphony.gui";
+  public static String FIELD_PROBE_EXT_ID = "field.probe";
 
   // perspective
   public static String DEFAULT_PERSPECTIVE = "repast.simphony.ui.perspective.default";

@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -25,7 +26,7 @@ import com.jgoodies.common.format.EmptyNumberFormat;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class NumericProbedProperty extends ProbedProperty {
+public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
 
   private enum NumType {
     BYTE, INT, DOUBLE, LONG, FLOAT, BIGINTEGER, BIGDECIMAL, SHORT
@@ -49,7 +50,7 @@ public class NumericProbedProperty extends ProbedProperty {
     values = possibleValues;
   }
 
-  private void setType(Class val) {
+  private void setType(Class<?> val) {
     if (val.equals(BigDecimal.class))
       numType = NumType.BIGDECIMAL;
     if (val.equals(BigInteger.class))
@@ -68,8 +69,8 @@ public class NumericProbedProperty extends ProbedProperty {
       numType = NumType.SHORT;
   }
 
-  public JComponent getComponent(PresentationModel model, boolean buffered) {
-    AbstractValueModel valueModel = buffered ? model.getBufferedModel(name) : model.getModel(name);
+  public JComponent getComponent(PresentationModel<Object> model) {
+    AbstractValueModel valueModel = model.getModel(name);
     if (type == Type.READ) {
       return this.wrapWithSparkLineButton(model,
           BasicComponentFactory.createLabel(valueModel, Utils.getNumberFormatInstance()));
@@ -108,10 +109,10 @@ public class NumericProbedProperty extends ProbedProperty {
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case INT: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Integer.valueOf(0));
+      //EmptyNumberFormat formatter = new EmptyNumberFormat(NumberFormat.getIntegerInstance(),
+       //   Integer.valueOf(0));
       return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createIntegerField(valueModel, 0));
     }
     case DOUBLE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
@@ -120,10 +121,8 @@ public class NumericProbedProperty extends ProbedProperty {
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case LONG: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Long.valueOf(0));
       return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createLongField(valueModel, 0L));
     }
     case FLOAT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
