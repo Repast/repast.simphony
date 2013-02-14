@@ -14,7 +14,7 @@ public interface StatechartCodeAdder {
   /**
    * Performs the code adding on a compilation unit.
    */
-  void run(String packageName, String className, String fqAgentName) throws Exception;
+  void run(String statechartName, String packageName, String className, String fqAgentName) throws Exception;
   
  
 }

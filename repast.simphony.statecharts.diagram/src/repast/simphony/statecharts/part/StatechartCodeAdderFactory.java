@@ -38,14 +38,22 @@ public class StatechartCodeAdderFactory {
       this.monitor = monitor;
     }
     
-    public void run(String packageName, String className, String fqAgentName)
+    public void run(String statechartName, String packageName, String className, String fqAgentName)
         throws Exception {
       // make sure that the agent name is the same the compilation unit.
       IType aType = unit.getTypes()[0];
       String agentType = unit.getParent().getElementName() + "." + aType.getElementName();
       if (agentType.equals(fqAgentName)) {
         createImport(packageName + "." + className);
+        createImport("repast.simphony.ui.probe.ProbedProperty");
         StringBuilder buf = new StringBuilder("\t");
+        buf.append("@ProbedProperty(usageName=\"");
+        buf.append(statechartName);
+        buf.append("\", displayName=\"");
+        buf.append(statechartName);
+        buf.append("\")");
+        buf.append(System.getProperty("line.separator"));
+        buf.append("\t");
         buf.append(className);
         buf.append(" ");
         buf.append(className.substring(0, 1).toLowerCase());
