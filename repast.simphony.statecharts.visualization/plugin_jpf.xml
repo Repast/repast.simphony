@@ -8,6 +8,7 @@
 
 	<requires>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true"/>
   </requires>
 
@@ -35,7 +36,7 @@
 	<extension id="statechart.probe" plugin-id="repast.simphony.gui"
         point-id="field.probe">
         <parameter id="probedObjectClass" value="repast.simphony.statecharts.DefaultStateChart" />
-        <parameter id="creatorClass" value="jzombies.JZUICreator" />
+        <parameter id="creatorClass" value="repast.simphony.statecharts.runtime.UICreatorFactory" />
     </extension>
 
 </plugin>
