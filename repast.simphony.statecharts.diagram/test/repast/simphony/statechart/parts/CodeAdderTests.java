@@ -114,7 +114,7 @@ public class CodeAdderTests {
     StatechartCodeAdder adder = StatechartCodeAdderFactory.createCodeAdder(unit, null);
     assertNotNull(adder);
 
-    adder.run(PACKAGE_NAME, CLASS_NAME, G_FQN);
+    adder.run("statechart", PACKAGE_NAME, CLASS_NAME, G_FQN);
     checkIfAdded(file);
   }
 
@@ -126,7 +126,7 @@ public class CodeAdderTests {
     StatechartCodeAdder adder = StatechartCodeAdderFactory.createCodeAdder(unit, null);
     assertNotNull(adder);
 
-    adder.run(PACKAGE_NAME, CLASS_NAME, J_FQN);
+    adder.run("statechart", PACKAGE_NAME, CLASS_NAME, J_FQN);
     checkIfAdded(file);
   }
 
