@@ -3,9 +3,7 @@
  */
 package repast.simphony.ui.probe;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -17,6 +15,12 @@ import javax.swing.JLabel;
 import org.junit.Test;
 
 import repast.simphony.parameter.StringConverterFactory;
+import repast.simphony.ui.probe.FieldPropertyDescriptor;
+import repast.simphony.ui.probe.MethodPropertyDescriptor;
+import repast.simphony.ui.probe.ProbeInfo;
+import repast.simphony.ui.probe.ProbeIntrospector;
+import repast.simphony.ui.probe.SampleObject;
+import repast.simphony.ui.probe.SampleObject2;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
