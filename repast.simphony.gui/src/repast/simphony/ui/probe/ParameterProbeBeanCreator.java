@@ -38,13 +38,13 @@ public class ParameterProbeBeanCreator {
     ClassLoader loader = Thread.currentThread().getContextClassLoader();
     ClassPool pool = new ClassPool();
     pool.appendSystemPath();
-    pool.insertClassPath(new LoaderClassPath(ProbeableBean.class.getClassLoader()));
+    pool.insertClassPath(new LoaderClassPath(OldProbeModel.class.getClassLoader()));
     pool.insertClassPath(new LoaderClassPath(Parameters.class.getClassLoader()));
     String className = "ParameterBean__" + count++;
     Schema schema = parameters.getSchema();
 
-    Thread.currentThread().setContextClassLoader(ProbeableBean.class.getClassLoader());
-    CtClass model = pool.get(ProbeableBean.class.getName());
+    Thread.currentThread().setContextClassLoader(OldProbeModel.class.getClassLoader());
+    CtClass model = pool.get(OldProbeModel.class.getName());
     CtClass ct = pool.makeClass(className, model);
     ct.addField(CtField.make("private " + Parameters.class.getName() + " params;", ct));
     ct.addConstructor(CtNewConstructor.make(createConstructorSource(className), ct));
@@ -79,7 +79,7 @@ public class ParameterProbeBeanCreator {
 
     Class clazz = ct.toClass();
     Thread.currentThread().setContextClassLoader(clazz.getClassLoader());
-    ProbeableBean m = (ProbeableBean) clazz.getConstructor(Parameters.class)
+    OldProbeModel m = (OldProbeModel) clazz.getConstructor(Parameters.class)
         .newInstance(parameters);
 
     for (String name : schema.parameterNames()) {

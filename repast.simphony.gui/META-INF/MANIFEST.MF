@@ -160,5 +160,6 @@ Require-Bundle: repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
  libs.piccolo;visibility:=reexport,
- repast.simphony.groovy;bundle-version="2.0.0"
+ repast.simphony.groovy;bundle-version="2.0.0",
+ org.junit
 Bundle-Vendor: %providerName
