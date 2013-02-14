@@ -3,14 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/Volumes/PassportT/Eclipse_Folder/eclipse_4_2_0/plugins/org.eclipse.emf.ecore.xmi_2.8.0.v20120911-0500.jar" sourcepath="/Volumes/PassportT/Eclipse_Folder/eclipse_4_2_0/plugins/org.eclipse.emf.ecore.xmi.source_2.8.0.v20120911-0500.jar">
-		<accessrules>
-			<accessrule kind="accessible" pattern="org/eclipse/emf/ecore/xmi/*"/>
-			<accessrule kind="accessible" pattern="org/eclipse/emf/ecore/xmi/impl/*"/>
-			<accessrule kind="accessible" pattern="org/eclipse/emf/ecore/xmi/util/*"/>
-			<accessrule ignoreifbetter="true" kind="nonaccessible" pattern="**/*"/>
-		</accessrules>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/batik-swing.jar" sourcepath="/Volumes/PassportT/JarAndSourceFiles/batik-1.7-src"/>
 	<classpathentry kind="lib" path="lib/batik-gvt.jar"/>
 	<classpathentry kind="lib" path="lib/batik-bridge.jar" sourcepath="/Volumes/PassportT/JarAndSourceFiles/batik-1.7-src"/>
