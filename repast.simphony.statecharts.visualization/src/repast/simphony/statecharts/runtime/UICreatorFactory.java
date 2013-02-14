@@ -3,6 +3,7 @@
  */
 package repast.simphony.statecharts.runtime;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import repast.simphony.statecharts.StateChart;
@@ -10,6 +11,9 @@ import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.probe.FieldPropertyDescriptor;
 import repast.simphony.ui.probe.PPUICreatorFactory;
 import repast.simphony.ui.probe.ProbedPropertyUICreator;
+
+import com.jgoodies.binding.PresentationModel;
+
 
 /**
  * PPUICreatorFactory for creating the UI probe component for a
@@ -58,14 +62,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 
     @Override
     public JComponent getComponent(PresentationModel<Object> model) {
-      // TODO Auto-generated method stub
-      return null;
+      return new JButton("Statechart");
     }
-    
-    
-    
   }
-  
-  
-
 }
