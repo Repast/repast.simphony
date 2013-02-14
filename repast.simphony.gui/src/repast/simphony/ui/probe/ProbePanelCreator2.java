@@ -57,7 +57,22 @@ public class ProbePanelCreator2 {
     }
     
     for (FieldPropertyDescriptor fpd : pbInfo.fieldPropertyDescriptor()) {
-      PPUICreatorFactory fac = creatorMap.get(fpd.getField().getType());
+      Class<?> clazz = fpd.getField().getType();
+      PPUICreatorFactory fac  = null;
+      
+      // try to find exact match
+      for (Class<?> key : creatorMap.keySet()) {
+        if (clazz.equals(key)) fac = creatorMap.get(key);
+      }
+      
+      // get assignable
+      if (fac == null) {
+     // try to find exact match
+        for (Class<?> key : creatorMap.keySet()) {
+          if (key.isAssignableFrom(clazz)) fac = creatorMap.get(key);
+        }
+      }
+      
       if (fac != null) {
         try {
           props.add(fac.createUICreator(target, fpd));
