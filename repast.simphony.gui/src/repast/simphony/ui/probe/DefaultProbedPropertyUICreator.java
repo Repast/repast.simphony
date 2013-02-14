@@ -13,7 +13,7 @@ import com.jgoodies.binding.PresentationModel;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public abstract class AbstractProbedProperty {
+public abstract class DefaultProbedPropertyUICreator implements ProbedPropertyUICreator {
 
   protected enum Type {
     READ_WRITE, WRITE, READ
@@ -23,7 +23,7 @@ public abstract class AbstractProbedProperty {
   protected String name;
   protected Type type;
 
-  protected AbstractProbedProperty(PropertyDescriptor desc) {
+  protected DefaultProbedPropertyUICreator(PropertyDescriptor desc) {
     name = desc.getName();
     displayName = desc.getDisplayName();
     if (desc.getReadMethod() != null && desc.getWriteMethod() != null) {
@@ -35,7 +35,7 @@ public abstract class AbstractProbedProperty {
     }
   }
 
-  public abstract JComponent getComponent(PresentationModel model, boolean buffered);
+  public abstract JComponent getComponent(PresentationModel<Object> model);
 
   public String getName() {
     return name;
@@ -45,7 +45,7 @@ public abstract class AbstractProbedProperty {
     return displayName;
   }
 
-  public void printValue(PresentationModel model) {
+  public void printValue(PresentationModel<Object> model) {
     System.out.println(name + " = " + model.getValue(name));
   }
 }

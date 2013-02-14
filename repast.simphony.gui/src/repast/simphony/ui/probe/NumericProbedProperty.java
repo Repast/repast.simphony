@@ -26,7 +26,7 @@ import com.jgoodies.common.format.EmptyNumberFormat;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class NumericProbedProperty extends AbstractProbedProperty {
+public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
 
   private enum NumType {
     BYTE, INT, DOUBLE, LONG, FLOAT, BIGINTEGER, BIGDECIMAL, SHORT
@@ -50,7 +50,7 @@ public class NumericProbedProperty extends AbstractProbedProperty {
     values = possibleValues;
   }
 
-  private void setType(Class val) {
+  private void setType(Class<?> val) {
     if (val.equals(BigDecimal.class))
       numType = NumType.BIGDECIMAL;
     if (val.equals(BigInteger.class))
@@ -69,8 +69,8 @@ public class NumericProbedProperty extends AbstractProbedProperty {
       numType = NumType.SHORT;
   }
 
-  public JComponent getComponent(PresentationModel model, boolean buffered) {
-    AbstractValueModel valueModel = buffered ? model.getBufferedModel(name) : model.getModel(name);
+  public JComponent getComponent(PresentationModel<Object> model) {
+    AbstractValueModel valueModel = model.getModel(name);
     if (type == Type.READ) {
       return this.wrapWithSparkLineButton(model,
           BasicComponentFactory.createLabel(valueModel, Utils.getNumberFormatInstance()));

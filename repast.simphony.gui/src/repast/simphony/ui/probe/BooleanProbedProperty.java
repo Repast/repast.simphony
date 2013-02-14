@@ -15,14 +15,14 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class BooleanProbedProperty extends AbstractProbedProperty {
+public class BooleanProbedProperty extends DefaultProbedPropertyUICreator {
 
 	public BooleanProbedProperty(PropertyDescriptor desc) {
 		super(desc);
 	}
 
-	public JComponent getComponent(PresentationModel model, boolean buffered) {
-		ValueModel vModel = buffered ? model.getBufferedModel(name) : model.getModel(name);
+	public JComponent getComponent(PresentationModel<Object> model) {
+		ValueModel vModel = model.getModel(name);
 		JCheckBox box = BasicComponentFactory.createCheckBox(vModel, "");
 		if (type == Type.READ) box.setEnabled(false);
 		return box;
