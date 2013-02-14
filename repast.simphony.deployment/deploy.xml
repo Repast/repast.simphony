@@ -485,6 +485,13 @@
 			<fileset dir="../repast.simphony.statecharts/bin" casesensitive="no">
 							<include name="**/*.class" />
 						</fileset>
+			<fileset dir="../repast.simphony.statecharts.visualization/src" casesensitive="no">
+										<include name="**/*.java" />
+										<include name="**/*.groovy" />
+									</fileset>
+						<fileset dir="../repast.simphony.statecharts.visualization/bin" casesensitive="no">
+										<include name="**/*.class" />
+									</fileset>
 						
 
 		</jar>

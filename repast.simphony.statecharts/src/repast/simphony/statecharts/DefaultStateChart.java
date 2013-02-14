@@ -92,9 +92,10 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	private void stateInit(List<AbstractState<T>> statesToEnter) {
-		notifyChangeListeners();
+		
 		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter
 				.size() - 1);
+		notifyChangeListeners();
 		// Entering states from the top down
 		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
