@@ -135,6 +135,8 @@ public class CodeAdderTests {
     String expected = CLASS_NAME + " " + CLASS_NAME.substring(0, 1).toLowerCase()
         + CLASS_NAME.substring(1) + " = " + CLASS_NAME + ".createStateChart(this, 1);";
     assertTrue(contains(file, expected));
+    expected = "@ProbedProperty(usageName=\"statechart\", displayName=\"statechart\")";
+    assertTrue(contains(file, expected));
   }
 
   private boolean contains(IFile file, String match) throws IOException {
