@@ -30,11 +30,9 @@ import javax.swing.SwingUtilities;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.DefaultMapContext;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
-import org.geotools.resources.CRSUtilities;
 import org.geotools.styling.Style;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -86,7 +84,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   protected DisplayData<?> initData;
   private boolean iconified = false;
   protected Object lock = new Object();
-  private MapContext mapContext;
+  private MapContent mapContext;
   private Updater updater;
   private Styler styler = new Styler();
   private java.util.List<FeatureSource> featureSources = new ArrayList<FeatureSource>();
@@ -185,7 +183,18 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    *          the layer order
    */
   public void registerFeatureSource(FeatureSource source, Style style, Integer order) {
-    featureSources.add(source);
+//  	String styleFileName = "archsites.xml";
+//  	File styleFile = new File(styleFileName);
+//		StyleFactory fac = CommonFactoryFinder.getStyleFactory(null);
+//		SLDParser parser = null;
+//		try {
+//			parser = new SLDParser(fac, styleFile);
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		style = parser.readXML()[0];
+  	
+  	featureSources.add(source);
     styler.registerStyle(source, style);
     layerOrder.put(order, source);
   }
@@ -230,15 +239,19 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       else if (proj instanceof Network)
         proj.addProjectionListener(this);
     }
-    mapContext = new DefaultMapContext(geog.getCRS());
+    mapContext = new MapContent();
+    mapContext.getViewport().setBounds(new ReferencedEnvelope(
+    		new Envelope(-90, -90, -90, 90), geog.getCRS()));
+    
     geog.addProjectionListener(this);
     decorator = new SelectionDecorator(mapContext);
+    
     for (Class clazz : getRegisteredClasses()) {
       decorator.initClass(clazz);
     }
-
+    
     updater = new Updater(mapContext, geog, styler, featureSources, layerOrder);
-
+    
     myRenderer = new MyRenderer();
     myUpdater = new MyUpdater();
 
@@ -316,7 +329,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     ReferencedEnvelope result = null;
     CoordinateReferenceSystem crs = mapContext.getCoordinateReferenceSystem();
     try {
-      for (MapLayer layer : mapContext.getLayers()) {
+      for (Layer layer : mapContext.layers()) {
 
         FeatureSource fs = layer.getFeatureSource();
         if (!fs.getFeatures().isEmpty()) {
@@ -358,12 +371,12 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       if (aoe.getCoordinateReferenceSystem() == null)
         return;
 
-      mapContext.setAreaOfInterest(aoe);
+      mapContext.getViewport().setBounds(aoe);
       PGISCanvas canvas = panel.getCanvas();
       PBounds bounds = canvas.getCamera().getViewBounds();
       Envelope env = new Envelope(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(),
           bounds.getMaxY());
-      mapContext.setAreaOfInterest(env, canvas.getCRS());
+      mapContext.getViewport().setBounds(new ReferencedEnvelope(env, canvas.getCRS()));
     }
   }
 
@@ -547,6 +560,9 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   public void createPanel() {
     panel = new PiccoloMapPanel(mapContext);
 
+    System.out.println("DisplayGIS.createPanel()..." 
+    		+ mapContext.layers().get(0).getClass());
+    
     URL imageFile = null;
     Image image = null;
 

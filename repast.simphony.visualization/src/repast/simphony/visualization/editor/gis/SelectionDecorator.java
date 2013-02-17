@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerListEvent;
 import org.geotools.map.event.MapLayerListListener;
 import org.geotools.styling.FeatureTypeStyle;
@@ -45,11 +46,10 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * @author Nick Collier
  */
 public class SelectionDecorator implements MapLayerListListener {
-
   private static final String HIGHLIGHT_RULE_NAME = "__high_light__";
 
   private Set<Object> selected = new HashSet<Object>();
-  private List<MapLayer> layers = new ArrayList<MapLayer>();
+  private List<Layer> layers = new ArrayList<Layer>();
   private StyleBuilder builder = new StyleBuilder();
   FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory( null );
   private Color highlightColor = Color.decode("#00FFFF");
@@ -74,8 +74,8 @@ public class SelectionDecorator implements MapLayerListListener {
 
   private FeatureAttributeAdapter adapter = new AttributeAdapter();
 
-  public SelectionDecorator(MapContext context) {
-    context.addMapLayerListListener(this);
+  public SelectionDecorator(MapContent context) {
+//    context.addMapLayerListListener(this);
   }
 
 
@@ -110,7 +110,7 @@ public class SelectionDecorator implements MapLayerListListener {
    * Removes the highlight rules from the styles.
    */
   public void removeHighlightRules() {
-    for (MapLayer layer : layers) {
+    for (Layer layer : layers) {
       Style style = layer.getStyle();
       
       Iterator iter = style.featureTypeStyles().toArray(
@@ -121,12 +121,12 @@ public class SelectionDecorator implements MapLayerListListener {
           iter.remove();
         }
       }
-      layer.setStyle(style);
+      ((FeatureLayer)layer).setStyle(style);
     }
   }
 
   public void addHighightRules() {
-    for (MapLayer layer : layers) {
+    for (Layer layer : layers) {
       Style style = layer.getStyle();
       SimpleFeatureType type = (SimpleFeatureType)layer.getFeatureSource().getSchema();
       Class geomType = type.getGeometryDescriptor().getType().getBinding();
@@ -140,7 +140,7 @@ public class SelectionDecorator implements MapLayerListListener {
               || geomType.equals(MultiLineString.class)) {
         highlightLine(style);
       }
-      layer.setStyle(style);
+      ((FeatureLayer)layer).setStyle(style);
     }
   }
 
@@ -191,8 +191,8 @@ public class SelectionDecorator implements MapLayerListListener {
   }
 
   public void layerAdded(MapLayerListEvent event) {
-    MapLayer layer = event.getLayer();
-    if (layer instanceof RepastMapLayer) {
+    Layer layer = event.getElement();
+    if (layer instanceof FeatureLayer) {
       layers.add(layer);
     }
   }

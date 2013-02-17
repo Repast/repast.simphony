@@ -29,6 +29,12 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public abstract class FeatureAgentFactory {
 
+	/*
+	 * The default name for the geometry attribute - an arbitrary string.  Note
+	 *  that Feature attribute names may not contain spaces or periods. 
+	 */
+	public static final String GEOM_ATTRIBUTE_NAME = "Location";
+	
 	private Map<Class, SimpleFeatureType> types = new HashMap<Class, SimpleFeatureType>();
 
 	private Map<Class, Class> primitiveMap = new HashMap<Class, Class>();
@@ -136,7 +142,7 @@ public abstract class FeatureAgentFactory {
 		ftBuilder.setCRS(coordRefSystem);
 		
 		// The FeatureType Geometry class is the first attribute added
-		ftBuilder.add(featureTypeName, geomClass);
+		ftBuilder.add(GEOM_ATTRIBUTE_NAME, geomClass);
 		
 		for (AttributeType type : types){
 		  ftBuilder.addBinding(type);
@@ -161,7 +167,7 @@ public abstract class FeatureAgentFactory {
 		SimpleFeatureType type = types.get(agentClass);
 		if (type != null)
 			return type;
-
+		
 		// if get here then we need to create our own type
 		BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
 		PropertyDescriptor[] pds = info.getPropertyDescriptors();
@@ -171,6 +177,8 @@ public abstract class FeatureAgentFactory {
 		for (int i = 0; i < pds.length; i++) {
 			String featureName = pds[i].getName();
 
+			System.out.println("FeatureAgentFactory.getFeatureType(): " + featureName);
+			
 			Method method = pds[i].getReadMethod();
 			if (method != null) {
 
@@ -202,14 +210,17 @@ public abstract class FeatureAgentFactory {
 		ftBuilder.setCRS(coordRefSystem);
 		
 		// The FeatureType Geometry class is the first attribute added
-		ftBuilder.add(featureTypeName, geomClass);
+		ftBuilder.add(GEOM_ATTRIBUTE_NAME, geomClass);
 		
 		for (AttributeType at : ats){
-		  ftBuilder.addBinding(at);
+			System.out.println("FeatureAgentFactory.getFeatureType()_binding: " + at.toString());
+			ftBuilder.addBinding(at);
 		}
-	  
-	  type = ftBuilder.buildFeatureType();
+		
+		type = ftBuilder.buildFeatureType();
 		types.put(agentClass, type);
+		
+		type.getClass();
 		
 		return type;
 	}

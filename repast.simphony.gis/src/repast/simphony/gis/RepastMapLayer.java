@@ -10,12 +10,12 @@ import java.util.List;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Style;
 
-public class RepastMapLayer extends MapLayer {
+public class RepastMapLayer extends FeatureLayer {
 
 	private boolean dynamic;
 
@@ -47,6 +47,9 @@ public class RepastMapLayer extends MapLayer {
 
 	@Override
 	public synchronized void addMapLayerListener(MapLayerListener listener) {
+		
+		System.out.println("RepastMapLayer.addMapLayerListener ");
+		
 		listenerList.add(listener);
 	}
 
@@ -56,10 +59,14 @@ public class RepastMapLayer extends MapLayer {
 	}
 
 	public void fireMapLayerChangedEvent(MapLayerEvent event) {
+		System.out.println("> 1 RepastMapLayer.fireMapLayerChangedEvent " + event.getReason());
 		for (MapLayerListener listener : listenerList) {
+			System.out.println("> 1.1 RepastMapLayer.fireMapLayerChangedEvent ");
 			if (event.getReason() == DATA_CHANGED
 					|| event.getReason() == FILTER_CHANGED
 					|| event.getReason() == STYLE_CHANGED) {
+				
+				System.out.println("> 2 RepastMapLayer.fireMapLayerChangedEvent " + event.getReason() + " " + listener);
 				listener.layerChanged(event);
 			} else if (event.getReason() == VISIBILITY_CHANGED
 					&& this.isVisible()) {

@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotools.map.DefaultMapContext;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.map.event.MapBoundsEvent;
 import org.geotools.map.event.MapBoundsListener;
 import org.geotools.map.event.MapLayerEvent;
@@ -28,7 +28,7 @@ import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.nodes.PImage;
 
 /**
- * This represents a MapLayer as an image. Each layer is inserted as a node into
+ * This represents a FeatureLayer as an image. Each layer is inserted as a node into
  * the PCanvas.
  *
  * @author Howe
@@ -42,7 +42,7 @@ public class PGisLayer extends PLayer implements MapLayerListener {
 
   BufferedImage image;
 
-  MapContext context;
+  MapContent context;
 
   GTRenderer rend;
 
@@ -54,9 +54,9 @@ public class PGisLayer extends PLayer implements MapLayerListener {
 
   AffineTransform transform;
 
-  MapLayer layer;
+  Layer layer;
 
-  MapContext localContext;
+  MapContent localContext;
 
   PImage pImage;
 
@@ -66,54 +66,55 @@ public class PGisLayer extends PLayer implements MapLayerListener {
 
   private static class BoundsListener implements MapBoundsListener {
 
-    private MapContext mainContext, localContext;
+    private MapContent mainContext, localContext;
 
-    public BoundsListener(MapContext mainContext, MapContext localContext) {
+    public BoundsListener(MapContent mainContext, MapContent localContext) {
       this.mainContext = mainContext;
       this.localContext = localContext;
     }
 
     public void mapBoundsChanged(MapBoundsEvent event) {
-      localContext.setAreaOfInterest(mainContext.getAreaOfInterest());
+      localContext.getViewport().setBounds(mainContext.getViewport().getBounds());
     }
   }
 
   private BoundsListener boundsListener;
 
   /**
-   * Create a new Layer based on the MapLayer, the MapContext (eventually for
+   * Create a new Layer based on the FeatureLayer, the MapContext (eventually for
    * projection) and the AffineTransform as supplied by piccolo.
    *
    * @param layer
    * @param context
    * @param transform
    */
-  public PGisLayer(MapLayer layer, MapContext context, AffineTransform transform) {
+  public PGisLayer(Layer layer, MapContent context, AffineTransform transform) {
     this.transform = transform;
     this.layer = layer;
     this.layer.addMapLayerListener(this);
+    System.out.println("PGisLayer(): " + layer);
     try {
       this.layerArea = layer.getFeatureSource().getBounds();
     } catch (IOException e) {
       center.error("Unable to get Layer bounds for: "
               + layer.getFeatureSource().getSchema().getName().getLocalPart(), e);
     }
-
     this.context = context;
-    localContext = new DefaultMapContext(context
-            .getCoordinateReferenceSystem());
-    localContext.setAreaOfInterest(context.getAreaOfInterest());
+    
+    localContext = new MapContent();
+    localContext.getViewport().setBounds(context.getViewport().getBounds());
+    
     boundsListener = new BoundsListener(context, localContext);
     context.addMapBoundsListener(boundsListener);
     localContext.addLayer(layer);
-
+    
     rend = new StreamingRenderer();
-    rend.setContext(localContext);
-
+    rend.setMapContent(localContext);
+    
     Map rendererParams = new HashMap();
     rendererParams.put("optimizedDataLoadingEnabled", Boolean.TRUE);
     rend.setRendererHints(rendererParams);
-
+   
     image = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
     rend.paint((Graphics2D) image.getGraphics(), rect, transform);
     pImage = new PImage(image);
@@ -136,11 +137,11 @@ public class PGisLayer extends PLayer implements MapLayerListener {
   }
 
   /**
-   * Gets the MapLayer that this PGisLayer displays.
+   * Gets the FeatureLayer that this PGisLayer displays.
    *
-   * @return the MapLayer that this PGisLayer displays.
+   * @return the FeatureLayer that this PGisLayer displays.
    */
-  public MapLayer getLayer() {
+  public Layer getLayer() {
     return layer;
   }
 
@@ -156,12 +157,14 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     Rectangle rect;
     clear();
 
+    System.out.println("PGISLayer.update()");
+    
     try {
       g2d = image.createGraphics();
       //if (context.getAreaOfInterest().getHeight() == 0 || context.getAreaOfInterest().get)
-      localContext.setAreaOfInterest(context.getAreaOfInterest());
+      localContext.getViewport().setBounds(context.getViewport().getBounds());
       rect = new Rectangle(0, 0, image.getWidth(), image.getHeight());
-      rend.paint(g2d, rect, context.getAreaOfInterest(), transform);
+      rend.paint(g2d, rect, context.getViewport().getBounds(), transform);
       g2d.dispose();
       pImage.setTransform(transform.createInverse());
       pImage.setImage(image);

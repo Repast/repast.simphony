@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.collection.CollectionDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 
 import simphony.util.messages.MessageCenter;
 
@@ -27,7 +27,7 @@ public class DataUtilities {
 	 * @param type the feature type
 	 * @return the created FeatureSource
 	 */
-	public static FeatureSource createFeatureSource(SimpleFeatureCollection collection) {
+	public static FeatureSource createFeatureSource(FeatureCollection collection) {
 
 		DataStore store = new CollectionDataStore(collection);
 

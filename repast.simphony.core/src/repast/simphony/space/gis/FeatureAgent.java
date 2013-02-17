@@ -15,8 +15,11 @@ import java.util.Map;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 
+import org.geotools.feature.GeometryAttributeImpl;
+import org.geotools.feature.type.AttributeDescriptorImpl;
 import org.geotools.filter.identity.FeatureIdImpl;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
@@ -24,6 +27,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
@@ -33,43 +37,28 @@ import simphony.util.messages.MessageCenter;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Wraps a POJO in a gis feature. The POJO's properties become feature
+ * Wraps a POJO in a GIS feature. The POJO's properties become feature
  * attributes. The feature's geometry is derived from the POJO and a Geography.
  * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class FeatureAgent<T> implements SimpleFeature {
 
-	private static MessageCenter msgCenter = MessageCenter
-			.getMessageCenter(FeatureAgent.class);
+	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(FeatureAgent.class);
 
-	protected FeatureId fid;
-	
+	protected FeatureId id;
+  protected SimpleFeatureType featureType;
 	private T agentObj;
-
-	private Map<String, FeatureAttributeAdapter> attributeMap = new HashMap<String, FeatureAttributeAdapter>();
-
-	private SimpleFeatureType featureType;
-
+  private Map<String, FeatureAttributeAdapter> attributeMap;
 	protected String geometryName;
-	
 	private Geometry geom;
-
 	private Geography geography;
-	
-	/**
-   * The set of user data attached to the feature (lazily created)
-   */
-  protected Map<Object, Object> userData;
 
 	static class ObjectFeatureAgentAttribute implements FeatureAttributeAdapter {
-
 		private static final Object[] EMPTY_ARRAY = new Object[0];
-
 		private String name;
-
 		private FastMethod readMethod;
-
 		private FastMethod writeMethod;
 
 		public ObjectFeatureAgentAttribute(String name, FastMethod readMethod,
@@ -108,7 +97,7 @@ public class FeatureAgent<T> implements SimpleFeature {
 	}
 
 	/**
-	 * Creates a FeatureAgent2 from the specified FeatureType, agent and
+	 * Creates a FeatureAgent from the specified FeatureType, agent and
 	 * geography. The geometry of the feature will be supplied by the geography.
 	 * The agent's properties will become attributes of the feature.
 	 * 
@@ -118,11 +107,10 @@ public class FeatureAgent<T> implements SimpleFeature {
 	 */
 	public FeatureAgent(SimpleFeatureType type, T agent, Geography geography) {
 		this(type, agent, geography, new ArrayList<FeatureAttributeAdapter>());
-
 	}
 
 	/**
-	 * Creates a FeatureAgent2 from the specified FeatureType, agent and
+	 * Creates a FeatureAgent from the specified FeatureType, agent and
 	 * geography. The geometry of the feature will be supplied by the geography.
 	 * The agent's properties will become attributes of the feature. The list of
 	 * adapters will become additional attributes for those that cannot be mapped
@@ -133,20 +121,23 @@ public class FeatureAgent<T> implements SimpleFeature {
 	 * @param geography
 	 * @param adapters
 	 */
-	public FeatureAgent(SimpleFeatureType type, T agent, Geography geography,
+	public FeatureAgent(SimpleFeatureType type, T agent, Geography geog,
 			List<FeatureAttributeAdapter> adapters) {
-		this.agentObj = agent;
-		this.geography = geography;
+				
+		id = new FeatureIdImpl("fid-" + new UID().toString().replace(':', '_'));
+		featureType = type;
+		agentObj = agent;
+		geography = geog;
 		geom = geography.getGeometry(agent);
+//		geometryName = type.getGeometryDescriptor().getName().getLocalPart();
+	  geometryName = FeatureAgentFactory.GEOM_ATTRIBUTE_NAME;
+		
 		createAttributes(adapters);
-		// create the id as in geotools DefaultFeature.
-		String id = "fid-" + (new UID()).toString();
-		fid = new FeatureIdImpl(id);
-		this.featureType = type;
 	}
 
 	// creates the feature attributes from object properties
 	private void createAttributes(List<FeatureAttributeAdapter> adapters) {
+		attributeMap = new HashMap<String, FeatureAttributeAdapter>();
 		try {
 			BeanInfo info = Introspector.getBeanInfo(agentObj.getClass(),
 					Object.class);
@@ -182,37 +173,45 @@ public class FeatureAgent<T> implements SimpleFeature {
 		return agentObj;
 	}
 
+	private String getAttributeName(int i) {
+		String name = null;
+		AttributeType type = featureType.getType(i);
+		if (type != null)
+			name = type.getName().getLocalPart();
+		return name;
+	}
+		
 	/**
-	 * Gets a reference to the feature type for this feature.
-	 * 
-	 * @return A copy of this feature's metadata in the form of a feature type
-	 *         
-	 */
-	public SimpleFeatureType getFeatureType() {
-		return featureType;
+   * @see SimpleFeature#getID()
+   */
+	public String getID(){
+		return id.getID();
 	}
 
 	/**
-	 * Gets the unique indentification string of this Feature.
-	 * 
-	 * @return The unique id.
-	 */
-	public String getID() {
-		return fid.getID();
+   * @see SimpleFeature#getType()
+   */
+	public SimpleFeatureType getType(){
+		return getFeatureType();
 	}
 	
-	public SimpleFeatureType getType() {
+	/**
+   * @see SimpleFeature#getFeatureType()
+   */
+	public SimpleFeatureType getFeatureType(){
 		return featureType;
 	}
 	
-	public FeatureId getIdentifier() {
-		return fid;
+	/**
+   * @see Feature#getIdentifier()
+   */
+	public FeatureId getIdentifier(){
+		return id;
 	}
 	
-	public Name getName() {
-		return featureType.getName();
-	}
-
+	/**
+   * @see SimpleFeature#getAttributes()
+   */
 	public List<Object> getAttributes() {
 		List<Object> objects = new ArrayList<Object>();
 		
@@ -228,74 +227,73 @@ public class FeatureAgent<T> implements SimpleFeature {
 		
 		return objects;
 	}
-
+	
 	/**
-	 * Gets an attribute for this feature at the location specified by xPath.
-	 * 
-	 * @param name
-	 *          name of attribute
-	 * @return Attribute.
-	 */
+   * @see SimpleFeature#getAttribute(String)
+   */
 	public Object getAttribute(String name) {
-		
+		Object obj = null;
 		if (name.equals(geometryName)) 
-			return getDefaultGeometry();
+			obj = getDefaultGeometry();
 		
 		FeatureAttributeAdapter getter = attributeMap.get(name);
 		if (getter != null)
-			return getter.getAttribute(agentObj);
-		return null;
-	}
-
-	public int getAttributeCount() {
-	  return featureType.getAttributeCount();
+			obj = getter.getAttribute(agentObj);
+		
+		return obj;
 	}
 	
 	/**
-	 * Gets an attribute by the given zero-based index.
-	 * 
-	 * @param index
-	 *          the position of the attribute to retrieve.
-	 * @return The attribute at the given index.
-	 */
+   * @see SimpleFeature#setAttribute(String, Object)
+   */
+	public void setAttribute(String name, Object obj){
+		if (obj instanceof Geometry) {
+			geometryName = name;
+			setDefaultGeometry((Geometry) obj);
+			return;
+		}
+		FeatureAttributeAdapter setter = attributeMap.get(name);
+		if (setter != null)
+			setter.setAttribute(agentObj, obj);
+	}
+
+	/**
+   * @see SimpleFeature#getAttribute(Name)
+   */
+	public Object getAttribute(Name name) {
+    return getAttribute( name.getLocalPart() );
+  }
+	
+	/**
+   * @see SimpleFeature#setAttribute(Name, Object)
+   */
+	public void setAttribute(Name name, Object value) {
+		setAttribute( name.getLocalPart(), value );
+	}
+	
+	/**
+   * @see SimpleFeature#getAttribute(int)
+   */
 	public Object getAttribute(int index) {
+		Object obj = null;	
 		String name = getAttributeName(index);
 		
 		// index 0 always returns Geometry
 		if (index == 0) 
-			return getDefaultGeometry();
+			obj = getDefaultGeometry();
 		
 		if (name != null) {
 			FeatureAttributeAdapter getter = attributeMap.get(name);
 			if (getter != null)
-				return getter.getAttribute(agentObj);
+				obj = getter.getAttribute(agentObj);
 		}
-		return null;
+		
+		return obj;
 	}
 	
-	public Object getAttribute(Name name) {
-    return getAttribute( name.getLocalPart() );
-  }
-
-	private String getAttributeName(int i) {
-		String name = null;
-		AttributeType type = featureType.getType(i);
-		if (type != null)
-			name = type.getName().getLocalPart();
-		return name;
-	}
-
 	/**
-	 * Sets the attribute at position to val.
-	 * 
-	 * @param index
-	 *          the index of the attribute to set.
-	 * @param val
-	 *          the new value to give the attribute at position.
-	 * @throws org.geotools.feature.IllegalAttributeException
-	 *           if the passed in val does not validate against the AttributeType
-	 *           at that position.
-	 */
+   * @see SimpleFeature#setAttribute(int, Object)
+   */
 	public void setAttribute(int index, Object val) throws IndexOutOfBoundsException {
 		String name = getAttributeName(index);
 		
@@ -311,40 +309,17 @@ public class FeatureAgent<T> implements SimpleFeature {
 			throw new IndexOutOfBoundsException("Unable to set attribute '" + name
 					+ "', attribute not found");
 	}
-
-
-	/**
-	 * Sets a single attribute for this feature, passed as a complex object. If
-	 * the attribute does not exist or the object does not conform to the internal
-	 * feature type, an exception is thrown.
-	 * 
-	 * @param name
-	 *          name of attribute 
-	 * @param obj
-	 *          the attribute value to set.
-	 * @throws org.geotools.feature.IllegalAttributeException
-	 *           if passed attribute does not match feature type
-	 */
-	public void setAttribute(String name, Object obj){
-		if (obj instanceof Geometry) {
-			geometryName = name;
-			setDefaultGeometry((Geometry) obj);
-			return;
-		}
-		FeatureAttributeAdapter setter = attributeMap.get(name);
-		if (setter != null)
-			setter.setAttribute(agentObj, obj);
-	}
-
-	public void setAttribute(Name name, Object value) {
-		setAttribute( name.getLocalPart(), value );
+	
+	 /**
+   * @see SimpleFeature#getAttributeCount()
+   */
+	public int getAttributeCount() {
+	  return featureType.getAttributeCount();
 	}
 	
 	/**
-	 * Gets the geometry for this feature.
-	 * 
-	 * @return Geometry for this feature.
-	 */
+   * @see SimpleFeature#getDefaultGeometry()
+   */	
 	public Geometry getDefaultGeometry() {
 		// this might be called after the agent is removed
 		// from a geography so we need to go through these
@@ -359,84 +334,83 @@ public class FeatureAgent<T> implements SimpleFeature {
 	}
 
 	/**
-	 * Modifies the geometry.
-	 * 
-	 * @param geometry
-	 *          for all feature attributes.
-	 * @throws org.geotools.feature.IllegalAttributeException
-	 *           if the feature does not have a geometry.
-	 */
+   * @see SimpleFeature#setDefaultGeometry(Object)
+   */
 	public void setDefaultGeometry(Object geometry){
 		geography.move(agentObj, (Geometry)geometry);
 	}
-
+	
+	/**
+	 * @see Feature#getBounds()
+	 */
 	public BoundingBox getBounds() {
+		//TODO: cache this value
 		ReferencedEnvelope bounds = new ReferencedEnvelope(
 				featureType.getCoordinateReferenceSystem());
 
-		if (bounds.isNull()) {
+		if ( bounds.isNull() ) {
 			bounds.init(geom.getEnvelopeInternal());
-		} else {
+		}
+		else {
 			bounds.expandToInclude(geom.getEnvelopeInternal());
 		}
-
 		return bounds;
 	}
 
-	public int hashCode() {
-		return fid.hashCode() * featureType.hashCode();
+	/**
+	 * @see Feature#getDefaultGeometryProperty()
+	 */
+	public GeometryAttribute getDefaultGeometryProperty() {
+		GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
+		GeometryAttribute geometryAttribute = null;
+		if(geometryDescriptor != null){
+			Object defaultGeometry = getDefaultGeometry();
+			geometryAttribute = new GeometryAttributeImpl(defaultGeometry, geometryDescriptor, null);            
+		}
+		return geometryAttribute;
 	}
 
 	/**
-	 * override of equals. Returns if the passed in object is equal to this.
-	 * 
-	 * @param obj
-	 *          the Object to test for equality.
-	 * @return <code>true</code> if the object is equal, <code>false</code>
-	 *         otherwise.
+	 * @see Feature#setDefaultGeometryProperty(GeometryAttribute)
 	 */
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-
-		if (obj == this) {
-			return true;
-		}
-
-		if (!(obj instanceof FeatureAgent)) {
-			return false;
-		}
-
-		FeatureAgent other = (FeatureAgent) obj;
-		if (!other.getFeatureType().equals(featureType)) {
-			return false;
-		}
-
-		if (!fid.equals(other.getID())) {
-			return false;
-		}
-
-		if (!other.agentObj.equals(agentObj))
-			return false;
-
-		return true;
+	public void setDefaultGeometryProperty(GeometryAttribute geometryAttribute) {
+		if(geometryAttribute != null)
+			setDefaultGeometry(geometryAttribute.getValue());
+		else
+			setDefaultGeometry(null);
 	}
-	
+
+	/**
+	 * @see Property#isNillable()
+	 */
 	public boolean isNillable() {
 		return true;
 	}
-
-	// TODO Auto-generated method stubs from SimpleFeature interface inheritance
-
-	public GeometryAttribute getDefaultGeometryProperty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setDefaultGeometryProperty(GeometryAttribute arg0) {
-		// TODO Auto-generated method stub
-	}
+	
+	/**
+   * @see Property#getName()
+   */
+  public Name getName() {
+      return featureType.getName();
+  }
+	
+  /**
+   * @see org.opengis.feature.Attribute#getDescriptor()
+   */
+  public AttributeDescriptor getDescriptor() {
+      return new AttributeDescriptorImpl(featureType, featureType.getName(), 0,
+              Integer.MAX_VALUE, true, null);
+  }
+	
+	//**************************************************************************
+	//
+	// The method stubs are not used for the Repast implementation of SimpleFeature,
+  //  however they may be necessary to implement if the FeatureAgent is used
+  //  with any GeoTools API that requires them.
+  //
+	//  TODO determine what stubs are required to be implemented
+  //
+	//**************************************************************************
 
 	public Collection<Property> getProperties() {
 		// TODO Auto-generated method stub
@@ -476,26 +450,20 @@ public class FeatureAgent<T> implements SimpleFeature {
 		// TODO Auto-generated method stub
 	}
 
-	public AttributeDescriptor getDescriptor() {
+	public Map<Object, Object> getUserData() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	 public Map<Object, Object> getUserData() {
-     if(userData == null)
-         userData = new HashMap<Object, Object>();
-     return userData;
- }
 
 	public void setValue(Object arg0) {
 		// TODO Auto-generated method stub
 	}
 
- public void setAttributes(List<Object> values) {
+	public void setAttributes(List<Object> arg0) {
 		// TODO Auto-generated method stub
- }
+	}
 
-	public void setAttributes(Object[] values) {
+	public void setAttributes(Object[] arg0) {
 		// TODO Auto-generated method stub
-  }
+	}
 }

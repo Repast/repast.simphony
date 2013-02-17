@@ -1,10 +1,10 @@
 package repast.simphony.gis.layers;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -22,17 +22,28 @@ import javax.swing.UIManager;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.map.DefaultMapContext;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
+import repast.simphony.context.Context;
+import repast.simphony.context.DefaultContext;
+import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
 import repast.simphony.gis.display.StatusBar;
@@ -44,9 +55,15 @@ import repast.simphony.gis.tools.PMarqueeZoomIn;
 import repast.simphony.gis.tools.PMarqueeZoomOut;
 import repast.simphony.gis.tools.PositionTool;
 import repast.simphony.gis.tools.ToolManager;
+import repast.simphony.space.gis.DefaultFeatureAgentFactory;
+import repast.simphony.space.gis.FeatureAgentFactoryFinder;
+import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.GeographyParameters;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 public class MapViewer {
 
@@ -56,47 +73,140 @@ public class MapViewer {
 
 	private MapLegend legend;
 
-	private MapContext context;
+	private MapContent context;
 
 	private JMenuBar bar = new JMenuBar();
 
 	private StyleBuilder builder = new StyleBuilder();
 
-//	private File currentDirectory = new File(".");
-
 	private StatusBar statusBar = new StatusBar();
 
 	private Properties props;
 	
+	SimpleFeatureCollection collection;
+	
+	SimpleFeatureCollection newAgents;
+	
+	SimpleFeature feature1;
+	SimpleFeature feature2;
+	
 	public MapViewer() {
-		context = new DefaultMapContext(DefaultGeographicCRS.WGS84);
-		
-		context.setAreaOfInterest(new Envelope(-90, -90, -90, 90), 
-				context.getCoordinateReferenceSystem());		
+		context = new MapContent();
+		context.getViewport().setBounds(new ReferencedEnvelope(new Envelope(-90, -90, -90, 90), 
+				DefaultGeographicCRS.WGS84));		
 		
 		mapPanel = new PiccoloMapPanel(context);
 
 		legend = new MapLegend(context, "legend");
 		
-//		File propsFile = new File("mapview.properties");
-//		props = new Properties();
-//		props.put("currentDirectory", ".");
-		
-//		if (propsFile.exists()) {
-//			try {
-//				props.load(new FileInputStream(propsFile));
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-		
-		
 		initTools();
-		createLayers();
+		
+//		createLayers();  // create layers from shapefiles
+		
+		createLayersFromAgents();  // create layers using agent factories
+		
+//		createLayers2();  // create layers from generated points
+		
+		System.out.println("Done creating layers.");
+	}
+	
+	 private static SimpleFeatureType createFeatureType() {
+
+     SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+     builder.setName("Location");
+     builder.setCRS(DefaultGeographicCRS.WGS84); // <- Coordinate reference system
+
+     // add attributes in order
+     builder.add("Location", Point.class);
+     builder.length(15).add("Name", String.class); // <- 15 chars width for name field
+
+     // build the type
+     final SimpleFeatureType LOCATION = builder.buildFeatureType();
+
+     return LOCATION;
+ }
+	
+	 /**
+	  * Test just adding plain GeoTools Features - not agents
+	  */
+	private void createLayers2() {
+		collection = FeatureCollections.newCollection();
+		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+
+		SimpleFeatureType type = createFeatureType();
+		EchoSimpleFeatureBuilder featureBuilder = new EchoSimpleFeatureBuilder(type);
+
+    int ats = type.getAttributeCount();
+		
+		for (int i=0; i<ats; i++){
+			System.out.println(" lulz " + type.getType(i));
+		}
+		
+		for (int i = 0; i < 10; i++) {
+			Coordinate coord = new Coordinate(-103.823 + i / 100.0, 44.373);
+			Point point = geometryFactory.createPoint(coord);
+
+			featureBuilder.add(point);
+			featureBuilder.add("Agent-" + i);
+			SimpleFeature feature = featureBuilder.buildFeature(null);
+			collection.add(feature);
+			
+			feature1 = feature;
+		}
+
+		FeatureSource source = DataUtilities.createFeatureSource(collection);
+
+		Style style = builder.createStyle(builder.createPointSymbolizer(
+				builder.createGraphic(null, builder.createMark("square", Color.RED), null)));
+
+		// !!! WORKS !!!!
+		addLayer(new RepastMapLayer(source, style));
+//		addLayer(new FeatureLayer(source, style));
 	}
 
+	/**
+	 * Create agents, add to geography with a feature
+	 */
+	@SuppressWarnings("unchecked")
+	private void createLayersFromAgents(){
+		Context ctxt = new DefaultContext();
+		GeographyParameters geoParams = new GeographyParameters();
+		Geography geography = GeographyFactoryFinder.createGeographyFactory(null)
+         .createGeography("Geography", ctxt, geoParams);
+		
+		GeometryFactory geoFac = new GeometryFactory();
+
+		FeatureAgentFactoryFinder finder = FeatureAgentFactoryFinder.getInstance();
+			
+		DefaultFeatureAgentFactory agentFac = 
+					finder.getFeatureAgentFactory(Boid.class, Point.class, geography.getCRS());
+
+		int ats = agentFac.getFeatureType().getAttributeCount();
+		
+		for (int i=0; i<ats; i++){
+			System.out.println(" lol " + agentFac.getFeatureType().getType(i));
+		}
+
+		for (int i = 0; i < 10; i++) {
+			Boid agent = new Boid("Boid-" + i);
+			ctxt.add(agent);
+			Coordinate coord = new Coordinate(-103.823 + i / 100.0, 44.373);
+			Point geom = geoFac.createPoint(coord);
+			geography.move(agent, geom);
+
+			feature2 = agentFac.getFeature(agent, geography);
+		} 
+
+		newAgents = agentFac.getFeatures();
+		
+		FeatureSource source = DataUtilities.createFeatureSource(newAgents);
+		
+		Style style = builder.createStyle(builder.createPointSymbolizer(
+				builder.createGraphic(null,	builder.createMark("square", Color.RED), null)));
+
+		addLayer(new RepastMapLayer(source, style));
+	}
+	
 	private void createLayers() {
 		try {
 			String dataFileName = "sampleData/streams.shp"; 
@@ -118,7 +228,6 @@ public class MapViewer {
 			styleFileName = "sampleData/archsites.xml"; 
 			store = new IndexedShapefileDataStore(new File(dataFileName).toURL());
 			source = store.getFeatureSource();
-
 			styleFile = new File(styleFileName);
 			fac = CommonFactoryFinder.getStyleFactory(null);
 			parser = new SLDParser(fac, styleFile);
@@ -128,28 +237,22 @@ public class MapViewer {
 //							builder.createMark("square", Color.RED), null)));
 
 			addLayer(new RepastMapLayer(source, style, "Sites"));
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
 	}
 
-	public void addLayer(MapLayer layer) {
+	public void addLayer(Layer layer) {
 		context.addLayer(layer);
-		try {
-			context.setAreaOfInterest(context.getLayerBounds());
-		} catch (IOException ex) {
-			System.out.print("Unable to load layer.");
-			ex.printStackTrace();
-		}
+		context.getViewport().setBounds(context.getMaxBounds());
 	}
 
 	private void initTools() {
 		URL imageFile = null;
 		Image image = null;
 		Map<String, Object> toolParams = null;
-		
-		if (mapPanel == null) return;
 		
 		PGISCanvas canvas = mapPanel.getCanvas();
 		toolParams = new HashMap<String, Object>();
@@ -232,31 +335,10 @@ public class MapViewer {
 
 	public void show() {
 		frame = new JFrame("Map Viewer");
-//		frame.addWindowListener(new WindowAdapter() {
-//
-//			@Override
-//			public void windowClosing(WindowEvent arg0) {
-//				Thread t = new Thread() {
-//					public void run() {
-//						File f = new File("./mapview.properties");
-//						try {
-//							props.store(new FileOutputStream(f), "");
-//						} catch (FileNotFoundException e) {
-//							e.printStackTrace();
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				};
-//				t.start();
-//			}
-//
-//		});
 		frame.setSize(800, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
-		if (mapPanel != null)
-		  frame.add(mapPanel, BorderLayout.CENTER);
+	  frame.add(mapPanel, BorderLayout.CENTER);
 		frame.add(legend, BorderLayout.WEST);
 		frame.add(bar, BorderLayout.PAGE_START);
 		frame.add(statusBar, BorderLayout.PAGE_END);
@@ -271,125 +353,3 @@ public class MapViewer {
 		viewer.show();
 	}
 }
-
-/*
-JMenu fileMenu = new JMenu("File");
-		bar.add(fileMenu);
-		Action loadShapefile = new AbstractAction() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser chooser = new JFileChooser(new File(props
-								.getProperty("currentDirectory")));
-				chooser.setFileFilter(new FileFilter() {
-
-					@Override
-					public boolean accept(File f) {
-						if (f.isDirectory())
-							return true;
-						if (f.getName().endsWith("shp"))
-							return true;
-						return false;
-					}
-
-					@Override
-					public String getDescription() {
-						return "Shapefile";
-
-					}
-
-				});
-				int result = chooser.showOpenDialog(frame);
-				if (result == JFileChooser.APPROVE_OPTION) {
-					// final TimerIcon icon = new TimerIcon(new Dimension(16,
-					// 16));
-					// icon.setMessage("Loading Shapefile: "
-					// + chooser.getSelectedFile().getName());
-					// icon.showClock(true);
-					//					statusBar.setComponent(icon);
-					Thread thread = new Thread() {
-						public void run() {
-							props.put("currentDirectory", chooser
-											.getSelectedFile().getParentFile()
-											.getAbsolutePath());
-							try {
-								Random random = new Random();
-								float r = (float) random.nextDouble();
-								float g = (float) random.nextDouble();
-								float b = (float) random.nextDouble();
-
-								IndexedShapefileDataStore store = new IndexedShapefileDataStore(
-												chooser.getSelectedFile().toURL());
-								FeatureSource source = store.getFeatureSource();
-								if (source.getSchema().getDefaultGeometry()
-												.getType().equals(Polygon.class)
-												|| source.getSchema()
-												.getDefaultGeometry().getType()
-												.equals(MultiPolygon.class)) {
-									Fill fill = builder.createFill(new Color(r,
-													g, b), .4);
-									addLayer(new DefaultMapLayer(
-													source,
-													builder
-																	.createStyle(builder
-																	.createPolygonSymbolizer(
-																	builder
-																					.createStroke(),
-																	fill))));
-								} else if (source.getSchema()
-												.getDefaultGeometry().getType().equals(
-												LineString.class)
-												|| source.getSchema()
-												.getDefaultGeometry().getType()
-												.equals(MultiLineString.class)) {
-									addLayer(new DefaultMapLayer(
-													source,
-													builder
-																	.createStyle(builder
-																	.createLineSymbolizer(new Color(
-																	r, g, b)))));
-								} else if (source.getSchema()
-												.getDefaultGeometry().getType().equals(
-												Point.class)
-												|| source.getSchema()
-												.getDefaultGeometry().getType()
-												.equals(MultiPoint.class)) {
-									addLayer(new DefaultMapLayer(
-													source,
-													builder
-																	.createStyle(builder
-																	.createPointSymbolizer(builder
-																	.createGraphic(
-																	null,
-																	builder
-																					.createMark(
-																					"square",
-																					new Color(
-																									r,
-																									g,
-																									b)),
-																	null)))));
-								} else {
-									throw new IllegalArgumentException(
-													"Unable to read Shapefile because unknown geometry type");
-								}
-								// icon.showClock(false);
-								ThreadUtilities.runInEventThread(new Runnable() {
-									public void run() {
-										statusBar.setMessage("");
-									}
-								});
-							} catch (Exception e) {
-								MessageCenter.getMessageCenter(getClass())
-												.error("Unable to load layer", e);
-							}
-
-						}
-					};
-					thread.start();
-				}
-			}
-
-		};
-		loadShapefile.putValue(Action.NAME, "Load ShapeFile");
-		fileMenu.add(loadShapefile);
- */

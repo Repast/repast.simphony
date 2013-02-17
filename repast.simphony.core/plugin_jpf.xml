@@ -60,43 +60,43 @@
     </library>
 
     <!-- geotools libs -->
-    <library id="gt-api-2.7.4.jar" path="lib/gt-api-2.7.4.jar" type="code">
+    <library id="gt-api-8.6.jar" path="lib/gt-api-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-brewer-2.7.4.jar" path="lib/gt-brewer-2.7.4.jar" type="code">
+    <library id="gt-brewer-8.6.jar" path="lib/gt-brewer-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-coverage-2.7.4.jar" path="lib/gt-coverage-2.7.4.jar" type="code">
+    <library id="gt-coverage-8.6.jar" path="lib/gt-coverage-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-cql-2.7.4.jar" path="lib/gt-cql-2.7.4.jar" type="code">
+    <library id="gt-cql-8.6.jar" path="lib/gt-cql-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-data-2.7.4.jar" path="lib/gt-data-2.7.4.jar" type="code">
+    <library id="gt-data-8.6.jar" path="lib/gt-data-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-epsg-hsql-2.7.4" path="lib/gt-epsg-hsql-2.7.4.jar" type="code">
+    <library id="gt-epsg-hsql-8.6" path="lib/gt-epsg-hsql-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-main-2.7.4.jar" path="lib/gt-main-2.7.4.jar" type="code">
+    <library id="gt-main-8.6.jar" path="lib/gt-main-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-metadata-2.7.4.jar" path="lib/gt-metadata-2.7.4.jar" type="code">
+    <library id="gt-metadata-8.6.jar" path="lib/gt-metadata-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-opengis-2.7.4.jar" path="lib/gt-opengis-2.7.4.jar" type="code">
+    <library id="gt-opengis-8.6.jar" path="lib/gt-opengis-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-referencing-2.7.4.jar" path="lib/gt-referencing-2.7.4.jar" type="code">
+    <library id="gt-referencing-8.6.jar" path="lib/gt-referencing-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-   <library id="gt-render-2.7.4.jar" path="lib/gt-render-2.7.4.jar" type="code">
+   <library id="gt-render-8.6.jar" path="lib/gt-render-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt-shapefile-2.7.4.jar" path="lib/gt-shapefile-2.7.4.jar" type="code">
+    <library id="gt-shapefile-8.6.jar" path="lib/gt-shapefile-8.6.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="jts-1.11.jar" path="lib/jts-1.11.jar" type="code">
+    <library id="jts-1.12.jar" path="lib/jts-1.12.jar" type="code">
       <export prefix="*"/>
     </library>
     <library id="hsqldb-1.8.0.7" path="lib/hsqldb-1.8.0.7.jar" type="code">

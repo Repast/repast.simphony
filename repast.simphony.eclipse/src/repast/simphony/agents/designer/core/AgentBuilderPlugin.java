@@ -47,7 +47,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-//import org.acm.seguin.util.FileSettings;
 import org.apache.commons.lang.ArrayUtils;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
 import org.eclipse.core.resources.ICommand;
@@ -1419,6 +1418,8 @@ public class AgentBuilderPlugin extends AbstractUIPlugin {
 
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+		
+		org.eclipse.jdt.ui.wizards.NewClassWizardPage fff;
 	}
 
 	/*

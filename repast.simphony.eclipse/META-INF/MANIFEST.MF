@@ -5,7 +5,7 @@ Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
 Bundle-Version: 2.0.1
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.agents.designer.core.AgentBuilderPlugin
-Bundle-Vendor: Provider
+Bundle-Vendor: Argonne National Lab
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
@@ -70,3 +70,4 @@ Export-Package: .,
  repast.simphony.agents.tools.ant,
  repast.simphony.conversion,
  repast.simphony.eclipse.ide
+Plugin-Class: repast.simphony.agents.designer.core.AgentBuilderPlugin

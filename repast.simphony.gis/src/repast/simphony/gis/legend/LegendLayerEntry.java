@@ -1,6 +1,7 @@
 package repast.simphony.gis.legend;
 
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import simphony.util.messages.MessageCenter;
@@ -22,7 +23,7 @@ public class LegendLayerEntry extends LegendEntry {
 	private transient MessageCenter msg = MessageCenter
 			.getMessageCenter(LegendModel.class);
 
-	private MapLayer layer = null;
+	private Layer layer = null;
 
 	/**
 	 * Create a new LegendLayer node for a layer.
@@ -34,7 +35,7 @@ public class LegendLayerEntry extends LegendEntry {
 	 * @param layer
 	 *            The layer upon which the node is based
 	 */
-	public LegendLayerEntry(String name, boolean isLayerSelected, MapLayer layer) {
+	public LegendLayerEntry(String name, boolean isLayerSelected, Layer layer) {
 		super(layer);
 		setName(name);
 		this.layer = layer;
@@ -90,7 +91,7 @@ public class LegendLayerEntry extends LegendEntry {
 		return c;
 	}
 
-	public MapLayer getLayer() {
+	public Layer getLayer() {
 		return layer;
 	}
 

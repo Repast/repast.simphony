@@ -1,6 +1,7 @@
 package repast.simphony.gis.display;
 
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListEvent;
 import org.geotools.map.event.MapLayerListListener;
@@ -16,9 +17,9 @@ public class GisDisplayMediator2 implements MapLayerListener,
         ComponentListener, MapLayerListListener {
 
 
-  private Map<MapLayer, PGisLayer> layerMap = new HashMap<MapLayer, PGisLayer>();
+  private Map<Layer, PGisLayer> layerMap = new HashMap<Layer, PGisLayer>();
 
-  public void layerAdded(MapLayer layer, PGisLayer gisLayer) {
+  public void layerAdded(Layer layer, PGisLayer gisLayer) {
     layerMap.put(layer, gisLayer);
     gisLayer.getLayer().addMapLayerListener(this);
   }
@@ -38,7 +39,7 @@ public class GisDisplayMediator2 implements MapLayerListener,
   public void layerRemoved(MapLayerListEvent event) {
   }
 
-  public void layerRemoved(MapLayer layer) {
+  public void layerRemoved(Layer layer) {
     layerMap.remove(layer);
     layer.removeMapLayerListener(this);
   }
@@ -63,8 +64,10 @@ public class GisDisplayMediator2 implements MapLayerListener,
   }
 
   public void layerChanged(MapLayerEvent event) {
-    if (event.getSource() instanceof MapLayer) {
-      MapLayer layer = (MapLayer) event.getSource();
+  	System.out.println("GisDisplayMediator2.layerChanged " + event.getReason() + " : " + event.getSource());
+  	
+  	if (event.getSource() instanceof FeatureLayer) {
+  		Layer layer = (FeatureLayer) event.getSource();
       switch (event.getReason()) {
         case MapLayerEvent.DATA_CHANGED:
           layerMap.get(layer).update();
