@@ -28,6 +28,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * **** IN PROGRESS NYI ****
  * 
+ * TODO determine if needed.
+ * 
  * Display Layer for networks in 2D GIS displays
  * 
  * @author Eric Tatara

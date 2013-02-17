@@ -19,6 +19,11 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 
+/**
+ * 
+ * TODO determine if needed.
+ *
+ */
 public class EdgeFeature implements SimpleFeature {
 
 	private SimpleFeatureCollection parent;

@@ -34,6 +34,10 @@ import org.opengis.feature.simple.SimpleFeatureType;
 /**
  * An utility class designed to ease style building by convinience methods.
  * 
+ * 
+ * TODO determine if needed.
+ *
+ * 
  * @author aaime
  * @source $URL:
  *         http://svn.geotools.org/geotools/tags/2.3.0/module/main/src/org/geotools/styling/StyleBuilder.java $
