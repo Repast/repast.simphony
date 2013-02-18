@@ -129,8 +129,6 @@ public class ShapefileLoader<T> {
         transform = ReferencingFactoryFinder.getCoordinateOperationFactory(null).createOperation(
         		gType.getCoordinateReferenceSystem(),geography.getCRS()).getMathTransform();
         
-        System.out.println("Transform: " + transform);
-        
       } catch (OperationNotFoundException ex) {
         // bursa wolf params may be missing so try lenient.
         transform = CRS.findMathTransform(gType.getCoordinateReferenceSystem(), 

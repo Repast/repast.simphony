@@ -176,8 +176,6 @@ public abstract class FeatureAgentFactory {
 
 		for (int i = 0; i < pds.length; i++) {
 			String featureName = pds[i].getName();
-
-			System.out.println("FeatureAgentFactory.getFeatureType(): " + featureName);
 			
 			Method method = pds[i].getReadMethod();
 			if (method != null) {
@@ -213,7 +211,6 @@ public abstract class FeatureAgentFactory {
 		ftBuilder.add(GEOM_ATTRIBUTE_NAME, geomClass);
 		
 		for (AttributeType at : ats){
-			System.out.println("FeatureAgentFactory.getFeatureType()_binding: " + at.toString());
 			ftBuilder.addBinding(at);
 		}
 		

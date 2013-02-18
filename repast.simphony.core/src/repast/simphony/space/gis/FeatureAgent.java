@@ -128,9 +128,11 @@ public class FeatureAgent<T> implements SimpleFeature {
 		featureType = type;
 		agentObj = agent;
 		geography = geog;
-		geom = geography.getGeometry(agent);
-//		geometryName = type.getGeometryDescriptor().getName().getLocalPart();
-	  geometryName = FeatureAgentFactory.GEOM_ATTRIBUTE_NAME;
+		
+		if (geography != null)
+		  geom = geography.getGeometry(agent);
+	  
+		geometryName = FeatureAgentFactory.GEOM_ATTRIBUTE_NAME;
 		
 		createAttributes(adapters);
 	}
@@ -324,12 +326,12 @@ public class FeatureAgent<T> implements SimpleFeature {
 		// this might be called after the agent is removed
 		// from a geography so we need to go through these
 		// hoops
-		Geometry tmp = geography.getGeometry(agentObj);
-		if (tmp == null)
-			return (Geometry) geom.clone();
-		else {
-			geom = tmp;
-		}
+//		Geometry tmp = geography.getGeometry(agentObj);
+//		if (tmp == null)
+//			return (Geometry) geom.clone();
+//		else {
+//			geom = tmp;
+//		}
 		return (Geometry) geom.clone();
 	}
 
@@ -337,6 +339,9 @@ public class FeatureAgent<T> implements SimpleFeature {
    * @see SimpleFeature#setDefaultGeometry(Object)
    */
 	public void setDefaultGeometry(Object geometry){
+		geom = (Geometry)geometry;
+		
+		if (geography != null)
 		geography.move(agentObj, (Geometry)geometry);
 	}
 	
