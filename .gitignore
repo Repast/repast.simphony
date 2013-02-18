@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 .DS_Store
 bin/
 test_bin/
 test-bin/
 
-=======
-.DS_Store
-bin/
-test_bin/
->>>>>>> geotools-2.7
