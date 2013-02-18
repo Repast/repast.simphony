@@ -1,7 +1,11 @@
 package repast.simphony.gis.display;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class StatusBar extends JPanel {
 	private static final long serialVersionUID = -6005582629829739723L;

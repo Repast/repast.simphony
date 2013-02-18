@@ -1,17 +1,18 @@
 package repast.simphony.gis.tools;
 
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.util.PBounds;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
+import org.geotools.map.MapContent;
+
 import repast.simphony.gis.display.AbstractMarqueeZoomer;
 import repast.simphony.gis.display.PGISCanvas;
+import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 
 public class PMarqueeZoomOut extends AbstractMarqueeZoomer {
 
-	MapContext context;
+	MapContent context;
 
-	public PMarqueeZoomOut(MapContext context) {
+	public PMarqueeZoomOut(MapContent context) {
 		this.context = context;
 	}
 

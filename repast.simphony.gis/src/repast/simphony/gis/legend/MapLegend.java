@@ -17,13 +17,15 @@
 
 package repast.simphony.gis.legend;
 
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -53,7 +55,7 @@ public class MapLegend extends JPanel {
 	 *
 	 * @param context the map context
 	 */
-	public MapLegend(MapContext context, String title) {
+	public MapLegend(MapContent context, String title) {
     model = new LegendModel(title);
     model.initMapContext(context);
     init();
@@ -196,7 +198,7 @@ public class MapLegend extends JPanel {
 		}
 	}
 
-	public MapLayer getSelectedLayer() {
+	public Layer getSelectedLayer() {
 		TreePath path = legendTree.getSelectionPath();
     if (path == null || path.getPath().length == 0) return null;
     DefaultMutableTreeNode comp = (DefaultMutableTreeNode) path

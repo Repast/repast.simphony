@@ -34,8 +34,8 @@ public class StyleEditor {
 	}
 
 	public void applyStyle() {
-		Class geomtype = layer.getFeatureSource().getSchema()
-				.getDefaultGeometry().getType();
+		Class geomtype = 
+				layer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
 		if (geomtype.equals(Point.class) || geomtype.equals(MultiPoint.class)) {
 			Mark mark = builder.createMark(markName, fillColor, strokeColor,
 					strokeWidth);

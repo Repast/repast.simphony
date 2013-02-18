@@ -1,6 +1,7 @@
 package repast.simphony.space.gis;
 
-import org.geotools.feature.IllegalAttributeException;
+import org.opengis.feature.IllegalAttributeException;
+
 
 /**
  * Adapts a method call or combination of method calls on an object
