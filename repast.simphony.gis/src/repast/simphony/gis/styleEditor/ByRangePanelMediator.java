@@ -12,10 +12,9 @@ import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.AttributeExpression;
-import org.geotools.filter.FilterFactory;
-import org.geotools.filter.FilterFactoryFinder;
 import org.geotools.filter.function.ClassificationFunction;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
@@ -26,10 +25,10 @@ import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.StyleBuilder;
-import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.FilterFactory;
 
 import repast.simphony.gis.GeometryUtil;
 
@@ -50,7 +49,7 @@ public class ByRangePanelMediator {
 					"circle", "cross", "star", "square", "triangle"
 	});
 	private FeatureSource source;
-	private FilterFactory filterFactory = FilterFactoryFinder.createFilterFactory();
+	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private int classesCount;
 	private SampleStyleTableModel tableModel = new SampleStyleTableModel();
 	private FeatureTypeStyle fts;
@@ -69,8 +68,7 @@ public class ByRangePanelMediator {
 			SimpleFeature feature = (SimpleFeature) source.getFeatures().iterator().next();
 			type = GeometryUtil.findGeometryType(feature);
 			DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-							.createFilterFactory());
+							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 			dsv.visit(rule);
 			defaultRule = (Rule) dsv.getCopy();
 			defaultRule.setTitle("<Default>");
@@ -278,7 +276,7 @@ public class ByRangePanelMediator {
 
 		public ClassificationFunction createFunction(int numClasses, FeatureCollection collection, String attribute) {
 			List<Number> vals = new ArrayList<Number>();
-			for (Feature feature : (Iterable<Feature>) collection) {
+			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
 				Number num = (Number) feature.getAttribute(attribute);
 				if (num != null) {
 					vals.add(num);
@@ -329,7 +327,7 @@ public class ByRangePanelMediator {
 			double min = Double.POSITIVE_INFINITY;
 			double max = Double.NEGATIVE_INFINITY;
 
-			for (Feature feature : (Iterable<Feature>) collection) {
+			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
 				Number num = (Number) feature.getAttribute(attribute);
 				if (num != null) {
 					double val = num.doubleValue();

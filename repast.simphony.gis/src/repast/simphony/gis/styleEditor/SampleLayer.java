@@ -6,7 +6,8 @@ import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.geotools.map.MapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -17,7 +18,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class SampleLayer {
 
-	public static MapLayer getSampleLayer() throws IOException {
+	public static Layer getSampleLayer() throws IOException {
 		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
 		ftBuilder.setName("myfeature");
 		
@@ -43,7 +44,7 @@ public class SampleLayer {
 		
 		MemoryDataStore store = new MemoryDataStore(new SimpleFeature[] { feature });
 		
-		return new MapLayer(store
+		return new FeatureLayer(store
 				.getFeatureSource(store.getTypeNames()[0]), DefaultStyler
 				.getDefaultStyle(store
 						.getFeatureSource(store.getTypeNames()[0])));

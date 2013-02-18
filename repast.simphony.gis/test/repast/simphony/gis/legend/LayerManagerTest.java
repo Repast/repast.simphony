@@ -1,13 +1,11 @@
 package repast.simphony.gis.legend;
 
-import junit.framework.TestCase;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.Query;
-import org.geotools.map.MapLayer;
-import org.geotools.map.event.MapLayerListener;
-import org.geotools.styling.Style;
-
 import java.util.Collection;
+
+import junit.framework.TestCase;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.Layer;
 
 public class LayerManagerTest extends TestCase {
 
@@ -19,7 +17,7 @@ public class LayerManagerTest extends TestCase {
 	}
 
 	public void testAddLayer() {
-		MapLayer layer = new TestMapLayer();
+		Layer layer = new TestMapLayer();
 		manager.addLayer(layer);
 		manager.addPath("Actions", "CBC");
 		manager.addPath("Actions", "HPAC");
@@ -31,7 +29,7 @@ public class LayerManagerTest extends TestCase {
 	}
 
 	public void testRemoveLayer() {
-		MapLayer layer = new TestMapLayer();
+		Layer layer = new TestMapLayer();
 		manager.addLayer(layer, "Actions", "CBC");
 		manager.removeLayer(layer, "Actions", "CBC");
 		assertEquals(0, manager.getLayers("Actions", "CBC").size());
@@ -41,7 +39,7 @@ public class LayerManagerTest extends TestCase {
 	}
 
 	public void testRemoveChild() {
-		MapLayer layer = new TestMapLayer();
+		Layer layer = new TestMapLayer();
 		manager.addLayer(layer, "Actions", "CBC");
 		manager.removePath("Actions", "CBC");
 		assertEquals(0, manager.getChildren("Actions").size());
@@ -53,7 +51,7 @@ public class LayerManagerTest extends TestCase {
 	}
 
 	public void testGetLayers() {
-		MapLayer layer = new TestMapLayer();
+		Layer layer = new TestMapLayer();
 		manager.addLayer(layer, "Actions", "CBC");
 		assertTrue(manager.getLayers("Actions", "CBC").contains(layer));
 	}
@@ -74,66 +72,13 @@ public class LayerManagerTest extends TestCase {
 
 	}
 
-	static class TestMapLayer extends MapLayer {
+	static class TestMapLayer extends Layer {
 
-		public TestMapLayer(){
-			super(null);
+		@Override
+		public ReferencedEnvelope getBounds() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
-		public void addMapLayerListener(MapLayerListener arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public FeatureSource getFeatureSource() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Query getQuery() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public Style getStyle() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public String getTitle() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		public boolean isVisible() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		public void removeMapLayerListener(MapLayerListener arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void setQuery(Query arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void setStyle(Style arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void setTitle(String arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void setVisible(boolean arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 }

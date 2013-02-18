@@ -4,29 +4,42 @@
 
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.map.MapLayer;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.xml.transform.TransformerException;
+
+import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.xml.transform.TransformerException;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * @author User #1
  */
 public class StyleEditorPanel extends JPanel implements IStyleEditor {
 
-	private MapLayer layer;
+	private Layer layer;
 
-	public StyleEditorPanel(MapLayer layer) {
+	public StyleEditorPanel(Layer layer) {
 		initComponents();
 		setMapLayer(layer);
 	}
@@ -35,7 +48,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void setMapLayer(MapLayer layer) {
+	public void setMapLayer(Layer layer) {
 		this.layer = layer;
 		ruleEditPanel1.setMapLayer(layer);
 		

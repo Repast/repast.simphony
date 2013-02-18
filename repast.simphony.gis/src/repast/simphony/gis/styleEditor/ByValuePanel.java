@@ -39,12 +39,11 @@ import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeature;
@@ -278,7 +277,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return style;
 	}
 
-	public void init(MapLayer layer) {
+	public void init(Layer layer) {
 		source = (SimpleFeatureSource)layer.getFeatureSource();
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		SimpleFeatureType type = source.getSchema();
@@ -315,8 +314,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
 				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-							.createFilterFactory());
+							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 				dsv.visit(rule);
 				rules.add((Rule) dsv.getCopy());
 			}

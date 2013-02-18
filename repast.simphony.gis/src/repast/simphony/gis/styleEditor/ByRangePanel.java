@@ -36,13 +36,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.data.FeatureSource;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.map.MapLayer;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -119,7 +118,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 
 	public Style getStyle() {
 		FeatureTypeStyle fts = mediator.getFeatureTypeStyle();
-		StyleFactory fac = StyleFactoryFinder.createStyleFactory();
+		StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 		Style style = fac.createStyle();
 		style.setFeatureTypeStyles(new FeatureTypeStyle[]{fts});
 		style.setAbstract(ID + ":" + attributeBox.getSelectedItem());
@@ -205,7 +204,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		});
 	}
 
-	public void init(MapLayer layer) {
+	public void init(Layer layer) {
 		try {
 			FeatureSource source = layer.getFeatureSource();
 			this.type = (SimpleFeatureType)source.getSchema();
@@ -248,8 +247,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
 				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-								StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-								.createFilterFactory());
+								CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 				dsv.visit(rule);
 				rules.add((Rule) dsv.getCopy());
 			}

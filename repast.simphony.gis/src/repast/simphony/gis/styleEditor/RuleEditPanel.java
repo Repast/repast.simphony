@@ -31,7 +31,7 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.expression.ExpressionBuilder;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.LineSymbolizer;
@@ -80,7 +80,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 
 	boolean ruleOnly = false;
 
-	public RuleEditPanel(MapLayer layer) {
+	public RuleEditPanel(Layer layer) {
 		initComponents();
 		setMapLayer(layer);
 	}
@@ -89,7 +89,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void setMapLayer(MapLayer layer) {
+	public void setMapLayer(Layer layer) {
 		Style style = layer.getStyle();
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));

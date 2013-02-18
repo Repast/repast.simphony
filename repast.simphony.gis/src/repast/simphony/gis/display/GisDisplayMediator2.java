@@ -64,9 +64,7 @@ public class GisDisplayMediator2 implements MapLayerListener,
   }
 
   public void layerChanged(MapLayerEvent event) {
-  	System.out.println("GisDisplayMediator2.layerChanged " + event.getReason() + " : " + event.getSource());
-  	
-  	if (event.getSource() instanceof FeatureLayer) {
+   	if (event.getSource() instanceof FeatureLayer) {
   		Layer layer = (FeatureLayer) event.getSource();
       switch (event.getReason()) {
         case MapLayerEvent.DATA_CHANGED:

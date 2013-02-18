@@ -23,7 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
@@ -46,11 +46,11 @@ import com.jgoodies.forms.layout.Sizes;
 public class RuledStyleEditorPanel extends JPanel implements IStyleEditor {
 	DefaultListModel model;
 
-	MapLayer layer;
+	Layer layer;
 
 	StyleBuilder builder = new StyleBuilder();
 
-	public RuledStyleEditorPanel(MapLayer layer) {
+	public RuledStyleEditorPanel(Layer layer) {
 		initComponents();
 		setMapLayer(layer);
 	}
@@ -59,7 +59,7 @@ public class RuledStyleEditorPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void setMapLayer(MapLayer layer) {
+	public void setMapLayer(Layer layer) {
 		this.layer = layer;
 		ruleEditPanel1.setRule(layer.getStyle().getFeatureTypeStyles()[0]
 				.getRules()[0]);

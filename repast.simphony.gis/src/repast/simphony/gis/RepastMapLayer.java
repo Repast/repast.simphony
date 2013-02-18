@@ -47,9 +47,6 @@ public class RepastMapLayer extends FeatureLayer {
 
 	@Override
 	public synchronized void addMapLayerListener(MapLayerListener listener) {
-		
-		System.out.println("RepastMapLayer.addMapLayerListener ");
-		
 		listenerList.add(listener);
 	}
 
@@ -59,14 +56,11 @@ public class RepastMapLayer extends FeatureLayer {
 	}
 
 	public void fireMapLayerChangedEvent(MapLayerEvent event) {
-		System.out.println("> 1 RepastMapLayer.fireMapLayerChangedEvent " + event.getReason());
 		for (MapLayerListener listener : listenerList) {
-			System.out.println("> 1.1 RepastMapLayer.fireMapLayerChangedEvent ");
 			if (event.getReason() == DATA_CHANGED
 					|| event.getReason() == FILTER_CHANGED
 					|| event.getReason() == STYLE_CHANGED) {
 				
-				System.out.println("> 2 RepastMapLayer.fireMapLayerChangedEvent " + event.getReason() + " " + listener);
 				listener.layerChanged(event);
 			} else if (event.getReason() == VISIBILITY_CHANGED
 					&& this.isVisible()) {

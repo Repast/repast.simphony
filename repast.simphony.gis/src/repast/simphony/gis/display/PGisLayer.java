@@ -92,7 +92,6 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     this.transform = transform;
     this.layer = layer;
     this.layer.addMapLayerListener(this);
-    System.out.println("PGisLayer(): " + layer);
     try {
       this.layerArea = layer.getFeatureSource().getBounds();
     } catch (IOException e) {
@@ -156,8 +155,6 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     Graphics2D g2d;
     Rectangle rect;
     clear();
-
-    System.out.println("PGISLayer.update()");
     
     try {
       g2d = image.createGraphics();

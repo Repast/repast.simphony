@@ -212,7 +212,6 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     getCamera().addLayer(toolLayer);
     
     for (Layer mapLayer : context.layers()) {
-    	System.out.println("PGISCanvas.init()... " + mapLayer.getClass().getCanonicalName());
     	addMapLayer(mapLayer);
     }
     getCamera().addLayer(toolLayer);
