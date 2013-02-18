@@ -335,10 +335,7 @@ public class Updater {
           // layers may be null because agents of that type
           // might not have been added to the geography yet
           if (mapLayer != null){
-            context.addLayer(mapLayer);
-            System.out.println("Updater.LayersAdder.reorderLayers()... " 
-              + mapLayer.getClass().getCanonicalName());
-            
+            context.addLayer(mapLayer);           
           }
         }
       }
@@ -357,7 +354,6 @@ public class Updater {
 
     public void run() {
       lock.lock();
-      System.out.println("Updater.LayerUpdater.run()... " + layer.getClass().getCanonicalName());
       layer.fireMapLayerChangedEvent(new MapLayerEvent(layer, MapLayerEvent.DATA_CHANGED));
       lock.unlock();
     }

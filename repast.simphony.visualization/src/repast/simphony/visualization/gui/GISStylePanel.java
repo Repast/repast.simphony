@@ -49,6 +49,8 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.map.DefaultMapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.MapLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.LineSymbolizer;
@@ -70,6 +72,7 @@ import repast.simphony.gis.styleEditor.StyleDialog;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
@@ -397,19 +400,22 @@ public class GISStylePanel extends JPanel {
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
       Style style = previewer.getStyle();
-      MapLayer layer = null;
+      Layer layer = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
 
         DefaultFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(agentClass, getGeometry().getClass(),
                 DefaultGeographicCRS.WGS84);
         SimpleFeatureCollection collection = fac.getFeatures();
-        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
-        layer = new MapLayer(DataUtilities.createFeatureSource(collection), style);
+        FeatureAgent feature = new FeatureAgent(fac.getFeatureType(), agentClass, null);
+        feature.setDefaultGeometry(getGeometry());
+        collection.add(feature);
+//        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
+        layer = new FeatureLayer(DataUtilities.createFeatureSource(collection), style);
       } else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        layer = new DefaultMapLayer(source, style);
+        layer = new FeatureLayer(source, style);
       }
       dialog.setMapLayer(layer);
       if (dialog.display()) {

@@ -16,12 +16,12 @@ import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionListener;
-import repast.simphony.visualization.editor.gis.DisplayEditorGIS;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -88,19 +88,22 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 	protected void addAddedEdges(){
 		for (RepastEdge edge : edgesToAdd) {
 			
-//			System.out.println(" $ NetworkDisplayLayer -> adding edge: " + edge);
-			
 			List<Coordinate> coords = new ArrayList<Coordinate>();
 			coords.add(geography.getGeometry(edge.getSource()).getCoordinate());
 			coords.add(geography.getGeometry(edge.getTarget()).getCoordinate());
 
 			Class<?> agentClass = net.getEdgeCreator().getEdgeType();
 			
-			EdgeFeature feature = new EdgeFeature(agentClass, 
-					DisplayEditorGIS.createLineString(coords), geography.getCRS());
+			FeatureAgent feature = null;
+					
+//					= new FeatureAgent() 
+//					
+//					(agentClass, 
+//					DisplayEditorGIS.createLineString(coords), geography.getCRS());
+			
 			featureMap.put(edge, feature);
 
-			feature.setParent(fc);
+//			feature.setParent(fc);
 		  fc.add(feature);
 
 		}

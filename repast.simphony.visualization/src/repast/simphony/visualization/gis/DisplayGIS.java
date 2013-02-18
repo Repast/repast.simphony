@@ -559,9 +559,6 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   public void createPanel() {
     panel = new PiccoloMapPanel(mapContext);
-
-    System.out.println("DisplayGIS.createPanel()..." 
-    		+ mapContext.layers().get(0).getClass());
     
     URL imageFile = null;
     Image image = null;

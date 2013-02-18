@@ -162,19 +162,22 @@ public class SelectionDecorator implements MapLayerListListener {
   }
 
   private void highlightPoint(Style style) {
-    FeatureTypeStyle fts = style.featureTypeStyles().toArray(
-    		new FeatureTypeStyle[0])[0];
-    Mark mark = SLD.pointMark(style);
-    Expression expr = mark.getSize();
-    mark = builder.createMark(mark.getWellKnownName().toString());
-    mark.setSize(expr);
-    mark.setStroke(builder.createStroke(highlightColor, 3));
-    PointSymbolizer ps = builder.createPointSymbolizer(builder
-            .createGraphic(null, mark, null));
-    Rule highlightRule = builder.createRule(ps);
-    highlightRule.setName(HIGHLIGHT_RULE_NAME);
-    highlightRule.setFilter(createFilter());
-    fts.rules().add(highlightRule);
+    
+  	// TODO update to Geotools 8.6 if GIS editor is renabled.
+  	
+//    FeatureTypeStyle fts = style.featureTypeStyles().toArray(
+//    		new FeatureTypeStyle[0])[0];
+//    Mark mark = SLD.pointMark(style);
+//    Expression expr = mark.getSize();
+//    mark = builder.createMark(mark.getWellKnownName().toString());
+//    mark.setSize(expr);
+//    mark.setStroke(builder.createStroke(highlightColor, 3));
+//    PointSymbolizer ps = builder.createPointSymbolizer(builder
+//            .createGraphic(null, mark, null));
+//    Rule highlightRule = builder.createRule(ps);
+//    highlightRule.setName(HIGHLIGHT_RULE_NAME);
+//    highlightRule.setFilter(createFilter());
+//    fts.rules().add(highlightRule);
   }
 
   private void highlightPolygon(Style style) {
