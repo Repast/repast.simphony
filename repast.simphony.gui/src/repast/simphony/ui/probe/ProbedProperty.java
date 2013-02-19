@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 public @interface ProbedProperty {
 
   /**
-   * The proper natural language name for this proeprty. For example,
+   * The proper natural language name for this property. For example,
    * "Simple Agent Count" rather than something like "simpleAgentCount."
    * 
    * @return proper natural language name for this property.
@@ -30,7 +30,7 @@ public @interface ProbedProperty {
    * 
    * @return java bean style property name for this property.
    */
-  String usageName();
+  String usageName() default "";
 
   /**
    * Gets the fully qualififed name of class used to convert the return value of

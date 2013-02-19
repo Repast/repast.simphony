@@ -106,7 +106,6 @@ public class StateChartSVGDisplayController implements StateChartListener {
 	public void initializeModel(SVGDocument svgDoc) {
 		model = new StateChartSVGModel(svgDoc);
 		svgDisplay.setModel(model);
-		//update(); // First point where active uuids are considered.
 		stateChart.registerStateChartListener(this);
 	}
 

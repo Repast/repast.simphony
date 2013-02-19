@@ -96,7 +96,11 @@ public class ProbeIntrospector {
     for (Field field : fields) {
       field.setAccessible(true);
       ProbedProperty pprop = field.getAnnotation(ProbedProperty.class);
-      FieldPropertyDescriptor fp = new FieldPropertyDescriptor(field, pprop.usageName().trim());
+      String fieldName = pprop.usageName().trim();
+      if (fieldName.isEmpty()){
+      	fieldName = field.getName();
+      }
+      FieldPropertyDescriptor fp = new FieldPropertyDescriptor(field, fieldName);
       if (pprop.displayName().trim().length() > 0)
         fp.setDisplayName(pprop.displayName().trim());
       fp.setStringConverter(createStringConverter(pprop));
@@ -147,12 +151,28 @@ public class ProbeIntrospector {
         }
 
         ProbedProperty pprop = method.getAnnotation(ProbedProperty.class);
-        MethodPropertyDescriptor pd = pdMap.get(pprop.usageName().trim());
+        String usageName = pprop.usageName().trim();
+        // If usage name is empty, infer appropriate usage name
+        if (usageName.isEmpty()){
+        	usageName = method.getName();
+        	if (usageName.startsWith("get") || usageName.startsWith("set")){
+        		if (usageName.length() > 3){
+        			usageName = Introspector.decapitalize(usageName.substring(3));
+        		}
+        	}
+        	else if (usageName.startsWith("is")){
+        		if (usageName.length() > 2){
+        			usageName = Introspector.decapitalize(usageName.substring(2));
+        		}
+        	}
+        }
+        MethodPropertyDescriptor pd = pdMap.get(usageName);
         if (pd == null) {
-          pd = new MethodPropertyDescriptor(pprop.usageName().trim(), info.getProbedClass());
-          pd.setDisplayName(pprop.usageName().trim());
+//        	method.
+          pd = new MethodPropertyDescriptor(usageName, info.getProbedClass());
+          pd.setDisplayName(usageName);
           info.pds.add(pd);
-          pdMap.put(pprop.usageName().trim(), pd);
+          pdMap.put(usageName, pd);
         }
 
         if (pd.getDisplayName().equals(pd.getName()) && pprop.displayName().trim().length() > 0)

@@ -206,6 +206,7 @@ public class StateChartSVGDisplay {
 	 * now ready for modification of the dom
 	 */
 	private boolean isReadyForModification = false;
+	private boolean needsInitialUpdate = true;
 
 	private Component createComponents() {
 		// Create a panel and add the button, status label and the SVG canvas.
@@ -223,30 +224,23 @@ public class StateChartSVGDisplay {
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
 				isReadyForModification = true;
+				if (needsInitialUpdate){
+					needsInitialUpdate = false;
+					controller.update();
+				}
 			}
 
 		});
-
-		// svgCanvas.addUpdateManagerListener(new UpdateManagerAdapter() {
-		//
-		//
-		//
-		// });
-		// svgCanvas.addSVGLoadEventDispatcherListener(new
-		// SVGLoadEventDispatcherAdapter() {
-		//
-		// @Override
-		// public void svgLoadEventDispatchStarted(SVGLoadEventDispatcherEvent e) {
-		// isReadyForModification = true;
-		//
-		// }
-		// });
 
 		svgCanvas.setURI(uri.toString());
 		panel.add("Center", svgCanvas);
 
 		return panel;
 	}
+
+	
+	private long lastRenderTS = 0;
+	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
 
 	/**
 	 * Renew the document by replacing the root node with the one of the new
@@ -260,9 +254,6 @@ public class StateChartSVGDisplay {
 	 *         http://stackoverflow.com/questions/10838971/make-a-jsvgcanvas-inside
 	 *         -jsvgscrollpane-match-the-svgdocument-size
 	 */
-	private long lastRenderTS = 0;
-	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
-
 	public void renewDocument() {
 		long ts = System.currentTimeMillis();
 		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
@@ -294,15 +285,9 @@ public class StateChartSVGDisplay {
 									// document
 									newRoot = d.importNode(newRoot, true);
 
-									// SVGDocument doc = svgCanvas.getSVGDocument();
-									// doc.g
 									d.replaceChild(newRoot, oldRoot);
 									svgCanvas.setSVGDocument((SVGDocument) d);
 
-									// svgCanvas.setSVGDocument(doc);
-									// svgCanvas.getParent().validate();
-									// svgCanvas.getParent().doLayout();
-									// svgCanvas.invalidate();
 								}
 							});
 							lastRenderTS = ts;

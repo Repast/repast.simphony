@@ -161,8 +161,9 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
    */
   public void objectProbed(ProbeEvent evt) {
     List<?> objs = evt.getProbedObjects();
-    for (Object obj : objs) {
-      probeObject(obj);
+    int numElements = objs.size();
+    if (numElements > 0){
+    	probeObject(objs.get(numElements-1));
     }
   }
 
