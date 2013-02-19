@@ -536,7 +536,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private T agent;
 
-	protected T getAgent() {
+	public T getAgent() {
 		if (agent == null) {
 			throw new IllegalStateException("The agent was not set in: " + this);
 		}
