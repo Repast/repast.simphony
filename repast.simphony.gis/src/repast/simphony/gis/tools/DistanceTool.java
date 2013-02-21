@@ -1,25 +1,30 @@
 package repast.simphony.gis.tools;
 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.geom.Point2D;
+
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.geotools.geometry.DirectPosition2D;
+import org.geotools.map.MapContent;
 import org.geotools.map.MapContext;
 import org.geotools.map.event.MapBoundsEvent;
 import org.geotools.map.event.MapBoundsListener;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.operation.TransformException;
+
 import repast.simphony.gis.display.PiccoloMapPanel;
 import simphony.util.messages.MessageCenter;
-
-import javax.units.Converter;
-import javax.units.NonSI;
-import javax.units.SI;
-import javax.units.Unit;
-import java.awt.*;
-import java.awt.geom.Point2D;
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.nodes.PPath;
 
 public class DistanceTool extends PBasicInputEventHandler implements MapTool, MapBoundsListener {
 
@@ -33,7 +38,7 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
 
   protected Point2D startCanvas;
 
-  MapContext mapContext;
+  MapContent mapContext;
 
   protected Unit unit;
 
@@ -46,7 +51,7 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
   private PCamera camera;
 
   // this unit mess is because geotools geodetic calculator uses the old jsr units
-  public DistanceTool(MapContext context, javax.measure.unit.Unit unit, DistanceSetter setter) {
+  public DistanceTool(MapContent context, javax.measure.unit.Unit unit, DistanceSetter setter) {
     this.mapContext = context;
     this.unit = Unit.valueOf(unit.toString());
     this.setter = setter;
@@ -129,11 +134,11 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
         if (unit == SI.METER) {
           distance = calculator.getOrthodromicDistance();
         } else {
-          Converter converter = SI.METER.getConverterTo(unit);
+          UnitConverter converter = SI.METER.getConverterTo(unit);
           distance = converter.convert(calculator.getOrthodromicDistance());
         }
       } else if (!unit.equals(calculator.getEllipsoid().getAxisUnit())) {
-        Converter converter = calculator.getEllipsoid().getAxisUnit()
+        UnitConverter converter = calculator.getEllipsoid().getAxisUnit()
                 .getConverterTo(unit);
         distance = converter.convert(calculator
                 .getOrthodromicDistance());

@@ -4,25 +4,7 @@
 
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureType;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.*;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
-import repast.simphony.gis.display.LegendIconMaker;
-import repast.simphony.gis.util.DoubleDocument;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -32,6 +14,53 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableCellRenderer;
+
+import org.geotools.data.FeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.map.Layer;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
+
+import repast.simphony.gis.display.LegendIconMaker;
+import repast.simphony.gis.util.DoubleDocument;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
 /**
  * @author User #2
  */
@@ -39,8 +68,8 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 
 	private static final String ID = ByRangePanel.class.toString();
 
-	private FeatureType type;
-	private Feature sample;
+	private SimpleFeatureType type;
+	private SimpleFeature sample;
 
 	private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
@@ -89,7 +118,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 
 	public Style getStyle() {
 		FeatureTypeStyle fts = mediator.getFeatureTypeStyle();
-		StyleFactory fac = StyleFactoryFinder.createStyleFactory();
+		StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 		Style style = fac.createStyle();
 		style.setFeatureTypeStyles(new FeatureTypeStyle[]{fts});
 		style.setAbstract(ID + ":" + attributeBox.getSelectedItem());
@@ -175,22 +204,22 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		});
 	}
 
-	public void init(MapLayer layer) {
+	public void init(Layer layer) {
 		try {
 			FeatureSource source = layer.getFeatureSource();
-			this.type = source.getSchema();
+			this.type = (SimpleFeatureType)source.getSchema();
 
 			Rule rule = layer.getStyle().getFeatureTypeStyles()[0].getRules()[0];
 			mediator = new ByRangePanelMediator(source, rule);
-			sample = (Feature) source.getFeatures().iterator().next();
+			sample = (SimpleFeature) source.getFeatures().iterator().next();
 			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
 			typeBox.setModel(model);
 			model = mediator.getAttributeModel();
-			FeatureType type = source.getSchema();
-			for (AttributeType at : type.getAttributeTypes()) {
-				if (numberTypes.contains(at.getType())) {
+			SimpleFeatureType type = (SimpleFeatureType)source.getSchema();
+			for (AttributeType at : type.getTypes()) {
+				if (numberTypes.contains(at.getBinding())) {
 					model.addElement(at.getName());
 				}
 			}
@@ -217,9 +246,8 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
-				DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
-								StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-								.createFilterFactory());
+				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+								CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 				dsv.visit(rule);
 				rules.add((Rule) dsv.getCopy());
 			}

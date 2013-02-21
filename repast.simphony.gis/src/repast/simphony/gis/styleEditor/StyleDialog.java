@@ -4,16 +4,28 @@
 
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.Style;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import org.geotools.map.Layer;
+import org.geotools.styling.Style;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * @author User #1
@@ -31,7 +43,7 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 
-	public void setMapLayer(MapLayer layer) {
+	public void setMapLayer(Layer layer) {
 		styleEditorPanel1.setMapLayer(layer);
 	}
 

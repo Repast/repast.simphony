@@ -1,29 +1,32 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
+import java.util.Map;
+
 import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.FactoryFinder;
+import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.cs.DefaultCartesianCS;
-import org.geotools.referencing.factory.FactoryGroup;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
+import org.geotools.referencing.operation.projection.TransverseMercator;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchIdentifierException;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.TransformException;
+
 import simphony.util.messages.MessageCenter;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Finds the UTM CRS appropriate to a specified lon, lat location.
@@ -92,9 +95,9 @@ public class UTMFinder {
 
 
   public static CoordinateReferenceSystem getUTMfor(short zone) {
-    FactoryGroup factories = new FactoryGroup(null);
     GeographicCRS geoCRS = DefaultGeographicCRS.WGS84;
-    MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+    MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
+    CRSFactory crsFactory = ReferencingFactoryFinder.getCRSFactory(null);
     CartesianCS cartCS = DefaultCartesianCS.GENERIC_2D;
     ParameterValueGroup parameters = null;
     try {
@@ -112,9 +115,13 @@ public class UTMFinder {
     }
 
     Map properties = Collections.singletonMap("name", "WGS 84 / UTM Zone " + zone + (zone > 0 ? "N" : "S"));
+    
+    Conversion conv = null;
     ProjectedCRS projCRS = null;
+    OperationMethod method = new TransverseMercator.Provider();
     try {
-      projCRS = factories.createProjectedCRS(properties, geoCRS, null, parameters, cartCS);
+    	conv = cFactory.createDefiningConversion(properties, method, parameters);    	
+    	projCRS = crsFactory.createProjectedCRS(properties, geoCRS, conv, cartCS);
     } catch (FactoryException e) {
       center.error("Error creating Projected CRS for UTM zone: " + zone, e);
     }

@@ -1,17 +1,20 @@
 package repast.simphony.gis.display;
 
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import org.geotools.map.DefaultMapContext;
-import org.geotools.map.MapContext;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import repast.simphony.gis.tools.MapTool;
-import repast.simphony.gis.tools.ToolManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+
+import org.geotools.map.MapContent;
+
+import repast.simphony.gis.tools.MapTool;
+import repast.simphony.gis.tools.ToolManager;
+import edu.umd.cs.piccolo.event.PInputEventListener;
 
 /**
  * This is a very basic panel that holds a canvas and a toolbar.
@@ -25,25 +28,16 @@ public class PiccoloMapPanel extends JPanel {
 
   private JToolBar toolBar;
 
-  private MapContext context;
+  private MapContent context;
 
   private ToolManager toolMan = new ToolManager();
-
-  /**
-   * Create a new panel with no MapContext. This will create a new
-   * DefaultMapContext.
-   */
-  public PiccoloMapPanel() {
-    context = new DefaultMapContext(DefaultGeographicCRS.WGS84);
-    init();
-  }
 
   /**
    * Create a new panel based on an existing MapContext.
    *
    * @param context The map context to display
    */
-  public PiccoloMapPanel(MapContext context) {
+  public PiccoloMapPanel(MapContent context) {
     this.context = context;
     init();
   }
@@ -108,17 +102,6 @@ public class PiccoloMapPanel extends JPanel {
     toolBar.add(action);
   }
 
-  // public void addTool(final MapTool tool, Map<String, Object> properties) {
-  // Action action = new AbstractAction() {
-  // public void actionPerformed(ActionEvent ev) {
-  // tool.execute(PiccoloMapPanel.this);
-  // }
-  // };
-  // for (Entry<String, Object> propEntry : properties.entrySet()) {
-  // action.putValue(propEntry.getKey(), propEntry.getValue());
-  // }
-  // toolBar.add(action);
-  // }
 
   public JToolBar getToolBar() {
     return toolBar;

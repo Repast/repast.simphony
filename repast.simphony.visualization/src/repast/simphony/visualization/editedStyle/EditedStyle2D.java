@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.geotools.renderer.style.Java2DMark;
+import org.geotools.renderer.lite.Java2DMark;
 
 import repast.simphony.visualization.visualization2D.style.Style2D;
 import edu.umd.cs.piccolo.PNode;

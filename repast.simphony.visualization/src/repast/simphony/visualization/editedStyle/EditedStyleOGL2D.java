@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotools.renderer.style.Java2DMark;
+import org.geotools.renderer.lite.Java2DMark;
 
 import repast.simphony.visualizationOGL2D.ImageSpatialSource;
 import repast.simphony.visualizationOGL2D.StyleOGL2D;

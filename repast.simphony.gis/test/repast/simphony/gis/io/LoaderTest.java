@@ -1,17 +1,23 @@
 package repast.simphony.gis.io;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
@@ -19,9 +25,7 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.gis.ShapefileLoader;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Shapefile loader tests
@@ -78,32 +82,32 @@ public class LoaderTest {
     Context context = new DefaultContext();
     GeographyParameters<Object> params = new GeographyParameters<Object>();
     geography = GeographyFactoryFinder.createGeographyFactory(null).createGeography("Geography", context, params);
-    File file = new File("/Users/nick/src/pave2/plugins/bootstrap/data/states.shp");
+    File file = new File("./sampleData/states.shp");
     loader = new ShapefileLoader<TestAgent>(TestAgent.class, file.toURL(), geography, context);
   }
 
   @Test
   public void testNext() throws IOException, FactoryException, TransformException {
-    File file = new File("/Users/nick/src/pave2/plugins/bootstrap/data/states.shp");
+    File file = new File("./sampleData/states.shp");
     ShapefileDataStore store = new ShapefileDataStore(file.toURL());
-    FeatureCollection collection = store.getFeatureSource().getFeatures();
-    MathTransform trans = CRS.findMathTransform(store.getFeatureSource().getSchema().
-            getDefaultGeometry().getCoordinateSystem(),
+    SimpleFeatureCollection collection = store.getFeatureSource().getFeatures();
+    MathTransform trans = CRS.findMathTransform(
+    		store.getFeatureSource().getSchema().getCoordinateReferenceSystem(),
             geography.getCRS(), true);
 
-    FeatureIterator fIterator = collection.features();
+    SimpleFeatureIterator fIterator = collection.features();
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
     while (loader.hasNext()) {
       TestAgent agent = loader.next();
-      Feature feature = fIterator.next();
-      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea());
+      SimpleFeature feature = fIterator.next();
+      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea(), 0);
       assertEquals(feature.getAttribute("STATE_NAME"), agent.getStateName());
       assertEquals(feature.getAttribute("POP1999"), agent.getPop1999());
       // for some reason the text is the same but the polygons aren't evaluating
       // as equal ...
-      assertEquals(JTS.transform(feature.getDefaultGeometry(), trans).toText(),
+      assertEquals(JTS.transform(((Geometry)feature.getDefaultGeometry()), trans).toText(),
               geography.getGeometry(agent).toText());
     }
     fIterator.close();
@@ -111,27 +115,27 @@ public class LoaderTest {
 
   @Test
   public void testNextWithCArgs() throws IOException, FactoryException, TransformException {
-    File file = new File("/Users/nick/src/pave2/plugins/bootstrap/data/states.shp");
+    File file = new File("./sampleData/states.shp");
     ShapefileDataStore store = new ShapefileDataStore(file.toURL());
-    FeatureCollection collection = store.getFeatureSource().getFeatures();
-    MathTransform trans = CRS.findMathTransform(store.getFeatureSource().getSchema().
-            getDefaultGeometry().getCoordinateSystem(),
+    SimpleFeatureCollection collection = store.getFeatureSource().getFeatures();
+    MathTransform trans = CRS.findMathTransform(
+    		store.getFeatureSource().getSchema().getCoordinateReferenceSystem(),
             geography.getCRS(), true);
 
-    FeatureIterator fIterator = collection.features();
+    SimpleFeatureIterator fIterator = collection.features();
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
     int i = 0;
     while (loader.hasNext()) {
       TestAgent agent = loader.nextWithArgs(new Integer(i), String.valueOf(i));
-      Feature feature = fIterator.next();
-      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea());
+      SimpleFeature feature = fIterator.next();
+      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea(), 0);
       assertEquals(feature.getAttribute("STATE_NAME"), agent.getStateName());
       assertEquals(feature.getAttribute("POP1999"), agent.getPop1999());
       // for some reason the text is the same but the polygons aren't evaluating
       // as equal ...
-      assertEquals(JTS.transform(feature.getDefaultGeometry(), trans).toText(),
+      assertEquals(JTS.transform(((Geometry)feature.getDefaultGeometry()), trans).toText(),
               geography.getGeometry(agent).toText());
       assertEquals(i, agent.id);
       assertEquals(String.valueOf(i), agent.strID);
@@ -142,14 +146,14 @@ public class LoaderTest {
 
   @Test
   public void testNextWithObj() throws IOException, FactoryException, TransformException {
-    File file = new File("/Users/nick/src/pave2/plugins/bootstrap/data/states.shp");
+    File file = new File("./sampleData/states.shp");
     ShapefileDataStore store = new ShapefileDataStore(file.toURL());
-    FeatureCollection collection = store.getFeatureSource().getFeatures();
-    MathTransform trans = CRS.findMathTransform(store.getFeatureSource().getSchema().
-            getDefaultGeometry().getCoordinateSystem(),
+    SimpleFeatureCollection collection = store.getFeatureSource().getFeatures();
+    MathTransform trans = CRS.findMathTransform(
+    		store.getFeatureSource().getSchema().getCoordinateReferenceSystem(),
             geography.getCRS(), true);
 
-    FeatureIterator fIterator = collection.features();
+    SimpleFeatureIterator fIterator = collection.features();
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
@@ -157,13 +161,13 @@ public class LoaderTest {
     while (loader.hasNext()) {
       TestAgent agent = new TestAgent(new Integer(i), String.valueOf(i));
       loader.next(agent);
-      Feature feature = fIterator.next();
-      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea());
+      SimpleFeature feature = fIterator.next();
+      assertEquals(((Double)feature.getAttribute("AREA")).doubleValue(), agent.getArea(), 0);
       assertEquals(feature.getAttribute("STATE_NAME"), agent.getStateName());
       assertEquals(feature.getAttribute("POP1999"), agent.getPop1999());
       // for some reason the text is the same but the polygons aren't evaluating
       // as equal ...
-      assertEquals(JTS.transform(feature.getDefaultGeometry(), trans).toText(),
+      assertEquals(JTS.transform(((Geometry)feature.getDefaultGeometry()), trans).toText(),
               geography.getGeometry(agent).toText());
       assertEquals(i, agent.id);
       assertEquals(String.valueOf(i), agent.strID);

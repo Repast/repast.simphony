@@ -51,7 +51,8 @@ public class DisplayCreatorGIS extends AbstractDisplayCreator {
       for (String agentName : descriptor.agentClassStyleNames()) {
         String styleXML = descriptor.getStyleClassName(agentName);
         SLDParser parser = new SLDParser(new StyleFactoryImpl(), new StringReader(styleXML));
-        display.registerAgentStyle(agentName, parser.readXML()[0], descriptor
+        Style style = parser.readXML()[0];
+        display.registerAgentStyle(agentName, style, descriptor
             .getLayerOrder(agentName));
       }
 
