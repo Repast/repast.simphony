@@ -2,7 +2,10 @@ package repast.simphony.systemdynamics.diagram.part;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -90,13 +93,37 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
         .getBundledImageDescriptor("icons/wizban/NewSDModelWizard.gif")); //$NON-NLS-1$
     setNeedsProgressMonitor(true);
   }
+  
+  /**
+   * @generated NOT
+   * 
+   */
+  private IResource extractSelection() {
+    if (!(selection instanceof IStructuredSelection))
+      return null;
+    IStructuredSelection ss = (IStructuredSelection) selection;
+    Object element = ss.getFirstElement();
+    if (element instanceof IResource)
+      return (IResource) element;
+    if (!(element instanceof IAdaptable))
+      return null;
+    IAdaptable adaptable = (IAdaptable) element;
+    Object adapter = adaptable.getAdapter(IResource.class);
+    return (IResource) adapter;
+  }
 
   /**
-   * @generated
+   * @generated NOT
    */
   public void addPages() {
+    IResource resource = extractSelection();
+    IProject project = null;
+    if (resource != null) {
+      project = resource.getProject();
+    }
+
     diagramModelFilePage = new SystemdynamicsCreationWizardPage(
-        "DiagramModelFile", getSelection(), "rsd"); //$NON-NLS-1$ //$NON-NLS-2$
+        "DiagramModelFile", project, getSelection(), "rsd"); //$NON-NLS-1$ //$NON-NLS-2$
     diagramModelFilePage.setTitle(Messages.SystemdynamicsCreationWizard_DiagramModelFilePageTitle);
     diagramModelFilePage
         .setDescription(Messages.SystemdynamicsCreationWizard_DiagramModelFilePageDescription);
