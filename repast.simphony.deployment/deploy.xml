@@ -99,6 +99,7 @@
 			<exclude name="**/xmltask.jar" />
 			
 			<exclude name="**/repast.simphony.distributed.batch/**" />
+			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
 		</fileset>
 		
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
