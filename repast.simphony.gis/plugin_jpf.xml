@@ -15,7 +15,6 @@
 		<library id="gis.bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-		<library id="swingx" path="lib/swingx-2006_07_20.jar" type="code"/>
 	</runtime>
 
 </plugin>

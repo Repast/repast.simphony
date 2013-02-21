@@ -1,28 +1,37 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.index.ItemVisitor;
-import com.vividsolutions.jts.index.SpatialIndex;
-import com.vividsolutions.jts.index.quadtree.Quadtree;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import javolution.util.FastMap;
 import javolution.util.FastSet;
+
 import org.apache.commons.collections15.Predicate;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.FactoryFinder;
 import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.matrix.GeneralMatrix;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.spatialschema.geometry.MismatchedDimensionException;
+
 import repast.simphony.space.projection.DefaultProjection;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionEvent.Type;
@@ -30,12 +39,13 @@ import repast.simphony.space.projection.ProjectionPredicate;
 import repast.simphony.util.collections.FilteredIterator;
 import simphony.util.messages.MessageCenter;
 
-import javax.units.SI;
-import javax.units.Unit;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.*;
-import java.util.Map.Entry;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.index.ItemVisitor;
+import com.vividsolutions.jts.index.SpatialIndex;
+import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 /**
  * Default implementation of Geography, a geographic GIS type space.
@@ -70,7 +80,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
 
   private GeodeticCalculator calc;
 
-  MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+  MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
 
   /**
    * Creates a DefaultGeography with the specified name. The coordinate
@@ -343,7 +353,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
       return;
     }
     try {
-      MathTransform transform = CRS.transform(this.crs, crs);
+      MathTransform transform = CRS.findMathTransform(this.crs, crs);
       for (Entry<T, GeomData> entry : geomMap.entrySet()) {
         GeomData gd = entry.getValue();
         T key = entry.getKey();
@@ -399,7 +409,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
 
     try {
       if (!crs.equals(DefaultGeographicCRS.WGS84)) {
-        MathTransform crsTrans = CRS.transform(this.crs, DefaultGeographicCRS.WGS84);
+        MathTransform crsTrans = CRS.findMathTransform(this.crs, DefaultGeographicCRS.WGS84);
         Coordinate tmp = new Coordinate();
         JTS.transform(coord, tmp, crsTrans);
         calc.setStartingGeographicPoint(tmp.x, tmp.y);
@@ -409,7 +419,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
       calc.setDirection(angleInDegrees, distance);
       Point2D p = calc.getDestinationGeographicPoint();
       if (!crs.equals(DefaultGeographicCRS.WGS84)) {
-        MathTransform crsTrans = CRS.transform(DefaultGeographicCRS.WGS84, this.crs);
+        MathTransform crsTrans = CRS.findMathTransform(DefaultGeographicCRS.WGS84, this.crs);
         JTS.transform(new Coordinate(p.getX(), p.getY()), coord, crsTrans);
       }
 

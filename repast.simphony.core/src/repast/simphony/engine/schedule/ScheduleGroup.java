@@ -44,6 +44,13 @@ public class ScheduleGroup implements IAction {
    * List of actions that should be executed first.
    */
   protected ActionList firstActions = new ActionList();
+  
+  /**
+   * List of actions that are executed as last actions but immediately
+   * prior to those.
+   */
+  protected ActionList firstOfLastActions = new ActionList();
+  
   /**
    * List of actions that should be executed last.
    */
@@ -131,6 +138,12 @@ public class ScheduleGroup implements IAction {
       count--;
       retVal = true;
     }
+    
+    if (firstOfLastActions.remove(action)) {
+      count--;
+      retVal = true;
+    }
+    
     if (actions.remove(action)) {
       count--;
       retVal = true;
@@ -140,15 +153,16 @@ public class ScheduleGroup implements IAction {
   }
 
   private void doAddAction(ISchedulableAction action) {
-    double priority = action.getPriority();
-    // todo change this as this relies on knowing that random priority is
-    // Double.NaN.
-    if (Double.isNaN(priority))
+    PriorityType pType = action.getPriorityType();
+    
+    if (pType == PriorityType.RANDOM)
       randomActions.add(action);
-    else if (priority == ScheduleParameters.LAST_PRIORITY)
+    else if (pType == PriorityType.LAST)
       lastActions.add(action);
-    else if (priority == ScheduleParameters.FIRST_PRIORITY)
+    else if (pType == PriorityType.FIRST)
       firstActions.add(action);
+    else if (pType == PriorityType.FIRST_OF_LAST) 
+      firstOfLastActions.add(action);
     else
       actions.add(action);
     count++;
@@ -162,6 +176,7 @@ public class ScheduleGroup implements IAction {
     randomActions.clear();
     firstActions.clear();
     lastActions.clear();
+    firstOfLastActions.clear();
     count = 0;
   }
 
@@ -212,6 +227,9 @@ public class ScheduleGroup implements IAction {
     interrupted = executeList(actions);
     if (interrupted)
       return;
+    
+    interrupted = executeList(firstOfLastActions);
+    if (interrupted) return;
 
     interrupted = executeList(lastActions);
     if (interrupted)
@@ -265,6 +283,7 @@ public class ScheduleGroup implements IAction {
     // we sort these to get a predictable order for actions scheduled with the
     // same priority
     firstActions.sort(oComp, false);
+    firstOfLastActions.sort(oComp, false);
     lastActions.sort(oComp, false);
     actions.sort(oComp, false);
 

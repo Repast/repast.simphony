@@ -21,23 +21,8 @@
  */
 package repast.simphony.gis.display;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.*;
-import org.geotools.filter.Expression;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.filter.LiteralExpression;
-import org.geotools.renderer.lite.LiteRenderer2;
-import org.geotools.resources.TestData;
-import org.geotools.styling.*;
-import org.geotools.styling.Stroke;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +30,49 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.UIManager;
+
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
+import org.geotools.data.FeatureSource;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.AttributeTypeBuilder;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.SchemaException;
+import org.geotools.renderer.lite.StreamingRenderer;
+import org.geotools.styling.Graphic;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.builder.StyleBuilder;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureTypeFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+import org.opengis.geometry.Geometry;
+import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Fill;
+import org.opengis.style.Style;
+import org.opengis.style.StyleFactory;
+import org.opengis.style.Symbolizer;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * DOCUMENT ME!
@@ -69,7 +97,7 @@ public class LegendIconMaker {
 	 * if the rule already has defined legendGraphic the stylefactory could
 	 * create symbolizer to contain it
 	 */
-	public static StyleFactory sFac = StyleFactoryFinder.createStyleFactory();
+	public static StyleFactory sFac = CommonFactoryFinder.getStyleFactory();
 
 	/**
 	 * offset for icon, otherwise icons will be connected to others in the
@@ -80,7 +108,7 @@ public class LegendIconMaker {
 	/**
 	 * the current renderer object
 	 */
-	private static LiteRenderer2 renderer = new LiteRenderer2();
+	private static StreamingRenderer renderer = new StreamingRenderer();
 
 	private static StyleBuilder styleBuilder = new StyleBuilder();
 
@@ -99,22 +127,31 @@ public class LegendIconMaker {
 		}
 	};
 
-	private static FeatureType fFac;
+	private static SimpleFeatureType fFac;
 
 	// Static initialization block
 	static {
-		// renderer = new Java2DRenderer();
-		AttributeType[] attribs = {
-				AttributeTypeFactory.newAttributeType("geometry:text",
-						Geometry.class),
-				AttributeTypeFactory.newAttributeType("label", String.class) };
+		AttributeTypeBuilder builder = new AttributeTypeBuilder();
+		builder.setName("geometry:text");
+   	builder.setBinding(Geometry.class);
+   	builder.setNillable(true);
+		AttributeType type1 = builder.buildType();
+		
+		builder.setName("label");
+   	builder.setBinding(String.class);
+   	builder.setNillable(true);
+		AttributeType type2 = builder.buildType();
+		
+		AttributeType[] attribs = {type1, type2 };
 
+		builder.setName("testGeometry");
+   	builder.setBinding(Geometry.class);
+   	builder.setNillable(true);
+		AttributeType testType = builder.buildType();
 		try {
 			fFac = FeatureTypeFactory
 					.newFeatureType(
-							new AttributeType[] { AttributeTypeFactory
-									.newAttributeType("testGeometry",
-											Geometry.class) }, "legend");
+							new AttributeType[] {testType}, "legend");
 		} catch (SchemaException se) {
 			throw new RuntimeException(se);
 		}
@@ -126,23 +163,23 @@ public class LegendIconMaker {
 	}
 
 	public static Icon makeLegendIcon(int iconWidth, Color background,
-			Rule rule, Feature sample) {
+			Rule rule, SimpleFeature sample) {
 		return makeLegendIcon(iconWidth, background, rule.getSymbolizers(),
 				sample);
 	}
 
-	public static Icon makeLegendIcon(int iconWidth, Rule rule, Feature sample) {
+	public static Icon makeLegendIcon(int iconWidth, Rule rule, SimpleFeature sample) {
 		return makeLegendIcon(iconWidth, new Color(0, 0, 0, 0), rule, sample);
 	}
 
 	public static Icon makeLegendIcon(int iconWidth, Color background,
-			Symbolizer[] syms, Feature sample) {
+			Symbolizer[] syms, SimpleFeature sample) {
 		return makeLegendIcon(iconWidth, iconWidth, background, syms, sample,
 				false);
 	}
 
 	public static Icon makeLegendIcon(int iconWidth, int iconHeight,
-			Color background, Symbolizer[] syms, Feature sample,
+			Color background, Symbolizer[] syms, SimpleFeature sample,
 			boolean cacheIcon) {
 		IconDescriptor descriptor = new IconDescriptor(iconWidth, iconHeight,
 				background, syms, sample);
@@ -167,9 +204,9 @@ public class LegendIconMaker {
 				oldGraphic.getRotation());
 
 		org.opengis.filter.expression.Expression sizeExp = graphic.getSize();
-		if (sizeExp instanceof LiteralExpression
-				&& ((LiteralExpression) sizeExp).getLiteral() instanceof Number) {
-			int val = ((Number) ((LiteralExpression) sizeExp).getLiteral())
+		if (sizeExp instanceof Literal
+				&& ((Literal) sizeExp).getValue() instanceof Number) {
+			int val = ((Number) ((Literal) sizeExp).getValue())
 					.intValue();
 			if (val > size) {
 				graphic.setSize(styleBuilder.literalExpression(size - 4));
@@ -219,8 +256,8 @@ public class LegendIconMaker {
 		}
 	}
 	private static Icon reallyMakeLegendIcon(int iconWidth, int iconHeight,
-			Color background, Symbolizer[] symbolizers, Feature sample) {
-		FeatureCollection fc = FeatureCollections.newCollection();
+			Color background, Symbolizer[] symbolizers, SimpleFeature sample) {
+		SimpleFeatureCollection fc = FeatureCollections.newCollection();
 
 		Symbolizer[] syms = symbolizers;
 		List<ChangeTracker> changes = new ArrayList<ChangeTracker>();
@@ -253,7 +290,7 @@ public class LegendIconMaker {
 			}
 		}
 		for (int i = 0; i < syms.length; i++) {
-			Feature feature = null;
+			SimpleFeature feature = null;
 
 			if (syms[i] instanceof PolygonSymbolizer) {
 				Number lineWidth = new Integer(0);
@@ -373,50 +410,7 @@ public class LegendIconMaker {
 		return icon;
 	}
 
-	/**
-	 * DOCUMENT ME!
-	 * 
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(String[] args) {
-		try {
-			HashMap params1 = new HashMap();
-			params1.put("url", TestData.getResource(LegendIconMaker.class,
-					"lakes.shp"));
-
-			DataStore data = DataStoreFinder.getDataStore(params1);
-			int width = UIManager.getIcon("Tree.openIcon").getIconWidth();
-			Expression fcolor1 = FilterFactoryFinder.createFilterFactory()
-					.createLiteralExpression(Color.PINK.getRGB() + "");
-			Expression fcolor2 = FilterFactoryFinder.createFilterFactory()
-					.createLiteralExpression(Color.BLACK.getRGB() + "");
-			Expression lineWidth = FilterFactoryFinder.createFilterFactory()
-					.createLiteralExpression(3.0);
-			Fill fill = StyleFactoryFinder.createStyleFactory().createFill(
-					fcolor1);
-			Stroke stroke = StyleFactoryFinder.createStyleFactory()
-					.createStroke(fcolor2, lineWidth);
-			PolygonSymbolizer polySymbolizer = StyleFactoryFinder
-					.createStyleFactory().createPolygonSymbolizer(stroke, fill,
-							"testGeometry");
-			JLabel iconJLabel = new JLabel("Legend Icon Example");
-
-			String typeName = data.getTypeNames()[0];
-			FeatureSource shape = data.getFeatureSource(typeName);
-
-			iconJLabel.setIcon(LegendIconMaker.makeLegendIcon(width, new Color(
-					0, 0, 0, 0), new Symbolizer[] { polySymbolizer },
-					(Feature) shape.getFeatures().collection().toArray()[2]));
-
-			JFrame f = new JFrame();
-			f.getContentPane().setBackground(new Color(204, 204, 255));
-			f.getContentPane().add(iconJLabel);
-			f.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	private static class IconDescriptor {
 		private int iconHeight;
@@ -427,10 +421,10 @@ public class LegendIconMaker {
 
 		private Symbolizer[] symbolizers;
 
-		private Feature sample;
+		private SimpleFeature sample;
 
 		public IconDescriptor(int iconWidth, int iconHeight, Color background,
-				Symbolizer[] symbolizers, Feature sample) {
+				Symbolizer[] symbolizers, SimpleFeature sample) {
 			this.iconWidth = iconWidth;
 			this.iconHeight = iconHeight;
 			this.background = background;

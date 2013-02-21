@@ -47,8 +47,10 @@ import javax.xml.transform.TransformerException;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.map.DefaultMapLayer;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.MapLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.LineSymbolizer;
@@ -70,6 +72,7 @@ import repast.simphony.gis.styleEditor.StyleDialog;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
@@ -337,10 +340,11 @@ public class GISStylePanel extends JPanel {
       try {
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        String name = source.getSchema().getTypeName();
+        String name = source.getSchema().getName().getLocalPart();
         AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
         elem.source = file;
-        elem.defaultGeometry = source.getSchema().getDefaultGeometry().getType();
+        elem.defaultGeometry = 
+        		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
         DefaultListModel model = (DefaultListModel) agentList.getModel();
         model.addElement(elem);
         agentList.setSelectedIndex(model.size() - 1);
@@ -396,19 +400,22 @@ public class GISStylePanel extends JPanel {
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
       Style style = previewer.getStyle();
-      MapLayer layer = null;
+      Layer layer = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
 
         DefaultFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(agentClass, getGeometry().getClass(),
                 DefaultGeographicCRS.WGS84);
-        FeatureCollection collection = fac.getFeatures();
-        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
-        layer = new DefaultMapLayer(DataUtilities.createFeatureSource(collection), style);
+        SimpleFeatureCollection collection = fac.getFeatures();
+        FeatureAgent feature = new FeatureAgent(fac.getFeatureType(), agentClass, null);
+        feature.setDefaultGeometry(getGeometry());
+        collection.add(feature);
+//        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
+        layer = new FeatureLayer(DataUtilities.createFeatureSource(collection), style);
       } else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        layer = new DefaultMapLayer(source, style);
+        layer = new FeatureLayer(source, style);
       }
       dialog.setMapLayer(layer);
       if (dialog.display()) {
@@ -455,10 +462,11 @@ public class GISStylePanel extends JPanel {
           File file = new File(entry.getKey());
           ShapefileDataStore dataStore = new ShapefileDataStore(file.toURI().toURL());
           FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-          String name = source.getSchema().getTypeName();
+          String name = source.getSchema().getName().getLocalPart();
           AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
           elem.source = file;
-          elem.defaultGeometry = source.getSchema().getDefaultGeometry().getType();
+          elem.defaultGeometry = 
+          		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
           elem.styleXML = entry.getValue();
           listModel.addElement(elem);
         } catch (IOException ex) {

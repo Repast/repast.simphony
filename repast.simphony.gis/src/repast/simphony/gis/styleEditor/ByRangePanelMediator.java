@@ -1,25 +1,36 @@
 package repast.simphony.gis.styleEditor;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.TableModel;
+
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
-import org.geotools.feature.Feature;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.filter.AttributeExpression;
-import org.geotools.filter.FilterFactory;
-import org.geotools.filter.FilterFactoryFinder;
 import org.geotools.filter.function.ClassificationFunction;
-import org.geotools.filter.function.CustomClassifierFunction;
-import org.geotools.styling.*;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
-import repast.simphony.gis.GeometryUtil;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Fill;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.FilterFactory;
 
-import javax.swing.*;
-import javax.swing.table.TableModel;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import repast.simphony.gis.GeometryUtil;
 
 /**
  * Mediates between the different components in ByRangePanel.
@@ -38,7 +49,7 @@ public class ByRangePanelMediator {
 					"circle", "cross", "star", "square", "triangle"
 	});
 	private FeatureSource source;
-	private FilterFactory filterFactory = FilterFactoryFinder.createFilterFactory();
+	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private int classesCount;
 	private SampleStyleTableModel tableModel = new SampleStyleTableModel();
 	private FeatureTypeStyle fts;
@@ -54,11 +65,10 @@ public class ByRangePanelMediator {
 		//cTypeModel.addElement(new QuantileItemType());
 
 		try {
-			Feature feature = (Feature) source.getFeatures().iterator().next();
+			SimpleFeature feature = (SimpleFeature) source.getFeatures().iterator().next();
 			type = GeometryUtil.findGeometryType(feature);
-			DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
-							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-							.createFilterFactory());
+			DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 			dsv.visit(rule);
 			defaultRule = (Rule) dsv.getCopy();
 			defaultRule.setTitle("<Default>");
@@ -266,7 +276,7 @@ public class ByRangePanelMediator {
 
 		public ClassificationFunction createFunction(int numClasses, FeatureCollection collection, String attribute) {
 			List<Number> vals = new ArrayList<Number>();
-			for (Feature feature : (Iterable<Feature>) collection) {
+			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
 				Number num = (Number) feature.getAttribute(attribute);
 				if (num != null) {
 					vals.add(num);
@@ -317,7 +327,7 @@ public class ByRangePanelMediator {
 			double min = Double.POSITIVE_INFINITY;
 			double max = Double.NEGATIVE_INFINITY;
 
-			for (Feature feature : (Iterable<Feature>) collection) {
+			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
 				Number num = (Number) feature.getAttribute(attribute);
 				if (num != null) {
 					double val = num.doubleValue();

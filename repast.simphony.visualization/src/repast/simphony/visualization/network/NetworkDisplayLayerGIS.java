@@ -10,23 +10,25 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureCollections;
 import org.geotools.styling.Style;
+import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionListener;
-import repast.simphony.visualization.editor.gis.DisplayEditorGIS;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * **** IN PROGRESS NYI ****
+ * 
+ * TODO determine if needed.
  * 
  * Display Layer for networks in 2D GIS displays
  * 
@@ -36,7 +38,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class NetworkDisplayLayerGIS extends RepastMapLayer implements ProjectionListener {
 
 	private Geography geography;
-	private Map <RepastEdge<?>,Feature> featureMap;
+	private Map <RepastEdge<?>,SimpleFeature> featureMap;
 	Set<RepastEdge> edgesToAdd;
 	private Network<?> net;
 	private FeatureCollection fc;
@@ -59,7 +61,7 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 		this.net = net;
 		
 		edgesToAdd = new HashSet<RepastEdge>();
-		featureMap = new HashMap<RepastEdge<?>,Feature>();
+		featureMap = new HashMap<RepastEdge<?>,SimpleFeature>();
 	}
 	
 	public void update() {
@@ -86,19 +88,22 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 	protected void addAddedEdges(){
 		for (RepastEdge edge : edgesToAdd) {
 			
-//			System.out.println(" $ NetworkDisplayLayer -> adding edge: " + edge);
-			
 			List<Coordinate> coords = new ArrayList<Coordinate>();
 			coords.add(geography.getGeometry(edge.getSource()).getCoordinate());
 			coords.add(geography.getGeometry(edge.getTarget()).getCoordinate());
 
 			Class<?> agentClass = net.getEdgeCreator().getEdgeType();
 			
-			EdgeFeature feature = new EdgeFeature(agentClass, 
-					DisplayEditorGIS.createLineString(coords), geography.getCRS());
+			FeatureAgent feature = null;
+					
+//					= new FeatureAgent() 
+//					
+//					(agentClass, 
+//					DisplayEditorGIS.createLineString(coords), geography.getCRS());
+			
 			featureMap.put(edge, feature);
 
-			feature.setParent(fc);
+//			feature.setParent(fc);
 		  fc.add(feature);
 
 		}

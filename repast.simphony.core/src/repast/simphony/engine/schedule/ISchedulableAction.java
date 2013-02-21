@@ -43,6 +43,13 @@ public interface ISchedulableAction extends IAction {
   double getPriority();
   
   /**
+   * Gets the PriorityType of this action. 
+   * 
+   * @return the PriorityType of this action.
+   */
+  PriorityType getPriorityType();
+  
+  /**
    * Gets an index indicating where this IAction was added to a schedule w/r to all other
    * actions added to a schedule. 
    * 

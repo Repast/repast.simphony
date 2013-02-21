@@ -1,17 +1,19 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.SchemaException;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import simphony.util.messages.MessageCenter;
-
 import java.beans.IntrospectionException;
 import java.util.List;
+
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.SchemaException;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import simphony.util.messages.MessageCenter;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Factory class for creating feature agents that
@@ -27,7 +29,7 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
 
 	private Class<? extends Geometry> geometryType = Point.class;
 
-	private FeatureType featureType;
+	private SimpleFeatureType featureType;
 
 	private FeatureCollection collection;
   private List<FeatureAttributeAdapter> adapters;
@@ -45,7 +47,7 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
    *
    * @return the created feature type.
    */
-  public FeatureType getFeatureType() {
+  public SimpleFeatureType getFeatureType() {
     return featureType;
   }
 
@@ -77,9 +79,8 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
 		}
 	}
 
-	public FeatureAgent2 getFeature(T agent, Geography geography) {
-		FeatureAgent2<T> featureAgent = new FeatureAgent2<T>(featureType, agent, geography, adapters);
-		featureAgent.setParent(collection);
+	public FeatureAgent getFeature(T agent, Geography geography) {
+		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, geography, adapters);
 		collection.add(featureAgent);
 		return featureAgent;
 	}
