@@ -64,7 +64,7 @@ public class StockSheet extends VariableSheet {
   protected void updateVariables(EObject eObj) {
     super.updateVariables(eObj);
     Stock stock = ((Stock) eObj);
-   
+
     java.util.List<Rate> ins = SDModelUtils.getIncomingRates(stock);
     java.util.List<Rate> outs = SDModelUtils.getOutgoingRates(stock);
 
@@ -80,10 +80,7 @@ public class StockSheet extends VariableSheet {
     if (stock.getEquation().trim().length() == 0 && ins.size() == 1 && outs.size() == 1) {
       txtEquation.setText(ins.get(0).getName() + " - " + outs.get(0).getName());
     }
-    
-    if (cmbVarSub.getSelectionIndex() == VAR_INDEX) {
-      lstVar.setItems(varList.toArray(new String[0]));
-    }
-    
+
+    lstVar.setItems(varList.toArray(new String[0]));
   }
 }

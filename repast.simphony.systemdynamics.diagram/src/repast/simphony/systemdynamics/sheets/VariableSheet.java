@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
@@ -40,22 +43,18 @@ import repast.simphony.systemdynamics.util.SDModelUtils;
 
 public class VariableSheet extends Composite {
 
-  protected static final String VARIABLES = "Variables";
-  protected static final int VAR_INDEX = 0;
-  private static final String SUBSCRIPTS = "Subscripts";
-  private static final int SUB_INDEX = 1;
-
   private Text txtId;
   protected StyledText txtEquation;
   private Combo cmbUnits;
-  protected Combo cmbType, cmbFuncType, cmbVarSub;
-  protected List lstVar, lstFunc;
+  protected Combo cmbType, cmbFuncType;
+  protected List lstVar, lstFunc, lstSub;
   private Text txtComment;
   protected Map<String, Variable> varMap = new HashMap<String, Variable>();
   protected java.util.List<String> subList = new ArrayList<String>();
   protected java.util.List<String> varList = new ArrayList<String>();
   protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
   private EObject eObj;
+  private CTabFolder tabFolder;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -129,18 +128,27 @@ public class VariableSheet extends Composite {
     toolkit.adapt(composite);
     toolkit.paintBordersFor(composite);
 
-    cmbVarSub = new Combo(composite, SWT.READ_ONLY);
-    GridData cmbData = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-    cmbData.verticalIndent = 4;
-    cmbVarSub.setLayoutData(cmbData);
-    cmbVarSub.setItems(new String[] { VARIABLES, SUBSCRIPTS });
-    cmbVarSub.select(0);
+    tabFolder = new CTabFolder(composite, SWT.BORDER);
+    tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    toolkit.adapt(tabFolder);
+    toolkit.paintBordersFor(tabFolder);
+    tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
+        SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
-    lstVar = new List(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-    lstVar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    CTabItem tbVariables = new CTabItem(tabFolder, SWT.NONE);
+    tbVariables.setText("Variables");
+
+    lstVar = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+    tbVariables.setControl(lstVar);
     toolkit.adapt(lstVar, true, true);
 
-    sashForm_1.setWeights(new int[] { 4, 1 });
+    CTabItem tbSubscripts = new CTabItem(tabFolder, SWT.NONE);
+    tbSubscripts.setText("Subscripts");
+    lstSub = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+    toolkit.adapt(lstSub, true, true);
+    tbSubscripts.setControl(lstSub);
+    sashForm_1.setWeights(new int[] {5, 1});
+
     sashForm.setWeights(new int[] { 1, 4 });
 
     ExpandableComposite xpndblcmpstNewExpandablecomposite = toolkit.createExpandableComposite(this,
@@ -212,21 +220,15 @@ public class VariableSheet extends Composite {
   }
 
   private void subSelected() {
-    java.util.List<Variable> vars = new ArrayList<Variable>();
-    vars.add((Variable)eObj);
-    
-    java.util.List<Subscript> subscripts = new ArrayList<Subscript>();
-    subscripts.add(subMap.get(lstVar.getSelection()[0]));
-    
-    SubscriptApplier applier = new SubscriptApplier(subscripts, vars);
-    applier.run();
-  }
+    if (lstSub.getSelectionIndex() != -1) {
+      java.util.List<Variable> vars = new ArrayList<Variable>();
+      vars.add((Variable) eObj);
 
-  private void subVarSelected() {
-    if (cmbVarSub.getSelectionIndex() == VAR_INDEX) {
-      lstVar.setItems(varList.toArray(new String[0]));
-    } else {
-      lstVar.setItems(subList.toArray(new String[0]));
+      java.util.List<Subscript> subscripts = new ArrayList<Subscript>();
+      subscripts.add(subMap.get(lstSub.getSelection()[0]));
+
+      SubscriptApplier applier = new SubscriptApplier(subscripts, vars);
+      applier.run();
     }
   }
 
@@ -286,10 +288,14 @@ public class VariableSheet extends Composite {
     lstVar.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        if (cmbVarSub.getSelectionIndex() == VAR_INDEX)
-          varSelected();
-        else
-          subSelected();
+        varSelected();
+      }
+    });
+
+    lstSub.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        subSelected();
       }
     });
 
@@ -297,12 +303,6 @@ public class VariableSheet extends Composite {
       @Override
       public void widgetSelected(SelectionEvent e) {
         funcTypeSelected();
-      }
-    });
-
-    cmbVarSub.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        subVarSelected();
       }
     });
     /*
@@ -379,6 +379,8 @@ public class VariableSheet extends Composite {
     lstFunc.setEnabled(!((Variable) eObject).getType().equals(VariableType.LOOKUP));
     updateVariables(eObject);
     updateSubscripts(eObject);
+
+    tabFolder.setSelection(0);
   }
 
   protected void updateVariables(EObject eObj) {
@@ -399,10 +401,7 @@ public class VariableSheet extends Composite {
           varMap.put(v.getName(), v);
         }
       }
-
-      if (cmbVarSub.getSelectionIndex() == VAR_INDEX) {
-        lstVar.setItems(varList.toArray(new String[0]));
-      }
+      lstVar.setItems(varList.toArray(new String[0]));
     }
   }
 
@@ -414,11 +413,9 @@ public class VariableSheet extends Composite {
       subList.add(sub.getName());
       subMap.put(sub.getName(), sub);
     }
-    
+
     Collections.sort(subList);
-    if (cmbVarSub.getSelectionIndex() == SUB_INDEX) {
-      lstVar.setItems(subList.toArray(new String[0]));
-    }
+    lstSub.setItems(subList.toArray(new String[0]));
   }
 
   private class StringToVarType implements IConverter {
