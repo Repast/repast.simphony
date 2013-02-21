@@ -13,6 +13,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -99,6 +101,7 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
 
     txtClassName = new Text(grpCodeGenerationProperties, SWT.BORDER);
     txtClassName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    txtClassName.addModifyListener(new Validator());
 
     Label lblPackage = new Label(grpCodeGenerationProperties, SWT.NONE);
     lblPackage.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -106,6 +109,7 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
 
     txtPackage = new Text(grpCodeGenerationProperties, SWT.BORDER);
     txtPackage.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    txtPackage.addModifyListener(new Validator());
 
     setPageComplete(validatePage());
   }
@@ -198,5 +202,12 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
       }
     }
     return true;
+  }
+  
+  private class Validator implements ModifyListener {
+    @Override
+    public void modifyText(ModifyEvent e) {
+      setPageComplete(validatePage());
+    }
   }
 }

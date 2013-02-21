@@ -1,5 +1,6 @@
 package repast.simphony.systemdynamics.diagram.part;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
@@ -7,7 +8,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.CommandParameter;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -16,6 +23,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.SystemModel;
 
 /**
  * @generated
@@ -131,24 +141,10 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   public boolean performFinish() {
-    IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
-
-      protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
-        diagram = SystemdynamicsDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
-            monitor);
-        if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
-          try {
-            SystemdynamicsDiagramEditorUtil.openDiagram(diagram);
-          } catch (PartInitException e) {
-            ErrorDialog.openError(getContainer().getShell(),
-                Messages.SystemdynamicsCreationWizardOpenEditorError, null, e.getStatus());
-          }
-        }
-      }
-    };
+    IRunnableWithProgress op = new OnFinish();
     try {
       getContainer().run(false, true, op);
     } catch (InterruptedException e) {
@@ -165,5 +161,50 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
       return false;
     }
     return diagram != null;
+  }
+  
+  private class OnFinish extends WorkspaceModifyOperation {
+    
+    protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
+      diagram = SystemdynamicsDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
+          monitor);
+      initModel();
+      if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
+        try {
+          SystemdynamicsDiagramEditorUtil.openDiagram(diagram);
+        } catch (PartInitException e) {
+          ErrorDialog.openError(getContainer().getShell(),
+              Messages.SystemdynamicsCreationWizardOpenEditorError, null, e.getStatus());
+        }
+      }
+    }
+    
+    private void initModel() {
+      if (diagram != null) {
+        SystemModel model = null;
+        for (EObject obj : diagram.getContents()) {
+          if (obj.eClass().equals(SDModelPackage.Literals.SYSTEM_MODEL)) {
+            model = (SystemModel)obj;
+            break;
+          }
+        }
+        
+        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(model);
+        Command cmd = domain.createCommand(SetCommand.class, new CommandParameter(model,
+            SDModelPackage.Literals.SYSTEM_MODEL__CLASS_NAME, diagramModelFilePage.getClassName()));
+        domain.getCommandStack().execute(cmd);
+        
+        cmd = domain.createCommand(SetCommand.class, new CommandParameter(model,
+            SDModelPackage.Literals.SYSTEM_MODEL__PACKAGE, diagramModelFilePage.getPackage()));
+        domain.getCommandStack().execute(cmd);
+        
+        try {
+          diagram.save(SystemdynamicsDiagramEditorUtil.getSaveOptions());
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    
   }
 }
