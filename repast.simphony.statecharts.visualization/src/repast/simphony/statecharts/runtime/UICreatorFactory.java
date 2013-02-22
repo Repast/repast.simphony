@@ -3,11 +3,18 @@
  */
 package repast.simphony.statecharts.runtime;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import repast.simphony.statecharts.StateChart;
+import repast.simphony.statecharts.DefaultStateChart;
 import repast.simphony.ui.RSApplication;
+import repast.simphony.ui.RSGui;
 import repast.simphony.ui.probe.FieldPropertyDescriptor;
 import repast.simphony.ui.probe.PPUICreatorFactory;
 import repast.simphony.ui.probe.ProbedPropertyUICreator;
@@ -38,17 +45,19 @@ public class UICreatorFactory implements PPUICreatorFactory {
   @Override
   public ProbedPropertyUICreator createUICreator(Object obj, FieldPropertyDescriptor fpd)
       throws IllegalAccessException, IllegalArgumentException {
-    return new PPUICreator((StateChart<?>)fpd.getField().get(obj), fpd.getDisplayName());
+    return new PPUICreator(obj, (DefaultStateChart<?>)fpd.getField().get(obj), fpd.getDisplayName());
   }
   
   
-  private static class PPUICreator implements ProbedPropertyUICreator {
+  private static class PPUICreator implements ProbedPropertyUICreator, StatechartCloseListener {
     
-    private StateChart<?> statechart;
+    private DefaultStateChart<?> statechart;
     private String name;
+		private Object obj;
     
-    public PPUICreator(StateChart<?> statechart, String name) {
-      this.statechart = statechart;
+    public PPUICreator(Object obj, DefaultStateChart<?> statechart, String name) {
+      this.obj = obj;
+    	this.statechart = statechart;
       this.name = name;
     }
 
@@ -59,10 +68,40 @@ public class UICreatorFactory implements PPUICreatorFactory {
     public String getDisplayName() {
       return name;
     }
+    
+    JButton button;
 
     @Override
     public JComponent getComponent(PresentationModel<Object> model) {
-      return new JButton("Statechart");
+    	JPanel panel = new JPanel();
+    	panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    	button = new JButton("Display");
+    	button.setPreferredSize(new Dimension(65,20));
+    	button.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object source = e.getSource();
+					if (source instanceof JButton){
+						((JButton) source).setEnabled(false);
+					}
+					StateChartSVGDisplayController scsdc = new StateChartSVGDisplayController(obj,statechart);
+					scsdc.registerCloseListener(PPUICreator.this);
+					RSApplication rsApp = RSApplication.getRSApplicationInstance();
+					if (rsApp != null){
+						RSGui rsGui = rsApp.getGui();
+						if (rsGui != null) rsGui.addViewListener(scsdc);
+					}
+					scsdc.createAndShowDisplay();
+				}
+			});
+    	panel.add(button);
+      return panel;
     }
+
+		@Override
+		public void statechartClosed() {
+			button.setEnabled(true);
+		}
   }
 }

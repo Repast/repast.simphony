@@ -22,7 +22,7 @@ import saf.core.ui.event.DockableFrameEvent;
  */
 public class ProbeManager extends DockableFrameAdapter implements ProbeListener {
 
-  private static final String PROBED_OBJ_KEY = "repast.simphony.ui.probe.PROBED_OBJ_KEY";
+  public static final String PROBED_OBJ_KEY = "repast.simphony.ui.probe.PROBED_OBJ_KEY";
 
   private static int probeCount = 0;
 
@@ -161,8 +161,9 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
    */
   public void objectProbed(ProbeEvent evt) {
     List<?> objs = evt.getProbedObjects();
-    for (Object obj : objs) {
-      probeObject(obj);
+    int numElements = objs.size();
+    if (numElements > 0){
+    	probeObject(objs.get(numElements-1));
     }
   }
 

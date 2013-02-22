@@ -10,6 +10,7 @@
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
   </requires>
 
 	<runtime>

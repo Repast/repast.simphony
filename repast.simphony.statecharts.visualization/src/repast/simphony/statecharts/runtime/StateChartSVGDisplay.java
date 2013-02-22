@@ -1,19 +1,21 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.apache.batik.bridge.UpdateManager;
-import org.apache.batik.bridge.UpdateManagerAdapter;
-import org.apache.batik.bridge.UpdateManagerEvent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
@@ -22,7 +24,6 @@ import org.apache.batik.swing.gvt.GVTTreeRendererEvent;
 import org.apache.batik.swing.svg.SVGDocumentLoaderAdapter;
 import org.apache.batik.swing.svg.SVGDocumentLoaderEvent;
 import org.apache.batik.util.RunnableQueue;
-import org.apache.batik.util.RunnableQueue.RunnableQueueState;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -35,6 +36,8 @@ public class StateChartSVGDisplay {
 	CustomJSVGCanvas svgCanvas;
 	StateChartSVGDisplayController controller;
 	StateChartSVGModel model;
+	
+	AbstractAction frameCloseAction;
 
 	/**
 	 * Custom JSVGCanvas.
@@ -184,21 +187,46 @@ public class StateChartSVGDisplay {
 		this.controller = controller;
 		frame = new JFrame(frameTitle);
 		this.uri = uri;
+		frameCloseAction = new AbstractAction("Close Window") {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+	   // For when the GUI is closed via keyboard shortcut
+	      frame.setVisible(false);
+	      frame.dispose();
+	      StateChartSVGDisplay.this.controller.notifyCloseListeners();
+	    }
+	  };
+		
 	}
 
 	public void initialize() {
-		// Add components to the frame.
-		frame.getContentPane().add(createComponents());
+
+		JPanel panel = createComponents();
+		
+		KeyStroke closeKey = KeyStroke.getKeyStroke(
+	      KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey, "closeWindow");
+		panel.getActionMap().put("closeWindow", frameCloseAction);
+		
+		frame.getContentPane().add(panel);
 		// Display the frame.
 		frame.setSize(600, 400);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				// TODO: clean up statechart references
+				// For when the GUI is closed via mouse click
+				controller.notifyCloseListeners();
 			}
 		});
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
 
+	}
+	
+	protected void closeFrame(){
+		frame.setVisible(false);
+		frame.dispose();
+		// no need to notify close listeners since the this is triggered by 
+		// the originating dock frame closing
 	}
 
 	/**
@@ -206,8 +234,9 @@ public class StateChartSVGDisplay {
 	 * now ready for modification of the dom
 	 */
 	private boolean isReadyForModification = false;
+	private boolean needsInitialUpdate = true;
 
-	private Component createComponents() {
+	private JPanel createComponents() {
 		// Create a panel and add the button, status label and the SVG canvas.
 		final JPanel panel = new JPanel(new BorderLayout());
 		svgCanvas = new CustomJSVGCanvas();
@@ -223,30 +252,23 @@ public class StateChartSVGDisplay {
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
 				isReadyForModification = true;
+				if (needsInitialUpdate){
+					needsInitialUpdate = false;
+					controller.update();
+				}
 			}
 
 		});
-
-		// svgCanvas.addUpdateManagerListener(new UpdateManagerAdapter() {
-		//
-		//
-		//
-		// });
-		// svgCanvas.addSVGLoadEventDispatcherListener(new
-		// SVGLoadEventDispatcherAdapter() {
-		//
-		// @Override
-		// public void svgLoadEventDispatchStarted(SVGLoadEventDispatcherEvent e) {
-		// isReadyForModification = true;
-		//
-		// }
-		// });
 
 		svgCanvas.setURI(uri.toString());
 		panel.add("Center", svgCanvas);
 
 		return panel;
 	}
+
+	
+	private long lastRenderTS = 0;
+	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
 
 	/**
 	 * Renew the document by replacing the root node with the one of the new
@@ -260,9 +282,6 @@ public class StateChartSVGDisplay {
 	 *         http://stackoverflow.com/questions/10838971/make-a-jsvgcanvas-inside
 	 *         -jsvgscrollpane-match-the-svgdocument-size
 	 */
-	private long lastRenderTS = 0;
-	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
-
 	public void renewDocument() {
 		long ts = System.currentTimeMillis();
 		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
@@ -294,15 +313,9 @@ public class StateChartSVGDisplay {
 									// document
 									newRoot = d.importNode(newRoot, true);
 
-									// SVGDocument doc = svgCanvas.getSVGDocument();
-									// doc.g
 									d.replaceChild(newRoot, oldRoot);
 									svgCanvas.setSVGDocument((SVGDocument) d);
 
-									// svgCanvas.setSVGDocument(doc);
-									// svgCanvas.getParent().validate();
-									// svgCanvas.getParent().doLayout();
-									// svgCanvas.invalidate();
 								}
 							});
 							lastRenderTS = ts;

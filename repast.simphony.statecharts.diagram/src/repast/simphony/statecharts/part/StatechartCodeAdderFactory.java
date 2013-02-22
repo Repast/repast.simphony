@@ -47,9 +47,7 @@ public class StatechartCodeAdderFactory {
         createImport(packageName + "." + className);
         createImport("repast.simphony.ui.probe.ProbedProperty");
         StringBuilder buf = new StringBuilder("\t");
-        buf.append("@ProbedProperty(usageName=\"");
-        buf.append(statechartName);
-        buf.append("\", displayName=\"");
+        buf.append("@ProbedProperty(displayName=\"");
         buf.append(statechartName);
         buf.append("\")");
         buf.append(System.getProperty("line.separator"));
