@@ -3,6 +3,7 @@ package repast.simphony.statecharts.runtime;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,8 +13,12 @@ import org.w3c.dom.svg.SVGDocument;
 import repast.simphony.statecharts.AbstractState;
 import repast.simphony.statecharts.StateChart;
 import repast.simphony.statecharts.StateChartListener;
+import repast.simphony.ui.probe.ProbeManager;
+import saf.core.ui.dock.DockableFrame;
+import saf.core.ui.event.DockableFrameEvent;
+import saf.core.ui.event.DockableFrameListener;
 
-public class StateChartSVGDisplayController implements StateChartListener {
+public class StateChartSVGDisplayController implements StateChartListener, DockableFrameListener {
 
 	private StateChart stateChart;
 	StateChartSVGDisplay svgDisplay;
@@ -107,6 +112,81 @@ public class StateChartSVGDisplayController implements StateChartListener {
 		model = new StateChartSVGModel(svgDoc);
 		svgDisplay.setModel(model);
 		stateChart.registerStateChartListener(this);
+	}
+	
+	private List<StatechartCloseListener> scls = new ArrayList<StatechartCloseListener>();
+	
+	public void registerCloseListener(StatechartCloseListener scl){
+		scls.add(scl);
+	}
+
+	public void notifyCloseListeners() {
+		for (StatechartCloseListener scl : scls){
+			scl.statechartClosed();
+		}
+	}
+
+	@Override
+	public void dockableClosed(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableClosing(DockableFrameEvent evt) {
+		DockableFrame view = evt.getDockable();
+		Object obj = view.getClientProperty(ProbeManager.PROBED_OBJ_KEY);
+		if (obj == agent){
+			svgDisplay.closeFrame();
+		}
+	}
+
+	@Override
+	public void dockableFloated(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableFloating(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableMaximized(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableMaximizing(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableMinimized(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableMinimizing(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableRestored(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dockableRestoring(DockableFrameEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
