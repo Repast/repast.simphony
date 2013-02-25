@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.beans.BeanAdapter;
+import com.jgoodies.binding.beans.PropertyAccessors;
 import com.jgoodies.binding.value.ValueModel;
 
 /**
@@ -16,6 +17,10 @@ import com.jgoodies.binding.value.ValueModel;
  */
 @SuppressWarnings("serial")
 public class ProbeModel extends PresentationModel<Object> {
+  
+  static {
+    PropertyAccessors.setProvider(new ProbePropertyAccessProvider());
+  }
   
   // This adapter is necessary because under normal use, the bindings
   // framework expects the bean that it binds the gui components to
