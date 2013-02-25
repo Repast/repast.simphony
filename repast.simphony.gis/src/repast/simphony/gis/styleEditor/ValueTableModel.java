@@ -1,16 +1,18 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.feature.Feature;
 import org.geotools.filter.CompareFilter;
 import org.geotools.filter.Expression;
 import org.geotools.filter.LiteralExpression;
 import org.geotools.styling.Rule;
+import org.opengis.feature.simple.SimpleFeature;
+
 import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.display.LegendIconMaker;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
-import java.awt.*;
+
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +27,12 @@ public class ValueTableModel extends AbstractTableModel {
 	private static String[] COL_NAMES = {"Symbol", "Value", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-  private Feature sample;
+  private SimpleFeature sample;
 	private Rule defaultRule;
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
 
-	public ValueTableModel(Feature sample) {
+	public ValueTableModel(SimpleFeature sample) {
 		this.sample = sample;
 		RuleCreator creator = new RuleCreator();
 		defaultRule = creator.createDefaultRule(Color.RED, GeometryUtil.findGeometryType(sample));

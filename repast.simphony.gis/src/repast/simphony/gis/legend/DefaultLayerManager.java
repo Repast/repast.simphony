@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
 
 public class DefaultLayerManager extends DefaultTreeModel implements
 		LayerManager {
@@ -25,7 +25,7 @@ public class DefaultLayerManager extends DefaultTreeModel implements
 		nodeMap.put(new TreePath("Layers"), root);
 	}
 
-	public void addLayer(MapLayer layer, Object... path) {
+	public void addLayer(Layer layer, Object... path) {
 		addPath(path);
 		DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
 		TreePath tp = new TreePath(root.getUserObject());
@@ -66,8 +66,8 @@ public class DefaultLayerManager extends DefaultTreeModel implements
 		return layerList;
 	}
 
-	public Collection<MapLayer> getLayers(Object... path) {
-		List<MapLayer> layerList = new ArrayList<MapLayer>();
+	public Collection<Layer> getLayers(Object... path) {
+		List<Layer> layerList = new ArrayList<Layer>();
 		TreePath tp;
 		if (path.length == 0) {
 			tp = new TreePath(root.getUserObject());
@@ -81,14 +81,14 @@ public class DefaultLayerManager extends DefaultTreeModel implements
 		for (int i = 0; i < node.getChildCount(); i++) {
 			Object userObject = ((DefaultMutableTreeNode) node.getChildAt(i))
 					.getUserObject();
-			if (userObject instanceof MapLayer) {
-				layerList.add((MapLayer) userObject);
+			if (userObject instanceof Layer) {
+				layerList.add((Layer) userObject);
 			}
 		}
 		return layerList;
 	}
 
-	public void removeLayer(MapLayer layer, Object... path) {
+	public void removeLayer(Layer layer, Object... path) {
 		TreePath tp = createPath(path);
 		tp = tp.pathByAddingChild(layer);
 		DefaultMutableTreeNode node = nodeMap.get(tp);

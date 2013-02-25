@@ -14,7 +14,7 @@ import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryFinder;
 import org.geotools.styling.Symbolizer;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 
 import repast.simphony.gis.styleEditor.PreviewLabel;
 
@@ -36,7 +36,7 @@ public class StylePreviewer {
 
   public void update(Style style) {
     this.style = style;
-    DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
+    DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
 						.createFilterFactory());
 		dsv.visit(style.getFeatureTypeStyles()[0].getRules()[0]);
@@ -95,7 +95,7 @@ public class StylePreviewer {
   
   private void setStrokeProperties(Stroke stroke){
 		if (stroke != null){
-			label.setOutlineColor(SLD.strokeColor(stroke));
+			label.setOutlineColor(SLD.color(stroke));
 			int outlineThickness = (int) SLD.width(stroke);
 			label.setOutlineThickness(outlineThickness);
 			double outlineOpacity = SLD.opacity(stroke);

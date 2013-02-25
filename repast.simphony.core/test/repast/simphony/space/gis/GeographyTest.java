@@ -483,7 +483,8 @@ public class GeographyTest extends TestCase {
     * Test method for 'repast.simphony.gis.Geography.getCRS()'
     */
   public void testGetCRS() {
-    assertEquals("WGS84", geography.getCRS().getName().toString());
+  	// Note WCS 1.0 standard changed "WGS84" to "WGS84(DD)"
+    assertEquals("WGS84(DD)", geography.getCRS().getName().toString());
   }
 
   /*

@@ -63,6 +63,12 @@
   <extension-point extension-multiplicity="any" id="composite.action" parent-plugin-id="repast.simphony.core" parent-point-id="composite.action">
     <parameter-def id="label" multiplicity="one" type="string"/>
   </extension-point>
+  
+  <!-- Extension point for adding buttons etc. to the probe panel for a FieldPropertyDescriptor -->
+  <extension-point extension-multiplicity="any" id="field.probe">
+    <parameter-def id="probedObjectClass" multiplicity="one" type="string"/>
+    <parameter-def id="creatorClass" multiplicity="one" type="string"/>
+  </extension-point>
 
   <!-- Extension point for child / component actions. Parameters:
     editorCreator - the name of a class that implements the repast.ui.plugin.ActionEditorCreator interface.
@@ -371,5 +377,4 @@
     <parameter id="creatorClass" value="repast.simphony.plugin.MiscCompositeActionCreator"/>
     <parameter id="label" value="Miscellaneous Actions"/>
   </extension>
-
 </plugin>

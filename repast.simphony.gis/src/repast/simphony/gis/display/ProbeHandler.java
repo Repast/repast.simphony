@@ -1,9 +1,10 @@
 package repast.simphony.gis.display;
 
+import org.opengis.feature.simple.SimpleFeature;
+
 import edu.umd.cs.piccolo.event.PInputEvent;
-import org.geotools.feature.Feature;
 
 public interface ProbeHandler {
 
-	public void handleFeatureProbe(Feature feature, PInputEvent ev);
+	public void handleFeatureProbe(SimpleFeature feature, PInputEvent ev);
 }

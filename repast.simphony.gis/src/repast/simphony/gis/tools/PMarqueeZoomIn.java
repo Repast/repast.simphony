@@ -1,20 +1,21 @@
 package repast.simphony.gis.tools;
 
+import java.awt.event.InputEvent;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.MapContent;
+
+import repast.simphony.gis.display.AbstractMarqueeZoomer;
+import repast.simphony.gis.display.PGISCanvas;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.util.PBounds;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
-import repast.simphony.gis.display.AbstractMarqueeZoomer;
-import repast.simphony.gis.display.PGISCanvas;
-
-import java.awt.event.InputEvent;
 
 public class PMarqueeZoomIn extends AbstractMarqueeZoomer {
 
-	MapContext context;
+	MapContent context;
 
-	public PMarqueeZoomIn(MapContext context) {
+	public PMarqueeZoomIn(MapContent context) {
 		setEventFilter(new PInputEventFilter(InputEvent.BUTTON1_MASK));
 		this.context = context;
 	}

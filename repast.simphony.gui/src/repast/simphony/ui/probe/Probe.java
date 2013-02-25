@@ -21,29 +21,44 @@ public class Probe {
   private static long UPDATE_INTERVAL = 17;
 
   private JPanel panel;
-  private List<PresentationModel> models;
+  // TODO change to list of ProbeModels when parameter
+  // code is updated
+  private List<? extends PresentationModel<?>> models;
   private boolean buffered = false;
   private Updater updater;
 
   private long lastUpdateTS = 0;
+  private String title;
 
   private class Updater implements Runnable {
     public void run() {
-      for (PresentationModel model : models) {
-        ((ProbeableBean) model.getBean()).update();
+      for (PresentationModel<?> model : models) {
+        // TODO remove check when parameter code is updated
+        if (model instanceof ProbeModel) ((ProbeModel)model).update();
+        else ((OldProbeModel)model.getBean()).update();
       }
     }
   }
 
-  public Probe(List<PresentationModel> models, JPanel panel) {
-    this(models, panel, false);
+  public Probe(List<? extends PresentationModel<?>> models, JPanel panel, String title) {
+    this(models, panel, title, false);
   }
 
-  public Probe(List<PresentationModel> models, JPanel panel, boolean buffered) {
+  public Probe(List<? extends PresentationModel<?>> models, JPanel panel, String title, boolean buffered) {
     this.panel = panel;
     this.models = models;
     this.buffered = buffered;
+    this.title = title;
     updater = new Updater();
+  }
+  
+  /**
+   * Gets the title of this Probe.
+   * 
+   * @return the title of this Probe.
+   */
+  public String getTitle() {
+    return title;
   }
 
   /**
@@ -75,7 +90,7 @@ public class Probe {
    * this is a buffered probe.
    */
   public void flush() {
-    for (PresentationModel model : models) {
+    for (PresentationModel<?> model : models) {
       model.triggerFlush();
     }
   }
@@ -85,7 +100,7 @@ public class Probe {
    * this is a buffered probe.
    */
   public void commit() {
-    for (PresentationModel model : models) {
+    for (PresentationModel<?> model : models) {
       model.triggerCommit();
     }
   }
@@ -106,8 +121,8 @@ public class Probe {
    * @param listener
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
-    for (PresentationModel model : models) {
-      ((ProbeableBean) model.getBean()).addPropertyChangeListener(listener);
+    for (PresentationModel<?> model : models) {
+      ((ProbeModel)model).addPropertyChangeListener(listener);
     }
   }
 
@@ -117,8 +132,8 @@ public class Probe {
    * @param listener
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
-    for (PresentationModel model : models) {
-      ((ProbeableBean) model.getBean()).removePropertyChangeListener(listener);
+    for (PresentationModel<?> model : models) {
+      ((ProbeModel)model).removePropertyChangeListener(listener);
     }
   }
 }
