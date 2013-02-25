@@ -19,6 +19,7 @@ public class SampleObject {
   
   private int intVal = 3;
   private String code = "code";
+  private int foo = 10;
   
   @ProbedProperty(usageName="intVal", displayName="Integer Value", 
       converter="repast.simphony.parameter.StringConverterFactory$IntConverter")
@@ -40,4 +41,20 @@ public class SampleObject {
   public void setCode(String val) {
     this.code = val;
   }
+  
+  public int val() {
+    return intVal;
+  }
+  
+  public int foo() {
+    return foo;
+  }
+  
+  public void bar(int i) {
+    foo = i;
+  }
+  
+  
+  
+  
 }
