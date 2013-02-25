@@ -169,7 +169,7 @@ public class ProbeIntrospector {
         MethodPropertyDescriptor pd = pdMap.get(usageName);
         if (pd == null) {
 //        	method.
-          pd = new MethodPropertyDescriptor(usageName, info.getProbedClass());
+          pd = new MethodPropertyDescriptor(usageName,null,null);
           pd.setDisplayName(usageName);
           info.pds.add(pd);
           pdMap.put(usageName, pd);
