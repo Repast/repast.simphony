@@ -70,7 +70,7 @@ public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
   }
 
   public JComponent getComponent(PresentationModel<Object> model) {
-    AbstractValueModel valueModel = model.getModel(name);
+    AbstractValueModel valueModel = model.getModel(name,getterName,setterName);
     if (type == Type.READ) {
       return this.wrapWithSparkLineButton(model,
           BasicComponentFactory.createLabel(valueModel, Utils.getNumberFormatInstance()));
