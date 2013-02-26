@@ -25,6 +25,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.mapmode.IMapMode;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
+import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
@@ -100,7 +101,7 @@ public class History2EditPart extends ShapeNodeEditPart {
    * @generated NOT
    */
   protected IFigure createNodeShape() {
-    return primaryShape = new DeepHistoryFigure(getMapMode());
+    return primaryShape = getPrimaryShape();
   }
 
   /**
@@ -141,6 +142,10 @@ public class History2EditPart extends ShapeNodeEditPart {
   @Override
   protected void handleNotificationEvent(Notification notification) {
     // We have to update the primary shape when the entry kind changes
+    if (NotationPackage.eINSTANCE.getView_Element().equals(notification.getFeature())) {
+      System.out.println("element changed");
+      
+    }
     if (StatechartPackage.eINSTANCE.getHistory_Shallow().equals(notification.getFeature())) {
       NodeFigure figure = (NodeFigure) getContentPane().getParent();
       figure.remove(primaryShape);
