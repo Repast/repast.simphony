@@ -530,5 +530,18 @@
           xsi:type="gmfmap:DiagramElementTarget"
           element="//@nodes.3/@ownedChild"/>
     </audits>
+    <audits
+        name="Composite Children Visibility Check"
+        description="Checks that children of a composite state are visible"
+        id="comp.child.viz.check"
+        severity="WARNING"
+        message="Composite State contains hidden children. These will not be seen in the runtime.">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@nodes.1/@ownedChild"/>
+    </audits>
   </audits>
 </gmfmap:Mapping>

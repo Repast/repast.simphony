@@ -419,7 +419,7 @@ public class CompositeState2EditPart extends ShapeNodeEditPart {
 
       fFigureCompositeStateNameFigure = new WrappingLabel();
 
-      fFigureCompositeStateNameFigure.setText("<?>");
+      fFigureCompositeStateNameFigure.setText("<É>");
 
       this.add(fFigureCompositeStateNameFigure);
 

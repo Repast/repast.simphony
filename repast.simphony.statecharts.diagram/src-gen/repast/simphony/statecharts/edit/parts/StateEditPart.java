@@ -398,7 +398,7 @@ public class StateEditPart extends ShapeNodeEditPart {
 
       fFigureStateNameFigure = new WrappingLabel();
 
-      fFigureStateNameFigure.setText("<?>");
+      fFigureStateNameFigure.setText("<É>");
 
       this.add(fFigureStateNameFigure);
 

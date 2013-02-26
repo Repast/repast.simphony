@@ -15,7 +15,7 @@
         name="Statechart Audits"
         description="Validation audits for statechart elements"
         path="//@audits/@categories.0"
-        audits="//@audits/@rules.0 //@audits/@rules.1"/>
+        audits="//@audits/@rules.0 //@audits/@rules.1 //@audits/@rules.2"/>
     <rules
         name="Agent type check"
         description="Check for null agent type string"
@@ -42,11 +42,27 @@
           contextSelector="//@audits/@clientContexts.1"
           element="//@diagram/@topLevelNodes.3 //@diagram/@childNodes.3"/>
     </rules>
+    <rules
+        name="Composite Children Visibility Check"
+        description="Checks that children of a composite state are visible"
+        id="comp.child.viz.check"
+        rule="//@expressionProviders/@providers.1/@expressions.25"
+        message="Composite State contains hidden children. These will not be seen in the runtime."
+        severity="WARNING"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.2"
+          element="//@diagram/@topLevelNodes.1 //@diagram/@childNodes.1"/>
+    </rules>
     <clientContexts
         ruleTargets="//@audits/@rules.0/@target"/>
     <clientContexts
         id="Ctx_2006_3006"
         ruleTargets="//@audits/@rules.1/@target"/>
+    <clientContexts
+        id="Ctx_2004_3002"
+        ruleTargets="//@audits/@rules.2/@target"/>
   </audits>
   <diagram
       visualID="1000"
@@ -1557,6 +1573,9 @@
       <expressions
           xsi:type="gmfgen:GenConstraint"
           body="  "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
     </providers>
     <providers
         xsi:type="gmfgen:GenLiteralExpressionProvider">

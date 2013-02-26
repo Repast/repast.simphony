@@ -761,8 +761,7 @@
       <super type="org.eclipse.core.resources.problemmarker"/>
       <super type="org.eclipse.gmf.runtime.common.ui.services.marker"/>
       <persistent value="true"/>
-   </extension>
-<extension id="validationDecoratorProvider" name="ValidationDecorations" point="org.eclipse.gmf.runtime.diagram.ui.decoratorProviders">
+   </extension><extension id="validationDecoratorProvider" name="ValidationDecorations" point="org.eclipse.gmf.runtime.diagram.ui.decoratorProviders">
       <?gmfgen generated="true"?>
       <decoratorProvider class="repast.simphony.statecharts.providers.StatechartValidationDecoratorProvider">
          <Priority name="Medium"/>
@@ -800,6 +799,16 @@
             <message><![CDATA[Choice must have a single default branch]]></message>
             <target class="notation.Node"/>
          </constraint>
+                  <constraint id="comp.child.viz.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter3"
+            name="Composite Children Visibility Check"
+            mode="Batch"
+            severity="WARNING" statusCode="200">
+            
+            <description><![CDATA[Checks that children of a composite state are visible]]></description>
+            <message><![CDATA[Composite State contains hidden children. These will not be seen in the runtime.]]></message>
+            <target class="notation.Node"/>
+         </constraint>
                   </constraints>
       </constraintProvider>
    </extension>
@@ -820,12 +829,20 @@
                   <constraint ref="repast.simphony.statecharts.diagram.choice.branch.check"/>
                </binding>
 
+      <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_2004_3002">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_2004_3002"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramCtx_2004_3002">
+                  <constraint ref="repast.simphony.statecharts.diagram.comp.child.viz.check"/>
+               </binding>
+
    </extension>
 
 <extension point="org.eclipse.emf.validation.ui.UIRegisteredClientContext">
       <?gmfgen generated="true"?>
       <clientContext id="repast.simphony.statecharts.diagramDefaultCtx"/>
       <clientContext id="repast.simphony.statecharts.diagramCtx_2006_3006"/>
+      <clientContext id="repast.simphony.statecharts.diagramCtx_2004_3002"/>
    </extension>
 <extension
       id="repast_simphony_statechart_nature"

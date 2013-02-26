@@ -315,8 +315,8 @@ public class StatechartCreationWizard extends Wizard implements INewWizard {
       if (agentIsOK) {
         try {
           StatechartCodeAdder adder = StatechartCodeAdderFactory.createCodeAdder(agent, monitor);
-          adder.run(modelPropsPage.getStatechartName(), modelPropsPage.getPackage(), modelPropsPage.getClassName(),
-              modelPropsPage.getAgentClassName());
+          adder.run(modelPropsPage.getStatechartName(), modelPropsPage.getPackage(),
+              modelPropsPage.getClassName(), modelPropsPage.getAgentClassName());
         } catch (Throwable ex) {
           // ignore any code creation errors as re-throwing the error causes the rest of the 
           // chart creation to abort.

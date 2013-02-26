@@ -2,6 +2,8 @@ package repast.simphony.statecharts.providers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -13,13 +15,24 @@ import org.eclipse.emf.validation.model.IClientSelector;
 import org.eclipse.emf.validation.service.IBatchValidator;
 import org.eclipse.emf.validation.service.ITraversalStrategy;
 import org.eclipse.gmf.runtime.emf.core.util.EMFCoreUtil;
+import org.eclipse.gmf.runtime.notation.Bounds;
+import org.eclipse.gmf.runtime.notation.LayoutConstraint;
 import org.eclipse.gmf.runtime.notation.Node;
+import org.eclipse.gmf.runtime.notation.Shape;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.jdt.core.JavaConventions;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.swt.graphics.Point;
 
+import repast.simphony.statecharts.edit.parts.CompositeState2EditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateCompositeStateCompartment2EditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateCompositeStateCompartmentEditPart;
+import repast.simphony.statecharts.edit.parts.CompositeStateEditPart;
+import repast.simphony.statecharts.edit.parts.FinalState2EditPart;
+import repast.simphony.statecharts.edit.parts.History2EditPart;
+import repast.simphony.statecharts.edit.parts.HistoryEditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState2EditPart;
+import repast.simphony.statecharts.edit.parts.PseudoState3EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
+import repast.simphony.statecharts.edit.parts.State2EditPart;
 import repast.simphony.statecharts.edit.parts.StateMachineEditPart;
 import repast.simphony.statecharts.generator.StateMachineValidator;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
@@ -124,6 +137,26 @@ public class StatechartValidationProvider {
   /**
    * @generated
    */
+  public static class Ctx_2004_3002 implements IClientSelector {
+
+    /**
+     * @generated
+     */
+    public boolean selects(Object object) {
+      if (isInDefaultEditorContext(object) && object instanceof View) {
+        final int id = StatechartVisualIDRegistry.getVisualID((View) object);
+        boolean result = false;
+        result = result || id == CompositeStateEditPart.VISUAL_ID;
+        result = result || id == CompositeState2EditPart.VISUAL_ID;
+        return result;
+      }
+      return false;
+    }
+  }
+
+  /**
+   * @generated
+   */
   public static ITraversalStrategy getNotationTraversalStrategy(IBatchValidator validator) {
     return new CtxSwitchStrategy(validator);
   }
@@ -169,7 +202,8 @@ public class StatechartValidationProvider {
     CtxSwitchStrategy(IBatchValidator validator) {
       this.defaultStrategy = validator.getDefaultTraversalStrategy();
       this.contextSwitchingIdentifiers = new int[] { PseudoState2EditPart.VISUAL_ID,
-          PseudoState4EditPart.VISUAL_ID };
+          PseudoState4EditPart.VISUAL_ID, CompositeStateEditPart.VISUAL_ID,
+          CompositeState2EditPart.VISUAL_ID };
       Arrays.sort(this.contextSwitchingIdentifiers);
     }
 
@@ -294,6 +328,78 @@ public class StatechartValidationProvider {
           return ctx.createFailureStatus(node);
       }
 
+      return ctx.createSuccessStatus();
+    }
+  }
+
+  /**
+   * @generated
+   */
+  public static class Adapter3 extends AbstractModelConstraint {
+
+    private Map<String, Point> defaultSizes = new HashMap<String, Point>();
+
+    public Adapter3() {
+      defaultSizes.put(String.valueOf(State2EditPart.VISUAL_ID), new Point(40, 40));
+      defaultSizes.put(String.valueOf(CompositeState2EditPart.VISUAL_ID), new Point(200, 200));
+      defaultSizes.put(String.valueOf(CompositeStateEditPart.VISUAL_ID), new Point(200, 200));
+      defaultSizes.put(String.valueOf(FinalState2EditPart.VISUAL_ID), new Point(15, 15));
+      defaultSizes.put(String.valueOf(HistoryEditPart.VISUAL_ID), new Point(15, 15));
+      defaultSizes.put(String.valueOf(History2EditPart.VISUAL_ID), new Point(15, 15));
+      defaultSizes.put(String.valueOf(PseudoState3EditPart.VISUAL_ID), new Point(15, 15));
+      defaultSizes.put(String.valueOf(PseudoState4EditPart.VISUAL_ID), new Point(19, 19));
+    }
+    
+    private int getWidth(int width, String type) {
+      if (width == -1) {
+        return defaultSizes.get(type).x;
+      }
+      return width;
+    }
+    
+    private int getHeight(int height, String type) {
+      if (height == -1) {
+        return defaultSizes.get(type).y;
+      }
+      return height;
+    }
+
+    /**
+     * @generated NOT
+     */
+    public IStatus validate(IValidationContext ctx) {
+      Node context = (Node) ctx.getTarget();
+      Shape shape = (Shape) context;
+      Bounds bounds = (Bounds) shape.getLayoutConstraint();
+      int fHeight = shape.getFontHeight();
+      int width = getWidth(bounds.getWidth(), shape.getType()) - 6;
+      int height = getHeight(bounds.getHeight(), shape.getType()) - (fHeight + 16);
+     
+      for (Object obj : context.getChildren()) {
+        Node child = (Node) obj;
+        String type = child.getType();
+        if (type.equals(String.valueOf(CompositeStateCompositeStateCompartmentEditPart.VISUAL_ID))
+            || type.equals(String
+                .valueOf(CompositeStateCompositeStateCompartment2EditPart.VISUAL_ID))) {
+
+          for (Object gc : child.getChildren()) {
+            LayoutConstraint lc = ((Node) gc).getLayoutConstraint();
+            if (lc != null) {
+              Bounds cBounds = (Bounds)lc;
+              int x = cBounds.getX();
+              int y = cBounds.getY();
+              String gcType = ((Node)gc).getType();
+              if (x < 0 || y < 0 || x + getWidth(cBounds.getWidth(), gcType) > width ||
+                  y + getHeight(cBounds.getHeight(), gcType) > height) {
+                //System.out.println(cBounds);
+                //System.out.println("failure: " +  (x + getWidth(cBounds.getWidth(), gcType)) + ", " +
+                //    (y + getHeight(cBounds.getHeight(), gcType)) + "; " + width + ", " + height);
+                return ctx.createFailureStatus(context);
+              }
+            }
+          }
+        }
+      }
       return ctx.createSuccessStatus();
     }
   }
