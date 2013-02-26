@@ -306,7 +306,7 @@ public class SVGGenerator {
 					baseCompositeStateCompartmentEditPartChildren);
 			}
 			catch (IllegalStateException e){
-				// TODO: fast forward to last element
+				// fast forward to last element
 				while(nextElement.getNextSibling() != null){
 					nextElement = (Element) nextElement.getNextSibling();
 				}
@@ -406,8 +406,8 @@ public class SVGGenerator {
 					baseCompositeStateCompartment2EditPartChildren);
 			}
 			catch (IllegalStateException e){
-				//TODO: fast forward to last element
-				while(nextElement.getNextSibling() != null){
+				// fast forward to last element
+				while(!nextElement.getNodeName().equals("line") && nextElement.getNextSibling() != null){
 					nextElement = (Element) nextElement.getNextSibling();
 				}
 			}
