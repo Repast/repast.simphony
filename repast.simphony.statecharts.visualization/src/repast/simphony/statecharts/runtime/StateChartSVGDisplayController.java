@@ -18,7 +18,7 @@ import saf.core.ui.dock.DockableFrame;
 import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
 
-public class StateChartSVGDisplayController implements StateChartListener, DockableFrameListener {
+public class StateChartSVGDisplayController implements StateChartListener {
 
 	private StateChart stateChart;
 	StateChartSVGDisplay svgDisplay;
@@ -126,66 +126,15 @@ public class StateChartSVGDisplayController implements StateChartListener, Docka
 		}
 	}
 
-	@Override
-	public void dockableClosed(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void dockableClosing(DockableFrameEvent evt) {
-		DockableFrame view = evt.getDockable();
-		Object obj = view.getClientProperty(ProbeManager.PROBED_OBJ_KEY);
-		if (obj == agent){
-			svgDisplay.closeFrame();
-		}
-	}
-
-	@Override
-	public void dockableFloated(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableFloating(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableMaximized(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableMaximizing(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableMinimized(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableMinimizing(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableRestored(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void dockableRestoring(DockableFrameEvent arg0) {
-		// TODO Auto-generated method stub
+	public void closeDisplayWithoutNotification(){
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				svgDisplay.closeFrame();
+			}
+		});
 		
 	}
 
