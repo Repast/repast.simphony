@@ -142,10 +142,6 @@ public class History2EditPart extends ShapeNodeEditPart {
   @Override
   protected void handleNotificationEvent(Notification notification) {
     // We have to update the primary shape when the entry kind changes
-    if (NotationPackage.eINSTANCE.getView_Element().equals(notification.getFeature())) {
-      System.out.println("element changed");
-      
-    }
     if (StatechartPackage.eINSTANCE.getHistory_Shallow().equals(notification.getFeature())) {
       NodeFigure figure = (NodeFigure) getContentPane().getParent();
       figure.remove(primaryShape);
