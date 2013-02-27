@@ -20,7 +20,6 @@ import repast.simphony.ui.probe.PPUICreatorFactory;
 import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.probe.ProbedPropertyUICreator;
 import saf.core.ui.dock.DockableFrame;
-import saf.core.ui.event.DockableFrameAdapter;
 import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
 

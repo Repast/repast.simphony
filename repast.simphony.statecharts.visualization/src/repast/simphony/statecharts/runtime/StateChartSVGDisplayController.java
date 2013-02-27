@@ -13,10 +13,6 @@ import org.w3c.dom.svg.SVGDocument;
 import repast.simphony.statecharts.AbstractState;
 import repast.simphony.statecharts.StateChart;
 import repast.simphony.statecharts.StateChartListener;
-import repast.simphony.ui.probe.ProbeManager;
-import saf.core.ui.dock.DockableFrame;
-import saf.core.ui.event.DockableFrameEvent;
-import saf.core.ui.event.DockableFrameListener;
 
 public class StateChartSVGDisplayController implements StateChartListener {
 
