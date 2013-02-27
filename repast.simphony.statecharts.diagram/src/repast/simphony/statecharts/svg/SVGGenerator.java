@@ -301,8 +301,16 @@ public class SVGGenerator {
 					.getChildren();
 			// CompositeStateCompositeStateCompartmentEditPart
 			// process in a depth first manner the EditParts contained within
+			try {
 			nextElement = processSubElements(nextElement,
 					baseCompositeStateCompartmentEditPartChildren);
+			}
+			catch (IllegalStateException e){
+				// fast forward to last element
+				while(nextElement.getNextSibling() != null){
+					nextElement = (Element) nextElement.getNextSibling();
+				}
+			}
 			if (!nextElement.getNodeName().equals("line")) {
 				throw new IllegalStateException(
 						"The final svg element of a composite state should be 'line'.");
@@ -393,8 +401,16 @@ public class SVGGenerator {
 		if (compartment2EditPart != null) {
 			List baseCompositeStateCompartment2EditPartChildren = compartment2EditPart
 					.getChildren();
+			try {
 			nextElement = processSubElements(nextElement,
 					baseCompositeStateCompartment2EditPartChildren);
+			}
+			catch (IllegalStateException e){
+				// fast forward to last element
+				while(!nextElement.getNodeName().equals("line") && nextElement.getNextSibling() != null){
+					nextElement = (Element) nextElement.getNextSibling();
+				}
+			}
 			if (!nextElement.getNodeName().equals("line")) {
 				throw new IllegalStateException(
 						"The final svg element of a composite state should be 'line'.");

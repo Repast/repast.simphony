@@ -17,7 +17,11 @@ import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.RSGui;
 import repast.simphony.ui.probe.FieldPropertyDescriptor;
 import repast.simphony.ui.probe.PPUICreatorFactory;
+import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.probe.ProbedPropertyUICreator;
+import saf.core.ui.dock.DockableFrame;
+import saf.core.ui.event.DockableFrameEvent;
+import saf.core.ui.event.DockableFrameListener;
 
 import com.jgoodies.binding.PresentationModel;
 
@@ -49,11 +53,12 @@ public class UICreatorFactory implements PPUICreatorFactory {
   }
   
   
-  private static class PPUICreator implements ProbedPropertyUICreator, StatechartCloseListener {
+  private static class PPUICreator implements ProbedPropertyUICreator, StatechartCloseListener, DockableFrameListener {
     
     private DefaultStateChart<?> statechart;
     private String name;
 		private Object obj;
+		private StateChartSVGDisplayController scsdc;
     
     public PPUICreator(Object obj, DefaultStateChart<?> statechart, String name) {
       this.obj = obj;
@@ -85,12 +90,12 @@ public class UICreatorFactory implements PPUICreatorFactory {
 					if (source instanceof JButton){
 						((JButton) source).setEnabled(false);
 					}
-					StateChartSVGDisplayController scsdc = new StateChartSVGDisplayController(obj,statechart);
+					scsdc = new StateChartSVGDisplayController(obj,statechart);
 					scsdc.registerCloseListener(PPUICreator.this);
 					RSApplication rsApp = RSApplication.getRSApplicationInstance();
 					if (rsApp != null){
 						RSGui rsGui = rsApp.getGui();
-						if (rsGui != null) rsGui.addViewListener(scsdc);
+						if (rsGui != null) rsGui.addViewListener(PPUICreator.this);
 					}
 					scsdc.createAndShowDisplay();
 				}
@@ -102,6 +107,71 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		@Override
 		public void statechartClosed() {
 			button.setEnabled(true);
+		}
+
+		@Override
+		public void dockableClosed(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableClosing(DockableFrameEvent evt) {
+			DockableFrame view = evt.getDockable();
+			Object closingObject = view.getClientProperty(ProbeManager.PROBED_OBJ_KEY);
+			if (closingObject == obj){
+				if (scsdc != null)
+				scsdc.closeDisplayWithoutNotification();
+			}
+			
+		}
+
+		@Override
+		public void dockableFloated(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableFloating(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableMaximized(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableMaximizing(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableMinimized(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableMinimizing(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableRestored(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void dockableRestoring(DockableFrameEvent arg0) {
+			// TODO Auto-generated method stub
+			
 		}
   }
 }
