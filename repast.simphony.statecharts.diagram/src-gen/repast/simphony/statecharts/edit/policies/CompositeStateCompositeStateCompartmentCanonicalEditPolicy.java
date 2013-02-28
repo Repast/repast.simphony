@@ -142,7 +142,8 @@ public class CompositeStateCompositeStateCompartmentCanonicalEditPolicy extends 
         EObject semanticElement = childView.getElement();
         if (next.getModelElement().equals(semanticElement)) {
           // adds a perfect match if both are history regardless of the part that represents them.
-          if (hint.equals(childView.getType()) || next.getModelElement().eClass().equals(StatechartPackage.Literals.HISTORY)) {
+          if (hint.equals(childView.getType())
+              || next.getModelElement().eClass().equals(StatechartPackage.Literals.HISTORY)) {
             perfectMatch.add(childView);
             // actually, can stop iteration over view children here, but
             // may want to use not the first view but last one as a 'real' match (the way original CEP does
@@ -204,7 +205,6 @@ public class CompositeStateCompositeStateCompartmentCanonicalEditPolicy extends 
       }
     }
 
-    
     boolean changed = deleteViews(orphaned.iterator());
     //
     CreateViewRequest request = getCreateViewRequest(viewDescriptors);

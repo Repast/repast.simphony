@@ -796,17 +796,77 @@
             severity="ERROR" statusCode="200">
             
             <description><![CDATA[Checks that a choice has a single default branch ]]></description>
-            <message><![CDATA[Choice must have a single default branch]]></message>
+            <message><![CDATA[{0}]]></message>
             <target class="notation.Node"/>
          </constraint>
-                  <constraint id="comp.child.viz.check"
+                  <constraint id="comp.check.warn"
             lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter3"
-            name="Composite Children Visibility Check"
+            name="Composite State Warning Check"
             mode="Batch"
             severity="WARNING" statusCode="200">
             
-            <description><![CDATA[Checks that children of a composite state are visible]]></description>
-            <message><![CDATA[Composite State contains hidden children. These will not be seen in the runtime.]]></message>
+            <description><![CDATA[Validates a Composite State for Warnings]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="notation.Node"/>
+         </constraint>
+                  <constraint id="transition.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter4"
+            name="Transition Check"
+            mode="Batch"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Validates a Transition]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="notation.Edge"/>
+         </constraint>
+                  <constraint id="comp.check.error"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter5"
+            name="Composite State Error Check"
+            mode="Batch"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Validates a Composite State for Errors]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="notation.Node"/>
+         </constraint>
+                  <constraint id="state.check.warn"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter6"
+            name="State Warning Check"
+            mode="Batch"
+            severity="WARNING" statusCode="200">
+            
+            <description><![CDATA[Validates a State for Warnings]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="scmodel.AbstractState"/>
+         </constraint>
+                  <constraint id="state.check.error"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter7"
+            name="State Error Check"
+            mode="Batch"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Validates a State for Errors]]></description>
+            <message><![CDATA[{0}]]></message>
+            <target class="scmodel.AbstractState"/>
+         </constraint>
+                  <constraint id="entry.state.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter8"
+            name="Entry State Outgoing Check"
+            mode="Batch"
+            severity="ERROR" statusCode="200">
+            
+            <description><![CDATA[Checks that an Entry State has an outgoing transition]]></description>
+            <message><![CDATA[Entry state marker is missing outgoing transition]]></message>
+            <target class="notation.Node"/>
+         </constraint>
+                  <constraint id="initial.state.check"
+            lang="Java" class="repast.simphony.statecharts.providers.StatechartValidationProvider$Adapter9"
+            name="Initial State Outgoing Check"
+            mode="Batch"
+            severity="WARNING" statusCode="200">
+            
+            <description><![CDATA[Checks that an Initial State has an outgoing transition]]></description>
+            <message><![CDATA[Initial State Marker is missing outgoing transition]]></message>
             <target class="notation.Node"/>
          </constraint>
                   </constraints>
@@ -820,6 +880,8 @@
       </clientContext>
       <binding context="repast.simphony.statecharts.diagramDefaultCtx">
                   <constraint ref="repast.simphony.statecharts.diagram.agent.type.check"/>
+                  <constraint ref="repast.simphony.statecharts.diagram.state.check.warn"/>
+                  <constraint ref="repast.simphony.statecharts.diagram.state.check.error"/>
                </binding>
 
       <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_2006_3006">
@@ -833,7 +895,29 @@
          <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_2004_3002"/>
       </clientContext>
       <binding context="repast.simphony.statecharts.diagramCtx_2004_3002">
-                  <constraint ref="repast.simphony.statecharts.diagram.comp.child.viz.check"/>
+                  <constraint ref="repast.simphony.statecharts.diagram.comp.check.warn"/>
+                  <constraint ref="repast.simphony.statecharts.diagram.comp.check.error"/>
+               </binding>
+
+      <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_4001">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_4001"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramCtx_4001">
+                  <constraint ref="repast.simphony.statecharts.diagram.transition.check"/>
+               </binding>
+
+      <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_2007">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_2007"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramCtx_2007">
+                  <constraint ref="repast.simphony.statecharts.diagram.entry.state.check"/>
+               </binding>
+
+      <clientContext default="false" id="repast.simphony.statecharts.diagramCtx_2005_3003">
+         <selector class="repast.simphony.statecharts.providers.StatechartValidationProvider$Ctx_2005_3003"/>
+      </clientContext>
+      <binding context="repast.simphony.statecharts.diagramCtx_2005_3003">
+                  <constraint ref="repast.simphony.statecharts.diagram.initial.state.check"/>
                </binding>
 
    </extension>
@@ -843,6 +927,9 @@
       <clientContext id="repast.simphony.statecharts.diagramDefaultCtx"/>
       <clientContext id="repast.simphony.statecharts.diagramCtx_2006_3006"/>
       <clientContext id="repast.simphony.statecharts.diagramCtx_2004_3002"/>
+      <clientContext id="repast.simphony.statecharts.diagramCtx_4001"/>
+      <clientContext id="repast.simphony.statecharts.diagramCtx_2007"/>
+      <clientContext id="repast.simphony.statecharts.diagramCtx_2005_3003"/>
    </extension>
 <extension
       id="repast_simphony_statechart_nature"

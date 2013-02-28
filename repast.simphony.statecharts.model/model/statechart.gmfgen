@@ -15,7 +15,7 @@
         name="Statechart Audits"
         description="Validation audits for statechart elements"
         path="//@audits/@categories.0"
-        audits="//@audits/@rules.0 //@audits/@rules.1 //@audits/@rules.2"/>
+        audits="//@audits/@rules.0 //@audits/@rules.1 //@audits/@rules.2 //@audits/@rules.3 //@audits/@rules.4 //@audits/@rules.5 //@audits/@rules.6 //@audits/@rules.7 //@audits/@rules.8"/>
     <rules
         name="Agent type check"
         description="Check for null agent type string"
@@ -35,7 +35,7 @@
         description="Checks that a choice has a single default branch "
         id="choice.branch.check"
         rule="//@expressionProviders/@providers.1/@expressions.24"
-        message="Choice must have a single default branch"
+        message="{0}"
         category="//@audits/@categories.0">
       <target
           xsi:type="gmfgen:GenDiagramElementTarget"
@@ -43,11 +43,11 @@
           element="//@diagram/@topLevelNodes.3 //@diagram/@childNodes.3"/>
     </rules>
     <rules
-        name="Composite Children Visibility Check"
-        description="Checks that children of a composite state are visible"
-        id="comp.child.viz.check"
+        name="Composite State Warning Check"
+        description="Validates a Composite State for Warnings"
+        id="comp.check.warn"
         rule="//@expressionProviders/@providers.1/@expressions.25"
-        message="Composite State contains hidden children. These will not be seen in the runtime."
+        message="{0}"
         severity="WARNING"
         category="//@audits/@categories.0">
       <target
@@ -55,14 +55,101 @@
           contextSelector="//@audits/@clientContexts.2"
           element="//@diagram/@topLevelNodes.1 //@diagram/@childNodes.1"/>
     </rules>
+    <rules
+        name="Transition Check"
+        description="Validates a Transition"
+        id="transition.check"
+        rule="//@expressionProviders/@providers.1/@expressions.26"
+        message="{0}"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.3"
+          element="//@diagram/@links.0"/>
+    </rules>
+    <rules
+        name="Composite State Error Check"
+        description="Validates a Composite State for Errors"
+        id="comp.check.error"
+        rule="//@expressionProviders/@providers.1/@expressions.27"
+        message="{0}"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.2"
+          element="//@diagram/@topLevelNodes.1 //@diagram/@childNodes.1"/>
+    </rules>
+    <rules
+        name="State Warning Check"
+        description="Validates a State for Warnings"
+        id="state.check.warn"
+        rule="//@expressionProviders/@providers.1/@expressions.28"
+        message="{0}"
+        severity="WARNING"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDomainElementTarget"
+          contextSelector="//@audits/@clientContexts.0">
+        <element
+            href="statechart.genmodel#//scmodel/AbstractState"/>
+      </target>
+    </rules>
+    <rules
+        name="State Error Check"
+        description="Validates a State for Errors"
+        id="state.check.error"
+        rule="//@expressionProviders/@providers.1/@expressions.29"
+        message="{0}"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDomainElementTarget"
+          contextSelector="//@audits/@clientContexts.0">
+        <element
+            href="statechart.genmodel#//scmodel/AbstractState"/>
+      </target>
+    </rules>
+    <rules
+        name="Entry State Outgoing Check"
+        description="Checks that an Entry State has an outgoing transition"
+        id="entry.state.check"
+        rule="//@expressionProviders/@providers.1/@expressions.30"
+        message="Entry state marker is missing outgoing transition"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.4"
+          element="//@diagram/@topLevelNodes.4"/>
+    </rules>
+    <rules
+        name="Initial State Outgoing Check"
+        description="Checks that an Initial State has an outgoing transition"
+        id="initial.state.check"
+        rule="//@expressionProviders/@providers.1/@expressions.31"
+        message="Initial State Marker is missing outgoing transition"
+        severity="WARNING"
+        category="//@audits/@categories.0">
+      <target
+          xsi:type="gmfgen:GenDiagramElementTarget"
+          contextSelector="//@audits/@clientContexts.5"
+          element="//@diagram/@topLevelNodes.2 //@diagram/@childNodes.2"/>
+    </rules>
     <clientContexts
-        ruleTargets="//@audits/@rules.0/@target"/>
+        ruleTargets="//@audits/@rules.0/@target //@audits/@rules.5/@target //@audits/@rules.6/@target"/>
     <clientContexts
         id="Ctx_2006_3006"
         ruleTargets="//@audits/@rules.1/@target"/>
     <clientContexts
         id="Ctx_2004_3002"
-        ruleTargets="//@audits/@rules.2/@target"/>
+        ruleTargets="//@audits/@rules.2/@target //@audits/@rules.4/@target"/>
+    <clientContexts
+        id="Ctx_4001"
+        ruleTargets="//@audits/@rules.3/@target"/>
+    <clientContexts
+        id="Ctx_2007"
+        ruleTargets="//@audits/@rules.7/@target"/>
+    <clientContexts
+        id="Ctx_2005_3003"
+        ruleTargets="//@audits/@rules.8/@target"/>
   </audits>
   <diagram
       visualID="1000"
@@ -1573,6 +1660,24 @@
       <expressions
           xsi:type="gmfgen:GenConstraint"
           body="  "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
+      <expressions
+          xsi:type="gmfgen:GenConstraint"
+          body=" "/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
           body=" "/>
