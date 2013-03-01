@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.statecharts.edit;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.1
 Bundle-ClassPath: .
 Bundle-Activator: repast.simphony.statecharts.scmodel.provider.StatechartEditPlugin$Implementation
 Bundle-Vendor: %providerName

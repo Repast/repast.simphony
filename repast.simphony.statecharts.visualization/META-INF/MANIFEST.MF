@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Runtime
 Bundle-SymbolicName: repast.simphony.statecharts.visualization
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.1
 Bundle-ClassPath: runtime.jar,
  lib/batik-swing.jar,
  lib/batik-gvt.jar,
