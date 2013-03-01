@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.StateItemSemanticEditPolicy;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
+import repast.simphony.statecharts.policies.ShowPropsEditPolicy;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
 
 /**
@@ -60,13 +61,18 @@ public class StateEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new StateItemSemanticEditPolicy());
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
-    // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
+    // XXX need an SCR to runtime to have another abstract superclass that would
+    // let children add reasonable editpolicies
+    // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
+    installEditPolicy(ShowPropsEditPolicy.EDIT_POLICY, new ShowPropsEditPolicy());
+    // XXX need an SCR to runtime to have another abstract superclass that would
+    // let children add reasonable editpolicies
     // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
   }
 
@@ -165,8 +171,8 @@ public class StateEditPart extends ShapeNodeEditPart {
   /**
    * Creates figure for this edit part.
    * 
-   * Body of this method does not depend on settings in generation model
-   * so you may safely remove <i>generated</i> tag and modify it.
+   * Body of this method does not depend on settings in generation model so you
+   * may safely remove <i>generated</i> tag and modify it.
    * 
    * @generated
    */
@@ -180,9 +186,11 @@ public class StateEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * Default implementation treats passed figure as content pane.
-   * Respects layout one may have set for generated figure.
-   * @param nodeShape instance of generated figure class
+   * Default implementation treats passed figure as content pane. Respects
+   * layout one may have set for generated figure.
+   * 
+   * @param nodeShape
+   *          instance of generated figure class
    * @generated
    */
   protected IFigure setupContentPane(IFigure nodeShape) {

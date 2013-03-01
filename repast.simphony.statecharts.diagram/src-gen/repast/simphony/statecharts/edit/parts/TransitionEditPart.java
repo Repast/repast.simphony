@@ -11,6 +11,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.notation.View;
 
 import repast.simphony.statecharts.edit.policies.TransitionItemSemanticEditPolicy;
+import repast.simphony.statecharts.policies.ShowPropsEditPolicy;
 
 /**
  * @generated
@@ -35,6 +36,7 @@ public class TransitionEditPart extends ConnectionNodeEditPart implements ITreeB
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new TransitionItemSemanticEditPolicy());
+    installEditPolicy(ShowPropsEditPolicy.EDIT_POLICY, new ShowPropsEditPolicy());
   }
 
   /**
