@@ -14,7 +14,8 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 
 /**
  * This is singleton responsible for managing the scheduling of statechart begin and resolve actions.
- * Both of these actions are managed because they are added and removed as a statechart evolves.
+ * Both of these actions need to be managed because they are added and removed based on statechart
+ * or simulation logic.
  * @author jozik
  *
  */
@@ -27,6 +28,11 @@ public enum StateChartScheduler {
 
 	protected Map<Double, BeginActionsMapValue> beginActions = new HashMap<Double, BeginActionsMapValue>();
 
+	/**
+	 * Local class to hold resolve action information.
+	 * @author jozik
+	 *
+	 */
 	static class ResolveActionsMapValue {
 		private StateChartResolveAction scra;
 		private ISchedulableAction isa;
@@ -67,6 +73,11 @@ public enum StateChartScheduler {
 		}
 	}
 	
+	/**
+	 * Local class to hold begin action information.
+	 * @author jozik
+	 *
+	 */
 	static class BeginActionsMapValue {
 		private StateChartBeginAction scba;
 		private ISchedulableAction isa;
@@ -90,9 +101,9 @@ public enum StateChartScheduler {
 	}
 
 	/**
-	 * Initializes the scheduler. This is called from initialization appropriate places if 
-	 * the regular Repast Simphony "init" is not exclusively used for initializing a simulation.
-	 * (e.g., ReLogo setup methods, via clearAll())
+	 * Initializes the scheduler. This is automatically called by a simulation end action 
+	 * or for simulations using other forms of initialization during a simulation run,
+	 * from initialization appropriate places if (e.g., ReLogo setup methods, via clearAll())
 	 */
 	public void initialize() {
 		shouldInitialize = false;
@@ -182,6 +193,11 @@ public enum StateChartScheduler {
 		ramv.registerListener(sc);
 	}
 	
+	/**
+	 * Called by generated statechart code to schedule the begin time for a statechart.
+	 * @param nextTime
+	 * @param sc
+	 */
 	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
 		if (shouldInitialize){
 			initialize();
