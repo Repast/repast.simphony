@@ -260,9 +260,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									iih.putUndirLinkPluralInformation(pi, instrumentingPackageName);
 								}
 								
-								// TODO: look at context.xml (and then display file if
-								// necessary)
-								// call context checker with type
+								// check to see if context and display files need modification
+								// and modify if necessary
 								checkContextAndDisplayFiles(type);
 								
 
@@ -279,11 +278,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		}
 		
 		private void checkContextAndDisplayFiles(IType type){
-			StringBuilder sb = new StringBuilder();
-			sb.append(project.getName());
-			sb.append(".rs");
-			IFile contextFile = project.getFile(sb.toString());
-			ContextAndDisplayUtils.checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
+			
+			try {
+				ContextAndDisplayUtilsGroovy.checkToModifyContextFile(project, type, monitor);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		private List<Pair<String, String>> getPatchFieldTypes(IType type) throws JavaModelException {
