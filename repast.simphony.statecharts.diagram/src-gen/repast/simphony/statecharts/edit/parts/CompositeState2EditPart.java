@@ -8,6 +8,8 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
@@ -17,6 +19,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.gef.editpolicies.AbstractEditPolicy;
+import org.eclipse.gef.editpolicies.GraphicalEditPolicy;
 import org.eclipse.gef.editpolicies.LayoutEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
@@ -33,13 +37,14 @@ import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.CompositeState2ItemSemanticEditPolicy;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
+import repast.simphony.statecharts.policies.ShowPropsEditPolicy;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
 
 /**
  * @generated
  */
 public class CompositeState2EditPart extends ShapeNodeEditPart {
-
+  
   /**
    * @generated
    */
@@ -63,14 +68,13 @@ public class CompositeState2EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new CompositeState2ItemSemanticEditPolicy());
-    installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
-    // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
-    // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
+    installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy()); 
+    installEditPolicy(ShowPropsEditPolicy.EDIT_POLICY, new ShowPropsEditPolicy());
   }
 
   /**
@@ -99,7 +103,7 @@ public class CompositeState2EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected IFigure createNodeShape() {
     return primaryShape = new CompositeStateFigure();

@@ -522,7 +522,7 @@
         name="Choice Branch Check"
         description="Checks that a choice has a single default branch "
         id="choice.branch.check"
-        message="Choice must have a single default branch">
+        message="{0}">
       <rule
           body="  "
           language="java"/>
@@ -531,17 +531,95 @@
           element="//@nodes.3/@ownedChild"/>
     </audits>
     <audits
-        name="Composite Children Visibility Check"
-        description="Checks that children of a composite state are visible"
-        id="comp.child.viz.check"
+        name="Composite State Warning Check"
+        description="Validates a Composite State for Warnings"
+        id="comp.check.warn"
         severity="WARNING"
-        message="Composite State contains hidden children. These will not be seen in the runtime.">
+        message="{0}">
       <rule
           body=" "
           language="java"/>
       <target
           xsi:type="gmfmap:DiagramElementTarget"
           element="//@nodes.1/@ownedChild"/>
+    </audits>
+    <audits
+        name="Transition Check"
+        description="Validates a Transition"
+        id="transition.check"
+        message="{0}">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@links.0"/>
+    </audits>
+    <audits
+        name="Composite State Error Check"
+        description="Validates a Composite State for Errors"
+        id="comp.check.error"
+        message="{0}">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@nodes.1/@ownedChild"/>
+    </audits>
+    <audits
+        name="State Warning Check"
+        description="Validates a State for Warnings"
+        id="state.check.warn"
+        severity="WARNING"
+        message="{0}">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DomainElementTarget">
+        <element
+            href="statechart.ecore#//AbstractState"/>
+      </target>
+    </audits>
+    <audits
+        name="State Error Check"
+        description="Validates a State for Errors"
+        id="state.check.error"
+        message="{0}">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DomainElementTarget">
+        <element
+            href="statechart.ecore#//AbstractState"/>
+      </target>
+    </audits>
+    <audits
+        name="Entry State Outgoing Check"
+        description="Checks that an Entry State has an outgoing transition"
+        id="entry.state.check"
+        message="Entry state marker is missing outgoing transition">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@nodes.4/@ownedChild"/>
+    </audits>
+    <audits
+        name="Initial State Outgoing Check"
+        description="Checks that an Initial State has an outgoing transition"
+        id="initial.state.check"
+        severity="WARNING"
+        message="Initial State Marker is missing outgoing transition">
+      <rule
+          body=" "
+          language="java"/>
+      <target
+          xsi:type="gmfmap:DiagramElementTarget"
+          element="//@nodes.2/@ownedChild"/>
     </audits>
   </audits>
 </gmfmap:Mapping>

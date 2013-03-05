@@ -30,6 +30,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.FinalStateItemSemanticEditPolicy;
+import repast.simphony.statecharts.policies.ShowPropsEditPolicy;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
 
 /**
@@ -68,7 +69,9 @@ public class FinalStateEditPart extends ShapeNodeEditPart {
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
     // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
     // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
+    installEditPolicy(ShowPropsEditPolicy.EDIT_POLICY, new ShowPropsEditPolicy());
   }
+  
 
   /**
    * @generated

@@ -99,51 +99,51 @@ public class StatechartNavigatorLabelProvider extends LabelProvider implements
    */
   public Image getImage(View view) {
     switch (StatechartVisualIDRegistry.getVisualID(view)) {
-    case CompositeState2EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Node?http://repast.sf.net/statecharts?CompositeState", StatechartElementTypes.CompositeState_3002); //$NON-NLS-1$
-    case CompositeStateEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?CompositeState", StatechartElementTypes.CompositeState_2004); //$NON-NLS-1$
     case PseudoStateEditPart.VISUAL_ID:
       return getImage(
           "Navigator?TopLevelNode?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_2005); //$NON-NLS-1$
+    case PseudoState5EditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_2007); //$NON-NLS-1$
+    case FinalStateEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?FinalState", StatechartElementTypes.FinalState_2008); //$NON-NLS-1$
+    case StateEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?State", StatechartElementTypes.State_2003); //$NON-NLS-1$
+    case TransitionEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Link?http://repast.sf.net/statecharts?Transition", StatechartElementTypes.Transition_4001); //$NON-NLS-1$
     case History2EditPart.VISUAL_ID:
       return getImage(
           "Navigator?Node?http://repast.sf.net/statecharts?History", StatechartElementTypes.History_3009); //$NON-NLS-1$
     case HistoryEditPart.VISUAL_ID:
       return getImage(
           "Navigator?Node?http://repast.sf.net/statecharts?History", StatechartElementTypes.History_3008); //$NON-NLS-1$
-    case PseudoState3EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Node?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_3003); //$NON-NLS-1$
-    case State2EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Node?http://repast.sf.net/statecharts?State", StatechartElementTypes.State_3001); //$NON-NLS-1$
-    case TransitionEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Link?http://repast.sf.net/statecharts?Transition", StatechartElementTypes.Transition_4001); //$NON-NLS-1$
-    case FinalStateEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?FinalState", StatechartElementTypes.FinalState_2008); //$NON-NLS-1$
-    case PseudoState5EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_2007); //$NON-NLS-1$
-    case FinalState2EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Node?http://repast.sf.net/statecharts?FinalState", StatechartElementTypes.FinalState_3007); //$NON-NLS-1$
     case PseudoState4EditPart.VISUAL_ID:
       return getImage(
           "Navigator?Node?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_3006); //$NON-NLS-1$
-    case StateMachineEditPart.VISUAL_ID:
+    case State2EditPart.VISUAL_ID:
       return getImage(
-          "Navigator?Diagram?http://repast.sf.net/statecharts?StateMachine", StatechartElementTypes.StateMachine_1000); //$NON-NLS-1$
-    case StateEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?State", StatechartElementTypes.State_2003); //$NON-NLS-1$
+          "Navigator?Node?http://repast.sf.net/statecharts?State", StatechartElementTypes.State_3001); //$NON-NLS-1$
     case PseudoState2EditPart.VISUAL_ID:
       return getImage(
           "Navigator?TopLevelNode?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_2006); //$NON-NLS-1$
+    case FinalState2EditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Node?http://repast.sf.net/statecharts?FinalState", StatechartElementTypes.FinalState_3007); //$NON-NLS-1$
+    case CompositeStateEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/statecharts?CompositeState", StatechartElementTypes.CompositeState_2004); //$NON-NLS-1$
+    case CompositeState2EditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Node?http://repast.sf.net/statecharts?CompositeState", StatechartElementTypes.CompositeState_3002); //$NON-NLS-1$
+    case StateMachineEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Diagram?http://repast.sf.net/statecharts?StateMachine", StatechartElementTypes.StateMachine_1000); //$NON-NLS-1$
+    case PseudoState3EditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Node?http://repast.sf.net/statecharts?PseudoState", StatechartElementTypes.PseudoState_3003); //$NON-NLS-1$
     }
     return getImage("Navigator?UnknownElement", null); //$NON-NLS-1$
   }
@@ -195,36 +195,36 @@ public class StatechartNavigatorLabelProvider extends LabelProvider implements
       return getUnresolvedDomainElementProxyText(view);
     }
     switch (StatechartVisualIDRegistry.getVisualID(view)) {
-    case CompositeState2EditPart.VISUAL_ID:
-      return getCompositeState_3002Text(view);
-    case CompositeStateEditPart.VISUAL_ID:
-      return getCompositeState_2004Text(view);
     case PseudoStateEditPart.VISUAL_ID:
       return getPseudoState_2005Text(view);
+    case PseudoState5EditPart.VISUAL_ID:
+      return getPseudoState_2007Text(view);
+    case FinalStateEditPart.VISUAL_ID:
+      return getFinalState_2008Text(view);
+    case StateEditPart.VISUAL_ID:
+      return getState_2003Text(view);
+    case TransitionEditPart.VISUAL_ID:
+      return getTransition_4001Text(view);
     case History2EditPart.VISUAL_ID:
       return getHistory_3009Text(view);
     case HistoryEditPart.VISUAL_ID:
       return getHistory_3008Text(view);
-    case PseudoState3EditPart.VISUAL_ID:
-      return getPseudoState_3003Text(view);
-    case State2EditPart.VISUAL_ID:
-      return getState_3001Text(view);
-    case TransitionEditPart.VISUAL_ID:
-      return getTransition_4001Text(view);
-    case FinalStateEditPart.VISUAL_ID:
-      return getFinalState_2008Text(view);
-    case PseudoState5EditPart.VISUAL_ID:
-      return getPseudoState_2007Text(view);
-    case FinalState2EditPart.VISUAL_ID:
-      return getFinalState_3007Text(view);
     case PseudoState4EditPart.VISUAL_ID:
       return getPseudoState_3006Text(view);
-    case StateMachineEditPart.VISUAL_ID:
-      return getStateMachine_1000Text(view);
-    case StateEditPart.VISUAL_ID:
-      return getState_2003Text(view);
+    case State2EditPart.VISUAL_ID:
+      return getState_3001Text(view);
     case PseudoState2EditPart.VISUAL_ID:
       return getPseudoState_2006Text(view);
+    case FinalState2EditPart.VISUAL_ID:
+      return getFinalState_3007Text(view);
+    case CompositeStateEditPart.VISUAL_ID:
+      return getCompositeState_2004Text(view);
+    case CompositeState2EditPart.VISUAL_ID:
+      return getCompositeState_3002Text(view);
+    case StateMachineEditPart.VISUAL_ID:
+      return getStateMachine_1000Text(view);
+    case PseudoState3EditPart.VISUAL_ID:
+      return getPseudoState_3003Text(view);
     }
     return getUnknownElementText(view);
   }

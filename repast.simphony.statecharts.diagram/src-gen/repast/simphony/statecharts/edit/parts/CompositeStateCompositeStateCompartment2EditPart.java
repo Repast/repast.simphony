@@ -15,6 +15,7 @@ import repast.simphony.statecharts.edit.policies.CompositeStateCompositeStateCom
 import repast.simphony.statecharts.edit.policies.CompositeStateCompositeStateCompartment2ItemSemanticEditPolicy;
 import repast.simphony.statecharts.part.Messages;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
+import repast.simphony.statecharts.policies.ShowPropsEditPolicy;
 
 /**
  * @generated
@@ -65,6 +66,8 @@ public class CompositeStateCompositeStateCompartment2EditPart extends ShapeCompa
         new CompositeStateCompositeStateCompartment2CanonicalEditPolicy());
     removeEditPolicy(EditPolicyRoles.POPUPBAR_ROLE);
     installEditPolicy(EditPolicyRoles.POPUPBAR_ROLE, new CompositeStatePopupBarEditPolicy());
+    
+    //installEditPolicy(ShowPropsEditPolicy.EDIT_POLICY, new ShowPropsEditPolicy());
   }
 
   /**
