@@ -12,6 +12,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
+import relogo.Activator;
+
 /**
  * ReLogo nature that loads the builder for ReLogo.
  * 
@@ -20,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ReLogoNature implements IProjectNature {
   
-  public static final String RELOGO_NATURE_ID = "repast_simphony_relogo_nature";
+  public static final String RELOGO_NATURE_ID = Activator.PLUGIN_ID + ".relogo_nature";
   
   private IProject project;
 

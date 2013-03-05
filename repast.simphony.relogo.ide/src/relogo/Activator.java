@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "repast.simphony.relogo";
+	public static final String PLUGIN_ID = "repast.simphony.relogo.ide";
 
 	// The shared instance
 	private static Activator plugin;

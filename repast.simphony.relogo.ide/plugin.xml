@@ -170,15 +170,25 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-            delegate="repast.simphony.relogo.ide.ReLogoLaunchConfigurationDelegate"
-            delegateDescription="Cleans the project prior to launching."
-            id="repast.simphony.relogo.ide.relogoLaunchDelegate"
-            modes="run,debug,profile"
-            name="ReLogo Launch Delegate"
-            type="org.eclipse.jdt.launching.localJavaApplication">
-      </launchDelegate>
+         id="relogo_nature"
+         name="ReLogoNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="repast.simphony.relogo.ide.handlers.ReLogoNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="builder"
+         name="ReLogo Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="false">
+         <run
+               class="repast.simphony.relogo.ide.handlers.ReLogoBuilder">
+         </run>
+      </builder>
    </extension>
 
 </plugin>
