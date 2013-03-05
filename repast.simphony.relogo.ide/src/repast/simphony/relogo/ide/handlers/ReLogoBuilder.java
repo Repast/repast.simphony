@@ -253,7 +253,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 								// find plural
 								PluralInformation pi = getPluralInformation(type);
 
-								// find dir
+								// find if it's directed or undirected
 								boolean isDir = isDir(type);
 								if (isDir) {
 									iih.putDirLinkPluralInformation(pi, instrumentingPackageName);
