@@ -6,11 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.PriorityType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
+/**
+ * This is singleton responsible for managing the scheduling of statechart begin and resolve actions.
+ * Both of these actions are managed because they are added and removed as a statechart evolves.
+ * @author jozik
+ *
+ */
 public enum StateChartScheduler {
 
 	INSTANCE;
@@ -82,7 +89,13 @@ public enum StateChartScheduler {
 		}
 	}
 
+	/**
+	 * Initializes the scheduler. This is called from initialization appropriate places if 
+	 * the regular Repast Simphony "init" is not exclusively used for initializing a simulation.
+	 * (e.g., ReLogo setup methods, via clearAll())
+	 */
 	public void initialize() {
+		shouldInitialize = false;
 		resolveClearCounter = 0;
 		beginClearCounter = 0;
 
@@ -96,6 +109,14 @@ public enum StateChartScheduler {
 			bamv.nullify();
 		}
 		beginActions.clear();
+		RunEnvironment.getInstance().getCurrentSchedule().schedule(ScheduleParameters.createAtEnd(0), new IAction(){
+
+			@Override
+			public void execute() {
+				shouldInitialize = true;
+			}
+			
+		});
 	}
 
 	long resolveClearCounter = 0;
@@ -140,7 +161,12 @@ public enum StateChartScheduler {
 	}
 
 
+	private boolean shouldInitialize = true;
+	
 	protected void scheduleResolveTime(double nextTime, DefaultStateChart<?> sc) {
+		if (shouldInitialize){
+			initialize();
+		}
 		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 		if (ramv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
@@ -157,10 +183,14 @@ public enum StateChartScheduler {
 	}
 	
 	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
+		if (shouldInitialize){
+			initialize();
+		}
 		double currentTickCount = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		if (currentTickCount >= nextTime){
 			nextTime = currentTickCount + nextTime;
 		}
+		if (nextTime < 0) nextTime = 0;
 		BeginActionsMapValue bamv = beginActions.get(nextTime);
 		if (bamv == null) {
 			ISchedule schedule = RunEnvironment.getInstance()
@@ -175,6 +205,7 @@ public enum StateChartScheduler {
 		bamv.registerListener(sc);
 	}
 
+	// Called from deactivation of transitions in DefaultStateChart
 	protected void removeResolveTime(double nextTime, DefaultStateChart<?> sc) {
 		if (resolveActions.containsKey(nextTime)) {
 			ResolveActionsMapValue ramv = resolveActions.get(nextTime);

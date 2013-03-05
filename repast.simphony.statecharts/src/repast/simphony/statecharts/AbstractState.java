@@ -105,6 +105,10 @@ public abstract class AbstractState<T> {
 
 	
 	public AbstractState<T> calculateLowestCommonAncestor(AbstractState<T> other){
+		// If the source and target are the same, the lca is the parent
+		if (this.equals(other)){
+			return getParent();
+		}
 		Iterator<AbstractState<T>> myAncestors = getAncestors().iterator();
 		Iterator<AbstractState<T>> otherAncestors = other.getAncestors().iterator();
 		AbstractState<T> currentCandidate = null;
