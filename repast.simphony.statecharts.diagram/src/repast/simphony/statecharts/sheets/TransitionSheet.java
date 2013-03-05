@@ -33,6 +33,7 @@ import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class TransitionSheet extends FocusFixComposite implements BindableFocusableSheet {
 
@@ -197,7 +198,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
     tbtmGuard.setText("Guard");
 
-    compGuard = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    compGuard = new Composite(tabFolder, SWT.NONE);
     tbtmGuard.setControl(compGuard);
     GridLayout gl_composite = new GridLayout(2, false);
     gl_composite.marginHeight = 3;
@@ -219,7 +220,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
     tbtmTrigger.setText("Trigger");
     
-    compTrigger = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    compTrigger = new Composite(tabFolder, SWT.NONE);
+    compTrigger.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     tbtmTrigger.setControl(compTrigger);
     toolkit.paintBordersFor(compTrigger);
     GridLayout gl_composite_3 = new GridLayout(2, false);
@@ -436,7 +438,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
     tbtmOnTrans.setText("On Transition");
     
-    compTrans = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    compTrans = new Composite(tabFolder, SWT.NONE);
+    compTrans.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     tbtmOnTrans.setControl(compTrans);
     compTrans.setLayout(new GridLayout(1, false));
 
