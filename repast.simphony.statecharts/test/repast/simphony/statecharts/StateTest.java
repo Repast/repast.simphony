@@ -59,6 +59,9 @@ public class StateTest {
 		assertEquals(zero,five.calculateLowestCommonAncestor(zero));
 		assertNull(four.calculateLowestCommonAncestor(six));
 		assertNull(six.calculateLowestCommonAncestor(four));
+		assertEquals(two, three.calculateLowestCommonAncestor(three));
+		assertNull(six.calculateLowestCommonAncestor(six));
+		assertEquals(one, five.calculateLowestCommonAncestor(five));
 	}
 	
 	
