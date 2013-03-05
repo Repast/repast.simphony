@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -36,8 +37,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
-
-import com.sun.jmx.mbeanserver.Introspector;
 
 import relogo.Activator;
 import repast.simphony.util.collections.Pair;
@@ -260,9 +259,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 								} else {
 									iih.putUndirLinkPluralInformation(pi, instrumentingPackageName);
 								}
-
+								
 								// TODO: look at context.xml (and then display file if
 								// necessary)
+								// call context checker with type
+								checkContextAndDisplayFiles(type);
+								
 
 							} else if (extendsClass(type, ABSTRACT_GLOBALS_AND_PANEL)) {
 								// TODO: do for UGPFactory
@@ -274,6 +276,14 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 			}
 			return true;
+		}
+		
+		private void checkContextAndDisplayFiles(IType type){
+			StringBuilder sb = new StringBuilder();
+			sb.append(project.getName());
+			sb.append(".rs");
+			IFile contextFile = project.getFile(sb.toString());
+			ContextAndDisplayUtils.checkToModifyContextFile(projectPath, projectName, className, basePackageName, contextFilePath)
 		}
 
 		private List<Pair<String, String>> getPatchFieldTypes(IType type) throws JavaModelException {
