@@ -11,6 +11,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,10 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
-import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
@@ -63,12 +62,22 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   private Label lblMessage, lblMessageClass;
   private Combo cmbMessageType, cmbMessageClass;
 
-  private Section sctnGuard;
-  private Section sctnOnTransition;
   private Button btnIsDefaultOut;
-  private Section sctnTrigger;
-
   private Button btnSelfTransition;
+
+  private CTabItem tbtmTrigger;
+
+  private CTabItem tbtmGuard;
+
+  private CTabItem tbtmOnTrans;
+
+  private CTabFolder tabFolder;
+
+  private Composite compTrigger;
+
+  private Composite compGuard;
+
+  private Composite compTrans;
 
   public TransitionSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NO_FOCUS);
@@ -78,9 +87,20 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.paintBordersFor(this);
 
     createHeaderSection(toolkit);
-    createTriggerSection(toolkit);
-    createGuardSection(toolkit);
-    createTransitionSection(toolkit);
+    
+    tabFolder = new CTabFolder(this, SWT.FLAT);
+    tabFolder.setTabHeight(20);
+    GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+    gd_tabFolder.verticalIndent = 4;
+    tabFolder.setLayoutData(gd_tabFolder);
+    toolkit.adapt(tabFolder);
+    toolkit.paintBordersFor(tabFolder);
+    tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
+        SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+    
+    createTriggerSection(toolkit, tabFolder);
+    createGuardSection(toolkit, tabFolder);
+    createTransitionSection(toolkit, tabFolder);
 
     cmbTriggerType.select(0);
     cmbMessageType.select(3);
@@ -132,6 +152,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     btnSelfTransition = new Button(composite_2, SWT.CHECK);
     toolkit.adapt(btnSelfTransition, true, true);
     btnSelfTransition.setText("Self Transition");
+    new Label(composite_2, SWT.NONE);
+    new Label(composite_2, SWT.NONE);
 
     Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -154,6 +176,9 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     new Label(composite_1, SWT.NONE);
 
     Button btnJava = new Button(composite_1, SWT.RADIO);
+    GridData gd_btnJava = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+    gd_btnJava.horizontalIndent = 5;
+    btnJava.setLayoutData(gd_btnJava);
     toolkit.adapt(btnJava, true, true);
     btnJava.setText("Java");
 
@@ -168,56 +193,44 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
 
-  private void createGuardSection(FormToolkit toolkit) {
-    sctnGuard = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
-    focusableControls.add(sctnGuard);
-    sctnGuard.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-    toolkit.paintBordersFor(sctnGuard);
-    sctnGuard.setText("Guard");
+  private void createGuardSection(FormToolkit toolkit, CTabFolder tabFolder) {
+    tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
+    tbtmGuard.setText("Guard");
 
-    Composite composite = new Composite(sctnGuard, SWT.NO_BACKGROUND);
-    sctnGuard.setClient(composite);
+    compGuard = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    tbtmGuard.setControl(compGuard);
     GridLayout gl_composite = new GridLayout(2, false);
     gl_composite.marginHeight = 3;
-    composite.setLayout(gl_composite);
-    toolkit.adapt(composite);
-    toolkit.paintBordersFor(composite);
+    compGuard.setLayout(gl_composite);
+    toolkit.adapt(compGuard);
+    toolkit.paintBordersFor(compGuard);
 
-    Label lblGuard = new Label(composite, SWT.NONE);
-    lblGuard.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-    toolkit.adapt(lblGuard, true, true);
-    lblGuard.setText("Guard:");
-
-    guardTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+    guardTxt = new Text(compGuard, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
     focusableControls.add(guardTxt);
     guardTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
-    gd_onExitTxt.heightHint = 50;
-    gd_onExitTxt.horizontalIndent = 1;
+    gd_onExitTxt.heightHint = 140;
     guardTxt.setLayoutData(gd_onExitTxt);
     toolkit.adapt(guardTxt, true, true);
   }
 
-  private void createTriggerSection(FormToolkit toolkit) {
-    sctnTrigger = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
-    focusableControls.add(sctnTrigger);
-    sctnTrigger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-    toolkit.paintBordersFor(sctnTrigger);
-    sctnTrigger.setText("Trigger");
-    sctnTrigger.setExpanded(true);
+  private void createTriggerSection(FormToolkit toolkit, CTabFolder tabFolder) {
 
-    Composite composite_3 = new Composite(sctnTrigger, SWT.NO_BACKGROUND);
-    sctnTrigger.setClient(composite_3);
-    toolkit.paintBordersFor(composite_3);
+    tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
+    tbtmTrigger.setText("Trigger");
+    
+    compTrigger = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    tbtmTrigger.setControl(compTrigger);
+    toolkit.paintBordersFor(compTrigger);
     GridLayout gl_composite_3 = new GridLayout(2, false);
-    composite_3.setLayout(gl_composite_3);
+    compTrigger.setLayout(gl_composite_3);
 
-    Label lblTriggerType = new Label(composite_3, SWT.NONE);
+    Label lblTriggerType = new Label(compTrigger, SWT.NONE);
     lblTriggerType.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblTriggerType, true, true);
     lblTriggerType.setText("Trigger Type:");
 
-    cmbTriggerType = new Combo(composite_3, SWT.READ_ONLY);
+    cmbTriggerType = new Combo(compTrigger, SWT.READ_ONLY);
     GridData gd_combo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
     gd_combo.widthHint = 220;
     cmbTriggerType.setLayoutData(gd_combo);
@@ -229,7 +242,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.adapt(cmbTriggerType);
     toolkit.paintBordersFor(cmbTriggerType);
 
-    Composite composite = toolkit.createComposite(composite_3, SWT.NONE);
+    Composite composite = toolkit.createComposite(compTrigger, SWT.NONE);
     triggerLayout = new StackLayout();
     composite.setLayout(triggerLayout);
     composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -419,35 +432,20 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtAlwaysPolling);
   }
 
-  private void createTransitionSection(FormToolkit toolkit) {
-    sctnOnTransition = toolkit.createSection(this, Section.TWISTIE | Section.TITLE_BAR);
-    focusableControls.add(sctnOnTransition);
-    sctnOnTransition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-    toolkit.paintBordersFor(sctnOnTransition);
-    sctnOnTransition.setText("On Transition");
-    sctnOnTransition.addExpansionListener(new ExpansionAdapter() {
-      @Override
-      public void expansionStateChanged(ExpansionEvent e) {
-        if (e.getState()) {
-          TransitionSheet.this.getParent().layout(true, true);
-        }
-      }
-    });
+  private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder) {
+    tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
+    tbtmOnTrans.setText("On Transition");
+    
+    compTrans = new Composite(tabFolder, SWT.NO_BACKGROUND);
+    tbtmOnTrans.setControl(compTrans);
+    compTrans.setLayout(new GridLayout(1, false));
 
-    Composite composite = new Composite(sctnOnTransition, SWT.NO_BACKGROUND);
-    sctnOnTransition.setClient(composite);
-    composite.setLayout(new GridLayout(1, false));
-
-    Label lblOnTransition = new Label(composite, SWT.NONE);
-    toolkit.adapt(lblOnTransition, true, true);
-    lblOnTransition.setText("On Transition:");
-
-    onTransitionTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
+    onTransitionTxt = new Text(compTrans, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
         | SWT.CANCEL | SWT.MULTI);
     focusableControls.add(onTransitionTxt);
     onTransitionTxt.addTraverseListener(new CancelTraverseOnReturn());
     GridData gd_onTransitionTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    gd_onTransitionTxt.heightHint = 100;
+    gd_onTransitionTxt.heightHint = 140;
     onTransitionTxt.setLayoutData(gd_onTransitionTxt);
     onTransitionTxt.setText("");
     toolkit.adapt(onTransitionTxt, true, true);
@@ -507,42 +505,68 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
      * sctnGuard.getParent().s } });
      */
   }
+  
+  private void resetTabs() {
+    if (!tbtmOnTrans.isDisposed()) {
+      tbtmOnTrans.dispose();
+    }
+    
+    if (tbtmTrigger.isDisposed()) {
+      tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
+      tbtmTrigger.setText("Trigger");
+      tbtmTrigger.setControl(compTrigger);
+    }
+    
+    if (tbtmGuard.isDisposed()) {
+      tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
+      tbtmGuard.setText("Guard");
+      tbtmGuard.setControl(compGuard);
+    }
+    
+    if (tbtmOnTrans.isDisposed()) {
+      tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
+      tbtmOnTrans.setText("On Transition");
+      tbtmOnTrans.setControl(compTrans);
+    }
+    tabFolder.setSelection(0);
+  }
 
   void defaultOutChanged(boolean isSelected) {
     // default out from branch cannot have any triggers
     if (object != null && ((Transition) object).isOutOfBranch()) {
-      if (!isSelected) {
+      if (isSelected) {
+        
+        if (!tbtmTrigger.isDisposed()) {
+          tbtmTrigger.dispose();
+        }
+        
+        if (!tbtmGuard.isDisposed()) {
+          tbtmGuard.dispose();
+        }
+        tabFolder.setSelection(0);
+        cmbTriggerType.setEnabled(true);
+      } else {
+        // add them all so the order will stay the same
+        resetTabs();
+        
         // can only have a conditional trigger
         cmbTriggerType.select(CONDITION_INDEX);
         cmbTriggerType.update();
+        cmbTriggerType.setEnabled(false);
         triggerChanged();
       }
-      sctnTrigger.setEnabled(!isSelected);
-      sctnTrigger.setExpanded(!isSelected);
-      String title = isSelected ? "Trigger Disabled" : "Trigger";
-      sctnTrigger.setText(title);
-      sctnTrigger.getParent().layout();
-
-      sctnGuard.setEnabled(!isSelected);
-      sctnGuard.setExpanded(!isSelected);
-      title = isSelected ? "Guard Disabled" : "Guard";
-      sctnGuard.setText(title);
-      sctnGuard.getParent().layout();
-
-      cmbTriggerType.setEnabled(isSelected);
     } else {
       // this block handles when we've switched to a non choice transition
       // from a choice transition.
+      if (tbtmTrigger.isDisposed()) {
+        resetTabs();
+      }
       cmbTriggerType.setEnabled(true);
-      sctnTrigger.setEnabled(true);
-      sctnTrigger.setExpanded(true);
-      sctnTrigger.getParent().layout();
-      sctnTrigger.setText("Trigger");
+      tabFolder.getTabList()[0].setEnabled(true);
+      tbtmTrigger.setText("Trigger");
 
-      sctnGuard.setEnabled(true);
-      sctnGuard.setExpanded(true);
-      sctnGuard.getParent().layout();
-      sctnGuard.setText("Guard");
+      tabFolder.getTabList()[1].setEnabled(true);
+      tbtmGuard.setText("Guard");
     }
   }
 
@@ -554,7 +578,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   void doSelfCheck() {
     if (object != null) {
       Transition transition = (Transition) object;
-      if (transition.getFrom() != null && transition.getTo() != null) 
+      if (transition.getFrom() != null && transition.getTo() != null)
         btnSelfTransition.setVisible(transition.getFrom().equals(transition.getTo()));
       else {
         btnSelfTransition.setVisible(false);
@@ -631,10 +655,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
     bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
     bindTextField(guardTxt, StatechartPackage.Literals.TRANSITION__GUARD);
-    Transition trans = (Transition) eObject;
-    sctnGuard.setExpanded(trans.getGuard() != null && trans.getGuard().trim().length() > 0);
-    sctnOnTransition.setExpanded(trans.getOnTransition() != null
-        && trans.getOnTransition().trim().length() > 0);
 
     bindTextField(priorityTxt, StatechartPackage.Literals.TRANSITION__PRIORITY,
         createUpdateValueStrategy(new StringToDoubleConverter()),
@@ -653,12 +673,19 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
             StatechartPackage.Literals.TRANSITION__DEFAULT_TRANSITION).observe(eObject));
     doOutOfChoiceCheck();
     defaultOutChanged(((Transition) eObject).isDefaultTransition());
-    
+
     context.bindValue(
         WidgetProperties.selection().observe(btnSelfTransition),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__SELF_TRANSITION).observe(eObject));
     doSelfCheck();
+    
+    for (int i = 0; i < tabFolder.getTabList().length; ++i) {
+      if (tabFolder.getTabList()[i].isEnabled()) {
+        tabFolder.setSelection(i);
+        break;
+      }
+    }
   }
 
   private void bindTriggerComponents(EMFDataBindingContext context, EObject eObject) {
