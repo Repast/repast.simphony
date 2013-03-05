@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
@@ -291,7 +292,8 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     if (getDiagramGraphicalViewer() instanceof DiagramGraphicalViewer) {
       PreferenceStore prefStore = getWorkspaceViewerPreferenceStore();
       if (prefStore.contains(WorkspaceViewerProperties.GRIDLINECOLOR)
-          && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR) == LIGHT_GRAY_RGB) {
+          // on OSX the light gray is almost invisible, so we want black
+          && prefStore.getInt(WorkspaceViewerProperties.GRIDLINECOLOR) == LIGHT_GRAY_RGB && Platform.getOS().equals(Platform.OS_MACOSX)) {
         prefStore.setValue(WorkspaceViewerProperties.GRIDLINECOLOR, SWT.COLOR_BLACK);
       }
 
