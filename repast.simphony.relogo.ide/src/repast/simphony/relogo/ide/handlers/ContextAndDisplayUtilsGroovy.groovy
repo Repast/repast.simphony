@@ -75,33 +75,6 @@ class ContextAndDisplayUtilsGroovy {
 		}
 	}
 
-/*	protected static void checkToModifyContextFile(String projectPath, String projectName, String className, String basePackageName, String contextFilePath){
-		File contextFile = new File(contextFilePath)
-		if (contextFile.exists()){
-			def root = new XmlSlurper().parse(contextFile)
-			GPathResult listOfDefaultReLogoContexts = root.context.findAll({it.@id.equals("default_observer_context")})
-			// If the default_observer_context exists
-			if (listOfDefaultReLogoContexts.size() == 1){
-				GPathResult defaultReLogoContext = listOfDefaultReLogoContexts[0]
-				GPathResult classNameNetworks = defaultReLogoContext.projection.findAll {
-					it.@type.equals("network") && it.@id.equals(className)
-				}
-				// If no networks corresponding to the className exist
-				if (classNameNetworks.isEmpty()){
-					// Add the network entry to the
-					defaultReLogoContext.leftShift{
-						projection(id:className, type:'network')
-					}
-
-					contextFile.write(prettyPrint(root))
-
-					//Add to the display's projection info
-					modifyDisplayFile(projectPath, projectName, className, basePackageName)
-				}
-			}
-		}
-	}
-*/
 	private static class DefaultDisplayFinder implements IResourceVisitor {
 
 		protected boolean foundDefaultDisplay = false;
@@ -150,12 +123,6 @@ class ContextAndDisplayUtilsGroovy {
 		}
 		return null
 	}
-
-	/*protected List<File> getCandidateDisplayFiles(String directoryString){
-		List candidateDisplayFiles = []
-		new File(directoryString).eachFileMatch(~/repast.simphony.action.display_.+\.xml/){ candidateDisplayFiles << it }
-		return candidateDisplayFiles
-	}*/
 
 	static class DefDisplayReturner {
 		IResource displayFile
@@ -233,55 +200,5 @@ class ContextAndDisplayUtilsGroovy {
 		}
 	}
 
-	/*protected void modifyDisplayFile(String projectPath, String projectName, String className, String basePackageName){
-
-
-		DefDisplayReturner result = findDefaultReLogoDisplayFile(projectPath, projectName)
-		if (result != null && result.displayFile.exists()){
-
-			GPathResult displayRoot = result.root
-			// Check to see if network is already there (to avoid accidental duplication)
-			GPathResult classNameInDisplay = displayRoot.netStyles.entry.string.findAll{
-				it.text().equals(className)
-			}
-			if (classNameInDisplay.isEmpty()){
-
-				displayRoot.netStyles.leftShift{
-					entry {
-						string(className)
-						string(basePackageName + ".style.LinkStyle")
-					}
-				}
-
-				displayRoot.editedNetStyles.leftShift{
-					entry {
-						string(className)
-						'null'()
-					}
-				}
-
-				displayRoot.projections.leftShift{
-					'repast.simphony.scenario.data.ProjectionData' {
-						id(className)
-						attributes()
-						type('NETWORK')
-					}
-				}
-
-				// The modifications made to displayRoot are not observable until the xml is generated, hence the '+ 1'
-				int numberOfProjections = 1 + displayRoot.projections.children().size()
-				displayRoot.projectionDescriptors.leftShift{
-					entry{
-						string(className)
-						'repast.simphony.visualization.engine.DefaultProjectionDescriptor'{
-							proj(reference:"../../../../projections/repast.simphony.scenario.data.ProjectionData[$numberOfProjections]")
-							props()
-						}
-					}
-				}
-				result.displayFile.write(plainPrettyPrint(displayRoot))
-			}
-		}
-	}*/
 
 }

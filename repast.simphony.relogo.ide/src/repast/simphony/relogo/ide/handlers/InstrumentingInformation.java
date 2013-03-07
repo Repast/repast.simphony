@@ -26,6 +26,10 @@ public class InstrumentingInformation {
 		listOfGlobalFieldNames.add(global);
 	}
 	
+	public void addToListOfGlobalFieldNames(List<String> globalFieldNames) {
+		this.listOfGlobalFieldNames.addAll(globalFieldNames);
+	}
+	
 	public List<Pair<String, String>> getTurtleSingularPlurals() {
 		return turtleSingularPlurals;
 	}

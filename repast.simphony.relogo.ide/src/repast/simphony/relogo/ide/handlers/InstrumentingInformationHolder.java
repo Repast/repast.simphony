@@ -48,8 +48,11 @@ public class InstrumentingInformationHolder {
 		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
 		ii.addToPatchFieldTypes(patchFieldTypes);
 	}
-
-	// TODO: globals
+	
+	public void putGlobalsInfo(List<String> globalFieldNames, String instrumentingPackageName) {
+		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
+		ii.addToListOfGlobalFieldNames(globalFieldNames);
+	}
 
 	public InstrumentingInformation getInstrumentingInformationFor(String instrumentingPackageName) {
 		return instrumentingPackageMap.get(instrumentingPackageName);

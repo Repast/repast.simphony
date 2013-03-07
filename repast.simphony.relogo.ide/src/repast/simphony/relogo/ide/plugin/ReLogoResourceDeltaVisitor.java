@@ -12,6 +12,7 @@ public class ReLogoResourceDeltaVisitor implements IResourceDeltaVisitor {
 	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource res = delta.getResource();
+		// TODO: fix this to use segments (see relogo builder)
 		if (res.getFullPath().toOSString().contains("/relogo/")) {
 			if (delta.getKind() == IResourceDelta.REMOVED) {
 //				System.out.print("ReLogo resource ");
@@ -24,7 +25,9 @@ public class ReLogoResourceDeltaVisitor implements IResourceDeltaVisitor {
 					IFile contextIFile = res.getProject().getFile(res.getProject().getName() + ".rs/context.xml");
 					if (contextIFile.exists()){
 						ContextDisplayNetworkSanitizer.sanitize(contextIFile, res);
+
 					}
+					//TODO: Add sanitizer for OTPL classes
 				}
 			}
 			/*else if (delta.getKind() == IResourceDelta.CHANGED){
