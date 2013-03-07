@@ -83,6 +83,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
 
   }
 
+  boolean tryAnotherUpdate = false;
   @Override
   public void update() {
     List<AbstractState> states = stateChart.getCurrentStates();
@@ -91,6 +92,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
       activeUUIDs.add(stateChart.getUuidForState(state));
     }
     model.setActiveUUIDs(activeUUIDs);
+    tryAnotherUpdate = false;
     svgDisplay.renewDocument();
   }
 
