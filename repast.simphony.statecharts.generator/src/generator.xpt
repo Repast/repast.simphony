@@ -61,7 +61,7 @@ private static class «generatorClassName()» {
         «ELSE-»
         «LET findFirstState(this.states) AS firstState -»
             «EXPAND blockContent(simpleType) FOR firstState-»
-            MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «getVar(firstState)», "«firstState.uuid»");
+            MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «EXPAND getVar FOR firstState-», "«firstState.uuid»");
             «EXPAND blockContent(simpleType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
         «ENDLET-»
         createTransitions(mscb);
@@ -421,6 +421,15 @@ private static class «generatorClassName()» {
      «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE blockContent(String agentType) FOR PseudoState-»
+    «IF this.type == PseudoStateTypes::choice»
+        «LET getBranchVar(this.uuid) AS bvar-»
+        BranchState<«agentType»> «bvar» = new BranchStateBuilder<«agentType»>("«this.id»").build();
+        stateMap.put("«this.uuid»", «bvar»);
+        «ENDLET»
+    «ENDIF»
+«ENDDEFINE»
+
 «DEFINE blockContent(String agentType) FOR FinalState-»
      «LET getSBVar(this.uuid) AS bvar-»
         FinalStateBuilder<«agentType»> «bvar» = new FinalStateBuilder<«agentType»>("«this.id»");
@@ -437,7 +446,7 @@ private static class «generatorClassName()» {
             «LET findInitialState(this.children) AS initialState -»
                 «EXPAND blockContent(agentType) FOR initialState-»
    
-                CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «getVar(initialState)», "«initialState.uuid»");
+                CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «EXPAND getVar FOR initialState-», "«initialState.uuid»");
                 «EXPAND registerActions(agentType, csbVar) FOR this-»
                 «FOREACH children.reject(e | e.uuid == initialState.uuid) AS child»
                     «IF History.isInstance(child)-»
@@ -457,6 +466,14 @@ private static class «generatorClassName()» {
   }
   
 «EXPAND csBlock(agentType) FOREACH compositeStates(children)-»
+«ENDDEFINE»
+
+«DEFINE getVar FOR PseudoState-»
+«getBranchVar(this.uuid)»
+«ENDDEFINE»
+
+«DEFINE getVar FOR AbstractState-»
+«getVar(this)»
 «ENDDEFINE»
 
 «DEFINE imports(String agentType, String code) FOR LanguageTypes»
