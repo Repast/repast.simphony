@@ -67,28 +67,34 @@ public class InstrumentingInformationHolder {
 				sb.append("### For package: " + ipn);
 				sb.append('\n');
 				InstrumentingInformation ii = instrumentingPackageMap.get(ipn);
-				sb.append("Turtles info:");
+				sb.append("# Turtles info:");
 				sb.append('\n');
 				for (Pair<String, String> pair : ii.getTurtleSingularPlurals()) {
 					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
 					sb.append('\n');
 				}
-				sb.append("DirLink info:");
+				sb.append("# DirLink info:");
 				sb.append('\n');
 				for (Pair<String, String> pair : ii.getDirLinkSingularPlurals()) {
 					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
 					sb.append('\n');
 				}
-				sb.append("UndirLink info:");
+				sb.append("# UndirLink info:");
 				sb.append('\n');
 				for (Pair<String, String> pair : ii.getUndirLinkSingularPlurals()) {
 					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
 					sb.append('\n');
 				}
-				sb.append("Patch fields info:");
+				sb.append("# Patch fields info:");
 				sb.append('\n');
 				for (Pair<String, String> pair : ii.getPatchFieldTypes()) {
 					sb.append("FieldName: " + pair.getFirst() + ", FieldType: " + pair.getSecond());
+					sb.append('\n');
+				}
+				sb.append("# Global fields info:");
+				sb.append('\n');
+				for (String global : ii.getListOfGlobalFieldNames()) {
+					sb.append("FieldName: " + global);
 					sb.append('\n');
 				}
 			}

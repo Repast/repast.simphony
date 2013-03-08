@@ -4,6 +4,7 @@
 package repast.simphony.relogo.ide.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.ModuleNode;
 import org.codehaus.groovy.ast.Parameter;
@@ -22,6 +24,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
 import org.eclipse.core.resources.IProject;
@@ -86,8 +89,16 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	private static final String LIB_PATCH_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibPatch";
 	private static final String LIB_LINK_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibLink";
 	private static final String LIB_OBSERVER_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibObserver";
-	
-	private static final ClassNode abstractGlobalsAndPanel = ClassHelper.make("repast.simphony.relogo.factories.AbstractReLogoGlobalsAndPanelFactory");
+
+	private static final String[] METHODS_ARRAY = { "addGlobal", "addSlider", "addChooser",
+			"addSwitch", "addSliderWL", "addChooserWL", "addSwitchWL", "addInput" };
+	private static final List<String> METHODS_LIST = Arrays.asList(METHODS_ARRAY);
+	private static final String[] METHODS_ARRAY2 = { "slider", "chooser", "rSwitch", "sliderWL",
+			"chooserWL", "rSwitchWL", "input" };
+	private static final List<String> METHODS_LIST2 = Arrays.asList(METHODS_ARRAY2);
+
+	private static final ClassNode abstractGlobalsAndPanel = ClassHelper
+			.make("repast.simphony.relogo.factories.AbstractReLogoGlobalsAndPanelFactory");
 
 	/*
 	 * (non-Javadoc)
@@ -125,7 +136,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
 				getProject(), monitor);
 		getProject().accept(visitor);
-//		System.out.println(visitor.iih);
+		System.out.println(visitor.iih);
 	}
 
 	protected static class FullBuildInstrumentationInformationVisitor implements IResourceVisitor {
@@ -272,16 +283,15 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 								} else {
 									iih.putUndirLinkPluralInformation(pi, instrumentingPackageName);
 								}
-								
+
 								// check to see if context and display files need modification
 								// and modify if necessary
 								checkContextAndDisplayFiles(type);
-								
 
 							} else if (extendsClass(type, ABSTRACT_GLOBALS_AND_PANEL)) {
 
-
 								List<String> listOfGlobalFields = getGlobalFields(type);
+								iih.putGlobalsInfo(listOfGlobalFields, instrumentingPackageName);
 							}
 						}
 					}
@@ -290,158 +300,87 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			}
 			return true;
 		}
-		
-		private List<String> getGlobalFields(IType type) throws JavaModelException{
-			List<String> globalFields = new ArrayList<String>();
+
+		private List<String> getGlobalFields(IType type) throws JavaModelException {
+			final List<String> globalFields = new ArrayList<String>();
 			// get compilation unit
 			if (!type.isBinary()) {
 				if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
-//					IMethod method = type.getMethod("addGlobalsAndPanelComponents", new String[0]);
-//					char [] source = method.getSource().toCharArray();
-					GroovyCompilationUnit icu = (GroovyCompilationUnit)type.getCompilationUnit();
-					ModuleNode moduleNode = icu.getModuleNode();
-					// begin
-					if (moduleNode!= null){
-						List<MethodNode> methods = moduleNode.getMethods();
-						for (MethodNode method : methods){
-							System.out.println(method.getName());
-						}
-						/*List<ClassNode> classNodes = moduleNode.getClasses();
-						// Usually there will be only one ClassNode per file but just in case there are multiple classes defined in one file
-						for (ClassNode classNode : classNodes){
-							// Checking to see if the class node is in a 'relogo' package or sub-package
-								if (classNode.isDerivedFrom(abstractGlobalsAndPanel)){
-									MethodNode addPanelComponentsMethod = classNode.getMethod("addGlobalsAndPanelComponents", Parameter.EMPTY_ARRAY);
-									if (addPanelComponentsMethod != null){
-										BlockStatement block = (BlockStatement) addPanelComponentsMethod.getCode();
-										for (Statement stmt : block.getStatements()){
-											System.out.println(stmt.getStatementLabel());
-										}
-									}
-								}
-						}*/
-					}
-/*											Expression expr = stmt.getExpression();
-											
-											if (expr && expr instanceof MethodCallExpression){
+					// IMethod method = type.getMethod("addGlobalsAndPanelComponents", new
+					// String[0]);
+					// char [] source = method.getSource().toCharArray();
+					GroovyCompilationUnit icu = (GroovyCompilationUnit) type.getCompilationUnit();
 
-												MethodCallExpression mce = (MethodCallExpression) expr
-												String methodString = mce.getMethodAsString()
-												def methodsList = [
-													'addGlobal',
-													'addSlider',
-													'addChooser',
-													'addSwitch',
-													'addSliderWL',
-													'addChooserWL',
-													'addSwitchWL',
-													'addInput'
-												]
-												if (methodsList.contains(methodString)){
-													Expression argumentsExpression = mce.getArguments()
-													if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
-														List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
-														if (arguments.get(0) instanceof ConstantExpression){
-															ConstantExpression ce = (ConstantExpression) arguments.get(0)
-															def val = ce.getValue()
-															if (val instanceof String){
-																listOfGlobalFieldNames.add((String) val)
-															}
-														}
-													}
-												}
-											} else if (expr && expr instanceof BinaryExpression ){
-												BinaryExpression be = (BinaryExpression) expr
-												Expression re = be.getRightExpression()
-												if (re && re instanceof MethodCallExpression){
-													MethodCallExpression mce = (MethodCallExpression) re
-													String methodString = mce.getMethodAsString()
-													def methodsList = [
-														'slider',
-														'chooser',
-														'rSwitch',
-														'sliderWL',
-														'chooserWL',
-														'rSwitchWL',
-														'input'
-													]
-													if (methodsList.contains(methodString)){
-														Expression argumentsExpression = mce.getArguments()
-														if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
-															List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
-															if (arguments.get(0) instanceof ConstantExpression){
-																ConstantExpression ce = (ConstantExpression) arguments.get(0)
-																def val = ce.getValue()
-																if (val instanceof String){
-																	listOfGlobalFieldNames.add((String) val)
-																}
-															}
+					ModuleNode moduleNode = icu.getModuleNode();
+					// System.out.println(moduleNode);
+					// begin
+					if (moduleNode != null) {
+						List<ClassNode> classNodes = moduleNode.getClasses();
+						// Usually there will be only one ClassNode per file but just in
+						// case there are multiple classes defined in one file
+						for (ClassNode classNode : classNodes) {
+
+							// Checking to see if the class node is in a 'relogo' package or
+							// sub-package
+							if (classNode.isDerivedFrom(abstractGlobalsAndPanel)) {
+								MethodNode addPanelComponentsMethod = classNode.getMethod(
+										"addGlobalsAndPanelComponents", Parameter.EMPTY_ARRAY);
+								if (addPanelComponentsMethod != null) {
+									BlockStatement block = (BlockStatement) addPanelComponentsMethod.getCode();
+									block.visit(new CodeVisitorSupport() {
+
+										@Override
+										public void visitMethodCallExpression(MethodCallExpression mce) {
+
+											String methodString = mce.getMethodAsString();
+											// List<String> methodsList = new ArrayList<String>();
+											if (METHODS_LIST.contains(methodString)) {
+												Expression argumentsExpression = mce.getArguments();
+												if (argumentsExpression != null
+														&& argumentsExpression instanceof ArgumentListExpression) {
+													List arguments = ((ArgumentListExpression) argumentsExpression)
+															.getExpressions();
+													if (arguments.get(0) instanceof ConstantExpression) {
+														ConstantExpression ce = (ConstantExpression) arguments.get(0);
+														Object val = ce.getValue();
+														if (val instanceof String) {
+															globalFields.add((String) val);
 														}
 													}
 												}
 											}
 										}
-									}
-								}
-*/					// end
-			     
-					
-					
-//			    TODO: Check what the Groovy ASTNode has to do with this if anything
-			    
-			    
-			    /*ast.accept(new ASTVisitor() {
 
-			    	boolean inMethod = false;
-			    	
-						@Override
-						public boolean visit(MethodDeclaration node) {
-							String nodeName = node.getName().getIdentifier();
-							System.out.println("Node: " + nodeName);
-							//												 addGlobalsAndPanelComponents
-							if (nodeName.equals("addGlobalsAndPanelComponents")){
-								inMethod = true;
-								Block block = node.getBody();
-								System.out.println("Block: " + block.toString());
-								for (Object o : block.statements()){
-									if (o instanceof Statement){
-										Statement s = (Statement)o;
-										System.out.println("Statement: " + s.toString());
-									}
-								}
-							}
-							return super.visit(node);
-						}
-						
-						@Override
-						public void endVisit(MethodDeclaration node) {
-							System.out.println("End Node: " + node.getName());
-							if (node.getName().equals("addGlobalsAndPanelComponents")){
-								inMethod = false;
-							}
-						}
+										@Override
+										public void visitBinaryExpression(BinaryExpression be) {
+											Expression re = be.getRightExpression();
+													if (re != null && re instanceof MethodCallExpression){
+														MethodCallExpression mce = (MethodCallExpression) re;
+														String methodString = mce.getMethodAsString();
+														if (METHODS_LIST2.contains(methodString)){
+															Expression argumentsExpression = mce.getArguments();
+															if (argumentsExpression != null && argumentsExpression instanceof ArgumentListExpression){
+																List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions();
+																if (arguments.get(0) instanceof ConstantExpression){
+																	ConstantExpression ce = (ConstantExpression) arguments.get(0);
+																	Object val = ce.getValue();
+																	if (val instanceof String){
+																		globalFields.add((String) val);
+																	}
+																}
+															}
+														}
+													}
+										}
+										
+										
 
-						@Override
-						public boolean visit(MethodInvocation node) {
-							System.out.println("Method invocation: " + node.getName());
-							if (inMethod){
-								System.out.println(node.getName());
+									});
+								}
+
 							}
-							return super.visit(node);
 						}
-						
-						@Override
-						public boolean visit(ExpressionStatement node) {
-							System.out.println("ExpressionStatement: " + node.toString());
-							if (inMethod){
-								System.out.println(node.toString());
-							}
-							return super.visit(node);
-						}
-						
-						
-			    	
-					});*/
+					}
 				}
 			}
 			// get AST
@@ -450,8 +389,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return globalFields;
 		}
 
-		private void checkContextAndDisplayFiles(IType type){
-			
+		private void checkContextAndDisplayFiles(IType type) {
+
 			try {
 				ContextAndDisplayUtilsGroovy.checkToModifyContextFile(project, type, monitor);
 			} catch (Exception e) {
@@ -482,22 +421,24 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				for (IField field : fields) {
 					boolean foundField = false;
 					int flags = field.getFlags();
-//					System.out.println("Field : " + field.getElementName() + " Flags: " + flags
-//							+ " toString: " + Flags.toString(flags));
+					// System.out.println("Field : " + field.getElementName() + " Flags: "
+					// + flags
+					// + " toString: " + Flags.toString(flags));
 					if (!Flags.isPublic(flags)) {
 						if (Flags.isPrivate(flags) && isGroovySource) {
 							// package default is seen as private in groovy source
 							// so need to check if it's truly private or not
 							String source = field.getSource();
 							if (source != null) {
-								if (!source.trim().startsWith("private ")){
-									// This is to check if this is part of a comma separated list of fields
-									// since in that case the non-first elements won't show the private modifier
-									if (source.trim().equals(field.getElementName())){
+								if (!source.trim().startsWith("private ")) {
+									// This is to check if this is part of a comma separated list
+									// of fields
+									// since in that case the non-first elements won't show the
+									// private modifier
+									if (source.trim().equals(field.getElementName())) {
 										// check to see if the previous field was found
 										foundField = previousField;
-									}
-									else {
+									} else {
 										foundField = true;
 									}
 								}
@@ -535,9 +476,9 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					}
 					previousField = foundField;
 				}
-//				System.out.println("Type: " + type.getElementName());
+				// System.out.println("Type: " + type.getElementName());
 				type = getSuperType(type);
-//				System.out.println("Supertype: " + type.getElementName());
+				// System.out.println("Supertype: " + type.getElementName());
 
 			}
 			return patchFieldTypes;
