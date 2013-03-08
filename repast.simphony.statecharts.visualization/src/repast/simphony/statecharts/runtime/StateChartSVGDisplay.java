@@ -252,12 +252,13 @@ public class StateChartSVGDisplay {
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
 				isReadyForModification = true;
-				if (controller.tryAnotherUpdate){
-					renewDocument();
-				}
+				
 				if (needsInitialUpdate){
 					needsInitialUpdate = false;
 					controller.update();
+				}
+				if (controller.tryAnotherUpdate){
+					renewDocument();
 				}
 			}
 
