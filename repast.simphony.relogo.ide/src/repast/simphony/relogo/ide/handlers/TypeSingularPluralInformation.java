@@ -8,12 +8,14 @@ import org.eclipse.jdt.core.IType;
  * @author jozik
  * 
  */
-class PluralInformation {
-	boolean hasPluralAnnotation = false;
-	String plural;
+class TypeSingularPluralInformation {
+	String fullyQualifiedName;
 	String singular;
+	String plural;
+	
 
-	public PluralInformation(IType type) {
+	public TypeSingularPluralInformation(IType type) {
+		this.fullyQualifiedName = type.getFullyQualifiedName();
 		this.singular = type.getElementName();
 		this.plural = type.getElementName() + "s";
 	}

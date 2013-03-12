@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.ast.AnnotationNode;
 import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
@@ -24,8 +23,6 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
-import org.codehaus.groovy.ast.stmt.ExpressionStatement;
-import org.codehaus.groovy.ast.stmt.Statement;
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,6 +48,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ide.IDE;
 
 import relogo.Activator;
 import repast.simphony.util.collections.Pair;
@@ -77,7 +76,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			.compile("\\s*(//)\\s*@Plural\\([\"|'](.+)[\"|']\\)");
 	private static final Pattern SIMPLE_PLURAL = Pattern.compile("@Plural\\([\"|'](.+)[\"|']\\)");
 
-	private static final String DIRECTED_ANNOTATION = "repast.simphony.relogo.Directed";
+	// private static final String DIRECTED_ANNOTATION =
+	// "repast.simphony.relogo.Directed";
 	private static final String UNDIRECTED_ANNOTATION = "repast.simphony.relogo.Undirected";
 
 	private static final String BASE_OBSERVER = "repast.simphony.relogo.BaseObserver";
@@ -99,6 +99,9 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 	private static final ClassNode abstractGlobalsAndPanel = ClassHelper
 			.make("repast.simphony.relogo.factories.AbstractReLogoGlobalsAndPanelFactory");
+
+	private static final ClassNode PLURAL_CLASSNODE = ClassHelper
+			.make("repast.simphony.relogo.Plural");
 
 	/*
 	 * (non-Javadoc)
@@ -133,10 +136,86 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	}
 
 	private void fullBuild(IProgressMonitor monitor) throws CoreException {
-		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
-				getProject(), monitor);
-		getProject().accept(visitor);
-		System.out.println(visitor.iih);
+		IProject project = getProject();
+//		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
+//				project, monitor);
+//		project.accept(visitor);
+//		System.out.println(visitor.iih);
+//		FullBuildInstrumentingVisitor fbiv = new FullBuildInstrumentingVisitor(visitor.iih, project,
+//				monitor);
+//		project.accept(fbiv);
+	}
+
+	protected static class FullBuildInstrumentingVisitor implements IResourceVisitor {
+		IProgressMonitor monitor;
+		IProject project;
+		InstrumentingInformationHolder iih;
+
+		public FullBuildInstrumentingVisitor(InstrumentingInformationHolder iih, IProject project,
+				IProgressMonitor monitor) {
+			this.iih = iih;
+			this.monitor = monitor;
+			this.project = project;
+		}
+
+		@Override
+		public boolean visit(IResource resource) throws CoreException {
+			Object obj = resource.getAdapter(IJavaElement.class);
+			if (obj != null) {
+				IJavaElement javaElement = (IJavaElement) obj;
+				IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElement
+						.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+				// Check that it's in the src-gen root package fragment
+				if (pfr != null && pfr.getElementName().equals(SRCGEN_ROOT_PACKAGE_FRAGMENT)) {
+					// Check that it's a compilation unit
+					if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
+						ICompilationUnit cu = (ICompilationUnit) javaElement;
+						// Check that it's a java file (not a groovy file)
+						IPath path = resource.getRawLocation();
+						if (path != null && path.getFileExtension() != null
+								&& path.getFileExtension().equals("java")) {
+							// okay to get first type since we control these
+							IType type = cu.getTypes()[0];
+							// get package
+							IPackageFragment pf = (IPackageFragment) javaElement
+									.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
+							if (pf != null && pf.getElementName() != null) {
+								String instrumentingPackageName = pf.getElementName();
+								InstrumentingInformation ii = iih
+										.getInstrumentingInformationFor(instrumentingPackageName);
+								// If information exists for this instrumenting package name
+								if (ii != null) {
+									// get corresponding instrumenting package info from iih
+									try {
+										new Instrumenter(ii, monitor).createAllMethods(type);
+										final IResource[] resources = { resource };
+										Display.getDefault().asyncExec(new Runnable() {
+											public void run() {
+												IDE.saveAllEditors(resources, false);
+											}
+										});
+
+									} catch (JavaModelException jme) {
+										jme.printStackTrace();
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			// is in src gen ?
+			// is java file
+			// extends base class
+
+			return true;
+		}
+
+		private void fullInstrumentTurtle(IType type, InstrumentingInformation ii) {
+
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	protected static class FullBuildInstrumentationInformationVisitor implements IResourceVisitor {
@@ -210,16 +289,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		}
 
 		@SuppressWarnings("restriction")
-		protected boolean extendsClass(IType type, String clazzName) throws JavaModelException {
-			IType[] types = JavaModelUtil.getAllSuperTypes(type, monitor);
-			for (IType t : types) {
-				if (t.getFullyQualifiedName().equals(clazzName))
-					return true;
-			}
-			return false;
-		}
-
-		@SuppressWarnings("restriction")
 		protected IType getSuperType(IType type) throws JavaModelException {
 			String superTypeName = type.getSuperclassName();
 			String[][] resolved = type.resolveType(superTypeName);
@@ -261,37 +330,42 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 						IJavaElement javaElement = (IJavaElement) obj;
 						if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 							ICompilationUnit cu = (ICompilationUnit) javaElement;
-							IType type = cu.getTypes()[0];
-							if (extendsClass(type, BASE_TURTLE)) {
-								// find plural
-								PluralInformation pi = getPluralInformation(type);
-								iih.putTurtlePluralInformation(pi, instrumentingPackageName);
-							} else if (extendsClass(type, BASE_PATCH)) {
-								// find fields and type info
-								List<Pair<String, String>> patchFieldTypes = getPatchFieldTypes(type);
-								// put in iih
-								iih.putPatchFieldTypes(patchFieldTypes, instrumentingPackageName);
+							for (IType type : cu.getTypes()) {
+								if (ITypeUtils.extendsClass(type, BASE_TURTLE, monitor)) {
+									// find plural
+									TypeSingularPluralInformation pi = getPluralInformation(type);
+									if (pi != null) {
+										iih.putTurtlePluralInformation(pi, instrumentingPackageName);
+									}
+								} else if (ITypeUtils.extendsClass(type, BASE_PATCH, monitor)) {
+									// find fields and type info
+									List<Pair<String, String>> patchFieldTypes = getPatchFieldTypes(type);
+									// put in iih
+									iih.putPatchFieldTypes(patchFieldTypes, instrumentingPackageName);
 
-							} else if (extendsClass(type, BASE_LINK)) {
-								// find plural
-								PluralInformation pi = getPluralInformation(type);
+								} else if (ITypeUtils.extendsClass(type, BASE_LINK, monitor)) {
+									// find plural
+									TypeSingularPluralInformation pi = getPluralInformation(type);
+									if (pi != null) {
+										// find if it's directed or undirected
+										boolean isDir = isDir(type);
+										if (isDir) {
+											iih.putDirLinkPluralInformation(pi, instrumentingPackageName);
+										} else {
+											iih.putUndirLinkPluralInformation(pi, instrumentingPackageName);
+										}
 
-								// find if it's directed or undirected
-								boolean isDir = isDir(type);
-								if (isDir) {
-									iih.putDirLinkPluralInformation(pi, instrumentingPackageName);
-								} else {
-									iih.putUndirLinkPluralInformation(pi, instrumentingPackageName);
+										// check to see if context and display files need
+										// modification
+										// and modify if necessary
+										checkContextAndDisplayFiles(type);
+									}
+
+								} else if (ITypeUtils.extendsClass(type, ABSTRACT_GLOBALS_AND_PANEL, monitor)) {
+
+									List<String> listOfGlobalFields = getGlobalFields(type);
+									iih.putGlobalsInfo(listOfGlobalFields, instrumentingPackageName);
 								}
-
-								// check to see if context and display files need modification
-								// and modify if necessary
-								checkContextAndDisplayFiles(type);
-
-							} else if (extendsClass(type, ABSTRACT_GLOBALS_AND_PANEL)) {
-
-								List<String> listOfGlobalFields = getGlobalFields(type);
-								iih.putGlobalsInfo(listOfGlobalFields, instrumentingPackageName);
 							}
 						}
 					}
@@ -305,23 +379,18 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			final List<String> globalFields = new ArrayList<String>();
 			// get compilation unit
 			if (!type.isBinary()) {
+				// TODO: do we need a Java version as well?
 				if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
-					// IMethod method = type.getMethod("addGlobalsAndPanelComponents", new
-					// String[0]);
-					// char [] source = method.getSource().toCharArray();
+
 					GroovyCompilationUnit icu = (GroovyCompilationUnit) type.getCompilationUnit();
 
 					ModuleNode moduleNode = icu.getModuleNode();
-					// System.out.println(moduleNode);
-					// begin
 					if (moduleNode != null) {
 						List<ClassNode> classNodes = moduleNode.getClasses();
 						// Usually there will be only one ClassNode per file but just in
 						// case there are multiple classes defined in one file
 						for (ClassNode classNode : classNodes) {
 
-							// Checking to see if the class node is in a 'relogo' package or
-							// sub-package
 							if (classNode.isDerivedFrom(abstractGlobalsAndPanel)) {
 								MethodNode addPanelComponentsMethod = classNode.getMethod(
 										"addGlobalsAndPanelComponents", Parameter.EMPTY_ARRAY);
@@ -354,38 +423,33 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 										@Override
 										public void visitBinaryExpression(BinaryExpression be) {
 											Expression re = be.getRightExpression();
-													if (re != null && re instanceof MethodCallExpression){
-														MethodCallExpression mce = (MethodCallExpression) re;
-														String methodString = mce.getMethodAsString();
-														if (METHODS_LIST2.contains(methodString)){
-															Expression argumentsExpression = mce.getArguments();
-															if (argumentsExpression != null && argumentsExpression instanceof ArgumentListExpression){
-																List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions();
-																if (arguments.get(0) instanceof ConstantExpression){
-																	ConstantExpression ce = (ConstantExpression) arguments.get(0);
-																	Object val = ce.getValue();
-																	if (val instanceof String){
-																		globalFields.add((String) val);
-																	}
-																}
+											if (re != null && re instanceof MethodCallExpression) {
+												MethodCallExpression mce = (MethodCallExpression) re;
+												String methodString = mce.getMethodAsString();
+												if (METHODS_LIST2.contains(methodString)) {
+													Expression argumentsExpression = mce.getArguments();
+													if (argumentsExpression != null
+															&& argumentsExpression instanceof ArgumentListExpression) {
+														List arguments = ((ArgumentListExpression) argumentsExpression)
+																.getExpressions();
+														if (arguments.get(0) instanceof ConstantExpression) {
+															ConstantExpression ce = (ConstantExpression) arguments.get(0);
+															Object val = ce.getValue();
+															if (val instanceof String) {
+																globalFields.add((String) val);
 															}
 														}
 													}
+												}
+											}
 										}
-										
-										
-
-									});
+									}); // end of CodeVisitorSupport
 								}
-
 							}
 						}
 					}
 				}
 			}
-			// get AST
-			// visit
-			// TODO: need to see if Groovy Compilation unit creates a problem
 			return globalFields;
 		}
 
@@ -547,12 +611,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					fieldTypeSignature, type));
 		}
 
-		private PluralInformation getPluralInformation(IType type) throws JavaModelException {
+		private TypeSingularPluralInformation getPluralInformation(IType type) throws JavaModelException {
 			ICompilationUnit cu = type.getCompilationUnit();
 			if (cu == null)
-				return new PluralInformation(type);
+				return null;
 			if (cu instanceof GroovyCompilationUnit) {
-				return getPluralInformationFromSource(type);
+				return getPluralInformationFromGroovySource(type);
 			}
 			return getPluralInformationFromType(type);
 		}
@@ -567,19 +631,17 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return "";
 		}
 
-		private PluralInformation getPluralInformationFromType(IType type) throws JavaModelException {
-			PluralInformation pi = new PluralInformation(type);
+		private TypeSingularPluralInformation getPluralInformationFromType(IType type) throws JavaModelException {
+			TypeSingularPluralInformation pi = new TypeSingularPluralInformation(type);
 			for (IAnnotation annot : type.getAnnotations()) {
 				// If the annotation is the fully qualified name
 				if (annot.getElementName().equals(PLURAL_ANNOTATION)) {
-					pi.hasPluralAnnotation = true;
 					pi.plural = getValueFromAnnotation(annot);
 					return pi;
 				}
 				String[][] resolve = type.resolveType(annot.getElementName());
 				for (String[] res : resolve) {
 					if (StringUtils.join(res, '.').equals(PLURAL_ANNOTATION)) {
-						pi.hasPluralAnnotation = true;
 						pi.plural = getValueFromAnnotation(annot);
 						return pi;
 					}
@@ -605,64 +667,64 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return true;
 		}
 
-		protected String getValueFromSimplePluralAnnotationLine(String line) {
-			Matcher matcher = SIMPLE_PLURAL.matcher(line);
-			if (matcher.find()) {
-				String result = matcher.group(1);
-				matcher = SIMPLE_COMMENTED_PLURAL.matcher(line);
-				if (!matcher.find())
-					return result;
-			}
-			return null;
-		}
+		/*
+		 * protected String getValueFromSimplePluralAnnotationLine(String line) {
+		 * Matcher matcher = SIMPLE_PLURAL.matcher(line); if (matcher.find()) {
+		 * String result = matcher.group(1); matcher =
+		 * SIMPLE_COMMENTED_PLURAL.matcher(line); if (!matcher.find()) return
+		 * result; } return null; }
+		 * 
+		 * protected String getValueFromFullPluralAnnotationLine(String line) {
+		 * 
+		 * Matcher matcher = FULL_PLURAL.matcher(line); if (matcher.find()) { String
+		 * result = matcher.group(1); matcher = FULL_COMMENTED_PLURAL.matcher(line);
+		 * if (!matcher.find()) return result; } return null; }
+		 */
 
-		protected String getValueFromFullPluralAnnotationLine(String line) {
-
-			Matcher matcher = FULL_PLURAL.matcher(line);
-			if (matcher.find()) {
-				String result = matcher.group(1);
-				matcher = FULL_COMMENTED_PLURAL.matcher(line);
-				if (!matcher.find())
-					return result;
-			}
-			return null;
-		}
-
-		private PluralInformation getPluralInformationFromSource(IType type) throws JavaModelException {
-			PluralInformation pi = new PluralInformation(type);
-			String source = type.getCompilationUnit().getSource();
-			if (source != null) {
-				Scanner scanner = new Scanner(source);
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
-					if (line.contains("@Plural")) {
-						String[][] resolve = type.resolveType("Plural");
-						for (String[] res : resolve) {
-							if (StringUtils.join(res, '.').equals(PLURAL_ANNOTATION)) {
-								pi.hasPluralAnnotation = true;
-								String plural = getValueFromSimplePluralAnnotationLine(line);
-								if (plural != null) {
-									pi.plural = plural;
+		private TypeSingularPluralInformation getPluralInformationFromGroovySource(IType type)
+				throws JavaModelException {
+			TypeSingularPluralInformation pi = new TypeSingularPluralInformation(type);
+			ICompilationUnit icu = type.getCompilationUnit();
+			if (icu instanceof GroovyCompilationUnit) {
+				GroovyCompilationUnit gcu = (GroovyCompilationUnit) icu;
+				ModuleNode moduleNode = gcu.getModuleNode();
+				if (moduleNode != null) {
+					List<ClassNode> classNodes = moduleNode.getClasses();
+					// Usually there will be only one ClassNode per file but just in
+					// case there are multiple classes defined in one file
+					for (ClassNode classNode : classNodes) {
+						List<AnnotationNode> annots = classNode.getAnnotations(PLURAL_CLASSNODE);
+						for (AnnotationNode annot : annots) {
+							Expression e = annot.getMember("value");
+							if (e instanceof ConstantExpression) {
+								Object pluralVal = ((ConstantExpression) e).getValue();
+								if (pluralVal instanceof String) {
+									pi.plural = (String) pluralVal;
 								}
-								scanner.close();
-								return pi;
 							}
 						}
 					}
-					if (line.contains("@repast.simphony.relogo.Plural")) {
-						pi.hasPluralAnnotation = true;
-						String plural = getValueFromFullPluralAnnotationLine(line);
-						if (plural != null) {
-							pi.plural = plural;
-						}
-						scanner.close();
-						return pi;
-					}
 				}
-				scanner.close();
 			}
 			return pi;
 		}
+
+		/*
+		 * private PluralInformation getPluralInformationFromSource(IType type)
+		 * throws JavaModelException { PluralInformation pi = new
+		 * PluralInformation(type); String source =
+		 * type.getCompilationUnit().getSource(); if (source != null) { Scanner
+		 * scanner = new Scanner(source); while (scanner.hasNextLine()) { String
+		 * line = scanner.nextLine(); if (line.contains("@Plural")) { String[][]
+		 * resolve = type.resolveType("Plural"); for (String[] res : resolve) { if
+		 * (StringUtils.join(res, '.').equals(PLURAL_ANNOTATION)) { String plural =
+		 * getValueFromSimplePluralAnnotationLine(line); if (plural != null) {
+		 * pi.plural = plural; } scanner.close(); return pi; } } } if
+		 * (line.contains("@repast.simphony.relogo.Plural")) { String plural =
+		 * getValueFromFullPluralAnnotationLine(line); if (plural != null) {
+		 * pi.plural = plural; } scanner.close(); return pi; } } scanner.close(); }
+		 * return pi; }
+		 */
 
 	}
 

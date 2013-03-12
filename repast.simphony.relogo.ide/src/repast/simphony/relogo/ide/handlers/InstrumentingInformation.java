@@ -13,9 +13,9 @@ import repast.simphony.util.collections.Pair;
 public class InstrumentingInformation {
 
 	List<String> listOfGlobalFieldNames = new ArrayList<String>();
-	List<Pair<String,String>> turtleSingularPlurals = new ArrayList<Pair<String,String>>();
-	List<Pair<String,String>> dirLinkSingularPlurals = new ArrayList<Pair<String,String>>();
-	List<Pair<String,String>> undirLinkSingularPlurals = new ArrayList<Pair<String,String>>();
+	List<TypeSingularPluralInformation> turtleSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
+	List<TypeSingularPluralInformation> dirLinkSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
+	List<TypeSingularPluralInformation> undirLinkSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
 	List<Pair<String,String>> patchFieldTypes = new ArrayList<Pair<String,String>>();
 	
 	public List<String> getListOfGlobalFieldNames() {
@@ -30,27 +30,27 @@ public class InstrumentingInformation {
 		this.listOfGlobalFieldNames.addAll(globalFieldNames);
 	}
 	
-	public List<Pair<String, String>> getTurtleSingularPlurals() {
+	public List<TypeSingularPluralInformation> getTurtleSingularPlurals() {
 		return turtleSingularPlurals;
 	}
 	
-	public void addToTurtleSingularPlurals(Pair<String, String> turtleSingularPlural) {
+	public void addToTurtleSingularPlurals(TypeSingularPluralInformation turtleSingularPlural) {
 		turtleSingularPlurals.add(turtleSingularPlural);
 	}
 	
-	public List<Pair<String, String>> getDirLinkSingularPlurals() {
+	public List<TypeSingularPluralInformation> getDirLinkSingularPlurals() {
 		return dirLinkSingularPlurals;
 	}
 	
-	public void addToDirLinkSingularPlurals(Pair<String, String> dirLinkSingularPlural) {
+	public void addToDirLinkSingularPlurals(TypeSingularPluralInformation dirLinkSingularPlural) {
 		dirLinkSingularPlurals.add(dirLinkSingularPlural);
 	}
 	
-	public List<Pair<String, String>> getUndirLinkSingularPlurals() {
+	public List<TypeSingularPluralInformation> getUndirLinkSingularPlurals() {
 		return undirLinkSingularPlurals;
 	}
 	
-	public void addToUndirLinkSingularPlurals(Pair<String, String> undirLinkSingularPlural) {
+	public void addToUndirLinkSingularPlurals(TypeSingularPluralInformation undirLinkSingularPlural) {
 		undirLinkSingularPlurals.add(undirLinkSingularPlural);
 	}
 	

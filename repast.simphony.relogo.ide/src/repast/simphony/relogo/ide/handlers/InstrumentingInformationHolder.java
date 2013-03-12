@@ -26,22 +26,19 @@ public class InstrumentingInformationHolder {
 		return ii;
 	}
 
-	public void putTurtlePluralInformation(PluralInformation pi, String instrumentingPackageName) {
+	public void putTurtlePluralInformation(TypeSingularPluralInformation pi, String instrumentingPackageName) {
 		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
-		Pair<String, String> pair = new Pair<String, String>(pi.singular, pi.plural);
-		ii.addToTurtleSingularPlurals(pair);
+		ii.addToTurtleSingularPlurals(pi);
 	}
 
-	public void putDirLinkPluralInformation(PluralInformation pi, String instrumentingPackageName) {
+	public void putDirLinkPluralInformation(TypeSingularPluralInformation pi, String instrumentingPackageName) {
 		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
-		Pair<String, String> pair = new Pair<String, String>(pi.singular, pi.plural);
-		ii.addToDirLinkSingularPlurals(pair);
+		ii.addToDirLinkSingularPlurals(pi);
 	}
 
-	public void putUndirLinkPluralInformation(PluralInformation pi, String instrumentingPackageName) {
+	public void putUndirLinkPluralInformation(TypeSingularPluralInformation pi, String instrumentingPackageName) {
 		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
-		Pair<String, String> pair = new Pair<String, String>(pi.singular, pi.plural);
-		ii.addToUndirLinkSingularPlurals(pair);
+		ii.addToUndirLinkSingularPlurals(pi);
 	}
 
 	public void putPatchFieldTypes(List<Pair<String,String>> patchFieldTypes, String instrumentingPackageName) {
@@ -69,20 +66,20 @@ public class InstrumentingInformationHolder {
 				InstrumentingInformation ii = instrumentingPackageMap.get(ipn);
 				sb.append("# Turtles info:");
 				sb.append('\n');
-				for (Pair<String, String> pair : ii.getTurtleSingularPlurals()) {
-					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
+				for (TypeSingularPluralInformation pi : ii.getTurtleSingularPlurals()) {
+					sb.append("FullyQualifiedName: " + pi.fullyQualifiedName + ", Singular: " + pi.singular + ", Plural: " + pi.plural);
 					sb.append('\n');
 				}
 				sb.append("# DirLink info:");
 				sb.append('\n');
-				for (Pair<String, String> pair : ii.getDirLinkSingularPlurals()) {
-					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
+				for (TypeSingularPluralInformation pi : ii.getDirLinkSingularPlurals()) {
+					sb.append("FullyQualifiedName: " + pi.fullyQualifiedName + ", Singular: " + pi.singular + ", Plural: " + pi.plural);
 					sb.append('\n');
 				}
 				sb.append("# UndirLink info:");
 				sb.append('\n');
-				for (Pair<String, String> pair : ii.getUndirLinkSingularPlurals()) {
-					sb.append("Singular: " + pair.getFirst() + ", Plural: " + pair.getSecond());
+				for (TypeSingularPluralInformation pi : ii.getUndirLinkSingularPlurals()) {
+					sb.append("FullyQualifiedName: " + pi.fullyQualifiedName + ", Singular: " + pi.singular + ", Plural: " + pi.plural);
 					sb.append('\n');
 				}
 				sb.append("# Patch fields info:");

@@ -9,6 +9,7 @@ import repast.simphony.relogo.BaseObserver;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoObserver extends BaseObserver{
@@ -27,6 +28,7 @@ import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoTurtle extends BaseTurtle{
@@ -44,6 +46,7 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 import repast.simphony.relogo.ast.Diffusible;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoPatch extends BasePatch{
@@ -63,6 +66,7 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Undirected;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoLink\<T\> extends BaseLink\<T\>	{

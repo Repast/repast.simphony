@@ -31,7 +31,8 @@ public class ReLogoBuilderTests {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+	// No need to parse the groovy source to get plural annotations.
+	/*@Test
 	public void testGetValueFromFullPluralAnnotationLine() {
 		ReLogoBuilder.FullBuildInstrumentationInformationVisitor visitor = new ReLogoBuilder.FullBuildInstrumentationInformationVisitor(
 				null, null);
@@ -109,7 +110,7 @@ public class ReLogoBuilderTests {
 		expected = null;
 
 		assertEquals(expected, visitor.getValueFromSimplePluralAnnotationLine(line));
-	}
+	}*/
 
 	@Test
 	public void testInstrumentingPackageName() {

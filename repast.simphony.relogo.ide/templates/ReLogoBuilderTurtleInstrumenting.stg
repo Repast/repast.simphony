@@ -1,0 +1,35 @@
+group reLogoBuilderTurtleInstrumenting;
+
+turtleHatchTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Makes a number of new <lowerPlural> and then executes a set of commands on the
+	 * created <lowerPlural>.
+	 * 
+	 * @param number
+	 *            a number
+	 * @param closure
+	 *            a set of commands
+	 * @return created <lowerPlural>
+	 */
+@ReLogoBuilderGeneratedFor(<fullyQualifiedName>)
+public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number, Closure closure) {
+	return this.hatch(number,closure,"<lowerPlural>")
+}
+
+	/**
+	 * Makes a number of new <lowerPlural> and then executes a set of commands on the
+	 * created <lowerPlural>.
+	 * 
+	 * @param number
+	 *            a number
+	 * @param closure
+	 *            a set of commands
+	 * @return created <lowerPlural>
+	 */
+@ReLogoBuilderGeneratedFor(<fullyQualifiedName>)
+public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number) {
+	return hatch<capPlural>(number,null);
+}
+
+>>
