@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Gis
 Bundle-SymbolicName: repast.simphony.gis
 Bundle-Version: 2.0.1
-Bundle-ClassPath: lib/forms-1.0.5.jar
+Bundle-ClassPath: lib/jgoodies-forms-1.7.1.jar
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,

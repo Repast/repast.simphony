@@ -68,7 +68,7 @@ public class StyleEditorDialog extends JPanel {
 
 	private void initLayout() {
 		FormLayout layout = new FormLayout("3dlu, 10dlu, pref", "");
-		PanelBuilder builder = new PanelBuilder(this, layout);
+		PanelBuilder builder = new PanelBuilder(layout, this);
 		builder.addSeparator("Fill Color");
 	}
 
