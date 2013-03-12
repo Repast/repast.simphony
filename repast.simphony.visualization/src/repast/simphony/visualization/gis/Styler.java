@@ -39,7 +39,8 @@ public class Styler {
    */
   public void registerStyle(FeatureSource source, Style style) {
     if (style == null) {
-      style = getDefaultStyle(source.getSchema().getDefaultGeometry().getType());
+      style = getDefaultStyle(
+      		source.getSchema().getGeometryDescriptor().getType().getBinding());
     }
     styleMap.put(source, style);
   }

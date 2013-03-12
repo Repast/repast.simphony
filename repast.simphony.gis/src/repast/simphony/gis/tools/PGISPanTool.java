@@ -1,6 +1,7 @@
 package repast.simphony.gis.tools;
 
-import org.geotools.map.MapContext;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.MapContent;
 
 import repast.simphony.gis.display.PGISCanvas;
 
@@ -11,11 +12,11 @@ import edu.umd.cs.piccolo.event.PPanEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
 
 public class PGISPanTool extends PPanEventHandler {
-	MapContext context;
+	MapContent context;
 
 	PGISCanvas canvas;
 
-	public PGISPanTool(MapContext context, PGISCanvas canvas) {
+	public PGISPanTool(MapContent context, PGISCanvas canvas) {
 		this.context = context;
 		this.canvas = canvas;
 	}
@@ -26,6 +27,6 @@ public class PGISPanTool extends PPanEventHandler {
 		PBounds bounds = canvas.getCamera().getViewBounds();
 		Envelope env = new Envelope(bounds.getMinX(), bounds.getMaxX(), bounds
 				.getMinY(), bounds.getMaxY());
-		context.setAreaOfInterest(env, canvas.getCRS());
+		context.getViewport().setBounds(new ReferencedEnvelope(env, canvas.getCRS()));
 	}
 }

@@ -4,16 +4,28 @@
 
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.Style;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import org.geotools.map.Layer;
+import org.geotools.styling.Style;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * @author User #1
@@ -31,7 +43,7 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 
-	public void setMapLayer(MapLayer layer) {
+	public void setMapLayer(Layer layer) {
 		styleEditorPanel1.setMapLayer(layer);
 	}
 
@@ -74,14 +86,14 @@ public class StyleDialog extends JDialog {
 
 		// ======== dialogPane ========
 		{
-			dialogPane.setBorder(Borders.DIALOG_BORDER);
+			dialogPane.setBorder(Borders.DIALOG);
 			dialogPane.setLayout(new BorderLayout());
 
 			// ======== contentPanel ========
 			{
 				contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
-						FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT,
 								FormSpec.DEFAULT_GROW) }, RowSpec
 						.decodeSpecs("fill:default:grow")));
@@ -91,11 +103,11 @@ public class StyleDialog extends JDialog {
 
 			// ======== buttonBar ========
 			{
-				buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+				buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
 				buttonBar.setLayout(new FormLayout(new ColumnSpec[] {
-						FormFactory.GLUE_COLSPEC, FormFactory.BUTTON_COLSPEC,
-						FormFactory.RELATED_GAP_COLSPEC,
-						FormFactory.BUTTON_COLSPEC }, RowSpec
+						FormSpecs.GLUE_COLSPEC, FormSpecs.BUTTON_COLSPEC,
+						FormSpecs.RELATED_GAP_COLSPEC,
+						FormSpecs.BUTTON_COLSPEC }, RowSpec
 						.decodeSpecs("pref")));
 
 				// ---- okButton ----

@@ -1,11 +1,12 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.feature.Feature;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
+import org.opengis.feature.simple.SimpleFeature;
+
 import repast.simphony.gis.display.LegendIconMaker;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +23,9 @@ public class SampleStyleTableModel extends AbstractTableModel {
 
 	private List<Rule> rules = new ArrayList<Rule>();
 	private Map<Rule, Icon> icons = new HashMap<Rule, Icon>();
-	private Feature sample;
+	private SimpleFeature sample;
 
-	public void initStyle(FeatureTypeStyle style, Feature sample) {
+	public void initStyle(FeatureTypeStyle style, SimpleFeature sample) {
 		rules.clear();
 		icons.clear();
 		this.sample = sample;

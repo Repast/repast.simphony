@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.AttributeType;
 
 public class FeatureObjectFiller {
 
@@ -22,7 +22,7 @@ public class FeatureObjectFiller {
 	public void addAttribute(AttributeType type) {
 		Field candidate = null;
 		for (Field f : clazz.getDeclaredFields()) {
-			if (f.getName().equalsIgnoreCase(type.getName())) {
+			if (f.getName().equalsIgnoreCase(type.getName().getLocalPart())) {
 				candidate = f;
 				break;
 			}
@@ -30,21 +30,21 @@ public class FeatureObjectFiller {
 		if (candidate == null) {
 			return;
 		}
-		if (areEquivelent(candidate.getType(), type.getType())) {
+		if (areEquivelent(candidate.getType(), type.getBinding())) {
 			candidate.setAccessible(true);
 			fieldMap.put(type, candidate);
 		}
 	}
 
-	public void fillObject(Feature feature, Object o) throws Exception {
+	public void fillObject(SimpleFeature feature, Object o) throws Exception {
 		for (Entry<AttributeType, Field> entry : fieldMap.entrySet()) {
 			try {
-				if (Number.class.isAssignableFrom(entry.getKey().getType())) {
+				if (Number.class.isAssignableFrom(entry.getKey().getBinding())) {
 					setNumber(o, entry.getValue(), (Number) feature
 							.getAttribute(entry.getKey().getName()));
 					continue;
 				}
-				if (Boolean.class.equals(entry.getKey().getType())) {
+				if (Boolean.class.equals(entry.getKey().getBinding())) {
 					entry.getValue().setBoolean(
 							o,
 							((Boolean) feature.getAttribute(entry.getKey()

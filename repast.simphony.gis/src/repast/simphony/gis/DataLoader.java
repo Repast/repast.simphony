@@ -7,10 +7,11 @@ import java.util.Map;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -21,16 +22,16 @@ public class DataLoader {
 		Map<T, Geometry> map = new HashMap<T, Geometry>();
 		try {
 			FeatureObjectFiller test = new FeatureObjectFiller(clazz);
-			for (AttributeType type : desc.getFeatureType().getAttributeTypes()) {
+			for (AttributeType type : desc.getFeatureType().getTypes()) {
 				test.addAttribute(type);
 			}
 			FeatureCollection collection = desc.getFeatures();
 			Iterator iter = collection.iterator();
 			while (iter.hasNext()) {
-				Feature feature = (Feature) iter.next();
+				SimpleFeature feature = (SimpleFeature) iter.next();
 				T o = clazz.newInstance();
 				test.fillObject(feature, o);
-				map.put(o, feature.getDefaultGeometry());
+				map.put(o, (Geometry)feature.getDefaultGeometry());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -45,16 +46,16 @@ public class DataLoader {
 			ShapefileDataStore store = new ShapefileDataStore(shapeFileURL);
 			FeatureSource source = store.getFeatureSource();
 			FeatureObjectFiller test = new FeatureObjectFiller(clazz);
-			for (AttributeType type : store.getSchema().getAttributeTypes()) {
+			for (AttributeType type : store.getSchema().getTypes()) {
 				test.addAttribute(type);
 			}
 			FeatureCollection collection = source.getFeatures();
 			Iterator iter = collection.iterator();
 			while (iter.hasNext()) {
-				Feature feature = (Feature) iter.next();
+				SimpleFeature feature = (SimpleFeature) iter.next();
 				T o = clazz.newInstance();
 				test.fillObject(feature, o);
-				map.put(o, feature.getDefaultGeometry());
+				map.put(o, (Geometry)feature.getDefaultGeometry());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,19 +64,19 @@ public class DataLoader {
 	}
 
 	public static <T extends Object> Map<T, Geometry> loadData(
-			FeatureType type, FeatureCollection collection, Class<T> clazz) {
+			SimpleFeatureType type, FeatureCollection collection, Class<T> clazz) {
 		Map<T, Geometry> map = new HashMap<T, Geometry>();
 		try {
 			FeatureObjectFiller test = new FeatureObjectFiller(clazz);
-			for (AttributeType at : type.getAttributeTypes()) {
+			for (AttributeType at : type.getTypes()) {
 				test.addAttribute(at);
 			}
 			Iterator iter = collection.iterator();
 			while (iter.hasNext()) {
-				Feature feature = (Feature) iter.next();
+				SimpleFeature feature = (SimpleFeature) iter.next();
 				T o = clazz.newInstance();
 				test.fillObject(feature, o);
-				map.put(o, feature.getDefaultGeometry());
+				map.put(o, (Geometry)feature.getDefaultGeometry());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
