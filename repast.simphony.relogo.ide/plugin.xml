@@ -169,26 +169,5 @@
          </perspectiveShortcut>
       </perspectiveExtension>
    </extension>
-   <extension
-         id="relogo_nature"
-         name="ReLogoNature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="repast.simphony.relogo.ide.handlers.ReLogoNature">
-         </run>
-      </runtime>
-   </extension>
-   <extension
-         id="builder"
-         name="ReLogo Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="false">
-         <run
-               class="repast.simphony.relogo.ide.handlers.ReLogoBuilder">
-         </run>
-      </builder>
-   </extension>
 
 </plugin>

@@ -5,15 +5,12 @@ package <packageName>;
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseObserver;
-import repast.simphony.relogo.Stop;
-import repast.simphony.relogo.Utility;
-import repast.simphony.relogo.UtilityG;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoObserver extends BaseObserver{
-
 }
 >>
 
@@ -22,17 +19,12 @@ package <packageName>;
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseTurtle;
-import repast.simphony.relogo.BasePatch;
-import repast.simphony.relogo.Plural;
-import repast.simphony.relogo.Stop;
-import repast.simphony.relogo.Utility;
-import repast.simphony.relogo.UtilityG;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoTurtle extends BaseTurtle{
-
 }
 >>
 
@@ -41,16 +33,13 @@ package <packageName>;
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BasePatch;
-import repast.simphony.relogo.Stop;
-import repast.simphony.relogo.Utility;
-import repast.simphony.relogo.UtilityG;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
 import repast.simphony.relogo.ast.Diffusible;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoPatch extends BasePatch{
-
 }
 >>
 
@@ -59,17 +48,11 @@ package <packageName>;
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseLink;
-import repast.simphony.relogo.Directed;
-import repast.simphony.relogo.Plural;
-import repast.simphony.relogo.Stop;
-import repast.simphony.relogo.Undirected;
-import repast.simphony.relogo.Utility;
-import repast.simphony.relogo.UtilityG;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
 @SuppressWarnings("unused")
 public class ReLogoLink\<T\> extends BaseLink\<T\>	{
-
 }
 >>

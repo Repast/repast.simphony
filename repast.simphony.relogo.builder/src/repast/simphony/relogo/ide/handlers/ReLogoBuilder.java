@@ -51,7 +51,7 @@ import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ide.IDE;
 
-import relogo.Activator;
+import repast.simphony.relogo.builder.Activator;
 import repast.simphony.util.collections.Pair;
 
 /**
@@ -62,7 +62,7 @@ import repast.simphony.util.collections.Pair;
 public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 	// public static final String STATECHART_EXTENSION = "rsc";
-	public static final String RELOGO_BUILDER = Activator.PLUGIN_ID + ".builder";
+	public static final String RELOGO_BUILDER = repast.simphony.relogo.builder.Activator.PLUGIN_ID + ".builder";
 
 	private static final String SRC_ROOT_PACKAGE_FRAGMENT = "src";
 	private static final String SRCGEN_ROOT_PACKAGE_FRAGMENT = "src-gen";
@@ -137,13 +137,13 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 	private void fullBuild(IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
-//		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
-//				project, monitor);
-//		project.accept(visitor);
-//		System.out.println(visitor.iih);
-//		FullBuildInstrumentingVisitor fbiv = new FullBuildInstrumentingVisitor(visitor.iih, project,
-//				monitor);
-//		project.accept(fbiv);
+		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
+				project, monitor);
+		project.accept(visitor);
+		System.out.println(visitor.iih);
+		FullBuildInstrumentingVisitor fbiv = new FullBuildInstrumentingVisitor(visitor.iih, project,
+				monitor);
+		project.accept(fbiv);
 	}
 
 	protected static class FullBuildInstrumentingVisitor implements IResourceVisitor {

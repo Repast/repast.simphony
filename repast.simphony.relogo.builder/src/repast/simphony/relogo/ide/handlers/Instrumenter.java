@@ -1,18 +1,15 @@
 package repast.simphony.relogo.ide.handlers;
 
 import java.beans.Introspector;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
-import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
-import org.antlr.stringtemplate.language.ChunkToken;
-import org.antlr.stringtemplate.language.DefaultTemplateLexer;
-import org.apache.velocity.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 public class Instrumenter {
 	
@@ -24,8 +21,8 @@ public class Instrumenter {
 	private InstrumentingInformation ii;
 	private IProgressMonitor monitor;
 	
-	protected StringTemplateGroup turtleInstumentingTemplateGroup;
-	static protected String RELOGO_BUILDER_TURTLE_INSTRUMENTING = "/templates/ReLogoBuilderTurtleInstrumenting.stg";
+	protected STGroup turtleInstumentingTemplateGroup;
+	static protected String RELOGO_BUILDER_TURTLE_INSTRUMENTING = "ReLogoBuilderTurtleInstrumenting.stg";
 //	protected StringTemplateGroup modelTemplateGroup;
 //	static public String RELOGO_MODEL_TEMPLATE_GROUP_FILE = "/templates/model.stg";
 //	static protected StringTemplateGroup contextTemplateGroup;
@@ -43,12 +40,12 @@ public class Instrumenter {
 	
 	protected void initializeTemplates(){
 		if (turtleInstumentingTemplateGroup == null) {
-			InputStream tiTemplateStream = getClass().getResourceAsStream(
-					RELOGO_BUILDER_TURTLE_INSTRUMENTING);
+//			InputStream tiTemplateStream = getClass().getResourceAsStream(
+//					RELOGO_BUILDER_TURTLE_INSTRUMENTING);
 //			new StringTemplateGroup(RELOGO_BUILDER_TURTLE_INSTRUMENTING);
 			// TODO: fix class loading issue here.
-			turtleInstumentingTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(tiTemplateStream), DefaultTemplateLexer.class);
+			turtleInstumentingTemplateGroup = new STGroupFile(RELOGO_BUILDER_TURTLE_INSTRUMENTING);
+//					new InputStreamReader(tiTemplateStream), DefaultTemplateLexer.class);
 		}
 	}
 	
@@ -94,7 +91,7 @@ public class Instrumenter {
 
 	private void fullInstrumentTurtle(IType type) throws JavaModelException {
 		// turtle turtle methods
-//		createTurtleTurtleMethods(type); // TODO: fix this
+		createTurtleTurtleMethods(type); // TODO: fix this
 		// turtle patch methods
 		// turtle link methods
 		// turtle observer methods
@@ -106,18 +103,19 @@ public class Instrumenter {
 		
 		for (TypeSingularPluralInformation tspi : ii.getTurtleSingularPlurals()){
 			String lowerSingular = Introspector.decapitalize(tspi.singular);
-			String capSingular = StringUtils.capitalizeFirstLetter(tspi.singular);
+			String capSingular = StringUtils.capitalize(tspi.singular);
 			String lowerPlural = Introspector.decapitalize(tspi.plural);
-			String capPlural = StringUtils.capitalizeFirstLetter(tspi.plural);
+			String capPlural = StringUtils.capitalize(tspi.plural);
 			String[] instanceNames = {"turtleHatchTypesMethod"};
 			for (String instanceName : instanceNames){
-				StringTemplate st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
-				st.setAttribute("fullyQualifiedName", tspi.fullyQualifiedName);
-				st.setAttribute("lowerSingular", lowerSingular);
-				st.setAttribute("capSingular", capSingular);
-				st.setAttribute("lowerPlural", lowerPlural);
-				st.setAttribute("capPlural", capPlural);
-				IMethod method = type.createMethod(st.toString(), null, true, monitor);
+				ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
+				
+				st.add("fullyQualifiedName", tspi.fullyQualifiedName);
+				st.add("lowerSingular", lowerSingular);
+				st.add("capSingular", capSingular);
+				st.add("lowerPlural", lowerPlural);
+				st.add("capPlural", capPlural);
+				IMethod method = type.createMethod(st.render(), null, true, monitor);
 			}
 //			type.
 //			icu.ast

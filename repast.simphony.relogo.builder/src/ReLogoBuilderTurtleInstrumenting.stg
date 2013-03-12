@@ -1,4 +1,4 @@
-group reLogoBuilderTurtleInstrumenting;
+
 
 turtleHatchTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
 
@@ -12,9 +12,9 @@ turtleHatchTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,
 	 *            a set of commands
 	 * @return created <lowerPlural>
 	 */
-@ReLogoBuilderGeneratedFor(<fullyQualifiedName>)
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number, Closure closure) {
-	return this.hatch(number,closure,"<lowerPlural>")
+	return this.hatch(number,closure,"<lowerPlural>");
 }
 
 	/**
@@ -27,7 +27,7 @@ public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number, Closure clo
 	 *            a set of commands
 	 * @return created <lowerPlural>
 	 */
-@ReLogoBuilderGeneratedFor(<fullyQualifiedName>)
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number) {
 	return hatch<capPlural>(number,null);
 }
