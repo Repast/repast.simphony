@@ -252,9 +252,13 @@ public class StateChartSVGDisplay {
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
 				isReadyForModification = true;
+				
 				if (needsInitialUpdate){
 					needsInitialUpdate = false;
 					controller.update();
+				}
+				if (controller.tryAnotherUpdate){
+					renewDocument();
 				}
 			}
 
@@ -284,10 +288,13 @@ public class StateChartSVGDisplay {
 	 */
 	public void renewDocument() {
 		long ts = System.currentTimeMillis();
-		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
-
+//		System.out.println("Attempting to update, checking update interval.");
+		if (/*ts - lastRenderTS > FRAME_UPDATE_INTERVAL*/ true) { // No throttling to avoid missing changes
+//			System.out.println("###########   Passed update interval, checking is ready for modification.");
 			if (isReadyForModification) {
-
+				isReadyForModification = false;
+				controller.tryAnotherUpdate = false;
+//				System.out.println("#################################   Passed is ready for modification, updating.");
 				final SVGDocument doc = model.getCurrentSVGDocument();
 
 				// SVGUtils.printDocument(doc, System.out);
@@ -295,7 +302,7 @@ public class StateChartSVGDisplay {
 				if (um != null) {
 					RunnableQueue rq = um.getUpdateRunnableQueue();
 					if (rq.getQueueState().equals(RunnableQueue.RUNNING)) {
-						isReadyForModification = false;
+						
 						try {
 							rq.invokeLater(new Runnable() {
 								@Override
@@ -325,6 +332,9 @@ public class StateChartSVGDisplay {
 						}
 					}
 				}
+			}
+			else {// wasn't ready for update, wait to be notified
+				controller.tryAnotherUpdate = true;
 			}
 		}
 	}
