@@ -39,6 +39,9 @@ import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
+import repast.simphony.systemdynamics.subscripts.Equation;
+import repast.simphony.systemdynamics.subscripts.EquationCreator;
+import repast.simphony.systemdynamics.subscripts.VariableBlock;
 import repast.simphony.systemdynamics.util.SDModelUtils;
 
 public class VariableSheet extends Composite {
@@ -147,7 +150,7 @@ public class VariableSheet extends Composite {
     lstSub = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     toolkit.adapt(lstSub, true, true);
     tbSubscripts.setControl(lstSub);
-    sashForm_1.setWeights(new int[] {5, 1});
+    sashForm_1.setWeights(new int[] { 5, 1 });
 
     sashForm.setWeights(new int[] { 1, 4 });
 
@@ -221,14 +224,24 @@ public class VariableSheet extends Composite {
 
   private void subSelected() {
     if (lstSub.getSelectionIndex() != -1) {
-      java.util.List<Variable> vars = new ArrayList<Variable>();
-      vars.add((Variable) eObj);
 
-      java.util.List<Subscript> subscripts = new ArrayList<Subscript>();
-      subscripts.add(subMap.get(lstSub.getSelection()[0]));
+      EquationCreator eqc = new EquationCreator(txtEquation.getText().trim());
+      Equation eq = eqc.createEquation(SDModelUtils.getVarNames((Variable) eObj));
+      int pos = txtEquation.getCaretOffset();
+      VariableBlock vb = null;
+      for (VariableBlock block : eq.getBlocks()) {
+        if (block.getBlockStart() <= pos && block.getBlockEnd() >= pos) {
+          vb = block;
+          break;
+        }
+      }
 
-      SubscriptApplier applier = new SubscriptApplier(subscripts, vars);
-      applier.run();
+      if (vb != null) {
+        vb.addSubscript(lstSub.getSelection()[0]);
+        txtEquation.setText(eq.getText());
+        txtEquation.setFocus();
+        txtEquation.setCaretOffset(pos);
+      }
     }
   }
 

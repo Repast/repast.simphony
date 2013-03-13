@@ -12,15 +12,14 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 
-import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
-import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
 import repast.simphony.systemdynamics.subscripts.Equation;
 import repast.simphony.systemdynamics.subscripts.EquationCreator;
 import repast.simphony.systemdynamics.subscripts.VariableBlock;
+import repast.simphony.systemdynamics.util.SDModelUtils;
 
 /**
  * Applies subscripts to variables equations.
@@ -97,33 +96,26 @@ public class SubscriptApplier {
     if (varNames.size() > 0)
       return varNames;
 
-    SystemModel model = (SystemModel) var.eContainer();
-    for (Variable v : model.getVariables()) {
-      if (!(v.getType().equals(VariableType.LOOKUP) || v.eClass().equals(SDModelFactory.eINSTANCE.getSDModelPackage().getCloud())))
-      varNames.add(v.getName());
-    }
+    varNames.addAll(SDModelUtils.getVarNames(var));
     return varNames;
   }
-  
+
   private String applyToAuxRate(Variable var) {
     String eq = var.getEquation().trim();
     String name = var.getName();
-    
+
     if (eq.length() == 0) {
       eq = name + "[" + subscriptText + "] =";
     } else {
-      
+
       EquationCreator creator = new EquationCreator(eq);
       List<String> names = getVarNames(var);
       Equation equation = creator.createEquation(names);
-      
-      for (String vName : names) {
-        List<VariableBlock> blocks = equation.getBlocks(vName);
-        for (VariableBlock block : blocks) {
-          block.addSubscripts(subscripts);
-        }
+
+      for (VariableBlock block : equation.getBlocks()) {
+        block.addSubscripts(subscripts);
       }
-      
+
       List<VariableBlock> vBlock = equation.getBlocks(name);
       if (vBlock.isEmpty()) {
         // assume equation is just variables without = so add the = to it.
@@ -133,7 +125,7 @@ public class SubscriptApplier {
         eq = equation.getText();
       }
     }
-    
+
     return eq;
   }
 
@@ -147,15 +139,11 @@ public class SubscriptApplier {
       EquationCreator creator = new EquationCreator(eq);
       List<String> names = getVarNames(var);
       Equation equation = creator.createEquation(names);
-     
-      
-      for (String vName : names) {
-        List<VariableBlock> blocks = equation.getBlocks(vName);
-        for (VariableBlock block : blocks) {
-          block.addSubscripts(subscripts);
-        }
+
+      for (VariableBlock block : equation.getBlocks()) {
+        block.addSubscripts(subscripts);
       }
-      
+
       List<VariableBlock> vBlock = equation.getBlocks(name);
       if (vBlock.isEmpty()) {
         // assume equation is just variables so add the equals to it.
