@@ -106,7 +106,7 @@ public class Instrumenter {
 			String capSingular = StringUtils.capitalize(tspi.singular);
 			String lowerPlural = Introspector.decapitalize(tspi.plural);
 			String capPlural = StringUtils.capitalize(tspi.plural);
-			String[] instanceNames = {"turtleHatchTypesMethod"};
+			String[] instanceNames = {"turtleHatchTypesMethod","turtlePatchTypesHereMethod","turtlePatchTypesAtMethod"};
 			for (String instanceName : instanceNames){
 				ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
 				

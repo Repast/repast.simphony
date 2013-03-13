@@ -9,7 +9,7 @@ import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","rawtypes","unchecked"})
 public class ReLogoObserver extends BaseObserver{
 }
 >>
@@ -22,8 +22,12 @@ import static repast.simphony.relogo.UtilityG.*;
 import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+import repast.simphony.space.SpatialException;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
 
-@SuppressWarnings("unused")
+
+@SuppressWarnings({"unused","rawtypes","unchecked"})
 public class ReLogoTurtle extends BaseTurtle{
 }
 >>
@@ -37,8 +41,9 @@ import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.ast.Diffusible;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+import repast.simphony.space.SpatialException;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","rawtypes","unchecked"})
 public class ReLogoPatch extends BasePatch{
 }
 >>
@@ -52,7 +57,7 @@ import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","rawtypes","unchecked"})
 public class ReLogoLink\<T\> extends BaseLink\<T\>	{
 }
 >>
