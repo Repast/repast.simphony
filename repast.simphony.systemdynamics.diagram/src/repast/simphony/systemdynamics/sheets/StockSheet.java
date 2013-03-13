@@ -9,15 +9,18 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Stock;
+import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.util.SDModelUtils;
 
 /**
@@ -26,13 +29,28 @@ import repast.simphony.systemdynamics.util.SDModelUtils;
  * @author Nick Collier
  */
 public class StockSheet extends VariableSheet {
+  
+  private class WhoHadFocus extends FocusAdapter {
 
-  private Text txtInitVal;
+    @Override
+    public void focusGained(FocusEvent e) {
+      if (e.getSource().equals(txtInitVal)) initValHadFocus = true;
+      else if (e.getSource().equals(txtEquation)) initValHadFocus = false;
+    }
+  }
+  
+
+  private StyledText txtInitVal;
+  private boolean initValHadFocus = false;
 
   public StockSheet(FormToolkit toolkit, Composite parent) {
     super(toolkit, parent);
+    WhoHadFocus who = new WhoHadFocus();
+    txtInitVal.addFocusListener(who);
+    txtEquation.addFocusListener(who);
   }
 
+  /*
   @Override
   protected void addHeader(FormToolkit toolkit, Composite parent) {
     super.addHeader(toolkit, parent);
@@ -40,13 +58,29 @@ public class StockSheet extends VariableSheet {
     toolkit.adapt(lblInitVal, true, true);
     lblInitVal.setText("Initial Value:");
 
-    txtInitVal = new Text(parent, SWT.BORDER);
-    GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1);
-    gd.widthHint = 140;
+    
+  }
+  */
+  
+  
+  
+  @Override
+  protected void createEquation(Composite parent, FormToolkit toolkit) {
+    super.createEquation(parent, toolkit);
+    txtInitVal = new StyledText(parent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+    txtInitVal.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+    gd.heightHint = 40;
     txtInitVal.setLayoutData(gd);
-    txtInitVal.addVerifyListener(new DoubleVerifier());
-    toolkit.adapt(txtInitVal, true, true);
-    Bug383650Fix.applyFix(txtInitVal);
+    //txtInitVal.addVerifyListener(new DoubleVerifier());
+    gd.heightHint = 40;
+    //Bug383650Fix.applyFix(txtInitVal);
+  }
+
+  @Override
+  protected StyledText getEquationControl() {
+    if (initValHadFocus) return txtInitVal;
+    return txtEquation;
   }
 
   @Override
@@ -55,9 +89,9 @@ public class StockSheet extends VariableSheet {
     context.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(200, txtInitVal),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            SDModelPackage.Literals.STOCK__INITIAL_VALUE).observe(eObject),
-        createUpdateValueStrategy(new StringToDoubleConverter()),
-        createUpdateValueStrategy(new DoubleToStringConverter()));
+            SDModelPackage.Literals.STOCK__INITIAL_VALUE).observe(eObject));
+        //createUpdateValueStrategy(new StringToDoubleConverter()),
+        //createUpdateValueStrategy(new DoubleToStringConverter()));
   }
 
   @Override
@@ -67,6 +101,7 @@ public class StockSheet extends VariableSheet {
 
     java.util.List<Rate> ins = SDModelUtils.getIncomingRates(stock);
     java.util.List<Rate> outs = SDModelUtils.getOutgoingRates(stock);
+    java.util.List<Variable> vars = SDModelUtils.getIncomingVariables(stock);
 
     for (Rate rate : ins) {
       varList.add(rate.getName());
@@ -79,6 +114,11 @@ public class StockSheet extends VariableSheet {
 
     if (stock.getEquation().trim().length() == 0 && ins.size() == 1 && outs.size() == 1) {
       txtEquation.setText(ins.get(0).getName() + " - " + outs.get(0).getName());
+    }
+    
+    for (Variable var : vars) {
+      varList.add(var.getName());
+      varMap.put(var.getName(), var);
     }
 
     lstVar.setItems(varList.toArray(new String[0]));

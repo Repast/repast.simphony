@@ -57,6 +57,7 @@ public class VariableSheet extends Composite {
   protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
   private EObject eObj;
   private CTabFolder tabFolder;
+  private Composite comp;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -114,13 +115,12 @@ public class VariableSheet extends Composite {
     toolkit.adapt(sashForm_1);
     toolkit.paintBordersFor(sashForm_1);
 
-    txtEquation = new StyledText(sashForm_1, SWT.BORDER | SWT.V_SCROLL);
-    txtEquation.setAlwaysShowScrollBars(false);
-    txtEquation.setTopMargin(4);
-    txtEquation.setLeftMargin(4);
-    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
-    txtEquation.setText("");
-    toolkit.adapt(txtEquation);
+    comp = new Composite(sashForm_1, SWT.NONE);
+    GridLayout gl_comp = new GridLayout(1, false);
+    gl_comp.marginHeight = 0;
+    gl_comp.marginWidth = 0;
+    comp.setLayout(gl_comp);
+    createEquation(comp, toolkit);
 
     Composite composite = new Composite(sashForm_1, SWT.NONE);
     GridLayout gl_composite = new GridLayout(1, false);
@@ -176,6 +176,17 @@ public class VariableSheet extends Composite {
 
     addListeners();
   }
+  
+  protected void createEquation(Composite parent, FormToolkit toolkit) {
+    txtEquation = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
+    txtEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    txtEquation.setAlwaysShowScrollBars(false);
+    txtEquation.setTopMargin(4);
+    txtEquation.setLeftMargin(4);
+    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    txtEquation.setText("");
+    toolkit.adapt(txtEquation);
+  }
 
   private void fillListFunc() {
     FunctionManager fm = FunctionManager.getInstance();
@@ -208,25 +219,30 @@ public class VariableSheet extends Composite {
     buf.append("]");
     return buf.toString();
   }
+  
+  protected StyledText getEquationControl() {
+    return txtEquation;
+  }
 
   private void varSelected() {
     if (lstVar.getSelectionIndex() != -1) {
       String name = lstVar.getSelection()[0];
       Variable var = varMap.get(name);
-      int offset = txtEquation.getSelection().x;
+      StyledText txtControl = getEquationControl();
+      int offset = txtControl.getSelection().x;
       String txtToInsert = name + formatSubscripts(var);
-      txtEquation.insert(txtToInsert);
-      txtEquation.setCaretOffset(offset + txtToInsert.length());
-      txtEquation.setFocus();
+      txtControl.insert(txtToInsert);
+      txtControl.setCaretOffset(offset + txtToInsert.length());
+      txtControl.setFocus();
     }
   }
 
   private void subSelected() {
     if (lstSub.getSelectionIndex() != -1) {
-
-      EquationCreator eqc = new EquationCreator(txtEquation.getText().trim());
+      StyledText txtControl = getEquationControl();
+      EquationCreator eqc = new EquationCreator(txtControl.getText().trim());
       Equation eq = eqc.createEquation(SDModelUtils.getVarNames((Variable) eObj));
-      int pos = txtEquation.getCaretOffset();
+      int pos = txtControl.getCaretOffset();
       VariableBlock vb = null;
       for (VariableBlock block : eq.getBlocks()) {
         if (block.getBlockStart() <= pos && block.getBlockEnd() >= pos) {
@@ -237,9 +253,9 @@ public class VariableSheet extends Composite {
 
       if (vb != null) {
         vb.addSubscript(lstSub.getSelection()[0], pos);
-        txtEquation.setText(eq.getText());
-        txtEquation.setFocus();
-        txtEquation.setCaretOffset(pos);
+        txtControl.setText(eq.getText());
+        txtControl.setFocus();
+        txtControl.setCaretOffset(pos);
       }
     }
   }
