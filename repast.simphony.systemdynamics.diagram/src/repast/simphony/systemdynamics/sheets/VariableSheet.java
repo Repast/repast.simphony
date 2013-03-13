@@ -33,7 +33,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import repast.simphony.systemdynamics.handlers.SubscriptApplier;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
@@ -237,7 +236,7 @@ public class VariableSheet extends Composite {
       }
 
       if (vb != null) {
-        vb.addSubscript(lstSub.getSelection()[0]);
+        vb.addSubscript(lstSub.getSelection()[0], pos);
         txtEquation.setText(eq.getText());
         txtEquation.setFocus();
         txtEquation.setCaretOffset(pos);
