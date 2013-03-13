@@ -33,7 +33,7 @@ public class StockImpl extends VariableImpl implements Stock {
    * @generated
    * @ordered
    */
-  protected static final double INITIAL_VALUE_EDEFAULT = 0.0;
+  protected static final String INITIAL_VALUE_EDEFAULT = "0";
 
   /**
    * The cached value of the '{@link #getInitialValue() <em>Initial Value</em>}' attribute.
@@ -43,7 +43,7 @@ public class StockImpl extends VariableImpl implements Stock {
    * @generated
    * @ordered
    */
-  protected double initialValue = INITIAL_VALUE_EDEFAULT;
+  protected String initialValue = INITIAL_VALUE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -69,7 +69,7 @@ public class StockImpl extends VariableImpl implements Stock {
    * <!-- end-user-doc -->
    * @generated
    */
-  public double getInitialValue() {
+  public String getInitialValue() {
     return initialValue;
   }
 
@@ -78,8 +78,8 @@ public class StockImpl extends VariableImpl implements Stock {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setInitialValue(double newInitialValue) {
-    double oldInitialValue = initialValue;
+  public void setInitialValue(String newInitialValue) {
+    String oldInitialValue = initialValue;
     initialValue = newInitialValue;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.STOCK__INITIAL_VALUE, oldInitialValue, initialValue));
@@ -108,7 +108,7 @@ public class StockImpl extends VariableImpl implements Stock {
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
       case SDModelPackage.STOCK__INITIAL_VALUE:
-        setInitialValue((Double)newValue);
+        setInitialValue((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -138,7 +138,7 @@ public class StockImpl extends VariableImpl implements Stock {
   public boolean eIsSet(int featureID) {
     switch (featureID) {
       case SDModelPackage.STOCK__INITIAL_VALUE:
-        return initialValue != INITIAL_VALUE_EDEFAULT;
+        return INITIAL_VALUE_EDEFAULT == null ? initialValue != null : !INITIAL_VALUE_EDEFAULT.equals(initialValue);
     }
     return super.eIsSet(featureID);
   }

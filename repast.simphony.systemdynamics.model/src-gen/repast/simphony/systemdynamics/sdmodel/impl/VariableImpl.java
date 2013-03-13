@@ -216,7 +216,6 @@ public class VariableImpl extends EObjectImpl implements Variable {
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__NAME, oldName, name));
-    parseSubscripts(equation);
   }
 
   /**
@@ -280,7 +279,6 @@ public class VariableImpl extends EObjectImpl implements Variable {
     equation = newEquation;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__EQUATION, oldEquation, equation));
-    parseSubscripts(equation);
   }
   
   private void parseSubscripts(String equation) {
