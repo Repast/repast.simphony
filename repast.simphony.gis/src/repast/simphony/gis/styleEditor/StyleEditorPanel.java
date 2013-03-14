@@ -18,10 +18,12 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.xml.transform.TransformerException;
 
-import org.geotools.map.Layer;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.map.FeatureLayer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -37,9 +39,9 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class StyleEditorPanel extends JPanel implements IStyleEditor {
 
-	private Layer layer;
+	static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 
-	public StyleEditorPanel(Layer layer) {
+	public StyleEditorPanel(FeatureLayer layer) {
 		initComponents();
 		setMapLayer(layer);
 	}
@@ -48,18 +50,19 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void setMapLayer(Layer layer) {
-		this.layer = layer;
+	public void setMapLayer(FeatureLayer layer) {
 		ruleEditPanel1.setMapLayer(layer);
 		
 		FeatureTypeStyle[] fts = 
 				layer.getStyle().featureTypeStyles().toArray(new FeatureTypeStyle[0]);
 		
-		if (fts[0].getDescription().getTitle().toString().equals("title")) {
-			layer.getStyle().getFeatureTypeStyles()[0].setTitle(layer
-					.getFeatureSource().getSchema().getName().getLocalPart());
+		if (fts[0].getDescription().getTitle() != null &&
+				fts[0].getDescription().getTitle().equals("title")) {
+			layer.getStyle().featureTypeStyles().get(0).getDescription().setTitle(
+					layer.getFeatureSource().getSchema().getName().getLocalPart());
 		}
-		if (layer.getStyle().getDescription().getTitle().toString().equals("title")) {
+		if (layer.getStyle().getDescription().getTitle() != null &&
+				layer.getStyle().getDescription().getTitle().equals("title")) {
 			layer.getStyle().getDescription().setTitle(
 					layer.getFeatureSource().getSchema().getName().getLocalPart());
 		}
@@ -156,8 +159,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(750, 800);
 		frame.setLayout(new BorderLayout());
-		final StyleEditorPanel pane = new StyleEditorPanel(SampleLayer
-				.getSampleLayer());
+		final StyleEditorPanel pane = new StyleEditorPanel(SampleLayer.getSampleLayer());
 		frame.add(pane, BorderLayout.CENTER);
 		JButton button = new JButton("ok");
 		button.addActionListener(new ActionListener() {
@@ -176,7 +178,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 	}
 
 	public Style getStyle() {
-		Style style = null;
+		Style style = styleFactory.createStyle();
 		IStyleEditor editor = (IStyleEditor) tb.getSelectedComponent();
 		style = editor.getStyle();
 		/*
@@ -188,8 +190,9 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 			style = byValuePanel.getStyle();
 		}
 		*/
-		style.setTitle(styleTitleField.getText());
-		style.getFeatureTypeStyles()[0].setTitle(styleTitleField.getText());
+		System.out.println(">> " + styleTitleField.getText());
+		style.getDescription().setTitle(styleTitleField.getText());
+		style.featureTypeStyles().get(0).getDescription().setTitle(styleTitleField.getText());
 		return style;
 	}
 }

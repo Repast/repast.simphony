@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -37,7 +36,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.FeatureSource;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
@@ -49,7 +47,6 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
 
 import simphony.util.messages.MessageCenter;
 
@@ -273,7 +270,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		java.util.List<Rule> rules = tableModel.getRules(defaultBox.isSelected());
 		String att = attributeBox.getSelectedItem().toString();
 		Style style = new RuleCreator().createStyle(att, rules);
-		style.setAbstract(ID + ":" + att);
+		style.getDescription().setAbstract(ID + ":" + att);
 		return style;
 	}
 
@@ -287,7 +284,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		}
 		attributeBox.setModel(model);
 		try {
-			SimpleFeature feature = (SimpleFeature) source.getFeatures().iterator().next();
+			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
 			tableModel = new ValueTableModel(feature);
 		} catch (IOException ex) {
 			msg.error("Error initializing ByValuePanel", ex);
@@ -304,13 +301,16 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	private void initTable(Style style) {
 		SimpleFeatureType type = source.getSchema();
 		AttributeType aType = type.getType(attributeBox.getSelectedItem().toString());
-		String desc = style.getAbstract();
+		String desc = "";
 
+		if (style.getDescription().getAbstract() != null)
+			desc = style.getDescription().getAbstract().toString();
+		
 		if (desc.contains(ByValuePanel.ID)) {
 			String attribName = desc.substring(desc.indexOf(":") + 1, desc.length());
 			attributeBox.setSelectedItem(attribName);
 			java.util.List<Rule> rules = new ArrayList<Rule>();
-			for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
+			for (Rule rule : style.featureTypeStyles().get(0).rules()) {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
 				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(

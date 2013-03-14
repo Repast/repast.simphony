@@ -14,10 +14,11 @@ import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.filter.AttributeExpression;
-import org.geotools.filter.function.ClassificationFunction;
+import org.geotools.filter.function.Classifier;
+import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -25,10 +26,14 @@ import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.style.GraphicalSymbol;
 
 import repast.simphony.gis.GeometryUtil;
 
@@ -49,6 +54,7 @@ public class ByRangePanelMediator {
 					"circle", "cross", "star", "square", "triangle"
 	});
 	private FeatureSource source;
+	 static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private int classesCount;
 	private SampleStyleTableModel tableModel = new SampleStyleTableModel();
@@ -165,18 +171,30 @@ public class ByRangePanelMediator {
 		try {
 			if (attributeModel.getSelectedItem() != null) {
 				String attribute = attributeModel.getSelectedItem().toString();
-				AttributeExpression att = filterFactory.createAttributeExpression(attribute);
-				ClassificationFunction function = ((ClassTypeItem) cTypeModel.getSelectedItem()).createFunction(classesCount,
+//				AttributeExpression att = filterFactory.createAttributeExpression(attribute);
+								
+				PropertyName pn = filterFactory.property(attribute);
+				
+				Classifier classifier = ((ClassTypeItem) cTypeModel.getSelectedItem()).createFunction(classesCount,
 								min, max, attribute);
-				function.setCollection(source.getFeatures());
-				function.setNumberOfClasses(classesCount);
-				function.setExpression(att);
+				
+//				function.setCollection(source.getFeatures());
+//				function.setNumberOfClasses(classesCount);
+//				function.setExpression(ex);
 				Palette palette = (Palette) paletteModel.getSelectedItem();
-				StyleGenerator gen = new StyleGenerator(palette.getColors(), function, "fts");
-				gen.setElseMode(StyleGenerator.ELSEMODE_INCLUDEASMIN);
-				fts = gen.createFeatureTypeStyle(source.getSchema().getDefaultGeometry());
+				
+//				StyleGenerator gen = new StyleGenerator(palette.getColors(), function, "fts");
+//				gen.setElseMode(StyleGenerator.ELSEMODE_INCLUDEASMIN);
+//				fts = gen.createFeatureTypeStyle(source.getSchema().getDefaultGeometry());
+				
+				fts = StyleGenerator.createFeatureTypeStyle(classifier, pn, 
+						palette.getColors(), "Generated FeatureTypeStyle", 
+						source.getSchema().getGeometryDescriptor(),
+						StyleGenerator.ELSEMODE_INCLUDEASMIN, 0.95, null);
+				
 				addSymbolizers(fts);
-				tableModel.initStyle(fts, (Feature) source.getFeatures().iterator().next());
+				
+				tableModel.initStyle(fts, (SimpleFeature) source.getFeatures().features().next());
 			}
 
 		} catch (IOException ex) {
@@ -195,28 +213,34 @@ public class ByRangePanelMediator {
 	}
 
 	private void addSymbolizers(FeatureTypeStyle style) {
-		//builder.createPointSymbolizer(builder.createGraphic(null,
-		//					builder.createMark("square", Color.RED)
 		StyleBuilder builder = new StyleBuilder();
-		for (Rule rule : style.getRules()) {
+		for (Rule rule : style.rules()) {
 			if (type == GeometryUtil.GeometryType.POINT) {
 				PointSymbolizer sym = (PointSymbolizer) rule.getSymbolizers()[0];
-				Mark ruleMark = ((PointSymbolizer) defaultRule.getSymbolizers()[0]).getGraphic().getMarks()[0];
+				Graphic ruleGraphic = ((PointSymbolizer)	defaultRule.getSymbolizers()[0]).getGraphic(); 
+				Mark ruleMark = (Mark)ruleGraphic.graphicalSymbols().get(0);		
 				Fill fill = ruleMark.getFill();
-				Fill newFill = builder.createFill(sym.getGraphic().getMarks()[0].getFill().getColor(), fill.getOpacity());
+				Mark mark = (Mark)sym.getGraphic().graphicalSymbols().get(0);
+				Fill newFill = builder.createFill(mark.getFill().getColor(), fill.getOpacity());
+				
 				Stroke stroke = ruleMark.getStroke();
 				Stroke newStroke = builder.createStroke(stroke.getColor(), stroke.getWidth(), stroke.getOpacity());
 				Mark newMark = builder.createMark(ruleMark.getWellKnownName(), newFill, newStroke);
-				newMark.setSize(ruleMark.getSize());
-				sym.getGraphic().setSize(ruleMark.getSize());
-				sym.getGraphic().setMarks(new Mark[]{newMark});
-			} else if (type == GeometryUtil.GeometryType.LINE) {
+				
+			  Graphic gr = styleFactory.createDefaultGraphic();
+			  gr.graphicalSymbols().clear();
+        gr.graphicalSymbols().add(newMark);
+        gr.setSize(filterFactory.literal(ruleGraphic.getSize()));								
+				sym.setGraphic(gr);
+			} 
+			else if (type == GeometryUtil.GeometryType.LINE) {
 				LineSymbolizer lineSym = (LineSymbolizer) rule.getSymbolizers()[0];
 				Stroke ruleStroke = ((LineSymbolizer) defaultRule.getSymbolizers()[0]).getStroke();
 				Stroke stroke = builder.createStroke(lineSym.getStroke().getColor(), ruleStroke.getWidth(),
 								ruleStroke.getOpacity());
 				lineSym.setStroke(stroke);
-			} else {
+			} 
+			else {
 				PolygonSymbolizer polySym = (PolygonSymbolizer) rule.getSymbolizers()[0];
 				Fill fill = ((PolygonSymbolizer) defaultRule.getSymbolizers()[0]).getFill();
 				Fill newFill = builder.createFill(polySym.getFill().getColor(), fill.getOpacity());
@@ -238,10 +262,10 @@ public class ByRangePanelMediator {
 		defaultRule = rules.get(rules.size() - 1);
 		if (rules.size() > 1) {
       tableModel.init(rules.subList(1, rules.size()));
-      String title = rules.get(0).getTitle();
+      String title = rules.get(0).getDescription().getTitle().toString();
       try {
         min = Double.valueOf(title.substring(0, title.indexOf(" ")));
-        title = rules.get(rules.size() - 2).getTitle();
+        title = rules.get(rules.size() - 2).getDescription().getTitle().toString();
         max = Double.valueOf(title.substring(title.lastIndexOf(" ") + 1, title.length()));
 
       } catch (NumberFormatException ex) {}
@@ -256,8 +280,8 @@ public class ByRangePanelMediator {
 			this.label = label;
 		}
 
-		public abstract ClassificationFunction createFunction(int numClasses, FeatureCollection collection, String attribute);
-		public abstract ClassificationFunction createFunction(int numClasses, double min, double max, String attribute);
+		public abstract Classifier createFunction(int numClasses, FeatureCollection collection, String attribute);
+		public abstract Classifier createFunction(int numClasses, double min, double max, String attribute);
 
 		public String toString() {
 			return label;
@@ -268,39 +292,39 @@ public class ByRangePanelMediator {
   // Quantile can't be used when we don't have
   // anything in the feature collection to style
   // to begin with.
-  private class QuantileItemType extends ClassTypeItem {
-
-		public QuantileItemType() {
-			super("Quantile");
-		}
-
-		public ClassificationFunction createFunction(int numClasses, FeatureCollection collection, String attribute) {
-			List<Number> vals = new ArrayList<Number>();
-			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
-				Number num = (Number) feature.getAttribute(attribute);
-				if (num != null) {
-					vals.add(num);
-				}
-			}
-
-			int interval = (int) Math.ceil(((float) vals.size()) / numClasses);
-
-
-			CustomClassifierFunction func = new CustomClassifierFunction();
-			for (int i = 0; i < numClasses; i++) {
-				int start = interval * i;
-				int end = interval * (i + 1);
-				if (end > vals.size() - 1) end = vals.size() - 1;
-				func.setRangedValues(i, vals.get(start), vals.get(end));
-			}
-
-			return func;
-		}
-
-    public ClassificationFunction createFunction(int numClasses, double min, double max, String attribute) {
-      return null;
-    }
-  }
+//  private class QuantileItemType extends ClassTypeItem {
+//
+//		public QuantileItemType() {
+//			super("Quantile");
+//		}
+//
+//		public Classifier createFunction(int numClasses, FeatureCollection collection, String attribute) {
+//			List<Number> vals = new ArrayList<Number>();
+//			for (SimpleFeature feature : (Iterable<SimpleFeature>) collection) {
+//				Number num = (Number) feature.getAttribute(attribute);
+//				if (num != null) {
+//					vals.add(num);
+//				}
+//			}
+//
+//			int interval = (int) Math.ceil(((float) vals.size()) / numClasses);
+//
+//
+//			CustomClassifierFunction func = new CustomClassifierFunction();
+//			for (int i = 0; i < numClasses; i++) {
+//				int start = interval * i;
+//				int end = interval * (i + 1);
+//				if (end > vals.size() - 1) end = vals.size() - 1;
+//				func.setRangedValues(i, vals.get(start), vals.get(end));
+//			}
+//
+//			return func;
+//		}
+//
+//    public Classifier createFunction(int numClasses, double min, double max, String attribute) {
+//      return null;
+//    }
+//  }
 
 
 
@@ -310,20 +334,25 @@ public class ByRangePanelMediator {
 			super("Equal Interval");
 		}
 
-    public ClassificationFunction createFunction(int numClasses, double min, double max, String attribute) {
-			CustomClassifierFunction func = new CustomClassifierFunction();
+    public Classifier createFunction(int numClasses, double min, double max, String attribute) {
+//			CustomClassifierFunction func = new CustomClassifierFunction();
 			double interval = (max - min) / numClasses;
+			Double [] mins = new Double[numClasses];
+			Double [] maxs = new Double[numClasses];
 			for (int i = 0; i < numClasses; i++) {
-				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
+//				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
+				mins[i] = min + (interval * i);
+				maxs[i] = min + (interval * (i + 1));
 			}
+			
+			// requires Comparable Double.class, not double primive
+			RangedClassifier func = new RangedClassifier(mins,maxs);
 
 			return func;
 		}
 
 
-
-
-    public ClassificationFunction createFunction(int numClasses, FeatureCollection collection, String attribute) {
+    public Classifier createFunction(int numClasses, FeatureCollection collection, String attribute) {
 			double min = Double.POSITIVE_INFINITY;
 			double max = Double.NEGATIVE_INFINITY;
 
@@ -336,12 +365,21 @@ public class ByRangePanelMediator {
 				}
 			}
 
-			CustomClassifierFunction func = new CustomClassifierFunction();
+//			CustomClassifierFunction func = new CustomClassifierFunction();
+
+ 			Double [] mins = new Double[numClasses];
+			Double [] maxs = new Double[numClasses];
+			
 			double interval = (max - min) / numClasses;
 			for (int i = 0; i < numClasses; i++) {
-				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
+//				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
+				mins[i] = min + (interval * i);
+				maxs[i] = min + (interval * (i + 1));
 			}
 
+			// requires Comparable Double.class, not double primive
+			RangedClassifier func = new RangedClassifier(mins,maxs);
+			
 			return func;
 		}
 	}

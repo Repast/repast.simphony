@@ -15,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.geotools.map.Layer;
+import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Style;
 
 import com.jgoodies.forms.factories.Borders;
@@ -43,7 +43,7 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 
-	public void setMapLayer(Layer layer) {
+	public void setMapLayer(FeatureLayer layer) {
 		styleEditorPanel1.setMapLayer(layer);
 	}
 

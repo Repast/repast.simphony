@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -46,6 +48,7 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.expression.Literal;
 
 import repast.simphony.gis.display.SquareIcon;
 import simphony.util.messages.MessageCenter;
@@ -93,7 +96,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		Style style = layer.getStyle();
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
-		dsv.visit(style.getFeatureTypeStyles()[0].getRules()[0]);
+		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
 		setRule((Rule) dsv.getCopy());
 		type = layer.getFeatureSource().getSchema();
 	}
@@ -228,7 +231,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		String wkn = SLD.wellKnownName(mark);
 		getPreview().setMark(wkn);
 		getMarkBox().setSelectedItem(wkn);
-		double markSize = SLD.size(mark);
+		Literal size = (Literal)SLD.graphic(ps).getSize();
+		double markSize = (Double)size.getValue();
 		getPreview().setMarkSize((int) markSize);
 		getMarkSizeSpinner().setValue(markSize);
 		Fill fill = mark.getFill();
@@ -286,8 +290,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 					(Double) fillOpacitySpinner.getValue()));
 		} else if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			ps.getGraphic().getMarks()[0].setFill(styleBuilder.createFill(
-					getFillColor(), (Double) fillOpacitySpinner.getValue()));
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
+			mark.setFill(styleBuilder.createFill(getFillColor(), (Double) fillOpacitySpinner.getValue()));
 		}
 	}
 
@@ -299,7 +303,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			ps.setStroke(stroke);
 		} else if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Mark mark = ps.getGraphic().getMarks()[0];
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
 			mark.setStroke(stroke);
 		} else if (symbolizer instanceof LineSymbolizer) {
 			LineSymbolizer ls = (LineSymbolizer) symbolizer;
@@ -329,11 +333,11 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 					getFillTransparency());
 			Stroke stroke = styleBuilder.createStroke(getStrokeColor(),
 					getStrokeWidth(), getStrokeTransparency());
-			ps.getGraphic().setMarks(
-					new Mark[] { styleBuilder.createMark(getMark(), fill,
-							stroke) });
-			 ps.getGraphic().setSize(
-					 CommonFactoryFinder.getFilterFactory(null).literal(getMarkSize())); 
+			List<Mark> markList = new ArrayList<Mark>();
+			markList.add(styleBuilder.createMark(getMark(), fill,	stroke));
+			ps.getGraphic().graphicalSymbols().clear();
+			ps.getGraphic().graphicalSymbols().addAll(markList);
+			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory(null).literal(getMarkSize())); 
 		} else {
 			throw new IllegalArgumentException("Cannot apply a mark to a "
 					+ symbolizer.getClass().getName());
@@ -705,7 +709,10 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		FeatureTypeStyle fts = styleBuilder.createFeatureTypeStyle(type
 				.getName().getLocalPart(), rule);
 		rule.setTitle(" ");
-		style.setFeatureTypeStyles(new FeatureTypeStyle[] { fts });
+		style.featureTypeStyles().clear();
+		List<FeatureTypeStyle> ftsList = new ArrayList<FeatureTypeStyle>();
+	  ftsList.add(fts);
+		style.featureTypeStyles().addAll(ftsList);
 		return style;
 	}
 

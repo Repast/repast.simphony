@@ -43,11 +43,10 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.Feature;
+import org.geotools.util.SimpleInternationalString;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
 
 import repast.simphony.gis.display.LegendIconMaker;
 import repast.simphony.gis.util.DoubleDocument;
@@ -120,8 +119,12 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		FeatureTypeStyle fts = mediator.getFeatureTypeStyle();
 		StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 		Style style = fac.createStyle();
-		style.setFeatureTypeStyles(new FeatureTypeStyle[]{fts});
-		style.setAbstract(ID + ":" + attributeBox.getSelectedItem());
+		ArrayList styles = new ArrayList();
+		styles.add(fts);
+		style.featureTypeStyles().clear();
+		style.featureTypeStyles().addAll(styles);
+		
+		style.getDescription().setAbstract(ID + ":" + attributeBox.getSelectedItem());
 		return style;
 	}
 
@@ -209,9 +212,9 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			FeatureSource source = layer.getFeatureSource();
 			this.type = (SimpleFeatureType)source.getSchema();
 
-			Rule rule = layer.getStyle().getFeatureTypeStyles()[0].getRules()[0];
+			Rule rule = layer.getStyle().featureTypeStyles().get(0).rules().get(0);
 			mediator = new ByRangePanelMediator(source, rule);
-			sample = (SimpleFeature) source.getFeatures().iterator().next();
+			sample = (SimpleFeature) source.getFeatures().features().next();
 			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
@@ -239,11 +242,13 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initFromStyle(Style style) {
-		String desc = style.getAbstract();
+		String desc = "";
+		if (style.getDescription().getAbstract() != null)
+			desc = style.getDescription().getAbstract().toString();
 		if (desc.contains(ByRangePanel.ID)) {
 			String attribName = desc.substring(desc.indexOf(":") + 1, desc.length());
 			java.util.List<Rule> rules = new ArrayList<Rule>();
-			for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
+			for (Rule rule : style.featureTypeStyles().get(0).rules()){
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
 				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(

@@ -48,10 +48,10 @@ import javax.xml.transform.TransformerException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.map.DefaultMapLayer;
+
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
-import org.geotools.map.MapLayer;
+
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
@@ -400,7 +400,7 @@ public class GISStylePanel extends JPanel {
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
       Style style = previewer.getStyle();
-      Layer layer = null;
+      FeatureLayer layer = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
 

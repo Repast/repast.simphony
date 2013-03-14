@@ -1,16 +1,24 @@
 package repast.simphony.gis.styleEditor;
 
-import com.vividsolutions.jts.geom.*;
+import java.awt.Color;
+
+import org.geotools.map.FeatureLayer;
+import org.geotools.styling.Graphic;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.*;
-
-import java.awt.*;
 
 public class StyleEditor {
 
-	MapLayer layer;
+	FeatureLayer layer;
 
 	StyleBuilder builder = new StyleBuilder();
 
@@ -28,7 +36,7 @@ public class StyleEditor {
 
 	int markSize;
 
-	public StyleEditor(MapLayer layer, StyleBuilder builder) {
+	public StyleEditor(FeatureLayer layer, StyleBuilder builder) {
 		this.layer = layer;
 		this.builder = builder;
 	}

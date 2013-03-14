@@ -7,7 +7,6 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -18,11 +17,11 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class SampleLayer {
 
-	public static Layer getSampleLayer() throws IOException {
+	public static FeatureLayer getSampleLayer() throws IOException {
 		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
 		ftBuilder.setName("myfeature");
 		
-		ftBuilder.add("the_geom", Polygon.class);
+		ftBuilder.add("Location", Polygon.class);
 		ftBuilder.add("name", String.class);
 		
 		final SimpleFeatureType TYPE = ftBuilder.buildFeatureType();
@@ -38,8 +37,8 @@ public class SampleLayer {
 		GeometryFactory fac = JTSFactoryFinder.getGeometryFactory( null );
 		Polygon p = fac.createPolygon(fac.createLinearRing(coord), new LinearRing[0]);
 		
-		featureBuilder.set("the_geom",p);
-		featureBuilder.set("name","Tom");
+		featureBuilder.set("Location",p);
+		featureBuilder.set("name","Buddy");
 		SimpleFeature feature = featureBuilder.buildFeature(null);
 		
 		MemoryDataStore store = new MemoryDataStore(new SimpleFeature[] { feature });
