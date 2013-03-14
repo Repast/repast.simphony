@@ -48,10 +48,7 @@ import javax.xml.transform.TransformerException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
-
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
-
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
@@ -66,7 +63,6 @@ import org.geotools.styling.Symbolizer;
 
 import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.data.DataUtilities;
-import repast.simphony.gis.styleEditor.HollowFeature;
 import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
 import repast.simphony.scenario.data.AgentData;
@@ -79,11 +75,11 @@ import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -536,42 +532,42 @@ public class GISStylePanel extends JPanel {
     setLayout(new FormLayout(
             new ColumnSpec[]{
                     new ColumnSpec(Sizes.dluX(35)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(35)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                    FormFactory.DEFAULT_COLSPEC,
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.DEFAULT_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.DLUX3),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(51), 0.1),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(10)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(97)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
             },
             new RowSpec[]{
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
                     new RowSpec(Sizes.dluY(10)),
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
                     new RowSpec(Sizes.dluY(44))
             }));
     add(upBtn, cc.xy(1, 1));

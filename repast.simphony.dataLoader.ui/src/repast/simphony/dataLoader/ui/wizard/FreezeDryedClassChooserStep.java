@@ -11,11 +11,11 @@ import repast.simphony.freezedry.gui.ClassRetrievable;
 import repast.simphony.util.wizard.ModelAwarePanelStep;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -45,16 +45,16 @@ public class FreezeDryedClassChooserStep extends ModelAwarePanelStep<DataLoaderW
     //======== this ========
     setLayout(new FormLayout(
     	new ColumnSpec[] {
-    		FormFactory.RELATED_GAP_COLSPEC,
-    		FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-    		FormFactory.DEFAULT_COLSPEC,
-    		FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+    		FormSpecs.RELATED_GAP_COLSPEC,
+    		FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+    		FormSpecs.DEFAULT_COLSPEC,
+    		FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
     		new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
     	},
     	new RowSpec[] {
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC
+    		FormSpecs.DEFAULT_ROWSPEC,
+    		FormSpecs.LINE_GAP_ROWSPEC,
+    		FormSpecs.DEFAULT_ROWSPEC
     	}));
     add(separator2, cc.xywh(1, 1, 5, 1));
 

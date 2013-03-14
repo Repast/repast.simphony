@@ -54,11 +54,11 @@ import repast.simphony.gis.display.SquareIcon;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -232,7 +232,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		getPreview().setMark(wkn);
 		getMarkBox().setSelectedItem(wkn);
 		Literal size = (Literal)SLD.graphic(ps).getSize();
-		double markSize = (Double)size.getValue();
+//		double markSize = (Double)size.getValue();
+		double markSize = 10;
 		getPreview().setMarkSize((int) markSize);
 		getMarkSizeSpinner().setValue(markSize);
 		Fill fill = mark.getFill();
@@ -465,17 +466,17 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			filterPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			filterPanel.add(separator5, cc.xywh(1, 1, 5, 1));
@@ -504,19 +505,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			fillPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			fillPanel.add(separator1, cc.xywh(1, 1, 5, 1));
@@ -549,22 +550,22 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			strokePanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			strokePanel.add(separator2, cc.xywh(1, 1, 6, 1));
@@ -609,19 +610,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			markPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.NO_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(80), FormSpec.DEFAULT_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			markPanel.add(separator3, cc.xywh(1, 1, 6, 1));
@@ -661,8 +662,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			previewPanel.setLayout(new FormLayout(
 				ColumnSpec.decodeSpecs("default, center:default:grow"),
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				}));
 			previewPanel.add(separator6, cc.xywh(1, 1, 2, 1));

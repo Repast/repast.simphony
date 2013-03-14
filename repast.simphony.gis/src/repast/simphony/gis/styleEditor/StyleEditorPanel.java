@@ -26,11 +26,11 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -91,20 +91,20 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 
 		//======== dialogPane ========
 		{
-			dialogPane.setBorder(Borders.DIALOG_BORDER);
+			dialogPane.setBorder(Borders.DIALOG);
 			dialogPane.setLayout(new BorderLayout());
 
 			//======== contentPanel ========
 			{
 				contentPanel.setLayout(new FormLayout(
 					new ColumnSpec[] {
-						FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 					},
 					new RowSpec[] {
 						new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
-						FormFactory.LINE_GAP_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 					}));
 

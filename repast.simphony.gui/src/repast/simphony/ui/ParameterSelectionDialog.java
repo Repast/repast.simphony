@@ -36,11 +36,11 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.Schema;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.jidesoft.swing.CheckBoxList;
@@ -181,8 +181,8 @@ public abstract class ParameterSelectionDialog<P extends Parameters> extends JDi
         contentPanel.setLayout(new FormLayout(
                 ColumnSpec.decodeSpecs("default:grow"),
                 new RowSpec[]{
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.RELATED_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.RELATED_GAP_ROWSPEC,
                         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
                 }));
 

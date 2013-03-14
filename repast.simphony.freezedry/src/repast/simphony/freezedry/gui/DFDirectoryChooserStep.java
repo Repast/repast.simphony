@@ -1,16 +1,26 @@
 /*CopyrightHere*/
 package repast.simphony.freezedry.gui;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import repast.simphony.freezedry.datasource.DFClassLister;
-import repast.simphony.util.wizard.DynamicWizardModel;
-import repast.simphony.util.wizard.ModelAwarePanelStep;
-import saf.core.ui.util.FileChooserUtilities;
-import simphony.util.messages.MessageCenter;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -19,14 +29,21 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+
+import repast.simphony.freezedry.datasource.DFClassLister;
+import repast.simphony.util.wizard.DynamicWizardModel;
+import repast.simphony.util.wizard.ModelAwarePanelStep;
+import saf.core.ui.util.FileChooserUtilities;
+import simphony.util.messages.MessageCenter;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * @author Jerry Vos
@@ -95,21 +112,21 @@ public class DFDirectoryChooserStep<T extends DynamicWizardModel> extends ModelA
     setLayout(new FormLayout(
     	new ColumnSpec[] {
     		new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.NO_GROW),
-    		FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+    		FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
     		new ColumnSpec(ColumnSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
-    		FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+    		FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
     		new ColumnSpec(ColumnSpec.RIGHT, Sizes.DEFAULT, FormSpec.NO_GROW)
     	},
     	new RowSpec[] {
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC,
-    		FormFactory.LINE_GAP_ROWSPEC,
-    		FormFactory.DEFAULT_ROWSPEC
+    		FormSpecs.DEFAULT_ROWSPEC,
+    		FormSpecs.LINE_GAP_ROWSPEC,
+    		FormSpecs.DEFAULT_ROWSPEC,
+    		FormSpecs.LINE_GAP_ROWSPEC,
+    		FormSpecs.DEFAULT_ROWSPEC,
+    		FormSpecs.LINE_GAP_ROWSPEC,
+    		FormSpecs.DEFAULT_ROWSPEC,
+    		FormSpecs.LINE_GAP_ROWSPEC,
+    		FormSpecs.DEFAULT_ROWSPEC
     	}));
     add(separator3, cc.xywh(1, 1, 5, 1));
 
