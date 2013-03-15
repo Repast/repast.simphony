@@ -58,7 +58,7 @@ public class StatechartCodeAdderFactory {
         buf.append(className.subSequence(1, className.length()));
         buf.append(" = ");
         buf.append(className);
-        buf.append(".createStateChart(this, 1);");
+        buf.append(".createStateChart(this, 0);");
         aType.createField(buf.toString(), null, true, monitor);
         unit.save(monitor, true);
       }

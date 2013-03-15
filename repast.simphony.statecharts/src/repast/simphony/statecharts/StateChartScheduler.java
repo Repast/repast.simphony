@@ -13,11 +13,12 @@ import repast.simphony.engine.schedule.PriorityType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 
 /**
- * This is singleton responsible for managing the scheduling of statechart begin and resolve actions.
- * Both of these actions need to be managed because they are added and removed based on statechart
- * or simulation logic.
+ * This is singleton responsible for managing the scheduling of statechart begin
+ * and resolve actions. Both of these actions need to be managed because they
+ * are added and removed based on statechart or simulation logic.
+ * 
  * @author jozik
- *
+ * 
  */
 public enum StateChartScheduler {
 
@@ -30,16 +31,16 @@ public enum StateChartScheduler {
 
 	/**
 	 * Local class to hold resolve action information.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	static class ResolveActionsMapValue {
 		private StateChartResolveAction scra;
 		private ISchedulableAction isa;
 		private boolean remove = false;
 
-		protected ResolveActionsMapValue(StateChartResolveAction scra,
-				ISchedulableAction isa) {
+		protected ResolveActionsMapValue(StateChartResolveAction scra, ISchedulableAction isa) {
 			this.scra = scra;
 			this.isa = isa;
 		}
@@ -51,18 +52,16 @@ public enum StateChartScheduler {
 		protected void removeListener(DefaultStateChart<?> sc) {
 			scra.removeListener(sc);
 			if (!scra.hasListeners()) {
-				RunEnvironment.getInstance().getCurrentSchedule()
-						.removeAction(isa);
+				RunEnvironment.getInstance().getCurrentSchedule().removeAction(isa);
 				isa = null;
 				scra = null;
 				remove = true;
 			}
 		}
-		
-		protected void nullify(){
+
+		protected void nullify() {
 			scra.removeAllListeners();
-			RunEnvironment.getInstance().getCurrentSchedule()
-			.removeAction(isa);
+			RunEnvironment.getInstance().getCurrentSchedule().removeAction(isa);
 			isa = null;
 			scra = null;
 			remove = true;
@@ -72,11 +71,12 @@ public enum StateChartScheduler {
 			return remove;
 		}
 	}
-	
+
 	/**
 	 * Local class to hold begin action information.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	static class BeginActionsMapValue {
 		private StateChartBeginAction scba;
@@ -90,20 +90,20 @@ public enum StateChartScheduler {
 		protected void registerListener(DefaultStateChart<?> sc) {
 			scba.registerListener(sc);
 		}
-		
-		protected void nullify(){
+
+		protected void nullify() {
 			scba.removeAllListeners();
-			RunEnvironment.getInstance().getCurrentSchedule()
-			.removeAction(isa);
+			RunEnvironment.getInstance().getCurrentSchedule().removeAction(isa);
 			isa = null;
 			scba = null;
 		}
 	}
 
 	/**
-	 * Initializes the scheduler. This is automatically called by a simulation end action 
-	 * or for simulations using other forms of initialization during a simulation run,
-	 * from initialization appropriate places if (e.g., ReLogo setup methods, via clearAll())
+	 * Initializes the scheduler. This is automatically called by a simulation end
+	 * action or for simulations using other forms of initialization during a
+	 * simulation run, from initialization appropriate places if (e.g., ReLogo
+	 * setup methods, via clearAll())
 	 */
 	public void initialize() {
 		shouldInitialize = false;
@@ -111,28 +111,28 @@ public enum StateChartScheduler {
 		beginClearCounter = 0;
 
 		// remove resolveActions from schedule
-		for (ResolveActionsMapValue ramv : resolveActions.values()){
+		for (ResolveActionsMapValue ramv : resolveActions.values()) {
 			ramv.nullify();
 		}
 		resolveActions.clear();
-		
-		for (BeginActionsMapValue bamv : beginActions.values()){
+
+		for (BeginActionsMapValue bamv : beginActions.values()) {
 			bamv.nullify();
 		}
 		beginActions.clear();
-		RunEnvironment.getInstance().getCurrentSchedule().schedule(ScheduleParameters.createAtEnd(0), new IAction(){
+		RunEnvironment.getInstance().getCurrentSchedule()
+				.schedule(ScheduleParameters.createAtEnd(0), new IAction() {
 
-			@Override
-			public void execute() {
-				shouldInitialize = true;
-			}
-			
-		});
+					@Override
+					public void execute() {
+						shouldInitialize = true;
+					}
+
+				});
 	}
 
 	long resolveClearCounter = 0;
 	long beginClearCounter = 0;
-	
 
 	// called by StateChartResolveAction after notifying listeners
 	// this allows for the rTime.compareTo(time) <= 0 expression
@@ -140,8 +140,7 @@ public enum StateChartScheduler {
 	protected void clearOldResolveActions() {
 		resolveClearCounter++;
 		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
-			double time = RunEnvironment.getInstance().getCurrentSchedule()
-					.getTickCount();
+			double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 			List<Double> keysToRemove = new ArrayList<Double>();
 			for (Double rTime : resolveActions.keySet()) {
 				if (rTime.compareTo(time) <= 0)
@@ -153,12 +152,11 @@ public enum StateChartScheduler {
 			resolveClearCounter = 0;
 		}
 	}
-	
+
 	protected void clearOldBeginActions() {
 		beginClearCounter++;
 		if (beginClearCounter > MAX_BEFOFE_CLEAR) {
-			double time = RunEnvironment.getInstance().getCurrentSchedule()
-					.getTickCount();
+			double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 			List<Double> keysToRemove = new ArrayList<Double>();
 			for (Double rTime : beginActions.keySet()) {
 				if (rTime.compareTo(time) <= 0)
@@ -171,54 +169,84 @@ public enum StateChartScheduler {
 		}
 	}
 
-
 	private boolean shouldInitialize = true;
-	
+
 	protected void scheduleResolveTime(double nextTime, DefaultStateChart<?> sc) {
-		if (shouldInitialize){
+		if (shouldInitialize) {
 			initialize();
 		}
 		ResolveActionsMapValue ramv = resolveActions.get(nextTime);
 		if (ramv == null) {
-			ISchedule schedule = RunEnvironment.getInstance()
-					.getCurrentSchedule();
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 			StateChartResolveAction scra = new StateChartResolveAction();
-			ISchedulableAction ia = schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, PriorityType.FIRST_OF_LAST),
-					scra);
+			ISchedulableAction ia = schedule.schedule(
+					ScheduleParameters.createOneTime(nextTime, PriorityType.FIRST_OF_LAST), scra);
 			ramv = new ResolveActionsMapValue(scra, ia);
 			resolveActions.put(nextTime, ramv);
 
 		}
 		ramv.registerListener(sc);
 	}
-	
+
 	/**
-	 * Called by generated statechart code to schedule the begin time for a statechart.
+	 * Called by generated statechart code to schedule the begin time for a
+	 * statechart.
+	 * 
 	 * @param nextTime
 	 * @param sc
 	 */
-	public void scheduleBeginTime(double nextTime, DefaultStateChart<?> sc) {
-		if (shouldInitialize){
+	public void scheduleBeginTime(double nextTime, final DefaultStateChart<?> sc) {
+		if (shouldInitialize) {
 			initialize();
 		}
+		// If nextTime is negative, reset to 0
+		if (nextTime < 0)
+			nextTime = 0;
+
 		double currentTickCount = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		if (currentTickCount >= nextTime){
+		// If currentTickCount is after nextTime, reinterpret nextTime to mean:
+		// currentTickCount + nextTime
+		if (Double.compare(currentTickCount, nextTime) > 0) {
 			nextTime = currentTickCount + nextTime;
 		}
-		if (nextTime < 0) nextTime = 0;
-		BeginActionsMapValue bamv = beginActions.get(nextTime);
-		if (bamv == null) {
-			ISchedule schedule = RunEnvironment.getInstance()
-					.getCurrentSchedule();
-			StateChartBeginAction scba = new StateChartBeginAction();
-			ISchedulableAction ia = schedule.schedule(ScheduleParameters
-					.createOneTime(nextTime, PriorityType.FIRST),
-					scba);
-			bamv = new BeginActionsMapValue(scba, ia);
-			beginActions.put(nextTime, bamv);
+		// If nextTime is the same as the currentTickCount
+		// schedule for this time tick with PriorityType.FIRST
+		if (Double.compare(currentTickCount, nextTime) == 0) {
+			ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+			// TODO: a reference to this ISchedulableAction might be needed for
+			// descheduling the begin action
+			// for the agent.
+			ISchedulableAction isa = schedule.schedule(
+					ScheduleParameters.createOneTime(currentTickCount, PriorityType.FIRST), new IAction() {
+						@Override
+						public void execute() {
+							if (sc != null) {
+								sc.begin();
+							}
+						}
+					});
+
+			// TODO: can get agent from statechart via: Object agent = sc.getAgent();
+
 		}
-		bamv.registerListener(sc);
+		// Otherwise, use the BeginActionsMapValue
+		else {
+
+			BeginActionsMapValue bamv = beginActions.get(nextTime);
+			// If a BeginActionsMapValue doesn't exist for nextTime, create one
+			if (bamv == null) {
+				ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+				StateChartBeginAction scba = new StateChartBeginAction();
+				ISchedulableAction ia = schedule.schedule(
+						ScheduleParameters.createOneTime(nextTime, PriorityType.FIRST), scba);
+				bamv = new BeginActionsMapValue(scba, ia);
+				beginActions.put(nextTime, bamv);
+			}
+			bamv.registerListener(sc);
+			// TODO: need to figure out how to find this sc to removeListener if necessary in the future
+			// one idea is to keep data connecting reference "sc" to "nextTime"
+			// then get appropriate bamv and removeListener(sc)
+		}
 	}
 
 	// Called from deactivation of transitions in DefaultStateChart
@@ -229,11 +257,9 @@ public enum StateChartScheduler {
 			if (ramv.toRemove())
 				resolveActions.remove(nextTime);
 		} else {
-			throw new IllegalStateException(
-					"Excess removeResolveTime call detected for StateChart: "
-							+ sc);
+			throw new IllegalStateException("Excess removeResolveTime call detected for StateChart: "
+					+ sc);
 		}
 	}
-
 
 }

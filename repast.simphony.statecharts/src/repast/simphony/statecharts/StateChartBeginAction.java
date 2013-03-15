@@ -17,7 +17,17 @@ public class StateChartBeginAction implements IAction {
 
 	// register listeners
 	public void registerListener(DefaultStateChart<?> sc) {
-		scSet.add(sc);
+		if (sc != null){
+			scSet.add(sc);
+		}
+	}
+	
+	// Remove specific listener (can be used, for example, for unscheduling
+	// when agent is removed from context)
+	public void removeListener(DefaultStateChart<?> sc) {
+		if (sc != null){
+			scSet.remove(sc);
+		}
 	}
 
 	// To be used by initialization routines
