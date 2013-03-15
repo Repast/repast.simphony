@@ -1,12 +1,20 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.renderer.style.Java2DMark;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import org.geotools.renderer.lite.Java2DMark;
 
 public class PreviewLabel extends JLabel {
 

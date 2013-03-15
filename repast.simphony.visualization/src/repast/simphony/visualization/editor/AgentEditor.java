@@ -4,13 +4,48 @@
 
 package repast.simphony.visualization.editor;
 
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import com.l2fprod.common.propertysheet.Property;
-import com.l2fprod.common.propertysheet.PropertySheet;
-import com.l2fprod.common.propertysheet.PropertySheetPanel;
 import groovy.lang.MetaClass;
+
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+
 import org.jscience.physics.amount.Amount;
+
 import repast.simphony.context.Context;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.RepastEdge;
@@ -21,20 +56,16 @@ import repast.simphony.ui.probe.SpaceLocationProbe;
 import repast.simphony.util.ClassUtilities;
 import repast.simphony.util.ContextUtils;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.List;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+import com.l2fprod.common.propertysheet.Property;
+import com.l2fprod.common.propertysheet.PropertySheet;
+import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
 /**
  * @author User #2
@@ -520,8 +551,8 @@ public class AgentEditor extends JPanel {
     setLayout(new FormLayout(
             ColumnSpec.decodeSpecs("default:grow"),
             new RowSpec[]{
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
                     new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
             }));
 
@@ -529,11 +560,11 @@ public class AgentEditor extends JPanel {
     {
       panel1.setLayout(new FormLayout(
               new ColumnSpec[]{
-                      FormFactory.BUTTON_COLSPEC,
-                      FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                      FormFactory.BUTTON_COLSPEC,
-                      FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                      FormFactory.BUTTON_COLSPEC
+                      FormSpecs.BUTTON_COLSPEC,
+                      FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                      FormSpecs.BUTTON_COLSPEC,
+                      FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                      FormSpecs.BUTTON_COLSPEC
               },
               RowSpec.decodeSpecs("default")));
       panel1.add(addBtn, cc.xy(1, 1));

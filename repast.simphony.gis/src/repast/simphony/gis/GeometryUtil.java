@@ -1,9 +1,14 @@
 package repast.simphony.gis;
 
-import com.vividsolutions.jts.geom.*;
-import org.geotools.feature.Feature;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  * Utilities methods for geometries
@@ -52,8 +57,8 @@ public class GeometryUtil {
    * @param feature the feature whose type we want.
    * @return the geometry type of the specified feature.
    */
-  public static GeometryType findGeometryType(Feature feature) {
-    Geometry geom = feature.getDefaultGeometry();
+  public static GeometryType findGeometryType(SimpleFeature feature) {
+    Object geom = feature.getDefaultGeometry();
     if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
       return GeometryType.POINT;
     else if (geom instanceof com.vividsolutions.jts.geom.Polygon || geom instanceof MultiPolygon)

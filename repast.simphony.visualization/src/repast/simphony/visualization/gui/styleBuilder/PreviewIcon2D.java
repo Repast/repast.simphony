@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.geotools.renderer.style.Java2DMark;
+import org.geotools.renderer.lite.Java2DMark;
 
 public class PreviewIcon2D extends JLabel implements PreviewIcon {
 

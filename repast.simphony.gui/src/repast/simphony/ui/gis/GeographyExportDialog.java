@@ -44,11 +44,11 @@ import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -222,7 +222,7 @@ public class GeographyExportDialog extends JDialog {
 
     //======== dialogPane ========
     {
-    	dialogPane.setBorder(Borders.DIALOG_BORDER);
+    	dialogPane.setBorder(Borders.DIALOG);
     	dialogPane.setLayout(new BorderLayout());
 
     	//======== contentPanel ========
@@ -230,8 +230,8 @@ public class GeographyExportDialog extends JDialog {
     		contentPanel.setLayout(new FormLayout(
     			ColumnSpec.decodeSpecs("default:grow"),
     			new RowSpec[] {
-    				FormFactory.DEFAULT_ROWSPEC,
-    				FormFactory.LINE_GAP_ROWSPEC,
+    				FormSpecs.DEFAULT_ROWSPEC,
+    				FormSpecs.LINE_GAP_ROWSPEC,
     				new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
     			}));
 
@@ -263,13 +263,13 @@ public class GeographyExportDialog extends JDialog {
 
     	//======== buttonBar ========
     	{
-    		buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+    		buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
     		buttonBar.setLayout(new FormLayout(
     			new ColumnSpec[] {
-    				FormFactory.GLUE_COLSPEC,
-    				FormFactory.BUTTON_COLSPEC,
-    				FormFactory.RELATED_GAP_COLSPEC,
-    				FormFactory.BUTTON_COLSPEC
+    				FormSpecs.GLUE_COLSPEC,
+    				FormSpecs.BUTTON_COLSPEC,
+    				FormSpecs.RELATED_GAP_COLSPEC,
+    				FormSpecs.BUTTON_COLSPEC
     			},
     			RowSpec.decodeSpecs("pref")));
 

@@ -25,11 +25,11 @@ import javax.swing.event.ListSelectionListener;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.ui.widget.IconUtils;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -190,19 +190,19 @@ public class AgentSelectionPanel extends JPanel {
     setLayout(new FormLayout(
       new ColumnSpec[] {
         new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.75),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC,
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+        FormSpecs.DEFAULT_COLSPEC,
+        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
         new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, 0.25),
-        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-        FormFactory.DEFAULT_COLSPEC
+        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+        FormSpecs.DEFAULT_COLSPEC
       },
       new RowSpec[] {
-        FormFactory.DEFAULT_ROWSPEC,
-        FormFactory.LINE_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC,
+        FormSpecs.LINE_GAP_ROWSPEC,
         new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-        FormFactory.LINE_GAP_ROWSPEC,
-        FormFactory.DEFAULT_ROWSPEC
+        FormSpecs.LINE_GAP_ROWSPEC,
+        FormSpecs.DEFAULT_ROWSPEC
       }));
 
     //======== panel5 ========

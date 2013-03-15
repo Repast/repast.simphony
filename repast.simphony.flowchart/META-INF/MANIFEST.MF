@@ -7,7 +7,9 @@ Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.agents.designer.core.AgentBuilderPlugin
 Bundle-Vendor: Provider
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: org.eclipse.ui.workbench.texteditor;bundle-version="3.8.0",
+ org.eclipse.ui,
+ org.eclipse.ui.views;bundle-version="3.6.100",
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.core.resources,
