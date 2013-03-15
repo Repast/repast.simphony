@@ -156,7 +156,7 @@ public enum StateChartScheduler {
 	
 	protected void clearOldBeginActions() {
 		beginClearCounter++;
-		if (resolveClearCounter > MAX_BEFOFE_CLEAR) {
+		if (beginClearCounter > MAX_BEFOFE_CLEAR) {
 			double time = RunEnvironment.getInstance().getCurrentSchedule()
 					.getTickCount();
 			List<Double> keysToRemove = new ArrayList<Double>();
