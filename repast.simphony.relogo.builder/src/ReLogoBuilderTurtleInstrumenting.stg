@@ -85,3 +85,133 @@ public AgentSet\<<fullyQualifiedName>\> <lowerPlural>At(Number nX, Number nY){
 	}
 }
 >>
+
+tplTypesOnPMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Returns an agentset of <lowerPlural> on a given patch.
+	 * 
+	 * @param p
+	 *            a patch
+	 * @return agentset of <lowerPlural> on patch p
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Patch p){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),getMyObserver(),"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+}
+>>
+
+tplTypesOnTMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Returns an agentset of <lowerPlural> on the same patch as a turtle.
+	 * 
+	 * @param t
+	 *            a turtle
+	 * @return agentset of <lowerPlural> on the same patch as turtle t
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Turtle t){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),getMyObserver(),"<lowerSingular>")){
+		if (tt instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)tt);
+	}
+	return result;
+}
+>>
+
+tplTypesOnCMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Returns an agentset of <lowerPlural> on the patches in a collection or on the patches
+	 * that a collection of turtles are.
+	 * 
+	 * @param a
+	 *            a collection
+	 * @return agentset of <lowerPlural> on the patches in collection a or on the patches
+	 *         that collection a turtles are
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Collection c){
+
+	if (c == null || c.isEmpty()){
+		return new AgentSet\<<fullyQualifiedName>\>();
+	}
+	
+	Set\<<fullyQualifiedName>\> total = new HashSet\<<fullyQualifiedName>\>();
+	if (c.iterator().next() instanceof Turtle){
+		for (Object o : c){
+			if (o instanceof Turtle){
+				Turtle t = (Turtle) o;
+				total.addAll(<lowerPlural>On(t));
+			}
+		}
+	}
+	else {
+		for (Object o : c){
+			if (o instanceof Patch){
+				Patch p = (Patch) o;
+				total.addAll(<lowerPlural>On(p));
+			}
+		}
+	}
+	return new AgentSet\<<fullyQualifiedName>\>(total);
+}
+>>
+
+tplIsTypeQMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Checks if an object is a <lowerSingular>.
+	 * 
+	 * @param o
+	 *            o object
+	 * @return true if object o is a <lowerSingular>, false otherwise
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public boolean is<capSingular>Q(Object o){
+	return o instanceof <fullyQualifiedName>;
+}
+>>
+
+tplTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Returns an agentset containing all <lowerPlural>.
+	 * 
+	 * @return agentset of all <lowerPlural>
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>(){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object o : Utility.getTurtleAgentSetOfType("<lowerPlural>",this.getMyObserver())){
+		if (o instanceof <fullyQualifiedName>)
+			result.add((<fullyQualifiedName>)o);
+	} 
+	return result;
+}
+>>
+
+tplTypeMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+	/**
+	 * Returns the <lowerSingular> with the given who number.
+	 * 
+	 * @param number
+	 *            a number
+	 * @return turtle number
+	 */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Number number){
+	Turtle turtle = Utility.turtleU(number.intValue(), getMyObserver());
+	if (turtle instanceof <fullyQualifiedName>)
+		return (<fullyQualifiedName>) turtle;
+	return null;
+}
+>>

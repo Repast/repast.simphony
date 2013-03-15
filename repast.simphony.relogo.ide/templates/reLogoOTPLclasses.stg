@@ -9,6 +9,7 @@ import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
 
+
 @SuppressWarnings({"unused","rawtypes","unchecked"})
 public class ReLogoObserver extends BaseObserver{
 }
@@ -19,6 +20,9 @@ package <packageName>;
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import groovy.lang.Closure;
 import repast.simphony.relogo.*;
 import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;

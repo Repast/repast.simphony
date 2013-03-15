@@ -693,14 +693,14 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Sets the turtleÕs pen to stop drawing lines.
+	 * Sets the turtleï¿½s pen to stop drawing lines.
 	 */
 	public void pu() {
 		penUp();
 	}
 
 	/**
-	 * Sets the turtleÕs pen to stop drawing lines.
+	 * Sets the turtleï¿½s pen to stop drawing lines.
 	 */
 	public void penUp() {
 		setPenMode(Utility.PEN_UP);
@@ -708,14 +708,14 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Sets the turtleÕs pen to draw lines.
+	 * Sets the turtleï¿½s pen to draw lines.
 	 */
 	public void pd() {
 		penDown();
 	}
 
 	/**
-	 * Sets the turtleÕs pen to draw lines.
+	 * Sets the turtleï¿½s pen to draw lines.
 	 */
 	public void penDown() {
 		setPenMode(Utility.PEN_DOWN);
@@ -1075,18 +1075,18 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the turtleÕs x increment for one step.
+	 * Returns the turtleï¿½s x increment for one step.
 	 * 
-	 * @returns turtleÕs x increment for one step
+	 * @returns turtleï¿½s x increment for one step
 	 */
 	public double dx() {
 		return Math.sin(heading * Math.PI / 180);
 	}
 
 	/**
-	 * Returns the turtleÕs y increment for one step.
+	 * Returns the turtleï¿½s y increment for one step.
 	 * 
-	 * @returns turtleÕs y increment for one step
+	 * @returns turtleï¿½s y increment for one step
 	 */
 	public double dy() {
 		return Math.cos(heading * Math.PI / 180);
@@ -1283,7 +1283,7 @@ public abstract class AbstractTurtle implements Turtle {
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the callerÕs patch
+	 * @return agentset of turtles from the callerï¿½s patch
 	 */
 	public AgentSet turtlesHere() {
 		// get grid and space
@@ -1311,7 +1311,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @param t
 	 *            a turtle
-	 * @return agentset of turtles on the same patch at turtle t
+	 * @return agentset of turtles on the same patch as turtle t
 	 */
 	public AgentSet<Turtle> turtlesOn(Turtle t) {
 		return Utility.getTurtlesOnGridPoint(
@@ -1936,9 +1936,9 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the agentset of the callerÕs out link neighbor turtles.
+	 * Returns the agentset of the callerï¿½s out link neighbor turtles.
 	 * 
-	 * @return agentset of the callerÕs out link neighbor turtles
+	 * @return agentset of the callerï¿½s out link neighbor turtles
 	 */
 	public AgentSet outLinkNeighbors() {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
@@ -1967,11 +1967,11 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the callerÕs directed link to a turtle.
+	 * Returns the callerï¿½s directed link to a turtle.
 	 * 
 	 * @param t
 	 *            a turtle
-	 * @return the callerÕs directed link to turtle t
+	 * @return the callerï¿½s directed link to turtle t
 	 */
 	public Link outLinkTo(Turtle t) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
