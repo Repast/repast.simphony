@@ -23,13 +23,13 @@ public class SampleStyleTableModel extends AbstractTableModel {
 
 	private List<Rule> rules = new ArrayList<Rule>();
 	private Map<Rule, Icon> icons = new HashMap<Rule, Icon>();
-	private SimpleFeature sample;
+//	private SimpleFeature sample;
 
-	public void initStyle(FeatureTypeStyle style, SimpleFeature sample) {
+	public void initStyle(FeatureTypeStyle style) {
 		rules.clear();
 		icons.clear();
-		this.sample = sample;
-		for (Rule rule : style.getRules()) {
+//		this.sample = sample;
+		for (Rule rule : style.rules()) {
 			rules.add(rule);
 		}
 
@@ -123,7 +123,8 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	private Icon getIcon(Rule rule) {
 		Icon icon = icons.get(rule);
 		if (icon == null) {
-			icon = LegendIconMaker.makeLegendIcon(12, rule, sample);
+		// TODO Geotools
+//			icon = LegendIconMaker.makeLegendIcon(12, rule, sample);
 			//icons.put(rule, icon);
 		}
 		return icon;

@@ -2,7 +2,7 @@ package repast.simphony.visualization.gui;
 
 import java.awt.Color;
 
-import org.geotools.filter.FilterFactoryFinder;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.Fill;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
@@ -12,9 +12,14 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactoryFinder;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.NilExpression;
+import org.opengis.style.Graphic;
 
 import repast.simphony.gis.styleEditor.PreviewLabel;
 
@@ -25,7 +30,9 @@ public class StylePreviewer {
 
   private PreviewLabel label;
   private Style style;
-
+  static FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2();
+  static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+  
   public StylePreviewer(PreviewLabel label) {
     this.label = label;
   }
@@ -36,10 +43,8 @@ public class StylePreviewer {
 
   public void update(Style style) {
     this.style = style;
-    DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-						.createFilterFactory());
-		dsv.visit(style.getFeatureTypeStyles()[0].getRules()[0]);
+    DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(styleFactory, filterFactory);
+		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
 		Rule rule = (Rule) dsv.getCopy();
     Symbolizer symbolizer = rule.getSymbolizers()[0];
 		if (PointSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
@@ -58,9 +63,14 @@ public class StylePreviewer {
     Mark mark = SLD.mark(ps);
 		String wkn = SLD.wellKnownName(mark);
 		label.setMark(wkn);
-    double markSize = SLD.size(mark);
-		label.setMarkSize((int) markSize);
-    Fill fill = mark.getFill();
+		Graphic gr = SLD.graphic(ps);
+		Expression ex = gr.getSize();
+		
+		if (ex instanceof Literal ){	
+			label.setMarkSize((Double) ex.evaluate(null,Double.class));
+		}	
+		
+		Fill fill = mark.getFill();
     if (fill != null){
     	Color fillColor = SLD.color(fill.getColor());
     	label.setFillColor(fillColor);

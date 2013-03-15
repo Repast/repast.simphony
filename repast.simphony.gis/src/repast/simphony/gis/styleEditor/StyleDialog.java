@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Mon Jul 31 13:07:10 CDT 2006
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.BorderLayout;
@@ -15,8 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Style;
+import org.opengis.feature.type.FeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -43,8 +39,12 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 
-	public void setMapLayer(FeatureLayer layer) {
-		styleEditorPanel1.setMapLayer(layer);
+//	public void setMapLayer(FeatureLayer layer) {
+//		styleEditorPanel1.setMapLayer(layer);
+//	}
+	
+	public void setData(FeatureType featureType, Style style){
+		styleEditorPanel1.setData(featureType, style);
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent e) {

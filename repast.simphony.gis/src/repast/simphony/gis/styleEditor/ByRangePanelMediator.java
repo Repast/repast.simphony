@@ -30,10 +30,13 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.GraphicalSymbol;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 import repast.simphony.gis.GeometryUtil;
 
@@ -53,7 +56,8 @@ public class ByRangePanelMediator {
 	private DefaultComboBoxModel markModel = new DefaultComboBoxModel(new String[]{
 					"circle", "cross", "star", "square", "triangle"
 	});
-	private FeatureSource source;
+//	private FeatureSource source;
+	private FeatureType featureType;
 	 static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private int classesCount;
@@ -65,23 +69,27 @@ public class ByRangePanelMediator {
 	private GeometryUtil.GeometryType type;
   private double min = 0, max = 10;
 
-  public ByRangePanelMediator(FeatureSource source, Rule rule) {
-		this.source = source;
+  public ByRangePanelMediator(FeatureType featureType, Rule rule) {
+//		this.source = source;
+  	this.featureType = featureType;
 		cTypeModel.addElement(new IntervalItemType());
 		//cTypeModel.addElement(new QuantileItemType());
 
-		try {
-			SimpleFeature feature = (SimpleFeature) source.getFeatures().iterator().next();
-			type = GeometryUtil.findGeometryType(feature);
+//		try {
+//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
+//			type = GeometryUtil.findGeometryType(feature);
+			Geometry geom = (Geometry)featureType.getGeometryDescriptor().getDefaultValue();
+			type = GeometryUtil.findGeometryType(geom);
+			
 			DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 			dsv.visit(rule);
 			defaultRule = (Rule) dsv.getCopy();
 			defaultRule.setTitle("<Default>");
 			defaultRule.setName("Default");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
 	}
 
   public double getMin() {
@@ -168,7 +176,7 @@ public class ByRangePanelMediator {
 	}
 
 	private void recreateStyle() {
-		try {
+//		try {
 			if (attributeModel.getSelectedItem() != null) {
 				String attribute = attributeModel.getSelectedItem().toString();
 //				AttributeExpression att = filterFactory.createAttributeExpression(attribute);
@@ -189,17 +197,17 @@ public class ByRangePanelMediator {
 				
 				fts = StyleGenerator.createFeatureTypeStyle(classifier, pn, 
 						palette.getColors(), "Generated FeatureTypeStyle", 
-						source.getSchema().getGeometryDescriptor(),
+						featureType.getGeometryDescriptor(),
 						StyleGenerator.ELSEMODE_INCLUDEASMIN, 0.95, null);
 				
 				addSymbolizers(fts);
 				
-				tableModel.initStyle(fts, (SimpleFeature) source.getFeatures().features().next());
+				tableModel.initStyle(fts);
 			}
 
-		} catch (IOException ex) {
-
-		}
+//		} catch (IOException ex) {
+//
+//		}
 	}
 
 	public void replaceRule(Rule oldRule, Rule newRule) {

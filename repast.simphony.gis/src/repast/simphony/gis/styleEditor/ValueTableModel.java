@@ -5,6 +5,9 @@ import org.geotools.filter.Expression;
 import org.geotools.filter.LiteralExpression;
 import org.geotools.styling.Rule;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.display.LegendIconMaker;
@@ -32,10 +35,11 @@ public class ValueTableModel extends AbstractTableModel {
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
 
-	public ValueTableModel(SimpleFeature sample) {
-		this.sample = sample;
+	public ValueTableModel(SimpleFeatureType featureType) {
+//		this.sample = sample;
 		RuleCreator creator = new RuleCreator();
-		defaultRule = creator.createDefaultRule(Color.RED, GeometryUtil.findGeometryType(sample));
+		Geometry geom = (Geometry)featureType.getGeometryDescriptor().getDefaultValue();
+		defaultRule = creator.createDefaultRule(Color.RED, GeometryUtil.findGeometryType(geom));
 		addRule(defaultRule);
 
 		convertors.put(Double.class, new DoubleConvertor());

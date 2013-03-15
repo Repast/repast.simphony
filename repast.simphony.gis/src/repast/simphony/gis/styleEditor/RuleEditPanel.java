@@ -33,9 +33,9 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.expression.ExpressionBuilder;
 import org.geotools.filter.text.cql2.CQL;
 import org.geotools.filter.text.cql2.CQLException;
-import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -48,10 +48,10 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 
 import repast.simphony.gis.display.SquareIcon;
-import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -83,23 +83,31 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 
 	boolean ruleOnly = false;
 
-	public RuleEditPanel(Layer layer) {
-		initComponents();
-		setMapLayer(layer);
-	}
+//	public RuleEditPanel(Layer layer) {
+//		initComponents();
+//		setMapLayer(layer);
+//	}
 
 	public RuleEditPanel() {
 		initComponents();
 	}
 
-	public void setMapLayer(Layer layer) {
-		Style style = layer.getStyle();
+	public void setData(FeatureType featureType, Style style) {
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
 		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
 		setRule((Rule) dsv.getCopy());
-		type = layer.getFeatureSource().getSchema();
+		type = featureType;
 	}
+	
+//	public void setMapLayer(Layer layer) {
+//		Style style = layer.getStyle();
+//		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+//				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
+//		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
+//		setRule((Rule) dsv.getCopy());
+//		type = layer.getFeatureSource().getSchema();
+//	}
 
 	public void init(FeatureType type, Rule rule) {
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
@@ -202,7 +210,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		return preview.getMark();
 	}
 
-	public int getMarkSize() {
+	public double getMarkSize() {
 		return preview.getMarkSize();
 	}
 
@@ -227,14 +235,16 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		enablePointFields();
 		PointSymbolizer ps = (PointSymbolizer) symbolizer;
 		Mark mark = SLD.mark(ps);
-		MessageCenter.getMessageCenter(getClass()).debug("initPoint: " + mark);
 		String wkn = SLD.wellKnownName(mark);
 		getPreview().setMark(wkn);
 		getMarkBox().setSelectedItem(wkn);
-		Literal size = (Literal)SLD.graphic(ps).getSize();
-//		double markSize = (Double)size.getValue();
-		double markSize = 10;
-		getPreview().setMarkSize((int) markSize);
+		Graphic gr = SLD.graphic(ps);
+		Expression ex = gr.getSize();
+		double markSize = 0;
+		if (ex instanceof Literal ){
+			markSize = (Double) ex.evaluate(null,Double.class);
+		}	
+		getPreview().setMarkSize(markSize);
 		getMarkSizeSpinner().setValue(markSize);
 		Fill fill = mark.getFill();
 		Color fillColor = SLD.color(fill.getColor());
@@ -330,15 +340,14 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private void setMark() {
 		if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Fill fill = styleBuilder.createFill(getFillColor(),
-					getFillTransparency());
+			Fill fill = styleBuilder.createFill(getFillColor(),	getFillTransparency());
 			Stroke stroke = styleBuilder.createStroke(getStrokeColor(),
 					getStrokeWidth(), getStrokeTransparency());
 			List<Mark> markList = new ArrayList<Mark>();
 			markList.add(styleBuilder.createMark(getMark(), fill,	stroke));
 			ps.getGraphic().graphicalSymbols().clear();
 			ps.getGraphic().graphicalSymbols().addAll(markList);
-			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory(null).literal(getMarkSize())); 
+			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(getMarkSize())); 
 		} else {
 			throw new IllegalArgumentException("Cannot apply a mark to a "
 					+ symbolizer.getClass().getName());

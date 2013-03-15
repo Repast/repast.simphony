@@ -34,7 +34,7 @@ public class PreviewLabel extends JLabel {
 
 	private double outlineThickness = 1;
 
-	private int markSize = 6;
+	private double markSize = 6;
 
 	private Image image;
 
@@ -162,11 +162,12 @@ public class PreviewLabel extends JLabel {
 		updatePreview();
 	}
 
-	public int getMarkSize() {
+	public double getMarkSize() {
 		return markSize;
 	}
 
-	public void setMarkSize(int markSize) {
+	public void setMarkSize(double markSize) {
+		System.out.println("PreviewLabel.setMarkSize: " + markSize);
 		this.markSize = markSize;
 		updateShape();
 		updatePreview();

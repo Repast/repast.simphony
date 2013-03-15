@@ -47,6 +47,7 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
 
 import repast.simphony.gis.display.LegendIconMaker;
 import repast.simphony.gis.util.DoubleDocument;
@@ -207,21 +208,26 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		});
 	}
 
-	public void init(Layer layer) {
-		try {
-			FeatureSource source = layer.getFeatureSource();
-			this.type = (SimpleFeatureType)source.getSchema();
+	public void init(FeatureType featureType, Style style) {
+//		try {
+			this.type = (SimpleFeatureType)featureType;
 
-			Rule rule = layer.getStyle().featureTypeStyles().get(0).rules().get(0);
-			mediator = new ByRangePanelMediator(source, rule);
-			sample = (SimpleFeature) source.getFeatures().features().next();
-			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
+			Rule rule = style.featureTypeStyles().get(0).rules().get(0);
+			mediator = new ByRangePanelMediator(featureType, rule);
+//			sample = (SimpleFeature) source.getFeatures().features().next();
+			
+			// TODO Geotools
+//			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
+			
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
 			typeBox.setModel(model);
 			model = mediator.getAttributeModel();
-			SimpleFeatureType type = (SimpleFeatureType)source.getSchema();
+			
 			for (AttributeType at : type.getTypes()) {
+				
+				System.out.println("ByRangePanel.init(): " + at.getName());
+				
 				if (numberTypes.contains(at.getBinding())) {
 					model.addElement(at.getName());
 				}
@@ -231,15 +237,50 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			previewTable.setModel(mediator.getPreviewTableModel());
 			previewTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 
-			initFromStyle(layer.getStyle());
+			initFromStyle(style);
       startFld.setText(String.valueOf(mediator.getMin()));
       endFld.setText(String.valueOf(mediator.getMax()));
 
       mediator.classesChanged(((Integer) classesSpn.getValue()).intValue());
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
 	}
+	
+//	public void init(Layer layer) {
+//		try {
+//			FeatureSource source = layer.getFeatureSource();
+//			this.type = (SimpleFeatureType)source.getSchema();
+//
+//			Rule rule = layer.getStyle().featureTypeStyles().get(0).rules().get(0);
+//			mediator = new ByRangePanelMediator(source, rule);
+//			sample = (SimpleFeature) source.getFeatures().features().next();
+//			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
+//			paletteBox.setModel(mediator.getPaletteModel());
+//			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
+//			typeBox.setModel(model);
+//			model = mediator.getAttributeModel();
+//			SimpleFeatureType type = (SimpleFeatureType)source.getSchema();
+//			for (AttributeType at : type.getTypes()) {
+//				System.out.println("ByRangePanel.init(): " + at.getName());
+//				if (numberTypes.contains(at.getBinding())) {
+//					model.addElement(at.getName());
+//				}
+//			}
+//			attributeBox.setModel(model);
+//
+//			previewTable.setModel(mediator.getPreviewTableModel());
+//			previewTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
+//
+//			initFromStyle(layer.getStyle());
+//      startFld.setText(String.valueOf(mediator.getMin()));
+//      endFld.setText(String.valueOf(mediator.getMax()));
+//
+//      mediator.classesChanged(((Integer) classesSpn.getValue()).intValue());
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+//	}
 
 	private void initFromStyle(Style style) {
 		String desc = "";

@@ -48,8 +48,10 @@ import javax.xml.transform.TransformerException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.map.FeatureLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -58,8 +60,12 @@ import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.FilterFactory;
 
 import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.data.DataUtilities;
@@ -99,7 +105,8 @@ public class GISStylePanel extends JPanel {
   private static MessageCenter msg = MessageCenter.getMessageCenter(GISStylePanel.class);
   private static final String SLD_NS = "<sld:UserStyle xmlns=\"http://www.opengis.net/sld\"";
   private static final String SLD_NS_2 = " xmlns:sld=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"";
-
+  static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+  static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
   public static File lastDirectory;
 
   static class AgentTypeElement {
@@ -352,7 +359,7 @@ public class GISStylePanel extends JPanel {
   }
 
   private void setGeometryBox(Style style) {
-    Symbolizer symbolizer = style.getFeatureTypeStyles()[0].getRules()[0].getSymbolizers()[0];
+    Symbolizer symbolizer = style.featureTypeStyles().get(0).rules().get(0).getSymbolizers()[0];
     if (PointSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(POINT);
     if (PolygonSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(POLYGON);
     if (LineSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(LINE);
@@ -378,17 +385,20 @@ public class GISStylePanel extends JPanel {
     StyleBuilder builder = new StyleBuilder();
 
     if (geomType == POINT) {
-      Mark mark = builder.createMark("square", Color.RED);
+      Mark mark = builder.createMark("Square", Color.BLUE);
       mark.setStroke(builder.createStroke());
-      return builder.createStyle(builder.createPointSymbolizer(builder.createGraphic(null,
-              mark, null)));
+      Graphic gr = builder.createGraphic();   
+      gr.graphicalSymbols().clear();
+      gr.graphicalSymbols().add(mark);
+   
+      return builder.createStyle(builder.createPointSymbolizer(gr,null));
     }
 
     if (geomType == LINE) {
       return builder.createStyle(builder.createLineSymbolizer(Color.RED, 1));
     }
 
-    return builder.createStyle(builder.createPolygonSymbolizer(Color.RED, Color.BLACK, 1));
+    return builder.createStyle(builder.createPolygonSymbolizer(Color.GREEN, Color.BLACK, 1));
   }
 
   private void showStyleDialog() {
@@ -396,24 +406,36 @@ public class GISStylePanel extends JPanel {
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
       Style style = previewer.getStyle();
-      FeatureLayer layer = null;
+//      FeatureLayer layer = null;
+      SimpleFeatureType featureType = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
-
-        DefaultFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(agentClass, getGeometry().getClass(),
-                DefaultGeographicCRS.WGS84);
-        SimpleFeatureCollection collection = fac.getFeatures();
-        FeatureAgent feature = new FeatureAgent(fac.getFeatureType(), agentClass, null);
-        feature.setDefaultGeometry(getGeometry());
-        collection.add(feature);
+        
+        System.out.println("GISStylePanel.showStyleDialog() > " + agentClass.getName() + " : " 
+        + ""	);
+        
+        DefaultFeatureAgentFactory fac = 
+        		FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(
+        				agentClass, getGeometry().getClass(), DefaultGeographicCRS.WGS84);
+//        SimpleFeatureCollection collection = fac.getFeatures();
+//        FeatureAgent feature = new FeatureAgent(fac.getFeatureType(), agentClass, null);
+//        feature.setDefaultGeometry(getGeometry());
+//        collection.add(feature);
+        featureType = fac.getFeatureType();
+        
+        System.out.println("GISStylePanel.showStyleDialog().2 > " + agentClass.getName() + " : " 
+            + featureType.getAttributeCount()	);
+        
 //        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
-        layer = new FeatureLayer(DataUtilities.createFeatureSource(collection), style);
+//        layer = new FeatureLayer(DataUtilities.createFeatureSource(collection), style);
       } else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        layer = new FeatureLayer(source, style);
+        featureType = (SimpleFeatureType)source.getSchema();
+//        layer = new FeatureLayer(source, style);
       }
-      dialog.setMapLayer(layer);
+//      dialog.setMapLayer(layer);
+      dialog.setData(featureType, style);
       if (dialog.display()) {
         style = dialog.getStyle();
         element.styleXML = getSLDStyle(style);

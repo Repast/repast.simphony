@@ -47,6 +47,7 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
 
 import simphony.util.messages.MessageCenter;
 
@@ -68,7 +69,8 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 	private static MessageCenter msg = MessageCenter.getMessageCenter(ByValuePanel.class);
 	private ValueTableModel tableModel;
-	private SimpleFeatureSource source;
+//	private SimpleFeatureSource source;
+	private SimpleFeatureType featureType;
 	private int colorIndex = 1;
 
   private class IconCellRenderer extends DefaultTableCellRenderer {
@@ -162,7 +164,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		attributeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				AttributeType aType = 
-						source.getSchema().getType(attributeBox.getSelectedItem().toString());
+						featureType.getType(attributeBox.getSelectedItem().toString());
 				tableModel.init(aType.getBinding());
 			}
 		});
@@ -191,7 +193,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 					if (rule != null) {
 						SymbolEditorDialog dialog =
 										new SymbolEditorDialog((JDialog) SwingUtilities.getWindowAncestor(ByValuePanel.this));
-						dialog.init(source.getSchema(), rule);
+						dialog.init(featureType, rule);
 						Rule newRule = dialog.display();
 						if (newRule != null) {
 							tableModel.setRule(row, newRule);
@@ -218,16 +220,20 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	}
 
 	private void addRule() {
-		try {
-			RuleCreator creator = new RuleCreator();
-			String att = attributeBox.getSelectedItem().toString();
-			SimpleFeature feature = source.getFeatures().iterator().next();
-			Rule rule = creator.createValueRule(feature, att, 
-					getSymbolizerFactory(getColor(colorIndex++)));
-			tableModel.addRule(rule);
-		} catch (IOException e) {
-			msg.error("Error getting features", e);
-		}
+
+		// TODO Geotools not sure what is going on here?  Supposed to scan all 
+		//      features from a shapefile?  Doesn't seem to make sense in the editor		
+		
+//		try {
+//			RuleCreator creator = new RuleCreator();
+//			String att = attributeBox.getSelectedItem().toString();
+//			SimpleFeature feature = source.getFeatures().iterator().next();
+//			Rule rule = creator.createValueRule(feature, att, 
+//					getSymbolizerFactory(getColor(colorIndex++)));
+//			tableModel.addRule(rule);
+//		} catch (IOException e) {
+//			msg.error("Error getting features", e);
+//		}
 	}
 
   private void resetRuleColors() {
@@ -240,23 +246,27 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
   }
 
   private void addAll() {
-		try {
+//		try {
 			RuleCreator creator = new RuleCreator();
 			String att = attributeBox.getSelectedItem().toString();
 			Set<Object> vals = new HashSet<Object>();
-			FeatureIterator<SimpleFeature> iterator =  source.getFeatures().features();
-			while (iterator.hasNext()) {
-				SimpleFeature feature = iterator.next();
-				Object obj = feature.getAttribute(att);
-				if (obj != null && !vals.contains(obj)) {
-					Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
-					tableModel.addRule(rule);
-					vals.add(obj);
-				}
-			}
-		} catch (IOException e) {
-			msg.error("Error getting features", e);
-		}
+			
+			// TODO Geotools not sure what is going on here?  Supposed to scan all 
+			//      features from a shapefile?  Doesn't seem to make sense in the editor
+			
+//			FeatureIterator<SimpleFeature> iterator =  source.getFeatures().features();
+//			while (iterator.hasNext()) {
+//				SimpleFeature feature = iterator.next();
+//				Object obj = feature.getAttribute(att);
+//				if (obj != null && !vals.contains(obj)) {
+//					Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
+//					tableModel.addRule(rule);
+//					vals.add(obj);
+//				}
+//			}
+//		} catch (IOException e) {
+//			msg.error("Error getting features", e);
+//		}
 	}
 
 	private Color getColor(int val) {
@@ -274,33 +284,62 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return style;
 	}
 
-	public void init(Layer layer) {
-		source = (SimpleFeatureSource)layer.getFeatureSource();
+	public void init(FeatureType type, Style style) {
+//		source = (SimpleFeatureSource)layer.getFeatureSource();
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		SimpleFeatureType type = source.getSchema();
-		for (AttributeType at : type.getTypes()) {
+//		SimpleFeatureType type = source.getSchema();
+		featureType = (SimpleFeatureType)type;
+		
+		// TODO Geotools "the_geom"...not used anymore, need to skip the first [0]
+		//      element that has the geom
+		for (AttributeType at : featureType.getTypes()) {
 			String name = at.getName().getLocalPart();
 			if (!name.equals("the_geom")) model.addElement(name);
 		}
+		
 		attributeBox.setModel(model);
-		try {
-			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
-			tableModel = new ValueTableModel(feature);
-		} catch (IOException ex) {
-			msg.error("Error initializing ByValuePanel", ex);
-		}
+//		try {
+//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
+			tableModel = new ValueTableModel(featureType);
+//		} catch (IOException ex) {
+//			msg.error("Error initializing ByValuePanel", ex);
+//		}
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
 		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
 
-		Style style = layer.getStyle();
+//		Style style = layer.getStyle();
 		initTable(style);
 	}
+	
+//	public void init(Layer layer) {
+//		source = (SimpleFeatureSource)layer.getFeatureSource();
+//		DefaultComboBoxModel model = new DefaultComboBoxModel();
+//		SimpleFeatureType type = source.getSchema();
+//		for (AttributeType at : type.getTypes()) {
+//			String name = at.getName().getLocalPart();
+//			if (!name.equals("the_geom")) model.addElement(name);
+//		}
+//		attributeBox.setModel(model);
+//		try {
+//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
+//			tableModel = new ValueTableModel(feature);
+//		} catch (IOException ex) {
+//			msg.error("Error initializing ByValuePanel", ex);
+//		}
+//		valueTable.setModel(tableModel);
+//		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
+//		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
+//		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
+//
+//		Style style = layer.getStyle();
+//		initTable(style);
+//	}
 
 	private void initTable(Style style) {
-		SimpleFeatureType type = source.getSchema();
-		AttributeType aType = type.getType(attributeBox.getSelectedItem().toString());
+//		SimpleFeatureType type = source.getSchema();
+		AttributeType aType = featureType.getType(attributeBox.getSelectedItem().toString());
 		String desc = "";
 
 		if (style.getDescription().getAbstract() != null)
