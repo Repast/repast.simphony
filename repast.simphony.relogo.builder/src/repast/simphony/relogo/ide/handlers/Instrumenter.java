@@ -1,8 +1,10 @@
 package repast.simphony.relogo.ide.handlers;
 
 import java.beans.Introspector;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -11,12 +13,25 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import repast.simphony.util.collections.Pair;
+
 public class Instrumenter {
 
 	private static final String BASE_OBSERVER = "repast.simphony.relogo.BaseObserver";
 	private static final String BASE_TURTLE = "repast.simphony.relogo.BaseTurtle";
 	private static final String BASE_PATCH = "repast.simphony.relogo.BasePatch";
 	private static final String BASE_LINK = "repast.simphony.relogo.BaseLink";
+
+	static private final String[] TURTLE_TURTLE_METHOD_INSTANCE_NAMES = { "turtleHatchTypesMethod",
+			"turtlePatchTypesHereMethod", "turtlePatchTypesAtMethod", "tplTypesOnPMethod",
+			"tplTypesOnTMethod", "tplTypesOnCMethod", // requires tplTypesOnPMethod
+																								// and tplTypesOnTMethod
+			"tplIsTypeQMethod", "tplTypesMethod", "tplTypeMethod" };
+
+	static private final String[] TURTLE_PATCH_SIMPLE_METHOD_INSTANCE_NAMES = { "patchGetterField",
+			"patchSetterField" };
+	static private final String[] TURTLE_PATCH_ACCESSOR_METHOD_INSTANCE_NAMES = {
+			"patchGetterGetter", "patchSetterSetter" };
 
 	private InstrumentingInformation ii;
 	private IProgressMonitor monitor;
@@ -85,6 +100,7 @@ public class Instrumenter {
 	}
 
 	private void clear(IType type) throws JavaModelException {
+
 		IMethod[] methods = type.getMethods();
 		for (IMethod method : methods) {
 			method.delete(true, monitor);
@@ -93,8 +109,9 @@ public class Instrumenter {
 
 	private void fullInstrumentTurtle(IType type) throws JavaModelException {
 		// turtle turtle methods
-		createTurtleTurtleMethods(type); // TODO: fix this
+		createTurtleTurtleMethods(type);
 		// turtle patch methods
+		createTurtlePatchMethods(type);
 		// turtle link methods
 		// turtle observer methods
 
@@ -108,16 +125,9 @@ public class Instrumenter {
 			String capSingular = StringUtils.capitalize(tspi.singular);
 			String lowerPlural = Introspector.decapitalize(tspi.plural);
 			String capPlural = StringUtils.capitalize(tspi.plural);
-			String[] instanceNames = { "turtleHatchTypesMethod",
-					"turtlePatchTypesHereMethod",
-					"turtlePatchTypesAtMethod",
-					"tplTypesOnPMethod", "tplTypesOnTMethod",
-					"tplTypesOnCMethod", // requires tplTypesOnPMethod and tplTypesOnTMethod
-					"tplIsTypeQMethod",
-					"tplTypesMethod",
-					"tplTypeMethod"
-					};
-			for (String instanceName : instanceNames) {
+
+			StringBuilder sb = new StringBuilder();
+			for (String instanceName : TURTLE_TURTLE_METHOD_INSTANCE_NAMES) {
 				ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
 
 				st.add("fullyQualifiedName", tspi.fullyQualifiedName);
@@ -125,15 +135,43 @@ public class Instrumenter {
 				st.add("capSingular", capSingular);
 				st.add("lowerPlural", lowerPlural);
 				st.add("capPlural", capPlural);
-				IMethod method = type.createMethod(st.render(), null, true, monitor);
+				sb.append(st.render());
+				sb.append("\n\n");
 			}
-			// type.
-			// icu.ast
-
-			// method.
-
+			type.createMethod(sb.toString(), null, true, monitor);
 		}
 
+	}
+
+	private void createTurtlePatchMethods(IType type) throws JavaModelException {
+		StringBuilder sb = new StringBuilder();
+		for (PatchTypeFieldNameFieldTypeInformation patchInfo : ii.getPatchFieldTypes()) {
+			// patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter
+			String patchType = patchInfo.patchType;
+			String fieldName = patchInfo.fieldName;
+			String capFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
+			String fieldType = patchInfo.fieldType;
+			String patchGetter = patchInfo.patchGetter;
+			String patchSetter = patchInfo.patchSetter;
+			String[] instanceNames = null;
+			if (patchGetter.isEmpty()) {
+				instanceNames = TURTLE_PATCH_SIMPLE_METHOD_INSTANCE_NAMES;
+			} else {
+				instanceNames = TURTLE_PATCH_ACCESSOR_METHOD_INSTANCE_NAMES;
+			}
+			for (String instanceName : instanceNames) {
+				ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
+				st.add("patchType", patchType);
+				st.add("fieldName", fieldName);
+				st.add("capFieldName", capFieldName);
+				st.add("fieldType",fieldType);
+				st.add("patchGetter", patchGetter);
+				st.add("patchSetter", patchSetter);
+				sb.append(st.render());
+				sb.append("\n\n");
+			}
+		}
+		type.createMethod(sb.toString(), null, true, monitor);
 	}
 
 }

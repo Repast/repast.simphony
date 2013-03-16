@@ -16,7 +16,7 @@ public class InstrumentingInformation {
 	List<TypeSingularPluralInformation> turtleSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
 	List<TypeSingularPluralInformation> dirLinkSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
 	List<TypeSingularPluralInformation> undirLinkSingularPlurals = new ArrayList<TypeSingularPluralInformation>();
-	List<Pair<String,String>> patchFieldTypes = new ArrayList<Pair<String,String>>();
+	List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
 	
 	public List<String> getListOfGlobalFieldNames() {
 		return listOfGlobalFieldNames;
@@ -54,15 +54,15 @@ public class InstrumentingInformation {
 		undirLinkSingularPlurals.add(undirLinkSingularPlural);
 	}
 	
-	public List<Pair<String, String>> getPatchFieldTypes() {
+	public List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes() {
 		return patchFieldTypes;
 	}
 	
-	public void addToPatchFieldTypes(Pair<String, String> patchFieldType) {
+	public void addToPatchFieldTypes(PatchTypeFieldNameFieldTypeInformation patchFieldType) {
 		patchFieldTypes.add(patchFieldType);
 	}
 	
-	public void addToPatchFieldTypes(List<Pair<String, String>> patchFieldTypes) {
+	public void addToPatchFieldTypes(List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes) {
 		this.patchFieldTypes.addAll(patchFieldTypes);
 	}
 

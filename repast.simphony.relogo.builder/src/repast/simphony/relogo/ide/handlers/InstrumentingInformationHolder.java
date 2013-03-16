@@ -41,7 +41,7 @@ public class InstrumentingInformationHolder {
 		ii.addToUndirLinkSingularPlurals(pi);
 	}
 
-	public void putPatchFieldTypes(List<Pair<String,String>> patchFieldTypes, String instrumentingPackageName) {
+	public void putPatchFieldTypes(List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes, String instrumentingPackageName) {
 		InstrumentingInformation ii = getNonNullInstrumentingInformation(instrumentingPackageName);
 		ii.addToPatchFieldTypes(patchFieldTypes);
 	}
@@ -84,8 +84,8 @@ public class InstrumentingInformationHolder {
 				}
 				sb.append("# Patch fields info:");
 				sb.append('\n');
-				for (Pair<String, String> pair : ii.getPatchFieldTypes()) {
-					sb.append("FieldName: " + pair.getFirst() + ", FieldType: " + pair.getSecond());
+				for (PatchTypeFieldNameFieldTypeInformation patchTypeInfo: ii.getPatchFieldTypes()) {
+					sb.append("PatchType: " + patchTypeInfo.patchType +", FieldName: " + patchTypeInfo.fieldName + ", FieldType: " + patchTypeInfo.fieldType);
 					sb.append('\n');
 				}
 				sb.append("# Global fields info:");

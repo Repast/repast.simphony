@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -181,6 +182,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 							if (pf != null && pf.getElementName() != null) {
 								String instrumentingPackageName = pf.getElementName();
+								
 								InstrumentingInformation ii = iih
 										.getInstrumentingInformationFor(instrumentingPackageName);
 								// If information exists for this instrumenting package name
@@ -339,7 +341,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									}
 								} else if (ITypeUtils.extendsClass(type, BASE_PATCH, monitor)) {
 									// find fields and type info
-									List<Pair<String, String>> patchFieldTypes = getPatchFieldTypes(type);
+									List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = getPatchFieldTypes(type);
 									// put in iih
 									iih.putPatchFieldTypes(patchFieldTypes, instrumentingPackageName);
 
@@ -462,9 +464,9 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			}
 		}
 
-		private List<Pair<String, String>> getPatchFieldTypes(IType type) throws JavaModelException {
+		private List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes(IType type) throws JavaModelException {
 			// IJavaProject javaProject =
-			List<Pair<String, String>> patchFieldTypes = new ArrayList<Pair<String, String>>();
+			List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
 			while (type != null && !type.getFullyQualifiedName().equals(BASE_PATCH)) {
 				boolean isGroovySource = false;
 				if (!type.isBinary()) {
@@ -488,6 +490,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					// System.out.println("Field : " + field.getElementName() + " Flags: "
 					// + flags
 					// + " toString: " + Flags.toString(flags));
+					String getterName = "";
+					String setterName = "";
 					if (!Flags.isPublic(flags)) {
 						if (Flags.isPrivate(flags) && isGroovySource) {
 							// package default is seen as private in groovy source
@@ -505,21 +509,33 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									} else {
 										foundField = true;
 									}
+									if (foundField){
+										// TODO: need to find the appropriate getter name depending on field type
+										// probably need to defer this resolution to below where the field type
+										// is deduced
+									}
 								}
 							}
 						} else {
 							// look for methods with is/get and set
 							String fieldName = field.getElementName();
-							String capitalizedFieldName = StringUtils.capitalize(fieldName);
+							String capitalizedFieldName = MetaClassHelper.capitalize(fieldName);
+							
 							String isGetter = "is" + capitalizedFieldName;
 							String getGetter = "get" + capitalizedFieldName;
 							String setSetter = "set" + capitalizedFieldName;
 							boolean foundGetter = false, foundSetter = false;
-							if (methodNames.contains(isGetter) || methodNames.contains(getGetter)) {
+							if (methodNames.contains(isGetter) ) {
 								foundGetter = true;
+								getterName = isGetter;
+							}
+							if (methodNames.contains(getGetter)) {
+								foundGetter = true;
+								getterName = getGetter;
 							}
 							if (methodNames.contains(setSetter)) {
 								foundSetter = true;
+								setterName = setSetter;
 							}
 							if (foundGetter && foundSetter) {
 								foundField = true;
@@ -532,7 +548,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 					if (foundField) {
 						try {
-							patchFieldTypes.add(getFieldAndFieldTypePair(field, type));
+							patchFieldTypes.add(getFieldAndFieldTypePair(field, type, getterName, setterName));
 						} catch (IllegalArgumentException iae) {
 							// if IllegalArgumentException is caught, quietly ignore this
 							// field
@@ -604,11 +620,11 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		}
 
-		private Pair<String, String> getFieldAndFieldTypePair(IField field, IType type)
+		private PatchTypeFieldNameFieldTypeInformation getFieldAndFieldTypePair(IField field, IType type, String patchGetterName, String patchSetterName)
 				throws IllegalArgumentException, JavaModelException {
 			String fieldTypeSignature = field.getTypeSignature();
-			return new Pair<String, String>(field.getElementName(), getFullResolvedName(
-					fieldTypeSignature, type));
+			return new PatchTypeFieldNameFieldTypeInformation(type.getFullyQualifiedName(),field.getElementName(), getFullResolvedName(
+					fieldTypeSignature, type), patchGetterName, patchSetterName);
 		}
 
 		private TypeSingularPluralInformation getPluralInformation(IType type) throws JavaModelException {

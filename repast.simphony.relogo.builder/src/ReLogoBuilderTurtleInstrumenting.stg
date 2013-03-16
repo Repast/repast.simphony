@@ -215,3 +215,58 @@ public <fullyQualifiedName> <lowerSingular>(Number number){
 	return null;
 }
 >>
+
+patchGetterField(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+	/**
+	 * Returns the <fieldName> of the underlying patch.
+	 * 
+	 * @return <fieldName> of type <fieldType>
+	 */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public <fieldType> get<capFieldName>(){
+	<patchType> p = (<patchType>)patchHere();
+	return p.<fieldName>;
+}
+
+>>
+
+patchGetterGetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+	/**
+	 * Returns the <fieldName> of the underlying patch.
+	 * 
+	 * @return <fieldName> of type <fieldType>
+	 */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public <fieldType> get<capFieldName>(){
+	<patchType> p = (<patchType>)patchHere();
+	return p.<patchGetter>;
+}
+>>
+
+patchSetterField(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+	/**
+	 * Sets the value of <fieldName> of the underlying patch.
+	 * 
+	 */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public void set<capFieldName>(<fieldType> value){
+	<patchType> p = (<patchType>)patchHere();
+	p.<fieldName> = value;
+}
+>>
+
+patchSetterSetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+	/**
+	 * Sets the value of <fieldName> of the underlying patch.
+	 * 
+	 */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public void set<capFieldName>(<fieldType> value){
+	<patchType> p = (<patchType>)patchHere();
+	p.<patchSetter>(value);
+}
+>>
