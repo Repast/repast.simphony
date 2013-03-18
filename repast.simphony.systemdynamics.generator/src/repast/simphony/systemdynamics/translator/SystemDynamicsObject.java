@@ -1,0 +1,129 @@
+package repast.simphony.systemdynamics.translator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SystemDynamicsObject {
+
+    private String screenName;
+    private List<GraphicObject> graphicObjects;
+    private List<Equation> equations;
+    private List<String> incomingArrows;
+    private List<String> outgoingArrows;
+
+    public SystemDynamicsObject() {
+	graphicObjects = new ArrayList<GraphicObject>();
+	equations = new ArrayList<Equation>();
+	incomingArrows = new ArrayList<String>();
+	outgoingArrows = new ArrayList<String>();
+    }
+
+    public SystemDynamicsObject(String name) {
+	this();
+	this.screenName = name.replace("\"", "");
+    }
+    
+    public String getAssociatedVariableName() {
+	if (graphicObjects.size() == 0)
+	    return null;
+	for (GraphicObject go : graphicObjects ) {
+	    if (go.getAssociatedVariable() != null)
+		return go.getAssociatedVariable().getName();
+	}
+	return null;
+    }
+    
+    public String getType() {
+	if (graphicObjects.size() == 0)
+	    return "UNKNOWN";
+	else
+	    return graphicObjects.get(0).getTypeAsString();
+    }
+    
+    public boolean isStock() {
+	if (getType().equals(View.VARIABLE)) {
+	    if (equations.size() > 0) {
+		return equations.get(0).isStock();
+	    } else {
+		return false;
+	    }
+	} else {
+	    return false;
+	}
+    }
+
+    public void print() {
+	System.out.println("Screen Name: "+screenName);
+	System.out.println("\tNumber of Graphic Representations: "+graphicObjects.size());
+	System.out.println("\tNumber of Equations: "+equations.size());
+	System.out.print("\tNumber of Incoming Arrows: "+incomingArrows.size());
+	for (String s : incomingArrows)
+	    System.out.print(", "+s);
+	System.out.print("\n");
+	System.out.print("\tNumber of Outgoing Arrows: "+outgoingArrows.size());
+	for (String s : outgoingArrows)
+	    System.out.print(", "+s);
+	System.out.print("\n");
+    }
+
+    public void addGraphicObject(GraphicObject graphicObject) {
+	if (!graphicObjects.contains(graphicObject))
+	    graphicObjects.add(graphicObject);
+    }
+
+    public void addEquation(Equation equation) {
+	if (!equations.contains(equation))
+	    equations.add(equation);
+    }
+
+    public void addIncomingArrow(String arrow) {
+	if (!incomingArrows.contains(arrow))
+	    incomingArrows.add(arrow);
+    }
+
+    public void addOutgoingArrow(String arrow) {
+	if (!outgoingArrows.contains(arrow))
+	    outgoingArrows.add(arrow);
+    }
+
+    public String getScreenName() {
+	return screenName;
+    }
+
+    public void setScreenName(String screenName) {
+	this.screenName = screenName;
+    }
+
+    public List<GraphicObject> getGraphicObjects() {
+	return graphicObjects;
+    }
+
+    public void setGraphicObjects(List<GraphicObject> graphicObjects) {
+	this.graphicObjects = graphicObjects;
+    }
+
+    public List<Equation> getEquations() {
+	return equations;
+    }
+
+    public void setEquations(List<Equation> equations) {
+	this.equations = equations;
+    }
+
+    public List<String> getIncomingArrows() {
+	return incomingArrows;
+    }
+
+    public void setIncomingArrows(List<String> incomingArrows) {
+	this.incomingArrows = incomingArrows;
+    }
+
+    public List<String> getOutgoingArrows() {
+	return outgoingArrows;
+    }
+
+    public void setOutgoingArrows(List<String> outgoingArrows) {
+	this.outgoingArrows = outgoingArrows;
+    }
+
+}
