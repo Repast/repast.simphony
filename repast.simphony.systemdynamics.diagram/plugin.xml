@@ -606,7 +606,7 @@
          name="Repast Simphony Systemdynamics Project Config"
          point="repast.simphony.project.config">
       <configurator
-            class="repast.simphony.systemdynamics.diagram.ProjectConfigurator">
+            class="repast.simphony.systemdynamics.ProjectConfigurator">
       </configurator>
    </extension>
    <extension

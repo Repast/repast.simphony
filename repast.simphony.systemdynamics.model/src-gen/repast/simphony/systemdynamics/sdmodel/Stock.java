@@ -30,12 +30,12 @@ public interface Stock extends Variable {
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Initial Value</em>' attribute.
-   * @see #setInitialValue(double)
+   * @see #setInitialValue(String)
    * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getStock_InitialValue()
    * @model default="0"
    * @generated
    */
-  double getInitialValue();
+  String getInitialValue();
 
   /**
    * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.Stock#getInitialValue <em>Initial Value</em>}' attribute.
@@ -45,6 +45,6 @@ public interface Stock extends Variable {
    * @see #getInitialValue()
    * @generated
    */
-  void setInitialValue(double value);
+  void setInitialValue(String value);
 
 } // Stock

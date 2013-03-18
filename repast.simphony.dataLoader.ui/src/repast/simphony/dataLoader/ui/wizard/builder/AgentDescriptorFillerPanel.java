@@ -17,9 +17,9 @@ import saf.core.ui.util.DoubleDocument;
 import saf.core.ui.util.IntegerDocument;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 
 public class AgentDescriptorFillerPanel extends UISaver {
 
@@ -59,8 +59,8 @@ public class AgentDescriptorFillerPanel extends UISaver {
 		}
 		propertyMap = new HashMap<Field, JComponent>();
 		Class<?> agentClass = descriptor.getAgentClass();
-		FormLayout layout = FormFactory.createColumnLayout(1, 1,
-				new ColumnSpec("right:p"));
+		FormLayout layout = new FormLayout(new ColumnSpec[]{FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("right:p")});
 
 		builder = new DefaultFormBuilder(layout, this);
 		builder.setDefaultDialogBorder();

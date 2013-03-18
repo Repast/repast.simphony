@@ -27,7 +27,7 @@
 			<export prefix="*" />
 		</library>
 
-		<library id="jgoodies-forms-1.4.0.jar" path="lib/jgoodies-forms-1.4.0.jar"
+		<library id="jgoodies-forms-1.7.1.jar" path="lib/jgoodies-forms-1.7.1.jar"
 			type="code">
 			<export prefix="*" />
 		</library>

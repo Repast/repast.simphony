@@ -44,6 +44,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.databinding.property;bundle-version="1.4.100",
  org.junit,
  org.eclipse.jdt.core;bundle-version="3.8.2",
- repast.simphony.eclipse;bundle-version="2.0.1"
+ repast.simphony.eclipse;bundle-version="2.0.1",
+ repast.simphony.systemdynamics.generator;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -7,19 +7,18 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
 
-import com.jgoodies.forms.factories.FormFactory;
+import repast.simphony.util.wizard.ModelAwarePanelStep;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-
-import repast.simphony.util.wizard.ModelAwarePanelStep;
 
 public class UserPanelStep extends ModelAwarePanelStep<UserPanelWizardModel> {
 
@@ -42,17 +41,17 @@ public class UserPanelStep extends ModelAwarePanelStep<UserPanelWizardModel> {
 
 		// ======== this ========
 		setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.PREF_COLSPEC,
-				FormFactory.RELATED_GAP_COLSPEC,
+				FormSpecs.PREF_COLSPEC,
+				FormSpecs.RELATED_GAP_COLSPEC,
 				new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT,
 						FormSpec.DEFAULT_GROW) }, new RowSpec[] {
-				FormFactory.DEFAULT_ROWSPEC,
-				// FormFactory.RELATED_GAP_ROWSPEC,
-				// FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.LINE_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.LINE_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC }));
+				FormSpecs.DEFAULT_ROWSPEC,
+				// FormSpecs.RELATED_GAP_ROWSPEC,
+				// FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.LINE_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.LINE_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC }));
 
 		// ---- label1 ----
 		label1.setText("UserPanelCreator");

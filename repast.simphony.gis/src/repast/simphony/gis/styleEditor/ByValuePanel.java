@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -37,7 +36,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.FeatureSource;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureIterator;
@@ -49,16 +47,15 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
 
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -347,26 +344,26 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		//======== this ========
 		setLayout(new FormLayout(
 						new ColumnSpec[]{
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 						},
 						new RowSpec[]{
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
 										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC
 						}));
 
 		//---- label1 ----
@@ -396,11 +393,11 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		{
 			panel1.setLayout(new FormLayout(
 							new ColumnSpec[]{
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.PREF_COLSPEC
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.PREF_COLSPEC
 							},
 							RowSpec.decodeSpecs("default")));
 
