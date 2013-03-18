@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Rate;
+import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
@@ -105,6 +106,25 @@ public class SDModelUtils {
     }
     
     return rates;
+  }
+  
+  /**
+   * Gets all the model variable names in the SystemModel that is
+   * the parent of the specified Variable.
+   * 
+   * @param var
+   * 
+   * @return all the model variable names in the SystemModel that is
+   * the parent of the specified Variable.
+   */
+  public static  List<String> getVarNames(Variable var) {
+    List<String> varNames = new ArrayList<String>();
+    SystemModel model = (SystemModel) var.eContainer();
+    for (Variable v : model.getVariables()) {
+      if (!(v.getType().equals(VariableType.LOOKUP) || v.eClass().equals(SDModelFactory.eINSTANCE.getSDModelPackage().getCloud())))
+      varNames.add(v.getName());
+    }
+    return varNames;
   }
 
 }

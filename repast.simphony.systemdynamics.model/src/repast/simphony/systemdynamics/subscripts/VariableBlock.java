@@ -111,6 +111,29 @@ public class VariableBlock implements TextBlock {
   }
   
   /**
+   * Adds the named subscript to this VariableBlock. The 
+   * subscript will be added before the subscript at the
+   * specified pos, if there is one.
+   * 
+   * @param subscript
+   * @param pos
+   */
+  public void addSubscript(String subscript, int pos) {
+    if (subEnd == -1) subscripts.add(subscript);
+    else {
+      int sstart = start + name.length();
+      int i;
+      for (i = 0; i < subscripts.size(); ++i) {
+        if (sstart + subscripts.get(i).length() + 1 > pos) {
+          break;
+        }
+        sstart += subscripts.get(i).length() + 1;
+      }
+      subscripts.add(i, subscript);
+    }
+  }
+  
+  /**
    * Adds the list of subscripts to this VariableBlock.
    * 
    * @param subs

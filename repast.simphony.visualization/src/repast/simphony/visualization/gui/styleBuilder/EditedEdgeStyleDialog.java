@@ -48,10 +48,10 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.thoughtworks.xstream.XStream;
@@ -616,15 +616,15 @@ public class EditedEdgeStyleDialog extends JDialog {
 
 		// ======== dialogPane ========
 		{
-			dialogPane.setBorder(Borders.DIALOG_BORDER);
+			dialogPane.setBorder(Borders.DIALOG);
 			dialogPane.setLayout(new BorderLayout());
 
 			// ======== buttonBar ========
 			{
-				buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+				buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
 				buttonBar.setLayout(new FormLayout(
-						new ColumnSpec[] { FormFactory.GLUE_COLSPEC, FormFactory.BUTTON_COLSPEC,
-								FormFactory.RELATED_GAP_COLSPEC, FormFactory.BUTTON_COLSPEC }, RowSpec
+						new ColumnSpec[] { FormSpecs.GLUE_COLSPEC, FormSpecs.BUTTON_COLSPEC,
+								FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.BUTTON_COLSPEC }, RowSpec
 								.decodeSpecs("pref")));
 
 				// ---- okButton ----
@@ -649,28 +649,28 @@ public class EditedEdgeStyleDialog extends JDialog {
 
 			// ======== panel1 ========
 			{
-				panel1.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.GROWING_BUTTON_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-						FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC }, new RowSpec[] {
-						FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-						FormFactory.LINE_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC }));
+				panel1.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.GROWING_BUTTON_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC }, new RowSpec[] {
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC }));
 
 				// ======== shapePanel ========
 				{
 					shapePanel.setBorder(new TitledBorder("Edge Style and Color"));
 					shapePanel.setLayout(new FormLayout(new ColumnSpec[] { new ColumnSpec(Sizes.dluX(66)),
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.GROWING_BUTTON_COLSPEC },
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.GROWING_BUTTON_COLSPEC },
 							RowSpec.decodeSpecs("default")));
 
 					// ---- shapeComboBox ----
@@ -694,15 +694,15 @@ public class EditedEdgeStyleDialog extends JDialog {
 				// ======== panel3 ========
 				{
 					panel3.setBorder(new TitledBorder("Edge Thickness"));
-					panel3.setLayout(new FormLayout(new ColumnSpec[] { new ColumnSpec("max(pref;66dlu)"),
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC },
-							new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC,
-							FormFactory.DEFAULT_ROWSPEC }));
+					panel3.setLayout(new FormLayout(new ColumnSpec[] {ColumnSpec.decode("max(pref;66dlu)"),
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC },
+							new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC }));
 
 					// ---- label1 ----
 					label1.setText("Value");
@@ -761,18 +761,18 @@ public class EditedEdgeStyleDialog extends JDialog {
 				// ======== panel6 ========
 				{
 					panel6.setBorder(new TitledBorder("Variable Icon Color"));
-					panel6.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC,
-							FormFactory.LABEL_COMPONENT_GAP_COLSPEC, FormFactory.DEFAULT_COLSPEC },
-							new RowSpec[] { FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC,
-							FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC,
-							FormFactory.DEFAULT_ROWSPEC, FormFactory.LINE_GAP_ROWSPEC,
-							FormFactory.DEFAULT_ROWSPEC }));
+					panel6.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+							FormSpecs.LABEL_COMPONENT_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC },
+							new RowSpec[] { FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC }));
 
 					// ---- label15 ----
 					label15.setText("Value");

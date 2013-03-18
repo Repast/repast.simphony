@@ -4,6 +4,8 @@
 package repast.simphony.systemdynamics.subscripts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import repast.simphony.systemdynamics.subscripts.TextBlock.Type;
@@ -34,6 +36,29 @@ public class Equation {
       buf.append(block.getText());
     }
     return buf.toString();
+  }
+  
+  /**
+   * Gets all the VariableBlocks in this equation. Blocks will 
+   * be ordered by starting point.
+   * 
+   * @return all the VariableBlocks in this equation.
+   */
+  public List<VariableBlock> getBlocks() {
+    List<VariableBlock> ret = new ArrayList<VariableBlock>();
+    for (TextBlock block : blocks) {
+      if (block.getType() == Type.VARIABLE) {
+        ret.add((VariableBlock)block);
+      }
+    }
+    
+    Collections.sort(ret, new Comparator<VariableBlock>() {
+      @Override
+      public int compare(VariableBlock b1, VariableBlock b2) {
+        return b1.getBlockStart() < b2.getBlockStart() ? -1 : b1.getBlockStart() == b2.getBlockStart() ? 0 : 1;
+      }
+    });
+    return ret;
   }
   
   /**
