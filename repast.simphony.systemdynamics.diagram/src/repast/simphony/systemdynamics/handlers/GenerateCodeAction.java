@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IWorkbenchPage;
 
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
+import repast.simphony.systemdynamics.engine.Engine;
 
 /**
  * @author Nick Collier
@@ -31,7 +32,8 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
   @Override
   protected void doRun(IProgressMonitor progressMonitor) {
     System.out.println("generate code");
-    
+    Engine engine = new Engine(model);
+    engine.generateCodeForRSD(model);
   }
 }
 
