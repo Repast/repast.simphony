@@ -1121,8 +1121,10 @@ public class CodeGenerator {
 	    ears = equation.getEars();
 	}
 
+	System.out.println("GC: <"+equation.getVensimEquation()+">");
 	generateLHScode(equation, ears);
 	generateRHScode(equation, ears);
+	
 
 	Node root = equation.getTreeRoot();
 

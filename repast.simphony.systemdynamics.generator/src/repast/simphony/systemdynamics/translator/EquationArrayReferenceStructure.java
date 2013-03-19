@@ -476,6 +476,14 @@ public class EquationArrayReferenceStructure {
     public int getOuterIndex(String arrayName, String subscript, int dimension) {
 	
 	int index = 0;
+	
+	if (lhsArrayReference == null) {
+		System.out.println("LHS Reference is null");
+		System.out.println("ArrayName: "+arrayName);
+		System.out.println("subscript: "+subscript);
+		System.out.println("dimension: "+dimension);
+	}
+	
 	for (String sub : lhsArrayReference.getSubscripts()) {
 	    if (sub.equals(subscript))
 		return index;
@@ -818,56 +826,64 @@ public class EquationArrayReferenceStructure {
     
     private void analyze() {
 
+    	equation.printTokensOneLine();
 	List<Node> al = equation.getTreeAsList();
 	if (al == null) {
-	    String lhs = equation.getTokens().get(0);
-	    if (lhs != null && ArrayReference.isArrayReference(lhs)) {
-		hasLHSarrayReference = true;
-		lhsArrayReference = new ArrayReference(lhs);
-	    }
-	    return;
+		System.out.println("EARS: al == null");
+		String lhs = equation.getTokens().get(0);
+		if (lhs != null && ArrayReference.isArrayReference(lhs)) {
+			hasLHSarrayReference = true;
+			lhsArrayReference = new ArrayReference(lhs);
+		}
+		System.out.println("EARS: return 1");
+		return;
 	}
 
 	if (equation.isArrayInitialization()) {
-	    arrayInitialization = true;
-	    // 
-	    Node lhs = al.get(0);
-	    numberArrayInitializers = al.size()-1;
-	    if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
-		hasLHSarrayReference = true;
-		lhsArrayReference = new ArrayReference(lhs.getToken());
-	    }
-	} else {
-
-	    // LHS
-	    Node lhs = al.get(0);
-	    if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
-		hasLHSarrayReference = true;
-		lhsArrayReference = new ArrayReference(lhs.getToken());
-	    }
-	    for (int i = 1; i < al.size(); i++) {
-		Node n = al.get(i);
-		if (n != null && ArrayReference.isArrayReference(n.getToken())) {
-		   
-		    hasRHSarrayReference = true;
-		    rhsArrayReferences.add(new ArrayReference(n.getToken()));
+		System.out.println("EARS: array initialization");
+		arrayInitialization = true;
+		// 
+		Node lhs = al.get(0);
+		numberArrayInitializers = al.size()-1;
+		if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
+			hasLHSarrayReference = true;
+			lhsArrayReference = new ArrayReference(lhs.getToken());
+			System.out.println("EARS: array initialization complete");
 		}
-	    }
+	} else {
+		System.out.println("EARS: ELSE");
 
-	    // Step 1 -- determine if we need outer looping separate index arrays for the array references
-	    requiresOuterIndexArray = this.needOuterIndexArray();
-	    // Step 2 -- determine if we need range looping and separate indexes
-	    // note that there can be multiple RHS references to the same subscript
-	    // we currently save the name of the array -- think we need to not store arrayName
-	    if (hasRHSrangeSubscripts())
-		hasRHSrangeArrayReference = true;
+		// LHS
+		Node lhs = al.get(0);
+		if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
+			hasLHSarrayReference = true;
+			lhsArrayReference = new ArrayReference(lhs.getToken());
+			System.out.println("EARS: LHS "+lhs.getToken());
+		}
+		for (int i = 1; i < al.size(); i++) {
+			Node n = al.get(i);
+			if (n != null && ArrayReference.isArrayReference(n.getToken())) {
 
-	    if (hasRHSarray() && hasRHSrangeSubscripts())
-		requiresRangeIndexArray = this.needRangeIndexArray();
-	    
-	    // Step 3 -- determine if we need subscript mapping
-	    requiresMappedIndexArray = this.needMappedIndexArray();
-	    hasRHSmappedArrayReference = requiresMappedIndexArray;
+				hasRHSarrayReference = true;
+				rhsArrayReferences.add(new ArrayReference(n.getToken()));
+				System.out.println("EARS: RHS "+n.getToken());
+			}
+		}
+
+		// Step 1 -- determine if we need outer looping separate index arrays for the array references
+		requiresOuterIndexArray = this.needOuterIndexArray();
+		// Step 2 -- determine if we need range looping and separate indexes
+		// note that there can be multiple RHS references to the same subscript
+		// we currently save the name of the array -- think we need to not store arrayName
+		if (hasRHSrangeSubscripts())
+			hasRHSrangeArrayReference = true;
+
+		if (hasRHSarray() && hasRHSrangeSubscripts())
+			requiresRangeIndexArray = this.needRangeIndexArray();
+
+		// Step 3 -- determine if we need subscript mapping
+		requiresMappedIndexArray = this.needMappedIndexArray();
+		hasRHSmappedArrayReference = requiresMappedIndexArray;
 	}
     }
     

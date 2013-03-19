@@ -248,8 +248,11 @@ public class TranslatorRepastSimphony extends Translator {
     			
     			String lhs = name+ sb.toString();
     			
-    			mdlContents.add(lhs+" =");
+//    			mdlContents.add(lhs+" =");
+    			
+    			
     			if (variable.getEquation().contains("=")) {
+    				mdlContents.add(variable.getEquation().split("=")[0]);
     				mdlContents.add(variable.getEquation().split("=")[1]);
     			} else {
     				mdlContents.add(variable.getEquation());
