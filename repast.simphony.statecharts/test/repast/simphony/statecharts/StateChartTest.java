@@ -63,7 +63,7 @@ public class StateChartTest {
 	private static class MyStateChart1 extends DefaultStateChart<MyAgent1> {
 		public MyStateChart1(MyAgent1 agent, TestClass tc1, TestClass tc2,
 				TestClass tc3, TestClass tc4) {
-			super(agent);
+			super(agent, false);
 			MyState one = new MyState("one", tc1);
 			this.registerEntryState(one);
 			MyState two = new MyState("two", tc2);
@@ -182,7 +182,7 @@ public class StateChartTest {
 	private static class MyStateChart2 extends DefaultStateChart<MyAgent2> {
 
 		public MyStateChart2(MyAgent2 agent) {
-			super(agent);
+			super(agent, false);
 
 			SimpleState<MyAgent2> one = new SimpleStateBuilder<MyAgent2>("one")
 					.build();
@@ -306,7 +306,7 @@ public class StateChartTest {
 	private static class MyStateChart3 extends DefaultStateChart<MyAgent3> {
 
 		public MyStateChart3(MyAgent3 agent) {
-			super(agent);
+			super(agent, false);
 			SimpleState<MyAgent3> one = new SimpleStateBuilder<MyAgent3>("one")
 					.build();
 			this.registerEntryState(one);
@@ -413,7 +413,7 @@ public class StateChartTest {
 	private static class MyStateChart4 extends DefaultStateChart<MyAgent4> {
 
 		public MyStateChart4(MyAgent4 agent) {
-			super(agent);
+			super(agent, false);
 			SimpleState<MyAgent4> one = new SimpleStateBuilder<MyAgent4>("one")
 					.build();
 			this.registerEntryState(one);
@@ -479,7 +479,7 @@ public class StateChartTest {
 	private static class MyStateChart5 extends DefaultStateChart<MyAgent5> {
 
 		public MyStateChart5(final MyAgent5 a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent5> one = new SimpleStateBuilder<MyAgent5>("one")
 					.build();
 			this.registerEntryState(one);
@@ -574,6 +574,7 @@ public class StateChartTest {
 			};
 
 			StateChartBuilder<MyAgent6> scb = new StateChartBuilder<StateChartTest.MyAgent6>(agent, one, "onetestuuid");
+			scb.setContextRequired(false);
 			BranchState<MyAgent6> bs = new BranchStateBuilder<StateChartTest.MyAgent6>("branch").build();
 			scb.addRootState(bs);
 			scb.addRootState(two);
@@ -603,7 +604,7 @@ public class StateChartTest {
 			return scb.build();
 		}
 		private MyStateChart6(MyAgent6 agent) {
-			super(agent);
+			super(agent, false);
 		}
 	}
 
@@ -722,6 +723,7 @@ public class StateChartTest {
 			CompositeState<MyAgent6b> zero = zeroBuilder.build();
 
 			StateChartBuilder<MyAgent6b> scb = new StateChartBuilder<StateChartTest.MyAgent6b>(agent, zero);
+			scb.setContextRequired(false);
 			scb.addRootState(three);
 			scb.addRootState(four);
 			
@@ -748,7 +750,7 @@ public class StateChartTest {
 			return scb.build();
 		}
 		private MyStateChart6b(MyAgent6b agent) {
-			super(agent);
+			super(agent, false);
 		}
 	}
 
@@ -835,7 +837,7 @@ public class StateChartTest {
 	private static class MyStateChart7 extends DefaultStateChart<MyAgent7> {
 
 		public MyStateChart7(final MyAgent7 a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent7> one = new SimpleStateBuilder<MyAgent7>("one").build();
 			this.registerEntryState(one);
 			Trigger timedTrigger = new TimedTrigger<MyAgent7>(2);
@@ -927,7 +929,7 @@ public class StateChartTest {
 	private static class MyStateChart7b extends DefaultStateChart<MyAgent7b> {
 
 		public MyStateChart7b(final MyAgent7b a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent7b> one = new SimpleStateBuilder<MyAgent7b>("one").build();
 			this.registerEntryState(one);
 			// Strategy is to create non-commutative operations

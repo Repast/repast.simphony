@@ -29,7 +29,7 @@ public class StateChartTest2 {
 	private static class MyStateChart1 extends DefaultStateChart<MyAgent1> {
 
 		public MyStateChart1(MyAgent1 a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent1> one = new SimpleStateBuilder<MyAgent1>("one")
 					.build();
 			CompositeStateBuilder<MyAgent1> csb = new CompositeStateBuilder<StateChartTest2.MyAgent1>(
@@ -89,7 +89,7 @@ public class StateChartTest2 {
 	private static class MyStateChart2 extends DefaultStateChart<MyAgent2> {
 
 		public MyStateChart2(MyAgent2 a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent2> one = new SimpleStateBuilder<MyAgent2>("one")
 					.build();
 			CompositeStateBuilder<MyAgent2> csb = new CompositeStateBuilder<StateChartTest2.MyAgent2>(
@@ -166,7 +166,7 @@ public class StateChartTest2 {
 	private static class MyStateChart3 extends DefaultStateChart<MyAgent3> {
 
 		public MyStateChart3(MyAgent3 a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent3> one = new SimpleStateBuilder<MyAgent3>("one")
 					.build();
 			CompositeStateBuilder<MyAgent3> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3>(
@@ -231,7 +231,7 @@ public class StateChartTest2 {
 	private static class MyStateChart3b extends DefaultStateChart<MyAgent3b> {
 
 		public MyStateChart3b(MyAgent3b a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent3b> one = new SimpleStateBuilder<MyAgent3b>(
 					"one").build();
 			CompositeStateBuilder<MyAgent3b> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3b>(
@@ -296,7 +296,7 @@ public class StateChartTest2 {
 	private static class MyStateChart3c extends DefaultStateChart<MyAgent3c> {
 
 		public MyStateChart3c(MyAgent3c a) {
-			super(a);
+			super(a, false);
 			SimpleState<MyAgent3c> one = new SimpleStateBuilder<MyAgent3c>(
 					"one").build();
 			CompositeStateBuilder<MyAgent3c> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3c>(
@@ -358,7 +358,7 @@ public class StateChartTest2 {
 	private static class MyStateChart4 extends DefaultStateChart<MyAgent4> {
 
 		public MyStateChart4(MyAgent4 a) {
-			super(a);
+			super(a, false);
 
 			class MyHistoryStateAction implements StateAction<MyAgent4> {
 
@@ -574,7 +574,7 @@ public class StateChartTest2 {
 		}
 		
 		private MyStateChart5(MyAgent5 a) {
-			super(a);
+			super(a, false);
 		}
 	}
 
