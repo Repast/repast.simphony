@@ -110,6 +110,20 @@ public class StateChartTest3 {
       schedule.execute();
     }
     assertEquals(expState, agent.getState());
+  }
+  
+  @Test
+  public void testScaling() {
+    context.clear();
+    for (int i = 0; i < 200000; ++i) {
+      context.add(new Agent(i, 1));
+    }
+    
+    
+    for (int i = 0; i < 2000; ++i) {
+      System.out.println(i);
+      schedule.execute();
+    }
     
   }
 }
