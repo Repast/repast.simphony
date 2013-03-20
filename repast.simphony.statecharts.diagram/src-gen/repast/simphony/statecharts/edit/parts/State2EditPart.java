@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
@@ -394,13 +395,15 @@ public class State2EditPart extends ShapeNodeEditPart {
     }
 
     /**
-     * @generated
+     * @generated NOT
      */
     private void createContents() {
 
       fFigureStateNameFigure = new WrappingLabel();
 
       fFigureStateNameFigure.setText("<É>");
+      fFigureStateNameFigure.setAlignment(PositionConstants.CENTER);
+
 
       this.add(fFigureStateNameFigure);
 

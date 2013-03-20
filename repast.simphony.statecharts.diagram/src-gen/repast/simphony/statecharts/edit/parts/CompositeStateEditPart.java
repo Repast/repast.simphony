@@ -8,6 +8,7 @@ import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
@@ -415,15 +416,16 @@ public class CompositeStateEditPart extends ShapeNodeEditPart {
     }
 
     /**
-     * @generated
+     * @generated NOT
      */
     private void createContents() {
 
       fFigureCompositeStateNameFigure = new WrappingLabel();
 
       fFigureCompositeStateNameFigure.setText("<É>");
-
-      this.add(fFigureCompositeStateNameFigure);
+      GridData gd = new GridData();
+      gd.horizontalAlignment = GridData.CENTER;
+      this.add(fFigureCompositeStateNameFigure, gd);
 
       fFigureCompositeStateCompartmentRectangle = new RectangleFigure();
 

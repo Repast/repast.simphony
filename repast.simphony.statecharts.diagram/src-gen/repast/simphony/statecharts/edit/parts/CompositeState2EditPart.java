@@ -10,6 +10,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
@@ -417,15 +418,16 @@ public class CompositeState2EditPart extends ShapeNodeEditPart {
     }
 
     /**
-     * @generated
+     * @generated NOT
      */
     private void createContents() {
 
       fFigureCompositeStateNameFigure = new WrappingLabel();
 
       fFigureCompositeStateNameFigure.setText("<É>");
-
-      this.add(fFigureCompositeStateNameFigure);
+      GridData gd = new GridData();
+      gd.horizontalAlignment = GridData.CENTER;
+      this.add(fFigureCompositeStateNameFigure, gd);
 
       fFigureCompositeStateCompartmentRectangle = new RectangleFigure();
 
@@ -439,7 +441,6 @@ public class CompositeState2EditPart extends ShapeNodeEditPart {
       constraintFFigureCompositeStateCompartmentRectangle.grabExcessVerticalSpace = true;
       this.add(fFigureCompositeStateCompartmentRectangle,
           constraintFFigureCompositeStateCompartmentRectangle);
-
     }
 
     /**

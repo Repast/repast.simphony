@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
@@ -382,10 +383,9 @@ public class StateEditPart extends ShapeNodeEditPart {
     public StateFigure() {
 
       FlowLayout layoutThis = new FlowLayout();
-      layoutThis.setStretchMinorAxis(false);
-      layoutThis.setMinorAlignment(FlowLayout.ALIGN_LEFTTOP);
-
-      layoutThis.setMajorAlignment(FlowLayout.ALIGN_LEFTTOP);
+     layoutThis.setStretchMinorAxis(false);
+     layoutThis.setMinorAlignment(FlowLayout.ALIGN_TOPLEFT);
+      layoutThis.setMajorAlignment(FlowLayout.ALIGN_TOPLEFT);
       layoutThis.setMajorSpacing(5);
       layoutThis.setMinorSpacing(5);
       layoutThis.setHorizontal(true);
@@ -400,13 +400,13 @@ public class StateEditPart extends ShapeNodeEditPart {
     }
 
     /**
-     * @generated
+     * @generated NOT
      */
     private void createContents() {
 
       fFigureStateNameFigure = new WrappingLabel();
-
       fFigureStateNameFigure.setText("<É>");
+      fFigureStateNameFigure.setAlignment(PositionConstants.CENTER);
 
       this.add(fFigureStateNameFigure);
 
