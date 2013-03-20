@@ -24,8 +24,8 @@ public class DiagramPreferenceInitializer extends AbstractPreferenceInitializer 
     DiagramPrintingPreferencePage.initDefaults(store);
     DiagramRulersAndGridPreferencePage.initDefaults(store);
 
-    store.setDefault(IPreferenceConstants.PREF_DEFAULT_FONT,
-        new FontData("Lucida Grande", 12, SWT.NORMAL).toString());
+    store.setDefault(IPreferenceConstants.PREF_DEFAULT_FONT, new FontData("Lucida Grande", 12,
+        SWT.NORMAL).toString());
   }
 
   /**

@@ -92,30 +92,30 @@ public class SystemdynamicsNavigatorLabelProvider extends LabelProvider implemen
    */
   public Image getImage(View view) {
     switch (SystemdynamicsVisualIDRegistry.getVisualID(view)) {
-    case CloudEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Cloud", SystemdynamicsElementTypes.Cloud_2002); //$NON-NLS-1$
-    case SystemModelEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Diagram?http://repast.sf.net/systemdynamics?SystemModel", SystemdynamicsElementTypes.SystemModel_1000); //$NON-NLS-1$
-    case RateEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?Link?http://repast.sf.net/systemdynamics?Rate", SystemdynamicsElementTypes.Rate_4003); //$NON-NLS-1$
-    case VariableEditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Variable", SystemdynamicsElementTypes.Variable_2001); //$NON-NLS-1$
-    case Variable3EditPart.VISUAL_ID:
-      return getImage(
-          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Variable", SystemdynamicsElementTypes.Variable_2005); //$NON-NLS-1$
     case InfluenceLinkEditPart.VISUAL_ID:
       return getImage(
           "Navigator?Link?http://repast.sf.net/systemdynamics?InfluenceLink", SystemdynamicsElementTypes.InfluenceLink_4004); //$NON-NLS-1$
+    case RateEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Link?http://repast.sf.net/systemdynamics?Rate", SystemdynamicsElementTypes.Rate_4003); //$NON-NLS-1$
+    case SystemModelEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?Diagram?http://repast.sf.net/systemdynamics?SystemModel", SystemdynamicsElementTypes.SystemModel_1000); //$NON-NLS-1$
     case Variable2EditPart.VISUAL_ID:
       return getImage(
           "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Variable", SystemdynamicsElementTypes.Variable_2004); //$NON-NLS-1$
+    case CloudEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Cloud", SystemdynamicsElementTypes.Cloud_2002); //$NON-NLS-1$
+    case Variable3EditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Variable", SystemdynamicsElementTypes.Variable_2005); //$NON-NLS-1$
     case StockEditPart.VISUAL_ID:
       return getImage(
           "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Stock", SystemdynamicsElementTypes.Stock_2003); //$NON-NLS-1$
+    case VariableEditPart.VISUAL_ID:
+      return getImage(
+          "Navigator?TopLevelNode?http://repast.sf.net/systemdynamics?Variable", SystemdynamicsElementTypes.Variable_2001); //$NON-NLS-1$
     }
     return getImage("Navigator?UnknownElement", null); //$NON-NLS-1$
   }
@@ -168,22 +168,22 @@ public class SystemdynamicsNavigatorLabelProvider extends LabelProvider implemen
       return getUnresolvedDomainElementProxyText(view);
     }
     switch (SystemdynamicsVisualIDRegistry.getVisualID(view)) {
-    case CloudEditPart.VISUAL_ID:
-      return getCloud_2002Text(view);
-    case SystemModelEditPart.VISUAL_ID:
-      return getSystemModel_1000Text(view);
-    case RateEditPart.VISUAL_ID:
-      return getRate_4003Text(view);
-    case VariableEditPart.VISUAL_ID:
-      return getVariable_2001Text(view);
-    case Variable3EditPart.VISUAL_ID:
-      return getVariable_2005Text(view);
     case InfluenceLinkEditPart.VISUAL_ID:
       return getInfluenceLink_4004Text(view);
+    case RateEditPart.VISUAL_ID:
+      return getRate_4003Text(view);
+    case SystemModelEditPart.VISUAL_ID:
+      return getSystemModel_1000Text(view);
     case Variable2EditPart.VISUAL_ID:
       return getVariable_2004Text(view);
+    case CloudEditPart.VISUAL_ID:
+      return getCloud_2002Text(view);
+    case Variable3EditPart.VISUAL_ID:
+      return getVariable_2005Text(view);
     case StockEditPart.VISUAL_ID:
       return getStock_2003Text(view);
+    case VariableEditPart.VISUAL_ID:
+      return getVariable_2001Text(view);
     }
     return getUnknownElementText(view);
   }
@@ -228,7 +228,7 @@ public class SystemdynamicsNavigatorLabelProvider extends LabelProvider implemen
   private String getSystemModel_1000Text(View view) {
     SystemModel domainModelElement = (SystemModel) view.getElement();
     if (domainModelElement != null) {
-      return String.valueOf(domainModelElement.getStartTime());
+      return domainModelElement.getClassName();
     } else {
       SystemdynamicsDiagramEditorPlugin.getInstance().logError(
           "No domain element for view with visualID = " + 1000); //$NON-NLS-1$

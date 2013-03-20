@@ -44,7 +44,7 @@
   	  <wizard
   	     name="%newWizardName"
   	     icon="icons/obj16/SDModelDiagramFile.gif"
-  	     category="repast.eclipse.ide.wizards"
+  	     category="org.eclipse.ui.Examples"
   	     class="repast.simphony.systemdynamics.diagram.part.SystemdynamicsCreationWizard"
   	     id="repast.simphony.systemdynamics.diagram.part.SystemdynamicsCreationWizardID">
   	  	 <description>%newWizardDesc</description>  

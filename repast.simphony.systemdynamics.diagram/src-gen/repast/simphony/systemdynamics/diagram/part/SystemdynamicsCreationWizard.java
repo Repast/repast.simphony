@@ -103,7 +103,7 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
         .getBundledImageDescriptor("icons/wizban/NewSDModelWizard.gif")); //$NON-NLS-1$
     setNeedsProgressMonitor(true);
   }
-  
+
   /**
    * @generated NOT
    * 
@@ -162,9 +162,9 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
     }
     return diagram != null;
   }
-  
+
   private class OnFinish extends WorkspaceModifyOperation {
-    
+
     protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
       diagram = SystemdynamicsDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
           monitor);
@@ -178,26 +178,26 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
         }
       }
     }
-    
+
     private void initModel() {
       if (diagram != null) {
         SystemModel model = null;
         for (EObject obj : diagram.getContents()) {
           if (obj.eClass().equals(SDModelPackage.Literals.SYSTEM_MODEL)) {
-            model = (SystemModel)obj;
+            model = (SystemModel) obj;
             break;
           }
         }
-        
+
         TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(model);
         Command cmd = domain.createCommand(SetCommand.class, new CommandParameter(model,
             SDModelPackage.Literals.SYSTEM_MODEL__CLASS_NAME, diagramModelFilePage.getClassName()));
         domain.getCommandStack().execute(cmd);
-        
+
         cmd = domain.createCommand(SetCommand.class, new CommandParameter(model,
             SDModelPackage.Literals.SYSTEM_MODEL__PACKAGE, diagramModelFilePage.getPackage()));
         domain.getCommandStack().execute(cmd);
-        
+
         try {
           diagram.save(SystemdynamicsDiagramEditorUtil.getSaveOptions());
         } catch (IOException e) {
@@ -205,6 +205,6 @@ public class SystemdynamicsCreationWizard extends Wizard implements INewWizard {
         }
       }
     }
-    
+
   }
 }

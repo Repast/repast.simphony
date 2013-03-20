@@ -32,6 +32,16 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
    * @generated
    */
   private final String fileExtension;
+
+  /**
+   * @generated
+   */
+  public SystemdynamicsCreationWizardPage(String pageName, IStructuredSelection selection,
+      String fileExtension) {
+    super(pageName, selection);
+    this.fileExtension = fileExtension;
+  }
+
   private Text txtClassName;
   private Text txtPackage;
 
@@ -115,12 +125,14 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
   }
 
   protected String getClassName() {
-    if (txtClassName == null) return "";
+    if (txtClassName == null)
+      return "";
     return txtClassName.getText().trim();
   }
 
   protected String getPackage() {
-    if (txtPackage == null) return "";
+    if (txtPackage == null)
+      return "";
     return txtPackage.getText().trim();
   }
 
@@ -190,7 +202,7 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
     }
 
     if (javaProject != null) {
-      IPath path = new Path(getPackage().replace(".", "/") + "/" +  getClassName() + ".java");
+      IPath path = new Path(getPackage().replace(".", "/") + "/" + getClassName() + ".java");
       IJavaElement element;
       try {
         element = javaProject.findElement(path);
@@ -203,7 +215,7 @@ public class SystemdynamicsCreationWizardPage extends WizardNewFileCreationPage 
     }
     return true;
   }
-  
+
   private class Validator implements ModifyListener {
     @Override
     public void modifyText(ModifyEvent e) {

@@ -19,7 +19,7 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
   /**
    * @generated
    */
-  protected Class<?> getEditorClass() {
+  protected Class getEditorClass() {
     return SystemdynamicsDiagramEditor.class;
   }
 
