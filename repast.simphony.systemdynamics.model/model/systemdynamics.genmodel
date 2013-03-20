@@ -46,6 +46,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/units"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/equation"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/comment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Variable/lhs"/>
     </genClasses>
     <genClasses ecoreClass="systemdynamics.ecore#//Subscript">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute systemdynamics.ecore#//Subscript/name"/>

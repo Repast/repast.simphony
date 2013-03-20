@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.Variable#getUnits <em>Units</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.Variable#getEquation <em>Equation</em>}</li>
  *   <li>{@link repast.simphony.systemdynamics.sdmodel.Variable#getComment <em>Comment</em>}</li>
+ *   <li>{@link repast.simphony.systemdynamics.sdmodel.Variable#getLhs <em>Lhs</em>}</li>
  * </ul>
  * </p>
  *
@@ -190,6 +191,33 @@ public interface Variable extends EObject {
    */
   void setComment(String value);
   
+  /**
+   * Returns the value of the '<em><b>Lhs</b></em>' attribute.
+   * The default value is <code>""</code>.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lhs</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lhs</em>' attribute.
+   * @see #setLhs(String)
+   * @see repast.simphony.systemdynamics.sdmodel.SDModelPackage#getVariable_Lhs()
+   * @model default=""
+   * @generated
+   */
+  String getLhs();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.systemdynamics.sdmodel.Variable#getLhs <em>Lhs</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lhs</em>' attribute.
+   * @see #getLhs()
+   * @generated
+   */
+  void setLhs(String value);
+
   /**
    * The list of subscripts used by this variable.
    * 
