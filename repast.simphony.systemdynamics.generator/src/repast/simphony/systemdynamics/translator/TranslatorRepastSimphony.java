@@ -163,7 +163,9 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	
     	List<String> mdlContents = convertToMDL(systemModel);
-    	execute(mdlContents);
+    	boolean success = execute(mdlContents);
+    	if (!success)
+    		System.out.println("Errors Prevent completion of operation");
     }
     
     private List<String> convertToMDL(SystemModel systemModel) {

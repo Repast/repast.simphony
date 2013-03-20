@@ -161,7 +161,7 @@ public class SystemDynamicsObjectManager {
     }
 
     private void addSystemDynamicsObjectPlaceHolder(String screenName) {
-	System.out.println("SDOM: Adding placeholder for: "+screenName);
+//	System.out.println("SDOM: Adding placeholder for: "+screenName);
 	objectsMap.put(screenName, new SystemDynamicsObject(screenName));
     }
 

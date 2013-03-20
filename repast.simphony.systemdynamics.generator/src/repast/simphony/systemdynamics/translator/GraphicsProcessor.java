@@ -32,8 +32,8 @@ public class GraphicsProcessor {
 	
 	String aLine = "";
 	String graphicsMarker = mdlContents.get(graphRecord++);
-	System.out.println("GP: graphics marker = "+graphicsMarker);
-	System.out.println("GP: graphrecord = "+graphRecord+" mdl size = "+mdlContents.size());
+//	System.out.println("GP: graphics marker = "+graphicsMarker);
+//	System.out.println("GP: graphrecord = "+graphRecord+" mdl size = "+mdlContents.size());
 
 	while(true) {
 		System.out.println("GP: <"+aLine+">");

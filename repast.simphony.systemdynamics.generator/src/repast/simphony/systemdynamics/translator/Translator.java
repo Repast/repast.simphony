@@ -179,16 +179,48 @@ public class Translator {
 
 	public void startProcess() {
 		List<String> mdlContents = reader.readMDLFile();
-		execute(mdlContents);
+		boolean success = execute(mdlContents);
+		if (!success)
+    		System.out.println("Errors Prevent completion of operation");
+	}
+	
+	private void printErrors(Map<String, Equation> errors) {
+		Iterator<String> iter = errors.keySet().iterator();
+		while (iter.hasNext()) {
+			String lhs = iter.next();
+			Equation eqn = errors.get(lhs);
+			System.out.println("ERROR: "+eqn.getVensimEquation());
+			for (String msg : eqn.getSyntaxMessages()) {
+				System.out.println(msg);
+			}
+			for (String msg : eqn.getSemanticMessages()) {
+				System.out.println(msg);
+			}
+
+		}
 	}
 
-	protected void execute(List<String> mdlContents) {
+	protected boolean execute(List<String> mdlContents) {
 
 		sdObjectManager = new SystemDynamicsObjectManager();
 
 		// process graphics first since we get screen name information from this portion of the file
 		Map<String, View> graphics = new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
-		Map<String, Equation> equations = new EquationProcessor().processRawEquations(sdObjectManager, mdlContents);
+		EquationProcessor equationProcessor = new EquationProcessor();
+		Map<String, Equation> equations = equationProcessor.processRawEquations(sdObjectManager, mdlContents);
+		Map<String, Equation> syntaxErrors = equationProcessor.getSyntaxErrors(equations);
+		boolean errors = syntaxErrors.size() > 0;
+		if (errors) {
+			printErrors(syntaxErrors);
+			return false;
+		}
+		
+		Map<String, Equation> semanticErrors = equationProcessor.getSemanticErrors(equations);
+		errors = semanticErrors.size() > 0;
+		if (errors) {
+			printErrors(semanticErrors);
+			return false;
+		}
 
 		//	sdObjectManager.print();
 
@@ -199,6 +231,8 @@ public class Translator {
 
 		process(equations);
 		printGraphics(graphics);
+		
+		return true;
 	}
 
 	protected void printGraphics(Map<String, View> graphics) {

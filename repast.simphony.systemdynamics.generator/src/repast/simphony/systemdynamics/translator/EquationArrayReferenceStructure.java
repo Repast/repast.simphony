@@ -829,18 +829,18 @@ public class EquationArrayReferenceStructure {
     	equation.printTokensOneLine();
 	List<Node> al = equation.getTreeAsList();
 	if (al == null) {
-		System.out.println("EARS: al == null");
+		
 		String lhs = equation.getTokens().get(0);
 		if (lhs != null && ArrayReference.isArrayReference(lhs)) {
 			hasLHSarrayReference = true;
 			lhsArrayReference = new ArrayReference(lhs);
 		}
-		System.out.println("EARS: return 1");
+		
 		return;
 	}
 
 	if (equation.isArrayInitialization()) {
-		System.out.println("EARS: array initialization");
+		
 		arrayInitialization = true;
 		// 
 		Node lhs = al.get(0);
@@ -848,17 +848,17 @@ public class EquationArrayReferenceStructure {
 		if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
 			hasLHSarrayReference = true;
 			lhsArrayReference = new ArrayReference(lhs.getToken());
-			System.out.println("EARS: array initialization complete");
+			
 		}
 	} else {
-		System.out.println("EARS: ELSE");
+		
 
 		// LHS
 		Node lhs = al.get(0);
 		if (lhs != null && ArrayReference.isArrayReference(lhs.getToken())) {
 			hasLHSarrayReference = true;
 			lhsArrayReference = new ArrayReference(lhs.getToken());
-			System.out.println("EARS: LHS "+lhs.getToken());
+			
 		}
 		for (int i = 1; i < al.size(); i++) {
 			Node n = al.get(i);
@@ -866,7 +866,7 @@ public class EquationArrayReferenceStructure {
 
 				hasRHSarrayReference = true;
 				rhsArrayReferences.add(new ArrayReference(n.getToken()));
-				System.out.println("EARS: RHS "+n.getToken());
+				
 			}
 		}
 
