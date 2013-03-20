@@ -65,6 +65,7 @@ public class VariableSheet extends Composite {
   private CTabFolder tabFolder;
   private Composite comp;
   private ComboViewer cmbSubViewer;
+  private Text text;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -123,10 +124,7 @@ public class VariableSheet extends Composite {
     toolkit.paintBordersFor(sashForm_1);
 
     comp = new Composite(sashForm_1, SWT.NONE);
-    GridLayout gl_comp = new GridLayout(1, false);
-    gl_comp.marginHeight = 0;
-    gl_comp.marginWidth = 0;
-    comp.setLayout(gl_comp);
+    comp.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     createEquation(comp, toolkit);
 
     Composite composite = new Composite(sashForm_1, SWT.NONE);
@@ -206,8 +204,24 @@ public class VariableSheet extends Composite {
   }
   
   protected void createEquation(Composite parent, FormToolkit toolkit) {
+    comp.setLayout(new GridLayout(2, false));
+    
+    Label lblNewLabel = new Label(comp, SWT.NONE);
+    toolkit.adapt(lblNewLabel, true, true);
+    lblNewLabel.setText("LHS:");
+    
+    text = new Text(comp, SWT.BORDER);
+    text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    toolkit.adapt(text, true, true);
+    
+    Label lblEq = new Label(comp, SWT.NONE);
+    lblEq.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+    toolkit.adapt(lblEq, true, true);
+    lblEq.setText("=");
     txtEquation = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
-    txtEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    GridData gd_txtEquation = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+    gd_txtEquation.widthHint = 401;
+    txtEquation.setLayoutData(gd_txtEquation);
     txtEquation.setAlwaysShowScrollBars(false);
     txtEquation.setTopMargin(4);
     txtEquation.setLeftMargin(4);
