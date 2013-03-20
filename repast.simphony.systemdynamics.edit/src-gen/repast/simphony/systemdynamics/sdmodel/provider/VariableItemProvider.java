@@ -66,6 +66,7 @@ public class VariableItemProvider
       addUnitsPropertyDescriptor(object);
       addEquationPropertyDescriptor(object);
       addCommentPropertyDescriptor(object);
+      addLhsPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -203,6 +204,28 @@ public class VariableItemProvider
   }
 
   /**
+   * This adds a property descriptor for the Lhs feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addLhsPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_Variable_lhs_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Variable_lhs_feature", "_UI_Variable_type"),
+         SDModelPackage.Literals.VARIABLE__LHS,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns Variable.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -245,6 +268,7 @@ public class VariableItemProvider
       case SDModelPackage.VARIABLE__UNITS:
       case SDModelPackage.VARIABLE__EQUATION:
       case SDModelPackage.VARIABLE__COMMENT:
+      case SDModelPackage.VARIABLE__LHS:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

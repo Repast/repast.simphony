@@ -241,6 +241,7 @@
         visualID="2005"
         editPartClassName="Variable3EditPart"
         itemSemanticEditPolicyClassName="Variable3ItemSemanticEditPolicy"
+        notationViewFactoryClassName="VariableViewFactory"
         canonicalEditPolicyClassName="Variable3CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Variable3GraphicalNodeEditPolicy"
         createCommandClassName="Variable3CreateCommand">
@@ -280,7 +281,8 @@
       <labels
           visualID="5004"
           editPartClassName="VariableName3EditPart"
-          itemSemanticEditPolicyClassName="VariableName3ItemSemanticEditPolicy">
+          itemSemanticEditPolicyClassName="VariableName3ItemSemanticEditPolicy"
+          notationViewFactoryClassName="VariableNameViewFactory">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap

@@ -140,7 +140,7 @@ public class RateEditPart extends ConnectionNodeEditPart implements ITreeBranchE
 
       fFigureRateName = new WrappingLabel();
 
-      fFigureRateName.setText("<?>");
+      fFigureRateName.setText("<É>");
 
       this.add(fFigureRateName);
 

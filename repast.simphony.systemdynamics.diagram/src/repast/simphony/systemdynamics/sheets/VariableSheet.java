@@ -13,6 +13,12 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -54,10 +60,13 @@ public class VariableSheet extends Composite {
   protected Map<String, Variable> varMap = new HashMap<String, Variable>();
   protected java.util.List<String> subList = new ArrayList<String>();
   protected java.util.List<String> varList = new ArrayList<String>();
-  protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
+  //protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
   private EObject eObj;
   private CTabFolder tabFolder;
   private Composite comp;
+  private ComboViewer cmbSubViewer;
+  private Text txtLHS;
+  protected Label lblEq;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -116,10 +125,7 @@ public class VariableSheet extends Composite {
     toolkit.paintBordersFor(sashForm_1);
 
     comp = new Composite(sashForm_1, SWT.NONE);
-    GridLayout gl_comp = new GridLayout(1, false);
-    gl_comp.marginHeight = 0;
-    gl_comp.marginWidth = 0;
-    comp.setLayout(gl_comp);
+    comp.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     createEquation(comp, toolkit);
 
     Composite composite = new Composite(sashForm_1, SWT.NONE);
@@ -141,14 +147,35 @@ public class VariableSheet extends Composite {
     tbVariables.setText("Variables");
 
     lstVar = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-    tbVariables.setControl(lstVar);
     toolkit.adapt(lstVar, true, true);
-
+    tbVariables.setControl(lstVar);
+   
     CTabItem tbSubscripts = new CTabItem(tabFolder, SWT.NONE);
     tbSubscripts.setText("Subscripts");
-    lstSub = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+    Composite c1 = new Composite(tabFolder, SWT.NONE);
+    c1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+    GridLayout gl_c1 = new GridLayout(1, false);
+    gl_c1.marginTop = 5;
+    gl_c1.marginHeight = 0;
+    gl_c1.marginWidth = 0;
+    c1.setLayout(gl_c1);
+    
+    cmbSubViewer = new ComboViewer(c1, SWT.READ_ONLY);
+    cmbSubViewer.getCombo().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    cmbSubViewer.setContentProvider(ArrayContentProvider.getInstance());
+    cmbSubViewer.setLabelProvider(new SubComboElementProvider());
+    cmbSubViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+      @Override
+      public void selectionChanged(SelectionChangedEvent event) {
+        cmbSubSelected();
+      }
+    });
+    //toolkit.adapt(cmbSub);
+    //toolkit.paintBordersFor(cmbSub);
+    lstSub = new List(c1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+    lstSub.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     toolkit.adapt(lstSub, true, true);
-    tbSubscripts.setControl(lstSub);
+    tbSubscripts.setControl(c1);
     sashForm_1.setWeights(new int[] { 5, 1 });
 
     sashForm.setWeights(new int[] { 1, 4 });
@@ -178,12 +205,29 @@ public class VariableSheet extends Composite {
   }
   
   protected void createEquation(Composite parent, FormToolkit toolkit) {
+    comp.setLayout(new GridLayout(2, false));
+    
+    Label lblNewLabel = new Label(comp, SWT.NONE);
+    toolkit.adapt(lblNewLabel, true, true);
+    lblNewLabel.setText("LHS:");
+    
+    txtLHS = new Text(comp, SWT.BORDER);
+    txtLHS.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    txtLHS.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
+    toolkit.adapt(txtLHS, true, true);
+    
+    lblEq = new Label(comp, SWT.NONE);
+    lblEq.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+    toolkit.adapt(lblEq, true, true);
+    lblEq.setText("=");
     txtEquation = new StyledText(parent, SWT.BORDER | SWT.V_SCROLL);
-    txtEquation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+    GridData gd_txtEquation = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+    gd_txtEquation.widthHint = 401;
+    txtEquation.setLayoutData(gd_txtEquation);
     txtEquation.setAlwaysShowScrollBars(false);
     txtEquation.setTopMargin(4);
     txtEquation.setLeftMargin(4);
-    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
     txtEquation.setText("");
     toolkit.adapt(txtEquation);
   }
@@ -252,7 +296,19 @@ public class VariableSheet extends Composite {
       }
 
       if (vb != null) {
-        vb.addSubscript(lstSub.getSelection()[0], pos);
+        String subscript = lstSub.getSelection()[0];
+        
+        // add the subscript the lhs
+        eqc = new EquationCreator(txtLHS.getText().trim());
+        Equation lhsEq = eqc.createEquation(((Variable) eObj).getName());
+        java.util.List<VariableBlock> lhsBlocks = lhsEq.getBlocks();
+        if (lhsBlocks.size() > 0) {
+          lhsBlocks.get(0).addSubscript(subscript);
+          txtLHS.setText(lhsEq.getText());
+        }
+        
+        // add the subscript to the equation or init value
+        vb.addSubscript(subscript, pos);
         txtControl.setText(eq.getText());
         txtControl.setFocus();
         txtControl.setCaretOffset(pos);
@@ -390,6 +446,7 @@ public class VariableSheet extends Composite {
     fillListFunc();
 
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
+    bind(context, eObject, SDModelPackage.Literals.VARIABLE__LHS, txtLHS);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__COMMENT, txtComment);
     context.bindValue(
@@ -435,15 +492,63 @@ public class VariableSheet extends Composite {
 
   protected void updateSubscripts(EObject eObj) {
     java.util.List<Subscript> subs = ((SystemModel) eObj.eContainer()).getSubscripts();
-    subList.clear();
-    subMap.clear();
+    
+    java.util.List<SubComboElement> cmbItems = new ArrayList<SubComboElement>();
+    SubComboElement rangeItem = new SubComboElement("Range");
+    cmbItems.add(rangeItem);
+    SubComboElement allElementsItem = new SubComboElement("All Elements");
+    
     for (Subscript sub : subs) {
-      subList.add(sub.getName());
-      subMap.put(sub.getName(), sub);
+      rangeItem.addString(sub.getName());
+      allElementsItem.addSubscript(sub);
+      SubComboElement item = new SubComboElement(sub.getName() + " Elements");
+      item.addSubscript(sub);
+      cmbItems.add(item);
     }
 
-    Collections.sort(subList);
-    lstSub.setItems(subList.toArray(new String[0]));
+    cmbItems.add(allElementsItem);
+    cmbSubViewer.setInput(cmbItems.toArray());
+    cmbSubViewer.getCombo().select(0);
+    cmbSubSelected();
+  }
+  
+  private void cmbSubSelected() {
+    IStructuredSelection selection = (IStructuredSelection) cmbSubViewer.getSelection();
+    SubComboElement element = (SubComboElement) selection.getFirstElement();
+    lstSub.setItems(element.getItems());
+  }
+  
+  private class SubComboElement {
+     String label;
+     java.util.List<String> items = new ArrayList<String>();
+    
+    public SubComboElement(String label) {
+      this.label = label;
+    }
+    
+    public void addSubscript(Subscript sub) {
+      items.addAll(sub.getElements());
+    }
+    
+    public void addString(String val) {
+      items.add(val);
+    }
+    
+    public String[] getItems() {
+      return items.toArray(new String[]{});
+    }
+    
+    public String getLabel() {
+      return label;
+    }
+  }
+  
+  private class SubComboElementProvider extends LabelProvider {
+
+    @Override
+    public String getText(Object element) {
+      return ((SubComboElement)element).getLabel();
+    }
   }
 
   private class StringToVarType implements IConverter {

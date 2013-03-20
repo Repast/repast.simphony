@@ -276,13 +276,22 @@ public interface SDModelPackage extends EPackage {
   int VARIABLE__COMMENT = 5;
 
   /**
+   * The feature id for the '<em><b>Lhs</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VARIABLE__LHS = 6;
+
+  /**
    * The number of structural features of the '<em>Variable</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VARIABLE_FEATURE_COUNT = 6;
+  int VARIABLE_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link repast.simphony.systemdynamics.sdmodel.impl.StockImpl <em>Stock</em>}' class.
@@ -347,6 +356,15 @@ public interface SDModelPackage extends EPackage {
    * @ordered
    */
   int STOCK__COMMENT = VARIABLE__COMMENT;
+
+  /**
+   * The feature id for the '<em><b>Lhs</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STOCK__LHS = VARIABLE__LHS;
 
   /**
    * The feature id for the '<em><b>Initial Value</b></em>' attribute.
@@ -431,6 +449,15 @@ public interface SDModelPackage extends EPackage {
   int CLOUD__COMMENT = STOCK__COMMENT;
 
   /**
+   * The feature id for the '<em><b>Lhs</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLOUD__LHS = STOCK__LHS;
+
+  /**
    * The feature id for the '<em><b>Initial Value</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -511,6 +538,15 @@ public interface SDModelPackage extends EPackage {
    * @ordered
    */
   int RATE__COMMENT = VARIABLE__COMMENT;
+
+  /**
+   * The feature id for the '<em><b>Lhs</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RATE__LHS = VARIABLE__LHS;
 
   /**
    * The feature id for the '<em><b>To</b></em>' reference.
@@ -890,6 +926,17 @@ public interface SDModelPackage extends EPackage {
   EAttribute getVariable_Comment();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.systemdynamics.sdmodel.Variable#getLhs <em>Lhs</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Lhs</em>'.
+   * @see repast.simphony.systemdynamics.sdmodel.Variable#getLhs()
+   * @see #getVariable()
+   * @generated
+   */
+  EAttribute getVariable_Lhs();
+
+  /**
    * Returns the meta object for class '{@link repast.simphony.systemdynamics.sdmodel.Subscript <em>Subscript</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1188,6 +1235,14 @@ public interface SDModelPackage extends EPackage {
      * @generated
      */
     EAttribute VARIABLE__COMMENT = eINSTANCE.getVariable_Comment();
+
+    /**
+     * The meta object literal for the '<em><b>Lhs</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VARIABLE__LHS = eINSTANCE.getVariable_Lhs();
 
     /**
      * The meta object literal for the '{@link repast.simphony.systemdynamics.sdmodel.impl.SubscriptImpl <em>Subscript</em>}' class.

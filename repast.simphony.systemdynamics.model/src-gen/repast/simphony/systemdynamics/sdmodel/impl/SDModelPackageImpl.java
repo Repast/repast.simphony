@@ -402,6 +402,15 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getVariable_Lhs() {
+    return (EAttribute)variableEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getSubscript() {
     return subscriptEClass;
   }
@@ -494,6 +503,7 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     createEAttribute(variableEClass, VARIABLE__UNITS);
     createEAttribute(variableEClass, VARIABLE__EQUATION);
     createEAttribute(variableEClass, VARIABLE__COMMENT);
+    createEAttribute(variableEClass, VARIABLE__LHS);
 
     subscriptEClass = createEClass(SUBSCRIPT);
     createEAttribute(subscriptEClass, SUBSCRIPT__NAME);
@@ -569,6 +579,7 @@ public class SDModelPackageImpl extends EPackageImpl implements SDModelPackage {
     initEAttribute(getVariable_Units(), ecorePackage.getEString(), "units", "", 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getVariable_Equation(), ecorePackage.getEString(), "equation", "", 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getVariable_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getVariable_Lhs(), ecorePackage.getEString(), "lhs", "", 0, 1, Variable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(subscriptEClass, Subscript.class, "Subscript", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getSubscript_Name(), ecorePackage.getEString(), "name", null, 0, 1, Subscript.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

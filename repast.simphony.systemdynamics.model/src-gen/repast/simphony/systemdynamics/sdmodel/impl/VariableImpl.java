@@ -17,28 +17,37 @@ import repast.simphony.systemdynamics.subscripts.VariableBlock;
 import repast.simphony.systemdynamics.subscripts.VariableFinder;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Variable</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '
+ * <em><b>Variable</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getUuid <em>Uuid</em>}</li>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getName <em>Name</em>}</li>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getType <em>Type</em>}</li>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getUnits <em>Units</em>}</li>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getEquation <em>Equation</em>}</li>
- *   <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getComment <em>Comment</em>}</li>
+ * <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getUuid
+ * <em>Uuid</em>}</li>
+ * <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getName
+ * <em>Name</em>}</li>
+ * <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getType
+ * <em>Type</em>}</li>
+ * <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getUnits
+ * <em>Units</em>}</li>
+ * <li>
+ * {@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getEquation
+ * <em>Equation</em>}</li>
+ * <li>
+ * {@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getComment
+ * <em>Comment</em>}</li>
+ * <li>{@link repast.simphony.systemdynamics.sdmodel.impl.VariableImpl#getLhs
+ * <em>Lhs</em>}</li>
  * </ul>
  * </p>
- *
+ * 
  * @generated
  */
 public class VariableImpl extends EObjectImpl implements Variable {
   /**
-   * The default value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getUuid() <em>Uuid</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getUuid()
    * @generated
    * @ordered
@@ -46,9 +55,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected static final String UUID_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getUuid() <em>Uuid</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getUuid() <em>Uuid</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getUuid()
    * @generated
    * @ordered
@@ -56,9 +65,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected String uuid = UUID_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getName()
    * @generated
    * @ordered
@@ -66,9 +75,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getName()
    * @generated
    * @ordered
@@ -76,9 +85,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getType() <em>Type</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getType()
    * @generated
    * @ordered
@@ -86,9 +95,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected static final VariableType TYPE_EDEFAULT = VariableType.CONSTANT;
 
   /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getType() <em>Type</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getType()
    * @generated
    * @ordered
@@ -97,8 +106,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
 
   /**
    * The default value of the '{@link #getUnits() <em>Units</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getUnits()
    * @generated
    * @ordered
@@ -107,8 +116,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
 
   /**
    * The cached value of the '{@link #getUnits() <em>Units</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getUnits()
    * @generated
    * @ordered
@@ -116,9 +125,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected String units = UNITS_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEquation() <em>Equation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getEquation() <em>Equation</em>}'
+   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getEquation()
    * @generated
    * @ordered
@@ -126,9 +135,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected static final String EQUATION_EDEFAULT = "";
 
   /**
-   * The cached value of the '{@link #getEquation() <em>Equation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The cached value of the '{@link #getEquation() <em>Equation</em>}'
+   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getEquation()
    * @generated
    * @ordered
@@ -136,9 +145,9 @@ public class VariableImpl extends EObjectImpl implements Variable {
   protected String equation = EQUATION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getComment() <em>Comment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * The default value of the '{@link #getComment() <em>Comment</em>}'
+   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getComment()
    * @generated
    * @ordered
@@ -147,19 +156,39 @@ public class VariableImpl extends EObjectImpl implements Variable {
 
   /**
    * The cached value of the '{@link #getComment() <em>Comment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @see #getComment()
    * @generated
    * @ordered
    */
   protected String comment = COMMENT_EDEFAULT;
-  
+
+  /**
+   * The default value of the '{@link #getLhs() <em>Lhs</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @see #getLhs()
+   * @generated
+   * @ordered
+   */
+  protected static final String LHS_EDEFAULT = "";
+
+  /**
+   * The cached value of the '{@link #getLhs() <em>Lhs</em>}' attribute. <!--
+   * begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @see #getLhs()
+   * @generated
+   * @ordered
+   */
+  protected String lhs = LHS_EDEFAULT;
+
   protected List<String> subscripts = new ArrayList<String>();
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   protected VariableImpl() {
@@ -167,8 +196,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
@@ -177,8 +206,8 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getUuid() {
@@ -186,20 +215,21 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setUuid(String newUuid) {
     String oldUuid = uuid;
     uuid = newUuid;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__UUID, oldUuid, uuid));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__UUID, oldUuid,
+          uuid));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getName() {
@@ -207,20 +237,38 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setName(String newName) {
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__NAME, oldName,
+          name));
+    updateLHS(oldName, name);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * @generated NOT
+   */
+  public void updateLHS(String oldName, String newName) {
+    if (getLhs() == null) {
+      setLhs(newName);
+    } else {
+      if (oldName != null && getLhs().contains(oldName)) {
+        String val = getLhs().replace(oldName, newName);
+        setLhs(val);
+      } else {
+        setLhs(newName + getLhs());
+      }
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public VariableType getType() {
@@ -228,20 +276,21 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setType(VariableType newType) {
     VariableType oldType = type;
     type = newType == null ? TYPE_EDEFAULT : newType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__TYPE, oldType, type));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__TYPE, oldType,
+          type));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getUnits() {
@@ -249,20 +298,21 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setUnits(String newUnits) {
     String oldUnits = units;
     units = newUnits;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__UNITS, oldUnits, units));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__UNITS,
+          oldUnits, units));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getEquation() {
@@ -270,29 +320,31 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setEquation(String newEquation) {
     String oldEquation = equation;
     equation = newEquation;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__EQUATION, oldEquation, equation));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__EQUATION,
+          oldEquation, equation));
   }
-  
+
   private void parseSubscripts(String equation) {
     subscripts.clear();
     if (name != null && name.length() > 0) {
       VariableFinder finder = new VariableFinder(equation);
       List<VariableBlock> blocks = finder.findBlock(name);
-      if (blocks.size() > 0) subscripts.addAll(blocks.get(0).getSubscripts());
+      if (blocks.size() > 0)
+        subscripts.addAll(blocks.get(0).getSubscripts());
     }
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public String getComment() {
@@ -300,133 +352,167 @@ public class VariableImpl extends EObjectImpl implements Variable {
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   public void setComment(String newComment) {
     String oldComment = comment;
     comment = newComment;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__COMMENT, oldComment, comment));
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__COMMENT,
+          oldComment, comment));
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated
+   */
+  public String getLhs() {
+    return lhs;
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
+   * @generated
+   */
+  public void setLhs(String newLhs) {
+    String oldLhs = lhs;
+    lhs = newLhs;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SDModelPackage.VARIABLE__LHS, oldLhs,
+          lhs));
+  }
+
+  /**
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
-      case SDModelPackage.VARIABLE__UUID:
-        return getUuid();
-      case SDModelPackage.VARIABLE__NAME:
-        return getName();
-      case SDModelPackage.VARIABLE__TYPE:
-        return getType();
-      case SDModelPackage.VARIABLE__UNITS:
-        return getUnits();
-      case SDModelPackage.VARIABLE__EQUATION:
-        return getEquation();
-      case SDModelPackage.VARIABLE__COMMENT:
-        return getComment();
+    case SDModelPackage.VARIABLE__UUID:
+      return getUuid();
+    case SDModelPackage.VARIABLE__NAME:
+      return getName();
+    case SDModelPackage.VARIABLE__TYPE:
+      return getType();
+    case SDModelPackage.VARIABLE__UNITS:
+      return getUnits();
+    case SDModelPackage.VARIABLE__EQUATION:
+      return getEquation();
+    case SDModelPackage.VARIABLE__COMMENT:
+      return getComment();
+    case SDModelPackage.VARIABLE__LHS:
+      return getLhs();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
-      case SDModelPackage.VARIABLE__UUID:
-        setUuid((String)newValue);
-        return;
-      case SDModelPackage.VARIABLE__NAME:
-        setName((String)newValue);
-        return;
-      case SDModelPackage.VARIABLE__TYPE:
-        setType((VariableType)newValue);
-        return;
-      case SDModelPackage.VARIABLE__UNITS:
-        setUnits((String)newValue);
-        return;
-      case SDModelPackage.VARIABLE__EQUATION:
-        setEquation((String)newValue);
-        return;
-      case SDModelPackage.VARIABLE__COMMENT:
-        setComment((String)newValue);
-        return;
+    case SDModelPackage.VARIABLE__UUID:
+      setUuid((String) newValue);
+      return;
+    case SDModelPackage.VARIABLE__NAME:
+      setName((String) newValue);
+      return;
+    case SDModelPackage.VARIABLE__TYPE:
+      setType((VariableType) newValue);
+      return;
+    case SDModelPackage.VARIABLE__UNITS:
+      setUnits((String) newValue);
+      return;
+    case SDModelPackage.VARIABLE__EQUATION:
+      setEquation((String) newValue);
+      return;
+    case SDModelPackage.VARIABLE__COMMENT:
+      setComment((String) newValue);
+      return;
+    case SDModelPackage.VARIABLE__LHS:
+      setLhs((String) newValue);
+      return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public void eUnset(int featureID) {
     switch (featureID) {
-      case SDModelPackage.VARIABLE__UUID:
-        setUuid(UUID_EDEFAULT);
-        return;
-      case SDModelPackage.VARIABLE__NAME:
-        setName(NAME_EDEFAULT);
-        return;
-      case SDModelPackage.VARIABLE__TYPE:
-        setType(TYPE_EDEFAULT);
-        return;
-      case SDModelPackage.VARIABLE__UNITS:
-        setUnits(UNITS_EDEFAULT);
-        return;
-      case SDModelPackage.VARIABLE__EQUATION:
-        setEquation(EQUATION_EDEFAULT);
-        return;
-      case SDModelPackage.VARIABLE__COMMENT:
-        setComment(COMMENT_EDEFAULT);
-        return;
+    case SDModelPackage.VARIABLE__UUID:
+      setUuid(UUID_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__NAME:
+      setName(NAME_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__TYPE:
+      setType(TYPE_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__UNITS:
+      setUnits(UNITS_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__EQUATION:
+      setEquation(EQUATION_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__COMMENT:
+      setComment(COMMENT_EDEFAULT);
+      return;
+    case SDModelPackage.VARIABLE__LHS:
+      setLhs(LHS_EDEFAULT);
+      return;
     }
     super.eUnset(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public boolean eIsSet(int featureID) {
     switch (featureID) {
-      case SDModelPackage.VARIABLE__UUID:
-        return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
-      case SDModelPackage.VARIABLE__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case SDModelPackage.VARIABLE__TYPE:
-        return type != TYPE_EDEFAULT;
-      case SDModelPackage.VARIABLE__UNITS:
-        return UNITS_EDEFAULT == null ? units != null : !UNITS_EDEFAULT.equals(units);
-      case SDModelPackage.VARIABLE__EQUATION:
-        return EQUATION_EDEFAULT == null ? equation != null : !EQUATION_EDEFAULT.equals(equation);
-      case SDModelPackage.VARIABLE__COMMENT:
-        return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
+    case SDModelPackage.VARIABLE__UUID:
+      return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
+    case SDModelPackage.VARIABLE__NAME:
+      return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+    case SDModelPackage.VARIABLE__TYPE:
+      return type != TYPE_EDEFAULT;
+    case SDModelPackage.VARIABLE__UNITS:
+      return UNITS_EDEFAULT == null ? units != null : !UNITS_EDEFAULT.equals(units);
+    case SDModelPackage.VARIABLE__EQUATION:
+      return EQUATION_EDEFAULT == null ? equation != null : !EQUATION_EDEFAULT.equals(equation);
+    case SDModelPackage.VARIABLE__COMMENT:
+      return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
+    case SDModelPackage.VARIABLE__LHS:
+      return LHS_EDEFAULT == null ? lhs != null : !LHS_EDEFAULT.equals(lhs);
     }
     return super.eIsSet(featureID);
   }
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
+   * 
    * @generated
    */
   @Override
   public String toString() {
-    if (eIsProxy()) return super.toString();
+    if (eIsProxy())
+      return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (uuid: ");
@@ -441,11 +527,15 @@ public class VariableImpl extends EObjectImpl implements Variable {
     result.append(equation);
     result.append(", comment: ");
     result.append(comment);
+    result.append(", lhs: ");
+    result.append(lhs);
     result.append(')');
     return result.toString();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.systemdynamics.sdmodel.Variable#getSubscripts()
    */
   /**
@@ -455,4 +545,4 @@ public class VariableImpl extends EObjectImpl implements Variable {
   public List<String> getSubscripts() {
     return new ArrayList<String>(subscripts);
   }
-} //VariableImpl
+} // VariableImpl
