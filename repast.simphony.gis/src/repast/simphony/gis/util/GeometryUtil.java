@@ -1,4 +1,4 @@
-package repast.simphony.gis;
+package repast.simphony.gis.util;
 
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;

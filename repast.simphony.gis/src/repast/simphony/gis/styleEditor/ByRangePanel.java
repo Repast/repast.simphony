@@ -164,6 +164,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
       }
     });
 
+    // Edit the default shape
     moreBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				Rule rule = mediator.getDefaultRule();
@@ -172,17 +173,20 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 									new SymbolEditorDialog((JDialog) SwingUtilities.getWindowAncestor(ByRangePanel.this));
 					dialog.init(type, rule);
 					Rule newRule = dialog.display();
+					SampleStyleTableModel tableModel = (SampleStyleTableModel) previewTable.getModel();
 					if (newRule != null) {
 						mediator.setDefaultRule(newRule);
-
-						// TODO Geotools set fill color based on rule
 						symbolLbl.setIcon(dialog.getPreview().getSmallIcon());
+						tableModel.setDefaultPreview(dialog.getPreview());
 					}
 				}
 			}
 		});
 
 
+    // Edit the shape for each row entry
+    // TODO currently there can be only a single shape for the range.  Should
+    //      we provide capability to have unique shapes in each row?
 		previewTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

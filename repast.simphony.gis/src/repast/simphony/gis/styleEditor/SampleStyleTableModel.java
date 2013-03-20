@@ -25,11 +25,12 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	private static String[] COL_NAMES = {"Symbol", "Range", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-	private PreviewLabel preview;
+	private PreviewLabel defaultPreview;
+	
 	private Palette palette;
 
 	public SampleStyleTableModel(PreviewLabel preview){
-		this.preview = preview;
+		this.defaultPreview = preview;
 	}
 	
 	public void initStyle(FeatureTypeStyle style, Palette pal) {
@@ -127,16 +128,14 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	}
 
 	private Icon getIcon(Rule rule, int rowIndex) {
-		
-		// TODO Geotools just use SquareIcon instance
-//			icon = LegendIconMaker.makeLegendIcon(12, rule, sample);
-		 			
+		// TODO Should each row be able to have a unique icon for styling?
+
 		Symbolizer sym = rule.symbolizers().get(0);
 		
 		if (sym instanceof PointSymbolizer || sym instanceof PolygonSymbolizer )
-		  return preview.getSmallIcon(palette.getColor(rowIndex), null);
+		  return defaultPreview.getSmallIcon(palette.getColor(rowIndex), null);
 		else if (sym instanceof LineSymbolizer)
-			return preview.getSmallIcon(null, palette.getColor(rowIndex));
+			return defaultPreview.getSmallIcon(null, palette.getColor(rowIndex));
 		else 
 			return null;
 	}
@@ -148,5 +147,9 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	public void init(List<Rule> rules) {
 		this.rules.clear();
 		this.rules.addAll(rules);
+	}
+
+	public void setDefaultPreview(PreviewLabel defaultPreview) {
+		this.defaultPreview = defaultPreview;
 	}
 }

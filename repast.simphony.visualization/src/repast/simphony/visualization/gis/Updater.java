@@ -27,8 +27,8 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.gis.data.DataUtilities;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;

@@ -1,8 +1,8 @@
 package repast.simphony.visualization.gui;
 
-import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POINT;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POLYGON;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POLYGON;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -60,9 +60,9 @@ import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 
-import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
+import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
@@ -400,6 +400,7 @@ public class GISStylePanel extends JPanel {
     StyleDialog dialog = new StyleDialog((JDialog) SwingUtilities.getWindowAncestor(this));
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
+    	FeatureSource source = null;  // used only for shapefiles
       Style style = previewer.getStyle();
       SimpleFeatureType featureType = null;
       if (element.source == null) {
@@ -414,11 +415,11 @@ public class GISStylePanel extends JPanel {
       } 
       else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
-        FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+        source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         featureType = (SimpleFeatureType)source.getSchema();
       }
 
-      dialog.setData(featureType, style);
+      dialog.setData(featureType, style, source);
       if (dialog.display()) {
         style = dialog.getStyle();
         element.styleXML = getSLDStyle(style);

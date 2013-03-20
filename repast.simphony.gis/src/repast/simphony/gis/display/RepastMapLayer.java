@@ -1,4 +1,4 @@
-package repast.simphony.gis;
+package repast.simphony.gis.display;
 
 import static org.geotools.map.event.MapLayerEvent.DATA_CHANGED;
 import static org.geotools.map.event.MapLayerEvent.FILTER_CHANGED;

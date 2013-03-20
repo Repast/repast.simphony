@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.geotools.data.FeatureSource;
 import org.geotools.styling.Style;
 import org.opengis.feature.type.FeatureType;
 
@@ -43,8 +44,8 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 	
-	public void setData(FeatureType featureType, Style style){
-		styleEditorPanel1.setData(featureType, style);
+	public void setData(FeatureType featureType, Style style, FeatureSource source){
+		styleEditorPanel1.setData(featureType, style, source);
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent e) {

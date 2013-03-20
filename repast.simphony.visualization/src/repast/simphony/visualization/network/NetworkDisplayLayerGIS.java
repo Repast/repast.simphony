@@ -15,7 +15,7 @@ import org.geotools.feature.FeatureCollections;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
 
-import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;

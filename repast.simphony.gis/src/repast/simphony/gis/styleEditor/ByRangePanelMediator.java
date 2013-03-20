@@ -31,7 +31,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
 
-import repast.simphony.gis.GeometryUtil;
+import repast.simphony.gis.util.GeometryUtil;
 
 /**
  * Mediates between the different components in ByRangePanel.

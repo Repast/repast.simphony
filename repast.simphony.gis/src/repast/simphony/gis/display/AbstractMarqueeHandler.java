@@ -1,4 +1,4 @@
-package repast.simphony.gis;
+package repast.simphony.gis.display;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

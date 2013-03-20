@@ -12,8 +12,8 @@ import org.opengis.filter.expression.Literal;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import repast.simphony.gis.GeometryUtil;
 import repast.simphony.gis.display.LegendIconMaker;
+import repast.simphony.gis.util.GeometryUtil;
 
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;

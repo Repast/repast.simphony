@@ -8,6 +8,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Style;
@@ -37,7 +38,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 	
-	public void setData(FeatureType featureType, Style style) {
+	public void setData(FeatureType featureType, Style style, FeatureSource source) {
 		ruleEditPanel1.setData(featureType,style);
 		
 		FeatureTypeStyle fts = style.featureTypeStyles().get(0);
@@ -52,7 +53,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		styleTitleField.setText(style.getDescription().getTitle().toString());
 
 		rangePanel.init(featureType, style, ruleEditPanel1.getPreview());
-		byValuePanel.init(featureType, style, ruleEditPanel1.getPreview());
+		byValuePanel.init(featureType, style, source, ruleEditPanel1.getPreview());
 	}
 
 	private void initComponents() {

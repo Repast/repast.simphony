@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,11 +32,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -67,6 +71,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	private SimpleFeatureType featureType;
 	private int colorIndex = 1;
 	private Set<Class> valueTypes = new HashSet<Class>();
+	private FeatureSource<SimpleFeatureType,SimpleFeature> source;  // for shapefiles only
 
   private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
@@ -223,21 +228,26 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return SymbolizerFactoryBuilder.getSymbolizerFactory(color, sym);
 	}
 
+	/**
+	 * Adds a rule based on either the FeatureType for agent features, or the 
+	 * FeatureSource for shapefile features.
+	 */
 	private void addRule() {
 
-		// TODO Geotools not sure what is going on here?  Supposed to scan all 
-		//      features from a shapefile?  Doesn't seem to make sense in the editor		
+		if (source == null){  // Create a rule from the FeatureType
+			// TODO Geotools
+		}
 		
-//		try {
-//			RuleCreator creator = new RuleCreator();
-//			String att = attributeBox.getSelectedItem().toString();
-//			SimpleFeature feature = source.getFeatures().iterator().next();
-//			Rule rule = creator.createValueRule(feature, att, 
-//					getSymbolizerFactory(getColor(colorIndex++)));
-//			tableModel.addRule(rule);
-//		} catch (IOException e) {
-//			msg.error("Error getting features", e);
-//		}
+		else try {
+			RuleCreator creator = new RuleCreator();
+			String att = attributeBox.getSelectedItem().toString();
+			SimpleFeature feature = source.getFeatures().features().next();
+			Rule rule = creator.createValueRule(feature, att, 
+					getSymbolizerFactory(getColor(colorIndex++)));
+			tableModel.addRule(rule);
+		} catch (IOException e) {
+			msg.error("Error getting features", e);
+		}
 	}
 
   private void resetRuleColors() {
@@ -249,29 +259,37 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
     tableModel.fireTableDataChanged();
   }
 
+  /**
+   * Adds a list of rules based on the complete set of features in a shapefile
+   * FeatureSource.  If no shapefile is used, then addAll() has the same effect
+   * as addRule().
+   */
   private void addAll() {
-//		try {
-			RuleCreator creator = new RuleCreator();
-			String att = attributeBox.getSelectedItem().toString();
-			Set<Object> vals = new HashSet<Object>();
-			
-			// TODO Geotools not sure what is going on here?  Supposed to scan all 
-			//      features from a shapefile?  Doesn't seem to make sense in the editor
-			
-//			FeatureIterator<SimpleFeature> iterator =  source.getFeatures().features();
-//			while (iterator.hasNext()) {
-//				SimpleFeature feature = iterator.next();
-//				Object obj = feature.getAttribute(att);
-//				if (obj != null && !vals.contains(obj)) {
-//					Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
-//					tableModel.addRule(rule);
-//					vals.add(obj);
-//				}
-//			}
-//		} catch (IOException e) {
-//			msg.error("Error getting features", e);
-//		}
-	}
+  	
+  	if (source == null){  // Create a rule from the FeatureType
+			// TODO Geotools  should this option even be available, ie only for 
+  		//      shapefile FeatureSources ?
+		}
+		
+  	else try {
+  		RuleCreator creator = new RuleCreator();
+  		String att = attributeBox.getSelectedItem().toString();
+  		Set<Object> vals = new HashSet<Object>();
+
+  		FeatureIterator<SimpleFeature> iterator =  source.getFeatures().features();
+  		while (iterator.hasNext()) {
+  			SimpleFeature feature = iterator.next();
+  			Object obj = feature.getAttribute(att);
+  			if (obj != null && !vals.contains(obj)) {
+  				Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
+  				tableModel.addRule(rule);
+  				vals.add(obj);
+  			}
+  		}
+  	} catch (IOException e) {
+  		msg.error("Error getting features", e);
+  	}
+  }
 
 	private Color getColor(int val) {
 		Palette pal = (Palette) paletteBox.getSelectedItem();
@@ -288,9 +306,11 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return style;
 	}
 
-	public void init(FeatureType type, Style style, PreviewLabel preview) {
+	public void init(FeatureType type, Style style, 
+			FeatureSource<SimpleFeatureType, SimpleFeature> source, PreviewLabel preview) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		featureType = (SimpleFeatureType)type;
+		this.source = source;
 				
 		for (AttributeType at : featureType.getTypes()) {
 			if (valueTypes.contains(at.getBinding())) {
