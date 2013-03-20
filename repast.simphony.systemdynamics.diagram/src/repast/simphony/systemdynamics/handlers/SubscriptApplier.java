@@ -57,24 +57,36 @@ public class SubscriptApplier {
   public void run() {
     varNames.clear();
     for (Variable var : variables) {
-      String eq = "";
+      String[] vals = {"", ""};
       if (var.getType().equals(VariableType.CONSTANT)) {
-        eq = applyToConstant(var);
+        vals = applyToConstant(var);
 
       } else if (var.getType().equals(VariableType.STOCK)) {
-        eq = applyToStock(var);
+        vals = applyToStock(var);
       } else if (!var.getType().equals(VariableType.LOOKUP)) {
-        eq = applyToAuxRate(var);
+        vals = applyToAuxRate(var);
       }
-
-      if (eq.length() > 0) {
+      
+      if (vals[0].length() > 0) {
         TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
         if (domain == null) {
           // for testing when there is no domain, just apply directory
-          var.setEquation(eq);
+          var.setLhs(vals[0]);
         } else {
           Command cmd = domain.createCommand(SetCommand.class, new CommandParameter(var,
-              SDModelPackage.Literals.VARIABLE__EQUATION, eq));
+              SDModelPackage.Literals.VARIABLE__LHS, vals[0]));
+          domain.getCommandStack().execute(cmd);
+        }
+      }
+
+      if (vals[1].length() > 0) {
+        TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
+        if (domain == null) {
+          // for testing when there is no domain, just apply directory
+          var.setEquation(vals[1]);
+        } else {
+          Command cmd = domain.createCommand(SetCommand.class, new CommandParameter(var,
+              SDModelPackage.Literals.VARIABLE__EQUATION, vals[1]));
           domain.getCommandStack().execute(cmd);
         }
 
@@ -100,13 +112,17 @@ public class SubscriptApplier {
     return varNames;
   }
 
-  private String applyToAuxRate(Variable var) {
+  private String[] applyToAuxRate(Variable var) {
+    String[] retVal = new String[2];
     String eq = var.getEquation().trim();
+    String lhs = var.getLhs();
     String name = var.getName();
+    
+    if (lhs == null || lhs.length() == 0 || lhs.equals(name)) {
+      retVal[0] = name + "[" + subscriptText + "]";
+    }
 
-    if (eq.length() == 0) {
-      eq = name + "[" + subscriptText + "] =";
-    } else {
+    if (eq.length() > 0) {
 
       EquationCreator creator = new EquationCreator(eq);
       List<String> names = getVarNames(var);
@@ -115,27 +131,25 @@ public class SubscriptApplier {
       for (VariableBlock block : equation.getBlocks()) {
         block.addSubscripts(subscripts);
       }
-
-      List<VariableBlock> vBlock = equation.getBlocks(name);
-      if (vBlock.isEmpty()) {
-        // assume equation is just variables without = so add the = to it.
-        eq = name + "[" + subscriptText + "] = " + equation.getText();
-      } else {
-        // just apply the subscripts to the existing equation.
-        eq = equation.getText();
-      }
+      eq = equation.getText();
     }
+    
+    retVal[1] = eq;
 
-    return eq;
+    return retVal;
   }
 
-  private String applyToStock(Variable var) {
+  private String[] applyToStock(Variable var) {
+    String[] retVal = new String[2];
     String eq = var.getEquation().trim();
+    String lhs = var.getLhs();
     String name = var.getName();
+    
+    if (lhs == null || lhs.length() == 0 || lhs.equals(name)) {
+      retVal[0] = name + "[" + subscriptText + "]";
+    }
 
-    if (eq.length() == 0) {
-      eq = name + "[" + subscriptText + "] = INTEG()";
-    } else {
+    if (eq.length() > 0) {
       EquationCreator creator = new EquationCreator(eq);
       List<String> names = getVarNames(var);
       Equation equation = creator.createEquation(names);
@@ -143,42 +157,40 @@ public class SubscriptApplier {
       for (VariableBlock block : equation.getBlocks()) {
         block.addSubscripts(subscripts);
       }
-
-      List<VariableBlock> vBlock = equation.getBlocks(name);
-      if (vBlock.isEmpty()) {
-        // assume equation is just variables so add the equals to it.
-        eq = name + "[" + subscriptText + "] = INTEG(" + equation.getText() + ")";
-      } else {
-        // just apply the subscripts to the existing equation.
-        eq = equation.getText();
-      }
+      eq = equation.getText();
     }
+    retVal[1] = eq;
 
-    return eq;
+    return retVal;
   }
 
-  private String applyToConstant(Variable var) {
+  private String[] applyToConstant(Variable var) {
+    String[] retVal = new String[2];
     String eq = var.getEquation().trim();
+    String lhs = var.getLhs();
     String name = var.getName();
+    
+    if (lhs == null || lhs.length() == 0 || lhs.equals(name)) {
+      retVal[0] = name + "[" + subscriptText + "]";
+    }
 
     if (eq.length() == 0) {
-      eq = name + "[" + subscriptText + "] = " + getConstantInitText();
+      eq = getConstantInitText();
     } else {
+      
       EquationCreator creator = new EquationCreator(eq);
       Equation equation = creator.createEquation(name);
       List<VariableBlock> blocks = equation.getBlocks(name);
-      if (blocks.isEmpty()) {
-        // equation not empty but variable not referenced
-        eq = name + "[" + subscriptText + "]" + " = " + eq;
-      } else {
+      if (!blocks.isEmpty()) {
         for (VariableBlock block : blocks) {
           block.addSubscripts(subscripts);
         }
         eq = equation.getText();
       }
     }
+    retVal[1] = eq;
 
-    return eq;
+    return retVal;
   }
 
 }
