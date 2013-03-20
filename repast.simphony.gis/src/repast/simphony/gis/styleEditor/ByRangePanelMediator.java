@@ -1,7 +1,5 @@
 package repast.simphony.gis.styleEditor;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
@@ -11,9 +9,9 @@ import javax.swing.table.TableModel;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
-import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.filter.AndImpl;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.FeatureTypeStyle;
@@ -28,15 +26,10 @@ import org.geotools.styling.Stroke;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.style.GraphicalSymbol;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 import repast.simphony.gis.GeometryUtil;
 
@@ -44,7 +37,7 @@ import repast.simphony.gis.GeometryUtil;
  * Mediates between the different components in ByRangePanel.
  *
  * @author Nick Collier
- * @version $Revision: 1.2 $ $Date: 2007/04/18 19:25:53 $
+ * @author Eric Tatara
  */
 public class ByRangePanelMediator {
 
@@ -54,14 +47,12 @@ public class ByRangePanelMediator {
 	private DefaultComboBoxModel cTypeModel = new DefaultComboBoxModel();
 	private DefaultComboBoxModel attributeModel = new DefaultComboBoxModel();
 	private DefaultComboBoxModel markModel = new DefaultComboBoxModel(new String[]{
-					"circle", "cross", "star", "square", "triangle"
-	});
-//	private FeatureSource source;
+					"circle", "cross", "star", "square", "triangle"});
 	private FeatureType featureType;
 	 static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private int classesCount;
-	private SampleStyleTableModel tableModel = new SampleStyleTableModel();
+	private SampleStyleTableModel tableModel;
 	private FeatureTypeStyle fts;
 	private boolean ignorePaletteChange = false;
 	private boolean ignoreAttributeChange = false;
@@ -69,27 +60,23 @@ public class ByRangePanelMediator {
 	private GeometryUtil.GeometryType type;
   private double min = 0, max = 10;
 
-  public ByRangePanelMediator(FeatureType featureType, Rule rule) {
-//		this.source = source;
+  public ByRangePanelMediator(FeatureType featureType, Rule rule, PreviewLabel preview) {
   	this.featureType = featureType;
-		cTypeModel.addElement(new IntervalItemType());
+		
+  	tableModel = new SampleStyleTableModel(preview);
+  	
+  	// TODO Geotools add other range types in new GT 8 API?
+  	cTypeModel.addElement(new IntervalItemType());
 		//cTypeModel.addElement(new QuantileItemType());
-
-//		try {
-//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
-//			type = GeometryUtil.findGeometryType(feature);
-			Geometry geom = (Geometry)featureType.getGeometryDescriptor().getDefaultValue();
-			type = GeometryUtil.findGeometryType(geom);
+		
+		type = GeometryUtil.findGeometryType(featureType.getGeometryDescriptor().getType().getBinding());
 			
-			DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
-			dsv.visit(rule);
-			defaultRule = (Rule) dsv.getCopy();
-			defaultRule.setTitle("<Default>");
-			defaultRule.setName("Default");
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
+		dsv.visit(rule);
+		defaultRule = (Rule) dsv.getCopy();
+		defaultRule.setTitle("<Default>");
+		defaultRule.setName("Default");
 	}
 
   public double getMin() {
@@ -135,6 +122,7 @@ public class ByRangePanelMediator {
 	 * @param classes the new number of classes
 	 */
 	public void classesChanged(int classes) {
+		// TODO Geotools restrict to max 11 classes
 		ignorePaletteChange = true;
 		this.classesCount = classes;
 		paletteModel.removeAllElements();
@@ -176,45 +164,30 @@ public class ByRangePanelMediator {
 	}
 
 	private void recreateStyle() {
-//		try {
-			if (attributeModel.getSelectedItem() != null) {
-				String attribute = attributeModel.getSelectedItem().toString();
-//				AttributeExpression att = filterFactory.createAttributeExpression(attribute);
-								
-				PropertyName pn = filterFactory.property(attribute);
-				
-				Classifier classifier = ((ClassTypeItem) cTypeModel.getSelectedItem()).createFunction(classesCount,
-								min, max, attribute);
-				
-//				function.setCollection(source.getFeatures());
-//				function.setNumberOfClasses(classesCount);
-//				function.setExpression(ex);
-				Palette palette = (Palette) paletteModel.getSelectedItem();
-				
-//				StyleGenerator gen = new StyleGenerator(palette.getColors(), function, "fts");
-//				gen.setElseMode(StyleGenerator.ELSEMODE_INCLUDEASMIN);
-//				fts = gen.createFeatureTypeStyle(source.getSchema().getDefaultGeometry());
-				
-				fts = StyleGenerator.createFeatureTypeStyle(classifier, pn, 
-						palette.getColors(), "Generated FeatureTypeStyle", 
-						featureType.getGeometryDescriptor(),
-						StyleGenerator.ELSEMODE_INCLUDEASMIN, 0.95, null);
-				
-				addSymbolizers(fts);
-				
-				tableModel.initStyle(fts);
-			}
+		if (attributeModel.getSelectedItem() != null) {
+			String attribute = attributeModel.getSelectedItem().toString();
+			PropertyName pn = filterFactory.property(attribute);
 
-//		} catch (IOException ex) {
-//
-//		}
+			Classifier classifier = ((ClassTypeItem) cTypeModel.getSelectedItem()).createFunction(classesCount,
+					min, max, attribute);
+
+			Palette palette = (Palette) paletteModel.getSelectedItem();
+
+			fts = StyleGenerator.createFeatureTypeStyle(classifier, pn, 
+					palette.getColors(), "Generated FeatureTypeStyle", 
+					featureType.getGeometryDescriptor(),
+					StyleGenerator.ELSEMODE_INCLUDEASMIN, 0.95, null);
+
+			addSymbolizers(fts);
+
+			tableModel.initStyle(fts, palette);
+		}
 	}
 
 	public void replaceRule(Rule oldRule, Rule newRule) {
-		Rule[] rules = fts.getRules();
-		for (int i = 0; i < rules.length; i++) {
-			if (rules[i].equals(oldRule)) {
-				rules[i] = newRule;
+		for (Rule rule : fts.rules()){
+			if (rule.equals(oldRule)){
+				rule = newRule;
 				break;
 			}
 		}
@@ -268,13 +241,34 @@ public class ByRangePanelMediator {
 		ignoreAttributeChange = true;
 		attributeModel.setSelectedItem(attributeName);
 		defaultRule = rules.get(rules.size() - 1);
+		
+		// Get the min and max range values by looking at the filter rhs values for
+		// the first and last rules.  Currently this is done by parsing the rule
+		// title which is either of the form "a - b" or ""a..b" where a is the rule
+		// min and b is the rule max.  A more proper way to check these values
+		// might be to get the rule->filter->children and check the value of the rhs
+		// LiteralExpression.
 		if (rules.size() > 1) {
       tableModel.init(rules.subList(1, rules.size()));
       String title = rules.get(0).getDescription().getTitle().toString();
+      int idx = -1;
       try {
-        min = Double.valueOf(title.substring(0, title.indexOf(" ")));
-        title = rules.get(rules.size() - 2).getDescription().getTitle().toString();
-        max = Double.valueOf(title.substring(title.lastIndexOf(" ") + 1, title.length()));
+      	idx = title.indexOf(".");
+      	if (idx == -1)
+      		idx = title.indexOf(" ");
+      	if (idx != -1)
+          min = Double.valueOf(title.substring(0, idx));
+        
+      	idx = -1;
+      	// rules.size() - 2 because we want the last range, but the very last
+      	// rule is "ELSE" - not a range. 
+      	title = rules.get(rules.size() - 2).getDescription().getTitle().toString();
+        
+      	idx = title.lastIndexOf(".");
+      	if (idx == -1)
+      		idx = title.lastIndexOf(" ");
+      	if (idx != -1)
+          max = Double.valueOf(title.substring(idx + 1, title.length()));
 
       } catch (NumberFormatException ex) {}
     }
@@ -343,12 +337,10 @@ public class ByRangePanelMediator {
 		}
 
     public Classifier createFunction(int numClasses, double min, double max, String attribute) {
-//			CustomClassifierFunction func = new CustomClassifierFunction();
 			double interval = (max - min) / numClasses;
 			Double [] mins = new Double[numClasses];
 			Double [] maxs = new Double[numClasses];
 			for (int i = 0; i < numClasses; i++) {
-//				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
 				mins[i] = min + (interval * i);
 				maxs[i] = min + (interval * (i + 1));
 			}
@@ -358,7 +350,6 @@ public class ByRangePanelMediator {
 
 			return func;
 		}
-
 
     public Classifier createFunction(int numClasses, FeatureCollection collection, String attribute) {
 			double min = Double.POSITIVE_INFINITY;
@@ -373,14 +364,11 @@ public class ByRangePanelMediator {
 				}
 			}
 
-//			CustomClassifierFunction func = new CustomClassifierFunction();
-
  			Double [] mins = new Double[numClasses];
 			Double [] maxs = new Double[numClasses];
 			
 			double interval = (max - min) / numClasses;
 			for (int i = 0; i < numClasses; i++) {
-//				func.setRangedValues(i, min + (interval * i), min + (interval * (i + 1)));
 				mins[i] = min + (interval * i);
 				maxs[i] = min + (interval * (i + 1));
 			}

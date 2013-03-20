@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Thu Oct 11 16:24:57 EDT 2007
- */
-
 package repast.simphony.visualization.gui;
 
 import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
@@ -47,9 +43,7 @@ import javax.xml.transform.TransformerException;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.map.FeatureLayer;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
@@ -64,17 +58,14 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 
 import repast.simphony.gis.GeometryUtil;
-import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
-import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
@@ -98,7 +89,11 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * @author User #2
+ * The main GIS agent style editor panel class with the list of agent classes,
+ * editor and layer order buttons, etc.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class GISStylePanel extends JPanel {
 
@@ -406,35 +401,23 @@ public class GISStylePanel extends JPanel {
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
       Style style = previewer.getStyle();
-//      FeatureLayer layer = null;
       SimpleFeatureType featureType = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
         
-        System.out.println("GISStylePanel.showStyleDialog() > " + agentClass.getName() + " : " 
-        + ""	);
-        
         DefaultFeatureAgentFactory fac = 
         		FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(
         				agentClass, getGeometry().getClass(), DefaultGeographicCRS.WGS84);
-//        SimpleFeatureCollection collection = fac.getFeatures();
-//        FeatureAgent feature = new FeatureAgent(fac.getFeatureType(), agentClass, null);
-//        feature.setDefaultGeometry(getGeometry());
-//        collection.add(feature);
+
         featureType = fac.getFeatureType();
         
-        System.out.println("GISStylePanel.showStyleDialog().2 > " + agentClass.getName() + " : " 
-            + featureType.getAttributeCount()	);
-        
-//        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
-//        layer = new FeatureLayer(DataUtilities.createFeatureSource(collection), style);
-      } else {
+      } 
+      else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         featureType = (SimpleFeatureType)source.getSchema();
-//        layer = new FeatureLayer(source, style);
       }
-//      dialog.setMapLayer(layer);
+
       dialog.setData(featureType, style);
       if (dialog.display()) {
         style = dialog.getStyle();
@@ -462,7 +445,6 @@ public class GISStylePanel extends JPanel {
     return xml;
 
   }
-
 
   public void init(ContextData context, DisplayDescriptor descriptor) {
     this.descriptor = descriptor;
@@ -523,7 +505,6 @@ public class GISStylePanel extends JPanel {
       }
     }
   }
-
 
   private void initComponents() {
     // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents

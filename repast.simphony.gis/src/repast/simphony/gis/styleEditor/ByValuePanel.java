@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Thu Apr 12 15:44:27 EDT 2007
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.Color;
@@ -10,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,15 +31,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.map.Layer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -61,7 +52,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #2
+ * The "Value Style" panel in the GisStyleEditor dialog that provides the
+ * capability of setting the shape fill color using value rules.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class ByValuePanel extends JPanel implements IStyleEditor {
 
@@ -69,9 +64,9 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 	private static MessageCenter msg = MessageCenter.getMessageCenter(ByValuePanel.class);
 	private ValueTableModel tableModel;
-//	private SimpleFeatureSource source;
 	private SimpleFeatureType featureType;
 	private int colorIndex = 1;
+	private Set<Class> valueTypes = new HashSet<Class>();
 
   private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
@@ -118,6 +113,16 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 	public ByValuePanel() {
 		initComponents();
+		valueTypes.add(int.class);
+		valueTypes.add(double.class);
+		valueTypes.add(long.class);
+		valueTypes.add(float.class);
+		valueTypes.add(Double.class);
+		valueTypes.add(Integer.class);
+		valueTypes.add(Long.class);
+		valueTypes.add(Float.class);
+		valueTypes.add(String.class);
+		
 		deleteBtn.setEnabled(false);
 		paletteBox.setRenderer(new CellRenderer());
 
@@ -202,7 +207,6 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 				}
 			}
 		});
-
 	}
 
 	private void delete() {
@@ -284,61 +288,27 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return style;
 	}
 
-	public void init(FeatureType type, Style style) {
-//		source = (SimpleFeatureSource)layer.getFeatureSource();
+	public void init(FeatureType type, Style style, PreviewLabel preview) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-//		SimpleFeatureType type = source.getSchema();
 		featureType = (SimpleFeatureType)type;
-		
-		// TODO Geotools "the_geom"...not used anymore, need to skip the first [0]
-		//      element that has the geom
+				
 		for (AttributeType at : featureType.getTypes()) {
-			String name = at.getName().getLocalPart();
-			if (!name.equals("the_geom")) model.addElement(name);
+			if (valueTypes.contains(at.getBinding())) {
+				model.addElement(at.getName());
+			}
 		}
 		
 		attributeBox.setModel(model);
-//		try {
-//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
-			tableModel = new ValueTableModel(featureType);
-//		} catch (IOException ex) {
-//			msg.error("Error initializing ByValuePanel", ex);
-//		}
+		tableModel = new ValueTableModel(featureType, preview);
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
 		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
-
-//		Style style = layer.getStyle();
+		
 		initTable(style);
 	}
-	
-//	public void init(Layer layer) {
-//		source = (SimpleFeatureSource)layer.getFeatureSource();
-//		DefaultComboBoxModel model = new DefaultComboBoxModel();
-//		SimpleFeatureType type = source.getSchema();
-//		for (AttributeType at : type.getTypes()) {
-//			String name = at.getName().getLocalPart();
-//			if (!name.equals("the_geom")) model.addElement(name);
-//		}
-//		attributeBox.setModel(model);
-//		try {
-//			SimpleFeature feature = (SimpleFeature) source.getFeatures().features().next();
-//			tableModel = new ValueTableModel(feature);
-//		} catch (IOException ex) {
-//			msg.error("Error initializing ByValuePanel", ex);
-//		}
-//		valueTable.setModel(tableModel);
-//		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
-//		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
-//		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
-//
-//		Style style = layer.getStyle();
-//		initTable(style);
-//	}
 
 	private void initTable(Style style) {
-//		SimpleFeatureType type = source.getSchema();
 		AttributeType aType = featureType.getType(attributeBox.getSelectedItem().toString());
 		String desc = "";
 

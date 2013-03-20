@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Wed Apr 11 11:12:31 EDT 2007
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.Component;
@@ -9,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,21 +30,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 
-import repast.simphony.gis.display.LegendIconMaker;
 import repast.simphony.gis.util.DoubleDocument;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -62,7 +53,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #2
+ * The "Range Style" panel in the GisStyleEditor dialog that provides the
+ * capability of setting the shape fill color using ranged rules.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class ByRangePanel extends JPanel implements IStyleEditor {
 
@@ -120,7 +115,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		FeatureTypeStyle fts = mediator.getFeatureTypeStyle();
 		StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 		Style style = fac.createStyle();
-		ArrayList styles = new ArrayList();
+		ArrayList<FeatureTypeStyle> styles = new ArrayList<FeatureTypeStyle>();
 		styles.add(fts);
 		style.featureTypeStyles().clear();
 		style.featureTypeStyles().addAll(styles);
@@ -179,7 +174,9 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 					Rule newRule = dialog.display();
 					if (newRule != null) {
 						mediator.setDefaultRule(newRule);
-						symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, newRule, sample));
+
+						// TODO Geotools set fill color based on rule
+						symbolLbl.setIcon(dialog.getPreview().getSmallIcon());
 					}
 				}
 			}
@@ -208,16 +205,13 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		});
 	}
 
-	public void init(FeatureType featureType, Style style) {
-//		try {
+	public void init(FeatureType featureType, Style style, PreviewLabel preview) {
 			this.type = (SimpleFeatureType)featureType;
 
 			Rule rule = style.featureTypeStyles().get(0).rules().get(0);
-			mediator = new ByRangePanelMediator(featureType, rule);
-//			sample = (SimpleFeature) source.getFeatures().features().next();
+			mediator = new ByRangePanelMediator(featureType, rule, preview);
 			
-			// TODO Geotools
-//			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
+			symbolLbl.setIcon(preview.getSmallIcon());
 			
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
@@ -225,9 +219,6 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			model = mediator.getAttributeModel();
 			
 			for (AttributeType at : type.getTypes()) {
-				
-				System.out.println("ByRangePanel.init(): " + at.getName());
-				
 				if (numberTypes.contains(at.getBinding())) {
 					model.addElement(at.getName());
 				}
@@ -242,45 +233,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
       endFld.setText(String.valueOf(mediator.getMax()));
 
       mediator.classesChanged(((Integer) classesSpn.getValue()).intValue());
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
 	}
-	
-//	public void init(Layer layer) {
-//		try {
-//			FeatureSource source = layer.getFeatureSource();
-//			this.type = (SimpleFeatureType)source.getSchema();
-//
-//			Rule rule = layer.getStyle().featureTypeStyles().get(0).rules().get(0);
-//			mediator = new ByRangePanelMediator(source, rule);
-//			sample = (SimpleFeature) source.getFeatures().features().next();
-//			symbolLbl.setIcon(LegendIconMaker.makeLegendIcon(24, rule, sample));
-//			paletteBox.setModel(mediator.getPaletteModel());
-//			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
-//			typeBox.setModel(model);
-//			model = mediator.getAttributeModel();
-//			SimpleFeatureType type = (SimpleFeatureType)source.getSchema();
-//			for (AttributeType at : type.getTypes()) {
-//				System.out.println("ByRangePanel.init(): " + at.getName());
-//				if (numberTypes.contains(at.getBinding())) {
-//					model.addElement(at.getName());
-//				}
-//			}
-//			attributeBox.setModel(model);
-//
-//			previewTable.setModel(mediator.getPreviewTableModel());
-//			previewTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
-//
-//			initFromStyle(layer.getStyle());
-//      startFld.setText(String.valueOf(mediator.getMin()));
-//      endFld.setText(String.valueOf(mediator.getMax()));
-//
-//      mediator.classesChanged(((Integer) classesSpn.getValue()).intValue());
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//	}
 
 	private void initFromStyle(Style style) {
 		String desc = "";
@@ -315,7 +268,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		startFld = new JTextField();
 		label6 = new JLabel();
 		endFld = new JTextField();
-		separator1 = compFactory.createSeparator("Classification");
+		separator1 = compFactory.createSeparator("Categories");
 		label3 = new JLabel();
 		classesSpn = new JSpinner();
 		label4 = new JLabel();
@@ -382,7 +335,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		add(separator1, cc.xywh(1, 5, 9, 1));
 
 		//---- label3 ----
-		label3.setText("Classes:");
+		label3.setText("Intervals:");
 		add(label3, cc.xy(1, 7));
 
 		//---- classesSpn ----

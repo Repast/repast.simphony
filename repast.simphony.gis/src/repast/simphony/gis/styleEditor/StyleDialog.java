@@ -24,7 +24,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #1
+ * Basic dialog class for GIS style editor.  Contains an instance of 
+ * StyleEditorPanel that further contains the infdividual styler panels.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class StyleDialog extends JDialog {
 	public StyleDialog(Frame owner) {
@@ -38,10 +42,6 @@ public class StyleDialog extends JDialog {
 	}
 
 	private boolean completed;
-
-//	public void setMapLayer(FeatureLayer layer) {
-//		styleEditorPanel1.setMapLayer(layer);
-//	}
 	
 	public void setData(FeatureType featureType, Style style){
 		styleEditorPanel1.setData(featureType, style);

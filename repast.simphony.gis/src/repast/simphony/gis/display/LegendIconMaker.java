@@ -98,7 +98,7 @@ public class LegendIconMaker {
 		fFac = ftBuilder.buildFeatureType();
 	}
 
-
+	
 	public static Icon makeLegendIcon(int iconWidth, Color background,
 			Rule rule, SimpleFeature sample) {
 		return makeLegendIcon(iconWidth, background, rule.getSymbolizers(),

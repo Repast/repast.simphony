@@ -1,27 +1,15 @@
-/*
- * Created by JFormDesigner on Mon Jul 31 13:07:10 CDT 2006
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.xml.transform.TransformerException;
 
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.map.FeatureLayer;
 import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.feature.type.FeatureType;
@@ -36,16 +24,14 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #1
+ * Panel that holds the various sub-panel editors (Basic, Rule, Value, etc.). 
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class StyleEditorPanel extends JPanel implements IStyleEditor {
 
 	static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
-
-//	public StyleEditorPanel(FeatureLayer layer) {
-//		initComponents();
-//		setMapLayer(layer);
-//	}
 
 	public StyleEditorPanel() {
 		initComponents();
@@ -65,29 +51,9 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		
 		styleTitleField.setText(style.getDescription().getTitle().toString());
 
-		rangePanel.init(featureType, style);
-		byValuePanel.init(featureType, style);
+		rangePanel.init(featureType, style, ruleEditPanel1.getPreview());
+		byValuePanel.init(featureType, style, ruleEditPanel1.getPreview());
 	}
-
-//	public void setMapLayer(FeatureLayer layer) {
-//		ruleEditPanel1.setMapLayer(layer);
-//		
-//		FeatureTypeStyle fts = layer.getStyle().featureTypeStyles().get(0);
-//		
-//		if (fts.getDescription().getTitle() == null) {
-//			fts.getDescription().setTitle(
-//					layer.getFeatureSource().getSchema().getName().getLocalPart());
-//		}
-//		if (layer.getStyle().getDescription().getTitle() == null) {
-//			layer.getStyle().getDescription().setTitle(
-//					layer.getFeatureSource().getSchema().getName().getLocalPart());
-//		}
-//		
-//		styleTitleField.setText(layer.getStyle().getDescription().getTitle().toString());
-//
-//		rangePanel.init(layer);
-//		byValuePanel.init(layer);
-//	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY

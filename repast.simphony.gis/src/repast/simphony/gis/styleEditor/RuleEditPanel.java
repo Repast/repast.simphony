@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Tue May 16 10:14:45 CDT 2006
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.Color;
@@ -63,30 +59,27 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
+ * Panel for basic GIS style editing that lets the user specify the style
+ * shape, fill, line color, etc.
+ * 
  * @author Tom Howe
+ * @author Eric Tatara
  */
 public class RuleEditPanel extends JPanel implements IStyleEditor {
 
-	StyleBuilder styleBuilder = new StyleBuilder();
-
-	ExpressionBuilder expBuilder = new ExpressionBuilder();
-
-	boolean point = false;
-
-	FeatureType type;
-
-	Rule rule;
-
-	Symbolizer symbolizer;
-
-	Dimension preferred = new Dimension(70, 18);
-
-	boolean ruleOnly = false;
-
-//	public RuleEditPanel(Layer layer) {
-//		initComponents();
-//		setMapLayer(layer);
-//	}
+	protected StyleBuilder styleBuilder = new StyleBuilder();
+	protected ExpressionBuilder expBuilder = new ExpressionBuilder();
+	protected boolean point = false;
+	protected FeatureType type;
+	protected Rule rule;
+	protected Symbolizer symbolizer;
+	protected Dimension preferred = new Dimension(70, 18);
+	protected boolean ruleOnly = false;
+	protected boolean titlesVisible = true;
+	protected boolean filterVisible = true;
+	protected boolean fillVisible = true;
+	protected boolean markVisible = true;
+	protected boolean strokeVisible = true;
 
 	public RuleEditPanel() {
 		initComponents();
@@ -99,15 +92,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		setRule((Rule) dsv.getCopy());
 		type = featureType;
 	}
-	
-//	public void setMapLayer(Layer layer) {
-//		Style style = layer.getStyle();
-//		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-//				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
-//		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
-//		setRule((Rule) dsv.getCopy());
-//		type = layer.getFeatureSource().getSchema();
-//	}
 
 	public void init(FeatureType type, Rule rule) {
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
@@ -139,18 +123,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		if (LineSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
 			initLine();
 		}
-
 	}
-
-	boolean titlesVisible = true;
-
-	boolean filterVisible = true;
-
-	boolean fillVisible = true;
-
-	boolean markVisible = true;
-
-	boolean strokeVisible = true;
 
 	public void showFilterPane(boolean show) {
 		filterPanel.setVisible(show);
@@ -242,7 +215,10 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		Expression ex = gr.getSize();
 		double markSize = 0;
 		if (ex instanceof Literal ){
-			markSize = (Double) ex.evaluate(null,Double.class);
+			Double d = ex.evaluate(null,Double.class);
+			
+			if (d != null)
+			  markSize = d;
 		}	
 		getPreview().setMarkSize(markSize);
 		getMarkSizeSpinner().setValue(markSize);
@@ -729,5 +705,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	public Rule getRule() {
 		return rule;
 	}
-
+	
+	public PreviewLabel getPreviewLabel(){
+		return preview;
+	}
 }

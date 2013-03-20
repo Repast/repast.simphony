@@ -1,38 +1,44 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.Rule;
-import org.opengis.feature.simple.SimpleFeature;
-
-import repast.simphony.gis.display.LegendIconMaker;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.opengis.style.Symbolizer;
 
 /**
+ * Table for the Range panel that shows how the icon fill appears according to
+ * the range rules.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.2 $ $Date: 2007/04/18 19:25:53 $
+ * @author Eric Tatara
  */
 public class SampleStyleTableModel extends AbstractTableModel {
 
 	private static String[] COL_NAMES = {"Symbol", "Range", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-	private Map<Rule, Icon> icons = new HashMap<Rule, Icon>();
-//	private SimpleFeature sample;
+	private PreviewLabel preview;
+	private Palette palette;
 
-	public void initStyle(FeatureTypeStyle style) {
+	public SampleStyleTableModel(PreviewLabel preview){
+		this.preview = preview;
+	}
+	
+	public void initStyle(FeatureTypeStyle style, Palette pal) {
 		rules.clear();
-		icons.clear();
-//		this.sample = sample;
 		for (Rule rule : style.rules()) {
 			rules.add(rule);
 		}
-
+		
+		palette = pal;
 		fireTableDataChanged();
 	}
 
@@ -86,11 +92,11 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		Rule rule = rules.get(rowIndex);
 		switch (columnIndex) {
 			case 0:
-				return getIcon(rule);
+				return getIcon(rule, rowIndex);
 			case 1:
-				return ruleTitleToRange(rule.getTitle());
+				return ruleTitleToRange(rule.getDescription().getTitle().toString());
 			case 2:
-				return rule.getTitle();
+				return ruleTitleToRange(rule.getDescription().getTitle().toString());
 			default:
 				return "";
 		}
@@ -120,23 +126,27 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		fireTableRowsUpdated(row, row);
 	}
 
-	private Icon getIcon(Rule rule) {
-		Icon icon = icons.get(rule);
-		if (icon == null) {
-		// TODO Geotools
+	private Icon getIcon(Rule rule, int rowIndex) {
+		
+		// TODO Geotools just use SquareIcon instance
 //			icon = LegendIconMaker.makeLegendIcon(12, rule, sample);
-			//icons.put(rule, icon);
-		}
-		return icon;
+		 			
+		Symbolizer sym = rule.symbolizers().get(0);
+		
+		if (sym instanceof PointSymbolizer || sym instanceof PolygonSymbolizer )
+		  return preview.getSmallIcon(palette.getColor(rowIndex), null);
+		else if (sym instanceof LineSymbolizer)
+			return preview.getSmallIcon(null, palette.getColor(rowIndex));
+		else 
+			return null;
 	}
 
 	private String ruleTitleToRange(String title) {
-		return title.replace("to", "-");
+		return title.replace("..", " - ");
 	}
 
 	public void init(List<Rule> rules) {
 		this.rules.clear();
 		this.rules.addAll(rules);
-		icons.clear();
 	}
 }

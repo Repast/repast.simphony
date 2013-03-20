@@ -18,7 +18,6 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.NilExpression;
 import org.opengis.style.Graphic;
 
 import repast.simphony.gis.styleEditor.PreviewLabel;
@@ -67,7 +66,10 @@ public class StylePreviewer {
 		Expression ex = gr.getSize();
 		
 		if (ex instanceof Literal ){	
-			label.setMarkSize((Double) ex.evaluate(null,Double.class));
+			Double d = ex.evaluate(null,Double.class);
+			
+			if (d != null)
+			  label.setMarkSize(d);
 		}	
 		
 		Fill fill = mark.getFill();

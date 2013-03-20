@@ -1,11 +1,14 @@
 package repast.simphony.gis.styleEditor;
 
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.CompareFilter;
 import org.geotools.filter.Expression;
 import org.geotools.filter.LiteralExpression;
 import org.geotools.styling.Rule;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Literal;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -22,26 +25,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Table for the Value panel that shows how the icon fill appears according to
+ * the value rules.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.3 $ $Date: 2007/06/19 15:38:16 $
+ * @author Eric Tatara
  */
 public class ValueTableModel extends AbstractTableModel {
 
+	private static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private static String[] COL_NAMES = {"Symbol", "Value", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-  private SimpleFeature sample;
+//  private SimpleFeature sample;
 	private Rule defaultRule;
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
+	private PreviewLabel preview;
 
-	public ValueTableModel(SimpleFeatureType featureType) {
-//		this.sample = sample;
+	public ValueTableModel(SimpleFeatureType featureType, PreviewLabel preview) {
 		RuleCreator creator = new RuleCreator();
 		Geometry geom = (Geometry)featureType.getGeometryDescriptor().getDefaultValue();
 		defaultRule = creator.createDefaultRule(Color.RED, GeometryUtil.findGeometryType(geom));
 		addRule(defaultRule);
 
+		this.preview = preview;
+		
 		convertors.put(Double.class, new DoubleConvertor());
 		convertors.put(double.class, new DoubleConvertor());
 		convertors.put(int.class, new IntegerConvertor());
@@ -67,11 +76,6 @@ public class ValueTableModel extends AbstractTableModel {
 		convertor = convertors.get(attributeType);
 	}
 
-	/**
-	 * Gets the default rule.
-	 *
-	 * @return the default rule.
-	 */
 	public Rule getDefaultRule() {
 		return defaultRule;
 	}
@@ -185,7 +189,7 @@ public class ValueTableModel extends AbstractTableModel {
 			case 1:
 				return literalValue(rule);
 			case 2:
-				return rule.getTitle();
+				return rule.getDescription().getTitle().toString();
 			default:
 				return "";
 		}
@@ -219,9 +223,13 @@ public class ValueTableModel extends AbstractTableModel {
 	}
 
 	private Icon getIcon(Rule rule) {
-		return LegendIconMaker.makeLegendIcon(12, rule, sample);
+	// TODO Geotools
+//		return LegendIconMaker.makeLegendIcon(12, rule, sample);
+		return preview.getSmallIcon();
+		
 	}
 
+	// TODO Geotools deprecated
 	private LiteralExpression findLiteralExpression(Rule rule) {
 		CompareFilter filter = (CompareFilter) rule.getFilter();
 		Expression exp = filter.getRightValue();
