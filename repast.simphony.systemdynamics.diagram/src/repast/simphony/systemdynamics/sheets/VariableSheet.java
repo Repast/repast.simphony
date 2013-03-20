@@ -65,7 +65,8 @@ public class VariableSheet extends Composite {
   private CTabFolder tabFolder;
   private Composite comp;
   private ComboViewer cmbSubViewer;
-  private Text text;
+  private Text txtLHS;
+  protected Label lblEq;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -210,11 +211,12 @@ public class VariableSheet extends Composite {
     toolkit.adapt(lblNewLabel, true, true);
     lblNewLabel.setText("LHS:");
     
-    text = new Text(comp, SWT.BORDER);
-    text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-    toolkit.adapt(text, true, true);
+    txtLHS = new Text(comp, SWT.BORDER);
+    txtLHS.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+    txtLHS.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
+    toolkit.adapt(txtLHS, true, true);
     
-    Label lblEq = new Label(comp, SWT.NONE);
+    lblEq = new Label(comp, SWT.NONE);
     lblEq.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblEq, true, true);
     lblEq.setText("=");
@@ -225,7 +227,7 @@ public class VariableSheet extends Composite {
     txtEquation.setAlwaysShowScrollBars(false);
     txtEquation.setTopMargin(4);
     txtEquation.setLeftMargin(4);
-    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    txtEquation.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
     txtEquation.setText("");
     toolkit.adapt(txtEquation);
   }
@@ -294,7 +296,19 @@ public class VariableSheet extends Composite {
       }
 
       if (vb != null) {
-        vb.addSubscript(lstSub.getSelection()[0], pos);
+        String subscript = lstSub.getSelection()[0];
+        
+        // add the subscript the lhs
+        eqc = new EquationCreator(txtLHS.getText().trim());
+        Equation lhsEq = eqc.createEquation(((Variable) eObj).getName());
+        java.util.List<VariableBlock> lhsBlocks = lhsEq.getBlocks();
+        if (lhsBlocks.size() > 0) {
+          lhsBlocks.get(0).addSubscript(subscript);
+          txtLHS.setText(lhsEq.getText());
+        }
+        
+        // add the subscript to the equation or init value
+        vb.addSubscript(subscript, pos);
         txtControl.setText(eq.getText());
         txtControl.setFocus();
         txtControl.setCaretOffset(pos);
@@ -432,6 +446,7 @@ public class VariableSheet extends Composite {
     fillListFunc();
 
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__EQUATION, txtEquation);
+    bind(context, eObject, SDModelPackage.Literals.VARIABLE__LHS, txtLHS);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__NAME, txtId);
     bind(context, eObject, SDModelPackage.Literals.VARIABLE__COMMENT, txtComment);
     context.bindValue(
