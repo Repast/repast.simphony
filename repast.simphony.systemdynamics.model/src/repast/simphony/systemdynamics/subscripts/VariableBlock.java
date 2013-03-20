@@ -107,7 +107,7 @@ public class VariableBlock implements TextBlock {
    * @param subscript
    */
   public void addSubscript(String subscript) {
-    subscripts.add(subscript);
+    if (!subscripts.contains(subscript)) subscripts.add(subscript);
   }
   
   /**
