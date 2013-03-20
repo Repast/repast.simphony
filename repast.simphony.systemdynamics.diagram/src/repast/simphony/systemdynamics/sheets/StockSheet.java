@@ -14,6 +14,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -50,30 +51,24 @@ public class StockSheet extends VariableSheet {
     txtEquation.addFocusListener(who);
   }
 
-  /*
-  @Override
-  protected void addHeader(FormToolkit toolkit, Composite parent) {
-    super.addHeader(toolkit, parent);
-    Label lblInitVal = new Label(parent, SWT.NONE);
-    toolkit.adapt(lblInitVal, true, true);
-    lblInitVal.setText("Initial Value:");
-
-    
-  }
-  */
-  
-  
   
   @Override
   protected void createEquation(Composite parent, FormToolkit toolkit) {
     super.createEquation(parent, toolkit);
+    lblEq.setText(" = \nINTEG(");
+    Label lblNewLabel = new Label(parent, SWT.NONE);
+    toolkit.adapt(lblNewLabel, true, true);
+    lblNewLabel.setText("Initial\nValue:");
+    
     txtInitVal = new StyledText(parent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
-    txtInitVal.setFont(SWTResourceManager.getFont("Lucida Grande", 14, SWT.BOLD));
+    txtInitVal.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
+    txtInitVal.setTopMargin(4);
+    txtInitVal.setLeftMargin(4);
     GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-    gd.heightHint = 40;
+    gd.heightHint = 25;
     txtInitVal.setLayoutData(gd);
     //txtInitVal.addVerifyListener(new DoubleVerifier());
-    gd.heightHint = 40;
+    gd.heightHint = 25;
     //Bug383650Fix.applyFix(txtInitVal);
   }
 
