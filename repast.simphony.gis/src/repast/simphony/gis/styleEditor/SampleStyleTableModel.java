@@ -7,11 +7,7 @@ import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
 
 import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.LineSymbolizer;
-import org.geotools.styling.PointSymbolizer;
-import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
-import org.opengis.style.Symbolizer;
 
 /**
  * Table for the Range panel that shows how the icon fill appears according to
@@ -26,20 +22,16 @@ public class SampleStyleTableModel extends AbstractTableModel {
 
 	private List<Rule> rules = new ArrayList<Rule>();
 	private PreviewLabel defaultPreview;
-	
-	private Palette palette;
 
 	public SampleStyleTableModel(PreviewLabel preview){
 		this.defaultPreview = preview;
 	}
 	
-	public void initStyle(FeatureTypeStyle style, Palette pal) {
+	public void initStyle(FeatureTypeStyle style) {
 		rules.clear();
 		for (Rule rule : style.rules()) {
 			rules.add(rule);
 		}
-		
-		palette = pal;
 		fireTableDataChanged();
 	}
 
@@ -93,7 +85,7 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		Rule rule = rules.get(rowIndex);
 		switch (columnIndex) {
 			case 0:
-				return getIcon(rule, rowIndex);
+				return getIcon(rule);
 			case 1:
 				return ruleTitleToRange(rule.getDescription().getTitle().toString());
 			case 2:
@@ -127,17 +119,8 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		fireTableRowsUpdated(row, row);
 	}
 
-	private Icon getIcon(Rule rule, int rowIndex) {
-		// TODO Should each row be able to have a unique icon for styling?
-
-		Symbolizer sym = rule.symbolizers().get(0);
-		
-		if (sym instanceof PointSymbolizer || sym instanceof PolygonSymbolizer )
-		  return defaultPreview.getSmallIcon(palette.getColor(rowIndex), null);
-		else if (sym instanceof LineSymbolizer)
-			return defaultPreview.getSmallIcon(null, palette.getColor(rowIndex));
-		else 
-			return null;
+	private Icon getIcon(Rule rule) {
+		return PreviewLabel.formatPreview(defaultPreview, rule);
 	}
 
 	private String ruleTitleToRange(String title) {

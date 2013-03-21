@@ -180,7 +180,7 @@ public class ByRangePanelMediator {
 
 			addSymbolizers(fts);
 
-			tableModel.initStyle(fts, palette);
+			tableModel.initStyle(fts);
 		}
 	}
 

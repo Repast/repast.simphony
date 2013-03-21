@@ -11,10 +11,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import org.geotools.renderer.lite.Java2DMark;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.opengis.style.Symbolizer;
 
 /**
  * The icon ("label") that represents a styled mark in the GIS style editors.
@@ -226,5 +233,42 @@ public class PreviewLabel extends JLabel {
 	public void setOutlineThickness(double outlineThickness) {
 		this.outlineThickness = outlineThickness;
 		updatePreview();
+	}
+	
+	/**
+	 * Generate an Icon from a Rule.
+	 * 
+	 * @param label the PreviewLabel from which to get the base icon
+	 * @param rule the rule used to format the icon
+	 * 
+	 * @return the rule-based icon.
+	 * 
+	 * TODO Geotools this should be changed to be only dependent on the Rule
+	 *      and not require a preview label to be more flexible.
+	 */
+	public static Icon formatPreview(PreviewLabel label, Rule rule){
+		Icon icon = null;
+		Symbolizer sym = rule.symbolizers().get(0);
+			
+		// TODO only does color...add mark, stroke, etc.
+		
+		if (sym instanceof PointSymbolizer){
+			PointSymbolizer ps = (PointSymbolizer) sym;	
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
+			Color c = Color.decode(mark.getFill().getColor().toString());	
+			icon = label.getSmallIcon(c,null);
+		}
+		else if (sym instanceof LineSymbolizer){
+			LineSymbolizer ls = (LineSymbolizer) sym;
+			Color c = Color.decode(ls.getStroke().getColor().toString());
+			icon = label.getSmallIcon(null, c);
+		}
+		else if (sym instanceof PolygonSymbolizer){
+			PolygonSymbolizer ps = (PolygonSymbolizer) sym;		
+			Color c = Color.decode(ps.getFill().getColor().toString());	
+			icon = label.getSmallIcon(c,null);
+		}
+	
+		return icon;
 	}
 }

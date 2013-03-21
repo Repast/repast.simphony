@@ -51,7 +51,7 @@ public class GeometryUtil {
    * @return the geometry type of the specified geometry.
    */
   public static GeometryType findGeometryType(Geometry geom) {
-    if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
+  	if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
       return GeometryType.POINT;
     else if (geom instanceof com.vividsolutions.jts.geom.Polygon || geom instanceof MultiPolygon)
       return GeometryType.POLYGON;

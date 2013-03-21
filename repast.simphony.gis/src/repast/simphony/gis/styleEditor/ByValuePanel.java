@@ -233,17 +233,20 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	 * FeatureSource for shapefile features.
 	 */
 	private void addRule() {
-
-		if (source == null){  // Create a rule from the FeatureType
-			// TODO Geotools
+		String att = attributeBox.getSelectedItem().toString();
+		
+		if (source == null){  
+			// TODO Geotools  need to create a rule from the FeatureType as with
+			//      the FeatureSource below
 		}
 		
 		else try {
 			RuleCreator creator = new RuleCreator();
-			String att = attributeBox.getSelectedItem().toString();
+			
 			SimpleFeature feature = source.getFeatures().features().next();
 			Rule rule = creator.createValueRule(feature, att, 
 					getSymbolizerFactory(getColor(colorIndex++)));
+			
 			tableModel.addRule(rule);
 		} catch (IOException e) {
 			msg.error("Error getting features", e);
@@ -319,7 +322,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		}
 		
 		attributeBox.setModel(model);
-		tableModel = new ValueTableModel(featureType, preview);
+		tableModel = new ValueTableModel(featureType, style, preview);
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
