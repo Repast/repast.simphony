@@ -25,18 +25,18 @@
 	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-api-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-cql-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-data-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-main-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-metadata-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-render-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jts-1.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-api-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-cql-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-data-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-main-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-metadata-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-render-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

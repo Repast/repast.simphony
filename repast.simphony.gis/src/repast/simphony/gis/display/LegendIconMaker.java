@@ -194,7 +194,7 @@ public class LegendIconMaker {
 	}
 	private static Icon reallyMakeLegendIcon(int iconWidth, int iconHeight,
 			Color background, Symbolizer[] symbolizers, SimpleFeature sample) {
-		SimpleFeatureCollection fc = FeatureCollections.newCollection();
+//		SimpleFeatureCollection fc = FeatureCollections.newCollection();
 
 		Symbolizer[] syms = symbolizers;
 		List<ChangeTracker> changes = new ArrayList<ChangeTracker>();
@@ -296,9 +296,9 @@ public class LegendIconMaker {
 				feature = new SimpleFeatureImpl(attrib, fFac, id, false);
 			}
 
-			if (feature != null) {
-				fc.add(feature);
-			}
+//			if (feature != null) {
+//				fc.add(feature);
+//			}
 		}
 		
 		Rule rule = sFac.createRule();

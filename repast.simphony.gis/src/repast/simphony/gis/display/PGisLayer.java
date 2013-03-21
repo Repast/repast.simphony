@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.event.MapBoundsEvent;
@@ -31,38 +30,26 @@ import edu.umd.cs.piccolo.nodes.PImage;
  * This represents a FeatureLayer as an image. Each layer is inserted as a node into
  * the PCanvas.
  *
- * @author Howe
+ * @author Tom Howe
+ * @author Eric Tatara
  */
 public class PGisLayer extends PLayer implements MapLayerListener {
   private static final long serialVersionUID = 1732090043130770803L;
 
   private static long layerKey = 0;
-
-  MessageCenter center = MessageCenter.getMessageCenter(getClass());
-
-  BufferedImage image;
-
-  MapContent context;
-
-  GTRenderer rend;
-
-  Rectangle rect = new Rectangle(800, 800);
-
-  boolean interacting = false;
-
-  boolean drawn = false;
-
-  AffineTransform transform;
-
-  Layer layer;
-
-  MapContent localContext;
-
-  PImage pImage;
-
-  Envelope layerArea;
-
-  double scaleDenominator;
+  protected MessageCenter center = MessageCenter.getMessageCenter(getClass());
+  protected BufferedImage image;
+  protected MapContent context;
+  protected GTRenderer rend;
+  protected Rectangle rect = new Rectangle(800, 800);
+  protected boolean interacting = false;
+  protected boolean drawn = false;
+  protected AffineTransform transform;
+  protected Layer layer;
+  protected MapContent localContext;
+  protected PImage pImage;
+  protected Envelope layerArea;
+  protected double scaleDenominator;
 
   private static class BoundsListener implements MapBoundsListener {
 
@@ -121,7 +108,8 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     try {
       pImage.setTransform(transform.createInverse());
     } catch (Exception ex) {
-      center.error("Error while drawing layer: " + layer.getStyle().getTitle(), ex);
+      center.error("Error while drawing layer: " + 
+         layer.getStyle().getDescription().getTitle().toString(), ex);
     }
     addChild(pImage);
   }
@@ -166,7 +154,8 @@ public class PGisLayer extends PLayer implements MapLayerListener {
       pImage.setTransform(transform.createInverse());
       pImage.setImage(image);
     } catch (Exception ex) {
-      center.error("Error while drawing layer: " + layer.getStyle().getTitle(), ex);
+      center.error("Error while drawing layer: " + 
+         layer.getStyle().getDescription().getTitle().toString(), ex);
     }
   }
 

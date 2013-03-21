@@ -1,12 +1,12 @@
 package repast.simphony.space.gis;
 
 import java.beans.IntrospectionException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.SchemaException;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -30,7 +30,7 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
 
 	private SimpleFeatureType featureType;
 
-	private SimpleFeatureCollection collection;
+	private List<SimpleFeature> features;
   private List<FeatureAttributeAdapter> adapters;
 
   DefaultFeatureAgentFactory(Class<T> agentType, Class<? extends Geometry> geometryType,
@@ -63,13 +63,13 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
    * Resets this factory by creating a new feature collection.
    */
   public void reset() {
-    collection = FeatureCollections.newCollection();
+    features = new ArrayList<SimpleFeature>();
   }
 
   private void init(Class<T> agentType) {
 		try {
 			featureType = getFeatureType(agentType, crs, geometryType, adapters);
-			collection = FeatureCollections.newCollection();
+			features = new ArrayList<SimpleFeature>();
 		} catch (IntrospectionException e) {
 			msg.error("Unable to introspect feature class: "
 					+ agentType.getName(), e);
@@ -80,11 +80,11 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
 
 	public FeatureAgent getFeature(T agent, Geography geography) {
 		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, geography, adapters);
-		collection.add(featureAgent);
+		features.add(featureAgent);
 		return featureAgent;
 	}
 
-	public SimpleFeatureCollection getFeatures() {
-		return collection;
+	public List<SimpleFeature> getFeatures() {
+		return features;
 	}
 }
