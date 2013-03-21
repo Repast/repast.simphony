@@ -29,7 +29,6 @@ import org.opengis.filter.expression.Literal;
  */
 public class ValueTableModel extends AbstractTableModel {
 
-	private static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 	private static String[] COL_NAMES = {"Symbol", "Value", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
