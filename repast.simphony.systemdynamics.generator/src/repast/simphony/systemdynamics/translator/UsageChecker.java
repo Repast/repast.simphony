@@ -7,7 +7,7 @@ import java.util.Map;
 public class UsageChecker {
 	
 	public static final String ARRAY = "array.";
-	public static final String FUNCTION = "sdFunction.";
+	public static final String FUNCTION = "sdFunctions.";
 	public static final String SCALAR = "memory.";
 	public static final String LOOKUP = "lookup.";
 	public static final String UNKNOWN = "unknown.";

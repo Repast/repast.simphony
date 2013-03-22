@@ -165,6 +165,16 @@ public class Parser {
     
     	return true;
     }
+    
+    public static boolean isQuotedString(String s) {
+    	return (s.startsWith("\"") && s.endsWith("\"")) ||
+    			(s.startsWith("'") && s.endsWith("'"));
+    }
+    
+    public static boolean isLocalVariable(String s) {	
+    	return s.equalsIgnoreCase("time") || s.equalsIgnoreCase("timestep");
+    }
+
 
     public static String forceDouble(String expression) {
     	List<String> tokens = new ArrayList<String>();

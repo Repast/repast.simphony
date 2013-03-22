@@ -35,8 +35,10 @@ public class OperationResult {
 	public void setErrorMessage(String message) {
 		
 		setMessage(message);
-		System.out.println("Setting not OK");
+		if (ok)
+			System.out.println("Setting not OK message = "+message);
 		setOk(false);
+		System.exit(1);
 	}
 
 }

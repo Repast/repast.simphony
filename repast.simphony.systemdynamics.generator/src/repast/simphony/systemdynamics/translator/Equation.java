@@ -175,6 +175,8 @@ public class Equation {
 		// if we were able to cleanly tokenize the equation, let's check for other syntax errors
 		if (syntacticallyCorrect) {
 			GrammarChecker checker = new GrammarChecker(tokens);
+			System.out.print("Grammar Check ");
+			this.printTokensOneLine();
 			OperationResult or = checker.checkGrammar();
 			if (!or.isOk()) {
 				syntacticallyCorrect = false;

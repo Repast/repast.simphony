@@ -2,6 +2,7 @@ package repast.simphony.systemdynamics.translator;
 
 import java.util.List;
 
+import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
 
 public class GrammarChecker {
@@ -20,7 +21,7 @@ public class GrammarChecker {
 	public static final String UNARY_OPERATOR = "UnaryOperator";
 	
 	public static final String ARRAY = "array.";
-	public static final String FUNCTION = "sdFunction.";
+	public static final String FUNCTION = "sdFunctions.";
 	public static final String SCALAR = "memory.";
 	public static final String LOOKUP = "lookup.";
 	
@@ -52,6 +53,9 @@ public class GrammarChecker {
 	}
 	
 	public OperationResult checkGrammar() {
+		
+		System.out.println("######################## check Grammar #############################");
+		
 		OperationResult or = new OperationResult();
 		String type = determineEquationType(or);
 		if (!or.isOk()) 
@@ -86,87 +90,103 @@ public class GrammarChecker {
 		// usage checked elsewhere
 		
 		
-		Boolean lookingForBinaryOperator = new Boolean(false);
-		Boolean lookingForArgumentSeparator = new Boolean(false);
+		MutableBoolean lookingForBinaryOperator = new MutableBoolean(false);
+		MutableBoolean lookingForArgumentSeparator = new MutableBoolean(false);
+		MutableBoolean processingFunctionInvocation = new MutableBoolean(false);
 		String previousToken = "";
 		MutableInteger pos = new MutableInteger();
 		MutableInteger openParens = new MutableInteger();
 		
+		int calls = 0;
+		
 		while (pos.value() < tokens.size()) {			
 			String token = tokens.get(pos.value());
-			grammerCheck(token, lookingForBinaryOperator, lookingForArgumentSeparator, previousToken, pos, openParens, or);
+			System.out.println("GCin: "+token+" "+lookingForBinaryOperator.value()+" pos = "+pos.value());
+			grammerCheck(token, lookingForBinaryOperator, lookingForArgumentSeparator, processingFunctionInvocation, previousToken, pos, openParens, or);
+			System.out.println("GCout: "+token+" "+lookingForBinaryOperator.value()+" pos = "+pos.value());
+			calls++;
+			if (calls > 10) {
+				or.setErrorMessage("Aborting loop");
+				return or;
+			}
 		}
 		return or;
 	}
 	
-	private void grammerCheck(String token, Boolean lookingForBinaryOperator, Boolean lookingForArgumentSeparator, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
+	private void grammerCheck(String token, MutableBoolean lookingForBinaryOperator, MutableBoolean lookingForArgumentSeparator, 
+			MutableBoolean processingFunctionInvocation, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
 		or.clear();
 
 		if (token.startsWith(ARRAY)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Array "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
 			previousToken = token;
 			pos.add(1);
-			lookingForBinaryOperator = true;
+			lookingForBinaryOperator.setValue(true);
 			return;
 		} else if (token.startsWith(LOOKUP)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Lookup "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
-			consumeLookup(lookingForBinaryOperator, lookingForArgumentSeparator, previousToken, pos, openParens, or);
+			consumeLookup(lookingForBinaryOperator, lookingForArgumentSeparator, processingFunctionInvocation, previousToken, pos, openParens, or);
 			if (!or.isOk())
 				return;
 			pos.add(1);
-			lookingForBinaryOperator = true;
+			lookingForBinaryOperator.setValue(true);
 			return;
 
 		}  else if (token.startsWith(FUNCTION)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Function "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
-			consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator, previousToken, pos, openParens, or);
+			consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator, processingFunctionInvocation, previousToken, pos, openParens, or);
 			if (!or.isOk())
 				return;
 			pos.add(1);
-			lookingForBinaryOperator = true;
+			lookingForBinaryOperator.setValue(true);
 			return;
 
 		}  else if (token.startsWith(SCALAR)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Scalar "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
 			previousToken = token;
 			pos.add(1);
-			lookingForBinaryOperator = true;
+			lookingForBinaryOperator.setValue(true);
 			return;
 
 		} else if (token.equals(LEFT_PAREN)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("LeftParen "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
@@ -174,12 +194,13 @@ public class GrammarChecker {
 			pos.add(1);
 			return;
 
-		} else if (token.equals(RIGHT_PAREN)) {
-			if (lookingForBinaryOperator) {
+		} else if (token.equals(RIGHT_PAREN)) { // this is a grouping paren
+			System.out.println("RightParen "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
@@ -187,48 +208,65 @@ public class GrammarChecker {
 			pos.add(1);
 			return;
 		} else if (token.equals(COMMA)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Comma "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			}
 		} else if (Parser.isOperator(token)) {
-			if (!lookingForBinaryOperator) {
+			if (!lookingForBinaryOperator.value()) {
 				if (Parser.isBinaryOperator(token)) {
-					or.setErrorMessage("expecting binary operator found "+token+" in pos "+pos.value());
+					or.setErrorMessage("not expecting binary operator but found "+token+" in pos "+pos.value());
 					return;
 				} else if (Parser.isUnaryOperator(token)) {
 					previousToken = token;
 					pos.add(1);
-					lookingForBinaryOperator = false;
+					lookingForBinaryOperator.setValue(false);
 					return;
 				}
 
 			} else {
 				previousToken = token;
 				pos.add(1);
-				lookingForBinaryOperator = false;
+				lookingForBinaryOperator.setValue(false);
 				return;
 			}
 
 		} else if (Parser.isNumber(token)) {
-			if (lookingForBinaryOperator) {
+			System.out.println("Number "+ token);
+			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
 			} 
-			if (lookingForArgumentSeparator) {
+			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
 				return;
 			}
 			previousToken = token;
 			pos.add(1);
-			lookingForBinaryOperator = true;
+			lookingForBinaryOperator.setValue(true);
 			return;
+		} else if (Parser.isQuotedString(token)) {
+			System.out.println("Quoted String "+token);
+			previousToken = token;
+			pos.add(1);
+			lookingForBinaryOperator.setValue(false);
+		} else if (Parser.isLocalVariable(token)) {
+			System.out.println("Local variable "+token);
+			previousToken = token;
+			pos.add(1);
+			lookingForBinaryOperator.setValue(false);
+		} else {
+			System.out.println("Unknown token type"+ token);
+			or.setErrorMessage("Unknown token type "+token);
 		}
 	}
 
-		private void consumeFunction(Boolean lookingForBinaryOperator, Boolean lookingForArgumentSeparator, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
+		private void consumeFunction(MutableBoolean lookingForBinaryOperator, MutableBoolean lookingForArgumentSeparator, 
+				MutableBoolean processingFunctionInvocation, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
 			
 			or.clear();
+			processingFunctionInvocation.setValue(true);
 			
 			// func is func_name ( notB , notB, ..., notB)
 			
@@ -241,29 +279,41 @@ public class GrammarChecker {
 				or.setErrorMessage("expecting open paren for function found "+token+" in pos "+pos.value());
 				return;
 			}
+			localOpenParen++;
 			// point to first argument
 			pos.add(1);
 			
 			while(!done) {
 				token = tokens.get(pos.value());
-				grammerCheck(token, lookingForBinaryOperator, lookingForArgumentSeparator, previousToken, pos, openParens, or);
+				grammerCheck(token, lookingForBinaryOperator, lookingForArgumentSeparator, processingFunctionInvocation, previousToken, pos, openParens, or);
 				if (!or.isOk())
 					return;
 				if (tokens.get(pos.value()).equals(RIGHT_PAREN)) {
+					System.out.println("Right Paren ");
+					localOpenParen--;
 					// found closing paren
-					done = true;
+					if (localOpenParen == 0) {
+						done = true;
+						System.out.println("ends function");
+					}
+					pos.add(1);
 				} else if (tokens.get(pos.value()).equals(COMMA)) {
+					System.out.println("Right Paren ");
 					// need to grab another function argument
 					pos.add(1);
+					lookingForArgumentSeparator.setValue(false);
+					lookingForBinaryOperator.setValue(false);
 				}
 			}
 			
 
 		}
 
-		private void consumeLookup(Boolean lookingForBinaryOperator, Boolean lookingForArgumentSeparator, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
+		private void consumeLookup(MutableBoolean lookingForBinaryOperator, MutableBoolean lookingForArgumentSeparator, 
+				MutableBoolean processingFunctionInvocation, String previousToken, MutableInteger pos, MutableInteger openParens, OperationResult or) {
+			
 			// for now...
-			consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator, previousToken, pos, openParens, or);
+			consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator, processingFunctionInvocation, previousToken, pos, openParens, or);
 		}
 
 		private OperationResult checkLookupDefinitionGrammar() {
