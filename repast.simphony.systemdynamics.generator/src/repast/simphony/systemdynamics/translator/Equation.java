@@ -35,10 +35,10 @@ public class Equation {
 	private Node treeRoot;
 	
 	private boolean syntacticallyCorrect = true;
-	private boolean semanticallyCorrect = true;
+	private boolean usageCorrect = true;
 	
 	private List<String> syntaxMessages = new ArrayList<String>();
-	private List<String> semanticMessages = new ArrayList<String>();
+	private List<String> usageMessages = new ArrayList<String>();
 	
 	private OperationResult opRes = new OperationResult();  // reusable
 	
@@ -168,8 +168,21 @@ public class Equation {
 		} else {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
 		}
+		
+		// tokenize will detect certain types of syntax errors
 		tokenize();
-		System.out.println(vensimEquation);
+		
+		// if we were able to cleanly tokenize the equation, let's check for other syntax errors
+		if (syntacticallyCorrect) {
+			GrammarChecker checker = new GrammarChecker(tokens);
+			OperationResult or = checker.checkGrammar();
+			if (!or.isOk()) {
+				syntacticallyCorrect = false;
+				syntaxMessages.add(or.getMessage());
+			}
+		}
+		
+		System.out.println("PostTok: "+vensimEquation);
 		printTokensOneLine();
 		
 	}
@@ -844,7 +857,7 @@ public class Equation {
 
 		cleanEquation = token;
 
-		lhs = token;
+		lhs = token; //  NativeDataTypeManager.getLegalName(token);
 
 		boolean ignore = true;
 
@@ -857,7 +870,7 @@ public class Equation {
 			if (inRange(position.value()+1) && characterAt(position.value()+1).equals("=")) {
 				position.add(1);
 			}
-			tokens.add(token);
+			tokens.add(NativeDataTypeManager.getLegalName(token));
 			assignment = true;
 			tokens.add("=");
 			cleanEquation += "=";
@@ -960,6 +973,7 @@ public class Equation {
 			ignore = false;
 			// need to tokenize the remaining characters in the subscript definition
 			tokens.add(token);
+			tokens.add(":");
 
 			// this will be comma separated in tokens
 			// tokenizeSubscripts stops if there is a mapping token "->"
@@ -1174,361 +1188,361 @@ public class Equation {
 	}
 	
 	private void tokenizeRHS(MutableInteger position) {
-	    
-	   
 
-	    // break into tokens and determine as much as possible
-	    // about the equation as we pass through it.
-	    String token = "";
-	    String unaryMinus = "";
 
-	    boolean function = false;
-	    boolean variable = false;
-	    boolean array = false;
-	    boolean macro = false;
-	    boolean stringConstant = false;
-	    boolean lookupRef = false;
-	    
-	    skipWhiteSpace(position);
-	    boolean done = false;
-	    while(!done) {
 
-		function = false;
-		variable = false;
-		array = false;
-		stringConstant = false;
-		macro = false;
-		lookupRef = false;
-		
-		if (position.value() >= equation.length())
-		    break;
-		
-		String theChar = characterAt(position);
-		if (characterAt(position).equals("\"") || characterAt(position).equals("'")) {
-		    if (characterAt(position).equals("'"))
-			stringConstant = true;
-		    
-		    if (typeString)
-		    	token = getQuotedStringWithQuotesStartingAt(position, opRes);
-		    else
-		    	token = getQuotedStringStartingAt(position, opRes);
-		    if (!opRes.isOk()) {
-				// failure finding closing quote
-				syntacticallyCorrect = false;
-				syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
-				return;
-			}
-		    
-		    // we have a quoted string. Her are possible situations:
-		    // (1) a function reference
-		    // (2) a lookup reference -- Can be an reference to an array Lookup table
-		    // (3) an array reference
-		    // (4) a simple variable reference
-		    // (5) String for variable assignment (typeString = "true")
-		    
-//		    ArrayLookupTable   MARK HERE
+		// break into tokens and determine as much as possible
+		// about the equation as we pass through it.
+		String token = "";
+		String unaryMinus = "";
 
-		    skipWhiteSpace(position);
-		    if (inRange(position)) {
-			theChar = characterAt(position);
+		boolean function = false;
+		boolean variable = false;
+		boolean array = false;
+		boolean macro = false;
+		boolean stringConstant = false;
+		boolean lookupRef = false;
 
-			// if the char == "(", we have either a function reference
-			// or a lookup reference
-			if (characterAt(position).equals("(")) {
-			    if (FunctionManager.isFunction(token)) { // HERE~~~
-				checkSpecialFunctions(token);
-				function = true;
-				if (isGetXlsDataFunction(token))
-				    usesTimeSeries = true;
-				
-				if (isGetXlsLookupsFunction(token))
-				    	definesLookupGetXls = true;
-				
-				if (token.toUpperCase().equals("INTEG"))
-				    stockVariable = true;
-				
-				// move past "(" as code below will be adding it back
-				position.add(1);
-			    } else if (isMacroName(token)) {
-				macro = true;
-				// move past "(" as code below will be adding it back
-				position.add(1);
-			    } else {
-				referencesLookup = true;
-				lookupRef = true;
-				rhsTokens.add(token);
-			    }
-			    // if the char == "[", we have either an array reference
-			    // or a array lookup reference
-			} else if (characterAt(position).equals("[")) {
-			    array = true;
-			    hasRHSArrayReference = true;
-			    token=tokenizeArrayReference(token, position, opRes);
-			    if (!opRes.isOk()) {
-			    	syntacticallyCorrect = false;
-			    	syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
-			    	return;
-			    }
-			    position.add(1);
-			    skipWhiteSpace(position);
-			    if (inRange(position.value()) && characterAt(position.value()).equals("(")) {
-				referencesLookup = true;
-				lookupRef = true;
-				token = token.replace("array.", "");
-				rhsTokens.add(token);
+		skipWhiteSpace(position);
+		boolean done = false;
+		while(!done) {
 
-			    } else {
-				rhsTokens.add(token);
-				//					position.add(1);
-			    }
+			function = false;
+			variable = false;
+			array = false;
+			stringConstant = false;
+			macro = false;
+			lookupRef = false;
 
-			} else {
-			    if (!stringConstant)
-				variable = true;
-			    rhsTokens.add(token);
-			}
-		    } else {
-			// don't look ahead since it is beyond the end of statement
-			// so this must be a variable
-			variable = true;
-			rhsTokens.add(token);
-		    }
-		    // this is where we grab either a funtion, a lookup, or variable
-		    // need to detect arrays
-		    // or special variable :NA:
-		} else if (Character.isLetter(characterAt(position).charAt(0))) {
-		    boolean allowColon = false;
-		    token = unaryMinus+ getNonQuotedStringStartingAt(position, allowColon, opRes);
+			if (position.value() >= equation.length())
+				break;
 
-		    skipWhiteSpace(position);
-		    if (inRange(position)) {
-			if (characterAt(position).equals("(")) {   // checking for function invocation 
-			    if (FunctionManager.isFunction(token)) {  // Here
-				checkSpecialFunctions(token);
-				function = true;
-				if (isGetXlsDataFunction(token)) {
-				    usesTimeSeries = true;
+			String theChar = characterAt(position);
+			if (characterAt(position).equals("\"") || characterAt(position).equals("'")) {
+				if (characterAt(position).equals("'"))
+					stringConstant = true;
+
+				if (typeString)
+					token = getQuotedStringWithQuotesStartingAt(position, opRes);
+				else
+					token = getQuotedStringStartingAt(position, opRes);
+				if (!opRes.isOk()) {
+					// failure finding closing quote
+					syntacticallyCorrect = false;
+					syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
+					return;
 				}
-				if (isGetXlsLookupsFunction(token)) {
-//				    usesTimeSeries = true;
-				    definesLookupGetXls = true;
+
+				// we have a quoted string. Her are possible situations:
+				// (1) a function reference
+				// (2) a lookup reference -- Can be an reference to an array Lookup table
+				// (3) an array reference
+				// (4) a simple variable reference
+				// (5) String for variable assignment (typeString = "true")
+
+				//		    ArrayLookupTable   MARK HERE
+
+				skipWhiteSpace(position);
+				if (inRange(position)) {
+					theChar = characterAt(position);
+
+					// if the char == "(", we have either a function reference
+					// or a lookup reference
+					if (characterAt(position).equals("(")) {
+						if (FunctionManager.isFunction(token)) { // HERE~~~
+							checkSpecialFunctions(token);
+							function = true;
+							if (isGetXlsDataFunction(token))
+								usesTimeSeries = true;
+
+							if (isGetXlsLookupsFunction(token))
+								definesLookupGetXls = true;
+
+							if (token.toUpperCase().equals("INTEG"))
+								stockVariable = true;
+
+							// move past "(" as code below will be adding it back
+							position.add(1);
+						} else if (isMacroName(token)) {
+							macro = true;
+							// move past "(" as code below will be adding it back
+							position.add(1);
+						} else {
+							referencesLookup = true;
+							lookupRef = true;
+							rhsTokens.add(token);
+						}
+						// if the char == "[", we have either an array reference
+						// or a array lookup reference
+					} else if (characterAt(position).equals("[")) {
+						array = true;
+						hasRHSArrayReference = true;
+						token=tokenizeArrayReference(token, position, opRes);
+						if (!opRes.isOk()) {
+							syntacticallyCorrect = false;
+							syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
+							return;
+						}
+						position.add(1);
+						skipWhiteSpace(position);
+						if (inRange(position.value()) && characterAt(position.value()).equals("(")) {
+							referencesLookup = true;
+							lookupRef = true;
+							token = token.replace("array.", "");
+							rhsTokens.add(token);
+
+						} else {
+							rhsTokens.add(token);
+							//					position.add(1);
+						}
+
+					} else {
+						if (!stringConstant)
+							variable = true;
+						rhsTokens.add(token);
+					}
+				} else {
+					// don't look ahead since it is beyond the end of statement
+					// so this must be a variable
+					variable = true;
+					rhsTokens.add(token);
 				}
-				
+				// this is where we grab either a funtion, a lookup, or variable
+				// need to detect arrays
+				// or special variable :NA:
+			} else if (Character.isLetter(characterAt(position).charAt(0))) {
+				boolean allowColon = false;
+				token = unaryMinus+ getNonQuotedStringStartingAt(position, allowColon, opRes);
 
-				if (token.toUpperCase().equals("INTEG"))
-				    stockVariable = true;
-				
-				token = token.toUpperCase();
-				// move past "(" as code below will be adding it back
+				skipWhiteSpace(position);
+				if (inRange(position)) {
+					if (characterAt(position).equals("(")) {   // checking for function invocation 
+						if (FunctionManager.isFunction(token)) {  // Here
+							checkSpecialFunctions(token);
+							function = true;
+							if (isGetXlsDataFunction(token)) {
+								usesTimeSeries = true;
+							}
+							if (isGetXlsLookupsFunction(token)) {
+								//				    usesTimeSeries = true;
+								definesLookupGetXls = true;
+							}
+
+
+							if (token.toUpperCase().equals("INTEG"))
+								stockVariable = true;
+
+							token = token.toUpperCase();
+							// move past "(" as code below will be adding it back
+							position.add(1);
+						} else if (isMacroName(token)) {
+							macro = true;
+							// move past "(" as code below will be adding it back
+							position.add(1);
+						} else {
+							lookupRef = true;
+							referencesLookup = true;
+							rhsTokens.add(token);
+						}
+						// array reference?
+					} else if (characterAt(position).equals("[")) {
+						array = true;
+						hasRHSArrayReference = true;
+						token=tokenizeArrayReference(token, position, opRes);
+						if (!opRes.isOk()) {
+							syntacticallyCorrect = false;
+							syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
+							return;
+						}
+						position.add(1);
+						skipWhiteSpace(position);
+						theChar = characterAt(position.value());
+						if (inRange(position.value()) && characterAt(position.value()).equals("(")) { // MARK HERE
+							referencesLookup = true;
+							lookupRef = true;
+							token = token.replace("array.", "");
+							rhsTokens.add(token);
+
+						} else {
+							rhsTokens.add(token);
+							//				position.add(1);
+						}
+
+
+					} else {
+						variable = true;
+						rhsTokens.add(token);
+					}
+				} else {
+					// don't look ahead since it is beyond the end of statement
+					// so this must be a variable
+					variable = true;
+					rhsTokens.add(token);
+				}
+			} else if (Character.isDigit(characterAt(position).charAt(0))) {
+				String numeric = getNumberStartingAt(position, opRes);
+				if (!opRes.isOk()) {
+					syntacticallyCorrect = false;
+					syntaxMessages.add("RHS: "+opRes.getMessage());
+					return;
+				}
+				token = unaryMinus+ numeric;
+			} else if (characterAt(position).equals(":")) {
+				token = getBooleanOperatorStartingAt(position, opRes);
+				if (!opRes.isOk()) {
+					syntacticallyCorrect = false;
+					syntaxMessages.add("RHS: "+opRes.getMessage());
+					return;
+				}
+			} else if (isTerminator(characterAt(position).charAt(0))) {
+				// special cases:
+				// if "-" need to check if unary and attach to next token
+				// if "=" need to change to "=="
+				// if "<" need to check to "<>"
+				// if "+" need to check if this is a unary + (previous token = "("
+				if (characterAt(position).equals("-")) {
+					String previousToken = tokens.get(tokens.size()-1);
+					if (previousToken.equals("(") || previousToken.equals("=") || Parser.isOperator(previousToken) || 
+							isFunctionArgumentSeparator(previousToken)) {
+						token = "_"; // unary minus
+					} else {
+						token = "-";
+					}
+				} else if (characterAt(position).equals("+")) {
+					String previousToken = tokens.get(tokens.size()-1);
+					if (previousToken.equals("(") || previousToken.equals("=") || Parser.isOperator(previousToken) || 
+							isFunctionArgumentSeparator(previousToken)) {
+						token = " "; // discard unary plus will this work?
+					} else {
+						token = "+";
+					}
+				} else if (characterAt(position).equals("=")) {
+					token = "==";
+				} else if (characterAt(position).equals("<")) {  // look ahead for ">" i.e. != "<>"
+					if (characterAt(position.value()+1).equals(">")) {
+						token = "<>";
+						position.add(1);
+					} if (characterAt(position.value()+1).equals("=")) {
+						token = "<=";
+						position.add(1);
+					} else {
+						token = characterAt(position);
+					}
+				}  else if (characterAt(position).equals(">")) {  // look ahead for "=" i.e. != "<>"
+					if (characterAt(position.value()+1).equals("=")){
+						token = ">=";
+						position.add(1);
+					} else {
+						token = characterAt(position);
+					}  
+				} else {
+					token = characterAt(position);
+				}
 				position.add(1);
-			    } else if (isMacroName(token)) {
-				    macro = true;
-				    // move past "(" as code below will be adding it back
-				    position.add(1);
-			    } else {
-				lookupRef = true;
-				referencesLookup = true;
-				rhsTokens.add(token);
-			    }
-			    // array reference?
-			} else if (characterAt(position).equals("[")) {
-			    array = true;
-			    hasRHSArrayReference = true;
-			    token=tokenizeArrayReference(token, position, opRes);
-			    if (!opRes.isOk()) {
-			    	syntacticallyCorrect = false;
-			    	syntaxMessages.add("Parsing RHS: "+opRes.getMessage());
-			    	return;
-			    }
-			    position.add(1);
-			    skipWhiteSpace(position);
-			    theChar = characterAt(position.value());
-			    if (inRange(position.value()) && characterAt(position.value()).equals("(")) { // MARK HERE
-				referencesLookup = true;
-				lookupRef = true;
-				token = token.replace("array.", "");
-				rhsTokens.add(token);
-				
-			    } else {
-				rhsTokens.add(token);
-//				position.add(1);
-			    }
-			    
+			}
 
+
+			// for functions 
+			if (function) {
+				if (clean(token).startsWith("GETXLSXXX")) {
+					tokens.add("sdFunctions."+clean(token));
+					tokens.add("(");
+					cleanEquation += "sdFunctions."+clean(token)+"(";
+				} else {
+					tokens.add("sdFunctions."+clean(token));
+					tokens.add("(");
+					FunctionDescription fd = FunctionManager.getDescription(token);
+					if (fd == null)
+						System.out.println("NULL FD");
+					if (fd.isRequiresName()) {
+						tokens.add("\""+lhs+"\"");
+						tokens.add(",");
+					}
+
+					String valueOf = "";
+					valueOf = NativeDataTypeManager.getLegalName(this, lhs);
+
+					//			 System.out.println("TokRHS: valueof ="+valueOf+" lhs = "+lhs);
+
+					int goober;
+					if (ArrayReference.isArrayReference(lhs)) {
+						goober = 1;
+						valueOf = lhs;
+						//			    valueOf = new ArrayReferenceNative(lhs, this).generateRHSImplementation(); // I added native 1/17
+					} else {
+						goober = 2;
+						//			    valueOf = NativeDataTypeManager.getLegalName(lhs);
+					}
+
+					if (fd.isRequiresValue()) {
+						tokens.add(valueOf);
+						tokens.add(",");
+					}
+					if (fd.isRequiresTime()) {
+						tokens.add("time");
+						tokens.add(",");
+					}
+					if (fd.isRequiresTimeStep()) {
+						tokens.add("timeStep");
+						tokens.add(",");
+					}
+
+					cleanEquation += "sdFunctions."+clean(token)+"(\""+lhs+"\","+valueOf+", time, timeStep, ";
+				}
+			} else if (macro) {
+				tokens.add(token);
+				//			tokens.add(clean(MacroManager.makeLegal(token)));
+				tokens.add("(");
+				//			cleanEquation += clean(MacroManager.makeLegal(token))+"(";
+				cleanEquation += clean(token)+"(";
+			}else if (lookupRef) {
+				// token = lookup name
+				tokens.add("sdFunctions.LOOKUP");
+				tokens.add("(");
+
+				tokens.add("lookup."+token);
+
+				tokens.add(",");
+				// move past the "(", we've already processed it
+				position.add(1);
+				skipWhiteSpace(position);
+
+				cleanEquation += "sdFunctions.LOOKUP"+"("+"lookup."+token+",";
+			}else if (array) {
+				tokens.add(token);
+				cleanEquation += token;
+
+			} else if (variable) {
+
+				tokens.add(NativeDataTypeManager.getLegalName(token));
+				cleanEquation += NativeDataTypeManager.getLegalName(token);
+
+			} else if (stringConstant) {
+				tokens.add("\""+token+"\"");
+				cleanEquation += "\""+token+"\"";
 			} else {
-			    variable = true;
-			    rhsTokens.add(token);
+				tokens.add(token);
+				cleanEquation += token.equals("_") ? "-" : token;
 			}
-		    } else {
-			// don't look ahead since it is beyond the end of statement
-			// so this must be a variable
-			variable = true;
-			rhsTokens.add(token);
-		    }
-		} else if (Character.isDigit(characterAt(position).charAt(0))) {
-			String numeric = getNumberStartingAt(position, opRes);
-			if (!opRes.isOk()) {
-				syntacticallyCorrect = false;
-				syntaxMessages.add("RHS: "+opRes.getMessage());
-				return;
-			}
-		    token = unaryMinus+ numeric;
-		} else if (characterAt(position).equals(":")) {
-		    token = getBooleanOperatorStartingAt(position, opRes);
-		    if (!opRes.isOk()) {
-		    	syntacticallyCorrect = false;
-				syntaxMessages.add("RHS: "+opRes.getMessage());
-				return;
-		    }
-		} else if (isTerminator(characterAt(position).charAt(0))) {
-		    // special cases:
-		    // if "-" need to check if unary and attach to next token
-		    // if "=" need to change to "=="
-		    // if "<" need to check to "<>"
-		    // if "+" need to check if this is a unary + (previous token = "("
-		    if (characterAt(position).equals("-")) {
-			String previousToken = tokens.get(tokens.size()-1);
-			if (previousToken.equals("(") || previousToken.equals("=") || Parser.isOperator(previousToken) || 
-				isFunctionArgumentSeparator(previousToken)) {
-			    token = "_"; // unary minus
-			} else {
-			    token = "-";
-			}
-		    } else if (characterAt(position).equals("+")) {
-			String previousToken = tokens.get(tokens.size()-1);
-			if (previousToken.equals("(") || previousToken.equals("=") || Parser.isOperator(previousToken) || 
-				isFunctionArgumentSeparator(previousToken)) {
-			    token = " "; // discard unary plus will this work?
-			} else {
-			    token = "+";
-			}
-		    } else if (characterAt(position).equals("=")) {
-			token = "==";
-		    } else if (characterAt(position).equals("<")) {  // look ahead for ">" i.e. != "<>"
-			if (characterAt(position.value()+1).equals(">")) {
-			    token = "<>";
-			    position.add(1);
-			} if (characterAt(position.value()+1).equals("=")) {
-			    token = "<=";
-			    position.add(1);
-			} else {
-			    token = characterAt(position);
-			}
-		    }  else if (characterAt(position).equals(">")) {  // look ahead for "=" i.e. != "<>"
-			if (characterAt(position.value()+1).equals("=")){
-			    token = ">=";
-			    position.add(1);
-			} else {
-			    token = characterAt(position);
-			}  
-		    } else {
-			token = characterAt(position);
-		    }
-		    position.add(1);
+			skipWhiteSpace(position);
 		}
+		// if this rhs contains an invocation of GETXLS...
+		// we do not want for it to have RHS tokens!
 
+		// set our conditions
 
-		// for functions 
-		if (function) {
-		    if (clean(token).startsWith("GETXLSXXX")) {
-			tokens.add("sdFunctions."+clean(token));
-			tokens.add("(");
-			cleanEquation += "sdFunctions."+clean(token)+"(";
-		    } else {
-			tokens.add("sdFunctions."+clean(token));
-			tokens.add("(");
-			FunctionDescription fd = FunctionManager.getDescription(token);
-			if (fd == null)
-			    System.out.println("NULL FD");
-			if (fd.isRequiresName()) {
-			tokens.add("\""+lhs+"\"");
-			tokens.add(",");
-			}
-
-			String valueOf = "";
-			 valueOf = NativeDataTypeManager.getLegalName(this, lhs);
-			 
-			 System.out.println("TokRHS: valueof ="+valueOf+" lhs = "+lhs);
-			 
-			 int goober;
-			if (ArrayReference.isArrayReference(lhs)) {
-			    goober = 1;
-			    valueOf = lhs;
-//			    valueOf = new ArrayReferenceNative(lhs, this).generateRHSImplementation(); // I added native 1/17
-			} else {
-			    goober = 2;
-//			    valueOf = NativeDataTypeManager.getLegalName(lhs);
-			}
-			
-			if (fd.isRequiresValue()) {
-			tokens.add(valueOf);
-			tokens.add(",");
-			}
-			if (fd.isRequiresTime()) {
-			tokens.add("time");
-			tokens.add(",");
-			}
-			if (fd.isRequiresTimeStep()) {
-			tokens.add("timeStep");
-			tokens.add(",");
-			}
-
-			cleanEquation += "sdFunctions."+clean(token)+"(\""+lhs+"\","+valueOf+", time, timeStep, ";
-		    }
-		} else if (macro) {
-		    tokens.add(token);
-//			tokens.add(clean(MacroManager.makeLegal(token)));
-			tokens.add("(");
-//			cleanEquation += clean(MacroManager.makeLegal(token))+"(";
-			cleanEquation += clean(token)+"(";
-		}else if (lookupRef) {
-		    // token = lookup name
-		    	tokens.add("sdFunctions.LOOKUP");
-		    	tokens.add("(");
-		    	
-		    	tokens.add("lookup."+token);
-		    	
-		    	tokens.add(",");
-		    	// move past the "(", we've already processed it
-		    	position.add(1);
-		    	skipWhiteSpace(position);
-		    	
-			cleanEquation += "sdFunctions.LOOKUP"+"("+"lookup."+token+",";
-		}else if (array) {
-		    	tokens.add(token);
-			cleanEquation += token;
-			
-		} else if (variable) {
-		    
-			tokens.add(NativeDataTypeManager.getLegalName(token));
-			cleanEquation += NativeDataTypeManager.getLegalName(token);
-		   
-		} else if (stringConstant) {
-			tokens.add("\""+token+"\"");
-			cleanEquation += "\""+token+"\"";
-		    } else {
-			tokens.add(token);
-			cleanEquation += token.equals("_") ? "-" : token;
-		    }
-		    skipWhiteSpace(position);
-		}
-	    // if this rhs contains an invocation of GETXLS...
-	    // we do not want for it to have RHS tokens!
-	    
-	    // set our conditions
-	    
-	    if (vensimEquation.contains("VDMLOOKUP"))
+		if (vensimEquation.contains("VDMLOOKUP"))
 			setVdmLookup(true);
-	    if (rhsTokens.size() == 0 || equation.contains("GET XLS") || equation.contains("VDMLOOKUP") ||
-		    definesLookup || hasInitialValue || definesSubscript ||
-		    definesLookupWithRange)
-		setOneTime(true);
-	    
-	    // need to call this multiple times even though it meets our "one-time" criteria
-	    if (equation.contains("RANDOM"))
-		setOneTime(false);
-	    
-	
+		if (rhsTokens.size() == 0 || equation.contains("GET XLS") || equation.contains("VDMLOOKUP") ||
+				definesLookup || hasInitialValue || definesSubscript ||
+				definesLookupWithRange)
+			setOneTime(true);
+
+		// need to call this multiple times even though it meets our "one-time" criteria
+		if (equation.contains("RANDOM"))
+			setOneTime(false);
+
+
 	}
 	
 	private boolean isArrayReference(MutableInteger position) {
@@ -2260,10 +2274,11 @@ public class Equation {
 					return al;
 				al.add(numeric);
 			} else {
-				al.add(characterAt(position));
+				if (!Character.isWhitespace(characterAt(position).toCharArray()[0]))
+					al.add(characterAt(position));
 				if (characterAt(position).equals("(")) {
 					openParens++;
-				} else if (characterAt(position).equals("(")) {
+				} else if (characterAt(position).equals(")")) {
 					openParens--;
 					if (openParens == 0)
 						done = true;
@@ -2272,12 +2287,12 @@ public class Equation {
 			}
 		}
 		if (!done) {
-			or.setOk(false);
-			or.setMessage("Closing paren(s) missing");
+			
+			or.setErrorMessage("Closing paren(s) missing");
 			return al;
 		}
 
-		al.add(")");
+//		al.add(")");
 
 		return al;
 	}
@@ -2285,8 +2300,7 @@ public class Equation {
 	private boolean checkIf(String s1, String s2, OperationResult or) {
 		or.clear();
 	    if (!s1.equals(s2)) {
-	    	or.setOk(false);
-	    	or.setMessage("Expecting <"+s1+"> found <"+s2+">");
+	    	or.setErrorMessage("Expecting <"+s1+"> found <"+s2+">");
 	    }
 	    return or.isOk();
 	}
@@ -2379,8 +2393,8 @@ public class Equation {
 		String str = equation.substring(position.value());
 		// is there a closing ")"
 		if (!str.contains(")")) {
-			or.setOk(false);
-			or.setMessage("Numeric Range Subscript Definition: Missing closing paren");
+			
+			or.setErrorMessage("Numeric Range Subscript Definition: Missing closing paren");
 			return;
 		}
 		str = str.substring(1, str.indexOf(")")).trim();
@@ -2406,8 +2420,8 @@ public class Equation {
 			return;
 		}
 		if (!lHead.equals(rHead)) {
-			or.setOk(false);
-			or.setMessage("Numeric Subscript Range: subscript heads do not match");
+			
+			or.setErrorMessage("Numeric Subscript Range: subscript heads do not match");
 		}
 		String chars = l.replaceAll(start, "");
 
@@ -2438,8 +2452,8 @@ public class Equation {
 				return n;
 			}
 		}
-		or.setOk(false);
-		or.setMessage("Non-numeric Subscript head not found");
+		
+		or.setErrorMessage("Non-numeric Subscript head not found");
 		return "";
 	}
 	
@@ -2453,8 +2467,8 @@ public class Equation {
 				return n;
 			}
 		}
-		or.setOk(false);
-		or.setMessage("Numeric Subscript tail not found");
+
+		or.setErrorMessage("Numeric Subscript tail not found");
 		return "";
 	}
 	
@@ -2511,8 +2525,8 @@ public class Equation {
 		}
 		booleanOperator += ":";
 		if (!inRange(position) || !Parser.isLogicalOperator(booleanOperator)) {
-			or.setOk(false);
-			or.setMessage("Expecting boolean operator");
+			
+			or.setErrorMessage("Expecting boolean operator");
 			return booleanOperator;
 		}
 		
@@ -2622,8 +2636,8 @@ public class Equation {
 		}
 		
 		if (number.length() == 0) {
-			or.setOk(false);
-			or.setMessage("Expecting numeric value");
+			
+			or.setErrorMessage("Expecting numeric value");
 		}
 
 		return number;
@@ -2659,8 +2673,8 @@ public class Equation {
 		}
 		
 		if (!inRange(position)) {
-			or.setOk(false);
-			or.setMessage("Missing end quote");
+			
+			or.setErrorMessage("Missing end quote");
 			return quotedString;
 		}
 		
@@ -2689,8 +2703,8 @@ public class Equation {
 		}
 		
 		if (!inRange(position)) {
-			or.setOk(false);
-			or.setMessage("Missing end quote");
+			
+			or.setErrorMessage("Missing end quote");
 		}
 		
 		position.add(1);
@@ -3779,12 +3793,12 @@ public class Equation {
 		this.syntacticallyCorrect = syntacticallyCorrect;
 	}
 
-	public boolean isSemanticallyCorrect() {
-		return semanticallyCorrect;
+	public boolean isUsageCorrect() {
+		return usageCorrect;
 	}
 
-	public void setSemanticallyCorrect(boolean semanticallyCorrect) {
-		this.semanticallyCorrect = semanticallyCorrect;
+	public void setUsageCorrect(boolean semanticallyCorrect) {
+		this.usageCorrect = semanticallyCorrect;
 	}
 
 	public List<String> getSyntaxMessages() {
@@ -3792,6 +3806,6 @@ public class Equation {
 	}
 
 	public List<String> getSemanticMessages() {
-		return semanticMessages;
+		return usageMessages;
 	}
 }

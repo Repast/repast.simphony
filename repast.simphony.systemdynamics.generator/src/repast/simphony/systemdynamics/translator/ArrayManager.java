@@ -54,6 +54,36 @@ public class ArrayManager {
 	return orderedSubscripts;
     }
     
+    public static OperationResult validateLookupReference(String token) {
+    	OperationResult or = new OperationResult();
+    	
+    	ArrayReference ar = null;
+    	if (ArrayReference.isArrayReference(token)) {
+    	    ar = new ArrayReference(token);
+    	    if (arrays.containsKey(ar.getArrayName()))
+    			return or;
+    	    
+    	} 
+    	
+    	or.setErrorMessage("Invalid array reference "+token);
+    	return or;
+    }
+    
+    public static OperationResult validateArrayReference(String token) {
+    	OperationResult or = new OperationResult();
+    	
+    	ArrayReference ar = null;
+    	if (ArrayReference.isArrayReference(token)) {
+    	    ar = new ArrayReference(token);
+    	    if (arraysUsedAsLookup.contains(ar.getArrayName()))
+    			return or;
+    	    
+    	} 
+    	
+    	or.setErrorMessage("Invalid lookup table reference "+token);
+    	return or;
+    }
+    
     public static String getVensimSubscript(String array, int dimension, int index) {
 	// inefficient change this to store as hash,ap
 	Map<Integer, Map<String, Integer>> arrayMap = allocatedIndicies.get(array);

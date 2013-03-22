@@ -145,41 +145,61 @@ public class Parser {
 	else
 	    return false;
     }
+    
+    public static boolean isWord(String expression) {
+    	
+    	MutableInteger ptr = new MutableInteger(0);
+
+    	while (inRange(expression, ptr)) {
+    		String aChar = characterAt(expression, ptr);
+    		
+
+    		if (!Character.isLetterOrDigit(aChar.charAt(0)) &&  !Character.isWhitespace(aChar.charAt(0))) {
+    			return false;
+    		}
+    		
+    		ptr.add(1);
+
+    	}
+
+    
+    	return true;
+    }
 
     public static String forceDouble(String expression) {
-	List<String> tokens = new ArrayList<String>();
-	MutableInteger ptr = new MutableInteger(0);
+    	List<String> tokens = new ArrayList<String>();
+    	MutableInteger ptr = new MutableInteger(0);
 
-	// Must not change quoted strings
+    	// Must not change quoted strings
 
-	boolean inQuote = false;
+    	boolean inQuote = false;
 
-	if (expression.contains("VDMLOOKUP"))
-	    return expression;
+    	if (expression.contains("VDMLOOKUP"))
+    		return expression;
 
-	while (inRange(expression, ptr)) {
-	    String aChar = characterAt(expression, ptr);
-	    if (aChar.equals("\""))
-		inQuote = !inQuote;
+    	while (inRange(expression, ptr)) {
+    		String aChar = characterAt(expression, ptr);
+    		if (aChar.equals("\""))
+    			inQuote = !inQuote;
 
-	    if (!inQuote && (Character.isDigit(aChar.charAt(0)) || aChar.equals("."))) {
-		String number = getNumberStartingAt(expression, ptr);
-		if (!number.contains("."))
-		    number += ".0";
-		tokens.add(number);
-	    } else {
-		tokens.add(aChar);
-		ptr.add(1);
-	    }
+    		if (!inQuote && (Character.isDigit(aChar.charAt(0)) || aChar.equals("."))) {
+    			String number = getNumberStartingAt(expression, ptr);
+    			if (!number.contains("."))
+    				number += ".0";
+    			tokens.add(number);
+    		} else {
+    			tokens.add(aChar);
+    			ptr.add(1);
+    		}
 
-	}
+    	}
 
-	String forced = "";
-	for (String s : tokens) {
-	    forced += s;
-	}
+    	String forced = "";
+    	for (String s : tokens) {
+    		forced += s;
+    	}
 
-	return forced;
+    	return forced;
     }
 
     public static String characterAt(String equation, MutableInteger position) {

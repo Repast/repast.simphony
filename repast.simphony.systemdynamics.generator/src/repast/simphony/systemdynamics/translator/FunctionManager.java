@@ -21,6 +21,18 @@ public class FunctionManager {
 	load();
     }
     
+    public static OperationResult validateFunctionRerference(String token) {
+    	OperationResult or = new OperationResult();
+    	FunctionDescription fd = getDescription(token);
+    	if (fd != null)
+    		return or;
+    	
+    	
+    	or.setErrorMessage("Function not registered "+token);
+    	
+    	return or;
+    }
+    
     private static void load() {
 	BufferedReader fileReader = null;
 

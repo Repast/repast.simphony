@@ -207,7 +207,12 @@ public class Translator {
 		// process graphics first since we get screen name information from this portion of the file
 		Map<String, View> graphics = new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
 		EquationProcessor equationProcessor = new EquationProcessor();
+		
+	
 		Map<String, Equation> equations = equationProcessor.processRawEquations(sdObjectManager, mdlContents);
+		
+		
+		
 		Map<String, Equation> syntaxErrors = equationProcessor.getSyntaxErrors(equations);
 		boolean errors = syntaxErrors.size() > 0;
 		if (errors) {
@@ -215,20 +220,31 @@ public class Translator {
 			return false;
 		}
 		
-		Map<String, Equation> semanticErrors = equationProcessor.getSemanticErrors(equations);
-		errors = semanticErrors.size() > 0;
+		
+		
+		
+		Map<String, Equation> usageErrors = equationProcessor.getUsageErrors(equations);
+		errors = usageErrors.size() > 0;
 		if (errors) {
-			printErrors(semanticErrors);
+			printErrors(usageErrors);
 			return false;
 		}
+		
+//		UnitsManager.performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
 
 		//	sdObjectManager.print();
+		
+		
 
 		List<String> addedScreenNames = sdObjectManager.validate(equations);
+		
+		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
 		sdObjectManager.print();
 
+		
+		
 		process(equations);
 		printGraphics(graphics);
 		

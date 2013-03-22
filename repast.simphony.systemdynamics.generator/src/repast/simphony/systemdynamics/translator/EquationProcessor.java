@@ -42,16 +42,16 @@ public class EquationProcessor {
     	
     }
     
-    public Map<String, Equation> getSemanticErrors(Map<String, Equation> equations) {
-   	 Map<String, Equation> semanticErrors = new HashMap<String, Equation>();
+    public Map<String, Equation> getUsageErrors(Map<String, Equation> equations) {
+   	 Map<String, Equation> usageErrors = new HashMap<String, Equation>();
    	 Iterator<String> iter = equations.keySet().iterator();
    	 while (iter.hasNext()) {
    		 String lhs = iter.next();
    		 Equation eqn = equations.get(lhs);
-   		 if (!eqn.isSemanticallyCorrect())
-   			 semanticErrors.put(lhs, eqn);
+   		 if (!eqn.isUsageCorrect())
+   			 usageErrors.put(lhs, eqn);
    	 }
-   	 return semanticErrors;
+   	 return usageErrors;
    	
    }
 
@@ -309,7 +309,7 @@ public class EquationProcessor {
     			// we now have the equation text
     			// skip "equations" that begin with "*" -- section markers
     			if (!vensimEquation.startsWith("***")) {
-
+    				
     				// trap any equations requiring special processing prior to creating
     				List<String> eqnToProcess = new ArrayList<String>();
     				//				    eqnToProcess.add(vensimEquation);
@@ -319,7 +319,10 @@ public class EquationProcessor {
     						processWithLookup(aVensimEquation, equations);
     					} else {
     						//			    System.out.println(aVensimEquation);
+    						
     						Equation equation = new Equation(aVensimEquation);
+    						
+    						
 
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set

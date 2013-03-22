@@ -220,6 +220,7 @@ public class TranslatorRepastSimphony extends Translator {
     		}
     		
     		System.out.println("Units: "+variable.getUnits());
+    		System.out.println("LHS: "+variable.getLhs());
     		System.out.println("Equation: "+variable.getEquation());
     		System.out.println("Subscripts: "+variable.getSubscripts());
     		for (String s : variable.getSubscripts()) {
@@ -252,12 +253,19 @@ public class TranslatorRepastSimphony extends Translator {
     			
 //    			mdlContents.add(lhs+" =");
     			
-    			
-    			if (variable.getEquation().contains("=")) {
-    				mdlContents.add(variable.getEquation().split("=")[0]);
-    				mdlContents.add(variable.getEquation().split("=")[1]);
-    			} else {
+    			if (variable.getType().equals(VariableType.STOCK)) {
+        			Stock stk = (Stock) variable;
+        			
+        			mdlContents.add(variable.getLhs()+ "= INTEG(");
+    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+    				
+        		} else if (variable.getType().equals(VariableType.RATE) || 
+        				variable.getType().equals(VariableType.CONSTANT)) {
+    				mdlContents.add(variable.getLhs()+ "=");
     				mdlContents.add(variable.getEquation());
+    			} else if (variable.getType().equals(VariableType.LOOKUP)){
+    				mdlContents.add(variable.getLhs()+ "(");
+    				mdlContents.add(variable.getEquation()+")");
     			}
     			mdlContents.add(FIELD_SEPARATOR+(variable.getUnits() != null ? variable.getUnits() : ""));
     			mdlContents.add(FIELD_SEPARATOR+(variable.getComment() != null ? variable.getComment() : ""));

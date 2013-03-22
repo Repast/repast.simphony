@@ -2,7 +2,7 @@ package repast.simphony.systemdynamics.translator;
 
 public class OperationResult {
 	
-	private boolean ok;
+	private boolean ok = true;
 	private String message;
 	
 	public OperationResult() {
@@ -14,6 +14,8 @@ public class OperationResult {
 	}
 
 	public void setOk(boolean ok) {
+		if (!ok)
+			System.out.println("Setting not OK");
 		this.ok = ok;
 	}
 
@@ -28,6 +30,13 @@ public class OperationResult {
 	public void clear() {
 		ok=true;
 		message = null;
+	}
+	
+	public void setErrorMessage(String message) {
+		
+		setMessage(message);
+		System.out.println("Setting not OK");
+		setOk(false);
 	}
 
 }
