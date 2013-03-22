@@ -14,6 +14,11 @@ import repast.simphony.util.SimUtilities;
 public class StateChartBeginAction implements IAction {
 
 	Set<DefaultStateChart<?>> scSet = new LinkedHashSet<DefaultStateChart<?>>();
+	private StateChartSimIntegrator integrator;
+	
+	public StateChartBeginAction(StateChartSimIntegrator integrator) {
+	  this.integrator = integrator;
+	}
 
 	// register listeners
 	public void registerListener(DefaultStateChart<?> sc) {
@@ -56,7 +61,7 @@ public class StateChartBeginAction implements IAction {
 		Collections.sort(temp, pComp);
 
 		for (DefaultStateChart<?> sc : temp) {
-			sc.begin();
+			sc.begin(integrator);
 		}
 	}
 
