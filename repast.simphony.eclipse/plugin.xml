@@ -2,6 +2,7 @@
 <?eclipse version="3.3"?>
 <plugin>
    <extension-point id="repast.simphony.project.config" name="RepastSimphonyProjectConfig" schema="schema/repast.simphony.project.config.exsd"/>
+   <extension-point id="repast.simphony.perspective.config" name="Repast Simphonty Perspsective Configurator" schema="schema/repast.simphony.perspective.config.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension: Repast Simphony Variables                                                -->
@@ -208,13 +209,13 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetID="repast.simphony.relogo.ide.relogoperspective">
          <actionSet
                id="repast.simphony.eclipse.samplemodelsactionSet">
          </actionSet>
       </perspectiveExtension>
       <perspectiveExtension
-            targetID="repast.simphony.relogo.ide.relogoperspective">
+            targetID="repast.simphony.eclipse.perspective">
          <actionSet
                id="repast.simphony.eclipse.samplemodelsactionSet">
          </actionSet>
