@@ -69,7 +69,7 @@ public class Node {
     }
     
     public String getUnits() {
-        return UnitsManager.getUnits(token);
+        return InformationManagers.getInstance().getUnitsManager().getUnits(token);
     }
 
     public void setToken(String token) {
@@ -93,7 +93,7 @@ public class Node {
 	StringBuffer sb = new StringBuffer();
 	
 	sb.append(blanks+"token: "+token+"\n");
-	sb.append(blanks+"units: "+UnitsManager.getUnits(token)+"\n");
+	sb.append(blanks+"units: "+InformationManagers.getInstance().getUnitsManager().getUnits(token)+"\n");
 	sb.append(blanks+"placeHolder: "+(placeHolder ? "True" : "False")+"\n");
 	sb.append(blanks+"results variable: "+resultsVariable+"\n");
 	sb.append(blanks+"head: "+generatedCodeHead+"\n");
@@ -106,7 +106,7 @@ public class Node {
 	StringBuffer sb = new StringBuffer();
 	
 	sb.append(blanks+"token: "+token+"\n");
-	sb.append(blanks+"units: "+UnitsManager.getUnits(token)+"\n");
+	sb.append(blanks+"units: "+InformationManagers.getInstance().getUnitsManager().getUnits(token)+"\n");
         return sb.toString(); // replacedToken;
     }
 

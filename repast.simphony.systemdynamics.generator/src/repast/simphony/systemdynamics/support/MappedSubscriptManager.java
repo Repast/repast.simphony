@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import repast.simphony.systemdynamics.translator.InformationManagers;
+
 /**
  * @author bragen
  * 
@@ -24,12 +26,16 @@ public class MappedSubscriptManager {
     // 2nd level key is definitionRHS -> Map<String, String>
     // 3rd level key is definitionRHS -> definitionLHS
 
-    public static Map<String, Map<String, Map<String, String>>> subscriptNameMap = 
-	new HashMap<String, Map<String, Map<String, String>>>();
-    private static List<DelayedMapping> delayedMappings = new ArrayList<DelayedMapping>();
+    public Map<String, Map<String, Map<String, String>>> subscriptNameMap;
+    private List<DelayedMapping> delayedMappings;
+    
+    public MappedSubscriptManager() {
+    	 subscriptNameMap = new HashMap<String, Map<String, Map<String, String>>>();
+    	delayedMappings = new ArrayList<DelayedMapping>();
+    }
     
     
-    public static boolean isMapBetween(String equationRHS, String equationLHS) {
+    public boolean isMapBetween(String equationRHS, String equationLHS) {
 	boolean map = false;
 	if (subscriptNameMap.containsKey(equationRHS)) {
 	    Map<String, Map<String, String>> level1 = subscriptNameMap.get(equationRHS);
@@ -44,7 +50,7 @@ public class MappedSubscriptManager {
     // here, lhsSubscript refers to the LHS of the mapping statement i.e.
     // lhsSubscript: x, y, z -> mappedToSubscript
 
-    public static void addSubscriptNameMapping(String definitionLHS,
+    public void addSubscriptNameMapping(String definitionLHS,
 	    String definitionRHS) {
 	if (!subscriptNameMap.containsKey(definitionLHS))
 	    subscriptNameMap.put(definitionLHS,
@@ -58,13 +64,13 @@ public class MappedSubscriptManager {
 
     // we can just save this as a delayed mapping since the subscript values are
     // full range
-    public static void addSubscriptNameFullSubrangeMapping(
+    public void addSubscriptNameFullSubrangeMapping(
 	    String definitionLHS, String definitionRHS) {
 	addSubscriptNameMapping(definitionLHS, definitionRHS);
 	delayedMappings.add(new DelayedMapping(definitionLHS, definitionRHS));
     }
 
-    public static void addSubscriptValueMapping(String definitionLHS,
+    public void addSubscriptValueMapping(String definitionLHS,
 	    String definitionRHS, String definitionLHSValue,
 	    String definitionRHSValue) {
 	Map<String, Map<String, String>> mappings = subscriptNameMap
@@ -73,7 +79,7 @@ public class MappedSubscriptManager {
 	valueMap.put(definitionRHSValue, definitionLHSValue);
     }
 
-    public static void addSubscriptValueMappingDelayed(String definitionLHS,
+    public void addSubscriptValueMappingDelayed(String definitionLHS,
 	    String definitionRHS, List<String> definitionLHSValues) {
 
 	delayedMappings.add(new DelayedMapping(definitionLHS, definitionRHS,
@@ -81,7 +87,7 @@ public class MappedSubscriptManager {
 
     }
 
-    public static void addSubscriptValueMappingDelayed(String definitionLHS,
+    public void addSubscriptValueMappingDelayed(String definitionLHS,
 	    String definitionRHS, List<String> definitionLHSValues,
 	    List<String> definitionRHSValues) {
 
@@ -90,7 +96,7 @@ public class MappedSubscriptManager {
 
     }
 
-    public static void makeConsistent() {
+    public void makeConsistent() {
 	// check for full Subrange that may not have a set of values equated
 	// will need to reach out to the NamedSubscriptManager for subscript
 	// values
@@ -105,17 +111,17 @@ public class MappedSubscriptManager {
 		// this assumes that the for x <-> y means that y is defined and
 		// x is defined by this (at the time of reading this statement
 
-		if (NamedSubscriptManager.isNamedSubscript(delayedMapping.getDefinitionLHS()))  {
-		    definitionLHSValues = NamedSubscriptManager.getValuesFor(delayedMapping.getDefinitionLHS());
+		if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(delayedMapping.getDefinitionLHS()))  {
+		    definitionLHSValues = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(delayedMapping.getDefinitionLHS());
 		} else {
-		    definitionLHSValues = NamedSubscriptManager.getValuesFor(delayedMapping.getDefinitionRHS());
+		    definitionLHSValues = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(delayedMapping.getDefinitionRHS());
 		}
 	    } 
 	    if (definitionRHSValues == null) {
-		if (NamedSubscriptManager.isNamedSubscript(delayedMapping.getDefinitionRHS()))  {
-		    definitionRHSValues = NamedSubscriptManager.getValuesFor(delayedMapping.getDefinitionRHS());
+		if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(delayedMapping.getDefinitionRHS()))  {
+		    definitionRHSValues = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(delayedMapping.getDefinitionRHS());
 		} else {
-		    definitionRHSValues = NamedSubscriptManager.getValuesFor(delayedMapping.getDefinitionLHS());
+		    definitionRHSValues = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(delayedMapping.getDefinitionLHS());
 		}
 	    }
 
@@ -124,7 +130,7 @@ public class MappedSubscriptManager {
 
 	    if (definitionLHSValues.size() > 0) {
 		for (int i = 0; i < definitionLHSValues.size(); i++)
-		    MappedSubscriptManager.addSubscriptValueMapping(
+		    addSubscriptValueMapping(
 			    delayedMapping.getDefinitionLHS(),
 			    delayedMapping.getDefinitionRHS(),
 			    definitionLHSValues.get(i),
@@ -145,7 +151,7 @@ public class MappedSubscriptManager {
 		if (valueMap.size() > 0)
 		    continue;
 		// otherwise, we need to populate
-		for (String value : NamedSubscriptManager
+		for (String value : InformationManagers.getInstance().getNamedSubscriptManager()
 			.getValuesFor(definitionRHS)) {
 		    addSubscriptValueMapping(definitionLHS, definitionRHS,
 			    value, value); 
@@ -175,8 +181,8 @@ public class MappedSubscriptManager {
 		    level3Key.add(key);
 		Collections.sort(level3Key);
 		for (String key3 : level3Key) {
-		    if (NamedSubscriptManager.isNamedSubscript(key3)) {
-			for (String terminal : NamedSubscriptManager
+		    if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(key3)) {
+			for (String terminal : InformationManagers.getInstance().getNamedSubscriptManager()
 				.getValuesFor(key3)) {
 			    addSubscriptValueMapping(key1, key2, 
 				    level3Map.get(key3), terminal);
@@ -190,7 +196,7 @@ public class MappedSubscriptManager {
     }
     
     
-    public static String getSubscriptMapping(String eqLHSnamed, String eqLHSterminal, String eqRHSnamed) {
+    public String getSubscriptMapping(String eqLHSnamed, String eqLHSterminal, String eqRHSnamed) {
 	Map<String, Map<String, String>> level2Map = subscriptNameMap.get(eqRHSnamed);
 	Map<String, String> level3Map = level2Map.get(eqLHSnamed);
 	String mapped = level3Map.get(eqLHSterminal);
@@ -203,7 +209,7 @@ public class MappedSubscriptManager {
     // here rhsSubscript means the rhs of an assignment equation
     // lhsSubscript is the subscript referenced on the lhs of equation
 
-    public static String getMappedValue(String definitionLHS,
+    public String getMappedValue(String definitionLHS,
 	    String definitionRHS, SubscriptCombination subscriptCombination) {
 	if (!subscriptNameMap.containsKey(definitionLHS))
 	    return null;
@@ -219,7 +225,7 @@ public class MappedSubscriptManager {
 	return null;
     }
 
-    public static String getMappedValue(String definitionLHS,
+    public String getMappedValue(String definitionLHS,
 	    List<String> allDefinitionRHS,
 	    SubscriptCombination subscriptCombination) {
 	// there can only be one mapping
@@ -244,7 +250,7 @@ public class MappedSubscriptManager {
 
     }
 
-    public static void generateCode(BufferedWriter bw) {
+    public void generateCode(BufferedWriter bw) {
 	// this method takes the information determined while parsing the System
 	// Dynamics equations
 	// and writes it back out in the forms of method calls to reload the
@@ -283,7 +289,7 @@ public class MappedSubscriptManager {
 	}
     }
 
-    public static void dumpMappings(BufferedWriter bw) {
+    public void dumpMappings(BufferedWriter bw) {
 	List<String> level1Key = new ArrayList<String>();
 	List<String> level2Key;
 	List<String> level3Key;
@@ -322,14 +328,14 @@ public class MappedSubscriptManager {
 				+ ","
 				+ level3Map.get(key3)
 				+ ","
-				+ NamedSubscriptManager.isNamedSubscript(key3)
+				+ InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(key3)
 				+ ","
-				+ NamedSubscriptManager
+				+ InformationManagers.getInstance().getNamedSubscriptManager()
 				.isNamedSubscript(level3Map.get(key3))
 				+ ","
-				+NamedSubscriptManager.getIndex(key2, key3)
+				+InformationManagers.getInstance().getNamedSubscriptManager().getIndex(key2, key3)
 				+ ","
-				+NamedSubscriptManager.getIndex(key1, level3Map.get(key3))
+				+InformationManagers.getInstance().getNamedSubscriptManager().getIndex(key1, level3Map.get(key3))
 				+ "\n");
 		    } catch (IOException e) {
 			// TODO Auto-generated catch block

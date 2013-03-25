@@ -43,13 +43,13 @@ public class UsageChecker {
 		OperationResult or = new OperationResult();
 		
 		if (type.equals(ARRAY)) {
-			or = ArrayManager.validateArrayReference(token);
+			or = InformationManagers.getInstance().getArrayManager().validateArrayReference(token);
 		} else if (type.equals(FUNCTION)) {
-			or = FunctionManager.validateFunctionRerference(token);
+			or = InformationManagers.getInstance().getFunctionManager().validateFunctionRerference(token);
 		} else if (type.equals(SCALAR)) {
-			or = NativeDataTypeManager.validateScalarReference(token);
+			or = InformationManagers.getInstance().getNativeDataTypeManager().validateScalarReference(token);
 		} else if (type.equals(LOOKUP)) {
-			or = ArrayManager.validateLookupReference(token);
+			or = InformationManagers.getInstance().getArrayManager().validateLookupReference(token);
 		} 
 		
 		

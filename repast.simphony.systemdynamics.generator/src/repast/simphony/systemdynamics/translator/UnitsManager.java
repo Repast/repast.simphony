@@ -14,16 +14,18 @@ import repast.simphony.systemdynamics.support.MutableInteger;
 
 public class UnitsManager {
     
-    private static Map<String, String> lhsUnits = new HashMap<String, String>();
-    private static Map<String, String> lhsUnitsRaw = new HashMap<String, String>();
-    private static Map<String, String> unitsEquivalence = new HashMap<String, String>();
-    private static UnitConsistencyXMLWriter unitConsistencyXMLWriter;
+    private  Map<String, String> lhsUnits;
+    private  Map<String, String> lhsUnitsRaw;
+    private  Map<String, String> unitsEquivalence;
+    private  UnitConsistencyXMLWriter unitConsistencyXMLWriter;
     
     public UnitsManager() {
-	
+    	lhsUnits = new HashMap<String, String>();
+        lhsUnitsRaw = new HashMap<String, String>();
+        unitsEquivalence = new HashMap<String, String>();
     }
     
-    public static boolean performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
+    public  boolean performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
     	boolean consistent = true;
     	List<String> evaluationOrder = new ArrayList<String>();
     	for (String key : equations.keySet()) {
@@ -34,7 +36,7 @@ public class UnitsManager {
 
     }
     
-    public static boolean performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
+    public  boolean performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
     	boolean consistent = true;
     	unitConsistencyXMLWriter = new UnitConsistencyXMLWriter();
     	int equationCount = 0;
@@ -44,7 +46,7 @@ public class UnitsManager {
     		if (!eqn.isAssignment())
     			continue;
 
-    		if (!FunctionManager.canCheckUnitsConsistency(eqn.getVensimEquation())) {
+    		if (!InformationManagers.getInstance().getFunctionManager().canCheckUnitsConsistency(eqn.getVensimEquation())) {
     			continue;
     		}
 
@@ -66,48 +68,48 @@ public class UnitsManager {
     	return consistent;
     }
     
-    public static void addEquivalence(String alternateUnit, String effectiveUnit) {
+    public  void addEquivalence(String alternateUnit, String effectiveUnit) {
 	unitsEquivalence.put(alternateUnit, effectiveUnit);
     }
     
-    public static String getEffectiveUnits(String units) {
+    public  String getEffectiveUnits(String units) {
 	if (unitsEquivalence.containsKey(units))
 	    return unitsEquivalence.get(units);
 	else
 	    return units;
     }
     
-    public static String getUnits(String lhs) {
+    public  String getUnits(String lhs) {
 	
 	String units = lhsUnits.get(cleanseLHS(lhs));
 	return getEffectiveUnits(units);
     }
     
-    public static void addLhsUnits(String lhs, String units) {
+    public  void addLhsUnits(String lhs, String units) {
 //	if (lhs.startsWith("array."))
 //	    System.out.println("Proc array");
 	lhsUnitsRaw.put(lhs, units);
 	lhsUnits.put(cleanseLHS(lhs), cleanseUnits(units));
     }
     
-    public static boolean hasUnits(String lhs) {
+    public  boolean hasUnits(String lhs) {
 	return lhsUnits.containsKey(cleanseLHS(lhs));
     }
     
-    public static String cleanseLHS(String lhs) {
+    public  String cleanseLHS(String lhs) {
 	String lhside = lhs;
 	
 	if (ArrayReference.isArrayReference(lhs)) {
 	    lhside = new ArrayReference(lhs).getArrayName();
 	}
 	
-	lhside = NativeDataTypeManager.getOriginalName(lhside);
+	lhside = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(lhside);
 	
 	lhside = lhside.replace("memory.", "").replace("lookup.", "").replace("sdFunctions.", "").replace("array.", "");
 	
 	return lhside.replace("memory.", "").replace("lookup.", "").replace("sdFunctions.", "");
     }
-    public static String cleanseUnits(String units) {
+    public  String cleanseUnits(String units) {
 	if (units == null)
 	    return null;
 	String u = units;
@@ -119,7 +121,7 @@ public class UnitsManager {
 	return u;
     }
     
-    public static void dumpLhsUnits(BufferedWriter bw) {
+    public  void dumpLhsUnits(BufferedWriter bw) {
 	List<String> lhs = new ArrayList<String>();
 	lhs.addAll(lhsUnits.keySet());
 	Collections.sort(lhs);
@@ -146,7 +148,7 @@ public class UnitsManager {
 	}
     }
     
-    public static void dumpLhsUnitsRaw(BufferedWriter bw) {
+    public  void dumpLhsUnitsRaw(BufferedWriter bw) {
 	List<String> lhs = new ArrayList<String>();
 	lhs.addAll(lhsUnitsRaw.keySet());
 	Collections.sort(lhs);
@@ -173,7 +175,7 @@ public class UnitsManager {
 	}
     }
     
-    public static boolean isConsistent(Equation eqn, List<String> units) {
+    public  boolean isConsistent(Equation eqn, List<String> units) {
 	
 	List<String> unitsExpanded = expandUnits(units);
 	unitsExpanded = addFunctionUnits(unitsExpanded);
@@ -186,7 +188,7 @@ public class UnitsManager {
 	return isValid;
     }
     
-    private static boolean valid(List<String> units, Equation eqn) {
+    private  boolean valid(List<String> units, Equation eqn) {
 	// stack based evaluation of units consistency
 	if (units.size() < 3) {
 	    return false;
@@ -205,14 +207,14 @@ public class UnitsManager {
 	return unitExpression.isValid();
     }
     
-    private static List<String> addFunctionUnits(List<String> units) {
+    private  List<String> addFunctionUnits(List<String> units) {
 	List<String> unitsExpanded = new ArrayList<String>();
 	MutableInteger i = new MutableInteger(0);
 	while (i.value() < units.size()) {
 	    String s = units.get(i.value());
 	    if (Parser.isFunctionInvocation(s)) {
 		s = s.split("<")[0];
-		FunctionDescription fd = FunctionManager.getDescription(s);
+		FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(s);
 		if (fd == null)
 		    unitsExpanded.add(s+"<NULL>");
 		else
@@ -225,7 +227,7 @@ public class UnitsManager {
 	return unitsExpanded;
     }
     
-    private static List<String> expandUnits(List<String> units) {
+    private  List<String> expandUnits(List<String> units) {
 	List<String> unitsExpanded = new ArrayList<String>();
 	MutableInteger i = new MutableInteger(0);
 	while (i.value() < units.size()) {
@@ -233,7 +235,7 @@ public class UnitsManager {
 	    if (Parser.isFunctionInvocation(s)) {
 		s = s.split("<")[0];
 		i.add(1);
-		FunctionDescription fd = FunctionManager.getDescription(s);
+		FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(s);
 		unitsExpanded.addAll(expandFunctionUnits(units, i, s));
 		
 		// should be pointing to the next argument
@@ -251,7 +253,7 @@ public class UnitsManager {
 		    if (Parser.isFunctionInvocation(s1)) {
 			s1 = s1.split("<")[0];
 			i.add(1);
-			FunctionDescription fd1 = FunctionManager.getDescription(s1);
+			FunctionDescription fd1 = InformationManagers.getInstance().getFunctionManager().getDescription(s1);
 			unitsExpanded.addAll(expandFunctionUnits(units, i, s1));
 		    } else {
 			unitsExpanded.add(s1);
@@ -268,9 +270,9 @@ public class UnitsManager {
 	return unitsExpanded;
     }
     
-    private static List<String> expandFunctionUnits(List<String> units, MutableInteger i, String functionName) {
+    private  List<String> expandFunctionUnits(List<String> units, MutableInteger i, String functionName) {
 	List<String> unitsExpanded = new ArrayList<String>();
-	FunctionDescription fd = FunctionManager.getDescription(functionName);
+	FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(functionName);
 	if (fd == null)
 	    System.out.println("fd is null for "+functionName);
 	unitsExpanded.add(functionName);  // function name
@@ -302,14 +304,14 @@ public class UnitsManager {
 	return unitsExpanded;
     }
     
-    private static void printUnits(List<String> units) {
+    private  void printUnits(List<String> units) {
 	for (String s : units) {
 	    System.out.print(" \""+s+"\"");
 	}
 	System.out.print("\n");
     }
     
-    private static void printUnitsIndented(List<String> units) {
+    private  void printUnitsIndented(List<String> units) {
 	
 	int indent = 0;
 	String indentation = getIndentation(indent);
@@ -329,7 +331,7 @@ public class UnitsManager {
 	
     }
     
-    private static String getIndentation(int indent) {
+    private  String getIndentation(int indent) {
 	StringBuffer sb = new StringBuffer();
 	
 	for (int i = 0; i < indent; i++)
@@ -341,7 +343,7 @@ public class UnitsManager {
 	
     }
 
-    public static UnitConsistencyXMLWriter getUnitConsistencyXMLWriter() {
+    public  UnitConsistencyXMLWriter getUnitConsistencyXMLWriter() {
         return unitConsistencyXMLWriter;
     }
 

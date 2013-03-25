@@ -8,6 +8,8 @@ package repast.simphony.systemdynamics.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import repast.simphony.systemdynamics.translator.InformationManagers;
+
 /**
  * @author bragen
  *
@@ -93,7 +95,7 @@ public class ArrayReference {
 		code.append(",");
 	    if (isRangeSubscript(sub)) {
 		code.append("rangeSub.getSubscriptValue(\""+sub.replace("!", "")+"\")");
-	    } else if (NamedSubscriptManager.isNamedSubscript(sub)) { // if not a named subscript
+	    } else if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(sub)) { // if not a named subscript
 		code.append("outerSub.getSubscriptValue(\""+sub.replace("!", "")+"\")");
 	    } else {
 		code.append("\""+sub.replace("!", "")+"\"");
@@ -134,7 +136,7 @@ public class ArrayReference {
 		code.append(",");
 	    if (isRangeSubscript(sub)) {
 		code.append("rangeSub.getSubscriptValue(\""+sub.replace("!", "")+"\")");
-	    } else if (NamedSubscriptManager.isNamedSubscript(sub)) { // if not a named subscript
+	    } else if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(sub)) { // if not a named subscript
 		code.append("outerSub.getSubscriptValue(\""+sub.replace("!", "")+"\")");
 	    } else {
 		code.append("\""+sub.replace("!", "")+"\"");

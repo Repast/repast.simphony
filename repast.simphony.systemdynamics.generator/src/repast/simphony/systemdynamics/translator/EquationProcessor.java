@@ -378,7 +378,7 @@ public class EquationProcessor {
 
     private void processMacro(String eqn, List<String> rawEquations, MutableInteger linePtr) {
 
-	if (!MacroManager.readMacroAndProcess(eqn, rawEquations, linePtr)) {
+	if (!InformationManagers.getInstance().getMacroManager().readMacroAndProcess(eqn, rawEquations, linePtr)) {
 	    System.out.println("Bad Macro");;
 	}
 

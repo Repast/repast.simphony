@@ -13,9 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import repast.simphony.systemdynamics.support.ArrayReference;
-import repast.simphony.systemdynamics.support.MappedSubscriptManager;
 import repast.simphony.systemdynamics.support.MutableInteger;
-import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 import repast.simphony.systemdynamics.support.SubscriptCombination;
 
 public class Equation {
@@ -162,8 +160,8 @@ public class Equation {
 		// need to check if this equation contains a macro invocation
 		// if so, we need to redefine the equation
 
-		if (MacroManager.containsMacroInvocation(vensimEquation)) {
-			this.vensimEquation = (MacroManager.expand(vensimEquation)).replaceAll("\t", "");
+		if (InformationManagers.getInstance().getMacroManager().containsMacroInvocation(vensimEquation)) {
+			this.vensimEquation = (InformationManagers.getInstance().getMacroManager().expand(vensimEquation)).replaceAll("\t", "");
 			hasMacroInvocation = true;
 		} else {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
@@ -537,7 +535,7 @@ public class Equation {
 				definition = definition + "[holder1,holder2]";
 			}
 
-			NativeDataTypeManager.addVariable(this, definition, typeString ? "String" : "double");
+			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, definition, typeString ? "String" : "double");
 
 			// the specification of the lookup data can appear as x[0],x[n],y[0],,,y[n]
 
@@ -825,7 +823,7 @@ public class Equation {
 		}
 		
 		if (this.isAssignment()) {
-			NativeDataTypeManager.addVariable(this, this.getLhs(), typeString ? "String" : "double");
+			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, this.getLhs(), typeString ? "String" : "double");
 		}
 	}
 	
@@ -874,7 +872,7 @@ public class Equation {
 			if (inRange(position.value()+1) && characterAt(position.value()+1).equals("=")) {
 				position.add(1);
 			}
-			tokens.add(NativeDataTypeManager.getLegalName(token));
+			tokens.add(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(token));
 			assignment = true;
 			tokens.add("=");
 			cleanEquation += "=";
@@ -908,7 +906,7 @@ public class Equation {
 				cleanEquation += s;
 			hasRHS = false;
 			definesLookup = true;
-			ArrayManager.setUsedAsLookup(token); // BAD BAD BAD can we trick code?
+			InformationManagers.getInstance().getArrayManager().setUsedAsLookup(token); // BAD BAD BAD can we trick code?
 			lookupTables.add(token); // used to be clean(token)
 			EquationProcessor.lookups.add(token); // used to be clean(token)
 		} else if (inRange(position) && characterAt(position).equals("[") && !hasEqualSign && equation.contains("(")) {
@@ -961,12 +959,12 @@ public class Equation {
 			hasRHS = false;
 			definesLookup = true;
 			lookupTables.add(token); // used to be clean(token)
-			ArrayManager.setUsedAsLookup(token);
+			InformationManagers.getInstance().getArrayManager().setUsedAsLookup(token);
 			EquationProcessor.lookups.add(token); // used to be clean(token)
 			//		List<String> s = new ArrayList<String>();
 			//		s.add(subscript);
 			List<String> s = this.extractSubscripts(subscript);
-			ArrayManager.arrayReference(origLHS, s);
+			InformationManagers.getInstance().getArrayManager().arrayReference(origLHS, s);
 
 			//	    } else if (inRange(position) && characterAt(position).equals("[") && !hasEqualSign && !equation.contains("(")) {
 
@@ -1002,7 +1000,7 @@ public class Equation {
 			definesSubscript = true;
 			EquationProcessor.subscripts.add(token);
 			registerSubscripts(tokens.get(0), tokenizedSubscripts);
-			NamedSubscriptManager.subscriptDefinition(tokens.get(0), extractSubscripts(tokenizedSubscripts));
+			InformationManagers.getInstance().getNamedSubscriptManager().subscriptDefinition(tokens.get(0), extractSubscripts(tokenizedSubscripts));
 
 			// check for -> 
 			// if we find it, we can find multiple formats for the mapped subscripts
@@ -1027,7 +1025,7 @@ public class Equation {
 			hasRHS = false;
 
 			String rhsSubscript = equation.split("<->")[1].trim();
-			MappedSubscriptManager.addSubscriptNameFullSubrangeMapping(lhs, rhsSubscript);
+			InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameFullSubrangeMapping(lhs, rhsSubscript);
 
 		} else if (inRange(position) && characterAt(position).equals("[")) {
 			leftBracketCount++;
@@ -1049,7 +1047,7 @@ public class Equation {
 				syntacticallyCorrect = false;
 				syntaxMessages.add("Tokenize LHS: "+opRes.getMessage());
 			}
-			ArrayManager.arrayReference(lhsArray, extractSubscripts(lhsSubscripts));
+			InformationManagers.getInstance().getArrayManager().arrayReference(lhsArray, extractSubscripts(lhsSubscripts));
 			skipWhiteSpace(position);
 
 			// 2/22/13 - ADD PROCESSING
@@ -1131,7 +1129,7 @@ public class Equation {
 		//		System.out.println("defines lookup");
 
 		if (hasEqualSign || definesLookup) {
-			UnitsManager.addLhsUnits(lhs, units);
+			InformationManagers.getInstance().getUnitsManager().addLhsUnits(lhs, units);
 		}
 
 		return hasRHS;
@@ -1258,7 +1256,7 @@ public class Equation {
 					// or a lookup reference
 					if (characterAt(position).equals("(")) {
 						System.out.println("TokRHS: func or lookup token: "+token);
-						if (FunctionManager.isFunction(token)) { // HERE~~~
+						if (InformationManagers.getInstance().getFunctionManager().isFunction(token)) { // HERE~~~
 							System.out.println("TokRHS: Function");
 							checkSpecialFunctions(token);
 							function = true;
@@ -1331,7 +1329,7 @@ public class Equation {
 				if (inRange(position)) {
 					if (characterAt(position).equals("(")) {   // checking for function invocation
 						System.out.println("TokRHS: Lookup3 based on token: "+token);
-						if (FunctionManager.isFunction(token)) {  // Here
+						if (InformationManagers.getInstance().getFunctionManager().isFunction(token)) {  // Here
 							checkSpecialFunctions(token);
 							function = true;
 							if (isGetXlsDataFunction(token)) {
@@ -1467,7 +1465,7 @@ public class Equation {
 				} else {
 					tokens.add("sdFunctions."+clean(token));
 					tokens.add("(");
-					FunctionDescription fd = FunctionManager.getDescription(token);
+					FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(token);
 					if (fd == null)
 						System.out.println("NULL FD");
 					if (fd.isRequiresName()) {
@@ -1476,7 +1474,7 @@ public class Equation {
 					}
 
 					String valueOf = "";
-					valueOf = NativeDataTypeManager.getLegalName(this, lhs);
+					valueOf = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(this, lhs);
 
 					//			 System.out.println("TokRHS: valueof ="+valueOf+" lhs = "+lhs);
 
@@ -1530,8 +1528,8 @@ public class Equation {
 
 			} else if (variable) {
 
-				tokens.add(NativeDataTypeManager.getLegalName(token));
-				cleanEquation += NativeDataTypeManager.getLegalName(token);
+				tokens.add(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(token));
+				cleanEquation += InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(token);
 
 			} else if (stringConstant) {
 				tokens.add("\""+token+"\"");
@@ -1695,14 +1693,14 @@ public class Equation {
 
 	    // format (1)
 	    if (!mappedTo.contains("(")) {
-		MappedSubscriptManager.addSubscriptNameMapping(rhsSubscriptName, mappedTo);
+	    	InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameMapping(rhsSubscriptName, mappedTo);
 
-		if (NamedSubscriptManager.isNamedSubscript(mappedTo)) {
-		    List<String> mappedToValues = NamedSubscriptManager.getValuesFor(mappedTo);
+		if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(mappedTo)) {
+		    List<String> mappedToValues = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(mappedTo);
 		    for (int i = 0; i < mappedToValues.size(); i++)
-			MappedSubscriptManager.addSubscriptValueMapping(rhsSubscriptName, mappedTo, rhsSubscriptValues.get(i), mappedToValues.get(i));
+		    	InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptValueMapping(rhsSubscriptName, mappedTo, rhsSubscriptValues.get(i), mappedToValues.get(i));
 		} else {
-		    MappedSubscriptManager.addSubscriptValueMappingDelayed(rhsSubscriptName, mappedTo, rhsSubscriptValues);
+			InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptValueMappingDelayed(rhsSubscriptName, mappedTo, rhsSubscriptValues);
 		}
 		return;
 	    } else {
@@ -1722,13 +1720,13 @@ public class Equation {
 		    mappedTo = tokens.get(0);
 		    tokens.remove(0);
 		    
-		    MappedSubscriptManager.addSubscriptNameMapping(rhsSubscriptName, mappedTo);
+		    InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameMapping(rhsSubscriptName, mappedTo);
 		    
-		    if (NamedSubscriptManager.isNamedSubscript(mappedTo)) {
+		    if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(mappedTo)) {
 		    for (int i = 0; i < tokens.size(); i++)
-			MappedSubscriptManager.addSubscriptValueMapping(rhsSubscriptName, mappedTo, rhsSubscriptValues.get(i), tokens.get(i));
+		    	InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptValueMapping(rhsSubscriptName, mappedTo, rhsSubscriptValues.get(i), tokens.get(i));
 		    } else {
-			MappedSubscriptManager.addSubscriptValueMappingDelayed(rhsSubscriptName, mappedTo, rhsSubscriptValues, tokens);
+		    	InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptValueMappingDelayed(rhsSubscriptName, mappedTo, rhsSubscriptValues, tokens);
 		    }
 		}
 		// at this point, we are either pointing to another "(" defining another mapping, or we are done.
@@ -1787,7 +1785,7 @@ public class Equation {
 			sb.append(token);
 		}
 
-		ArrayManager.arrayReference(arrayName, extractSubscripts(tokenList));
+		InformationManagers.getInstance().getArrayManager().arrayReference(arrayName, extractSubscripts(tokenList));
 		// position should be correct
 		return sb.toString();
 	}
@@ -2018,11 +2016,11 @@ public class Equation {
 
 				List<String> subs = extractSubscripts(lhsSubscripts);
 				for (int i = subs.size()-1; i >= 0; i--) {
-					if (NamedSubscriptManager.isNamedSubscript(subs.get(i))) {
+					if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(subs.get(i))) {
 						if (numCols == -1) {
-							numCols = NamedSubscriptManager.getValuesFor(subs.get(i)).size();
+							numCols = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subs.get(i)).size();
 						} else  {
-							numRows *= NamedSubscriptManager.getValuesFor(subs.get(i)).size();
+							numRows *= InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subs.get(i)).size();
 						}
 					}
 				}
@@ -2078,11 +2076,11 @@ public class Equation {
 
 				List<String> subs = extractSubscripts(lhsSubscripts);
 				for (int i = subs.size()-1; i >= 0; i--) {
-					if (NamedSubscriptManager.isNamedSubscript(subs.get(i))) {
+					if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(subs.get(i))) {
 						if (numCols == -1) {
-							numCols = NamedSubscriptManager.getValuesFor(subs.get(i)).size();
+							numCols = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subs.get(i)).size();
 						} else  {
-							numRows *= NamedSubscriptManager.getValuesFor(subs.get(i)).size();
+							numRows *= InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subs.get(i)).size();
 						}
 					}
 				}
@@ -2815,7 +2813,7 @@ public class Equation {
 //	}
 	
 	public static boolean isMacroName(String s) {
-	    return MacroManager.isMacroName(s);
+	    return InformationManagers.getInstance().getMacroManager().isMacroName(s);
 	}
 
 	public String getEquation() {
@@ -2858,8 +2856,8 @@ public class Equation {
 
 	public void setVensimEquation(String vensimEquation) {
 		
-		if (MacroManager.containsMacroInvocation(vensimEquation)) {
-			this.vensimEquation = (MacroManager.expand(vensimEquation)).replaceAll("\t", "");
+		if (InformationManagers.getInstance().getMacroManager().containsMacroInvocation(vensimEquation)) {
+			this.vensimEquation = (InformationManagers.getInstance().getMacroManager().expand(vensimEquation)).replaceAll("\t", "");
 			hasMacroInvocation = true;
 		} else {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
@@ -2911,7 +2909,7 @@ public class Equation {
 		for (String t : rhsTokens) {
 			String tNoBang = t.replaceAll("!", "");
 			if (ArrayReference.isArrayReference(tNoBang)) {
-				s.addAll(ArrayManager.expand(new ArrayReference(tNoBang)));
+				s.addAll(InformationManagers.getInstance().getArrayManager().expand(new ArrayReference(tNoBang)));
 			} else {
 				s.add(t);
 			}
@@ -2979,8 +2977,8 @@ public class Equation {
 	    System.out.println("EQ: "+getCleanEquation());
 	    for (String t : getRpn()) {
 		String u = "";
-		if (UnitsManager.hasUnits(t))
-		    u = UnitsManager.getUnits(t);
+		if (InformationManagers.getInstance().getUnitsManager().hasUnits(t))
+		    u = InformationManagers.getInstance().getUnitsManager().getUnits(t);
 		System.out.println("   <"+t+"> <"+u+">");
 	    }
 	}
@@ -3226,7 +3224,7 @@ public class Equation {
 		} else if (isFunctionInvocation(token)) {
 		 // if a functionInvocation
 //		    int numArgs = numberArguments.get(getFunctionName(token).toUpperCase());
-		    FunctionDescription fd = FunctionManager.getDescription(token); 
+		    FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(token); 
 		    if (fd == null)
 			System.out.println("Null Description");
 		    
@@ -3272,7 +3270,7 @@ public class Equation {
 		    }
 		} else if (isMacroInvocation(token)) {
 			 // if a macro Invocation
-			    int numArgs = MacroManager.getNumArgumentsFor(token);
+			    int numArgs = InformationManagers.getInstance().getMacroManager().getNumArgumentsFor(token);
 			    
 			    Node[] args = new Node[numArgs];
 			    args[numArgs-1] = end;
@@ -3446,11 +3444,11 @@ public class Equation {
 		    System.out.println(node.getToken()+"<"+"constant"+">");
 		    eqn.add("constant"+"#"+node.getToken());
 		} else {
-		    System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
-		    String v = UnitsManager.getUnits(node.getToken());
+		    System.out.println(node.getToken()+"<"+InformationManagers.getInstance().getUnitsManager().getUnits(node.getToken())+">");
+		    String v = InformationManagers.getInstance().getUnitsManager().getUnits(node.getToken());
 		    if (v == null)
 			System.out.println("V is null");
-		    eqn.add(UnitsManager.getUnits(node.getToken()));
+		    eqn.add(InformationManagers.getInstance().getUnitsManager().getUnits(node.getToken()));
 		}
 	    }
 	    
@@ -3467,9 +3465,9 @@ public class Equation {
 	    }
 	    
 	    if (Parser.isFunctionInvocation(node.getToken())) {
-		eqn.add(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
+		eqn.add(node.getToken()+"<"+InformationManagers.getInstance().getUnitsManager().getUnits(node.getToken())+">");
 		eqn.add("(");
-		System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
+		System.out.println(node.getToken()+"<"+InformationManagers.getInstance().getUnitsManager().getUnits(node.getToken())+">");
 		Node child = node.getChild();
 		int c = 0;
 		while (child != null) {
@@ -3620,7 +3618,7 @@ public class Equation {
 	    
 	    List<String> al = new ArrayList<String>();
 	    for (String subscript : exceptions)
-		al.addAll(NamedSubscriptManager.getValuesFor(subscript));
+		al.addAll(InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subscript));
 	    return al;
 	}
 	

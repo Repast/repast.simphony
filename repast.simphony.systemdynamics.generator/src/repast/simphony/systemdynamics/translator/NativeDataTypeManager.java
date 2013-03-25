@@ -23,24 +23,33 @@ import com.thoughtworks.xstream.XStream;
 
 public class NativeDataTypeManager {
 
-	private static final String[] SYSTEM_INITIAL = {"INITIAL TIME", "INITIALTIME", "INTIAL_TIME"};
-	private static final String[] SYSTEM_FINAL = {"FINAL TIME", "FINALTIME", "FINAL_TIME"};
-	private static final String[] SYSTEM_TIMESTEP = {"TIME STEP", "TIMESTEP", "TIME_STEP"};
+	private  final String[] SYSTEM_INITIAL = {"INITIAL TIME", "INITIALTIME", "INTIAL_TIME"};
+	private  final String[] SYSTEM_FINAL = {"FINAL TIME", "FINALTIME", "FINAL_TIME"};
+	private  final String[] SYSTEM_TIMESTEP = {"TIME STEP", "TIMESTEP", "TIME_STEP"};
 
-	public static Set<String> scalars = new HashSet<String>();
+	public  Set<String> scalars;
 	// key = Vensim name, value = Java name
-	public static Map<String, String> legal = new HashMap<String, String>();
-	public static Map<String, String> original = new HashMap<String, String>();
-	public static Map<String, String> dataType = new HashMap<String, String>();
+	public  Map<String, String> legal;
+	public  Map<String, String> original;
+	public  Map<String, String> dataType;
 	// key = Vensim name
-	public static Map<String, NativeArray> arrays = new HashMap<String, NativeArray>();
+	public  Map<String, NativeArray> arrays;
 
-	public static Set<ArrayDeclaration> arrayDeclarations = new HashSet<ArrayDeclaration>();
+	public  Set<ArrayDeclaration> arrayDeclarations = new HashSet<ArrayDeclaration>();
 
 	public NativeDataTypeManager() {
+		scalars = new HashSet<String>();
+		// key = Vensim name, value = Java name
+		legal = new HashMap<String, String>();
+		original = new HashMap<String, String>();
+		dataType = new HashMap<String, String>();
+		// key = Vensim name
+		arrays = new HashMap<String, NativeArray>();
+
+		arrayDeclarations = new HashSet<ArrayDeclaration>();
 	}
 	
-	public static OperationResult validateScalarReference(String token) {
+	public  OperationResult validateScalarReference(String token) {
 		OperationResult or = new OperationResult();
 		String original = getOriginalName(token);
 		if (scalars.contains(original))
@@ -51,16 +60,16 @@ public class NativeDataTypeManager {
 		
 	}
 
-	public static void addVariable(Equation equation, String variable, String dataType) {
+	public  void addVariable(Equation equation, String variable, String dataType) {
 
-		NativeDataTypeManager.dataType.put(variable, dataType);
+		this.dataType.put(variable, dataType);
 		if (ArrayReference.isArrayReference(variable))
 			addArray(equation, variable, dataType);
 		else
 			addScalar(variable, dataType);
 	}
 
-	private static void addScalar(String scalar, String dataType) {
+	private  void addScalar(String scalar, String dataType) {
 		if (arrays.containsKey(scalar)) {
 			System.out.println("#####Attempting to add scalar already defined as array: "+scalar);
 		}
@@ -72,7 +81,7 @@ public class NativeDataTypeManager {
 		original.put(legalized, scalar);
 	}
 
-	private static void addArray(Equation equation, String arrayRef, String dataType) {
+	private  void addArray(Equation equation, String arrayRef, String dataType) {
 		ArrayReference ar = new ArrayReference(arrayRef);
 		String name = ar.getArrayName();
 		NativeArray na = new NativeArray(name);
@@ -98,7 +107,7 @@ public class NativeDataTypeManager {
 		}
 	}
 
-	private static String legalize(String name) {
+	private  String legalize(String name) {
 		String legalName = null;
 		legalName = makeLegal(name);
 		if (Parser.isNumber(Parser.characterAt(legalName, new MutableInteger(0))))
@@ -115,14 +124,14 @@ public class NativeDataTypeManager {
 		return legalName;
 	}
 
-	public static String makeLegal(String name) {
+	public  String makeLegal(String name) {
 		return name.replace(" ", "_").replace("/", "_")
 				.replace(":", "_").replace("-", "_").replace("&", "_")
 				.replace("(", "_").replace(")", "_")
 				.replace("(", "_").replace(")", "_").replace(".", "_").replace(",", "_").replace("'", "").replace("*", "_");
 	}
 
-	private static String collision(String name) {
+	private  String collision(String name) {
 		String aPossible = name + "_";
 		while (legal.containsValue(aPossible)) {
 			aPossible += "_";
@@ -130,7 +139,7 @@ public class NativeDataTypeManager {
 		return aPossible;
 	}
 
-	public static String getOriginalName(String legalized) {
+	public  String getOriginalName(String legalized) {
 		String s = legalized.replace("memory.", "").replace("lookup.", "");
 		if (original.containsKey(s))
 			return original.get(s);
@@ -138,11 +147,11 @@ public class NativeDataTypeManager {
 			return legalized;
 	}
 
-	public static String getLegalName(String variable) {
+	public  String getLegalName(String variable) {
 		return getLegalName(null, variable);
 	}
 
-	public static String getLegalName(Equation equation, String variable) {
+	public  String getLegalName(Equation equation, String variable) {
 		String referenceType = "memory.";
 		if (variable.contains("memory."))
 			referenceType = "memory.";
@@ -174,7 +183,7 @@ public class NativeDataTypeManager {
 		}
 	}
 
-	public static void generateMemoryJava(BufferedWriter bw, String objectName, Translator translator) {
+	public  void generateMemoryJava(BufferedWriter bw, String objectName, Translator translator) {
 
 		try {
 			// class header information
@@ -190,7 +199,7 @@ public class NativeDataTypeManager {
 			for (String scalar : al) {
 
 				bw.append("public "+dataType.get(scalar)+" "+legal.get(scalar)+";\n");
-				//		bw.append("public static double "+legal.get(scalar)+";\n");
+				//		bw.append("public  double "+legal.get(scalar)+";\n");
 				//		bw.append("List<Double> "+legal.get(scalar)+"_history = new ArrayList<Double>();\n");
 			}
 
@@ -201,7 +210,7 @@ public class NativeDataTypeManager {
 			Collections.sort(al);
 			for (String array : al) {
 				bw.append("public double");
-				//		bw.append("public static double");
+				//		bw.append("public  double");
 				NativeArray na = arrays.get(array);
 				for (int i = 0; i < na.getNumDimensions(); i++)
 					bw.append("[]");
@@ -213,14 +222,14 @@ public class NativeDataTypeManager {
 			bw.append("public Memory"+objectName+"() {\n");
 
 			for (String array : al) {
-				if (ArrayManager.isUsedAsLookup(array))
+				if (InformationManagers.getInstance().getArrayManager().isUsedAsLookup(array))
 					continue;
 				int dim = 0;
 
 				NativeArray na = arrays.get(array);
 				boolean declare = false;
 				for (String subscript : na.getDimensionNames()) {
-					String numInd = Integer.toString(ArrayManager.getNumIndicies(array, dim));
+					String numInd = Integer.toString(InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dim));
 					if (!numInd.equals("0"))
 						declare = true;
 					dim++;
@@ -230,7 +239,7 @@ public class NativeDataTypeManager {
 				bw.append(legal.get(array)+" = new double");
 				dim = 0;
 				for (String subscript : na.getDimensionNames()) {
-					String numInd = Integer.toString(ArrayManager.getNumIndicies(array, dim));
+					String numInd = Integer.toString(InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dim));
 					if (numInd.equals("0"))
 						numInd = "/* "+subscript+" */";
 					bw.append("["+numInd+"]");
@@ -268,7 +277,7 @@ public class NativeDataTypeManager {
 
 	}
 
-	public static void generateMemoryC(BufferedWriter bw, String objectName, Translator translator) {
+	public  void generateMemoryC(BufferedWriter bw, String objectName, Translator translator) {
 
 		try {
 
@@ -278,7 +287,7 @@ public class NativeDataTypeManager {
 			Collections.sort(al);
 			for (String scalar : al) {
 
-				if (ArrayManager.isUsedAsLookup(scalar)) {
+				if (InformationManagers.getInstance().getArrayManager().isUsedAsLookup(scalar)) {
 					bw.append(CodeGenerator.scrub("LOOKUP_t *"));
 					//		    int n = ArrayManager.getNumDimensions(scalar);
 					//		    for (int i = 0; i < 2; i++)
@@ -304,7 +313,7 @@ public class NativeDataTypeManager {
 
 				String arrayType;
 
-				if (ArrayManager.isUsedAsLookup(array)) {
+				if (InformationManagers.getInstance().getArrayManager().isUsedAsLookup(array)) {
 					bw.append(CodeGenerator.scrub("LOOKUP_t *"));
 					arrayType = "LOOKUP_t";
 				} else {
@@ -323,7 +332,7 @@ public class NativeDataTypeManager {
 					Integer[] dimSize = new Integer[numDimensions];
 
 					for (String subscript : na.getDimensionNames()) {
-						String numInd = Integer.toString(ArrayManager.getNumIndicies(array, dim));
+						String numInd = Integer.toString(InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dim));
 						//		    if (!numInd.equals("0")) {
 						bw.append("*");
 						dimSize[dim] = Integer.parseInt(numInd);
@@ -363,7 +372,7 @@ public class NativeDataTypeManager {
 
 	}
 
-	public static void generateArrayDeclarationC(BufferedWriter bw/* , String objectName, Translator translator */) {
+	public  void generateArrayDeclarationC(BufferedWriter bw/* , String objectName, Translator translator */) {
 
 		try {
 			bw.append("void declareArrays() {\n");
@@ -435,7 +444,7 @@ public class NativeDataTypeManager {
 
 	}
 
-	private static void generateDataSetGetters(BufferedWriter bw, String objectName, Translator translator) {
+	private  void generateDataSetGetters(BufferedWriter bw, String objectName, Translator translator) {
 
 		// Create a DataSetDescriptor
 
@@ -463,7 +472,7 @@ public class NativeDataTypeManager {
 				bw.append("public double get_"+legal.get(scalar)+"() {\n");
 				bw.append("return "+legal.get(scalar)+";\n");
 				bw.append("}\n");
-				//		bw.append("public static double "+legal.get(scalar)+";\n");
+				//		bw.append("public  double "+legal.get(scalar)+";\n");
 				//		bw.append("List<Double> "+legal.get(scalar)+"_history = new ArrayList<Double>();\n");
 			}
 
@@ -483,22 +492,22 @@ public class NativeDataTypeManager {
 					continue;
 
 				Map<Integer, List<Integer>> indexValueMap = new HashMap<Integer, List<Integer>>();
-				for (int dimension = 0; dimension < ArrayManager.getNumDimensions(array); dimension++) {
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
 					indexValueMap.put(dimension, new ArrayList<Integer>());
-					for (int index = 0; index < ArrayManager.getNumIndicies(array, dimension); index++) {
+					for (int index = 0; index < InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dimension); index++) {
 						indexValueMap.get(dimension).add(index);
 					}
 				}
 
 				// total number of dimensions in the array
-				int numDimensions = ArrayManager.getNumDimensions(array);
+				int numDimensions = InformationManagers.getInstance().getArrayManager().getNumDimensions(array);
 
 				List<StringBuffer> methodName = new ArrayList<StringBuffer>();
 				List<StringBuffer> bodySubscript = new ArrayList<StringBuffer>();
 
 				// compute the number of combinations of indicies
 				int numToGenerate = 1;
-				for (int dimension = 0; dimension < ArrayManager.getNumDimensions(array); dimension++) {
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
 					numToGenerate *= indexValueMap.get(dimension).size();
 				}
 				for (int i = 0; i < numToGenerate; i++) {
@@ -507,9 +516,9 @@ public class NativeDataTypeManager {
 				}
 
 				// for each dimension compute 
-				for (int dimension = 0; dimension < ArrayManager.getNumDimensions(array); dimension++) {
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
 					int numPer = 1;
-					for (int dim = dimension+1; dim < ArrayManager.getNumDimensions(array); dim++) {
+					for (int dim = dimension+1; dim < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dim++) {
 						numPer *= indexValueMap.get(dim).size();
 					}
 					int ptr = 0;
@@ -527,7 +536,7 @@ public class NativeDataTypeManager {
 								} else {
 									sb2.append("$_$");   // this represents ","
 								}
-								sb2.append(ArrayManager.getVensimSubscript(array, dimension, subr));
+								sb2.append(InformationManagers.getInstance().getArrayManager().getVensimSubscript(array, dimension, subr));
 							}
 						}
 					}
@@ -552,7 +561,7 @@ public class NativeDataTypeManager {
 					StringBuffer squareBrackets = new StringBuffer();
 
 					for (String subscript : na.getDimensionNames()) {
-						String numInd = Integer.toString(ArrayManager.getNumIndicies(array, dim));
+						String numInd = Integer.toString(InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dim));
 						if (numInd.equals("0"))
 							squareBrackets.append("[]");
 						dim++;
@@ -585,7 +594,7 @@ public class NativeDataTypeManager {
 		serialize(dsd, ScenarioDirectory+"repast.simphony.action.data_set_0.xml");
 	}
 
-	private static void serialize(DataSetDescriptor dsd, String toFile) {
+	private  void serialize(DataSetDescriptor dsd, String toFile) {
 		XStream xstream = new XStream();
 		//	xstream.registerConverter(new FastMethodConverter(xstream));
 		try {
@@ -596,34 +605,34 @@ public class NativeDataTypeManager {
 		}
 	}
 
-	private static String asVensim(String s) {
+	private  String asVensim(String s) {
 		String vensim = s.replace("$__$", "[");
 		vensim = vensim.replace("$_$", ",");
 		return vensim + "]";
 	}
 
-	private static String getInitialTimeVariable() {
+	private  String getInitialTimeVariable() {
 		for (String s : SYSTEM_INITIAL)
 			if (scalars.contains(s))
 				return makeLegal(s);
 		return "ERROR_INITIAL";
 	}
 
-	private static String getFinalTimeVariable() {
+	private  String getFinalTimeVariable() {
 		for (String s : SYSTEM_FINAL)
 			if (scalars.contains(s))
 				return makeLegal(s);
 		return "ERROR_FINAL";
 	}
 
-	private static String getTimeStepVariable() {
+	private  String getTimeStepVariable() {
 		for (String s : SYSTEM_TIMESTEP)
 			if (scalars.contains(s))
 				return makeLegal(s);
 		return "ERROR_TIMESTEP";
 	}
 
-	public static void dumpLegalNames(BufferedWriter bw) {
+	public  void dumpLegalNames(BufferedWriter bw) {
 
 		try {
 			bw.append("Name,Legal Name\n");
@@ -638,7 +647,7 @@ public class NativeDataTypeManager {
 		}	
 	}
 
-	public static String getDataType(String var) {
+	public  String getDataType(String var) {
 		return dataType.get(var);
 	}
 

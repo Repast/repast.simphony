@@ -144,7 +144,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	this.loadProperties();
     	
-    	FunctionManager.load(PROPERTIES.getProperty("functionFile"));
+    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	
     	Translator.target = ReaderConstants.JAVA;
     	
@@ -179,7 +179,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	this.loadProperties();
     	
-    	FunctionManager.load(PROPERTIES.getProperty("functionFile"));
+    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	
     	Translator.target = ReaderConstants.JAVA;
     	

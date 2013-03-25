@@ -120,7 +120,7 @@ public class EquationArrayReferenceStructure {
 
 		    for (int i = 0; i < lhsSubscripts.size(); i++) {
 			String lhsSubr = lhsSubscripts.get(i);
-			if (MappedSubscriptManager.isMapBetween(rhsSubscript, lhsSubr)) {
+			if (InformationManagers.getInstance().getMappedSubscriptManager().isMapBetween(rhsSubscript, lhsSubr)) {
 			    foundMap = true;
 			    String lhsPacked = pack(lhsArrayReference.getArrayName(), lhsSubr, i);
 			    // this could be a terminal. Need to check
@@ -132,7 +132,7 @@ public class EquationArrayReferenceStructure {
 
 		    }
 		    if (!foundMap) {
-			if (!ArrayManager.isTerminalSubscript(ar.getArrayName(), rhsSubscript, dim)) {
+			if (!InformationManagers.getInstance().getArrayManager().isTerminalSubscript(ar.getArrayName(), rhsSubscript, dim)) {
 //			    System.out.println("NOT TERMINAL: no map for "+rhsSubscript);
 			}
 		    }
@@ -188,8 +188,8 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-			    ArrayManager.getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
-			    ArrayManager.getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    CodeGenerator.defineIndex(packed);
 		}
 	    }
@@ -211,13 +211,13 @@ public class EquationArrayReferenceStructure {
 //		code.append("for (int outer"+dim+" = 0; outer"+dim+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; outer"+dim+"++) {\n");
 		
 		code.append("int outer"+dim+";\n");
-		code.append("for (outer"+dim+" = 0; outer"+dim+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; outer"+dim+"++) {\n");
+		code.append("for (outer"+dim+" = 0; outer"+dim+" < "+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(sub)+"; outer"+dim+"++) {\n");
 		
 	    } else {
 //		code.append("/* getOuterLoops 2 */\n");
 //		code.append("for (int outer"+dim+" :  new int[] {"+
 //			ArrayManager.getIndiciesSorted(lhsArrayReference.getArrayName(), dim, sub)+"}) {\n");
-		String data = ArrayManager.getIndiciesSorted(lhsArrayReference.getArrayName(), dim, sub);
+		String data = InformationManagers.getInstance().getArrayManager().getIndiciesSorted(lhsArrayReference.getArrayName(), dim, sub);
 		int num = data.split(",").length;
 		if (!Translator.target.equals(ReaderConstants.C))
 		    code.append("int[] ");
@@ -228,7 +228,7 @@ public class EquationArrayReferenceStructure {
 		
 		code.append("int outer"+dim+";\n");
 		code.append("int touter"+dim+";\n");
-		code.append("for (touter"+dim+" = 0; touter"+dim+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; touter"+dim+"++) {\n");
+		code.append("for (touter"+dim+" = 0; touter"+dim+" < "+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(sub)+"; touter"+dim+"++) {\n");
 		code.append("outer"+dim+" = outer"+dim+"_index[touter"+dim+"];\n");
 	    }
 	}
@@ -245,12 +245,12 @@ public class EquationArrayReferenceStructure {
 	List<String> rhs = new ArrayList<String>();
 	
 	// need to generate the sequence of lhs subscripts
-	for (String s : NamedSubscriptManager.getValuesFor(eqLHSsubscript)) {
+	for (String s : InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(eqLHSsubscript)) {
 	    lhs.add(s);
 	}
 	// for each of these, get the mapping
 	for (String lh : lhs) {
-	    rhs.add(MappedSubscriptManager.getSubscriptMapping(eqLHSsubscript, lh, eqRHSsubscript));
+	    rhs.add(InformationManagers.getInstance().getMappedSubscriptManager().getSubscriptMapping(eqLHSsubscript, lh, eqRHSsubscript));
 	}
 	
 	    String index = "indexMapArray_"+CodeGenerator.getLegalName(eqRHSarray+"_"+eqRHSsubscript+"_"+eqRHSdimension) +
@@ -288,16 +288,16 @@ public class EquationArrayReferenceStructure {
 	String lhsPacked = mappedSubscriptIndexMap.get(rhsPacked);
 	String[] rhsUnpacked = unpack(rhsPacked);
 	String[] lhsUnpacked = unpack(lhsPacked);
-	List<String> orderedLHS = ArrayManager.getOrderedSubscriptNames(lhsUnpacked[0], Integer.parseInt(lhsUnpacked[2]), lhsUnpacked[1]);
+	List<String> orderedLHS = InformationManagers.getInstance().getArrayManager().getOrderedSubscriptNames(lhsUnpacked[0], Integer.parseInt(lhsUnpacked[2]), lhsUnpacked[1]);
 	List<String> orderedRHS = new ArrayList<String>();
 	for (String lhsSubr : orderedLHS) {
-	    orderedRHS.add(MappedSubscriptManager.getSubscriptMapping(lhsUnpacked[1], lhsSubr, rhsUnpacked[1]));
+	    orderedRHS.add(InformationManagers.getInstance().getMappedSubscriptManager().getSubscriptMapping(lhsUnpacked[1], lhsSubr, rhsUnpacked[1]));
 	}
 	int index = 0;
 	for (String rhsSubr : orderedRHS) {
 	    if (index++ > 0)
 		sb.append(", ");
-	    sb.append(ArrayManager.getTerminalValue(rhsUnpacked[0], rhsSubr, Integer.parseInt(rhsUnpacked[2])));
+	    sb.append(InformationManagers.getInstance().getArrayManager().getTerminalValue(rhsUnpacked[0], rhsSubr, Integer.parseInt(rhsUnpacked[2])));
 	}
 	
 	
@@ -311,7 +311,7 @@ public class EquationArrayReferenceStructure {
 	List<String> lhs = new ArrayList<String>();
 	
 	// need to generate the sequence of lhs subscripts
-	for (String s : NamedSubscriptManager.getValuesFor(eqLHSsubscript)) {
+	for (String s : InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(eqLHSsubscript)) {
 	    lhs.add(s);
 	}
 	
@@ -359,7 +359,7 @@ public class EquationArrayReferenceStructure {
 	    // if the subscripts don't match, then it could map to any of the lhs subscripts
 	    int lhsSubrIndex = 0;
 	    for (String lhsSubr : lhsArrayReference.getSubscripts()) {
-		if (MappedSubscriptManager.isMapBetween(subscript, lhsSubr)) {
+		if (InformationManagers.getInstance().getMappedSubscriptManager().isMapBetween(subscript, lhsSubr)) {
 		    subr = generateMappedIndexForRHS(this.lhsArrayReference.getArrayName(), lhsSubr, lhsSubrIndex, 
 			    arrayName, subscript, dimension);
 		    
@@ -518,7 +518,7 @@ public class EquationArrayReferenceStructure {
 	
 	code.append("stringConcat(");
 	code.append("\"");
-	code.append(NativeDataTypeManager.getOriginalName(NativeDataTypeManager.getLegalName(lhsArrayReference.getArrayName())));
+	code.append(InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhsArrayReference.getArrayName())));
 	code.append("\"");
 
 	List<Integer> dimensionsRequiringIndexArray = new ArrayList<Integer>();
@@ -542,7 +542,7 @@ public class EquationArrayReferenceStructure {
     
     public String getLHSassignment() {
 	StringBuffer code = new StringBuffer();
-	code.append(NativeDataTypeManager.getLegalName(lhsArrayReference.getArrayName()));
+	code.append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhsArrayReference.getArrayName()));
 	// need to check for index array usage
 	//	    for (int subNum = 0; subNum < lhsArrayReference.getSubscripts().size(); subNum++) {
 	//		code.append("[outer"+subNum+"]");
@@ -617,8 +617,8 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-			    ArrayManager.getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
-			    ArrayManager.getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    localIndexArrays.add(pack(unpacked[0],unpacked[1],unpacked[2]));
 		    
 		    // If the lhs ar not null, we know that the index array is defined within an outer loop so this
@@ -653,7 +653,7 @@ public class EquationArrayReferenceStructure {
 	    code.append("int range"+subIndex+";\n");
 	    if (!dimensionsRequiringIndexArray.contains(subIndex)) {
 		
-		code.append("for (range"+subIndex+" = 0; range"+subIndex+" < "+NamedSubscriptManager.getNumIndexFor(subr.replace("!", ""))+"; range"+subIndex+"++) {\n");
+		code.append("for (range"+subIndex+" = 0; range"+subIndex+" < "+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(subr.replace("!", ""))+"; range"+subIndex+"++) {\n");
 	    } else {
 //		/* EARS 598 */ for (range0 :  new int[] {0, 1, 2, 3, 4, 5, 6}) {
 //		code.append("for (range"+subIndex+" :  new int[] {"+
@@ -662,7 +662,7 @@ public class EquationArrayReferenceStructure {
 			code.append("int[] ");
 		    else
 			code.append("int *");
-		String numbers = ArrayManager.getIndiciesSorted(getArrayWithSubscriptDimension(arraysRequiringRangeIndexArray, subr, subIndex), subIndex, subr);
+		String numbers = InformationManagers.getInstance().getArrayManager().getIndiciesSorted(getArrayWithSubscriptDimension(arraysRequiringRangeIndexArray, subr, subIndex), subIndex, subr);
 		    int num = numbers.split(",").length;
 		    
 		    code.append("range"+subIndex+"_index = newIntArray("+num+","+numbers+");\n");
@@ -715,8 +715,8 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-			    ArrayManager.getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
-			    ArrayManager.getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    
 		    localIndexArrays.add(pack(unpacked[0],unpacked[1],unpacked[2]));
 		    
@@ -740,10 +740,10 @@ public class EquationArrayReferenceStructure {
 	    String sub = subrs.get(subIndex);
 	    code.append("int range"+subIndex+";\n");
 	    if (!dimensionsRequiringIndexArray.contains(subIndex)) {
-		code.append("for (range"+subIndex+" = 0; range"+subIndex+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; range"+subIndex+"++) {\n");
+		code.append("for (range"+subIndex+" = 0; range"+subIndex+" < "+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(sub)+"; range"+subIndex+"++) {\n");
 	    } else {
 		code.append("/* EARS 662 */ for (range"+subIndex+" :  new int[] {"+
-			ArrayManager.getIndiciesSorted(getArrayWithSubscriptDimension(arraysRequiringRangeIndexArray, sub, subIndex), subIndex, sub)+"}) {\n");
+				InformationManagers.getInstance().getArrayManager().getIndiciesSorted(getArrayWithSubscriptDimension(arraysRequiringRangeIndexArray, sub, subIndex), subIndex, sub)+"}) {\n");
 	    }
 	}
 
@@ -889,7 +889,7 @@ public class EquationArrayReferenceStructure {
     
     private String getIndicies(String packed) {
 	String[] unpacked = unpack(packed);
-	 return ArrayManager.getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1]);
+	 return InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1]);
     }
     
     private String[] unpack(String packed) {
@@ -1031,7 +1031,7 @@ public class EquationArrayReferenceStructure {
 		uniqueBySubscript.put(info[1], new ArrayList<String>());
 	    }
 	    List<String> bySubscript = uniqueBySubscript.get(info[1]);
-	    String indicies = ArrayManager.getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
+	    String indicies = InformationManagers.getInstance().getArrayManager().getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
 	    if (!bySubscript.contains(indicies))
 		bySubscript.add(indicies);
 	}
@@ -1083,7 +1083,7 @@ public class EquationArrayReferenceStructure {
 		uniqueBySubscript.put(info[1], new ArrayList<String>());
 	    }
 	    List<String> bySybscript = uniqueBySubscript.get(info[1]);
-	    String indicies = ArrayManager.getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
+	    String indicies = InformationManagers.getInstance().getArrayManager().getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
 	    if (!bySybscript.contains(indicies))
 		bySybscript.add(indicies);
 	}

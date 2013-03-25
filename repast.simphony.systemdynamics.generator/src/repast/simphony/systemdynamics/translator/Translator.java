@@ -108,7 +108,7 @@ public class Translator {
 		ReaderConstants.GENERATED_CODE_DIRECTORY = "DontCare";
 		ReaderConstants.PACKAGE = "DontCare";
 		ReaderConstants.SUPPORT = "DontCare";
-		FunctionManager.load(PROPERTIES.getProperty("functionFile"));
+		InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
 		loadUnitsEquivalences();
 		initializeForConsistencyCheck();
 
@@ -128,8 +128,8 @@ public class Translator {
 		processExponentiaion(equations);
 		generateRPN(equations);
 		generateTrees(equations);
-		ArrayManager.populateArraySubscriptSpace();
-		UnitsManager.performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
+		InformationManagers.getInstance().getUnitsManager().performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
 	}
 
 	public void initialize() {
@@ -167,7 +167,7 @@ public class Translator {
 			aLine = unitsReader.readLine();
 			while (aLine != null) {
 				String[] equiv = aLine.split("=");
-				UnitsManager.addEquivalence(equiv[0], equiv[1]);
+				InformationManagers.getInstance().getUnitsManager().addEquivalence(equiv[0], equiv[1]);
 				aLine = unitsReader.readLine();
 			}
 			unitsReader.close();
@@ -228,9 +228,9 @@ public class Translator {
 		generateRPN(equations);
 		generateTrees(equations);
 //		generateCausalTrees(sdObjectManager);
-		ArrayManager.populateArraySubscriptSpace();
+		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
 		
-		UnitsManager.performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+		InformationManagers.getInstance().getUnitsManager().performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
 
 		//	sdObjectManager.print();
 		
@@ -354,20 +354,20 @@ public class Translator {
 	}
 
 	protected void generateMemory() {
-		MappedSubscriptManager.makeConsistent();
+		InformationManagers.getInstance().getMappedSubscriptManager().makeConsistent();
 
 		if (isGenerateC() || isGenerateJava()) {
-			MappedSubscriptManager.dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptMappings_"+objectName+".csv"));
-			NamedSubscriptManager.dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptNameValues_"+objectName+".csv"));
+			InformationManagers.getInstance().getMappedSubscriptManager().dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptMappings_"+objectName+".csv"));
+			InformationManagers.getInstance().getNamedSubscriptManager().dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptNameValues_"+objectName+".csv"));
 
-			UnitsManager.dumpLhsUnits(Translator.openReport(miscDirectory+"/"+"Units_"+objectName+".csv"));
-			UnitsManager.dumpLhsUnitsRaw(Translator.openReport(miscDirectory+"/"+"UnitsRaw_"+objectName+".csv"));
+			InformationManagers.getInstance().getUnitsManager().dumpLhsUnits(Translator.openReport(miscDirectory+"/"+"Units_"+objectName+".csv"));
+			InformationManagers.getInstance().getUnitsManager().dumpLhsUnitsRaw(Translator.openReport(miscDirectory+"/"+"UnitsRaw_"+objectName+".csv"));
 
 
 			if (Translator.target.equals(ReaderConstants.JAVA)) {
 
 				String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
-				NativeDataTypeManager.dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
+				InformationManagers.getInstance().getNativeDataTypeManager().dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
 
 				RepastSimphonyEnvironment.generateContextBuilder(Translator.openReport(SourceDirectory+"ContextBuilder"+objectName+".java"), objectName, this);
 
@@ -378,18 +378,18 @@ public class Translator {
 				RepastSimphonyEnvironment.generateClassLoaderXml(Translator.openReport(ScenarioDirectory+"repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_1.xml"), objectName, this);
 				RepastSimphonyEnvironment.generateContextXml(Translator.openReport(ScenarioDirectory+"context.xml"), objectName);
 
-				NativeDataTypeManager.generateMemoryJava(Translator.openReport(SourceDirectory+"Memory"+objectName+".java"), objectName, this);
+				InformationManagers.getInstance().getNativeDataTypeManager().generateMemoryJava(Translator.openReport(SourceDirectory+"Memory"+objectName+".java"), objectName, this);
 
 			} else if (Translator.target.equals(ReaderConstants.JAVASCRIPT)) {
 
 			} else if (Translator.target.equals(ReaderConstants.C)) {
 				String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
-				NativeDataTypeManager.dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
-				NativeDataTypeManager.generateMemoryC(Translator.openReport(SourceDirectory+"memory"+objectName+".h"), objectName, this);
+				InformationManagers.getInstance().getNativeDataTypeManager().dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
+				InformationManagers.getInstance().getNativeDataTypeManager().generateMemoryC(Translator.openReport(SourceDirectory+"memory"+objectName+".h"), objectName, this);
 
 			}
 
-			ArrayManager.dumpSubscriptSpace(Translator.openReport(miscDirectory+"/"+"SubscriptSpace_"+objectName+".csv"));
+			InformationManagers.getInstance().getArrayManager().dumpSubscriptSpace(Translator.openReport(miscDirectory+"/"+"SubscriptSpace_"+objectName+".csv"));
 		}
 
 	}
@@ -504,7 +504,7 @@ public class Translator {
 				}
 
 				// Generate all combinations of realLHS expanded
-				for (SubscriptCombination outerSub : ArrayManager.getSubscriptValueCombinations(lhsArrayReference.getSubscriptsAsArray())) {
+				for (SubscriptCombination outerSub : InformationManagers.getInstance().getArrayManager().getSubscriptValueCombinations(lhsArrayReference.getSubscriptsAsArray())) {
 
 					// Here we will skip any subscript combo values that are defined in another equation within a multi-equation definition
 					if (exceptions.contains(outerSub.getSubscriptValue())) {
@@ -545,14 +545,14 @@ public class Translator {
 							// some array references may take on multiple values for the eqauation (e.g. SUM(xyz!)
 							// get a list of these combinations
 							String arrayName = null;
-							if (rhsArrayReference.hasRangeSubscript() || NamedSubscriptManager.hasNamedSubscript(rhsArrayReference)) {
+							if (rhsArrayReference.hasRangeSubscript() || InformationManagers.getInstance().getNamedSubscriptManager().hasNamedSubscript(rhsArrayReference)) {
 								String[] rhsExpanded;
 								if (rhsArrayReference.hasRangeSubscript())
 									rhsExpanded = removeBang(rhsArrayReference.getRangeSubscriptsAsArray());
 								else
-									rhsExpanded = NamedSubscriptManager.getExpandedSubscripts(rhsArrayReference);
+									rhsExpanded = InformationManagers.getInstance().getNamedSubscriptManager().getExpandedSubscripts(rhsArrayReference);
 
-								List<SubscriptCombination> combos = ArrayManager.getSubscriptValueCombinations(rhsExpanded);
+								List<SubscriptCombination> combos = InformationManagers.getInstance().getArrayManager().getSubscriptValueCombinations(rhsExpanded);
 								for (SubscriptCombination rangeSub : combos){
 
 									// we now construct an appropriate arrayReference for each combination
@@ -841,7 +841,7 @@ public class Translator {
 
 				String v = removeValueOf(var).replaceAll("\"", "");
 				// the requires
-				v = NativeDataTypeManager.getOriginalName(v);
+				v = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(v);
 
 				if (Parser.isNumber(v))
 					continue;
@@ -899,7 +899,7 @@ public class Translator {
 
 				String v = removeValueOf(var).replaceAll("\"", "");
 				// the requires
-				v = NativeDataTypeManager.getOriginalName(v);
+				v = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(v);
 
 				if (Parser.isNumber(v))
 					continue;

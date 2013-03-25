@@ -142,7 +142,7 @@ public class CodeGenerator {
 		startObject(sourceCode);
 	    } else {
 		startObjectC(sourceCode);
-		NativeDataTypeManager.generateArrayDeclarationC(sourceCode);	
+		InformationManagers.getInstance().getNativeDataTypeManager().generateArrayDeclarationC(sourceCode);	
 	    }
 
 
@@ -382,27 +382,27 @@ public class CodeGenerator {
 			} else {
 			    bw.append(eqn.getUnitsAndComment());
 			    String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
-			    if (NativeDataTypeManager.getLegalName(bothSides[0]).contains(step))
+			    if (InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).contains(step))
 				tStep = forceDouble(bothSides[1]);
 			 
 				//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
 				if (Translator.target.equals(ReaderConstants.C)) {
-				    statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
+				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
 				    "logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+");\n"; // 2\n";
 				} else {
 //				    bw.append("/* oneTime */\n");
-				    statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+
-				    	" = (Double) params.getValue(\""+NativeDataTypeManager.getLegalName(bothSides[0]).replace("memory.", "")+
+				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
+				    	" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
 				    	"\"); // 2;\n" +
 				    	"logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
-				    NativeDataTypeManager.getLegalName(bothSides[0]).replace("memory.", "")+"\"));\n"; // 2\n";
+				    	InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"));\n"; // 2\n";
 
 				    // none Repast Execution
 				    //				statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
 				    //				"log(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+");\n"; // 2\n";
 				}
 
-				initialValues.put(NativeDataTypeManager.getLegalName(bothSides[0]), forceDouble(bothSides[1]));
+				initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
 			  
 			    //						if (eqn.isVdmLookup())
 			    //						    bw.append("/*\n"); // leave code in, but commented out
@@ -419,11 +419,11 @@ public class CodeGenerator {
 				// need to get the assigned index for this
 				ArrayReference ar = new ArrayReference(lhSide);
 //				getTerminalValue(String arrayName, String subscriptName, int dimension)
-				statement = NativeDataTypeManager.getLegalName(lhSide) + 
-				"["+ArrayManager.getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
+				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + 
+				"["+InformationManagers.getInstance().getArrayManager().getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
 				+ " = " + eqn.getCleanEquation()+"; // 3\n";
 			    } else {
-				statement = NativeDataTypeManager.getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
+				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
 			    }
 			    bw.append(eqn.getUnitsAndComment());
 			    bw.append("{\n");
@@ -924,7 +924,7 @@ public class CodeGenerator {
 
     public static String getLegalName(String s ) {
 	// cleanup the string for use as a portion of a variable/array name
-	String legal = NativeDataTypeManager.getLegalName(s.replace("!", ""));
+	String legal = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(s.replace("!", ""));
 	return legal.replace("memory.", "");
     }
 
@@ -1375,7 +1375,7 @@ public class CodeGenerator {
 	    // setValue(A, _d) tail
 
 	  
-		lhs.getGeneratedCodeTail().append(NativeDataTypeManager.getLegalName(lhs.getToken())+" = "+resultsVariable+";\n");
+		lhs.getGeneratedCodeTail().append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs.getToken())+" = "+resultsVariable+";\n");
 //		lhs.getGeneratedCodeTail().append("/* generateLHScode */\n");
 		lhs.getGeneratedCodeTail().append("logit(\""+lhs.getToken()+"\",time,"+resultsVariable+");\n");
 	   
@@ -1679,9 +1679,9 @@ public class CodeGenerator {
 
 
 		if (Translator.target.equals(ReaderConstants.C))
-		    theHead.append("double _da"+suffix1+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+		    theHead.append("double _da"+suffix1+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 		else
-		    theHead.append("double[] _da"+suffix1+" = new double"+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+		    theHead.append("double[] _da"+suffix1+" = new double"+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 
 		theHead.append("int _i"+suffix1+" = 0;\n");
 		// need a range loop
@@ -1701,9 +1701,9 @@ public class CodeGenerator {
 
 
 		    if (Translator.target.equals(ReaderConstants.C))
-			theHead.append("double _da"+suffix2+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+			theHead.append("double _da"+suffix2+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 		    else
-			theHead.append("double[] _da"+suffix2+" = new double"+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+			theHead.append("double[] _da"+suffix2+" = new double"+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 
 		    theHead.append("int _i"+suffix2+" = 0;\n");
 		    // need a range loop
@@ -1733,9 +1733,9 @@ public class CodeGenerator {
 		    // We want to generate the child, the node, the childs next repeatedly
 
 		    if (Translator.target.equals(ReaderConstants.C))
-			theHead.append("double _da"+suffix2+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+			theHead.append("double _da"+suffix2+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 		    else
-			theHead.append("double[] _da"+suffix2+" = new double"+"["+NamedSubscriptManager.getNumIndexFor(range.get(0))+"];\n");
+			theHead.append("double[] _da"+suffix2+" = new double"+"["+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(range.get(0))+"];\n");
 
 		    theHead.append("int _i"+suffix2+" = 0;\n");
 		    // need a range loop
@@ -1778,7 +1778,7 @@ public class CodeGenerator {
 
 
 		} else {
-		    valueArg = NativeDataTypeManager.getLegalName(lhs);
+		    valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
 
 		    nameArg = "\""+lhs+"\"";
 		}
@@ -1860,7 +1860,7 @@ public class CodeGenerator {
 
 		} else {
 
-		    valueArg = NativeDataTypeManager.getLegalName(lhs);
+		    valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
 
 		    nameArg = "\""+lhs+"\"";
 		}
@@ -1940,7 +1940,7 @@ public class CodeGenerator {
 		String valueArg;
 		String nameArg;
 		
-		valueArg = NativeDataTypeManager.getLegalName(lhs);
+		valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
 		    nameArg = "\""+lhs+"\"";
 		    
 		    
@@ -2029,7 +2029,7 @@ public class CodeGenerator {
 
 		} else {
 
-		    valueArg = NativeDataTypeManager.getLegalName(lhs);
+		    valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
 		    nameArg = "\""+lhs+"\"";
 		}
 
@@ -2112,7 +2112,7 @@ public class CodeGenerator {
 		    }
 		    if (resultTypeDouble || resultTypeBoolean) {
 
-			theTail.append(node.getResultsVariable()+" = "+NativeDataTypeManager.getLegalName(node.getToken())+castToBoolean+";\n");
+			theTail.append(node.getResultsVariable()+" = "+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(node.getToken())+castToBoolean+";\n");
 
 		    } else {
 
@@ -2188,7 +2188,7 @@ public class CodeGenerator {
 
 	} else {
 	   
-		valueArg = NativeDataTypeManager.getLegalName(lhs);
+		valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
 	   
 	    nameArg = "\""+lhs+"\"";
 	}

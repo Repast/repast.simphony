@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import repast.simphony.systemdynamics.translator.InformationManagers;
+
 /**
  * This class holds the values of the subscripts for this combination
  * 
@@ -37,7 +39,7 @@ public class SubscriptCombination {
 	    // ask if from the list of orders, there is a mapping from
 	    // subscript -> LHS. The mapper would select the appropriate
 	    // value in questions and map it back.
-	    String alternate = MappedSubscriptManager.getMappedValue(subscript, order, this);
+	    String alternate = InformationManagers.getInstance().getMappedSubscriptManager().getMappedValue(subscript, order, this);
 	    if (alternate != null)
 		return alternate;
 	    else

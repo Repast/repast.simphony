@@ -231,7 +231,7 @@ public class SimplifiedUnit {
     }
     
     private void addToNumerator(String tokenIn) {
-	String token = UnitsManager.getEffectiveUnits(tokenIn);
+	String token = InformationManagers.getInstance().getUnitsManager().getEffectiveUnits(tokenIn);
 	if (numerator.containsKey(token)) {
 	    MutableInteger mi = numerator.get(token);
 	    mi.add(1);
@@ -242,7 +242,7 @@ public class SimplifiedUnit {
     }
     
     private void addToDenominator(String tokenIn) {
-	String token = UnitsManager.getEffectiveUnits(tokenIn);
+	String token = InformationManagers.getInstance().getUnitsManager().getEffectiveUnits(tokenIn);
 	if (denominator.containsKey(token)) {
 	    MutableInteger mi = denominator.get(token);
 	    mi.add(1);

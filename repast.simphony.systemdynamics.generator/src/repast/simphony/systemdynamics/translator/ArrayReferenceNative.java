@@ -145,13 +145,13 @@ public class ArrayReferenceNative {
 	EquationArrayReferenceStructure ears = equation.getEars();
 	
 
-	    code.append(NativeDataTypeManager.getLegalName(arrayName));
+	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName));
 	    
 		int subNum = 0;
 		for (String sub : subscripts) {
 		    if (isRangeSubscript(sub)) {
 			code.append("["+equation.getEars().getRangeSubscriptForImplementation(arrayName, sub, subNum)+"]");
-		    } else if (NamedSubscriptManager.isNamedSubscript(sub)) { // if not a named subscript
+		    } else if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(sub)) { // if not a named subscript
 			code.append("["+equation.getEars().getSubscriptForImplementation(arrayName, sub, subNum)+"]");
 		    } else {
 			// This may to be referenced through an index array even if a terminal
@@ -160,8 +160,8 @@ public class ArrayReferenceNative {
 			if (equation.getEars().requiresIndirection(arrayName, sub, subNum)) {
 			    code.append("["+equation.getEars().getSubscriptForImplementation(arrayName, sub, subNum)+"]");
 			} else {
-			    if (ArrayManager.isTerminalSubscript(arrayName, sub, subNum)) {
-				code.append("["+ArrayManager.getTerminalValue(arrayName, sub, subNum)+"]"); 
+			    if (InformationManagers.getInstance().getArrayManager().isTerminalSubscript(arrayName, sub, subNum)) {
+				code.append("["+InformationManagers.getInstance().getArrayManager().getTerminalValue(arrayName, sub, subNum)+"]"); 
 			    } else {
 				code.append("\n// PROBLEM: "+arrayName+" "+sub+" "+subNum+"\n");
 				code.append("["+sub.replace("!", "")+"]"); 
@@ -188,13 +188,13 @@ public class ArrayReferenceNative {
 //	code.append("/* generateRHSName  */\n");
 	code.append("stringConcat(");
 	code.append("\"");
-	    code.append(NativeDataTypeManager.getLegalName(arrayName));
+	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName));
 	    
 		
 		for (String sub : subscripts) {
 		    if (isRangeSubscript(sub)) {
 			code.append("[\",intToString(range"+equation.getEars().getRangeSubscriptNumber(sub)+"),\"]");
-		    } else if (NamedSubscriptManager.isNamedSubscript(sub)) { // if not a named subscript
+		    } else if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(sub)) { // if not a named subscript
 			code.append("[\",intToString(outer"+equation.getEars().getOuterSubscriptNumber(sub)+"),\"]");
 		    } else {
 			code.append("["+sub.replace("!", "")+"]");   // need a lookup to determine terminal value!

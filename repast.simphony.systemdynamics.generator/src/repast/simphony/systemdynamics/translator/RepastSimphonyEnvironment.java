@@ -104,9 +104,9 @@ public class RepastSimphonyEnvironment {
 	 
 	 for (String var : intialValues.keySet()) {
 	     String value = intialValues.get(var);
-	     String legalVar = NativeDataTypeManager.makeLegal(var.replace("memory.", ""));
+	     String legalVar = InformationManagers.getInstance().getNativeDataTypeManager().makeLegal(var.replace("memory.", ""));
 	     
-	     source.append("<parameter name=\""+legalVar+"\" displayName=\""+NativeDataTypeManager.getOriginalName(var)+"\" type=\"double\" \n");
+	     source.append("<parameter name=\""+legalVar+"\" displayName=\""+InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(var)+"\" type=\"double\" \n");
 	     source.append("\tdefaultValue=\""+value+"\" \n");
 	     source.append("\tisReadOnly=\"false\" \n");
 	     source.append("\tconverter=\"repast.simphony.parameter.StringConverterFactory$DoubleConverter\"\n");
