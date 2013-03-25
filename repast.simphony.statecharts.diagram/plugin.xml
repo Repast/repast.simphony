@@ -949,6 +949,14 @@
          class="repast.simphony.statecharts.handlers.StatechartConfigurator">
    </configurator>
 </extension>
+<extension
+      id="statechart_perspective_config"
+      name="Repast Simphony Statechart Perspective Configurator"
+      point="repast.simphony.perspective.config">
+   <configurator
+         class="repast.simphony.statecharts.handlers.StatechartPerspectiveConfigurator">
+   </configurator>
+</extension>
 
 
 
