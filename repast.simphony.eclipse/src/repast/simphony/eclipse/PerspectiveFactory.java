@@ -45,7 +45,7 @@ public class PerspectiveFactory implements IPerspectiveFactory {
       IContributor contrib = element.getContributor();
       try {
         Object obj = element.createExecutableExtension("class");
-        if (obj instanceof IRepastProjectConfigurator) {
+        if (obj instanceof IRepastPerspectiveConfigurator) {
           ((IRepastPerspectiveConfigurator) obj).configurePerspective(layout);
         }
       } catch (Exception ex) {
