@@ -2,6 +2,7 @@
 <?eclipse version="3.3"?>
 <plugin>
    <extension-point id="repast.simphony.project.config" name="RepastSimphonyProjectConfig" schema="schema/repast.simphony.project.config.exsd"/>
+   <extension-point id="repast.simphony.perspective.config" name="Repast Simphonty Perspsective Configurator" schema="schema/repast.simphony.perspective.config.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension: Repast Simphony Variables                                                -->
@@ -135,7 +136,7 @@
             </not>
          </visibility>
          <action
-               label="Add Repast Simphony to this Project"
+               label="Add Repast Simphony"
                icon="icons/full/ctool16/add.gif"
                class="repast.simphony.eclipse.ide.AddSimphony"
                menubarPath="rs_main/natureGroup"
@@ -151,7 +152,7 @@
                value="repast.simphony.eclipse.repast_simphony_nature">
          </filter>
          <action
-               label="Remove Repast Simphony from this Project"
+               label="Remove Repast Simphony"
                icon="icons/full/ctool16/remove.gif"
                class="repast.simphony.eclipse.ide.RemoveSimphony"
                menubarPath="rs_main/natureGroup"
@@ -208,17 +209,25 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <actionSet
-               id="repast.simphony.eclipse.samplemodelsactionSet">
-         </actionSet>
-      </perspectiveExtension>
-      <perspectiveExtension
             targetID="repast.simphony.relogo.ide.relogoperspective">
          <actionSet
                id="repast.simphony.eclipse.samplemodelsactionSet">
          </actionSet>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="repast.simphony.eclipse.perspective">
+         <actionSet
+               id="repast.simphony.eclipse.samplemodelsactionSet">
+         </actionSet>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="repast.simphony.eclipse.PerspectiveFactory"
+            id="repast.simphony.eclipse.perspective"
+            name="Repast Simphony">
+      </perspective>
    </extension>
    
    
