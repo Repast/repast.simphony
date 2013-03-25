@@ -123,6 +123,7 @@
             </separator>
          </menu>
       </objectContribution>
+      
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -133,16 +134,43 @@
                      name="projectNature"
                      value="repast.simphony.eclipse.repast_simphony_nature">
                </objectState>
-            </not>
+             </not>
+              
          </visibility>
          <action
-               label="Add Repast Simphony"
-               icon="icons/full/ctool16/add.gif"
+               label="Add Repast Simphony Nature"
                class="repast.simphony.eclipse.ide.AddSimphony"
                menubarPath="rs_main/natureGroup"
                id="addAction">
          </action>
       </objectContribution>
+      
+      <objectContribution
+       objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.agents.rs_projectContribution_update">
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="repast.simphony.eclipse.repast_simphony_nature">
+               </objectState>
+             <not>
+               <objectState
+                     name="projectNature"
+                     value="repast.simphony.statecharts.diagram.repast_simphony_statechart_nature">
+               </objectState>
+             </not>
+             </and>
+         </visibility>
+         <action
+               label="Update Repast Simphony Nature"
+               class="repast.simphony.eclipse.ide.UpdateSimphony"
+               menubarPath="rs_main/natureGroup"
+               id="addAction">
+         </action>
+      </objectContribution>
+      
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -152,13 +180,13 @@
                value="repast.simphony.eclipse.repast_simphony_nature">
          </filter>
          <action
-               label="Remove Repast Simphony"
-               icon="icons/full/ctool16/remove.gif"
+               label="Remove Repast Simphony Nature"
                class="repast.simphony.eclipse.ide.RemoveSimphony"
                menubarPath="rs_main/natureGroup"
                id="removeAction">
          </action>
       </objectContribution>
+      
       <objectContribution
             adaptable="false"
             id="repast.simphony.eclipse.ScenarioConverter"
@@ -181,7 +209,7 @@
          name="Repast Simphony Agents SSE Adapter"
          point="org.eclipse.wst.sse.ui.adapterFactoryDescription">
      
-         <adapterFactoryDescription class="repast.simphony.agents.scenario.ui.editors.ScenarioOutlineViewer"/>
+         <adapterFactoryDescription class="repast.simphony.eclipse.ide.ScenarioOutlineViewer"/>
      
    </extension>
    <extension
