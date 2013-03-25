@@ -1,7 +1,7 @@
 package repast.simphony.gis.styleEditor;
 
-import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POINT;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -24,11 +24,13 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 
-import repast.simphony.gis.GeometryUtil.GeometryType;
+import repast.simphony.gis.util.GeometryUtil.GeometryType;
 
 /**
+ * Utility class for creating Styles from rules and rule editing.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.3 $ $Date: 2007/04/26 18:32:33 $
+ * 
  */
 public class RuleCreator {
 

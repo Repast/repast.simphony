@@ -1,4 +1,4 @@
-package repast.simphony.agents.scenario.ui.editors;
+package repast.simphony.eclipse.ide;
 
 import org.eclipse.wst.sse.core.internal.ltk.modelhandler.IDocumentTypeHandler;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;

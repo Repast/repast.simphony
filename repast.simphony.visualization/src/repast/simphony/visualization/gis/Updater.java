@@ -1,8 +1,6 @@
 package repast.simphony.visualization.gis;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,21 +12,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerEvent;
-import org.geotools.styling.SLDParser;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactory;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.gis.data.DataUtilities;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
@@ -52,8 +44,8 @@ public class Updater {
   private Lock updateLock = new ReentrantLock();
 
   private Geography geog;
-  private Map<Class, FeatureCollection> featureMap = 
-  		new HashMap<Class, FeatureCollection>();
+  private Map<Class, List<SimpleFeature>> featureMap = 
+  		new HashMap<Class, List<SimpleFeature>>();
   private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
 
   private Set<Object> agentsToAdd = new HashSet<Object>();
@@ -133,60 +125,22 @@ public class Updater {
       fac.reset();
     }
   }
-  
-  private List testFeatures(){
-  	List list = new ArrayList();
-  	
-  	try {
-			String dataFileName = "sampleData/streams.shp"; 
-//			String styleFileName = "sampleData/streams.xml";
-			
-			String styleFileName = "archsites.xml";
-			
-			URL shapefile = new File(dataFileName).toURL();
-			
-			ShapefileDataStore store = new ShapefileDataStore(shapefile);
-			FeatureSource source = store.getFeatureSource();
-			
-			list.add(0,source);
-			
-			File styleFile = new File(styleFileName);
-			StyleFactory fac = CommonFactoryFinder.getStyleFactory(null);
-			SLDParser parser = new SLDParser(fac, styleFile);
-			Style style = parser.readXML()[0];
-			
-			list.add(1,style);
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-  	
-  	
-  	return list;
-  }
 
   public void render(MapContent mapContext) {
     if (addRender) {
       for (Class clazz : renderMap.keySet()) {
         DefaultFeatureAgentFactory fac = renderMap.get(clazz);
-        FeatureCollection newAgents = fac.getFeatures();
-        FeatureCollection currentAgents = featureMap.get(clazz);
+        List<SimpleFeature> newAgents = fac.getFeatures();
+        List<SimpleFeature> currentAgents = featureMap.get(clazz);
         if (currentAgents == null) {
           featureMap.put(clazz, newAgents);
           FeatureSource source = DataUtilities.createFeatureSource(newAgents);
-          FeatureAgent agent = (FeatureAgent) newAgents.iterator().next();
+          FeatureAgent agent = (FeatureAgent) newAgents.get(0);
           
           RepastMapLayer layer = new RepastMapLayer(source, 
           		styler.getStyle(clazz.getName(), 
           				agent.getDefaultGeometry().getClass()));
           
-//          List list = testFeatures();
-//          FeatureSource source2 = (FeatureSource)list.get(0);
-//          Style style = (Style)list.get(1);
-//          RepastMapLayer layer = new RepastMapLayer(source2, style, "Streams");
-            
-          
-//          layer.setDynamic(true);
           layerMap.put(clazz.getName(), layer);
           
           reorder = true;

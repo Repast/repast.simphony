@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DefaultTransaction;
@@ -11,7 +12,8 @@ import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import simphony.util.messages.MessageCenter;
@@ -47,16 +49,16 @@ public class ShapefileWriter {
    */
   public void write(String layerName, URL url) {
     ShapefileFeatureAgentFactory fac = createFactory(layerName);
-    FeatureCollection collection = fac.getFeatures();
+    List<SimpleFeature> features = fac.getFeatures();
     SimpleFeatureType type = fac.getFeatureType();
     try {
-      write(url, collection, type);
+      write(url, features, type);
     } catch (IOException ex) {
       msg.error("Error writing geography to shapefile", ex);
     }
   }
 
-  private void write(URL url, FeatureCollection collection, SimpleFeatureType type) throws IOException {
+  private void write(URL url, List<SimpleFeature> features, SimpleFeatureType type) throws IOException {
   	ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
       	
   	Map<String, Serializable> params = new HashMap<String, Serializable>();
@@ -71,6 +73,10 @@ public class ShapefileWriter {
     Transaction transaction = new DefaultTransaction("create");
     SimpleFeatureStore fs = (SimpleFeatureStore) store.getFeatureSource(featureName);
     fs.setTransaction(transaction);
+    
+    DefaultFeatureCollection collection = new DefaultFeatureCollection(null,null);
+		collection.addAll(features);
+		
     try {
       fs.addFeatures(collection);
       transaction.commit();

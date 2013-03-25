@@ -1,38 +1,37 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.Rule;
-import org.opengis.feature.simple.SimpleFeature;
-
-import repast.simphony.gis.display.LegendIconMaker;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Rule;
 
 /**
+ * Table for the Range panel that shows how the icon fill appears according to
+ * the range rules.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.2 $ $Date: 2007/04/18 19:25:53 $
+ * @author Eric Tatara
  */
 public class SampleStyleTableModel extends AbstractTableModel {
 
 	private static String[] COL_NAMES = {"Symbol", "Range", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-	private Map<Rule, Icon> icons = new HashMap<Rule, Icon>();
-	private SimpleFeature sample;
+	private PreviewLabel defaultPreview;
 
-	public void initStyle(FeatureTypeStyle style, SimpleFeature sample) {
+	public SampleStyleTableModel(PreviewLabel preview){
+		this.defaultPreview = preview;
+	}
+	
+	public void initStyle(FeatureTypeStyle style) {
 		rules.clear();
-		icons.clear();
-		this.sample = sample;
-		for (Rule rule : style.getRules()) {
+		for (Rule rule : style.rules()) {
 			rules.add(rule);
 		}
-
 		fireTableDataChanged();
 	}
 
@@ -88,9 +87,9 @@ public class SampleStyleTableModel extends AbstractTableModel {
 			case 0:
 				return getIcon(rule);
 			case 1:
-				return ruleTitleToRange(rule.getTitle());
+				return ruleTitleToRange(rule.getDescription().getTitle().toString());
 			case 2:
-				return rule.getTitle();
+				return ruleTitleToRange(rule.getDescription().getTitle().toString());
 			default:
 				return "";
 		}
@@ -121,21 +120,19 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	}
 
 	private Icon getIcon(Rule rule) {
-		Icon icon = icons.get(rule);
-		if (icon == null) {
-			icon = LegendIconMaker.makeLegendIcon(12, rule, sample);
-			//icons.put(rule, icon);
-		}
-		return icon;
+		return PreviewLabel.formatPreview(defaultPreview, rule);
 	}
 
 	private String ruleTitleToRange(String title) {
-		return title.replace("to", "-");
+		return title.replace("..", " - ");
 	}
 
 	public void init(List<Rule> rules) {
 		this.rules.clear();
 		this.rules.addAll(rules);
-		icons.clear();
+	}
+
+	public void setDefaultPreview(PreviewLabel defaultPreview) {
+		this.defaultPreview = defaultPreview;
 	}
 }

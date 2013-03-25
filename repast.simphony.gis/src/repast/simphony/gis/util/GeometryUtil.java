@@ -1,4 +1,4 @@
-package repast.simphony.gis;
+package repast.simphony.gis.util;
 
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
@@ -21,6 +21,28 @@ public class GeometryUtil {
   public static enum GeometryType {
     POINT, LINE, POLYGON, OTHER
   }
+  
+  /**
+   * Finds the geometry type of the specified com.vividsolutions.jts.geom class.
+   *
+   * @param geom the com.vividsolutions.jts.geom class whose type we want.
+   * @return the geometry type of the specified com.vividsolutions.jts.geom class.
+   */
+  public static GeometryType findGeometryType(Class geomClass) {
+    if (com.vividsolutions.jts.geom.Point.class.equals(geomClass) || 
+    		com.vividsolutions.jts.geom.MultiPoint.class.equals(geomClass))
+      return GeometryType.POINT;
+    
+    else if (com.vividsolutions.jts.geom.Polygon.class.equals(geomClass) || 
+    		     com.vividsolutions.jts.geom.MultiPolygon.class.equals(geomClass))
+      return GeometryType.POLYGON;
+    
+    else if (com.vividsolutions.jts.geom.LineString.class.equals(geomClass) || 
+    		     com.vividsolutions.jts.geom.MultiLineString.class.equals(geomClass))
+      return GeometryType.LINE;
+    
+    else return GeometryType.OTHER;
+  }
 
   /**
    * Finds the geometry type of the specified geometry.
@@ -29,7 +51,7 @@ public class GeometryUtil {
    * @return the geometry type of the specified geometry.
    */
   public static GeometryType findGeometryType(Geometry geom) {
-    if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
+  	if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
       return GeometryType.POINT;
     else if (geom instanceof com.vividsolutions.jts.geom.Polygon || geom instanceof MultiPolygon)
       return GeometryType.POLYGON;
