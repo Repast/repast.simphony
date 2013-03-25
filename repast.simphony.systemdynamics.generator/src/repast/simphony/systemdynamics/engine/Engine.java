@@ -43,6 +43,9 @@ public class Engine {
 		getTranslator().generateCodeForRSD(systemModel);
 	}
 	
+	public void validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
+		getTranslator().validateGenerateRSD(systemModel, generateCode);
+	}
 	public SystemModel loadMDL(String filename) {
 		return null;
 	}

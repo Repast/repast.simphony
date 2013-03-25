@@ -865,6 +865,8 @@ public class Equation {
 
 		// need to determine what we have based on next token "(", "=", or "[" -- array processing for later
 		if (inRange(position) && characterAt(position).equals("=")) {
+			
+			System.out.println("Think this is assignment");
 
 			// need to check if this is a "==" for an unchangeable variable
 			// in the immediate future, this restriction will not be applied
@@ -878,6 +880,7 @@ public class Equation {
 			cleanEquation += "=";
 			ignore = false;
 		} else if (inRange(position) && characterAt(position).equals("(")) {
+			System.out.println("Think this is lookup");
 			// need to tokenize the remaining characters in the lookup definition
 			ignore = false;
 			tokens.add(token);
@@ -972,6 +975,9 @@ public class Equation {
 			// this should be converted into a method call for a data lookup
 
 		} else if (inRange(position) && characterAt(position).equals(":")) {
+			
+			System.out.println("Think this is subscript definition");
+			
 			ignore = false;
 			// need to tokenize the remaining characters in the subscript definition
 			tokens.add(token);
@@ -1251,7 +1257,9 @@ public class Equation {
 					// if the char == "(", we have either a function reference
 					// or a lookup reference
 					if (characterAt(position).equals("(")) {
+						System.out.println("TokRHS: func or lookup token: "+token);
 						if (FunctionManager.isFunction(token)) { // HERE~~~
+							System.out.println("TokRHS: Function");
 							checkSpecialFunctions(token);
 							function = true;
 							if (isGetXlsDataFunction(token))
@@ -1266,10 +1274,12 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else if (isMacroName(token)) {
+							System.out.println("TokRHS: Macro");
 							macro = true;
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
+							System.out.println("TokRHS: Lookup");
 							referencesLookup = true;
 							lookupRef = true;
 							rhsTokens.add(token);
@@ -1288,6 +1298,7 @@ public class Equation {
 						position.add(1);
 						skipWhiteSpace(position);
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) {
+							System.out.println("TokRHS: Lookup2");
 							referencesLookup = true;
 							lookupRef = true;
 							token = token.replace("array.", "");
@@ -1318,7 +1329,8 @@ public class Equation {
 
 				skipWhiteSpace(position);
 				if (inRange(position)) {
-					if (characterAt(position).equals("(")) {   // checking for function invocation 
+					if (characterAt(position).equals("(")) {   // checking for function invocation
+						System.out.println("TokRHS: Lookup3 based on token: "+token);
 						if (FunctionManager.isFunction(token)) {  // Here
 							checkSpecialFunctions(token);
 							function = true;
@@ -1342,6 +1354,7 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
+							System.out.println("TokRHS: Lookup3");
 							lookupRef = true;
 							referencesLookup = true;
 							rhsTokens.add(token);
@@ -1361,6 +1374,7 @@ public class Equation {
 						theChar = characterAt(position.value());
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) { // MARK HERE
 							referencesLookup = true;
+							System.out.println("TokRHS: Lookup4");
 							lookupRef = true;
 							token = token.replace("array.", "");
 							rhsTokens.add(token);
@@ -3423,17 +3437,19 @@ public class Equation {
 	}
 	
 	private void printTreeCodeUnits(List<String> eqn, Node node, int level) {
-	    if (node == null)
+	    if (node == null) {
+	    	System.out.println("printTreeCodeUnits: terminate");
 		return;
+	    }
 	    if (node.isTerminal()) {
 		if (Parser.isNumber(node.getToken())) {
-//		    System.out.println(node.getToken()+"<"+"constant"+">");
+		    System.out.println(node.getToken()+"<"+"constant"+">");
 		    eqn.add("constant"+"#"+node.getToken());
 		} else {
-//		    System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
+		    System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
 		    String v = UnitsManager.getUnits(node.getToken());
-//		    if (v == null)
-//			System.out.println("V is null");
+		    if (v == null)
+			System.out.println("V is null");
 		    eqn.add(UnitsManager.getUnits(node.getToken()));
 		}
 	    }
@@ -3443,9 +3459,9 @@ public class Equation {
 		Node rightChild = leftChild != null ? leftChild.getNext() : null;
 		eqn.add("(");
 		printTreeCodeUnits(eqn, leftChild, level+1);
-//		System.out.println(level+" "+node.getToken()+"<"+node.getUnits()+">");
+		System.out.println(level+" "+node.getToken()+"<"+node.getUnits()+">");
 		eqn.add(node.getToken());
-//		System.out.println(node.getToken());
+		System.out.println(node.getToken());
 		printTreeCodeUnits(eqn, rightChild, level+1);
 		eqn.add(")");
 	    }
@@ -3453,7 +3469,7 @@ public class Equation {
 	    if (Parser.isFunctionInvocation(node.getToken())) {
 		eqn.add(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
 		eqn.add("(");
-//		System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
+		System.out.println(node.getToken()+"<"+UnitsManager.getUnits(node.getToken())+">");
 		Node child = node.getChild();
 		int c = 0;
 		while (child != null) {

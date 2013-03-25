@@ -65,6 +65,7 @@ public class FunctionManager {
     }
     
     public static boolean isFunction(String function) {
+    	
 	return allFunctions.containsKey(function.replace("sdFunctions.", "").toUpperCase());
     }
     

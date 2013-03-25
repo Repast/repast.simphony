@@ -33,7 +33,7 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
   protected void doRun(IProgressMonitor progressMonitor) {
     System.out.println("generate code");
     Engine engine = new Engine(model);
-    engine.generateCodeForRSD(model);
+    engine.validateGenerateRSD(model, true);
   }
 }
 

@@ -50,7 +50,7 @@ public class Translator {
 	protected String supportName;
 
 	protected String unitsConsistencyCheckMdlFile = "";
-	protected String unitsConsistencyCheckResultsFile = "";
+	protected String unitsConsistencyCheckResultsFile = "./UnitsConsistencyCheckResults.txt";
 
 	protected boolean unitsConsistency;
 
@@ -199,6 +199,53 @@ public class Translator {
 
 		}
 	}
+	
+	protected boolean validateGenerate(List<String> mdlContents, boolean generateCode) {
+		sdObjectManager = new SystemDynamicsObjectManager();
+
+		// process graphics first since we get screen name information from this portion of the file
+		Map<String, View> graphics = new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
+		EquationProcessor equationProcessor = new EquationProcessor();
+		
+		Map<String, Equation> equations = equationProcessor.processRawEquations(sdObjectManager, mdlContents);
+		
+		Map<String, Equation> syntaxErrors = equationProcessor.getSyntaxErrors(equations);
+		boolean errors = syntaxErrors.size() > 0;
+		if (errors) {
+			printErrors(syntaxErrors);
+			return false;
+		}
+		
+		Map<String, Equation> usageErrors = equationProcessor.getUsageErrors(equations);
+		errors = usageErrors.size() > 0;
+		if (errors) {
+			printErrors(usageErrors);
+			return false;
+		}
+		
+		processSubscriptDefinition(equations);
+		processExponentiaion(equations);
+		generateRPN(equations);
+		generateTrees(equations);
+//		generateCausalTrees(sdObjectManager);
+		ArrayManager.populateArraySubscriptSpace();
+		
+		UnitsManager.performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+
+		//	sdObjectManager.print();
+		
+		List<String> addedScreenNames = sdObjectManager.validate(equations);
+		
+		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
+
+		sdObjectManager.print();
+		if (!generateCode)
+			return true;
+		
+		process(equations);
+		printGraphics(graphics);
+		return true;
+	}
 
 	protected boolean execute(List<String> mdlContents) {
 
@@ -208,7 +255,6 @@ public class Translator {
 		Map<String, View> graphics = new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
 		EquationProcessor equationProcessor = new EquationProcessor();
 		
-	
 		Map<String, Equation> equations = equationProcessor.processRawEquations(sdObjectManager, mdlContents);
 		
 		

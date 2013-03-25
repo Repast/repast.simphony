@@ -23,42 +23,47 @@ public class UnitsManager {
 	
     }
     
-    public static void performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
-	List<String> evaluationOrder = new ArrayList<String>();
-	for (String key : equations.keySet()) {
-	    evaluationOrder.add(key);
-	}
-	performUnitsConsistencyCheck(evaluationOrder, equations, file);
-	
+    public static boolean performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
+    	boolean consistent = true;
+    	List<String> evaluationOrder = new ArrayList<String>();
+    	for (String key : equations.keySet()) {
+    		evaluationOrder.add(key);
+    	}
+    	consistent = performUnitsConsistencyCheck(evaluationOrder, equations, file);
+    	return consistent;
+
     }
     
-    public static void performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
-	unitConsistencyXMLWriter = new UnitConsistencyXMLWriter();
-	int equationCount = 0;
-	for (String lhs : evaluationOrder) {
+    public static boolean performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
+    	boolean consistent = true;
+    	unitConsistencyXMLWriter = new UnitConsistencyXMLWriter();
+    	int equationCount = 0;
+    	for (String lhs : evaluationOrder) {
 
-	    Equation eqn = equations.get(lhs);
-	    if (!eqn.isAssignment())
-		continue;
-	    
-	    if (!FunctionManager.canCheckUnitsConsistency(eqn.getVensimEquation())) {
-		continue;
-	    }
-	    
-	    equationCount++;
-	    System.out.println("===================================");
-	    
-	    List<String> units = eqn.getEquationUnits();
+    		Equation eqn = equations.get(lhs);
+    		if (!eqn.isAssignment())
+    			continue;
 
-	    if (!eqn.isArrayInitialization() && !isConsistent(eqn, units)) {
-		System.out.println("INCONSISTENT UNITS: "+eqn.getCleanEquation());
-	    } else {
-		System.out.println("!!!YES!!! CONSISTENT UNITS: "+eqn.getCleanEquation());
-	    }
-	}
-	unitConsistencyXMLWriter.setEquationCount(equationCount);
-	unitConsistencyXMLWriter.write(file);
-	unitConsistencyXMLWriter.writeReport(file.replace(".xml", ".txt"));
+    		if (!FunctionManager.canCheckUnitsConsistency(eqn.getVensimEquation())) {
+    			continue;
+    		}
+
+    		equationCount++;
+    		System.out.println("===================================");
+
+    		List<String> units = eqn.getEquationUnits();
+
+    		if (!eqn.isArrayInitialization() && !isConsistent(eqn, units)) {
+    			System.out.println("INCONSISTENT UNITS: "+eqn.getCleanEquation());
+    			consistent = false;
+    		} else {
+    			System.out.println("!!!YES!!! CONSISTENT UNITS: "+eqn.getCleanEquation());
+    		}
+    	}
+    	unitConsistencyXMLWriter.setEquationCount(equationCount);
+    	unitConsistencyXMLWriter.write(file);
+    	unitConsistencyXMLWriter.writeReport(file.replace(".xml", ".txt"));
+    	return consistent;
     }
     
     public static void addEquivalence(String alternateUnit, String effectiveUnit) {
@@ -173,8 +178,8 @@ public class UnitsManager {
 	List<String> unitsExpanded = expandUnits(units);
 	unitsExpanded = addFunctionUnits(unitsExpanded);
 	eqn.printTokensOneLine();
-//	printUnits(units);
-//	System.out.println("++++++++++++++++++++++++++++++++");
+	printUnits(units);
+	System.out.println("++++++++++++++++++++++++++++++++");
 	boolean isValid = valid(unitsExpanded, eqn);
 	if (!isValid)
 	    printUnitsIndented(unitsExpanded);

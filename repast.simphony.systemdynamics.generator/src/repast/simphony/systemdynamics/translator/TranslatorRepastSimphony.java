@@ -128,6 +128,40 @@ public class TranslatorRepastSimphony extends Translator {
     	}
     }
     
+    public void validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
+    	reader = null;
+    	this.objectName = systemModel.getClassName();
+    	Translator.target = "JAVA";
+    	this.dataType = "Arrays";
+    	this.destinationDirectory = ".";
+    	this.miscDirectory = ".";
+    	this.packageName = systemModel.getPackage();
+    	this.supportName = "support";
+    	
+    	this.unitsConsistency = true;
+    	this.generateC = false;
+    	this.generateJava = true;
+    	
+    	this.loadProperties();
+    	
+    	FunctionManager.load(PROPERTIES.getProperty("functionFile"));
+    	
+    	Translator.target = ReaderConstants.JAVA;
+    	
+    	
+    	System.out.println("********");
+    	System.out.println("RSD File: "+systemModel.getClassName());
+    	System.out.println("Object Name: "+objectName);
+    	System.out.println("Target Language: "+target);
+    	System.out.println("Data Type: "+dataType);
+    	System.out.println("Dest Dir: "+destinationDirectory);
+    	System.out.println("Misc Dir: "+miscDirectory);
+    	System.out.println("Package: "+packageName);
+    	System.out.println("********");
+    	List<String> mdlContents = convertToMDL(systemModel);
+    	boolean success = validateGenerate(mdlContents, generateCode);
+    }
+    
     public void generateCodeForRSD(SystemModel systemModel) {
 
     	reader = null;
@@ -310,13 +344,15 @@ public class TranslatorRepastSimphony extends Translator {
     @Override
     protected void process(Map<String, Equation> equations) {
 	CodeGenerator cg = null;
-	processSubscriptDefinition(equations);
-	processExponentiaion(equations);
-	generateRPN(equations);
-	generateTrees(equations);
-	generateCausalTrees(sdObjectManager);
-	ArrayManager.populateArraySubscriptSpace();
+//	processSubscriptDefinition(equations);
+//	processExponentiaion(equations);
+//	generateRPN(equations);
+//	generateTrees(equations);
+//	generateCausalTrees(sdObjectManager);
+//	ArrayManager.populateArraySubscriptSpace();
 //	UnitsManager.performUnitsConsistencyCheck(equations, "./ConsistencyResults.xml");
+	
+	generateCausalTrees(sdObjectManager);
 	
 	
 	if (equations != null) {
