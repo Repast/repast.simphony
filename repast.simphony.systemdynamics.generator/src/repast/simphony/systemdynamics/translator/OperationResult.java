@@ -24,7 +24,10 @@ public class OperationResult {
 	}
 
 	public void setMessage(String message) {
-		this.message = message;
+		if (this.message == null)
+			this.message = message;
+		else
+			this.message += "\n" + message;
 	}
 	
 	public void clear() {
@@ -35,10 +38,7 @@ public class OperationResult {
 	public void setErrorMessage(String message) {
 		
 		setMessage(message);
-		if (ok)
-			System.out.println("Setting not OK message = "+message);
 		setOk(false);
-		System.exit(1);
 	}
 
 }

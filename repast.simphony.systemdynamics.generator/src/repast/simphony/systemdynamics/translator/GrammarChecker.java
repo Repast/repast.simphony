@@ -52,6 +52,9 @@ public class GrammarChecker {
 		this.tokens = tokens;
 	}
 	
+	// make sure proper number of parens
+	// ends with appropriate token type
+	
 	public OperationResult checkGrammar() {
 		
 		System.out.println("######################## check Grammar #############################");
@@ -109,6 +112,12 @@ public class GrammarChecker {
 				or.setErrorMessage("Aborting loop");
 				return or;
 			}
+		}
+		if (openParens.value() != 0) {
+			or.setErrorMessage("Mismatched parens");
+		}
+		if (!lookingForBinaryOperator.value()) {
+			or.setErrorMessage("Illegal final token in equation");
 		}
 		return or;
 	}
@@ -197,8 +206,13 @@ public class GrammarChecker {
 		} else if (token.equals(RIGHT_PAREN)) { // this is a grouping paren
 			System.out.println("RightParen "+ token);
 			if (lookingForBinaryOperator.value()) {
+				
+				// If this paren matches an open paren, we are OK
+				
+				if (openParens.value() <= 0) {
 				or.setErrorMessage("Looking for operator found "+token+" in pos "+pos.value());
 				return;
+				}
 			}
 			if (lookingForArgumentSeparator.value()) {
 				or.setErrorMessage("Looking for argument separator found "+token+" in pos "+pos.value());
