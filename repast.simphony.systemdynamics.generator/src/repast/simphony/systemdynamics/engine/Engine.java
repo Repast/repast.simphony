@@ -3,17 +3,22 @@ package repast.simphony.systemdynamics.engine;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
+import repast.simphony.systemdynamics.translator.InformationManagers;
 import repast.simphony.systemdynamics.translator.SystemDynamicsObjectManager;
 import repast.simphony.systemdynamics.translator.TranslatorRepastSimphony;
 
 public class Engine {
+	
+	private List<String> messages = new ArrayList<String>();
 
 	private String currentModel;
 //	private SystemDynamicsObjectManager sdObjectManager;
@@ -30,21 +35,21 @@ public class Engine {
 	 */
 
 	public Engine() {
+		InformationManagers.init();
 		translator = new TranslatorRepastSimphony();
 		System.out.println("Engine created");
 	}
 	
 	public Engine(SystemModel systemModel) {
 		this();
-//		getTranslator().generateCodeForRSD(systemModel);
 	}
 	
 	public void generateCodeForRSD(SystemModel systemModel) {
 		getTranslator().generateCodeForRSD(systemModel);
 	}
 	
-	public void validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
-		getTranslator().validateGenerateRSD(systemModel, generateCode);
+	public boolean validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
+		return getTranslator().validateGenerateRSD(systemModel, generateCode, messages);
 	}
 	public SystemModel loadMDL(String filename) {
 		return null;
@@ -295,6 +300,17 @@ public class Engine {
 
 	public SystemDynamicsObjectManager getSdObjectManager() {
 		return translator.getSdObjectManager();
+	}
+
+	public String getMessages() {
+		
+		StringBuffer sb = new StringBuffer();
+		
+		for (String s : messages) {
+			sb.append(s);
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 

@@ -128,7 +128,7 @@ public class TranslatorRepastSimphony extends Translator {
     	}
     }
     
-    public void validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
+    public boolean validateGenerateRSD(SystemModel systemModel, boolean generateCode, List<String> messages) {
     	reader = null;
     	this.objectName = systemModel.getClassName();
     	Translator.target = "JAVA";
@@ -158,8 +158,20 @@ public class TranslatorRepastSimphony extends Translator {
     	System.out.println("Misc Dir: "+miscDirectory);
     	System.out.println("Package: "+packageName);
     	System.out.println("********");
+    	
+    	messages.add("********");
+    	messages.add("RSD File: "+systemModel.getClassName());
+    	messages.add("Object Name: "+objectName);
+    	messages.add("Target Language: "+target);
+    	messages.add("Data Type: "+dataType);
+    	messages.add("Dest Dir: "+destinationDirectory);
+    	messages.add("Misc Dir: "+miscDirectory);
+    	messages.add("Package: "+packageName);
+    	messages.add("********");
+    	
     	List<String> mdlContents = convertToMDL(systemModel);
-    	boolean success = validateGenerate(mdlContents, generateCode);
+    	boolean success = validateGenerate(mdlContents, generateCode, messages);
+    	return success;
     }
     
     public void generateCodeForRSD(SystemModel systemModel) {

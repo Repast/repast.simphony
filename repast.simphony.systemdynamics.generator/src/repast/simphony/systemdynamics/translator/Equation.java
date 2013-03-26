@@ -37,6 +37,7 @@ public class Equation {
 	
 	private List<String> syntaxMessages = new ArrayList<String>();
 	private List<String> usageMessages = new ArrayList<String>();
+	private List<String> unitsMessages = new ArrayList<String>();
 	
 	private OperationResult opRes = new OperationResult();  // reusable
 	
@@ -3823,5 +3824,9 @@ public class Equation {
 
 	public List<String> getSemanticMessages() {
 		return usageMessages;
+	}
+
+	public List<String> getUnitsMessages() {
+		return unitsMessages;
 	}
 }

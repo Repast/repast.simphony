@@ -200,7 +200,7 @@ public class Translator {
 		}
 	}
 	
-	protected boolean validateGenerate(List<String> mdlContents, boolean generateCode) {
+	protected boolean validateGenerate(List<String> mdlContents, boolean generateCode, List<String> messages) {
 		sdObjectManager = new SystemDynamicsObjectManager();
 
 		// process graphics first since we get screen name information from this portion of the file
@@ -213,6 +213,7 @@ public class Translator {
 		boolean errors = syntaxErrors.size() > 0;
 		if (errors) {
 			printErrors(syntaxErrors);
+			generateErrorReport("Syntax Errors", syntaxErrors, messages);
 			return false;
 		}
 		
@@ -220,6 +221,7 @@ public class Translator {
 		errors = usageErrors.size() > 0;
 		if (errors) {
 			printErrors(usageErrors);
+			generateErrorReport("Usage Errors", usageErrors, messages);
 			return false;
 		}
 		
@@ -230,7 +232,14 @@ public class Translator {
 //		generateCausalTrees(sdObjectManager);
 		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
 		
-		InformationManagers.getInstance().getUnitsManager().performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+		Map<String, Equation> unitsErrors = InformationManagers.getInstance().getUnitsManager().
+				performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+		errors = unitsErrors.size() > 0;
+		if (errors) {
+			printErrors(unitsErrors);
+			generateErrorReport("Units Errors", unitsErrors, messages);
+			return false;
+		}
 
 		//	sdObjectManager.print();
 		
@@ -245,6 +254,25 @@ public class Translator {
 		process(equations);
 		printGraphics(graphics);
 		return true;
+	}
+	
+	protected void generateErrorReport(String title, Map<String, Equation> errors, List<String> messages) {
+		Iterator<String> iter = errors.keySet().iterator();
+		messages.add("+++ "+title+" +++");
+		while (iter.hasNext()) {
+			String lhs = iter.next();
+			Equation eqn = errors.get(lhs);
+			messages.add("ERROR: "+eqn.getVensimEquation());
+			for (String msg : eqn.getSyntaxMessages()) {
+				messages.add(msg);
+			}
+			for (String msg : eqn.getSemanticMessages()) {
+				messages.add(msg);
+			}
+			for (String msg : eqn.getUnitsMessages()) {
+				messages.add(msg);
+			}
+		}
 	}
 
 	protected boolean execute(List<String> mdlContents) {
@@ -276,7 +304,7 @@ public class Translator {
 			return false;
 		}
 		
-//		UnitsManager.performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
+		InformationManagers.getInstance().getUnitsManager().performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
 
 		//	sdObjectManager.print();
 		

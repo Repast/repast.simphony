@@ -25,19 +25,21 @@ public class UnitsManager {
         unitsEquivalence = new HashMap<String, String>();
     }
     
-    public  boolean performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
+    public  Map<String, Equation> performUnitsConsistencyCheck(Map<String, Equation> equations, String file) {
+    	
     	boolean consistent = true;
     	List<String> evaluationOrder = new ArrayList<String>();
     	for (String key : equations.keySet()) {
     		evaluationOrder.add(key);
     	}
-    	consistent = performUnitsConsistencyCheck(evaluationOrder, equations, file);
-    	return consistent;
+    	Map<String, Equation> errors = performUnitsConsistencyCheck(evaluationOrder, equations, file);
+    	return errors;
 
     }
     
-    public  boolean performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
+    public  Map<String, Equation> performUnitsConsistencyCheck(List<String> evaluationOrder, Map<String, Equation> equations, String file) {
     	boolean consistent = true;
+    	Map<String, Equation> errors = new HashMap<String, Equation>();
     	unitConsistencyXMLWriter = new UnitConsistencyXMLWriter();
     	int equationCount = 0;
     	for (String lhs : evaluationOrder) {
@@ -57,6 +59,7 @@ public class UnitsManager {
 
     		if (!eqn.isArrayInitialization() && !isConsistent(eqn, units)) {
     			System.out.println("INCONSISTENT UNITS: "+eqn.getCleanEquation());
+    			errors.put(eqn.getLhs(), eqn);
     			consistent = false;
     		} else {
     			System.out.println("!!!YES!!! CONSISTENT UNITS: "+eqn.getCleanEquation());
@@ -65,7 +68,7 @@ public class UnitsManager {
     	unitConsistencyXMLWriter.setEquationCount(equationCount);
     	unitConsistencyXMLWriter.write(file);
     	unitConsistencyXMLWriter.writeReport(file.replace(".xml", ".txt"));
-    	return consistent;
+    	return errors;
     }
     
     public  void addEquivalence(String alternateUnit, String effectiveUnit) {
@@ -176,16 +179,17 @@ public class UnitsManager {
     }
     
     public  boolean isConsistent(Equation eqn, List<String> units) {
-	
-	List<String> unitsExpanded = expandUnits(units);
-	unitsExpanded = addFunctionUnits(unitsExpanded);
-	eqn.printTokensOneLine();
-	printUnits(units);
-	System.out.println("++++++++++++++++++++++++++++++++");
-	boolean isValid = valid(unitsExpanded, eqn);
-	if (!isValid)
-	    printUnitsIndented(unitsExpanded);
-	return isValid;
+
+    	List<String> unitsExpanded = expandUnits(units);
+    	unitsExpanded = addFunctionUnits(unitsExpanded);
+    	eqn.printTokensOneLine();
+    	printUnits(units);
+    	System.out.println("++++++++++++++++++++++++++++++++");
+    	boolean isValid = valid(unitsExpanded, eqn);
+    	if (!isValid) {
+    		printUnitsIndented(unitsExpanded, eqn);
+    	}
+    	return isValid;
     }
     
     private  boolean valid(List<String> units, Equation eqn) {
@@ -311,24 +315,25 @@ public class UnitsManager {
 	System.out.print("\n");
     }
     
-    private  void printUnitsIndented(List<String> units) {
-	
-	int indent = 0;
-	String indentation = getIndentation(indent);
-	for (String s : units) {
-	    if (s == null)
-		    s = "null";
-	    if (s.equals(")")) {
-		indent--;
-	    	indentation = getIndentation(indent);
-	    }
-	    System.out.println(indentation+"\""+s+"\"");
-	    if (s.equals("(")) {
-		indent++;
-	    	indentation = getIndentation(indent);
-	    }
-	}
-	
+    private  void printUnitsIndented(List<String> units, Equation eqn) {
+
+    	int indent = 0;
+    	String indentation = getIndentation(indent);
+    	for (String s : units) {
+    		if (s == null)
+    			s = "null";
+    		if (s.equals(")")) {
+    			indent--;
+    			indentation = getIndentation(indent);
+    		}
+    		System.out.println(indentation+"\""+s+"\"");
+    		eqn.getUnitsMessages().add(indentation+"\""+s+"\"");
+    		if (s.equals("(")) {
+    			indent++;
+    			indentation = getIndentation(indent);
+    		}
+    	}
+
     }
     
     private  String getIndentation(int indent) {
