@@ -34,23 +34,26 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
    */
   @Override
   protected void doRun(IProgressMonitor progressMonitor) {
-	
-    System.out.println("generate code");
-    Engine engine = new Engine(model);
-//    boolean success2 = engine.validateGenerateRSD(model, true);
-    boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
-    
-    MessageBox msgBox = null;
-    
-    if (success) {
-    	msgBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_INFORMATION);
-    } else {
-    	msgBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.ICON_ERROR);
-    }
-    
-    msgBox.setMessage(engine.getMessages());
-    msgBox.open();
-    
+
+	  System.out.println("generate code");
+	  Engine engine = new Engine(model);
+	  //    boolean success2 = engine.validateGenerateRSD(model, true);
+	  // this is for testing purposes
+//	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
+	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EPIDEMIC.mdl", true);
+
+	  MessageBox msgBox = null;
+	  int style = SWT.ICON_ERROR;
+	  if (success)
+		  style = SWT.ICON_INFORMATION;
+
+
+	  msgBox = new MessageBox(Display.getCurrent().getActiveShell(), style);
+
+
+	  msgBox.setMessage(engine.getMessages());
+	  msgBox.open();
+
   }
 }
 

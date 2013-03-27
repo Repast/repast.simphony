@@ -23,7 +23,7 @@ import repast.simphony.systemdynamics.support.Utilities;
 
 public class CodeGenerator {
 
-    private static int EQUATION_LIMIT = 5;
+    private static int EQUATION_LIMIT = 200;
     private int currentEquationNumber = 0;
     private int currentMethodNumber;
 

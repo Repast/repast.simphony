@@ -391,6 +391,9 @@ public class GrammarChecker {
 		// <)> <]> <,> <(> <12> <,> <12> <)> <,> <(> <12> <,> <12> <)> <)>
 		// 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 		// 26 27
+		
+		// or
+		// x(0,1,2,3,4, 0.5, 0.4, 0.3, 0.2, 0.1); i.e. all X and all Y
 
 		MutableInteger pos = new MutableInteger();
 		String[] pattern = { "(", "#", ",", "#", ")" };
@@ -446,6 +449,46 @@ public class GrammarChecker {
 			}
 			pos.add(1);
 
+		} else if (!token.equals("(")) {
+			// this is the alternate syntax with all X's and all Y's group together
+			
+			int numDataPoints = 0;
+			
+			while(pos.value() < tokens.size()) {
+				// pos even -> should be number
+				// pos odd -> should be comma or closing )
+				if (pos.value() % 2 == 0) {
+					if (!Parser.isNumber(tokens.get(pos.value()))) {
+						or.setErrorMessage("Invalid numeric value "
+								+ tokens.get(pos.value()));
+						System.out.println("Invalid numeric value "
+								+ tokens.get(pos.value()));
+						return or;
+					} else {
+						numDataPoints++;
+					}
+				} else {
+					if (!tokens.get(pos.value()).equals(",") && !tokens.get(pos.value()).equals(")")) {
+						or.setErrorMessage("Invalid list separator "
+								+ tokens.get(pos.value()));
+						System.out.println("Invalid numeric value "
+								+ tokens.get(pos.value()));
+						return or;
+				} 
+			}
+				String tok = tokens.get(pos.value());
+			
+			pos.add(1);
+			if (tok.equals(LEFT_PAREN)) {
+				if (numDataPoints == 0 || numDataPoints % 2 != 0) {
+					or.setErrorMessage("incorrect number of data points provided in lookup table definition "+numDataPoints);
+					System.out.println("incorrect number of data points provided in lookup table definition "+numDataPoints);
+				}
+				return or;
+			}
+			
+			}
+			return or;
 		}
 		// all that's left should be comma-separated pairs of numbers
 

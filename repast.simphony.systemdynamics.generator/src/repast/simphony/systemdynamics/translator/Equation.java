@@ -3863,24 +3863,26 @@ public class Equation {
 		return unitsMessages;
 	}
 	
-    public List<String> getUnitsInconsistencyReport() {
-	
-    	List<String> bw = new ArrayList<String>();
-//	bw.add("Equation:\n");
-//		bw.add("\t"+StringEscapeUtils.escapeHtml(unitExpression.getVensimEquation().split("~")[0]));
-		
-		    
-		bw.add("LHS Units:\n");
-		bw.add("\t"+unitExpression.getLhsUnitsString());
-		
-		bw.add("RHS Units:\n");
-		bw.add("\t"+unitExpression.getRhsUnitsString());
-		
-		bw.add("Complete RHS Units:\n");
-		bw.add("\t"+unitExpression.getCompleteRhsUnitsString());
-		
+	public List<String> getUnitsInconsistencyReport() {
+
+		List<String> bw = new ArrayList<String>();
+		//	bw.add("Equation:\n");
+		//		bw.add("\t"+StringEscapeUtils.escapeHtml(unitExpression.getVensimEquation().split("~")[0]));
+
+		if (unitExpression != null) {
+
+			bw.add("LHS Units:\n");
+			bw.add("\t"+unitExpression.getLhsUnitsString());
+
+			bw.add("RHS Units:\n");
+			bw.add("\t"+unitExpression.getRhsUnitsString());
+
+			bw.add("Complete RHS Units:\n");
+			bw.add("\t"+unitExpression.getCompleteRhsUnitsString());
+		}
+
 		return bw;
-    }
+	}
 
 	public UnitExpression getUnitExpression() {
 		return unitExpression;
