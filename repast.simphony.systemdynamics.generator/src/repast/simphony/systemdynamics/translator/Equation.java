@@ -1,6 +1,8 @@
 package repast.simphony.systemdynamics.translator;
 
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +13,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MutableInteger;
@@ -90,6 +94,8 @@ public class Equation {
 	
 	private boolean hasVectorSortOrder = false;
 	private boolean hasVectorElmMap = false;
+	
+	private UnitExpression unitExpression;
 	
 	
 	private static HashSet<Character> terminatorSet = new HashSet<Character>(); 
@@ -751,13 +757,15 @@ public class Equation {
 	
 	private void tokenize() {
 		MutableInteger position = new MutableInteger(0);
-		
+		boolean repastSimphony = true;
 		
 		// is this a string assignment?
 		if (vensimEquation.contains(":IS:")) {
 			vensimEquation = vensimEquation.replace(":IS:", "=");
 			typeString = true;
 		}
+		
+
 
 
 		// reference predefined variables?
@@ -767,11 +775,14 @@ public class Equation {
 
 		// equation consists of three parts
 		String[] eqn = vensimEquation.split("~");
+		
+		if (!repastSimphony) {
 
-		// if no rhs is evident, then need to get data from external source
-		if (eqn[0].endsWith("=")) {
-			eqn[0] = eqn[0] + " VDMLOOKUP(\""+eqn[0].replace("=", "").trim()+"\")";
-			setVdmLookup(true);
+			// if no rhs is evident, then need to get data from external source
+			if (eqn[0].endsWith("=")) {
+				eqn[0] = eqn[0] + " VDMLOOKUP(\""+eqn[0].replace("=", "").trim()+"\")";
+				setVdmLookup(true);
+			}
 		}
 
 		// do some preliminary cleanup
@@ -839,6 +850,13 @@ public class Equation {
 
 		String token = "";
 		skipWhiteSpace(position);
+		
+		if (!inRange(position)) {
+			syntacticallyCorrect = false;
+			syntaxMessages.add("Parsing LHS: No Equation provided");
+			lhs = vensimEquation;
+			return false;
+		}
 		
 		if (characterAt(position).equals("\"")) {
 			// quoted string -- either a variable name or a lookup table name
@@ -2735,8 +2753,12 @@ public class Equation {
 	}
 	
 	private String characterAt(MutableInteger position) {
-	    String s =  equation.substring(position.value(), position.value()+1);
-	    return equation.substring(position.value(), position.value()+1);
+		if (inRange(position)) {
+			String s =  equation.substring(position.value(), position.value()+1);
+			return equation.substring(position.value(), position.value()+1);
+		} else {
+			return null;
+		}
 	}
 	
 	private String beyondPosition(MutableInteger position) {
@@ -2957,6 +2979,16 @@ public class Equation {
 	    for (String t : getTokens()) {
 		System.out.println("   <"+t+">");
 	    }
+	}
+	
+	public String getTokensOneLine() {
+
+		StringBuffer sb = new StringBuffer();
+		for (String t : getTokens()) {
+			sb.append(" <"+t+">");
+		}
+
+		return sb.toString();
 	}
 	
 	public void printTokensOneLine() {
@@ -3827,6 +3859,34 @@ public class Equation {
 	}
 
 	public List<String> getUnitsMessages() {
+		
 		return unitsMessages;
+	}
+	
+    public List<String> getUnitsInconsistencyReport() {
+	
+    	List<String> bw = new ArrayList<String>();
+//	bw.add("Equation:\n");
+//		bw.add("\t"+StringEscapeUtils.escapeHtml(unitExpression.getVensimEquation().split("~")[0]));
+		
+		    
+		bw.add("LHS Units:\n");
+		bw.add("\t"+unitExpression.getLhsUnitsString());
+		
+		bw.add("RHS Units:\n");
+		bw.add("\t"+unitExpression.getRhsUnitsString());
+		
+		bw.add("Complete RHS Units:\n");
+		bw.add("\t"+unitExpression.getCompleteRhsUnitsString());
+		
+		return bw;
+    }
+
+	public UnitExpression getUnitExpression() {
+		return unitExpression;
+	}
+
+	public void setUnitExpression(UnitExpression unitExpression) {
+		this.unitExpression = unitExpression;
 	}
 }

@@ -15,7 +15,7 @@ public class OperationResult {
 
 	public void setOk(boolean ok) {
 		if (!ok)
-			System.out.println("Setting not OK");
+			System.out.println("Setting not OK again");
 		this.ok = ok;
 	}
 
@@ -38,6 +38,7 @@ public class OperationResult {
 	public void setErrorMessage(String message) {
 		
 		setMessage(message);
+		System.out.println("ErrorMsg: "+message);
 		setOk(false);
 	}
 

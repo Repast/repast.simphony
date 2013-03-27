@@ -552,11 +552,13 @@ public class UnitExpression {
 				valid = true;
 			} else {
 				valid = false;
+				this.equation.setUnitExpression(this);
 				InformationManagers.getInstance().getUnitsManager().getUnitConsistencyXMLWriter().addInconsistent(this);
 				inconsistentMessage = "1 RHS SU hasSameUnits false";
 			}
 		} else {
 			valid = false;
+			this.equation.setUnitExpression(this);
 			InformationManagers.getInstance().getUnitsManager().getUnitConsistencyXMLWriter().addInconsistent(this);
 			inconsistentMessage = "!= 1 RHS SU "+rhsSimplifiedUnit.size();
 		}

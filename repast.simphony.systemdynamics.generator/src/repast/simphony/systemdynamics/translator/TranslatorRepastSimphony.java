@@ -128,6 +128,54 @@ public class TranslatorRepastSimphony extends Translator {
     	}
     }
     
+    public boolean validateGenerateMDL(String mdlFile, boolean generateCode, List<String> messages) {
+    	reader = null;
+    	this.objectName = "Object";
+    	Translator.target = "JAVA";
+    	this.dataType = "Arrays";
+    	this.destinationDirectory = ".";
+    	this.miscDirectory = ".";
+    	this.packageName = "Package";
+    	this.supportName = "support";
+    	
+    	this.unitsConsistency = true;
+    	this.generateC = false;
+    	this.generateJava = true;
+    	
+    	this.loadProperties();
+    	this.loadUnitsProperties();
+    	
+    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	loadUnitsEquivalences();
+    	
+    	Translator.target = ReaderConstants.JAVA;
+    	
+    	
+    	System.out.println("********");
+    	System.out.println("MFL File: "+mdlFile);
+    	System.out.println("Object Name: "+objectName);
+    	System.out.println("Target Language: "+target);
+    	System.out.println("Data Type: "+dataType);
+    	System.out.println("Dest Dir: "+destinationDirectory);
+    	System.out.println("Misc Dir: "+miscDirectory);
+    	System.out.println("Package: "+packageName);
+    	System.out.println("********");
+    	
+    	messages.add("********");
+    	messages.add("MDL File: "+mdlFile);
+    	messages.add("Object Name: "+objectName);
+//    	messages.add("Target Language: "+target);
+//    	messages.add("Data Type: "+dataType);
+//    	messages.add("Dest Dir: "+destinationDirectory);
+//    	messages.add("Misc Dir: "+miscDirectory);
+//    	messages.add("Package: "+packageName);
+    	messages.add("********");
+    	
+    	List<String> mdlContents = new Reader(mdlFile).readMDLFile();
+    	boolean success = validateGenerate(mdlContents, generateCode, messages);
+    	return success;
+    }
+    
     public boolean validateGenerateRSD(SystemModel systemModel, boolean generateCode, List<String> messages) {
     	reader = null;
     	this.objectName = systemModel.getClassName();
@@ -143,8 +191,10 @@ public class TranslatorRepastSimphony extends Translator {
     	this.generateJava = true;
     	
     	this.loadProperties();
+    	this.loadUnitsProperties();
     	
     	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	loadUnitsEquivalences();
     	
     	Translator.target = ReaderConstants.JAVA;
     	
@@ -162,11 +212,11 @@ public class TranslatorRepastSimphony extends Translator {
     	messages.add("********");
     	messages.add("RSD File: "+systemModel.getClassName());
     	messages.add("Object Name: "+objectName);
-    	messages.add("Target Language: "+target);
-    	messages.add("Data Type: "+dataType);
-    	messages.add("Dest Dir: "+destinationDirectory);
-    	messages.add("Misc Dir: "+miscDirectory);
-    	messages.add("Package: "+packageName);
+//    	messages.add("Target Language: "+target);
+//    	messages.add("Data Type: "+dataType);
+//    	messages.add("Dest Dir: "+destinationDirectory);
+//    	messages.add("Misc Dir: "+miscDirectory);
+//    	messages.add("Package: "+packageName);
     	messages.add("********");
     	
     	List<String> mdlContents = convertToMDL(systemModel);
@@ -306,7 +356,8 @@ public class TranslatorRepastSimphony extends Translator {
     				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
     				
         		} else if (variable.getType().equals(VariableType.RATE) || 
-        				variable.getType().equals(VariableType.CONSTANT)) {
+        				variable.getType().equals(VariableType.CONSTANT )|| 
+        				variable.getType().equals(VariableType.AUXILIARY )) {
     				mdlContents.add(variable.getLhs()+ "=");
     				mdlContents.add(variable.getEquation());
     			} else if (variable.getType().equals(VariableType.LOOKUP)){

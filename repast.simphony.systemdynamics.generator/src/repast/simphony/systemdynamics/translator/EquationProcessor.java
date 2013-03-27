@@ -322,8 +322,6 @@ public class EquationProcessor {
     						
     						Equation equation = new Equation(aVensimEquation);
     						
-    						
-
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set
     							equations.put(equation.getLhs(), equation);

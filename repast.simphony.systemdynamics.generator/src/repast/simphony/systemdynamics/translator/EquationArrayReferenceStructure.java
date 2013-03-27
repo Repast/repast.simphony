@@ -69,6 +69,7 @@ public class EquationArrayReferenceStructure {
 	// start with the LHS
 	int dim = 0;
 	for (String outerSubscript : lhsArrayReference.getSubscripts()) {
+		System.out.println("LHS");
 	    al.add(pack(lhsArrayReference.getArrayName(),outerSubscript,dim));
 	    dim++;
 	}
@@ -79,6 +80,7 @@ public class EquationArrayReferenceStructure {
 		List<String> subscripts = ar.getSubscripts();
 		if (subscripts.contains(outerSubscript)) {
 		    dim = subscripts.indexOf(outerSubscript);
+		    System.out.println("RHS");
 		    String packed = pack(ar.getArrayName(),outerSubscript,dim);
 		    if (!al.contains(packed))
 			al.add(packed);
@@ -520,6 +522,8 @@ public class EquationArrayReferenceStructure {
 	code.append("\"");
 	code.append(InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhsArrayReference.getArrayName())));
 	code.append("\"");
+	
+	System.out.println("LHS Name: "+code.toString());
 
 	List<Integer> dimensionsRequiringIndexArray = new ArrayList<Integer>();
 
@@ -817,16 +821,18 @@ public class EquationArrayReferenceStructure {
     
     
     private String pack(String arrayName, String subscript, int dimension) {
+    	System.out.println("PACK <"+arrayName+"###"+subscript+"###"+dimension);
 	return arrayName+"###"+subscript+"###"+dimension;
     }
     
     private String pack(String arrayName, String subscript, String dimension) {
+    	System.out.println("PACK <"+arrayName+"###"+subscript+"###"+dimension);
 	return arrayName+"###"+subscript+"###"+dimension;
     }
     
     private void analyze() {
 
-    	equation.printTokensOneLine();
+//    	equation.printTokensOneLine();
 	List<Node> al = equation.getTreeAsList();
 	if (al == null) {
 		
@@ -865,6 +871,7 @@ public class EquationArrayReferenceStructure {
 			if (n != null && ArrayReference.isArrayReference(n.getToken())) {
 
 				hasRHSarrayReference = true;
+				System.out.println("RHS ar "+n.getToken());
 				rhsArrayReferences.add(new ArrayReference(n.getToken()));
 				
 			}
@@ -1066,50 +1073,53 @@ public class EquationArrayReferenceStructure {
 }
     
     public boolean needOuterIndexArray() {
-	
-	
-	boolean need = false;
-	if (lhsArrayReference == null)
-	    return need;
-    
-	// move this code to ears.
-	// need to maintain info between ArrayRefs -> this is tied to ears within equation?
-	List<String> packedInfo = getOuterArraySubscriptDimensionPacked();
-	
-	// first determine if we need multiple index arrays
-	for (String packed : packedInfo) {
-	    String[] info = packed.split("###");
-	    if (!uniqueBySubscript.containsKey(info[1])) {
-		uniqueBySubscript.put(info[1], new ArrayList<String>());
-	    }
-	    List<String> bySybscript = uniqueBySubscript.get(info[1]);
-	    String indicies = InformationManagers.getInstance().getArrayManager().getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
-	    if (!bySybscript.contains(indicies))
-		bySybscript.add(indicies);
-	}
-	
-	// create index arrays only when needed
-	for (String packed : packedInfo) {
-	    String[] info = packed.split("###");
-	    if (uniqueBySubscript.get(info[1]).size() > 1) {
-		arraysRequiringOuterIndexArray.add(packed);
-		need = true;
-	    }
-	}
-	
+    	
+    	System.out.println("needOuterIndexArray");
 
-//	    int subNum = 0;
-//	    for (String sub : subscripts) {
-//		List<String> unique = uniqueBySubscript.get(sub);
-//		if (unique.size() > 1) {
-//		    code.append("for (int outer"+subNum+" = 0; outer"+subNum+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; outer"+subNum+"++) {\n");
-//		} else {
-//		    code.append("for (int outer"+subNum+" :  new int[] {"+
-//		    ArrayManager.getIndicies(arrayName, subNum, sub)+"} {\n");
-//		}
-//		subNum++;
-//	    }
-	return need;
+
+    	boolean need = false;
+    	if (lhsArrayReference == null)
+    		return need;
+
+    	// move this code to ears.
+    	// need to maintain info between ArrayRefs -> this is tied to ears within equation?
+    	List<String> packedInfo = getOuterArraySubscriptDimensionPacked();
+
+    	// first determine if we need multiple index arrays
+    	for (String packed : packedInfo) {
+    		System.out.println("packedInfo: "+packed);
+    		String[] info = packed.split("###");
+    		if (!uniqueBySubscript.containsKey(info[1])) {
+    			uniqueBySubscript.put(info[1], new ArrayList<String>());
+    		}
+    		List<String> bySybscript = uniqueBySubscript.get(info[1]);
+    		String indicies = InformationManagers.getInstance().getArrayManager().getIndicies(info[0], Integer.parseInt(info[2]), info[1]);
+    		if (!bySybscript.contains(indicies))
+    			bySybscript.add(indicies);
+    	}
+
+    	// create index arrays only when needed
+    	for (String packed : packedInfo) {
+    		String[] info = packed.split("###");
+    		if (uniqueBySubscript.get(info[1]).size() > 1) {
+    			arraysRequiringOuterIndexArray.add(packed);
+    			need = true;
+    		}
+    	}
+
+
+    	//	    int subNum = 0;
+    	//	    for (String sub : subscripts) {
+    	//		List<String> unique = uniqueBySubscript.get(sub);
+    	//		if (unique.size() > 1) {
+    	//		    code.append("for (int outer"+subNum+" = 0; outer"+subNum+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; outer"+subNum+"++) {\n");
+    	//		} else {
+    	//		    code.append("for (int outer"+subNum+" :  new int[] {"+
+    	//		    ArrayManager.getIndicies(arrayName, subNum, sub)+"} {\n");
+    	//		}
+    	//		subNum++;
+    	//	    }
+    	return need;
 
 }
 

@@ -49,7 +49,21 @@ public class Engine {
 	}
 	
 	public boolean validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
-		return getTranslator().validateGenerateRSD(systemModel, generateCode, messages);
+		boolean result = getTranslator().validateGenerateRSD(systemModel, generateCode, messages);
+		if (result) {
+			messages.add("Model syntax OK\n");
+			messages.add("Model units consistent");
+		}
+		return result;
+	}
+	
+	public boolean validateGenerateMDL(String mdlFile, boolean generateCode) {
+		boolean result = getTranslator().validateGenerateMDL(mdlFile, generateCode, messages);
+		if (result) {
+			messages.add("Model syntax OK\n");
+			messages.add("Model units consistent");
+		}
+		return result;
 	}
 	public SystemModel loadMDL(String filename) {
 		return null;
@@ -283,7 +297,17 @@ public class Engine {
 	}
 
 	public Response getSubscriptDefinitionSyntax() {
-		return new Response();
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("Subscript Definition Syntax\n");
+		sb.append("NamedSubscript : sub1, sub2, ..., subN\n");
+		sb.append("where subn is another named subscript or a terminal value\n\n");
+		sb.append("NamedSubscript : (sub1-sub4)\n");
+		sb.append("is equivalent to:\n");
+		sb.append("NamedSubscript : sub1, sun2, sub3, sub4\n");
+		Response response = new Response();
+		response.setMessage(sb.toString());
+		return response;
 	}
 
 	public Response getEquivalenceDefinitionSyntax() {

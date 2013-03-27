@@ -37,7 +37,8 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
 	
     System.out.println("generate code");
     Engine engine = new Engine(model);
-    boolean success = engine.validateGenerateRSD(model, true);
+//    boolean success2 = engine.validateGenerateRSD(model, true);
+    boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
     
     MessageBox msgBox = null;
     

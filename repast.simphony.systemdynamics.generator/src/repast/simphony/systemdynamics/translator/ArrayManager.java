@@ -157,6 +157,7 @@ public class ArrayManager {
 	}
 
 	public  String getIndicies(String arrayIn, int dimension, String subscript) {
+		System.out.println("AM:getIndicies: array "+arrayIn+" dim "+dimension+" subscript "+subscript);
 		String array = new String(arrayIn);
 		if (array.startsWith("lookup.")) {
 

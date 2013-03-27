@@ -151,7 +151,7 @@ public class ArrayReference {
     public static boolean isArrayReference(String token) {
 	// treat this as a literal, what about actual
 	// variables have " in them?
-	if (token.startsWith("\"array.") && token.endsWith("\""))
+	if ((token.startsWith("\"array.") && token.endsWith("\"")) || (token.startsWith("stringConcat(\"memory.") && token.endsWith("\")")))
 	    return false;
 	if ((token.startsWith("array.") || token.startsWith("lookup.")  ) && token.contains("[") && token.contains("]") ||
 		token.contains("[") && token.contains("]"))	

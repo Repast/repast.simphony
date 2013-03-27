@@ -96,45 +96,45 @@ public class UnitConsistencyXMLWriter {
     }
     
     public void writeInconsistencies(BufferedWriter bw) {
-	
-	try {
-	    bw.append("\t<Inconsistencies>\n");
-	    for (UnitExpression ue : inconsistentEquations) {
-		bw.append("\t<Equations>\n");
-		bw.append("\t\t<Equation>\n");
-		
-		bw.append("\t\t\t<VensimEquation>");
-		bw.append(StringEscapeUtils.escapeHtml(ue.getVensimEquation().split("~")[0]));
-		bw.append("</VensimEquation>\n\n");
-		
-		bw.append("\t\t\t<Lhs>");
-		bw.append(StringEscapeUtils.escapeHtml(ue.getEquationLHS()));
-		bw.append("</Lhs>\n\n");
-		    
-		bw.append("\t\t\t<LhsUnits>");
-		bw.append(StringEscapeUtils.escapeHtml(ue.getLhsUnitsString()));
-		bw.append("</LhsUnits>\n\n");
-		
-		bw.append("\t\t\t<RhsUnits>");
-		bw.append(StringEscapeUtils.escapeHtml(ue.getRhsUnitsString()));
-		bw.append("</RhsUnits>\n\n");
-		
-		bw.append("\t\t\t<RhsUnitsComplete>");
-		bw.append(StringEscapeUtils.escapeHtml(ue.getCompleteRhsUnitsString()));
-		bw.append("</RhsUnitsComplete>\n");
-		
-//		bw.append("\t\t\t<Message>");
-//		bw.append(ue.getInconsistentMessage());
-//		bw.append("</Message>\n");
 
-		bw.append("\t\t</Equation>\n");
-		bw.append("\t</Equations>\n");
-	    }
-	    bw.append("\t</Inconsistencies>\n");
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+    	try {
+    		bw.append("\t<Inconsistencies>\n");
+    		for (UnitExpression ue : inconsistentEquations) {
+    			bw.append("\t<Equations>\n");
+    			bw.append("\t\t<Equation>\n");
+
+    			bw.append("\t\t\t<VensimEquation>");
+    			bw.append(StringEscapeUtils.escapeHtml(ue.getVensimEquation().split("~")[0]));
+    			bw.append("</VensimEquation>\n\n");
+
+    			bw.append("\t\t\t<Lhs>");
+    			bw.append(StringEscapeUtils.escapeHtml(ue.getEquationLHS()));
+    			bw.append("</Lhs>\n\n");
+
+    			bw.append("\t\t\t<LhsUnits>");
+    			bw.append(StringEscapeUtils.escapeHtml(ue.getLhsUnitsString()));
+    			bw.append("</LhsUnits>\n\n");
+
+    			bw.append("\t\t\t<RhsUnits>");
+    			bw.append(StringEscapeUtils.escapeHtml(ue.getRhsUnitsString()));
+    			bw.append("</RhsUnits>\n\n");
+
+    			bw.append("\t\t\t<RhsUnitsComplete>");
+    			bw.append(StringEscapeUtils.escapeHtml(ue.getCompleteRhsUnitsString()));
+    			bw.append("</RhsUnitsComplete>\n");
+
+    			//		bw.append("\t\t\t<Message>");
+    			//		bw.append(ue.getInconsistentMessage());
+    			//		bw.append("</Message>\n");
+
+    			bw.append("\t\t</Equation>\n");
+    			bw.append("\t</Equations>\n");
+    		}
+    		bw.append("\t</Inconsistencies>\n");
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
     }
     
     public void writeInconsistenciesReport(BufferedWriter bw) {

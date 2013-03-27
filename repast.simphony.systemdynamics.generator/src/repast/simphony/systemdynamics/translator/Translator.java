@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MappedSubscriptManager;
 import repast.simphony.systemdynamics.support.NamedSubscriptManager;
@@ -190,6 +192,7 @@ public class Translator {
 			String lhs = iter.next();
 			Equation eqn = errors.get(lhs);
 			System.out.println("ERROR: "+eqn.getVensimEquation());
+			System.out.println("ERROR: "+eqn.getTokensOneLine());
 			for (String msg : eqn.getSyntaxMessages()) {
 				System.out.println(msg);
 			}
@@ -256,22 +259,28 @@ public class Translator {
 		return true;
 	}
 	
+	
 	protected void generateErrorReport(String title, Map<String, Equation> errors, List<String> messages) {
 		Iterator<String> iter = errors.keySet().iterator();
 		messages.add("+++ "+title+" +++");
 		while (iter.hasNext()) {
 			String lhs = iter.next();
+//			messages.add(lhs);
 			Equation eqn = errors.get(lhs);
-			messages.add("ERROR: "+eqn.getVensimEquation());
+//			messages.add("ERROR: "+eqn.getVensimEquation().split("~")[0]);
+			messages.add("Equation:\n");
+			messages.add("\t"+StringEscapeUtils.escapeHtml(eqn.getVensimEquation().split("~")[0]));
+			messages.add(eqn.getTokensOneLine());
 			for (String msg : eqn.getSyntaxMessages()) {
 				messages.add(msg);
 			}
 			for (String msg : eqn.getSemanticMessages()) {
 				messages.add(msg);
 			}
-			for (String msg : eqn.getUnitsMessages()) {
+			for (String msg : eqn.getUnitsInconsistencyReport()) {
 				messages.add(msg);
 			}
+			messages.add("----------");
 		}
 	}
 
@@ -1291,6 +1300,8 @@ public class Translator {
 	public static BufferedReader openForRead(String filename) {
 
 		BufferedReader fileReader = null;
+		
+		System.out.println("Open for Read: "+filename);
 
 		// open the file for reading
 		try {

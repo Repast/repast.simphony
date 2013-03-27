@@ -193,22 +193,22 @@ public class UnitsManager {
     }
     
     private  boolean valid(List<String> units, Equation eqn) {
-	// stack based evaluation of units consistency
-	if (units.size() < 3) {
-	    return false;
-	}
-	
-	// by definition:	
-	String lhs = units.get(0);
-	
-	if (lhs == null)
-	    return false;
-	String equal = units.get(1);
-	List<String> rhs = new ArrayList<String>(units);
-	rhs.remove(0);
-	rhs.remove(0);
-	UnitExpression unitExpression = new UnitExpression(lhs, equal, rhs, eqn);
-	return unitExpression.isValid();
+    	// stack based evaluation of units consistency
+    	if (units.size() < 3) {
+    		return false;
+    	}
+
+    	// by definition:	
+    	String lhs = units.get(0);
+
+    	if (lhs == null)
+    		return false;
+    	String equal = units.get(1);
+    	List<String> rhs = new ArrayList<String>(units);
+    	rhs.remove(0);
+    	rhs.remove(0);
+    	UnitExpression unitExpression = new UnitExpression(lhs, equal, rhs, eqn);
+    	return unitExpression.isValid();
     }
     
     private  List<String> addFunctionUnits(List<String> units) {

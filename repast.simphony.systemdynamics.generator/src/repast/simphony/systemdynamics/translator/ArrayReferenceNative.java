@@ -203,6 +203,7 @@ public class ArrayReferenceNative {
 		}
 		code.append("\")");
 	
+		System.out.println("RHS Name: "+code.toString());
 	return code.toString();
     }
     

@@ -154,7 +154,8 @@ public class Parser {
     		String aChar = characterAt(expression, ptr);
     		
 
-    		if (!Character.isLetterOrDigit(aChar.charAt(0)) &&  !Character.isWhitespace(aChar.charAt(0))) {
+    		if (!Character.isLetterOrDigit(aChar.charAt(0)) &&  !Character.isWhitespace(aChar.charAt(0)) &&
+    				!aChar.equals("_")) {
     			return false;
     		}
     		
