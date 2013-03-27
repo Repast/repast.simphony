@@ -14,6 +14,8 @@ public class Parser {
 
     private static char[] terminators = { '+', '-', '*', '/', '(', ')', '=', ',', '^', '`', '>', '<', ':', ';'};
     private static HashSet<Character> terminatorSet = new HashSet<Character>();
+    
+    public static final String INTERNAL_UNARY_MINUS = "_";
 
     static {
 

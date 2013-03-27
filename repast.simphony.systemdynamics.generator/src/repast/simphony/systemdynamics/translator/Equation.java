@@ -3891,4 +3891,55 @@ public class Equation {
 	public void setUnitExpression(UnitExpression unitExpression) {
 		this.unitExpression = unitExpression;
 	}
+	
+	public String getEquationFromTree(Node root) {
+	    StringBuffer sb = new StringBuffer();
+	    
+	    Node lhs = root.getChild();
+	    Node rhs = lhs.getNext();
+	    
+	    sb.append(lhs.getToken()+" = ");
+	    buildEquation(sb, rhs);
+	    
+	    return sb.toString();
+	    
+	}
+	
+	public void buildEquation(StringBuffer sb, Node node) {
+	    if (node == null)
+		return;
+	    // unary operator need special processing
+	    String token = node.getToken();
+	    if (Parser.isArithmeticOperator(token) && Parser.isUnaryOperator(token)) {
+		if (token.equals(Parser.INTERNAL_UNARY_MINUS))
+		    sb.append("-");
+		else
+		    sb.append(token);
+		buildEquation(sb, node.getChild());
+	    } else {
+		// need to handle function invocations differently
+		if (Parser.isFunctionInvocation(node.getToken())) {
+		    sb.append(node.getToken());
+		    sb.append("(");
+		    int argNum = 0;
+		    Node args = node.getChild();
+		    while(args != null) {
+			if (argNum++ > 0)
+			    sb.append(",");
+			buildEquation(sb, args);
+			args = args.getNext();		    
+		    }
+		    sb.append(")");
+		} else {
+		    Node child = node.getChild();
+		    buildEquation(sb, child);
+		    sb.append(node.getToken());
+		    if (child == null)
+			return;
+		    Node next = child.getNext();
+		    buildEquation(sb,next);
+		}
+	    }
+	}
+
 }

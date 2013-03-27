@@ -650,5 +650,42 @@ public class NativeDataTypeManager {
 	public  String getDataType(String var) {
 		return dataType.get(var);
 	}
+	
+    public String getLegalNameWithSubscripts(Equation equation, String variable) {
+	String subscript = "";
+	String referenceType = "memory.";
+	if (variable.contains("memory."))
+	    referenceType = "memory.";
+	else if (variable.contains("lookup."))
+	    referenceType = "lookup.";
+	else if (variable.contains("array."))
+	    referenceType = "array.";
+	String in = variable.replace("memory.", "").replace("lookup.", "");
+	if (ArrayReference.isArrayReference(in)) {
+	    in = new ArrayReference(in).getArrayName();
+	    subscript = "[" + variable.split("\\[")[1];
+	}
+	String name = legal.get(in);
+	if (name == null) {
+	    if (Parser.isInteger(in) || Parser.isReal(in))
+		return in;
+	    // we haven't seen this yet
+//	    System.out.println("Legal -> <"+in+"><"+name+">");
+	    addVariable(equation, variable, "double");
+	}
+	name = legal.get(in);
+	if (name == null) {
+	    // we haven't seen this yet
+	    System.out.println("Legal -> <"+in+"><"+name+">");
+	}
+
+	if (Translator.target.equals(ReaderConstants.JAVA)) {
+	    return referenceType + name + subscript;
+	} else if (Translator.target.equals(ReaderConstants.C)) {
+	    return "memory." + name;
+	} else {
+	    return "memory." + name;
+	}
+    }
 
 }
