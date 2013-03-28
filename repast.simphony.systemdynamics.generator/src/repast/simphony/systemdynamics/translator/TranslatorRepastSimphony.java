@@ -8,6 +8,7 @@ import java.util.Map;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.systemdynamics.analysis.PolarityCodeBuilder;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
@@ -416,6 +417,7 @@ public class TranslatorRepastSimphony extends Translator {
 //	UnitsManager.performUnitsConsistencyCheck(equations, "./ConsistencyResults.xml");
 	
 	generateCausalTrees(sdObjectManager);
+	generatePolarityCode(equations);
 	
 	
 	if (equations != null) {
@@ -431,7 +433,22 @@ public class TranslatorRepastSimphony extends Translator {
 
     
     private void generateCausalTrees(SystemDynamicsObjectManager sdObjectManager) {
-	CausalAnalyzer analyzer = new CausalAnalyzer();
-	analyzer.generateCausalTrees(sdObjectManager);
+    	CausalAnalyzer analyzer = new CausalAnalyzer();
+    	analyzer.generateCausalTrees(sdObjectManager);
+    }
+    
+    private void  generatePolarityCode(Map<String, Equation> equations) {
+    	for (Equation eqn : equations.values()) {
+    		if (!eqn.isAssignment())
+    			continue;
+    		if (eqn.isDefinesLookup() || eqn.isUsesTimeSeries() || eqn.isDefinesLookupGetXls())
+    			continue;
+    		if (eqn.getVensimEquation().contains("INTEG")) {
+    			System.out.println("INTEG");
+    		}
+    		PolarityCodeBuilder polarityCodeBuilder = new PolarityCodeBuilder(eqn);
+    		System.out.println(eqn.getVensimEquation());
+    		System.out.println(polarityCodeBuilder.getGeneratedCode());
+    	}
     }
 }

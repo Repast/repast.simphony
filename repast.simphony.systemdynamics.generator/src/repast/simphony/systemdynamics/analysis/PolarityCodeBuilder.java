@@ -6,7 +6,6 @@ import java.util.Map;
 
 import repast.simphony.systemdynamics.translator.Equation;
 import repast.simphony.systemdynamics.translator.InformationManagers;
-import repast.simphony.systemdynamics.translator.NativeDataTypeManager;
 import repast.simphony.systemdynamics.translator.Node;
 
 public class PolarityCodeBuilder {
@@ -40,8 +39,9 @@ public class PolarityCodeBuilder {
 	Iterator<String> iter = equation.getRHSVariables().iterator();
 	while(iter.hasNext()) {
 	    String variable = iter.next();
-	    replaceVariableWithID(polarityRoot, InformationManagers.getInstance().getNativeDataTypeManager().getLegalNameWithSubscripts(equation, variable), id++);
-	    replaceVariableWithID(polarityRoot, variable, id++);
+	    replaceVariableWithID(polarityRoot, InformationManagers.getInstance().getNativeDataTypeManager().getLegalNameWithSubscripts(equation, variable), id);
+	    replaceVariableWithID(polarityRoot, variable, id);
+	    id++;
 	}
 	
     }
