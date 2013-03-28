@@ -2,6 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test_bin" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-stax-api_1.0_spec-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-3.7-20101029.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.7-20101029.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.7-20101029.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/colt-1.2.0-no_hep.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jbullet.jar"/>
@@ -19,7 +25,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-3.6-20091214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-algorithms-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-api-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.0.1.jar"/>
