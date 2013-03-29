@@ -1794,6 +1794,43 @@ public class GridTest extends TestCase {
     assertEquals(0, nghs.size());
   }
 
+  // this specifically tests for a problem where the queried object
+  // is at y == 0 and x > 0.
+  public void test2DStrictMooreQuery() {
+    Context<Integer> context = new DefaultContext<Integer>();
+    GridBuilderParameters<Integer> params = GridBuilderParameters.singleOccupancy2D(
+        new SimpleGridAdder<Integer>(), new StrictBorders(), 3, 3);
+    Grid<Integer> grid = GridFactoryFinder.createGridFactory(null).createGrid("2D Grid", context,
+        params);
+
+    Set<Integer> nghs = new HashSet<Integer>();
+    
+    int i = 0;
+    for (int y = 0; y < 3; y++) {
+      for (int x = 0; x < 3; x++) {
+        Integer val = new Integer(i);
+        i++;
+        context.add(val);
+        grid.moveTo(val, x, y);
+      }
+    }
+    
+    nghs.add(new Integer(0));
+    nghs.add(new Integer(2));
+    nghs.add(new Integer(3));
+    nghs.add(new Integer(4));
+    nghs.add(new Integer(5));
+
+    // get nghs of (1, 0)
+    MooreQuery<Integer> query = new MooreQuery<Integer>(grid, new Integer(1), 1, 1);
+    // remove all the vals returned from the query
+    // checking to see that those vals are in nghs.
+    for (Integer val : query.query()) {
+      assertTrue(nghs.remove(val));
+    }
+    assertEquals(0, nghs.size());
+  }
+
   public void test2DTorusMooreQuery() {
     Context<Integer> context = new DefaultContext<Integer>();
     GridBuilderParameters<Integer> params = GridBuilderParameters.singleOccupancy2DTorus(
