@@ -4,7 +4,7 @@ package repast.simphony.systemdynamics.analysis;
  * This is what we will actually generate
  */
 
-public class SamplePolarityCalculator {
+public class SamplePolarityCalculator implements PolarityCalculator {
 	
 	public double compute(double[] rhs) {
 		
