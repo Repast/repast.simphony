@@ -30,7 +30,7 @@ public class StandAloneMain {
     System.setProperty("eclipse.home", bd.getLocation().getParentFile().getParent());
     System.setProperty("plugins.version", PLUGINS_VERSION);
     
-    finder.findBundles(new File(bundleDir), bd);
+    finder.findRequiredBundles(new File(bundleDir), bd);
 
     String propsFile = null;
     List<URL> urls = new ArrayList<URL>();

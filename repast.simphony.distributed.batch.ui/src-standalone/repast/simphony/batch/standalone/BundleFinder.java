@@ -19,6 +19,13 @@ import java.util.jar.Manifest;
  */
 public class BundleFinder {
   
+  /**
+   * Finds the bundle named in BundleData and fills
+   * in its attributes.
+   * 
+   * @param bundleDir
+   * @param data
+   */
   public void findBundle(File bundleDir, BundleData data) {
     Map<String, BundleData> bundles = new HashMap<String, BundleData>();
     bundles.put(data.getName(), data);
@@ -32,7 +39,14 @@ public class BundleFinder {
     }
   }
 
-  public void findBundles(File bundleDir, BundleData data) {
+  /**
+   * Finds the bundles named as required bundles in the
+   * specified bundle data.
+   * 
+   * @param bundleDir
+   * @param data
+   */
+  public void findRequiredBundles(File bundleDir, BundleData data) {
     Map<String, BundleData> bundles = new HashMap<String, BundleData>();
     for (BundleData bd : data.requiredBundles()) {
       bundles.put(bd.getName(), bd);
