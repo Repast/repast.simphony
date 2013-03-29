@@ -6,6 +6,7 @@ import repast.simphony.parameter.*;
 import repast.simphony.util.collections.Pair;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Nick Collier
@@ -111,6 +112,20 @@ public class XMLTester extends TestCase {
       ex.printStackTrace();
       assertTrue(false);
     }
+  }
+  
+  public void testPattern() {
+    boolean val = Pattern.matches("\\-?\\d*\\.\\d+", "1");
+    assertTrue(!val);
+    
+    val = Pattern.matches("\\-?\\d*\\.\\d+", "-1");
+    assertTrue(!val);
+    
+    val = Pattern.matches("\\-?\\d*\\.\\d+", "-1.0");
+    assertTrue(val);
+    
+    val = Pattern.matches("\\-?\\d*\\.\\d+", "1.0");
+    assertTrue(val);
   }
 
   public void testSimpleStringListSetterCreator() {
