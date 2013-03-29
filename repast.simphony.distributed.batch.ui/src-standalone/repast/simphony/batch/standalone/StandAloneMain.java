@@ -51,11 +51,7 @@ public class StandAloneMain {
         urls.add(new File(bundle.getLocation(), path).toURI().toURL());
       }
     }
-    
-    for (URL url : urls) {
-      System.out.println(url);
-    }
-
+  
     URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]), this.getClass()
         .getClassLoader());
     Class<?> clazz = Class.forName("repast.simphony.batch.gui.Main", true, loader);
