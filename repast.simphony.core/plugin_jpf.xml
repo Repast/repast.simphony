@@ -51,11 +51,11 @@
     <library id="velocity-1.4" path="lib/velocity-1.4.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="opencsv" path="lib/opencsv-1.5.jar" type="code">
+    <library id="opencsv" path="lib/opencsv-2.3.jar" type="code">
       <export prefix="*"/>
     </library>
 
-    <library id="poi" path="lib/poi-3.6-20091214.jar" type="code">
+    <library id="poi" path="lib/poi-3.7-20101029.jar" type="code">
       <export prefix="*"/>
     </library>
 
