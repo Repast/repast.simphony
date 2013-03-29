@@ -8,11 +8,15 @@
 
 	<target name="jar.files">
 		<delete dir="${batch_runner.dir}" quiet="true"/>
-		<jar jarfile="${batch_runner.dir}/batch_runner.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png" />
+		<jar jarfile="${batch_runner.dir}/batch_runner.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png">
+			<manifest>
+				<attribute name="Main-Class" value="repast.simphony.batch.standalone.StandAloneMain"/>
+			</manifest>
+		</jar>
 	</target>
 
 
-	<target name="mac.dist" depends="jar.files">
+	<target name="dist" depends="jar.files">
 
 		<mkdir dir="${release.dir}" />
 		<delete file="${release.dir}/${app.name}-1.0.app" failonerror="false" />
@@ -25,7 +29,7 @@
 			shortname="Batch Runner" mainclass="repast.simphony.batch.standalone.StandAloneMain" 
 			arguments="$APP_PACKAGE/../eclipse/plugins"
 			vmoptions="-Xmx256M" jvmversion="1.6+" 
-			workingdirectory="$APP_PACKAGE/..">
+			workingdirectory="$APP_PACKAGE/.." icon="./icons/agents.icns">
 			
 			<jarfileset dir="${batch_runner.dir}">
 				<include name="*.jar" />
@@ -37,6 +41,7 @@
 		</jarbundler>
 
 		<move todir="${release.dir}" file="${batch_runner.dir}/${app.name}-1.0.app"/>
+		<move todir="${release.dir}" file="${batch_runner.dir}/batch_runner.jar"/>
 		
 		<!--
 		<move todir="${arteriopathy.dir}/${app.name}-1.0/">
