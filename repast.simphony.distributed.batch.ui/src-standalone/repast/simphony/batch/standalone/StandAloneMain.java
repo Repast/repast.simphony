@@ -61,7 +61,11 @@ public class StandAloneMain {
 
   public static void main(String[] args) {
     try {
-      new StandAloneMain().run(args[0]);
+      String arg = "./eclipse/plugins";
+      if (args.length > 0) {
+        arg = args[0];
+      }
+      new StandAloneMain().run(arg);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
