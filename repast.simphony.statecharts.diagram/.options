@@ -1,0 +1,7 @@
+# Tracing options for the repast.simphony.statecharts.diagram plug-in
+
+# Common issues
+repast.simphony.statecharts.diagram/debug=false
+
+# Visual IDs
+repast.simphony.statecharts.diagram/debug/visualID=false

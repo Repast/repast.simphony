@@ -25,6 +25,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.statecharts.StateChartScheduler;
 import repast.simphony.ui.probe.ProbeID;
 import cern.colt.function.DoubleFunction;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
@@ -228,6 +229,7 @@ public abstract class AbstractObserver implements Observer {
 		ct();
 		cp();
 		clearTrackingNetwork();
+		StateChartScheduler.INSTANCE.initialize();
 	}
 
 	/**

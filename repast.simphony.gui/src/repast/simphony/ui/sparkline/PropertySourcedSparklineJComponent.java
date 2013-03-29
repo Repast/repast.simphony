@@ -8,16 +8,18 @@ import org.jscience.physics.amount.Amount;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.ui.probe.NumericProbedProperty;
 
-import com.jgoodies.binding.PresentationModel;
+import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.binding.value.ValueModel;
 import com.representqueens.spark.BarGraph;
 
 /*
  * @author Michael J. North
  *
  */
+@SuppressWarnings("serial")
 public class PropertySourcedSparklineJComponent extends SparklineJComponent {
 
-  public PresentationModel model;
+  public AbstractValueModel model;
   public NumericProbedProperty property;
   public PropertyChangeListener listener = null;
 
@@ -25,7 +27,7 @@ public class PropertySourcedSparklineJComponent extends SparklineJComponent {
     super();
   }
 
-  public PropertySourcedSparklineJComponent(PresentationModel newModel,
+  public PropertySourcedSparklineJComponent(AbstractValueModel newModel,
       NumericProbedProperty newProperty) {
 
     super();
@@ -46,23 +48,23 @@ public class PropertySourcedSparklineJComponent extends SparklineJComponent {
 
   }
 
-  public PresentationModel getModel() {
+  public ValueModel getModel() {
     return model;
   }
 
-  public void setModel(PresentationModel newModel) {
+  public void setModel(AbstractValueModel newModel) {
 
     if ((this.model != null) && (this.listener != null)) {
-      this.model.getModel(property.getName()).removePropertyChangeListener(this.listener);
+      this.model.removePropertyChangeListener(this.listener);
     }
 
     this.model = newModel;
     this.listener = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent event) {
-        addData(model.getValue(property.getName()));
+        addData(model.getValue());
       }
     };
-    this.model.getModel(property.getName()).addPropertyChangeListener(this.listener);
+    this.model.addPropertyChangeListener(this.listener);
 
   }
 

@@ -3,12 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.gui
 Bundle-Version: 2.0.1
-Bundle-ClassPath: lib/jgoodies-binding-2.7.0.jar,
- lib/jgoodies-common-1.4.0.jar,
- lib/jmf.jar,
+Bundle-ClassPath: lib/jmf.jar,
  bin/,
  lib/jide-oss-3.4.9.jar,
- lib/spark-1.2.jar
+ lib/spark-1.2.jar,
+ lib/jgoodies-binding-2.7.0.jar,
+ lib/jgoodies-common-1.4.0.jar
 Bundle-Localization: plugin
 Export-Package: .,
  codecLib.mpa,
