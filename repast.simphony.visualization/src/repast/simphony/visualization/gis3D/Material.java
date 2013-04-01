@@ -2,7 +2,7 @@ package repast.simphony.visualization.gis3D;
 
 import java.awt.Color;
 
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 
 /**
  * Material is used to color RenderableShapes based on the supplied diffuse 
@@ -59,15 +59,15 @@ public class Material{
 	 * @param gl the GL.
 	 * @param face the face.
 	 */
-	public void apply(GL2 gl, int face)	{
+	public void apply(GL gl, int face)	{
 		float[] rgba = new float[4];
 
-		gl.glMaterialfv(face, GL2.GL_AMBIENT, ambient.getRGBComponents(rgba), 0);
-		gl.glMaterialfv(face, GL2.GL_DIFFUSE, diffuse.getRGBComponents(rgba), 0);
-		gl.glMaterialfv(face, GL2.GL_SPECULAR, specular.getRGBComponents(rgba), 0);
-		gl.glMaterialfv(face, GL2.GL_EMISSION, emission.getRGBComponents(rgba), 0);
+		gl.glMaterialfv(face, GL.GL_AMBIENT, ambient.getRGBComponents(rgba), 0);
+		gl.glMaterialfv(face, GL.GL_DIFFUSE, diffuse.getRGBComponents(rgba), 0);
+		gl.glMaterialfv(face, GL.GL_SPECULAR, specular.getRGBComponents(rgba), 0);
+		gl.glMaterialfv(face, GL.GL_EMISSION, emission.getRGBComponents(rgba), 0);
 		
-		gl.glMaterialf (face, GL2.GL_SHININESS,shininess);
+		gl.glMaterialf (face, GL.GL_SHININESS,shininess);
 	}
 
 	public Color getDiffuseColor() {
