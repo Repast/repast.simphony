@@ -3,7 +3,7 @@ package repast.simphony.visualization.gis;
 import com.vividsolutions.jts.geom.Envelope;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
-import repast.simphony.gis.AbstractMarqueeHandler;
+import repast.simphony.gis.display.AbstractMarqueeHandler;
 
 /**
  * Handler for creating probes.

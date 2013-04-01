@@ -10,12 +10,12 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
 
-import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
@@ -41,19 +41,19 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 	private Map <RepastEdge<?>,SimpleFeature> featureMap;
 	Set<RepastEdge> edgesToAdd;
 	private Network<?> net;
-	private FeatureCollection fc;
+//	private FeatureCollection fc;
 	
 	private Lock lock = new ReentrantLock();
 	
 	public NetworkDisplayLayerGIS(Network<?> net, Geography geography, Style style) {
-		super(FeatureCollections.newCollection(), style);
+		super(new DefaultFeatureCollection(null, null), style);
 		
-		try {
-			fc = this.getFeatureSource().getFeatures();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			fc = this.getFeatureSource().getFeatures();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		net.addProjectionListener(this);
 		setDynamic(true);
@@ -104,7 +104,7 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 			featureMap.put(edge, feature);
 
 //			feature.setParent(fc);
-		  fc.add(feature);
+//		  fc.add(feature);
 
 		}
 	}

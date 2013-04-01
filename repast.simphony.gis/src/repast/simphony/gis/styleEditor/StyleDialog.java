@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Mon Jul 31 13:07:10 CDT 2006
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.BorderLayout;
@@ -15,8 +11,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.geotools.map.Layer;
+import org.geotools.data.FeatureSource;
 import org.geotools.styling.Style;
+import org.opengis.feature.type.FeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -28,7 +25,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #1
+ * Basic dialog class for GIS style editor.  Contains an instance of 
+ * StyleEditorPanel that further contains the infdividual styler panels.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class StyleDialog extends JDialog {
 	public StyleDialog(Frame owner) {
@@ -42,9 +43,9 @@ public class StyleDialog extends JDialog {
 	}
 
 	private boolean completed;
-
-	public void setMapLayer(Layer layer) {
-		styleEditorPanel1.setMapLayer(layer);
+	
+	public void setData(FeatureType featureType, Style style, FeatureSource source){
+		styleEditorPanel1.setData(featureType, style, source);
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent e) {

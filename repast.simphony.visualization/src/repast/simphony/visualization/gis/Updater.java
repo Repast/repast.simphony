@@ -1,8 +1,6 @@
 package repast.simphony.visualization.gis;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,21 +12,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerEvent;
-import org.geotools.styling.SLDParser;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactory;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.gis.data.DataUtilities;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
@@ -52,10 +45,14 @@ public class Updater {
   private Lock updateLock = new ReentrantLock();
 
   private Geography geog;
-  private Map<Class, FeatureCollection> featureMap = 
-  		new HashMap<Class, FeatureCollection>();
-  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
-
+  
+  // Note that DefaultFeatureCollection should be used to store an in memory
+  //  FeatureCollection in the Geotools 9.0 API
+  private Map<Class, DefaultFeatureCollection> featureMap = 
+  		new HashMap<Class, DefaultFeatureCollection>();
+//  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
+  private Set<FeatureAgent> featureAgentsToAdd = new HashSet<FeatureAgent>();
+  
   private Set<Object> agentsToAdd = new HashSet<Object>();
   private Set<Object> agentsToRemove = new HashSet<Object>();
   private Map<Class, DefaultFeatureAgentFactory> factoryMap;
@@ -106,7 +103,7 @@ public class Updater {
     CoordinateReferenceSystem crs = geog.getCRS();
     FeatureAgentFactoryFinder finder = FeatureAgentFactoryFinder.getInstance();
     for (Object obj : agentsToAdd) {
-      Class<? extends Object> clazz = obj.getClass();
+    	Class<? extends Object> clazz = obj.getClass();
       DefaultFeatureAgentFactory fac = factoryMap.get(clazz);
       if (fac == null) {
 
@@ -121,7 +118,8 @@ public class Updater {
       }
       renderMap.put(clazz, fac);
       FeatureAgent fa = fac.getFeature(obj, geog);
-      agentMap.put(obj, fa);
+//      agentMap.put(obj, fa);
+      featureAgentsToAdd.add(fa);
       origGeomMap.put(obj, fa.getDefaultGeometry());
     }
 
@@ -133,70 +131,40 @@ public class Updater {
       fac.reset();
     }
   }
-  
-  private List testFeatures(){
-  	List list = new ArrayList();
-  	
-  	try {
-			String dataFileName = "sampleData/streams.shp"; 
-//			String styleFileName = "sampleData/streams.xml";
-			
-			String styleFileName = "archsites.xml";
-			
-			URL shapefile = new File(dataFileName).toURL();
-			
-			ShapefileDataStore store = new ShapefileDataStore(shapefile);
-			FeatureSource source = store.getFeatureSource();
-			
-			list.add(0,source);
-			
-			File styleFile = new File(styleFileName);
-			StyleFactory fac = CommonFactoryFinder.getStyleFactory(null);
-			SLDParser parser = new SLDParser(fac, styleFile);
-			Style style = parser.readXML()[0];
-			
-			list.add(1,style);
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-  	
-  	
-  	return list;
-  }
 
   public void render(MapContent mapContext) {
-    if (addRender) {
+    if (addRender) {  // if new agents have been added
       for (Class clazz : renderMap.keySet()) {
         DefaultFeatureAgentFactory fac = renderMap.get(clazz);
-        FeatureCollection newAgents = fac.getFeatures();
-        FeatureCollection currentAgents = featureMap.get(clazz);
-        if (currentAgents == null) {
-          featureMap.put(clazz, newAgents);
-          FeatureSource source = DataUtilities.createFeatureSource(newAgents);
-          FeatureAgent agent = (FeatureAgent) newAgents.iterator().next();
+                
+        // Geotools TODO make sure this works correctly
+        
+        // FeatureCollection of FeatureAgents for this agent class
+        DefaultFeatureCollection agentCollection = featureMap.get(clazz);
+        
+        if (agentCollection == null) {  // hasn't been created for this class yet
+        	List<SimpleFeature> featureAgentList = fac.getFeatures();
+        	agentCollection = new DefaultFeatureCollection(null,null);
+        	agentCollection.addAll(featureAgentList);
+        	
+          featureMap.put(clazz, agentCollection);
+
+          FeatureAgent agent = (FeatureAgent) featureAgentList.get(0);
           
-          RepastMapLayer layer = new RepastMapLayer(source, 
+          RepastMapLayer layer = new RepastMapLayer(agentCollection, 
           		styler.getStyle(clazz.getName(), 
           				agent.getDefaultGeometry().getClass()));
           
-//          List list = testFeatures();
-//          FeatureSource source2 = (FeatureSource)list.get(0);
-//          Style style = (Style)list.get(1);
-//          RepastMapLayer layer = new RepastMapLayer(source2, style, "Streams");
-            
-          
-//          layer.setDynamic(true);
-          layerMap.put(clazz.getName(), layer);
-          
+          layerMap.put(clazz.getName(), layer);          
           reorder = true;
         } else {
           addFeaturesLock.lock();
-          currentAgents.addAll(newAgents);
+          agentCollection.addAll(featureAgentsToAdd);
           addFeaturesLock.unlock();
         }
       }
 
+      featureAgentsToAdd.clear();
       renderMap.clear();
       addRender = false;
     }
@@ -233,12 +201,13 @@ public class Updater {
     updateRender = true;
   }
 
+  //  Geotools TODO make sure this works correctly...agents removed from feature collection??
   public void removeAgents() {
     try {
       addFeaturesLock.lock();
       for (Object obj : agentsToRemove) {
         origGeomMap.remove(obj);
-        FeatureAgent fa = agentMap.remove(obj);
+//        FeatureAgent fa = agentMap.remove(obj);
         updateClasses.add(obj.getClass());
       }
       

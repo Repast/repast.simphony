@@ -17,7 +17,7 @@ public abstract class AbstractNumberSetterCreator extends AbstractParameterSette
 	}
 
   protected boolean isDouble(String val) {
-    return Pattern.matches("\\d*\\.\\d+", val);
+    return Pattern.matches("\\-?\\d*\\.\\d+", val);
   }
 
   protected boolean isLong(String val) {

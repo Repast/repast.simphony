@@ -1,0 +1,516 @@
+«IMPORT scmodel»
+«EXTENSION  generator_util»
+
+«DEFINE Main FOR StateMachine-»
+«init(uuid)»
+«FILE filename()-»
+
+package «this.package»;
+
+import java.util.Map;
+import java.util.HashMap;
+
+import repast.simphony.statecharts.*;
+import repast.simphony.statecharts.generator.GeneratedFor;
+
+import «getPackageFromType(agentType)».*;
+
+@GeneratedFor("«this.uuid»")
+public class «className» extends DefaultStateChart<«this.agentType»> {
+
+    public static «className» createStateChart(«agentType» agent, double begin) {
+        «className» result = createStateChart(agent);
+        StateChartScheduler.INSTANCE.scheduleBeginTime(begin,result);
+        return result;
+    }
+
+    public static «className» createStateChart(«agentType» agent) {
+        «generatorClassName()» generator = new «generatorClassName()»();
+        return generator.build(agent);
+    }
+
+    private «className»(«agentType» agent) {
+        super(agent);
+    }
+    
+    private static class MyStateChartBuilder extends StateChartBuilder<«agentType»> {
+
+        public MyStateChartBuilder(«agentType» agent, AbstractState<«agentType»> entryState, String entryStateUuid) {
+            super(agent, entryState, entryStateUuid);
+            setPriority(«this.priority»);
+        }
+
+        @Override
+        public «className» build() {
+            «className» result = new «className»(getAgent());
+            setStateChartProperties(result);
+            return result;
+        }
+    }
+
+
+private static class «generatorClassName()» {
+
+    «LET getSimpleClassName(agentType.trim()) AS simpleType-»
+    private Map<String, AbstractState<«simpleType»>> stateMap = new HashMap<String, AbstractState<«simpleType»>>();
+
+   
+    public «className» build(«simpleType» agent) {
+        «IF this.states.size == 0-»
+        throw new UnsupportedOperationException("Statechart has not been defined.");
+        «ELSE-»
+        «LET findFirstState(this.states) AS firstState -»
+            «EXPAND blockContent(simpleType) FOR firstState-»
+            MyStateChartBuilder mscb = new MyStateChartBuilder(agent, «EXPAND getVar FOR firstState-», "«firstState.uuid»");
+            «EXPAND blockContent(simpleType, "mscb.addRootState") FOREACH states.reject(e | e.uuid == firstState.uuid)-»
+        «ENDLET-»
+        createTransitions(mscb);
+        return mscb.build();
+        «ENDIF»
+    }
+    «EXPAND csBlock(simpleType) FOREACH compositeStates(states)-»
+   
+   «LET transitions.reject(e | e.isInvalid()) AS links-»
+    private void createTransitions(MyStateChartBuilder mscb) {
+        «EXPAND transitionCreateCall(simpleType) FOREACH links» 
+    }
+    
+   «EXPAND transitionCreateMethod(simpleType) FOREACH links» 
+   «ENDLET»
+   «ENDLET»
+}
+}
+«ENDFILE»
+
+«LET agentType.trim() AS trimmedType-»
+«EXPAND createActions(package.trim(), trimmedType, this.uuid) FOREACH states-»
+«FOREACH transitions.reject(e | e.isInvalid()) AS link»
+    «EXPAND createGuard(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createOnTransitionAction(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createTDF(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createCTC(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createMC(package.trim(), trimmedType, this.uuid) FOR link-»
+    «EXPAND createME(package.trim(), trimmedType, this.uuid) FOR link-»
+«ENDFOREACH»
+«ENDLET»
+«ENDDEFINE»
+
+«REM» transitions «ENDREM»
+«DEFINE transitionCreateCall(String agentType) FOR Transition-»
+    // creates transition «this.id»
+    «getTransitionMethodName(this.uuid)»(mscb);
+«ENDDEFINE»
+
+«DEFINE transitionCreateMethod(String agentType) FOR Transition-»
+    // creates transition «this.id», from = «this.from.id», to = «this.to.id»
+    private void «getTransitionMethodName(this.uuid)»(MyStateChartBuilder mscb) {
+    «IF isBranch(this.from)-»
+	     «IF this.defaultTransition-»
+	        DefaultOutOfBranchTransitionBuilder<«agentType»> tb = new DefaultOutOfBranchTransitionBuilder<«agentType»>("«this.id»",
+	            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+	        «EXPAND registerTransition("tb")-»
+	        tb.setPriority(«priority»);
+	        mscb.addRegularTransition(tb.build());
+	     «ELSE»
+	        OutOfBranchTransitionBuilder<«agentType»> tb = new OutOfBranchTransitionBuilder<«agentType»>("«this.id»",
+	            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+	            «EXPAND createAllTransProps(agentType)-»
+	            mscb.addRegularTransition(tb.build());
+	     «ENDIF-»
+    «ELSEIF this.from.uuid == this.to.uuid && this.selfTransition -»
+        // «this.selfTransition»
+        SelfTransitionBuilder<«agentType»> tb = new SelfTransitionBuilder<«agentType»>("«this.id»",
+                stateMap.get("«this.from.uuid»"));
+        «EXPAND createAllTransProps(agentType)-»
+        mscb.addSelfTransition(tb.build());
+    «ELSE-»
+        TransitionBuilder<«agentType»> tb = new TransitionBuilder<«agentType»>("«this.id»",
+            stateMap.get("«this.from.uuid»"), stateMap.get("«this.to.uuid»"));
+            «EXPAND createAllTransProps(agentType)-»
+            mscb.addRegularTransition(tb.build());
+    «ENDIF-»
+    }
+«ENDDEFINE»
+
+«DEFINE createAllTransProps(String agentType) FOR Transition-»
+	«EXPAND registerGuard("tb")-»
+	«EXPAND registerTransition("tb")-»
+	«EXPAND createTrigger("tb", agentType)-»
+	tb.setPriority(«priority»);
+«ENDDEFINE»
+
+«DEFINE createTrigger(String bvar, String agentType) FOR Transition-»
+    «IF this.triggerType == TriggerTypes::always-»
+        «bvar».addTrigger(new AlwaysTrigger(«this.triggerTime»));
+    «ELSEIF this.triggerType == TriggerTypes::timed-»
+        «bvar».addTrigger(new TimedTrigger<«agentType»>(new «getTDFType(this.uuid)»()));
+     «ELSEIF this.triggerType == TriggerTypes::probability-»
+        «bvar».addTrigger(new ProbabilityTrigger<«agentType»>(new «getTDFType(this.uuid)»(), «this.triggerTime»));
+     «ELSEIF this.triggerType == TriggerTypes::exponential-»
+        «bvar».addTrigger(new ExponentialDecayRateTrigger<«agentType»>(new «getTDFType(this.uuid)»()));
+     «ELSEIF this.triggerType == TriggerTypes::condition-»
+        «bvar».addTrigger(new ConditionTrigger<«agentType»>(new «getCTCType(this.uuid)»(), «this.triggerTime»));
+     «ELSEIF this.triggerType == TriggerTypes::message-»
+        «bvar».addTrigger(new MessageTrigger<«agentType»>(new «EXPAND createMessageChecker(agentType) FOR this-», «this.triggerTime»));
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE createMessageChecker(String agentType) FOR Transition-»
+    «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
+    «IF this.messageCheckerType == MessageCheckerTypes::conditional-»
+        MessageConditionMessageChecker<«agentType», «ctype»>(new «getMCType(uuid)»(), «ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::equals-»
+        MessageEqualsMessageChecker<«agentType», «ctype»>(new «getMEType(uuid)»(), «ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::unconditional-»
+        UnconditionalByClassMessageChecker(«ctype».class)
+    «ELSEIF this.messageCheckerType == MessageCheckerTypes::always-»
+        UnconditionalMessageChecker()
+    «ENDIF-»
+    «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE registerGuard(String bvar) FOR Transition-»
+    «IF this.guard != null && this.guard.trim().length > 0-»
+        «bvar».registerGuard(new «getGuardType(this.uuid)»());
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE registerTransition(String bvar) FOR Transition-»
+    «IF this.onTransition != null && this.onTransition.trim().length > 0-»
+            «bvar».registerOnTransition(new «getOnTransType(this.uuid)»());
+    «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE createME(String package, String agentType, String smUUID) FOR Transition-»
+    «IF getMECode(this).length > 0-»
+    «FILE actionFilename(package, getMEType(this.uuid), this.triggerCodeLanguage)-»
+        package «package»;
+        
+        «EXPAND imports(agentType, getMECode(this)) FOR this.triggerCodeLanguage-»
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         *  MessageEquals for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getMEType(this.uuid)» implements MessageEquals<«simpleType»> {
+            @Override
+            public Object messageValue(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getMECode(this)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createMC(String package, String agentType, String smUUID) FOR Transition-»
+    «IF getMCCode(this).length > 0-»
+    «FILE actionFilename(package, getMCType(this.uuid), this.triggerCodeLanguage)-»
+    «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
+        package «package»;
+        
+        «EXPAND imports(agentType, getMCCode(this)) FOR this.triggerCodeLanguage-»
+        «IF ctype.contains(".")-»
+        import «ctype»;
+        «ENDIF»
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        «LET getSimpleClassName(ctype) AS simpleCType»
+        /**
+         *  MessageCondition for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getMCType(this.uuid)» implements MessageCondition<«simpleType», «simpleCType»> {
+            @Override
+            public boolean isTrue(«simpleType» agent, Transition<«simpleType»> transition, «simpleCType» message, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getMCCode(this)»
+            }
+        }
+        «ENDLET»
+        «ENDLET»
+     «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createCTC(String package, String agentType, String smUUID) FOR Transition»
+    «IF getCTCCode(this).length > 0-»
+    «FILE actionFilename(package, getCTCType(this.uuid), this.triggerCodeLanguage)-»
+        package «package»;
+        
+       «EXPAND imports(agentType, getCTCCode(this)) FOR this.triggerCodeLanguage-»
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Condition trigger condition for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getCTCType(this.uuid)» implements ConditionTriggerCondition<«simpleType»> {
+            @Override
+            public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getCTCCode(this)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createTDF(String package, String agentType, String smUUID) FOR Transition»
+    «IF getTDFCode(this).length > 0-»
+    «FILE actionFilename(package, getTDFType(this.uuid), this.triggerCodeLanguage)-»
+        package «package»;
+        
+       «EXPAND imports(agentType, getTDFCode(this)) FOR this.triggerCodeLanguage-»
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Trigger Function for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getTDFType(this.uuid)» implements TriggerDoubleFunction<«simpleType»> {
+            @Override
+            public double value(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR getTDFCode(this)»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+
+«DEFINE createGuard(String package, String agentType, String smUUID) FOR Transition»
+    «IF this.guard != null && this.guard.trim().length > 0-»
+    «FILE actionFilename(package, getGuardType(this.uuid), this.triggerCodeLanguage)-»
+        package «package»;
+        
+      «EXPAND imports(agentType, this.guard.trim()) FOR this.triggerCodeLanguage-» 
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * Guard for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getGuardType(this.uuid)» implements GuardCondition<«simpleType»> {
+            @Override
+            public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, true) FOR this.guard.trim()»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE createOnTransitionAction(String package, String agentType, String smUUID) FOR Transition»
+    «IF this.onTransition != null && this.onTransition.trim().length > 0-»
+    «FILE actionFilename(package, getOnTransType(this.uuid), this.triggerCodeLanguage)-»
+        package «package»;
+        
+        «EXPAND imports(agentType, this.onTransition.trim()) FOR this.triggerCodeLanguage-»
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+        /**
+         * OnTransition action for «this.id», from = «this.from.id», to = «this.to.id».
+         */
+        @GeneratedFor("«smUUID»")
+        public class «getOnTransType(this.uuid)» implements TransitionAction<«simpleType»> {
+            @Override
+            public void action(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+                «EXPAND codeBlock(this.triggerCodeLanguage, false) FOR this.onTransition.trim()»
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDIF»
+«ENDDEFINE»
+
+
+
+«REM» expansions for creating state actions «ENDREM»
+«DEFINE createActionsCore(String package, String agentType, String smUUID) FOR AbstractState»
+«IF this.onEnter != null && this.onEnter.trim().length > 0-»
+    «EXPAND createAction(package.trim(), getOnEnterActionType(this.uuid), agentType.trim(), this.onEnter.trim(), smUUID) FOR this-»
+«ENDIF»
+
+«IF this.onExit != null && this.onExit.trim().length > 0-»
+    «EXPAND createAction(package.trim(), getOnExitActionType(this.uuid), agentType.trim(), this.onExit.trim(), smUUID) FOR this-»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE createAction(String package, String actType, String agentType, String body, String smUUID) FOR AbstractState»
+    «FILE actionFilename(package, actType, this.language)-»
+	    package «package»;
+	    
+	   «EXPAND imports(agentType, body) FOR this.language-»
+	    
+	    «LET getSimpleClassName(agentType) AS simpleType»
+	    /**
+	     * Action for «this.id».
+	     */
+	    @GeneratedFor("«smUUID»")
+	    public class «actType» implements StateAction<«simpleType»> {
+	        @Override
+	        public void action(«simpleType» agent, AbstractState<«simpleType»> state, Parameters params) throws Exception {
+	            «EXPAND codeBlock(this.language, false) FOR body»
+	        }
+	    }
+	    «ENDLET»
+    «ENDFILE»
+«ENDDEFINE»
+
+«DEFINE createActions(String package, String agentType, String smUUID) FOR AbstractState-»
+    «EXPAND createActionsCore(package, agentType, smUUID) FOR this-»
+«ENDDEFINE»
+
+«DEFINE createActions(String package, String agentType, String smUUID) FOR CompositeState-»
+    «EXPAND createActionsCore(package, agentType, smUUID) FOR this-»
+    «EXPAND createActions(package, agentType, smUUID) FOREACH children-»
+«ENDDEFINE»
+
+«REM» expansions for create states «ENDREM»
+«DEFINE registerActions(String agentType, String bvar) FOR AbstractState-»
+        «IF this.onEnter != null && this.onEnter.trim().length > 0-»
+            «bvar».registerOnEnter(new «getOnEnterActionType(this.uuid)»());
+        «ENDIF-»
+        «IF this.onExit != null && this.onExit.trim().length > 0-»
+            «bvar».registerOnExit(new «getOnExitActionType(this.uuid)»());
+        «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR AbstractState-»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType, String addMethod) FOR PseudoState-»
+    «IF this.type == PseudoStateTypes::choice»
+        «LET getBranchVar(this.uuid) AS bvar-»
+        BranchState<«agentType»> «bvar» = new BranchStateBuilder<«agentType»>("«this.id»").build();
+        stateMap.put("«this.uuid»", «bvar»);
+        «addMethod»(«bvar»,"«this.uuid»");
+        «ENDLET»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType, String addMethod) FOR AbstractState-»
+    «EXPAND blockContent(agentType)-»
+    «addMethod»(«getVar(this)»,"«this.uuid»");
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR CompositeState-»
+    // «this.id»
+    CompositeState<«agentType»> «getVar(this)» = «getCSMethodName(this.uuid)»();
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR History-»
+     «LET getSBVar(this.uuid) AS bvar-»
+        HistoryStateBuilder<«agentType»> «bvar» = new HistoryStateBuilder<«agentType»>("«this.id»", «this.shallow»);
+        «EXPAND registerActions(agentType, bvar) FOR this-»
+        HistoryState<«agentType»> «getVar(this)» = «bvar».build();
+        stateMap.put("«this.uuid»", «getVar(this)»);
+     «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR State-»
+     «LET getSBVar(this.uuid) AS bvar-»
+        SimpleStateBuilder<«agentType»> «bvar» = new SimpleStateBuilder<«agentType»>("«this.id»");
+        «EXPAND registerActions(agentType, bvar) FOR this-»
+        SimpleState<«agentType»> «getVar(this)» = «bvar».build();
+        stateMap.put("«this.uuid»", «getVar(this)»);
+     «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR PseudoState-»
+    «IF this.type == PseudoStateTypes::choice»
+        «LET getBranchVar(this.uuid) AS bvar-»
+        BranchState<«agentType»> «bvar» = new BranchStateBuilder<«agentType»>("«this.id»").build();
+        stateMap.put("«this.uuid»", «bvar»);
+        «ENDLET»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE blockContent(String agentType) FOR FinalState-»
+     «LET getSBVar(this.uuid) AS bvar-»
+        FinalStateBuilder<«agentType»> «bvar» = new FinalStateBuilder<«agentType»>("«this.id»");
+        «EXPAND registerActions(agentType, bvar) FOR this-»
+        FinalState<«agentType»> «getVar(this)» = «bvar».build();
+        stateMap.put("«this.uuid»", «getVar(this)»);
+     «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE csBlock(String agentType) FOR CompositeState-»
+    // Creates CompositeState '«this.id»'
+    private CompositeState<«agentType»> «getCSMethodName(this.uuid)»() {
+        «LET getCSBVar(this.uuid) AS csbVar»
+            «LET findInitialState(this.children) AS initialState -»
+                «EXPAND blockContent(agentType) FOR initialState-»
+   
+                CompositeStateBuilder<«agentType»> «csbVar» = new CompositeStateBuilder<«agentType»>("«this.id»", «EXPAND getVar FOR initialState-», "«initialState.uuid»");
+                «EXPAND registerActions(agentType, csbVar) FOR this-»
+                «FOREACH children.reject(e | e.uuid == initialState.uuid) AS child»
+                    «IF History.isInstance(child)-»
+                         «EXPAND blockContent(agentType, csbVar + ".addHistoryState") FOR child-»
+                     «ELSE»
+                         «EXPAND blockContent(agentType, csbVar + ".addChildState") FOR child-»
+                     «ENDIF»
+                «ENDFOREACH»
+               
+            «ENDLET-»
+            «LET getCSVar(this.uuid) AS csVar-»
+                CompositeState<«agentType»> «csVar» = «csbVar».build();
+                stateMap.put("«this.uuid»", «csVar»);
+                return «csVar»;
+            «ENDLET-»
+        «ENDLET-»
+  }
+  
+«EXPAND csBlock(agentType) FOREACH compositeStates(children)-»
+«ENDDEFINE»
+
+«DEFINE getVar FOR PseudoState-»
+«getBranchVar(this.uuid)»
+«ENDDEFINE»
+
+«DEFINE getVar FOR AbstractState-»
+«getVar(this)»
+«ENDDEFINE»
+
+«DEFINE imports(String agentType, String code) FOR LanguageTypes»
+import repast.simphony.statecharts.*;
+import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper.*;
+import repast.simphony.statecharts.generator.GeneratedFor;
+
+«IF this == LanguageTypes::groovy || this == LanguageTypes::relogo-»
+import static repast.simphony.relogo.Utility.*; 
+import static repast.simphony.relogo.UtilityG.*; 
+import repast.simphony.relogo.BaseTurtle; 
+import repast.simphony.relogo.BasePatch; 
+import repast.simphony.relogo.Plural; 
+import repast.simphony.relogo.Stop; 
+import repast.simphony.relogo.Utility; 
+import repast.simphony.relogo.UtilityG;
+«ENDIF-» 
+import repast.simphony.essentials.RepastEssentials;
+
+«parseCodeForImports(code)»
+        
+import «getPackageFromType(agentType)».*;
+«ENDDEFINE»
+
+«DEFINE codeBlock(LanguageTypes type, boolean needsRet) FOR String-»
+    «IF type == LanguageTypes::java-»
+        «expandCodeBody(this, needsRet)-»
+    «ELSEIF type == LanguageTypes::groovy-»
+        «expandCodeBody(this, false)-»
+    «ELSE-»
+        Closure cl = {«expandCodeBody(this, false)»}
+        cl.setResolveStrategy(Closure.DELEGATE_FIRST);
+        cl.setDelegate(agent);
+        cl.call(agent);
+    «ENDIF-»
+«ENDDEFINE»
+
+
+

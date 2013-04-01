@@ -30,7 +30,7 @@ public class StringProbedProperty extends DefaultProbedPropertyUICreator {
   }
 
   public JComponent getComponent(PresentationModel<Object> model) {
-		ValueModel vModel = model.getModel(name);
+		ValueModel vModel = model.getModel(name,getterName,setterName);
 		if (type == Type.READ) return BasicComponentFactory.createLabel(vModel);
 		else if (vals == null) return BasicComponentFactory.createTextField(vModel, true);
     else return new JComboBox(new ComboBoxAdapter(vals, vModel));

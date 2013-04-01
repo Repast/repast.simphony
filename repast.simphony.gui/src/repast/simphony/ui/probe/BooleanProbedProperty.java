@@ -22,7 +22,7 @@ public class BooleanProbedProperty extends DefaultProbedPropertyUICreator {
 	}
 
 	public JComponent getComponent(PresentationModel<Object> model) {
-		ValueModel vModel = model.getModel(name);
+		ValueModel vModel = model.getModel(name,getterName,setterName);
 		JCheckBox box = BasicComponentFactory.createCheckBox(vModel, "");
 		if (type == Type.READ) box.setEnabled(false);
 		return box;

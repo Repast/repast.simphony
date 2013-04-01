@@ -100,6 +100,7 @@
 			
 			<exclude name="**/repast.simphony.distributed.batch/**" />
 			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
+			<exclude name="**/repast.simphony.statecharts.diagram/**" />
 		</fileset>
 		
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
@@ -477,6 +478,23 @@
 			<fileset dir="../repast.simphony.terracotta/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+			
+			<!-- Statechart projects -->
+			<fileset dir="../repast.simphony.statecharts/src" casesensitive="no">
+							<include name="**/*.java" />
+							<include name="**/*.groovy" />
+						</fileset>
+			<fileset dir="../repast.simphony.statecharts/bin" casesensitive="no">
+							<include name="**/*.class" />
+						</fileset>
+			<fileset dir="../repast.simphony.statecharts.visualization/src" casesensitive="no">
+										<include name="**/*.java" />
+										<include name="**/*.groovy" />
+									</fileset>
+						<fileset dir="../repast.simphony.statecharts.visualization/bin" casesensitive="no">
+										<include name="**/*.class" />
+									</fileset>
+						
 
 		</jar>
 	</target>

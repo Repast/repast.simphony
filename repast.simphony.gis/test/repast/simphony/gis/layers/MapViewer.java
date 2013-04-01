@@ -7,7 +7,9 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -22,13 +24,10 @@ import javax.swing.UIManager;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -42,10 +41,10 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.gis.RepastMapLayer;
 import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.gis.display.StatusBar;
 import repast.simphony.gis.legend.MapLegend;
 import repast.simphony.gis.tools.DistanceTool;
@@ -83,9 +82,9 @@ public class MapViewer {
 
 	private Properties props;
 	
-	SimpleFeatureCollection collection;
+	List<SimpleFeature> features;
 	
-	SimpleFeatureCollection newAgents;
+	List<SimpleFeature> newAgents;
 	
 	SimpleFeature feature1;
 	SimpleFeature feature2;
@@ -130,7 +129,7 @@ public class MapViewer {
 	  * Test just adding plain GeoTools Features - not agents
 	  */
 	private void createLayers2() {
-		collection = FeatureCollections.newCollection();
+		features = new ArrayList<SimpleFeature>();
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 
 		SimpleFeatureType type = createFeatureType();
@@ -149,12 +148,12 @@ public class MapViewer {
 			featureBuilder.add(point);
 			featureBuilder.add("Agent-" + i);
 			SimpleFeature feature = featureBuilder.buildFeature(null);
-			collection.add(feature);
+			features.add(feature);
 			
 			feature1 = feature;
 		}
 
-		FeatureSource source = DataUtilities.createFeatureSource(collection);
+		FeatureSource source = DataUtilities.createFeatureSource(features);
 
 		Style style = builder.createStyle(builder.createPointSymbolizer(
 				builder.createGraphic(null, builder.createMark("square", Color.RED), null)));

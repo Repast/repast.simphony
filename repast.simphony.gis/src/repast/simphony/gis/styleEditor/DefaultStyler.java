@@ -13,6 +13,14 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+/**
+ * Provides default Style or Sympbolier for a FeatureSource.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
+ *
+ */
+
 public class DefaultStyler {
 	private static StyleBuilder builder = new StyleBuilder();
 
@@ -36,6 +44,5 @@ public class DefaultStyler {
 			throw new IllegalArgumentException(type.getBinding().getName()
 					+ " is not a supported geometry type");
 		}
-
 	}
 }

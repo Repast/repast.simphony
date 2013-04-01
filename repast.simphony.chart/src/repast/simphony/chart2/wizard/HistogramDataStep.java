@@ -64,7 +64,7 @@ public class HistogramDataStep extends PanelWizardStep {
 
     FormLayout layout = new FormLayout("left:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-    builder.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    builder.border(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     builder.append("Name:", idField);
     builder.nextLine();
 
@@ -191,23 +191,13 @@ public class HistogramDataStep extends PanelWizardStep {
     }
   }
 
-  private DataSetDescriptor findDSByName(String name) {
-    for (DataSetDescriptor ds : model.getDataSets()) {
-      if (ds.getName().equals(name)) {
-        return ds;
-      }
-    }
-
-    return null;
-  }
-
   public void prepare() {
     super.prepare();
     HistogramChartDescriptor descriptor = model.getDescriptor();
     idField.setText(descriptor.getName());
     String dsName = descriptor.getDataSet();
     if (dsName != null) {
-      dataSetBox.setSelectedItem(findDSByName(dsName));
+      dataSetBox.setSelectedItem(dsName);
     } else {
       if (dataSetBox.getModel().getSize() > 0) dataSetBox.setSelectedIndex(0);
     }

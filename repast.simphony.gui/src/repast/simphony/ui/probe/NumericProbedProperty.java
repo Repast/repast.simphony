@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -70,14 +69,14 @@ public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
   }
 
   public JComponent getComponent(PresentationModel<Object> model) {
-    AbstractValueModel valueModel = model.getModel(name);
+    AbstractValueModel valueModel = model.getModel(name,getterName,setterName);
     if (type == Type.READ) {
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createLabel(valueModel, Utils.getNumberFormatInstance()));
     }
 
     if (values != null) {
-      return this.wrapWithSparkLineButton(model, new JComboBox(new ComboBoxAdapter(values,
+      return this.wrapWithSparkLineButton(valueModel, new JComboBox(new ComboBoxAdapter(values,
           valueModel)));
     }
 
@@ -86,57 +85,57 @@ public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new BigInteger("0"));
       // formatter.setValueClass(BigInteger.class);
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case BIGDECIMAL: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new BigDecimal("0"));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
 
     }
     case BYTE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new Byte((byte) 0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case SHORT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new Short((short) 0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case INT: {
       //EmptyNumberFormat formatter = new EmptyNumberFormat(NumberFormat.getIntegerInstance(),
        //   Integer.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createIntegerField(valueModel, 0));
     }
     case DOUBLE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           Double.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case LONG: {
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createLongField(valueModel, 0L));
     }
     case FLOAT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           Float.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     default:
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createIntegerField(valueModel, 0));
     }
   }
 
-  public JComponent wrapWithSparkLineButton(PresentationModel model, JComponent textComponent) {
+  public JComponent wrapWithSparkLineButton(AbstractValueModel model, JComponent textComponent) {
 
     if (this.wrap) {
 

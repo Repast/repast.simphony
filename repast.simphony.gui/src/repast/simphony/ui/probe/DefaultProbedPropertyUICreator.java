@@ -20,7 +20,7 @@ public abstract class DefaultProbedPropertyUICreator implements ProbedPropertyUI
   };
 
   protected String displayName;
-  protected String name;
+  protected String name, getterName, setterName;
   protected Type type;
 
   protected DefaultProbedPropertyUICreator(PropertyDescriptor desc) {
@@ -33,6 +33,13 @@ public abstract class DefaultProbedPropertyUICreator implements ProbedPropertyUI
     } else {
       type = Type.WRITE;
     }
+    if (desc.getReadMethod() != null){
+    	getterName = desc.getReadMethod().getName();
+    }
+    if (desc.getWriteMethod() != null){
+    	setterName = desc.getWriteMethod().getName();
+    }
+    
   }
 
   public abstract JComponent getComponent(PresentationModel<Object> model);

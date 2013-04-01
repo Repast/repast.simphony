@@ -57,6 +57,9 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * @author Eric Tatara
  */
 public class EditedStyleDialog extends JDialog {
+  
+  private static final String ICON_SIZE = "Icon Size";
+  
   private boolean save = false;
   private EditedStyleData userStyleData;
   private static final Set<Class> pTypes = new HashSet<Class>();
@@ -189,6 +192,8 @@ public class EditedStyleDialog extends JDialog {
     variableIconRedColorScaleModel = new DefaultComboBoxModel();
     variableIconGreenColorScaleModel = new DefaultComboBoxModel();
     variableIconBlueColorScaleModel = new DefaultComboBoxModel();
+    
+    sizeModel.addElement(ICON_SIZE);
 
     // Add available methods to appropriate combo box models
     for (String method : methodList) {
@@ -210,6 +215,8 @@ public class EditedStyleDialog extends JDialog {
 //			variableIconGreenColorScaleModel.addElement(method);
 //			variableIconBlueColorScaleModel.addElement(method);
     }
+    
+    
 
     for (String method : labelMethodList)
       labelModel.addElement(method);
@@ -217,8 +224,12 @@ public class EditedStyleDialog extends JDialog {
     if (userStyleData.getSizeMethodName() != null)
       sizeModel.setSelectedItem(userStyleData.getSizeMethodName());
     else {
-      sizeModel.addElement(userStyleData.getSize());
-      sizeModel.setSelectedItem(userStyleData.getSize());
+      if (userStyleData.getSize() == -1) {
+        sizeModel.setSelectedItem(ICON_SIZE);
+      } else {
+        sizeModel.addElement(userStyleData.getSize());
+        sizeModel.setSelectedItem(userStyleData.getSize());
+      }
     }
     if (userStyleData.getSizeMinMethodName() != null)
       sizeMinModel.setSelectedItem(userStyleData.getSizeMinMethodName());
@@ -473,6 +484,10 @@ public class EditedStyleDialog extends JDialog {
     } else if (isUserTypedNumber(selection)) {
       userStyleData.setSize(new Float((String) selection));
       preview.setMarkSize(new Float((String) selection));
+      userStyleData.setSizeMethodName(null);
+    } else if (selection.equals(ICON_SIZE)) {
+      userStyleData.setSize(-1f);
+      preview.setMarkSize(-1f);
       userStyleData.setSizeMethodName(null);
     } else
       userStyleData.setSizeMethodName((String) selection);

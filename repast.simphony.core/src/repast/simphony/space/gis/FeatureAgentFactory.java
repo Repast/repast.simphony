@@ -16,6 +16,7 @@ import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -102,11 +103,11 @@ public abstract class FeatureAgentFactory {
 			SchemaException {
 		BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
 		PropertyDescriptor[] pds = info.getPropertyDescriptors();
-		List<AttributeType> types = new ArrayList<AttributeType>();
+		List<AttributeDescriptor> ats = new ArrayList<AttributeDescriptor>();
 
 		AttributeTypeBuilder builder = new AttributeTypeBuilder();
 		for (int i = 0; i < pds.length; i++) {
-			String featureName = pds[i].getName();
+			String fieldName = pds[i].getName();
 
 			Method method = pds[i].getReadMethod();
 			if (method != null) {
@@ -115,10 +116,9 @@ public abstract class FeatureAgentFactory {
 				if (retType == null)
 					retType = returnType;
 				if (legalShapefileAttribs.contains(retType)) {
-					builder.setName(featureName);
 					builder.setBinding(retType);
 					builder.setNillable(true);
-					types.add(builder.buildType());
+					ats.add(builder.buildDescriptor(fieldName));
 				}
 			}
 		}
@@ -129,10 +129,9 @@ public abstract class FeatureAgentFactory {
 			if (retType == null)
 				retType = returnType;
 			if (legalShapefileAttribs.contains(retType)) {
-				builder.setName(adapter.getAttributeName());
 				builder.setBinding(retType);
 				builder.setNillable(true);
-				types.add(builder.buildType());
+				ats.add(builder.buildDescriptor(adapter.getAttributeName()));
 			}
 		}
 			
@@ -144,8 +143,8 @@ public abstract class FeatureAgentFactory {
 		// The FeatureType Geometry class is the first attribute added
 		ftBuilder.add(GEOM_ATTRIBUTE_NAME, geomClass);
 		
-		for (AttributeType type : types){
-		  ftBuilder.addBinding(type);
+		for (AttributeDescriptor ad : ats){
+		  ftBuilder.add(ad);
 		}
 				
 		return ftBuilder.buildFeatureType();
@@ -171,11 +170,11 @@ public abstract class FeatureAgentFactory {
 		// if get here then we need to create our own type
 		BeanInfo info = Introspector.getBeanInfo(agentClass, Object.class);
 		PropertyDescriptor[] pds = info.getPropertyDescriptors();
-		List<AttributeType> ats = new ArrayList<AttributeType>();
+		List<AttributeDescriptor> ats = new ArrayList<AttributeDescriptor>();
 		AttributeTypeBuilder builder = new AttributeTypeBuilder();
 
 		for (int i = 0; i < pds.length; i++) {
-			String featureName = pds[i].getName();
+			String fieldName = pds[i].getName();
 			
 			Method method = pds[i].getReadMethod();
 			if (method != null) {
@@ -184,10 +183,9 @@ public abstract class FeatureAgentFactory {
 				Class retType = primitiveMap.get(returnType);
 				if (retType == null)
 					retType = returnType;
-				builder.setName(featureName);
 				builder.setBinding(retType);
 				builder.setNillable(true);
-				ats.add(builder.buildType());
+				ats.add(builder.buildDescriptor(fieldName));
 			}
 		}
 
@@ -196,10 +194,9 @@ public abstract class FeatureAgentFactory {
 			Class retType = primitiveMap.get(returnType);
 			if (retType == null)
 				retType = returnType;
-			builder.setName(adapter.getAttributeName());
 			builder.setBinding(retType);
 			builder.setNillable(true);
-			ats.add(builder.buildType());
+			ats.add(builder.buildDescriptor(adapter.getAttributeName()));
 		}
 
 		SimpleFeatureTypeBuilder ftBuilder = new SimpleFeatureTypeBuilder();
@@ -207,17 +204,15 @@ public abstract class FeatureAgentFactory {
 		ftBuilder.setName(featureTypeName);
 		ftBuilder.setCRS(coordRefSystem);
 		
-		// The FeatureType Geometry class is the first attribute added
+		// !! IMPORTANT !!  The default Geometry class must be the first attribute added
 		ftBuilder.add(GEOM_ATTRIBUTE_NAME, geomClass);
 		
-		for (AttributeType at : ats){
-			ftBuilder.addBinding(at);
+		for (AttributeDescriptor ad : ats){
+			ftBuilder.add(ad);
 		}
 		
 		type = ftBuilder.buildFeatureType();
 		types.put(agentClass, type);
-		
-		type.getClass();
 		
 		return type;
 	}

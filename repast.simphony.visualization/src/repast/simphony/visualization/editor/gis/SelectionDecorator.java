@@ -29,7 +29,7 @@ import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
-import repast.simphony.gis.RepastMapLayer;
+import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.FeatureAttributeAdapter;
 import repast.simphony.space.gis.GISConstants;

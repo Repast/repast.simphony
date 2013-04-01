@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Tue Apr 17 10:36:47 EDT 2007
- */
-
 package repast.simphony.gis.styleEditor;
 
 import java.awt.BorderLayout;
@@ -26,7 +22,11 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
- * @author User #2
+ * Dialog that wraps a RuleEditPanel.  Used in GIS style editor panels when
+ *  the Rule editor is needed.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class SymbolEditorDialog extends JDialog {
 
@@ -64,8 +64,10 @@ public class SymbolEditorDialog extends JDialog {
 		setVisible(true);
 		return rule;
 	}
-
-
+	
+	public PreviewLabel getPreview(){
+		return ruleEditPanel1.getPreview();
+	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents

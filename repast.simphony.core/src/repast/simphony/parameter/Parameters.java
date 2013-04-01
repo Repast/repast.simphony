@@ -32,7 +32,67 @@ public interface Parameters extends Cloneable{
    * @return the value associated with the specified parameter name.
    */
   Object getValue(String paramName);
+  
+  /**
+   * Gets the Double value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  Double getDouble(String paramName);
 
+  /**
+   * Gets the Integer value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  Integer getInteger(String paramName);
+  
+  /**
+   * Gets the Boolean value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  Boolean getBoolean(String paramName);
+  
+  /**
+   * Gets the String value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  String getString(String paramName);
+  
+  /**
+   * Gets the Long value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  Long getLong(String paramName);
+  
+  /**
+   * Gets the Float value associated with the specified parameter name.
+   * 
+   * @param paramName
+   *          the name of the parameter whose value we want
+   * 
+   * @return the value associated with the specified parameter name.
+   */
+  Float getFloat(String paramName);
+  
   /**
    * Gets a String representation of the specified parameter's value.
    * 

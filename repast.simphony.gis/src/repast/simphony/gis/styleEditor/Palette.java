@@ -7,7 +7,7 @@ import java.awt.*;
 
 /**
  * @author Nick Collier
- * @version $Revision: 1.2 $ $Date: 2007/04/18 19:25:53 $
+ * 
  */
 public class Palette {
 	private Color[] colors;
