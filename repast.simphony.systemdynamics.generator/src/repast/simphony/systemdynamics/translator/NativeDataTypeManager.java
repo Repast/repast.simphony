@@ -589,7 +589,7 @@ public class NativeDataTypeManager {
 			e.printStackTrace();
 		}
 
-		String ScenarioDirectory = translator.getDestinationDirectory()+"/" + objectName + ".rs/";
+		String ScenarioDirectory = translator.getScenarioDirectory();
 
 		serialize(dsd, ScenarioDirectory+"repast.simphony.action.data_set_0.xml");
 	}

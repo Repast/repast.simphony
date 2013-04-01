@@ -12,5 +12,10 @@
 	<classpathentry kind="lib" path="C:/poi-3.7/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="C:/poi-3.7/poi-scratchpad-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="C:/Users/bragen/Downloads/xstream-1.4.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bragen/EclipseJuno32/eclipse/plugins/org.eclipse.ui.views.properties.tabbed_3.5.300.v20120912-132807.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bragen/EclipseJuno32/eclipse/plugins/org.eclipse.ui.views_3.6.100.v20120705-114010.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bragen/EclipseJuno32/eclipse/plugins/org.eclipse.ui.workbench.texteditor.source_3.8.0.v20120523-1310.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bragen/EclipseJuno32/eclipse/plugins/org.eclipse.ui.workbench_3.104.0.v20130204-164612.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bragen/EclipseJuno32/eclipse/plugins/org.eclipse.ui_3.104.0.v20121024-145224.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

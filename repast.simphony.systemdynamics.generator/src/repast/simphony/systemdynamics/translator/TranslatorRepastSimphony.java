@@ -6,9 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.systemdynamics.analysis.PolarityCodeBuilder;
+import repast.simphony.systemdynamics.generator.DirectoryCleaner;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
@@ -23,6 +33,19 @@ public class TranslatorRepastSimphony extends Translator {
 	public final static String MDL_HEADER = "{UTF-8}";
 	public final static String FIELD_SEPARATOR = "\t~\t";
 	public final static String EQUATION_TERMINATOR = "\t|";
+	
+	private static final String SRC_GEN = "src-gen";
+	private static final String OUTPUT = "output";
+
+	
+	private IProject project;
+	private IProgressMonitor progressMonitor;
+	
+	public TranslatorRepastSimphony(IProject project, IProgressMonitor progressMonitor) {
+		this();
+		this.project = project;
+		this.progressMonitor = progressMonitor;
+	}
 	
 	
 	public TranslatorRepastSimphony() {
@@ -134,8 +157,17 @@ public class TranslatorRepastSimphony extends Translator {
     	this.objectName = "Object";
     	Translator.target = "JAVA";
     	this.dataType = "Arrays";
-    	this.destinationDirectory = ".";
-    	this.miscDirectory = ".";
+    	
+    	try {
+			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
+			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
+    	
     	this.packageName = "Package";
     	this.supportName = "support";
     	
@@ -182,8 +214,20 @@ public class TranslatorRepastSimphony extends Translator {
     	this.objectName = systemModel.getClassName();
     	Translator.target = "JAVA";
     	this.dataType = "Arrays";
-    	this.destinationDirectory = ".";
-    	this.miscDirectory = ".";
+    	
+    	
+    	
+//    	addPath(IProject project, IProgressMonitor monitor, String dirName)
+    	
+    	try {
+			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
+			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
     	this.packageName = systemModel.getPackage();
     	this.supportName = "support";
     	
@@ -231,8 +275,17 @@ public class TranslatorRepastSimphony extends Translator {
     	this.objectName = systemModel.getClassName();
     	Translator.target = "JAVA";
     	this.dataType = "Arrays";
-    	this.destinationDirectory = ".";
-    	this.miscDirectory = ".";
+    	
+    	
+    	try {
+			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
+			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
     	this.packageName = systemModel.getPackage();
     	this.supportName = "support";
     	
@@ -424,8 +477,9 @@ public class TranslatorRepastSimphony extends Translator {
 	    generateMemory();
 	    List<String> evaluationOrder = determineEvaluationOrder(equations);
 	    if (evaluationOrder != null) {
-		new File(destinationDirectory+"/"+"src" + "/" + asDirectoryPath(packageName)+ "/").mkdirs();
-		cg = new CodeGenerator(destinationDirectory+ "/"+"src" + "/" + asDirectoryPath(packageName)+ "/", evaluationOrder, equations, objectName, Translator.target, this);
+	    	String dir = getSourceDirectory() + "/" + asDirectoryPath(packageName)+ "/";
+		new File(dir).mkdirs();
+		cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
 		cg.generateCode();
 	    }
 	}
@@ -451,4 +505,71 @@ public class TranslatorRepastSimphony extends Translator {
     		System.out.println(polarityCodeBuilder.getGeneratedCode());
     	}
     }
+    
+    private String addPath(IProject project, IProgressMonitor monitor, String dirName) throws CoreException {
+        IJavaProject javaProject = JavaCore.create(project);
+        
+        // workspace relative
+        IPath srcPath = javaProject.getPath().append(dirName + "/");
+        // project relative
+        IFolder folder = project.getFolder(dirName);
+     
+        if (!folder.exists()) {
+          // creates within the project
+          folder.create(true, true, monitor);
+        }
+        
+        return project.getLocation().append(srcPath.lastSegment()).toPortableString();
+      }
+    
+    private String addSrcPath(IProject project, IProgressMonitor monitor, String dirName) throws CoreException {
+        IJavaProject javaProject = JavaCore.create(project);
+        
+        // workspace relative
+        IPath srcPath = javaProject.getPath().append(dirName + "/");
+        // project relative
+        IFolder folder = project.getFolder(dirName);
+     
+        if (!folder.exists()) {
+          // creates within the project
+          folder.create(true, true, monitor);
+          IClasspathEntry[] entries = javaProject.getRawClasspath();
+          boolean found = false;
+          for (IClasspathEntry entry : entries) {
+            if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getPath().equals(srcPath)) {
+              found = true;
+              break;
+            }
+          }
+
+          if (!found) {
+            IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
+            System.arraycopy(entries, 0, newEntries, 0, entries.length);
+            IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath, null);
+            newEntries[entries.length] = srcEntry;
+            javaProject.setRawClasspath(newEntries, null);
+          }
+
+        }
+        
+        return project.getLocation().append(srcPath.lastSegment()).toPortableString();
+      }
+    
+    public String getProjectLocation() {
+    	return project.getLocation().toPortableString();
+    }
+    
+    public String getProjectName() {
+    	return project.getName();
+    }
+
+    @Override
+	public String getSourceDirectory() {
+		return destinationDirectory +"/";
+	}
+	
+    @Override
+	public String getScenarioDirectory() {
+		 return getProjectLocation() + "/" + getProjectName() + ".rs/";
+	}
 }

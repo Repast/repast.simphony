@@ -475,7 +475,7 @@ public class CodeGenerator {
 	    bw.flush();
 	    
 	   
-		String ScenarioDirectory = translator.getDestinationDirectory() +"/" + objectName + ".rs/";
+		String ScenarioDirectory = translator.getScenarioDirectory();
 		RepastSimphonyEnvironment.generateParametersXml(Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
 	   
 

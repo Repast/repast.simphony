@@ -403,12 +403,12 @@ public class Translator {
 
 			if (Translator.target.equals(ReaderConstants.JAVA)) {
 
-				String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
+				String SourceDirectory = getSourceDirectory() + asDirectoryPath(packageName)+ "/";
 				InformationManagers.getInstance().getNativeDataTypeManager().dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
 
 				RepastSimphonyEnvironment.generateContextBuilder(Translator.openReport(SourceDirectory+"ContextBuilder"+objectName+".java"), objectName, this);
 
-				String ScenarioDirectory = destinationDirectory +"/" + objectName + ".rs/";
+				String ScenarioDirectory = getScenarioDirectory();
 
 				RepastSimphonyEnvironment.generateScenarioXml(Translator.openReport(ScenarioDirectory+"scenario.xml"), objectName);
 				RepastSimphonyEnvironment.generateUserPathXml(Translator.openReport(ScenarioDirectory+"user_path.xml"), objectName);
@@ -420,7 +420,7 @@ public class Translator {
 			} else if (Translator.target.equals(ReaderConstants.JAVASCRIPT)) {
 
 			} else if (Translator.target.equals(ReaderConstants.C)) {
-				String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
+				String SourceDirectory = getSourceDirectory() + asDirectoryPath(packageName)+ "/";
 				InformationManagers.getInstance().getNativeDataTypeManager().dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
 				InformationManagers.getInstance().getNativeDataTypeManager().generateMemoryC(Translator.openReport(SourceDirectory+"memory"+objectName+".h"), objectName, this);
 
@@ -1426,4 +1426,11 @@ public class Translator {
 		return generateJava;
 	}
 
+	public String getSourceDirectory() {
+		return destinationDirectory+"/"+ "src" + "/";
+	}
+	
+	public String getScenarioDirectory() {
+		return destinationDirectory +"/" + objectName + ".rs/";
+	}
 }

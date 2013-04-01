@@ -1570,9 +1570,21 @@ public class Equation {
 				definesLookup || hasInitialValue || definesSubscript ||
 				definesLookupWithRange)
 			setOneTime(true);
+		
+		System.out.println(vensimEquation);
+		System.out.println(rhsTokens.size() == 0);
+		System.out.println(equation.contains("GET XLS"));
+		System.out.println( equation.contains("VDMLOOKUP"));
+		System.out.println(definesLookup);
+		System.out.println(hasInitialValue);
+		System.out.println(definesSubscript);
+		System.out.println(definesLookupWithRange);
 
 		// need to call this multiple times even though it meets our "one-time" criteria
 		if (equation.contains("RANDOM"))
+			setOneTime(false);
+		
+		if (tokens.contains("time"))
 			setOneTime(false);
 
 
