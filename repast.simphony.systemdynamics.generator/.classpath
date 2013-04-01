@@ -6,11 +6,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.data"/>
 	<classpathentry kind="lib" path="/repast.simphony.core/lib/colt-1.2.0-no_hep.jar"/>
-	<classpathentry kind="lib" path="C:/poi-3.7/poi-3.7-20101029.jar"/>
-	<classpathentry kind="lib" path="C:/poi-3.7/poi-examples-3.7-20101029.jar"/>
-	<classpathentry kind="lib" path="C:/poi-3.7/poi-ooxml-3.7-20101029.jar"/>
-	<classpathentry kind="lib" path="C:/poi-3.7/poi-ooxml-schemas-3.7-20101029.jar"/>
-	<classpathentry kind="lib" path="C:/poi-3.7/poi-scratchpad-3.7-20101029.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bragen/Downloads/xstream-1.4.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
