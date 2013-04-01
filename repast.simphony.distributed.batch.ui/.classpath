@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
@@ -11,17 +10,3 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.distributed.batch"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
-=======
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgoodies-forms-1.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgoodies-binding-2.7.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.distributed.batch"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
->>>>>>> branch 'system_dynamics' of ssh://bragen@git.code.sf.net/p/repast/repast-simphony
