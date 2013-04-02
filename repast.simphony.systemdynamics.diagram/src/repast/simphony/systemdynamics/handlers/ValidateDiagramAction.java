@@ -17,9 +17,9 @@ public class ValidateDiagramAction extends AbstractToolbarAction  {
  
   public ValidateDiagramAction(IWorkbenchPage workbenchPage) {
     super(workbenchPage);
-    setText("Validate Model");
+    setText("Check Syntax");
     setId(ID);
-    setToolTipText("Validate Model");
+    setToolTipText("Check Model Syntax");
     setImageDescriptor(SystemdynamicsDiagramEditorPlugin.getBundledImageDescriptor("icons/obj16/complete_task.gif"));
   }
   
@@ -28,7 +28,7 @@ public class ValidateDiagramAction extends AbstractToolbarAction  {
    */
   @Override
   protected void doRun(IProgressMonitor progressMonitor) {
-    System.out.println("validate code");
+    System.out.println("checking syntax");
   }
 }
 

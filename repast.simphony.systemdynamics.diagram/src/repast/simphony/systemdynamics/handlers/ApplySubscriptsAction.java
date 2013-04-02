@@ -35,7 +35,7 @@ public class ApplySubscriptsAction extends AbstractActionHandler {
     setId(ID);
     setToolTipText("Apply Subscripts");
     setImageDescriptor(SystemdynamicsDiagramEditorPlugin
-        .getBundledImageDescriptor("icons/obj16/build_tab.gif"));
+        .getBundledImageDescriptor("icons/obj16/debugtt_obj.gif"));
   }
 
   // needs to true so that refresh is called when selections changes.
