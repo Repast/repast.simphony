@@ -105,14 +105,6 @@
 <!-- =================================================================================== -->
 <!-- Extension: Repast Simphony Perspective                                              -->
 <!-- =================================================================================== -->
-   <extension
-         id="repast.simphony.agents.sse_adapter"
-         name="Repast Simphony Agents SSE Adapter"
-         point="org.eclipse.wst.sse.ui.adapterFactoryDescription">
-     
-         <adapterFactoryDescription class="repast.simphony.agents.scenario.ui.editors.ScenarioOutlineViewer"/>
-     
-   </extension>
    
    
    <extension

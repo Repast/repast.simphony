@@ -1,0 +1,83 @@
+<class-diagram version="1.0.11" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.AbstractState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/AbstractState.java" binary="false">    
+    <position height="-1" width="-1" x="559" y="199"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.CompositeState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/CompositeState.java" binary="false">    
+    <position height="-1" width="-1" x="128" y="587"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.SimpleState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/SimpleState.java" binary="false">    
+    <position height="-1" width="-1" x="900" y="230"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.FinalState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/FinalState.java" binary="false">    
+    <position height="-1" width="-1" x="1085" y="316"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.HistoryState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/HistoryState.java" binary="false">    
+    <position height="-1" width="-1" x="576" y="595"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="repast.simphony.statecharts.BranchState" 
+    project="repast.simphony.statecharts" 
+    file="/repast.simphony.statecharts/src/repast/simphony/statecharts/BranchState.java" binary="false">    
+    <position height="-1" width="-1" x="1242" y="151"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <generalization id="7">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="8">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="9">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <generalization id="10">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <generalization id="11">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="1"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

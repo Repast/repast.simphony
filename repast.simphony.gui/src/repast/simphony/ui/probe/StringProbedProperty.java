@@ -15,7 +15,7 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class StringProbedProperty extends ProbedProperty {
+public class StringProbedProperty extends DefaultProbedPropertyUICreator {
 
   private List vals;
 
@@ -29,8 +29,8 @@ public class StringProbedProperty extends ProbedProperty {
 
   }
 
-  public JComponent getComponent(PresentationModel model, boolean buffered) {
-		ValueModel vModel = buffered ? model.getBufferedModel(name) : model.getModel(name);
+  public JComponent getComponent(PresentationModel<Object> model) {
+		ValueModel vModel = model.getModel(name,getterName,setterName);
 		if (type == Type.READ) return BasicComponentFactory.createLabel(vModel);
 		else if (vals == null) return BasicComponentFactory.createTextField(vModel, true);
     else return new JComboBox(new ComboBoxAdapter(vals, vModel));

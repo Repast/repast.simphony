@@ -2,7 +2,8 @@ package repast.simphony.gis.legend;
 
 import java.util.Collection;
 
-import org.geotools.map.MapLayer;
+import org.geotools.map.Layer;
+
 
 /**
  * This interface is designed to support complex hierarchies as the structure
@@ -22,7 +23,7 @@ public interface LayerManager {
 	 * @param layer
 	 *            The layer to be managed.
 	 */
-	public void addLayer(MapLayer layer, Object... path);
+	public void addLayer(Layer layer, Object... path);
 
 	/**
 	 * Remove the layer that is at the supplied path.
@@ -33,7 +34,7 @@ public interface LayerManager {
 	 * @param layer
 	 *            The layer to be managed.
 	 */
-	public void removeLayer(MapLayer layer, Object... path);
+	public void removeLayer(Layer layer, Object... path);
 
 	/**
 	 * Get the layers that exist exactly at the path specified. This will not
@@ -44,7 +45,7 @@ public interface LayerManager {
 	 *            layer.
 	 * @return The layers at the path.
 	 */
-	public Collection<MapLayer> getLayers(Object... path);
+	public Collection<Layer> getLayers(Object... path);
 
 	/**
 	 * Add the path into the hierarchy.

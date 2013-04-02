@@ -1,12 +1,8 @@
-/*
- * Created by JFormDesigner on Thu Oct 11 16:24:57 EDT 2007
- */
-
 package repast.simphony.visualization.gui;
 
-import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POINT;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POLYGON;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POLYGON;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,10 +43,9 @@ import javax.xml.transform.TransformerException;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.map.DefaultMapLayer;
-import org.geotools.map.MapLayer;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -59,14 +54,15 @@ import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.FilterFactory;
 
-import repast.simphony.gis.GeometryUtil;
-import repast.simphony.gis.data.DataUtilities;
-import repast.simphony.gis.styleEditor.HollowFeature;
 import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
+import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
@@ -76,11 +72,11 @@ import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -93,14 +89,19 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * @author User #2
+ * The main GIS agent style editor panel class with the list of agent classes,
+ * editor and layer order buttons, etc.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class GISStylePanel extends JPanel {
 
   private static MessageCenter msg = MessageCenter.getMessageCenter(GISStylePanel.class);
   private static final String SLD_NS = "<sld:UserStyle xmlns=\"http://www.opengis.net/sld\"";
   private static final String SLD_NS_2 = " xmlns:sld=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"";
-
+  static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
+  static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
   public static File lastDirectory;
 
   static class AgentTypeElement {
@@ -337,10 +338,11 @@ public class GISStylePanel extends JPanel {
       try {
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        String name = source.getSchema().getTypeName();
+        String name = source.getSchema().getName().getLocalPart();
         AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
         elem.source = file;
-        elem.defaultGeometry = source.getSchema().getDefaultGeometry().getType();
+        elem.defaultGeometry = 
+        		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
         DefaultListModel model = (DefaultListModel) agentList.getModel();
         model.addElement(elem);
         agentList.setSelectedIndex(model.size() - 1);
@@ -352,7 +354,7 @@ public class GISStylePanel extends JPanel {
   }
 
   private void setGeometryBox(Style style) {
-    Symbolizer symbolizer = style.getFeatureTypeStyles()[0].getRules()[0].getSymbolizers()[0];
+    Symbolizer symbolizer = style.featureTypeStyles().get(0).rules().get(0).getSymbolizers()[0];
     if (PointSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(POINT);
     if (PolygonSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(POLYGON);
     if (LineSymbolizer.class.isAssignableFrom(symbolizer.getClass())) geomBox.setSelectedItem(LINE);
@@ -378,39 +380,46 @@ public class GISStylePanel extends JPanel {
     StyleBuilder builder = new StyleBuilder();
 
     if (geomType == POINT) {
-      Mark mark = builder.createMark("square", Color.RED);
+      Mark mark = builder.createMark("Square", Color.BLUE);
       mark.setStroke(builder.createStroke());
-      return builder.createStyle(builder.createPointSymbolizer(builder.createGraphic(null,
-              mark, null)));
+      Graphic gr = builder.createGraphic();   
+      gr.graphicalSymbols().clear();
+      gr.graphicalSymbols().add(mark);
+   
+      return builder.createStyle(builder.createPointSymbolizer(gr,null));
     }
 
     if (geomType == LINE) {
       return builder.createStyle(builder.createLineSymbolizer(Color.RED, 1));
     }
 
-    return builder.createStyle(builder.createPolygonSymbolizer(Color.RED, Color.BLACK, 1));
+    return builder.createStyle(builder.createPolygonSymbolizer(Color.GREEN, Color.BLACK, 1));
   }
 
   private void showStyleDialog() {
     StyleDialog dialog = new StyleDialog((JDialog) SwingUtilities.getWindowAncestor(this));
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
+    	FeatureSource source = null;  // used only for shapefiles
       Style style = previewer.getStyle();
-      MapLayer layer = null;
+      SimpleFeatureType featureType = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
+        
+        DefaultFeatureAgentFactory fac = 
+        		FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(
+        				agentClass, getGeometry().getClass(), DefaultGeographicCRS.WGS84);
 
-        DefaultFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().getFeatureAgentFactory(agentClass, getGeometry().getClass(),
-                DefaultGeographicCRS.WGS84);
-        FeatureCollection collection = fac.getFeatures();
-        collection.add(new HollowFeature(fac.getFeatureType(), agentClass, getGeometry()));
-        layer = new DefaultMapLayer(DataUtilities.createFeatureSource(collection), style);
-      } else {
+        featureType = fac.getFeatureType();
+        
+      } 
+      else {
         ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
-        FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        layer = new DefaultMapLayer(source, style);
+        source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+        featureType = (SimpleFeatureType)source.getSchema();
       }
-      dialog.setMapLayer(layer);
+
+      dialog.setData(featureType, style, source);
       if (dialog.display()) {
         style = dialog.getStyle();
         element.styleXML = getSLDStyle(style);
@@ -438,7 +447,6 @@ public class GISStylePanel extends JPanel {
 
   }
 
-
   public void init(ContextData context, DisplayDescriptor descriptor) {
     this.descriptor = descriptor;
     DefaultListModel listModel = new DefaultListModel();
@@ -455,10 +463,11 @@ public class GISStylePanel extends JPanel {
           File file = new File(entry.getKey());
           ShapefileDataStore dataStore = new ShapefileDataStore(file.toURI().toURL());
           FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-          String name = source.getSchema().getTypeName();
+          String name = source.getSchema().getName().getLocalPart();
           AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
           elem.source = file;
-          elem.defaultGeometry = source.getSchema().getDefaultGeometry().getType();
+          elem.defaultGeometry = 
+          		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
           elem.styleXML = entry.getValue();
           listModel.addElement(elem);
         } catch (IOException ex) {
@@ -498,7 +507,6 @@ public class GISStylePanel extends JPanel {
     }
   }
 
-
   private void initComponents() {
     // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
     // Generated using JFormDesigner non-commercial license
@@ -528,42 +536,42 @@ public class GISStylePanel extends JPanel {
     setLayout(new FormLayout(
             new ColumnSpec[]{
                     new ColumnSpec(Sizes.dluX(35)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(35)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                    FormFactory.DEFAULT_COLSPEC,
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.DEFAULT_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.DLUX3),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(ColumnSpec.FILL, Sizes.dluX(51), 0.1),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(10)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(Sizes.dluX(97)),
-                    FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                    FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                     new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
             },
             new RowSpec[]{
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
                     new RowSpec(Sizes.dluY(10)),
-                    FormFactory.LINE_GAP_ROWSPEC,
-                    FormFactory.DEFAULT_ROWSPEC,
-                    FormFactory.LINE_GAP_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
+                    FormSpecs.DEFAULT_ROWSPEC,
+                    FormSpecs.LINE_GAP_ROWSPEC,
                     new RowSpec(Sizes.dluY(44))
             }));
     add(upBtn, cc.xy(1, 1));

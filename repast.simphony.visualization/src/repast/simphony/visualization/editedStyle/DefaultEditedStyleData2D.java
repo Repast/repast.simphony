@@ -7,7 +7,8 @@ public class DefaultEditedStyleData2D<T> extends EditedStyleData<T> {
 	public DefaultEditedStyleData2D(){
 	  
 	  shapeWkt = "circle";
-	  size = 15.0f;
+	  // -1 indicates the default icon size
+	  size = -1f;
 	  
 	  label = "";
 	  labelOffset = 5.0f;

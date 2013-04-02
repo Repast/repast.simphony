@@ -34,6 +34,7 @@ public class DataSetDescriptor implements Descriptor {
   private String sourceType;
   private boolean inclTick, inclBatchRun, inclRandomSeed;
   private ScheduleParameters scheduleParams = ScheduleParameters.createRepeating(1, 1, ScheduleParameters.LAST_PRIORITY);
+  private boolean atEnd = false;
   
   private Map<String, MethodDataSourceDefinition> methodDataSources = new LinkedHashMap<String, MethodDataSourceDefinition>();
   private Map<String, CountSourceDefinition> countSources = new LinkedHashMap<String, CountSourceDefinition>();
@@ -191,6 +192,14 @@ public class DataSetDescriptor implements Descriptor {
    */
   public void setType(DataSetType type) {
     this.type = type;
+  }
+  
+  public boolean isScheduleAtEnd() {
+    return atEnd;
+  }
+  
+  public void setScheduleAtEnd(boolean val) {
+    atEnd = val;
   }
 
   /*

@@ -1,17 +1,19 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.FeatureType;
+import java.beans.IntrospectionException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.geotools.feature.SchemaException;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import simphony.util.messages.MessageCenter;
 
-import java.beans.IntrospectionException;
-import java.util.List;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Factory class for creating feature agents that
@@ -27,9 +29,9 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
 
 	private Class<? extends Geometry> geometryType = Point.class;
 
-	private FeatureType featureType;
+	private SimpleFeatureType featureType;
 
-	private FeatureCollection collection;
+	private List<SimpleFeature> features;
   private List<FeatureAttributeAdapter> adapters;
 
   ShapefileFeatureAgentFactory(Class<T> agentType, Class<? extends Geometry> geometryType,
@@ -45,7 +47,7 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
    *
    * @return the created feature type.
    */
-  public FeatureType getFeatureType() {
+  public SimpleFeatureType getFeatureType() {
     return featureType;
   }
 
@@ -62,13 +64,13 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
    * Resets this factory by creating a new feature collection.
    */
   public void reset() {
-    collection = FeatureCollections.newCollection();
+  	 features = new ArrayList<SimpleFeature>();
   }
 
   private void init(Class<T> agentType, List<FeatureAttributeAdapter> adapters) {
 		try {
 			featureType = getShapefileFeatureType(agentType, crs, geometryType, adapters);
-			collection = FeatureCollections.newCollection();
+			features = new ArrayList<SimpleFeature>();
 		} catch (IntrospectionException e) {
 			msg.error("Unable to introspect feature class: "
 					+ agentType.getName(), e);
@@ -77,14 +79,13 @@ public class ShapefileFeatureAgentFactory<T> extends FeatureAgentFactory {
 		}
 	}
 
-	public FeatureAgent2 getFeature(T agent, Geography geography) {
-		FeatureAgent2<T> featureAgent = new FeatureAgent2<T>(featureType, agent, geography, adapters);
-		featureAgent.setParent(collection);
-		collection.add(featureAgent);
+	public FeatureAgent getFeature(T agent, Geography geography) {
+		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, geography, adapters);
+		features.add(featureAgent);
 		return featureAgent;
 	}
 
-	public FeatureCollection getFeatures() {
-		return collection;
+	public List<SimpleFeature> getFeatures() {
+		return features;
 	}
 }

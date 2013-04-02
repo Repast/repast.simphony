@@ -25,7 +25,7 @@ import com.jgoodies.common.format.EmptyNumberFormat;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class NumericProbedProperty extends ProbedProperty {
+public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
 
   private enum NumType {
     BYTE, INT, DOUBLE, LONG, FLOAT, BIGINTEGER, BIGDECIMAL, SHORT
@@ -49,7 +49,7 @@ public class NumericProbedProperty extends ProbedProperty {
     values = possibleValues;
   }
 
-  private void setType(Class val) {
+  private void setType(Class<?> val) {
     if (val.equals(BigDecimal.class))
       numType = NumType.BIGDECIMAL;
     if (val.equals(BigInteger.class))
@@ -68,15 +68,15 @@ public class NumericProbedProperty extends ProbedProperty {
       numType = NumType.SHORT;
   }
 
-  public JComponent getComponent(PresentationModel model, boolean buffered) {
-    AbstractValueModel valueModel = buffered ? model.getBufferedModel(name) : model.getModel(name);
+  public JComponent getComponent(PresentationModel<Object> model) {
+    AbstractValueModel valueModel = model.getModel(name,getterName,setterName);
     if (type == Type.READ) {
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createLabel(valueModel, Utils.getNumberFormatInstance()));
     }
 
     if (values != null) {
-      return this.wrapWithSparkLineButton(model, new JComboBox(new ComboBoxAdapter(values,
+      return this.wrapWithSparkLineButton(valueModel, new JComboBox(new ComboBoxAdapter(values,
           valueModel)));
     }
 
@@ -85,59 +85,57 @@ public class NumericProbedProperty extends ProbedProperty {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new BigInteger("0"));
       // formatter.setValueClass(BigInteger.class);
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case BIGDECIMAL: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new BigDecimal("0"));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
 
     }
     case BYTE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new Byte((byte) 0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case SHORT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           new Short((short) 0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case INT: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Integer.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+      //EmptyNumberFormat formatter = new EmptyNumberFormat(NumberFormat.getIntegerInstance(),
+       //   Integer.valueOf(0));
+      return this.wrapWithSparkLineButton(valueModel,
+          BasicComponentFactory.createIntegerField(valueModel, 0));
     }
     case DOUBLE: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           Double.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     case LONG: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Long.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+      return this.wrapWithSparkLineButton(valueModel,
+          BasicComponentFactory.createLongField(valueModel, 0L));
     }
     case FLOAT: {
       EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
           Float.valueOf(0));
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createFormattedTextField(valueModel, formatter));
     }
     default:
-      return this.wrapWithSparkLineButton(model,
+      return this.wrapWithSparkLineButton(valueModel,
           BasicComponentFactory.createIntegerField(valueModel, 0));
     }
   }
 
-  public JComponent wrapWithSparkLineButton(PresentationModel model, JComponent textComponent) {
+  public JComponent wrapWithSparkLineButton(AbstractValueModel model, JComponent textComponent) {
 
     if (this.wrap) {
 

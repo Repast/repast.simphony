@@ -1,27 +1,31 @@
 package repast.simphony.gis.io;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.jscience.physics.amount.Amount;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.measure.unit.SI;
+
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.jscience.physics.amount.Amount;
 import org.junit.Before;
 import org.junit.Test;
+
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.gis.ShapefileWriter;
 
-import javax.measure.unit.SI;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Tests of shapefile writing.
@@ -100,7 +104,7 @@ public class WriterTest {
 
   @Test
   public void writeTest() throws IOException {
-    File file = new File("/Users/nick/tmp/my.shp");
+    File file = new File("sampleData/my.shp");
     ShapefileWriter writer = new ShapefileWriter(geog);
     writer.write(geog.getLayer(GisAgent.class).getName(), file.toURI().toURL());
 
@@ -110,11 +114,11 @@ public class WriterTest {
     }
     
     ShapefileDataStore store = new ShapefileDataStore(file.toURL());
-    FeatureCollection collection = store.getFeatureSource().getFeatures();
+    SimpleFeatureCollection collection = store.getFeatureSource().getFeatures();
     assertEquals(10, collection.size());
 
-    for (FeatureIterator iter = collection.features(); iter.hasNext();) {
-     assertTrue(set.remove(iter.next().getDefaultGeometry().toText()));
+    for (SimpleFeatureIterator iter = collection.features(); iter.hasNext();) {
+     assertTrue(set.remove(iter.next().getDefaultGeometry().toString()));
     }
 
     assertEquals(0, set.size());

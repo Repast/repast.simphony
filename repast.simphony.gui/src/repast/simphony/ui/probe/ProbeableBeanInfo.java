@@ -8,26 +8,27 @@ import java.util.Map;
 public class ProbeableBeanInfo {
 
   private Map<String, String> nameMap;
-  private ProbeableBean bean;
+  private OldProbeModel bean;
 
-
-  public ProbeableBeanInfo(ProbeableBean bean, Map<String, String> nameMap) {
+  public ProbeableBeanInfo(OldProbeModel bean, Map<String, String> nameMap) {
     this.nameMap = nameMap;
 
     this.bean = bean;
   }
 
-  public ProbeableBean getBean() {
+  public OldProbeModel getBean() {
     return bean;
   }
 
-	/**
-	 * Gets the display name mapped to the specified property  name.
-	 * @param propName the property name
-   *
-	 * @return the display name mapped to the specified property name.
-	 */
-	public String getDisplayName(String propName) {
-		return nameMap.get(propName);
-	}
+  /**
+   * Gets the display name mapped to the specified property name.
+   * 
+   * @param propName
+   *          the property name
+   * 
+   * @return the display name mapped to the specified property name.
+   */
+  public String getDisplayName(String propName) {
+    return nameMap.get(propName);
+  }
 }

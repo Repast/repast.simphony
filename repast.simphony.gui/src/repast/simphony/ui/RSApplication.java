@@ -40,6 +40,7 @@ import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.ui.newscenario.NewScenarioWizard;
 import repast.simphony.ui.plugin.UIActionExtensions;
 import repast.simphony.ui.probe.Probe;
+import repast.simphony.ui.probe.ProbeExtensionLoader;
 import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.tree.ScenarioTree;
 import repast.simphony.ui.widget.ErrorLog;
@@ -427,7 +428,7 @@ public class RSApplication implements TickListener, RunListener {
     modelPluginLoader.removePlugins();
     File modelPluginPath = scenario.getModelPluginPath();
     if (modelPluginPath != null) {
-      modelPluginLoader.addPath(modelPluginPath);
+      modelPluginLoader.setPath(modelPluginPath);
       modelPluginLoader.publishPlugins();
     }
 
@@ -436,6 +437,9 @@ public class RSApplication implements TickListener, RunListener {
     if (!loader.isTickFormatterLoaded()) {
       gui.setTickCountFormatter(new DefaultTickCountFormatter());
     }
+    
+    // load any new probe extension from the model jpf file.
+    new ProbeExtensionLoader(this, modelPluginLoader.getManager()).loadExtensions();
   }
 
   /**
@@ -665,10 +669,15 @@ public class RSApplication implements TickListener, RunListener {
     errorLog = new ErrorLog(gui);
     gui.init(errorLog);
     probeManager = new ProbeManager(gui);
+    try {
+      new ProbeExtensionLoader(this, modelPluginLoader.getManager()).loadExtensions();
+    } catch (PluginDefinitionException ex) {
+      msgCenter.error("Runtime initialization Error", ex);
+    }
     gui.addPlaceHolderUserPanel();
     gui.addRunOptionsView(runOptions);
   }
-
+  
   // RunListener implementation
 
   /**

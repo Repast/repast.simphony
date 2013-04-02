@@ -23,6 +23,8 @@ public class Grid2DLayout implements Layout<Object, Grid> {
 
 	private float cellSize = 15f;
 	private VisualizationProperties visualizationProps;
+	// amount to shift the agents so that they center in the cells.
+	private float centerShift;
 	
 	private Box box;
 
@@ -47,6 +49,7 @@ public class Grid2DLayout implements Layout<Object, Grid> {
 		if (obj != null && obj instanceof Float) {
 			cellSize = (Float)obj;
 		}
+		centerShift = cellSize / 2.0f;
 	}
 
 	/**
@@ -70,8 +73,8 @@ public class Grid2DLayout implements Layout<Object, Grid> {
 			return point;
 		}
 		
-		float x = (float) (gpoint.getX() + xOffset) * cellSize;
-		float y = (float) (gpoint.getY() + yOffset) * cellSize;
+		float x = (float) (gpoint.getX() + xOffset) * cellSize + centerShift;
+		float y = (float) (gpoint.getY() + yOffset) * cellSize + centerShift;
 		point[0] = x;
 		point[1] = y;
 		return point;

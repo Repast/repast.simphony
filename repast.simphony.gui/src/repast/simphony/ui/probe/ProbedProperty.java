@@ -1,50 +1,47 @@
 package repast.simphony.ui.probe;
 
-import java.beans.PropertyDescriptor;
-
-import javax.swing.JComponent;
-
-import com.jgoodies.binding.PresentationModel;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Represents a property of a probed object whether is read / read only etc. Also produces
- * a JComponent to display and edit the property.
- *
+ * Marks an accessor type method as a Property that should show up when an
+ * instance of the class containing it is probed.
+ * 
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public abstract class ProbedProperty {
+@Target({ ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ProbedProperty {
 
-	protected enum Type {READ_WRITE, WRITE, READ};
+  /**
+   * The proper natural language name for this property. For example,
+   * "Simple Agent Count" rather than something like "simpleAgentCount."
+   * 
+   * @return proper natural language name for this property.
+   */
+  String displayName() default "";
 
-	protected String displayName;
-	protected String name;
-	protected Type type;
+  /**
+   * Gets java bean style property name for this property. For example, if this
+   * annotates a "getFoo" method, then the property name is "foo."
+   * 
+   * @return java bean style property name for this property.
+   */
+  String usageName() default "";
 
+  /**
+   * Gets the fully qualififed name of class used to convert the return value of
+   * the annotated method to and from a String representation. The class must
+   * implement repast.simphony.parameter.StringConvertor. This is only necessary
+   * if the return type is not a String, a primitive value, or one of the Object
+   * representatons of a primitive (e.g. an Integer, or Boolean).
+   * 
+   * @return Gets the convertor used to convert the return value of the
+   *         annotated method to and from a String representation.
+   */
+  String converter() default "";
 
-	protected ProbedProperty(PropertyDescriptor desc) {
-		name = desc.getName();
-		displayName = desc.getDisplayName();
-		if (desc.getReadMethod() != null && desc.getWriteMethod() != null) {
-			 type = Type.READ_WRITE;
-		} else if (desc.getWriteMethod() == null) {
-			type = Type.READ;
-		} else {
-			type = Type.WRITE;
-		}
-	}
-
-	public abstract JComponent getComponent(PresentationModel model, boolean buffered);
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public void printValue(PresentationModel model) {
-		System.out.println(name + " = " + model.getValue(name));
-	}
 }

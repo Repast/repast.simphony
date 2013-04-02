@@ -212,4 +212,112 @@ public class BeanParameters implements Parameters {
 			return writeMethod == null;
 		}
 	}
+
+	  /**
+	   * Gets the Double value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public Double getDouble(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == Double.class || paramType == double.class){
+	    	return (Double) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of double type.");
+	    }
+	  }
+	  
+	  /**
+	   * Gets the Integer value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public Integer getInteger(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == Integer.class || paramType == int.class){
+	    	return (Integer) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of integer type.");
+	    }
+	  }
+
+	  /**
+	   * Gets the Boolean value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public Boolean getBoolean(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == Boolean.class || paramType == boolean.class){
+	    	return (Boolean) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of boolean type.");
+	    }
+	  }
+	  
+	  /**
+	   * Gets the String value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public String getString(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == String.class){
+	    	return (String) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of String type.");
+	    }
+	  }
+	  
+	  /**
+	   * Gets the Boolean value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public Long getLong(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == Long.class || paramType == long.class){
+	    	return (Long) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of long type.");
+	    }
+	  }
+	  
+	  /**
+	   * Gets the Float value associated with the specified parameter name.
+	   * 
+	   * @param paramName
+	   *          the name of the parameter whose value we want
+	   * @return the value associated with the specified parameter name.
+	   */
+	  public Float getFloat(String paramName) {
+	    Object value = getValue(paramName);
+	    Class<?> paramType = schema.getDetails(paramName).getType();
+	    if (paramType == Float.class || paramType == float.class){
+	    	return (Float) value;
+	    }
+	    else {
+	    	throw new IllegalParameterException("Parameter '" + paramName + "' not of float type.");
+	    }
+	  }
 }

@@ -1,32 +1,7 @@
-/*
- * Created by JFormDesigner on Thu Apr 12 15:44:27 EDT 2007
- */
-
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.brewer.color.BrewerPalette;
-import org.geotools.brewer.color.ColorBrewer;
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureType;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.Rule;
-import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactoryFinder;
-import org.geotools.styling.Symbolizer;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
-import simphony.util.messages.MessageCenter;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,11 +9,58 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+
+import org.geotools.brewer.color.BrewerPalette;
+import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.data.FeatureSource;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
+import org.geotools.styling.Symbolizer;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
+
+import simphony.util.messages.MessageCenter;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
 /**
- * @author User #2
+ * The "Value Style" panel in the GisStyleEditor dialog that provides the
+ * capability of setting the shape fill color using value rules.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  */
 public class ByValuePanel extends JPanel implements IStyleEditor {
 
@@ -46,8 +68,10 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 	private static MessageCenter msg = MessageCenter.getMessageCenter(ByValuePanel.class);
 	private ValueTableModel tableModel;
-	private FeatureSource source;
+	private SimpleFeatureType featureType;
 	private int colorIndex = 1;
+	private Set<Class> valueTypes = new HashSet<Class>();
+	private FeatureSource<SimpleFeatureType,SimpleFeature> source;  // for shapefiles only
 
   private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
@@ -94,6 +118,16 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 	public ByValuePanel() {
 		initComponents();
+		valueTypes.add(int.class);
+		valueTypes.add(double.class);
+		valueTypes.add(long.class);
+		valueTypes.add(float.class);
+		valueTypes.add(Double.class);
+		valueTypes.add(Integer.class);
+		valueTypes.add(Long.class);
+		valueTypes.add(Float.class);
+		valueTypes.add(String.class);
+		
 		deleteBtn.setEnabled(false);
 		paletteBox.setRenderer(new CellRenderer());
 
@@ -139,9 +173,9 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
 		attributeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				AttributeType aType = source.getSchema().
-								getAttributeType(attributeBox.getSelectedItem().toString());
-				tableModel.init(aType.getType());
+				AttributeType aType = 
+						featureType.getType(attributeBox.getSelectedItem().toString());
+				tableModel.init(aType.getBinding());
 			}
 		});
 
@@ -169,7 +203,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 					if (rule != null) {
 						SymbolEditorDialog dialog =
 										new SymbolEditorDialog((JDialog) SwingUtilities.getWindowAncestor(ByValuePanel.this));
-						dialog.init(source.getSchema(), rule);
+						dialog.init(featureType, rule);
 						Rule newRule = dialog.display();
 						if (newRule != null) {
 							tableModel.setRule(row, newRule);
@@ -178,7 +212,6 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 				}
 			}
 		});
-
 	}
 
 	private void delete() {
@@ -195,12 +228,25 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		return SymbolizerFactoryBuilder.getSymbolizerFactory(color, sym);
 	}
 
+	/**
+	 * Adds a rule based on either the FeatureType for agent features, or the 
+	 * FeatureSource for shapefile features.
+	 */
 	private void addRule() {
-		try {
+		String att = attributeBox.getSelectedItem().toString();
+		
+		if (source == null){  
+			// TODO Geotools  need to create a rule from the FeatureType as with
+			//      the FeatureSource below
+		}
+		
+		else try {
 			RuleCreator creator = new RuleCreator();
-			String att = attributeBox.getSelectedItem().toString();
-			Feature feature = (Feature) source.getFeatures().iterator().next();
-			Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
+			
+			SimpleFeature feature = source.getFeatures().features().next();
+			Rule rule = creator.createValueRule(feature, att, 
+					getSymbolizerFactory(getColor(colorIndex++)));
+			
 			tableModel.addRule(rule);
 		} catch (IOException e) {
 			msg.error("Error getting features", e);
@@ -216,24 +262,37 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
     tableModel.fireTableDataChanged();
   }
 
+  /**
+   * Adds a list of rules based on the complete set of features in a shapefile
+   * FeatureSource.  If no shapefile is used, then addAll() has the same effect
+   * as addRule().
+   */
   private void addAll() {
-		try {
-			RuleCreator creator = new RuleCreator();
-			String att = attributeBox.getSelectedItem().toString();
-			Set<Object> vals = new HashSet<Object>();
-			for (Iterator iter = source.getFeatures().iterator(); iter.hasNext();) {
-				Feature feature = (Feature) iter.next();
-				Object obj = feature.getAttribute(att);
-				if (obj != null && !vals.contains(obj)) {
-					Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
-					tableModel.addRule(rule);
-					vals.add(obj);
-				}
-			}
-		} catch (IOException e) {
-			msg.error("Error getting features", e);
+  	
+  	if (source == null){  // Create a rule from the FeatureType
+			// TODO Geotools  should this option even be available, ie only for 
+  		//      shapefile FeatureSources ?
 		}
-	}
+		
+  	else try {
+  		RuleCreator creator = new RuleCreator();
+  		String att = attributeBox.getSelectedItem().toString();
+  		Set<Object> vals = new HashSet<Object>();
+
+  		FeatureIterator<SimpleFeature> iterator =  source.getFeatures().features();
+  		while (iterator.hasNext()) {
+  			SimpleFeature feature = iterator.next();
+  			Object obj = feature.getAttribute(att);
+  			if (obj != null && !vals.contains(obj)) {
+  				Rule rule = creator.createValueRule(feature, att, getSymbolizerFactory(getColor(colorIndex++)));
+  				tableModel.addRule(rule);
+  				vals.add(obj);
+  			}
+  		}
+  	} catch (IOException e) {
+  		msg.error("Error getting features", e);
+  	}
+  }
 
 	private Color getColor(int val) {
 		Palette pal = (Palette) paletteBox.getSelectedItem();
@@ -246,56 +305,55 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		java.util.List<Rule> rules = tableModel.getRules(defaultBox.isSelected());
 		String att = attributeBox.getSelectedItem().toString();
 		Style style = new RuleCreator().createStyle(att, rules);
-		style.setAbstract(ID + ":" + att);
+		style.getDescription().setAbstract(ID + ":" + att);
 		return style;
 	}
 
-	public void init(MapLayer layer) {
-		source = layer.getFeatureSource();
+	public void init(FeatureType type, Style style, 
+			FeatureSource<SimpleFeatureType, SimpleFeature> source, PreviewLabel preview) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		FeatureType type = source.getSchema();
-		for (AttributeType at : type.getAttributeTypes()) {
-			String name = at.getName();
-			if (!name.equals("the_geom")) model.addElement(name);
+		featureType = (SimpleFeatureType)type;
+		this.source = source;
+				
+		for (AttributeType at : featureType.getTypes()) {
+			if (valueTypes.contains(at.getBinding())) {
+				model.addElement(at.getName());
+			}
 		}
+		
 		attributeBox.setModel(model);
-		try {
-			Feature feature = (Feature) source.getFeatures().iterator().next();
-			tableModel = new ValueTableModel(feature);
-		} catch (IOException ex) {
-			msg.error("Error initializing ByValuePanel", ex);
-		}
+		tableModel = new ValueTableModel(featureType, style, preview);
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
 		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
-
-		Style style = layer.getStyle();
+		
 		initTable(style);
 	}
 
 	private void initTable(Style style) {
-		FeatureType type = source.getSchema();
-		AttributeType aType = type.getAttributeType(attributeBox.getSelectedItem().toString());
-		String desc = style.getAbstract();
+		AttributeType aType = featureType.getType(attributeBox.getSelectedItem().toString());
+		String desc = "";
 
+		if (style.getDescription().getAbstract() != null)
+			desc = style.getDescription().getAbstract().toString();
+		
 		if (desc.contains(ByValuePanel.ID)) {
 			String attribName = desc.substring(desc.indexOf(":") + 1, desc.length());
 			attributeBox.setSelectedItem(attribName);
 			java.util.List<Rule> rules = new ArrayList<Rule>();
-			for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
+			for (Rule rule : style.featureTypeStyles().get(0).rules()) {
 				// reusing the dsv, recreates the same rule every time
 				// so we need to create a new one for each rule.
-				DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
-							StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-							.createFilterFactory());
+				DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 				dsv.visit(rule);
 				rules.add((Rule) dsv.getCopy());
 			}
 
-			tableModel.init(aType.getType(), rules);
+			tableModel.init(aType.getClass(), rules);
 		} else {
-			tableModel.init(aType.getType());
+			tableModel.init(aType.getClass());
 		}
 	}
 
@@ -321,26 +379,26 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		//======== this ========
 		setLayout(new FormLayout(
 						new ColumnSpec[]{
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-										FormFactory.DEFAULT_COLSPEC,
-										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+										FormSpecs.DEFAULT_COLSPEC,
+										FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 										new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 						},
 						new RowSpec[]{
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
 										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC
 						}));
 
 		//---- label1 ----
@@ -370,11 +428,11 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		{
 			panel1.setLayout(new FormLayout(
 							new ColumnSpec[]{
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.DEFAULT_COLSPEC,
-											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-											FormFactory.PREF_COLSPEC
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.DEFAULT_COLSPEC,
+											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+											FormSpecs.PREF_COLSPEC
 							},
 							RowSpec.decodeSpecs("default")));
 

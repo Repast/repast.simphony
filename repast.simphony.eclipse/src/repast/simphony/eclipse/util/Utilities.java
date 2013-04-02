@@ -54,18 +54,28 @@ import repast.simphony.eclipse.RepastSimphonyPlugin;
  *         to the Original Author)
  */
 public class Utilities {
-  
+
   public static void addNature(IProject project, String natureId) throws CoreException {
-    
+
     IProjectDescription description = project.getProject().getDescription();
     String[] prevNatures = description.getNatureIds();
-    String[] newNatures = new String[prevNatures.length + 1];
-    System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-    newNatures[prevNatures.length] = natureId;
-    description.setNatureIds(newNatures);
-    project.getProject().setDescription(description, IResource.FORCE, null);
+    boolean add = true;
+    for (String id : prevNatures) {
+      if (id.equals(natureId)) {
+        add = false;
+        break;
+      }
+    }
+
+    if (add) {
+      String[] newNatures = new String[prevNatures.length + 1];
+      System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+      newNatures[prevNatures.length] = natureId;
+      description.setNatureIds(newNatures);
+      project.getProject().setDescription(description, IResource.FORCE, null);
+    }
   }
-  
+
   public static void removeNature(IProject project, String natureId) throws CoreException {
     IProjectDescription description = project.getDescription();
     String[] prevNatures = description.getNatureIds();
@@ -75,12 +85,11 @@ public class Utilities {
         newNatures.add(nature);
       }
     }
-    
+
     description.setNatureIds(newNatures.toArray(new String[0]));
     project.getProject().setDescription(description, IResource.FORCE, null);
   }
 
-  
   public static void copyFileFromPluginInstallation(String sourceFileName,
       IFolder destinationFolder, String destinationFileName, String[][] variableMap,
       IProgressMonitor monitor) {

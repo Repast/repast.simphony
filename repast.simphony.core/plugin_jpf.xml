@@ -51,71 +51,83 @@
     <library id="velocity-1.4" path="lib/velocity-1.4.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="opencsv" path="lib/opencsv-1.5.jar" type="code">
+    <library id="opencsv" path="lib/opencsv-2.3.jar" type="code">
       <export prefix="*"/>
     </library>
 
-    <library id="poi" path="lib/poi-3.6-20091214.jar" type="code">
+    <!-- poi related libs -->
+    <library id="poi" path="lib/poi-3.7-20101029.jar" type="code">
       <export prefix="*"/>
     </library>
 
-    <!-- gis stuff -->
-    <library id="geoapi" path="lib/geoapi-nogenerics-2.1-M2.jar" type="code">
+    <library id="poi-ooxml" path="lib/poi-ooxml-3.7-20101029.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-api-2.3.3.jar" path="lib/gt2-api-2.3.3.jar" type="code">
+    
+    <library id="poi-ooxml-schemas" path="lib/poi-ooxml-schemas-3.7-20101029.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-main-2.3.3.jar" path="lib/gt2-main-2.3.3.jar" type="code">
+    
+    <library id="dom4j" path="lib/dom4j-1.6.1.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-referencing-2.3.3.jar" path="lib/gt2-referencing-2.3.3.jar" type="code">
+    
+    <library id="geronimo-stax" path="lib/geronimo-stax-api_1.0_spec-1.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="jsr108-0.01.jar" path="lib/jsr108-0.01.jar" type="code">
+    
+    <library id="xmlbeans" path="lib/xmlbeans-2.3.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="jts-1.7.1.jar" path="lib/jts-1.7.1.jar" type="code">
+    
+    <!-- geotools libs -->
+    <library id="gt-api-9.0.jar" path="lib/gt-api-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="vecmath.jar" path="lib/vecmath-1.3.1.jar" type="code">
+    <library id="gt-brewer-9.0.jar" path="lib/gt-brewer-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-shapefile-2.3.3.jar" path="lib/gt2-shapefile-2.3.3.jar" type="code">
+    <library id="gt-coverage-9.0.jar" path="lib/gt-coverage-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-indexed-shapefile-2.3.3.jar" path="lib/gt2-indexed-shapefile-2.3.3.jar" type="code">
+    <library id="gt-cql-9.0.jar" path="lib/gt-cql-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="imageioext-asciigrid-1.0-rc1.jar" path="lib/imageioext-asciigrid-1.0-rc1.jar" type="code">
+    <library id="gt-data-9.0.jar" path="lib/gt-data-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-arcgrid-2.3.3.jar" path="lib/gt2-arcgrid-2.3.3.jar" type="code">
+    <library id="gt-epsg-hsql-9.0" path="lib/gt-epsg-hsql-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-coverage-2.3.3.jar" path="lib/gt2-coverage-2.3.3.jar" type="code">
+    <library id="gt-main-9.0.jar" path="lib/gt-main-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-brewer-2.3.3.jar" path="lib/gt2-brewer-2.3.3.jar" type="code">
+    <library id="gt-metadata-9.0.jar" path="lib/gt-metadata-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="gt2-render-2.3.3.jar" path="lib/gt2-render-2.3.3.jar" type="code">
+    <library id="gt-opengis-9.0.jar" path="lib/gt-opengis-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-
-    <library id="hsqldb-1.8.0.1" path="lib/hsqldb-1.8.0.1.jar" type="code">
+    <library id="gt-referencing-9.0.jar" path="lib/gt-referencing-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-
-    <library id="gt2-epsg-hsql-2.3.3" path="lib/gt2-epsg-hsql-2.3.3.jar" type="code">
+   <library id="gt-render-9.0.jar" path="lib/gt-render-9.0.jar" type="code">
       <export prefix="*"/>
     </library>
-
+    <library id="gt-shapefile-9.0.jar" path="lib/gt-shapefile-9.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    <library id="jts-1.13.jar" path="lib/jts-1.13.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    <library id="hsqldb-1.8.0.7" path="lib/hsqldb-1.8.0.7.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
     <!-- this is used by geotools when reading and writing shapefiles -->
     <library id="concurrent-1.3.4" path="lib/concurrent-1.3.4.jar" type="code">
       <export prefix="*"/>
     </library>
-
 
     <library id="jung-api" path="lib/jung-api-2.0.1.jar" type="code"/>
     <library id="jung-graph" path="lib/jung-graph-impl-2.0.1.jar" type="code"/>

@@ -1,78 +1,101 @@
-/*
- * Created by JFormDesigner on Tue May 16 10:14:45 CDT 2006
- */
-
 package repast.simphony.gis.styleEditor;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.*;
-import org.geotools.feature.FeatureType;
-import org.geotools.filter.ExpressionBuilder;
-import org.geotools.filter.Filter;
-import org.geotools.filter.FilterFactoryFinder;
-import org.geotools.filter.parser.ParseException;
-import org.geotools.map.MapLayer;
-import org.geotools.styling.*;
-import org.geotools.styling.Stroke;
-import org.geotools.styling.visitor.DuplicatorStyleVisitor;
-import repast.simphony.gis.display.SquareIcon;
-import simphony.util.messages.MessageCenter;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.expression.ExpressionBuilder;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.filter.text.cql2.CQLException;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Fill;
+import org.geotools.styling.Graphic;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.SLD;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.Symbolizer;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+
+import repast.simphony.gis.display.SquareIcon;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
+ * Panel for basic GIS style editing that lets the user specify the style
+ * shape, fill, line color, etc.
+ * 
  * @author Tom Howe
+ * @author Eric Tatara
  */
 public class RuleEditPanel extends JPanel implements IStyleEditor {
 
-	StyleBuilder styleBuilder = new StyleBuilder();
-
-	ExpressionBuilder expBuilder = new ExpressionBuilder();
-
-	boolean point = false;
-
-	FeatureType type;
-
-	Rule rule;
-
-	Symbolizer symbolizer;
-
-	Dimension preferred = new Dimension(70, 18);
-
-	boolean ruleOnly = false;
-
-	public RuleEditPanel(MapLayer layer) {
-		initComponents();
-		setMapLayer(layer);
-	}
+	protected StyleBuilder styleBuilder = new StyleBuilder();
+	protected ExpressionBuilder expBuilder = new ExpressionBuilder();
+	protected boolean point = false;
+	protected FeatureType type;
+	protected Rule rule;
+	protected Symbolizer symbolizer;
+	protected Dimension preferred = new Dimension(70, 18);
+	protected boolean ruleOnly = false;
+	protected boolean titlesVisible = true;
+	protected boolean filterVisible = true;
+	protected boolean fillVisible = true;
+	protected boolean markVisible = true;
+	protected boolean strokeVisible = true;
 
 	public RuleEditPanel() {
 		initComponents();
 	}
 
-	public void setMapLayer(MapLayer layer) {
-		Style style = layer.getStyle();
-		DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
-				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-						.createFilterFactory());
-		dsv.visit(style.getFeatureTypeStyles()[0].getRules()[0]);
+	public void setData(FeatureType featureType, Style style) {
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
+		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
 		setRule((Rule) dsv.getCopy());
-		type = layer.getFeatureSource().getSchema();
+		type = featureType;
 	}
 
 	public void init(FeatureType type, Rule rule) {
-		DuplicatorStyleVisitor dsv = new DuplicatorStyleVisitor(
-				StyleFactoryFinder.createStyleFactory(), FilterFactoryFinder
-						.createFilterFactory());
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
 		dsv.visit(rule);
 		ruleOnly = true;
 		setRule((Rule)dsv.getCopy());
@@ -100,18 +123,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		if (LineSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
 			initLine();
 		}
-
 	}
-
-	boolean titlesVisible = true;
-
-	boolean filterVisible = true;
-
-	boolean fillVisible = true;
-
-	boolean markVisible = true;
-
-	boolean strokeVisible = true;
 
 	public void showFilterPane(boolean show) {
 		filterPanel.setVisible(show);
@@ -136,7 +148,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		markPanel.setVisible(false);
 		fillPanel.setVisible(false);
 		Stroke stroke = SLD.stroke(ls);
-		Color strokeColor = SLD.strokeColor(stroke);
+		Color strokeColor = SLD.color(stroke);
 		getPreview().setOutlineColor(strokeColor);
 		getStrokeColorButton().setIcon(new SquareIcon(strokeColor));
 		int outlineThickness = (int) SLD.width(stroke);
@@ -171,7 +183,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		return preview.getMark();
 	}
 
-	public int getMarkSize() {
+	public double getMarkSize() {
 		return preview.getMarkSize();
 	}
 
@@ -196,12 +208,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		enablePointFields();
 		PointSymbolizer ps = (PointSymbolizer) symbolizer;
 		Mark mark = SLD.mark(ps);
-		MessageCenter.getMessageCenter(getClass()).debug("initPoint: " + mark);
 		String wkn = SLD.wellKnownName(mark);
 		getPreview().setMark(wkn);
 		getMarkBox().setSelectedItem(wkn);
-		double markSize = SLD.size(mark);
-		getPreview().setMarkSize((int) markSize);
+		Graphic gr = SLD.graphic(ps);
+		Expression ex = gr.getSize();
+		double markSize = 0;
+		if (ex instanceof Literal ){
+			Double d = ex.evaluate(null,Double.class);
+			
+			if (d != null)
+			  markSize = d;
+		}	
+		getPreview().setMarkSize(markSize);
 		getMarkSizeSpinner().setValue(markSize);
 		Fill fill = mark.getFill();
 		Color fillColor = SLD.color(fill.getColor());
@@ -211,7 +230,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		getFillOpacitySpinner().setValue(fillOpacity);
 		getPreview().setFillOpacity(fillOpacity);
 		Stroke stroke = SLD.stroke(ps);
-		Color strokeColor = SLD.strokeColor(stroke);
+		Color strokeColor = SLD.color(stroke);
 		getPreview().setOutlineColor(strokeColor);
 		getStrokeColorButton().setIcon(new SquareIcon(strokeColor));
 		int outlineThickness = (int) SLD.width(stroke);
@@ -237,7 +256,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 				new SquareIcon(SLD.color(stroke.getColor())));
 		getOutlineOpacitySpinner().setValue(SLD.polyFillOpacity(ps));
 		getOutlineThicknessSpinner().setValue(
-				((Number) stroke.getWidth().getValue(null)).intValue());
+				((Number) stroke.getWidth().evaluate(null)).intValue());
 
 	}
 
@@ -258,8 +277,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 					(Double) fillOpacitySpinner.getValue()));
 		} else if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			ps.getGraphic().getMarks()[0].setFill(styleBuilder.createFill(
-					getFillColor(), (Double) fillOpacitySpinner.getValue()));
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
+			mark.setFill(styleBuilder.createFill(getFillColor(), (Double) fillOpacitySpinner.getValue()));
 		}
 	}
 
@@ -271,7 +290,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			ps.setStroke(stroke);
 		} else if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Mark mark = ps.getGraphic().getMarks()[0];
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
 			mark.setStroke(stroke);
 		} else if (symbolizer instanceof LineSymbolizer) {
 			LineSymbolizer ls = (LineSymbolizer) symbolizer;
@@ -281,13 +300,14 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 
 	private void setFilter() {
 		String filter = filterField.getText();
+		
 		if (filter == null || filter.length() < 1) {
 			return;
 		}
+		
 		try {
-			Filter f = (Filter) expBuilder.parser(type, filter);
-			rule.setFilter(f);
-		} catch (ParseException e) {
+			rule.setFilter(CQL.toFilter(filter));
+		} catch (CQLException e) {
 			filterField.setForeground(Color.RED);
 			JOptionPane.showConfirmDialog(this, e.getCause().getMessage());
 		}
@@ -296,16 +316,14 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private void setMark() {
 		if (symbolizer instanceof PointSymbolizer) {
 			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Fill fill = styleBuilder.createFill(getFillColor(),
-					getFillTransparency());
+			Fill fill = styleBuilder.createFill(getFillColor(),	getFillTransparency());
 			Stroke stroke = styleBuilder.createStroke(getStrokeColor(),
 					getStrokeWidth(), getStrokeTransparency());
-			ps.getGraphic().setMarks(
-					new Mark[] { styleBuilder.createMark(getMark(), fill,
-							stroke) });
-			 ps.getGraphic().setSize(
-                          FilterFactoryFinder.createFilterFactory()
-                                    .createLiteralExpression(getMarkSize())); 
+			List<Mark> markList = new ArrayList<Mark>();
+			markList.add(styleBuilder.createMark(getMark(), fill,	stroke));
+			ps.getGraphic().graphicalSymbols().clear();
+			ps.getGraphic().graphicalSymbols().addAll(markList);
+			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(getMarkSize())); 
 		} else {
 			throw new IllegalArgumentException("Cannot apply a mark to a "
 					+ symbolizer.getClass().getName());
@@ -433,17 +451,17 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			filterPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			filterPanel.add(separator5, cc.xywh(1, 1, 5, 1));
@@ -472,19 +490,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			fillPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			fillPanel.add(separator1, cc.xywh(1, 1, 5, 1));
@@ -517,22 +535,22 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		{
 			strokePanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormFactory.DEFAULT_COLSPEC,
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.DEFAULT_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			strokePanel.add(separator2, cc.xywh(1, 1, 6, 1));
@@ -577,19 +595,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			markPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.NO_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(Sizes.dluX(80)),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 					new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(80), FormSpec.DEFAULT_GROW),
-					FormFactory.LABEL_COMPONENT_GAP_COLSPEC
+					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(Sizes.dluY(10))
 				}));
 			markPanel.add(separator3, cc.xywh(1, 1, 6, 1));
@@ -629,8 +647,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			previewPanel.setLayout(new FormLayout(
 				ColumnSpec.decodeSpecs("default, center:default:grow"),
 				new RowSpec[] {
-					FormFactory.DEFAULT_ROWSPEC,
-					FormFactory.LINE_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				}));
 			previewPanel.add(separator6, cc.xywh(1, 1, 2, 1));
@@ -675,14 +693,20 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	public Style getStyle() {
 		Style style = styleBuilder.createStyle();
 		FeatureTypeStyle fts = styleBuilder.createFeatureTypeStyle(type
-				.getTypeName(), rule);
+				.getName().getLocalPart(), rule);
 		rule.setTitle(" ");
-		style.setFeatureTypeStyles(new FeatureTypeStyle[] { fts });
+		style.featureTypeStyles().clear();
+		List<FeatureTypeStyle> ftsList = new ArrayList<FeatureTypeStyle>();
+	  ftsList.add(fts);
+		style.featureTypeStyles().addAll(ftsList);
 		return style;
 	}
 
 	public Rule getRule() {
 		return rule;
 	}
-
+	
+	public PreviewLabel getPreviewLabel(){
+		return preview;
+	}
 }

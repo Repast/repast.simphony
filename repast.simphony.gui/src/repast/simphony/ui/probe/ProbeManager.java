@@ -17,79 +17,87 @@ import saf.core.ui.event.DockableFrameEvent;
 
 /**
  * Manages the creation, destruction and updating of probes.
- *
+ * 
  * @author Nick Collier
- * @version $Revision$ $Date$
  */
 public class ProbeManager extends DockableFrameAdapter implements ProbeListener {
 
-  private static final String PROBED_OBJ_KEY = "repast.simphony.ui.probe.PROBED_OBJ_KEY";
+  public static final String PROBED_OBJ_KEY = "repast.simphony.ui.probe.PROBED_OBJ_KEY";
 
   private static int probeCount = 0;
 
   private Map<Object, DockableFrame> probeViewMap = new HashMap<Object, DockableFrame>();
   private Map<Object, Probe> probeMap = new HashMap<Object, Probe>();
   private RSGui gui;
-  private List probesToRemove = new ArrayList();
+  private List<Object> probesToRemove = new ArrayList<Object>();
   private Map<Object, Probe> probesToAdd = new HashMap<Object, Probe>();
-
+  private Map<Class<?>, PPUICreatorFactory> uiCreatorMap = new HashMap<Class<?>, PPUICreatorFactory>();
 
   /**
    * Creates a ProbeManager and associates it with the specified gui.
-   *
-   * @param gui the gui for this app
+   * 
+   * @param gui
+   *          the gui for this app
    */
   public ProbeManager(RSGui gui) {
     this.gui = gui;
     gui.addViewListener(this);
   }
   
-  public void reset(){
-  	probesToRemove.clear();
-  	probesToAdd.clear();
-  	probeMap.clear();
-  	probeViewMap.clear();
+  /**
+   * Adds a PPUICreator that will be used to create UIs for probed properties.
+   * 
+   * @param creator
+   */
+  public void addPPUICreator(Class<?> propertyClass, PPUICreatorFactory creator) {
+    uiCreatorMap.put(propertyClass, creator);
+  }
+
+  public void reset() {
+    probesToRemove.clear();
+    probesToAdd.clear();
+    probeMap.clear();
+    probeViewMap.clear();
   }
 
   /**
    * Update all the probes to show the current values of their probed objects.
    */
   public void update() {
-  	
-  	addAddedProbes();
-  	
-  	for (Probe probe : probeMap.values())
+
+    addAddedProbes();
+
+    for (Probe probe : probeMap.values())
       probe.update();
-  	
-  	removeRemovedProbes();
-  	
-  	probesToRemove.clear();
-  	probesToAdd.clear();
+
+    removeRemovedProbes();
+
+    probesToRemove.clear();
+    probesToAdd.clear();
   }
 
-  private void removeRemovedProbes(){
-  for (Object obj : probesToRemove){
-  		probeMap.remove(obj);
-  	}
+  private void removeRemovedProbes() {
+    for (Object obj : probesToRemove) {
+      probeMap.remove(obj);
+    }
   }
-  
-  private void addAddedProbes(){
-  	for (Object obj : probesToAdd.keySet()){
-  		probeMap.put(obj, probesToAdd.get(obj));
-  	}
+
+  private void addAddedProbes() {
+    for (Object obj : probesToAdd.keySet()) {
+      probeMap.put(obj, probesToAdd.get(obj));
+    }
   }
-  
+
   // create a probe for the specified object
   private void probeObject(Object obj) {
     DockableFrame view = probeViewMap.get(obj);
     if (view != null) {
       gui.setActiveView(view);
     } else {
-      String title = createTitle(obj);
-      ProbePanelCreator creator = new ProbePanelCreator(obj);
-      Probe probe = creator.getProbe(title, true);
+      ProbePanelCreator2 creator = new ProbePanelCreator2(obj);
+      Probe probe = creator.getProbe(uiCreatorMap, true);
       probesToAdd.put(obj, probe);
-      view = gui.addProbeView("probe_" + probeCount++, title, probe.getPanel());
+      view = gui.addProbeView("probe_" + probeCount++, probe.getTitle(), probe.getPanel());
       view.putClientProperty(PROBED_OBJ_KEY, obj);
       probeViewMap.put(obj, view);
       gui.setActiveView(view);
@@ -97,11 +105,12 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
       // we do this twice as sometimes it
       // doesn't seem to take the first time...
       gui.setActiveView(view);
-      
+
       probe.update();
     }
   }
 
+  @SuppressWarnings("unchecked")
   public static String createTitle(Object obj) {
     Method[] methods = ClassUtilities.findMethods(obj.getClass(), ProbeID.class);
     if (methods.length > 0) {
@@ -127,8 +136,9 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
 
   /**
    * Removes the probe in the closed view from this ProbeManager.
-   *
-   * @param evt the details of the close event
+   * 
+   * @param evt
+   *          the details of the close event
    */
   public void dockableClosed(DockableFrameEvent evt) {
     DockableFrame view = evt.getDockable();
@@ -143,16 +153,28 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
     }
   }
 
-
   /**
    * Creates and display a probe for the objects in the ProbeEvent.
-   *
-   * @param evt the details of the probe
+   * 
+   * @param evt
+   *          the details of the probe
    */
   public void objectProbed(ProbeEvent evt) {
     List<?> objs = evt.getProbedObjects();
-    for (Object obj : objs) {
-      probeObject(obj);
+    int numElements = objs.size();
+    if (numElements > 0){
+    	probeObject(objs.get(numElements-1));
     }
+  }
+
+  /**
+   * Gets whether or no this ProbeManager has an PPUICreatorFactory
+   * registered for the specified class.
+   * 
+   * @param probedObjectClass
+   * @return true if there is a PPUICreatorFactory otherwise false.
+   */
+  public boolean hasUICreatorFactory(Class<?> probedObjectClass) {
+    return uiCreatorMap.containsKey(probedObjectClass);
   }
 }

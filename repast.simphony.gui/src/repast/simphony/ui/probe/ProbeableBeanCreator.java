@@ -76,10 +76,10 @@ public class ProbeableBeanCreator {
 //      ClassPool pool = new ClassPool();
       ClassPool pool = ClassPool.getDefault();
       pool.appendSystemPath();
-      pool.insertClassPath(new LoaderClassPath(ProbeableBean.class.getClassLoader()));
+      pool.insertClassPath(new LoaderClassPath(ProbeModel.class.getClassLoader()));
       String className = "BindableBeanZZ" + target.getClass().getSimpleName();
-      Thread.currentThread().setContextClassLoader(ProbeableBean.class.getClassLoader());
-      CtClass model = pool.get(ProbeableBean.class.getName());
+      Thread.currentThread().setContextClassLoader(ProbeModel.class.getClassLoader());
+      CtClass model = pool.get(ProbeModel.class.getName());
 
       CtClass ct = pool.makeClass(className, model);
       ct.addField(CtField.make("private " + targetClassName + " bean;", ct));
@@ -102,7 +102,7 @@ public class ProbeableBeanCreator {
       if (prop.converter != null) convMap.put(prop.propName, prop.converter);
     }
     Thread.currentThread().setContextClassLoader(clazz.getClassLoader());
-    ProbeableBean m = (ProbeableBean) clazz.getConstructor(target.getClass(), Map.class).
+    OldProbeModel m = (OldProbeModel) clazz.getConstructor(target.getClass(), Map.class).
             newInstance(target, convMap);
     Thread.currentThread().setContextClassLoader(loader);
 

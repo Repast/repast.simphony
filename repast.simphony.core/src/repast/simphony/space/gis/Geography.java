@@ -9,8 +9,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.space.projection.ProjectionPredicate;
 
-import javax.units.Unit;
 import java.util.Collection;
+
+import javax.measure.unit.Unit;
 
 /**
  * Space that locates objects in a geographic gis-type space.
