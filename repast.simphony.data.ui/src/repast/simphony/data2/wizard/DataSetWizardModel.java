@@ -52,9 +52,14 @@ public class DataSetWizardModel extends DynamicModel {
   public ScheduleParameters getSchedParams() {
     return descriptor.getScheduleParameters();
   }
+  
+  public boolean isScheduleAtEnd() {
+    return descriptor.isScheduleAtEnd();
+  }
 
-  public void setSchedParams(ScheduleParameters schedParams) {
+  public void setSchedParams(ScheduleParameters schedParams, boolean atEnd) {
     descriptor.setScheduleParameters(schedParams);
+    descriptor.setScheduleAtEnd(atEnd);
   }
 
   public void setDescriptor(DataSetDescriptor descriptor) {
