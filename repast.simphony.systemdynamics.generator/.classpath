@@ -5,6 +5,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.data"/>
-	<classpathentry kind="lib" path="/repast.simphony.core/lib/colt-1.2.0-no_hep.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
