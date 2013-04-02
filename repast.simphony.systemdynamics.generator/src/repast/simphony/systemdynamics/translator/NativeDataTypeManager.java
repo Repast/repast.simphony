@@ -612,23 +612,47 @@ public class NativeDataTypeManager {
 	}
 
 	private  String getInitialTimeVariable() {
-		for (String s : SYSTEM_INITIAL)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_INITIAL) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
 		return "ERROR_INITIAL";
 	}
 
 	private  String getFinalTimeVariable() {
-		for (String s : SYSTEM_FINAL)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_FINAL) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
 		return "ERROR_FINAL";
 	}
 
 	private  String getTimeStepVariable() {
-		for (String s : SYSTEM_TIMESTEP)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_TIMESTEP) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
+		
 		return "ERROR_TIMESTEP";
 	}
 

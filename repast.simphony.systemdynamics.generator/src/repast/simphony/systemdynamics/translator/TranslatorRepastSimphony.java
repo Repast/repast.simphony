@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -331,10 +332,27 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	// set the various time parameters
     	
-    	mdlContents.add("Initial Time = "+systemModel.getStartTime()+ FIELD_SEPARATOR+ systemModel.getUnits()+FIELD_SEPARATOR+EQUATION_TERMINATOR);
-    	mdlContents.add("Final Time = "+systemModel.getEndTime()+ FIELD_SEPARATOR+ systemModel.getUnits()+ FIELD_SEPARATOR+EQUATION_TERMINATOR);
-    	mdlContents.add("Time Step = "+systemModel.getTimeStep()+ FIELD_SEPARATOR+ systemModel.getUnits()+ FIELD_SEPARATOR+EQUATION_TERMINATOR);
-    	mdlContents.add("Savper = "+systemModel.getReportingInterval()+ FIELD_SEPARATOR+ systemModel.getUnits()+ FIELD_SEPARATOR+EQUATION_TERMINATOR);
+    	mdlContents.add("InitialTime = "+systemModel.getStartTime());
+    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
+    	mdlContents.add(FIELD_SEPARATOR);
+    	mdlContents.add(EQUATION_TERMINATOR);
+    	
+    	mdlContents.add("FinalTime = "+systemModel.getEndTime());
+    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
+    	mdlContents.add(FIELD_SEPARATOR);
+    	mdlContents.add(EQUATION_TERMINATOR);
+    	
+    	
+    	mdlContents.add("TimeStep = "+systemModel.getTimeStep());
+    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
+    	mdlContents.add(FIELD_SEPARATOR);
+    	mdlContents.add(EQUATION_TERMINATOR);
+    	
+    	
+    	mdlContents.add("Savper = "+systemModel.getReportingInterval());
+    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
+    	mdlContents.add(FIELD_SEPARATOR);
+    	mdlContents.add(EQUATION_TERMINATOR);
     		
 // subscripts
     	
@@ -482,6 +500,13 @@ public class TranslatorRepastSimphony extends Translator {
 		cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
 		cg.generateCode();
 	    }
+	    try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
 	}
     }
 

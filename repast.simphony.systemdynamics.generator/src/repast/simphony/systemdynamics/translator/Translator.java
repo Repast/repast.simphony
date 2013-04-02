@@ -108,8 +108,8 @@ public class Translator {
 		this.loadUnitsProperties();
 		ReaderConstants.OUTPUT_DIRECTORY = "DontCare";
 		ReaderConstants.GENERATED_CODE_DIRECTORY = "DontCare";
-		ReaderConstants.PACKAGE = "DontCare";
-		ReaderConstants.SUPPORT = "DontCare";
+//		ReaderConstants.PACKAGE = "DontCare";
+//		ReaderConstants.SUPPORT = "DontCare";
 		InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
 		loadUnitsEquivalences();
 		initializeForConsistencyCheck();

@@ -463,7 +463,7 @@ public class CodeGenerator {
 	    if (!Translator.target.equals(ReaderConstants.C))
 		bw.append("protected ");
 	    bw.append("void oneTime() {\n\n");
-	    bw.append(scrub("memory.TIME_STEP = "+tStep+";\n\n"));
+//	    bw.append(scrub("memory."+TIME_STEP+" = "+tStep+";\n\n"));   MJB 1Apr2013
 
 	    for (int i = 0; i <= currentMethodNumber; i++) {
 		
