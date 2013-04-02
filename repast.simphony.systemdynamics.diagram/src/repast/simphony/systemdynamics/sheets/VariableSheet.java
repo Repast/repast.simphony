@@ -115,9 +115,11 @@ public class VariableSheet extends Composite {
     cmbFuncType.setItems(FunctionManager.getInstance().getFunctionSetNames());
     cmbFuncType.select(0);
 
-    lstFunc = new List(composite_2, SWT.BORDER);
-    lstFunc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-    toolkit.adapt(lstFunc, true, true);
+    lstFunc = new List(composite_2, SWT.BORDER | SWT.V_SCROLL);
+    GridData gd_lstFunc = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
+    gd_lstFunc.heightHint = 150;
+    lstFunc.setLayoutData(gd_lstFunc);
+    //toolkit.adapt(lstFunc, true, true);
     fillListFunc();
 
     SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
