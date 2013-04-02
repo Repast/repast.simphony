@@ -63,14 +63,14 @@ public class VariableEditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
     installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new VariableItemSemanticEditPolicy());
     installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
     // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
-    // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
+    removeEditPolicy(EditPolicyRoles.CONNECTION_HANDLES_ROLE);
   }
 
   /**

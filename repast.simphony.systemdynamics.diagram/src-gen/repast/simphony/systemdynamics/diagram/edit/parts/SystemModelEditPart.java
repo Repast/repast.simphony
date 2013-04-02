@@ -41,7 +41,7 @@ public class SystemModelEditPart extends DiagramEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
   protected void createDefaultEditPolicies() {
     super.createDefaultEditPolicies();
@@ -49,7 +49,7 @@ public class SystemModelEditPart extends DiagramEditPart {
     installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new SystemModelCanonicalEditPolicy());
     installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicyWithCustomReparent(
         SystemdynamicsVisualIDRegistry.TYPED_INSTANCE));
-    // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.POPUPBAR_ROLE);
+    removeEditPolicy(EditPolicyRoles.POPUPBAR_ROLE);
   }
 
   /**
