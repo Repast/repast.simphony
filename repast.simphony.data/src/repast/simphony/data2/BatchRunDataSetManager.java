@@ -24,7 +24,7 @@ public class BatchRunDataSetManager extends AbstractDataSetManager {
   @Override
   public void batchStarted() {
     for (DataSetBuilder<?> builder : builders.values()) {
-      addDataSet(builder.create(), builder.getScheduleParameters());
+      addDataSet(builder.create(), builder.getScheduleParameters(), builder.isScheduleAtEnd());
     }
     
     for (ScheduledDataSet set : dataSets) {

@@ -23,6 +23,25 @@ public class ProbeListenerSupport {
       listeners.add(listener);
     }
   }
+  
+  /**
+   * Broadcast a probe event consisting of the specified source, probed object 
+   * and type to the current list of probe listeners.
+   *
+   * @param source       the source of the event
+   * @param probedObject the probed object
+   * @param type the type of the probe
+   */
+  public void fireProbeEvent(Object source, List<?> probedObject, ProbeEvent.Type type) {
+    ProbeEvent evt = new ProbeEvent(source, probedObject, type);
+    List<ProbeListener> list;
+    synchronized (listeners) {
+      list = (List<ProbeListener>) ((ArrayList) listeners).clone();
+    }
+    for (ProbeListener listener : list) {
+      listener.objectProbed(evt);
+    }
+  }
 
   /**
    * Broadcast a probe event consisting of the specified source and probed object to the current
@@ -32,14 +51,7 @@ public class ProbeListenerSupport {
    * @param probedObject the probed object
    */
   public void fireProbeEvent(Object source, List<?> probedObject) {
-    ProbeEvent evt = new ProbeEvent(source, probedObject);
-    List<ProbeListener> list;
-    synchronized (listeners) {
-      list = (List<ProbeListener>) ((ArrayList) listeners).clone();
-    }
-    for (ProbeListener listener : list) {
-      listener.objectProbed(evt);
-    }
+    fireProbeEvent(source, probedObject, ProbeEvent.Type.POINT);
   }
 
   /**
