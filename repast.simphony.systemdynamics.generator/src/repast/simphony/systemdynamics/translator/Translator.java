@@ -268,9 +268,9 @@ public class Translator {
 //			messages.add(lhs);
 			Equation eqn = errors.get(lhs);
 //			messages.add("ERROR: "+eqn.getVensimEquation().split("~")[0]);
-			messages.add("Equation:\n");
+			messages.add("Equation:"); // "\n"
 			messages.add("\t"+StringEscapeUtils.escapeHtml(eqn.getVensimEquation().split("~")[0]));
-			messages.add(eqn.getTokensOneLine());
+//			messages.add(eqn.getTokensOneLine());
 			for (String msg : eqn.getSyntaxMessages()) {
 				messages.add(msg);
 			}

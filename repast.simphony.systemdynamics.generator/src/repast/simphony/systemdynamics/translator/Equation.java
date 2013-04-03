@@ -3883,13 +3883,13 @@ public class Equation {
 
 		if (unitExpression != null) {
 
-			bw.add("LHS Units:\n");
+			bw.add("LHS Units: ");  // "\n"
 			bw.add("\t"+unitExpression.getLhsUnitsString());
 
-			bw.add("RHS Units:\n");
+			bw.add("RHS Units: ");  // "\n"
 			bw.add("\t"+unitExpression.getRhsUnitsString());
 
-			bw.add("Complete RHS Units:\n");
+			bw.add("Complete RHS Units: ");  // "\n"
 			bw.add("\t"+unitExpression.getCompleteRhsUnitsString());
 		}
 
