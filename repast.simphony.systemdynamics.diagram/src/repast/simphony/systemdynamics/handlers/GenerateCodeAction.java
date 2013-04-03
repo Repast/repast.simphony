@@ -52,17 +52,20 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
 //	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
 //	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EPIDEMIC.mdl", true);
 
-	  MessageBox msgBox = null;
-	  int style = SWT.ICON_ERROR;
-	  if (success)
-		  style = SWT.ICON_INFORMATION;
-
-
-	  msgBox = new MessageBox(Display.getCurrent().getActiveShell(), style);
-
-
-	  msgBox.setMessage(engine.getMessages());
-	  msgBox.open();
+//	  MessageBox msgBox = null;
+//	  int style = SWT.ICON_ERROR;
+//	  if (success)
+//		  style = SWT.ICON_INFORMATION;
+//
+//
+//	  msgBox = new MessageBox(Display.getCurrent().getActiveShell(), style);
+//
+//
+//	  msgBox.setMessage(engine.getMessages());
+//	  msgBox.open();
+	  
+	  GenerateCodeDialog dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), success, engine.getMessages());
+	  dialog.open();
 
   }
 }
