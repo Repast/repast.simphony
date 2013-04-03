@@ -2,7 +2,7 @@ package repast.simphony.visualization.gis3D;
 
 import gov.nasa.worldwind.render.DrawContext;
 
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
@@ -36,13 +36,13 @@ public class ConeShape extends PointShape {
 	
 	@Override
 	protected void initialize(DrawContext dc){
-		glListId = dc.getGL().glGenLists(1);
+		glListId = dc.getGL().getGL2().glGenLists(1);
 
 		GLU glu = dc.getGLU();
-		GL gl = dc.getGL();
+		GL2 gl = dc.getGL().getGL2();
 		GLUquadric quad = glu.gluNewQuadric();
 		
-		gl.glNewList(glListId, GL.GL_COMPILE);
+		gl.glNewList(glListId, GL2.GL_COMPILE);
 		// tube (no ends)
 		glu.gluCylinder(quad, radius, 0, height, slices, rings);
 		// bottom disc
