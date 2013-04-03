@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/dockingFrames-1.0.8p3a-saf.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-forms-1.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="saf.core.v3d.jar" sourcepath="/Users/nick/Documents/repos/simphony.app.framework/v3d/src"/>
-	<classpathentry exported="true" kind="lib" path="lib/osx.jar"/>
-	<classpathentry exported="true" kind="lib" path="saf.core.ui.jar" sourcepath="/Users/nick/Documents/workspace/saf/ui/src"/>
-	<classpathentry exported="true" kind="lib" path="lib/wizard-0.1.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/TableLayout.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jh.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/l2fprod-common-all.jar"/>
-
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all.jar"/>
-
+	<classpathentry exported="true" kind="lib" path="lib/osx.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/TableLayout.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wizard-0.1.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="saf.core.v3d.jar" sourcepath="/Users/nick/Documents/repos/simphony.app.framework/v3d/src"/>
+	<classpathentry exported="true" kind="lib" path="saf.core.ui.jar" sourcepath="/Users/nick/Documents/workspace/saf/ui/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/dockingFrames-1.0.8p3a-saf.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -46,14 +46,6 @@
     <library id="TableLayout" path="lib/TableLayout.jar" type="code">
       <export prefix="*"/>
     </library>
-    
-    <library id="gluegen" path="lib/gluegen-rt.jar" type="code">
-      <export prefix="*"/>
-    </library>
-    
-    <library id="jogl" path="lib/jogl-all.jar" type="code">
-      <export prefix="*"/>
-    </library>
 
     <library id="icons" path="icons/" type="resources"/>
   </runtime>
