@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.geotools.data.FeatureSource;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
@@ -20,7 +21,6 @@ import org.geotools.map.event.MapLayerEvent;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgent;
@@ -46,11 +46,15 @@ public class Updater {
 
   private Geography geog;
   
+  // TODO Geotools commented lines no longer used...clean before release.
+  
   // Note that DefaultFeatureCollection should be used to store an in memory
   //  FeatureCollection in the Geotools 9.0 API
   private Map<Class, DefaultFeatureCollection> featureMap = 
   		new HashMap<Class, DefaultFeatureCollection>();
-//  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
+  
+  // Map the object (agent) to the FeatureAgent instance that is displayed
+  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
   private Set<FeatureAgent> featureAgentsToAdd = new HashSet<FeatureAgent>();
   
   private Set<Object> agentsToAdd = new HashSet<Object>();
@@ -59,7 +63,7 @@ public class Updater {
   private Map<Class, DefaultFeatureAgentFactory> renderMap;
   private Map<String, RepastMapLayer> layerMap = new HashMap<String, RepastMapLayer>();
   private Map<FeatureSource, Layer> featureLayerMap = new HashMap<FeatureSource, Layer>();
-  private Set<Class> updateClasses = new HashSet<Class>();
+//  private Set<Class> updateClasses = new HashSet<Class>();
   private Map<Integer, Object> layerOrder;
   // maps the original geometry of a object to
   // the object. This is necessary because GT renderer
@@ -118,7 +122,7 @@ public class Updater {
       }
       renderMap.put(clazz, fac);
       FeatureAgent fa = fac.getFeature(obj, geog);
-//      agentMap.put(obj, fa);
+      agentMap.put(obj, fa);
       featureAgentsToAdd.add(fa);
       origGeomMap.put(obj, fa.getDefaultGeometry());
     }
@@ -183,7 +187,7 @@ public class Updater {
   }
 
   public void agentMoved(Object obj) {
-    updateClasses.add(obj.getClass());
+//    updateClasses.add(obj.getClass());
     Geometry geom = geog.getGeometry(obj);
     Geometry origGeom = origGeomMap.get(obj);
     // may be null if object is moved before
@@ -201,14 +205,18 @@ public class Updater {
     updateRender = true;
   }
 
-  //  Geotools TODO make sure this works correctly...agents removed from feature collection??
   public void removeAgents() {
     try {
       addFeaturesLock.lock();
       for (Object obj : agentsToRemove) {
         origGeomMap.remove(obj);
-//        FeatureAgent fa = agentMap.remove(obj);
-        updateClasses.add(obj.getClass());
+        FeatureAgent fa = agentMap.remove(obj);
+        
+        // Remove the FeatureAgent associated with the object (agent) from the 
+        // FeatureCollection connected to the MapLayer
+        featureMap.get(obj.getClass()).remove(fa);
+     
+//        updateClasses.add(obj.getClass());
       }
       
       agentsToRemove.clear();
@@ -233,7 +241,6 @@ public class Updater {
       removeAgents();
       updateRender = true;
     }
-
   }
 
   /**
