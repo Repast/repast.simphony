@@ -63,7 +63,9 @@ public class Engine {
 			messages.add("Model units consistent\n");
 			if (generateCode)
 				messages.add("Java source code generated");
+			
 		}
+		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
 		return result;
 	}
 	
@@ -73,6 +75,7 @@ public class Engine {
 			messages.add("Model syntax OK\n");
 			messages.add("Model units consistent");
 		}
+		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
 		return result;
 	}
 	public SystemModel loadMDL(String filename) {

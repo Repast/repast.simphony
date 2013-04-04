@@ -478,36 +478,36 @@ public class TranslatorRepastSimphony extends Translator {
     
     @Override
     protected void process(Map<String, Equation> equations) {
-	CodeGenerator cg = null;
-//	processSubscriptDefinition(equations);
-//	processExponentiaion(equations);
-//	generateRPN(equations);
-//	generateTrees(equations);
-//	generateCausalTrees(sdObjectManager);
-//	ArrayManager.populateArraySubscriptSpace();
-//	UnitsManager.performUnitsConsistencyCheck(equations, "./ConsistencyResults.xml");
-	
-	generateCausalTrees(sdObjectManager);
-	generatePolarityCode(equations);
-	
-	
-	if (equations != null) {
-	    generateMemory();
-	    List<String> evaluationOrder = determineEvaluationOrder(equations);
-	    if (evaluationOrder != null) {
-	    	String dir = getSourceDirectory() + "/" + asDirectoryPath(packageName)+ "/";
-		new File(dir).mkdirs();
-		cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
-		cg.generateCode();
-	    }
-	    try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-	}
+    	CodeGenerator cg = null;
+    	//	processSubscriptDefinition(equations);
+    	//	processExponentiaion(equations);
+    	//	generateRPN(equations);
+    	//	generateTrees(equations);
+    	//	generateCausalTrees(sdObjectManager);
+    	//	ArrayManager.populateArraySubscriptSpace();
+    	//	UnitsManager.performUnitsConsistencyCheck(equations, "./ConsistencyResults.xml");
+
+    	generateCausalTrees(sdObjectManager);
+    	generatePolarityCode(equations);
+
+
+    	if (equations != null) {
+    		generateMemory();
+    		List<String> evaluationOrder = determineEvaluationOrder(equations);
+    		if (evaluationOrder != null) {
+    			String dir = getSourceDirectory() + "/" + asDirectoryPath(packageName)+ "/";
+    			new File(dir).mkdirs();
+    			cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
+    			cg.generateCode();
+    		}
+    		try {
+    			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+    		} catch (CoreException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+
+    	}
     }
 
     

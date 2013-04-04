@@ -212,13 +212,30 @@ public class Translator {
 		
 		Map<String, Equation> equations = equationProcessor.processRawEquations(sdObjectManager, mdlContents);
 		
+		boolean errors = equationProcessor.getDuplicateLHS().size() > 0;
+		if (errors) {
+			messages.add("+++ Duplicate LHS +++");
+			for (String lhs : equationProcessor.getDuplicateLHS()) {
+				messages.add(lhs);
+			}
+			return false;
+		}
+		
+		// Should these be done here?
+		
+		processSubscriptDefinition(equations);
+		processExponentiaion(equations);
+		
 		Map<String, Equation> syntaxErrors = equationProcessor.getSyntaxErrors(equations);
-		boolean errors = syntaxErrors.size() > 0;
+		errors = syntaxErrors.size() > 0;
 		if (errors) {
 			printErrors(syntaxErrors);
 			generateErrorReport("Syntax Errors", syntaxErrors, messages);
 			return false;
 		}
+		
+		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
+		equationProcessor.checkUsage(equations);
 		
 		Map<String, Equation> usageErrors = equationProcessor.getUsageErrors(equations);
 		errors = usageErrors.size() > 0;
@@ -228,12 +245,12 @@ public class Translator {
 			return false;
 		}
 		
-		processSubscriptDefinition(equations);
-		processExponentiaion(equations);
+//		processSubscriptDefinition(equations);
+//		processExponentiaion(equations);
 		generateRPN(equations);
 		generateTrees(equations);
 //		generateCausalTrees(sdObjectManager);
-		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
+//		InformationManagers.getInstance().getArrayManager().populateArraySubscriptSpace();
 		
 		Map<String, Equation> unitsErrors = InformationManagers.getInstance().getUnitsManager().
 				performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
@@ -265,12 +282,12 @@ public class Translator {
 		messages.add("+++ "+title+" +++");
 		while (iter.hasNext()) {
 			String lhs = iter.next();
-//			messages.add(lhs);
+
 			Equation eqn = errors.get(lhs);
-//			messages.add("ERROR: "+eqn.getVensimEquation().split("~")[0]);
+
 			messages.add("Equation:"); // "\n"
 			messages.add("\t"+StringEscapeUtils.escapeHtml(eqn.getVensimEquation().split("~")[0]));
-//			messages.add(eqn.getTokensOneLine());
+
 			for (String msg : eqn.getSyntaxMessages()) {
 				messages.add(msg);
 			}
@@ -466,47 +483,6 @@ public class Translator {
 
 		// first make sure that all mapped subscripts have been defined
 
-		//	MappedSubscriptManager.makeConsistent();
-		//	
-		//	if (isGenerateC() || isGenerateJava()) {
-		//	    MappedSubscriptManager.dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptMappings_"+objectName+".csv"));
-		//	    NamedSubscriptManager.dumpMappings(Translator.openReport(miscDirectory+"/"+"SubscriptNameValues_"+objectName+".csv"));
-		//
-		//	    UnitsManager.dumpLhsUnits(Translator.openReport(miscDirectory+"/"+"Units_"+objectName+".csv"));
-		//	    UnitsManager.dumpLhsUnitsRaw(Translator.openReport(miscDirectory+"/"+"UnitsRaw_"+objectName+".csv"));
-		//
-		//
-		//	    if (Translator.useNativeDataTypes) {
-		//
-		//		if (Translator.target.equals(ReaderConstants.JAVA)) {
-		//
-		//		    String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
-		//		    NativeDataTypeManager.dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
-		//
-		//		    RepastSimphonyEnvironment.generateContextBuilder(Translator.openReport(SourceDirectory+"ContextBuilder"+objectName+".java"), objectName, this);
-		//
-		//		    String ScenarioDirectory = destinationDirectory +"/" + objectName + ".rs/";
-		//
-		//		    RepastSimphonyEnvironment.generateScenarioXml(Translator.openReport(ScenarioDirectory+"scenario.xml"), objectName);
-		//		    RepastSimphonyEnvironment.generateUserPathXml(Translator.openReport(ScenarioDirectory+"user_path.xml"), objectName);
-		//		    RepastSimphonyEnvironment.generateClassLoaderXml(Translator.openReport(ScenarioDirectory+"repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_1.xml"), objectName, this);
-		//		    RepastSimphonyEnvironment.generateContextXml(Translator.openReport(ScenarioDirectory+"context.xml"), objectName);
-		//
-		//		    NativeDataTypeManager.generateMemoryJava(Translator.openReport(SourceDirectory+"Memory"+objectName+".java"), objectName, this);
-		//
-		//		} else if (Translator.target.equals(ReaderConstants.JAVASCRIPT)) {
-		//
-		//		} else if (Translator.target.equals(ReaderConstants.C)) {
-		//		    String SourceDirectory = destinationDirectory+"/"+ "src" + "/" + asDirectoryPath(packageName)+ "/";
-		//		    NativeDataTypeManager.dumpLegalNames(Translator.openReport(miscDirectory+"/"+"LegalNames_"+objectName+".csv"));
-		//		    NativeDataTypeManager.generateMemoryC(Translator.openReport(SourceDirectory+"memory"+objectName+".h"), objectName, this);
-		//
-		//		}
-		//	    }
-		//	    ArrayManager.dumpSubscriptSpace(Translator.openReport(miscDirectory+"/"+"SubscriptSpace_"+objectName+".csv"));
-		//	}
-
-
 		for (String realLHS : equations.keySet()) {
 
 			// reference to the equations currently being processed
@@ -651,7 +627,39 @@ public class Translator {
 		boolean startChain = false; // want this to be false for production
 		dumpRequiresExpanded("initialRequiresExpanded.txt", requiresExpanded, startChain); // HerelhsExpandedNotInitialized
 		dumpRequiresExpanded("initiallhsExpandedNotInitialized.txt", lhsExpandedNotInitialized, startChain);
+		
+		// determine if any equations are not referenced in the model
+		// Note that we will disregard any autogenerated equations since there is no requirement that they be referenced
 
+		List<String> notReferenced = new ArrayList<String>();
+		for (String s : equations.keySet()) {
+			if (!equations.get(s).isAutoGenerated())
+				notReferenced.add(s);
+		}
+		
+		int initialCount = notReferenced.size();
+		
+		
+		for (HashSet<String> hs : requires.values()) {
+			if (hs == null)
+				continue;
+			Iterator<String> iter = hs.iterator();
+			while(iter.hasNext()) {
+				String rhs = iter.next();
+				if (notReferenced.contains(rhs))
+					notReferenced.remove(rhs);
+			}
+		}
+		
+		if (notReferenced.size() > 0) {
+			MessageManager mm = InformationManagers.getInstance().getMessageManager();
+			mm.addWarningMessage("+++ Unused Equations +++");
+			mm.addWarningMessage("Requires "+requires.size()+" Total Recognized: "+equations.keySet().size()+" Initial "+initialCount+" Not Referenced: "+notReferenced.size());
+			for (String lhs : notReferenced) {
+				mm.addWarningMessage(equations.get(lhs).getVensimEquationOnly()+"\n");
+			}
+			
+		}
 
 
 		// this is the order in which we will evaluate the equations

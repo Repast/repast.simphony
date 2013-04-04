@@ -34,5 +34,19 @@ public class NativeArray {
     public void setDimensionName(int index, String name) {
 	subscriptName[index] = name;
     }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(name);
+    	sb.append("[");
+    	for (int i = 0; i < numDimensions; i++) {
+    		if (i > 0)
+    			sb.append(",");
+    		sb.append(subscriptName[i]);
+    	}
+    	sb.append("]");
+    	
+    	return sb.toString();
+    }
 
 }

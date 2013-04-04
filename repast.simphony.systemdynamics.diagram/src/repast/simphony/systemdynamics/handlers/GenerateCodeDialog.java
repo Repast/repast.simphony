@@ -25,6 +25,7 @@ public class GenerateCodeDialog extends TitleAreaDialog {
   private boolean success;
   private String messages;
   private Text txtElements;
+  private String title;
 
 
   private Button btnOK;
@@ -34,10 +35,11 @@ public class GenerateCodeDialog extends TitleAreaDialog {
    * 
    * @param parentShell
    */
-  public GenerateCodeDialog(Shell parentShell, boolean success, String messages) {
+  public GenerateCodeDialog(Shell parentShell, boolean success, String title, String messages) {
     super(parentShell);
     this.success = success;
     this.messages = messages;
+    this.title = title;
   }
 
   /**
@@ -47,7 +49,7 @@ public class GenerateCodeDialog extends TitleAreaDialog {
    */
   @Override
   protected Control createDialogArea(Composite parent) {
-    this.setTitle("Code Generation Status: "+(success ? "   SUCCESS" : "   FAILURE"));
+    this.setTitle(title+(success ? "   SUCCESS" : "   FAILURE"));
 //    this.setMessage("Messages");
     this.setHelpAvailable(false);
 
@@ -77,7 +79,7 @@ public class GenerateCodeDialog extends TitleAreaDialog {
     
 //    ScrolledForm scrollForm = formToolkit.createScrolledForm(composite);
 
-    txtElements = formToolkit.createText(composite, "", SWT.WRAP | SWT.H_SCROLL | SWT.CANCEL | SWT.V_SCROLL
+    txtElements = formToolkit.createText(composite, "", /* SWT.WRAP  | */ SWT.H_SCROLL | SWT.CANCEL | SWT.V_SCROLL
         | SWT.MULTI);
   
     GridData gd_txtElements = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);

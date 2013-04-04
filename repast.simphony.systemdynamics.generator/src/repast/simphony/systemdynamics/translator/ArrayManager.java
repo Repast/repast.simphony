@@ -18,6 +18,7 @@ import java.util.Set;
 
 import repast.simphony.systemdynamics.support.ArrayDefinition;
 import repast.simphony.systemdynamics.support.ArrayReference;
+import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
 import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 import repast.simphony.systemdynamics.support.Subscript;
@@ -68,33 +69,98 @@ public class ArrayManager {
 		return orderedSubscripts;
 	}
 
-	public  OperationResult validateLookupReference(String token) {
+	public  OperationResult validateLookupReference(Map<String, Equation> equations, Equation equation, MutableInteger pos, MutableBoolean lhs) {
+		
 		OperationResult or = new OperationResult();
+		List<String> tokens = equation.getTokens();
+		String token = tokens.get(pos.value());
 
+		// if the lookup is stored as an array, then check it as an array, 
+		if (ArrayReference.isArrayReference(token)) {
+			return validateArrayReference(equations, equation, pos, lhs);
+		// is stored in a scalar, check as scalar except that
+		}  else {
+			
+			return validateArrayReference(equations, equation, pos, lhs);
+		}
+	}
+
+	public  OperationResult validateArrayReference(Map<String, Equation> equations, Equation equation, MutableInteger pos, MutableBoolean lhs) {
+		OperationResult or = new OperationResult();
+		List<String> tokens = equation.getTokens();
+		String token = tokens.get(pos.value());
+		// if this is a lhs arrayReference, we need to assume it is correct as this defines how it will be used
+		if (lhs.value())
+			return or;
+
+		NativeArray na = null;
 		ArrayReference ar = null;
 		if (ArrayReference.isArrayReference(token)) {
 			ar = new ArrayReference(token);
-			if (arrays.containsKey(ar.getArrayName()))
+				// correct Number of dimensions?
+			int numDimensions = 0;
+			if (isUsedAsLookup(ar.getArrayName())) {
+				na = InformationManagers.getInstance().getNativeDataTypeManager().getNativeArray(ar.getArrayName());
+				numDimensions = na.getNumDimensions();
+			} else {
+				numDimensions = getNumDimensions(ar.getArrayName());
+			}
+				if (numDimensions != ar.getSubscripts().size()) {
+					or.setErrorMessage(ar.getArrayName());
+					or.setErrorMessage(equation.getTokensOneLine());
+					or.setErrorMessage("Incorrect number of dimensions for "+token+" "+ar.getSubscripts().size()+" expecting "+
+							numDimensions);
+					if (na != null) {
+						or.setErrorMessage("NativeArray: "+na.toString());
+					}
+					return or;
+				} else {
+					validateSubscriptForArray(ar, or);
+					return or;
+				}
+			// could be scalar lookup table
+				// we do need to remove the lookup. tag
+		} else {
+			if (isUsedAsLookup(token.replace("lookup.", "")))
 				return or;
-
-		} 
-
+		}
+		or.setErrorMessage(equation.getTokensOneLine());
 		or.setErrorMessage("Invalid array reference "+token);
 		return or;
 	}
+	
+	private OperationResult validateSubscriptForArray(ArrayReference ar, OperationResult or) {
+		String arrayName = ar.getArrayName();
+		int numDimensions = getNumDimensions(ar.getArrayName());
+		String[] subscripts = ar.getSubscriptsAsArray();
 
-	public  OperationResult validateArrayReference(String token) {
-		OperationResult or = new OperationResult();
+		Map<Integer, Map<String, Integer>> arrayMap = allocatedIndicies.get(arrayName);
 
-		ArrayReference ar = null;
-		if (ArrayReference.isArrayReference(token)) {
-			ar = new ArrayReference(token);
-			if (arraysUsedAsLookup.contains(ar.getArrayName()))
-				return or;
+		NamedSubscriptManager nsm = InformationManagers.getInstance().getNamedSubscriptManager();
 
-		} 
-
-		or.setErrorMessage("Invalid lookup table reference "+token);
+		for (int dimension = 0; dimension < numDimensions; dimension++) {
+			Map<String, Integer> indexMap = arrayMap.get(dimension);
+			if (nsm.isNamedSubscript(subscripts[dimension])) {
+				List<String> values = nsm.getValuesFor(subscripts[dimension]);
+				for (String value : values) {
+					if (!indexMap.containsKey(value)) {
+						or.setErrorMessage(ar.getVensimReference());
+						or.setErrorMessage("   Incorrect Named subscript ("+value+")"+subscripts[dimension]+ " in dimension "+dimension );
+						or.setErrorMessage("   indexMap size = "+indexMap.size());
+						for (String s : indexMap.keySet())
+							or.setErrorMessage("   "+s);
+					}
+				}
+			} else {
+				if (!indexMap.containsKey(subscripts[dimension])) {
+					or.setErrorMessage(ar.getVensimReference());
+					or.setErrorMessage("   Incorrect subscript "+subscripts[dimension]+ " in dimension "+dimension );
+					or.setErrorMessage("   indexMap size = "+indexMap.size());
+					for (String s : indexMap.keySet())
+						or.setErrorMessage("   "+s);
+				}
+			}
+		}
 		return or;
 	}
 

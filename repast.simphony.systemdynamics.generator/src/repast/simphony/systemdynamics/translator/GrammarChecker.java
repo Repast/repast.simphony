@@ -87,6 +87,8 @@ public class GrammarChecker {
 		String previousToken = "";
 		MutableInteger pos = new MutableInteger();
 		MutableInteger openParens = new MutableInteger();
+		
+		MutableBoolean lhs = new MutableBoolean(true);
 
 		int calls = 0;
 
@@ -96,7 +98,7 @@ public class GrammarChecker {
 			System.out.println("GCin: " + token + " LkBinOP: "
 					+ lookingForBinaryOperator.value() + " pos = "
 					+ pos.value());
-			grammerCheck(token, lookingForBinaryOperator,
+			grammerCheck(token, lhs, lookingForBinaryOperator,
 					lookingForArgumentSeparator, processingFunctionInvocation,
 					previousToken, pos, openParens, or);
 			System.out.println("###GCout: LkBinOP: "
@@ -119,6 +121,7 @@ public class GrammarChecker {
 	}
 
 	private void grammerCheck(String token,
+			MutableBoolean lhs,
 			MutableBoolean lookingForBinaryOperator,
 			MutableBoolean lookingForArgumentSeparator,
 			MutableBoolean processingFunctionInvocation, String previousToken,
@@ -305,6 +308,8 @@ public class GrammarChecker {
 
 		or.clear();
 		processingFunctionInvocation.setValue(true);
+		
+		MutableBoolean lhs = new MutableBoolean(false);
 
 		// func is func_name ( notB , notB, ..., notB)
 
@@ -331,7 +336,7 @@ public class GrammarChecker {
 				localOpenParen++;
 				System.out.println("consumeFunc ahead LeftParen"+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
 			}
-			grammerCheck(token, lookingForBinaryOperator,
+			grammerCheck(token, lhs, lookingForBinaryOperator,
 					lookingForArgumentSeparator, processingFunctionInvocation,
 					previousToken, pos, openParens, or);
 			if (!or.isOk())

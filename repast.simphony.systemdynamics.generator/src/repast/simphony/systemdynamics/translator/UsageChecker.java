@@ -1,8 +1,9 @@
 package repast.simphony.systemdynamics.translator;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+
+import repast.simphony.systemdynamics.support.MutableBoolean;
+import repast.simphony.systemdynamics.support.MutableInteger;
 
 public class UsageChecker {
 	
@@ -19,37 +20,47 @@ public class UsageChecker {
 	 * For this check, need access to all equations
 	 */
 	
+	private Equation equation;
 	private Map<String, Equation> equations;
-	private List<Equation> usageErrors = new ArrayList<Equation>();
 	
-	public UsageChecker(Map<String, Equation> equations) {
+	public UsageChecker(Map<String, Equation> equations, Equation equation) {
 		this.equations = equations;
+		this.equation = equation;
 	}
 	
-	public List<Equation> checkUsage() {
+	public OperationResult checkUsage() {
+		OperationResult allResults = new OperationResult();
 		
-		for (Equation eqn : equations.values()) {
-			for (String token : eqn.getTokens()) {
+		MutableBoolean lhs = new MutableBoolean(true);
+		MutableInteger pos = new MutableInteger(-1);
+		
+			for (String token : equation.getTokens()) {
+				pos.add(1);
+				if (token.equals("="));
+					lhs.setValue(false);
 				if (!isClassified(token)) 
 					continue;
 				String type = getType(token);
-				OperationResult or = validateReference(type, token);
+				OperationResult or = validateReference(pos, type, token, lhs);
+				if (!or.isOk()) {
+					allResults.setErrorMessage(or.getMessage());
+				}
 			}
-		}
-		return usageErrors;
+		
+		return allResults;
 	}
 	
-	private OperationResult validateReference(String type, String token) {
+	private OperationResult validateReference(MutableInteger pos, String type, String token, MutableBoolean lhs) {
 		OperationResult or = new OperationResult();
 		
 		if (type.equals(ARRAY)) {
-			or = InformationManagers.getInstance().getArrayManager().validateArrayReference(token);
+			or = InformationManagers.getInstance().getArrayManager().validateArrayReference(equations, equation, pos, lhs);
 		} else if (type.equals(FUNCTION)) {
-			or = InformationManagers.getInstance().getFunctionManager().validateFunctionRerference(token);
+			or = InformationManagers.getInstance().getFunctionManager().validateFunctionReference(equations, equation, pos, lhs);
 		} else if (type.equals(SCALAR)) {
-			or = InformationManagers.getInstance().getNativeDataTypeManager().validateScalarReference(token);
+			or = InformationManagers.getInstance().getNativeDataTypeManager().validateScalarReference(equations, equation, pos, lhs);
 		} else if (type.equals(LOOKUP)) {
-			or = InformationManagers.getInstance().getArrayManager().validateLookupReference(token);
+			or = InformationManagers.getInstance().getArrayManager().validateLookupReference(equations, equation, pos, lhs);
 		} 
 		
 		

@@ -17,6 +17,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor.DataSetType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.systemdynamics.support.ArrayReference;
+import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
 
 import com.thoughtworks.xstream.XStream;
@@ -49,15 +50,20 @@ public class NativeDataTypeManager {
 		arrayDeclarations = new HashSet<ArrayDeclaration>();
 	}
 	
-	public  OperationResult validateScalarReference(String token) {
+	public  OperationResult validateScalarReference(Map<String, Equation> equations, Equation equation, MutableInteger pos, MutableBoolean lhs) {
 		OperationResult or = new OperationResult();
+		String token = equation.getTokens().get(pos.value());
 		String original = getOriginalName(token);
-		if (scalars.contains(original))
+		if (equations.containsKey(original))
 			return or;
 		
-		or.setErrorMessage("Scaler not found - "+token);
+		or.setErrorMessage("Scalar not found - "+token);
 		return or;
 		
+	}
+	
+	public NativeArray getNativeArray(String array) {
+		return arrays.get(array);
 	}
 
 	public  void addVariable(Equation equation, String variable, String dataType) {

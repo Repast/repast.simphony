@@ -18,6 +18,7 @@ public class InformationManagers {
 	private NativeDataTypeManager nativeDataTypeManager; // >
 	private SubscriptManager subscriptManager; // empty
 	private MacroManager macroManager;
+	private MessageManager messageManager;
 
 
 	public static InformationManagers getInstance() {
@@ -34,6 +35,7 @@ public class InformationManagers {
 		nativeDataTypeManager = new NativeDataTypeManager();
 		subscriptManager = new SubscriptManager();
 		macroManager = new MacroManager();
+		messageManager = new MessageManager();
 	}
 
 	public static void init() {
@@ -74,6 +76,10 @@ public class InformationManagers {
 
 	public MacroManager getMacroManager() {
 		return macroManager;
+	}
+
+	public MessageManager getMessageManager() {
+		return messageManager;
 	}
 
 }
