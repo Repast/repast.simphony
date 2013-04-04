@@ -219,7 +219,7 @@ public <fullyQualifiedName> <lowerSingular>(Number number){
 patchGetterField(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
 
 	/**
-	 * Returns the <fieldName> of the underlying patch.
+	 * Returns the value of the <fieldName> variable of the underlying patch.
 	 * 
 	 * @return <fieldName> of type <fieldType>
 	 */
@@ -234,14 +234,14 @@ public <fieldType> get<capFieldName>(){
 patchGetterGetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
 
 	/**
-	 * Returns the <fieldName> of the underlying patch.
+	 * Returns the value from the <patchGetter>() method of the underlying patch.
 	 * 
 	 * @return <fieldName> of type <fieldType>
 	 */
 @ReLogoBuilderGeneratedFor("<patchType>")
 public <fieldType> get<capFieldName>(){
 	<patchType> p = (<patchType>)patchHere();
-	return p.<patchGetter>;
+	return p.<patchGetter>();
 }
 >>
 
@@ -261,7 +261,7 @@ public void set<capFieldName>(<fieldType> value){
 patchSetterSetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
 
 	/**
-	 * Sets the value of <fieldName> of the underlying patch.
+	 * Calls the <patchSetter>(<fieldType>) method of the underlying patch.
 	 * 
 	 */
 @ReLogoBuilderGeneratedFor("<patchType>")

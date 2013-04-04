@@ -63,7 +63,8 @@ import repast.simphony.util.collections.Pair;
 public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 	// public static final String STATECHART_EXTENSION = "rsc";
-	public static final String RELOGO_BUILDER = repast.simphony.relogo.builder.Activator.PLUGIN_ID + ".builder";
+	public static final String RELOGO_BUILDER = repast.simphony.relogo.builder.Activator.PLUGIN_ID
+			+ ".builder";
 
 	private static final String SRC_ROOT_PACKAGE_FRAGMENT = "src";
 	private static final String SRCGEN_ROOT_PACKAGE_FRAGMENT = "src-gen";
@@ -97,6 +98,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	private static final String[] METHODS_ARRAY2 = { "slider", "chooser", "rSwitch", "sliderWL",
 			"chooserWL", "rSwitchWL", "input" };
 	private static final List<String> METHODS_LIST2 = Arrays.asList(METHODS_ARRAY2);
+	private static final String[] BOOLS = { "boolean", "java.lang.Boolean" };
+	private static final List<String> BOOLS_LIST = Arrays.asList(BOOLS);
 
 	private static final ClassNode abstractGlobalsAndPanel = ClassHelper
 			.make("repast.simphony.relogo.factories.AbstractReLogoGlobalsAndPanelFactory");
@@ -182,7 +185,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
 							if (pf != null && pf.getElementName() != null) {
 								String instrumentingPackageName = pf.getElementName();
-								
+
 								InstrumentingInformation ii = iih
 										.getInstrumentingInformationFor(instrumentingPackageName);
 								// If information exists for this instrumenting package name
@@ -464,7 +467,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			}
 		}
 
-		private List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes(IType type) throws JavaModelException {
+		private List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes(IType type)
+				throws JavaModelException {
 			// IJavaProject javaProject =
 			List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
 			while (type != null && !type.getFullyQualifiedName().equals(BASE_PATCH)) {
@@ -477,15 +481,29 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				// if (type.getCorrespondingResource())
 				IField[] fields = type.getFields();
 				IMethod[] methods = type.getMethods();
-				List<String> methodNames = new ArrayList<String>();
+				List<String> publicMethodNames = new ArrayList<String>();// may become
+																																	// unnecessary
+				List<String> nonPublicMethodNames = new ArrayList<String>();
+				// Separate methods into public and non-public
 				for (IMethod method : methods) {
 					if (Flags.isPublic(method.getFlags())) {
-						methodNames.add(method.getElementName());
+						publicMethodNames.add(method.getElementName());
+					} else {
+						nonPublicMethodNames.add(method.getElementName());
 					}
+				}
+				// TODO: also extract properties
+				List<PropertyInfo> properties = null;
+				try {
+					properties = getProperties(type);
+				}
+				catch (JavaModelException jme){
+					// ignore
 				}
 				boolean previousField = false;
 				for (IField field : fields) {
 					boolean foundField = false;
+					boolean needsGetterResolve = false;
 					int flags = field.getFlags();
 					// System.out.println("Field : " + field.getElementName() + " Flags: "
 					// + flags
@@ -509,9 +527,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									} else {
 										foundField = true;
 									}
-									if (foundField){
-										// TODO: need to find the appropriate getter name depending on field type
-										// probably need to defer this resolution to below where the field type
+									if (foundField) {
+										needsGetterResolve = true; // Groovy generated accessors
+										// TODO: need to find the appropriate getter name depending
+										// on field type
+										// probably need to defer this resolution to below where the
+										// field type
 										// is deduced
 									}
 								}
@@ -520,20 +541,20 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 							// look for methods with is/get and set
 							String fieldName = field.getElementName();
 							String capitalizedFieldName = MetaClassHelper.capitalize(fieldName);
-							
+
 							String isGetter = "is" + capitalizedFieldName;
 							String getGetter = "get" + capitalizedFieldName;
 							String setSetter = "set" + capitalizedFieldName;
 							boolean foundGetter = false, foundSetter = false;
-							if (methodNames.contains(isGetter) ) {
+							if (publicMethodNames.contains(isGetter)) {
 								foundGetter = true;
 								getterName = isGetter;
 							}
-							if (methodNames.contains(getGetter)) {
+							if (publicMethodNames.contains(getGetter)) {
 								foundGetter = true;
 								getterName = getGetter;
 							}
-							if (methodNames.contains(setSetter)) {
+							if (publicMethodNames.contains(setSetter)) {
 								foundSetter = true;
 								setterName = setSetter;
 							}
@@ -548,7 +569,21 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 					if (foundField) {
 						try {
-							patchFieldTypes.add(getFieldAndFieldTypePair(field, type, getterName, setterName));
+							PatchTypeFieldNameFieldTypeInformation patchInfo = getFieldAndFieldTypePair(field,
+									type, getterName, setterName);
+							if (needsGetterResolve) {
+								String capitalizedFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
+								String localGetterName = null;
+								if (BOOLS_LIST.contains(patchInfo.fieldType)) {
+									localGetterName = "is" + capitalizedFieldName;
+								} else {
+									localGetterName = "get" + capitalizedFieldName;
+								}
+								String localSetterName = "set" + capitalizedFieldName;
+								patchInfo.patchGetter = localGetterName;
+								patchInfo.patchSetter = localSetterName;
+							}
+							patchFieldTypes.add(patchInfo);
 						} catch (IllegalArgumentException iae) {
 							// if IllegalArgumentException is caught, quietly ignore this
 							// field
@@ -562,6 +597,65 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 			}
 			return patchFieldTypes;
+		}
+
+		/**
+		 * Gathers all the properties in this type. Properties have both accessors conforming to the 
+		 * JavaBean convention and both public.
+		 * @param type
+		 * @return list of property infos
+		 * @throws JavaModelException
+		 */
+		private List<PropertyInfo> getProperties(IType type) throws JavaModelException {
+			List<PropertyInfo> properties = new ArrayList<PropertyInfo>();
+			IMethod[] methods = type.getMethods();
+			List<IMethod> publicMethods = new ArrayList<IMethod>();
+			for (IMethod method : methods) {
+				if (Flags.isPublic(method.getFlags())) {
+					publicMethods.add(method);
+				}
+			}
+			for (IMethod candidateSetterMethod : publicMethods) {
+				String candidateSetterMethodName = candidateSetterMethod.getElementName();
+				if (candidateSetterMethodName != null && candidateSetterMethodName.startsWith("set") && candidateSetterMethodName.length() > 3) {
+					String getterSuffix = candidateSetterMethodName.substring(3);
+					for (IMethod candidateGetterMethod : publicMethods) {
+						String candidateGetterMethodName = candidateSetterMethod.getElementName();
+						if (candidateGetterMethodName != null
+								&& candidateGetterMethodName.endsWith(getterSuffix)
+								&& (candidateGetterMethodName.equals("is" + getterSuffix) || candidateGetterMethodName.equals("get"
+										+ getterSuffix))) {
+							// Check to see that it's a one parameter method
+							if (candidateSetterMethod.getNumberOfParameters() == 1){
+								// Extract the argument type
+								String parameterSignature = candidateSetterMethod.getParameterTypes()[0];
+								String parameterTypeName = null;
+								try {
+									parameterTypeName = getFullResolvedName(parameterSignature, type);
+								}
+								catch(JavaModelException jme){
+									// ignore
+								}
+								if (parameterTypeName != null){
+									String returnSignature = candidateGetterMethod.getReturnType();
+									String returnTypeName = null;
+									try {
+										returnTypeName = getFullResolvedName(returnSignature, type);
+									}
+									catch(JavaModelException jme){
+										// ignore
+									}
+									// Check if return type of getter matches the parameter type of setter
+									if (returnTypeName != null && returnTypeName.equals(parameterTypeName)){
+										properties.add(new PropertyInfo(candidateGetterMethodName,candidateSetterMethodName,returnTypeName));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			return properties;
 		}
 
 		/**
@@ -620,14 +714,17 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		}
 
-		private PatchTypeFieldNameFieldTypeInformation getFieldAndFieldTypePair(IField field, IType type, String patchGetterName, String patchSetterName)
+		private PatchTypeFieldNameFieldTypeInformation getFieldAndFieldTypePair(IField field,
+				IType type, String patchGetterName, String patchSetterName)
 				throws IllegalArgumentException, JavaModelException {
 			String fieldTypeSignature = field.getTypeSignature();
-			return new PatchTypeFieldNameFieldTypeInformation(type.getFullyQualifiedName(),field.getElementName(), getFullResolvedName(
-					fieldTypeSignature, type), patchGetterName, patchSetterName);
+			return new PatchTypeFieldNameFieldTypeInformation(type.getFullyQualifiedName(),
+					field.getElementName(), getFullResolvedName(fieldTypeSignature, type), patchGetterName,
+					patchSetterName);
 		}
 
-		private TypeSingularPluralInformation getPluralInformation(IType type) throws JavaModelException {
+		private TypeSingularPluralInformation getPluralInformation(IType type)
+				throws JavaModelException {
 			ICompilationUnit cu = type.getCompilationUnit();
 			if (cu == null)
 				return null;
@@ -647,7 +744,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return "";
 		}
 
-		private TypeSingularPluralInformation getPluralInformationFromType(IType type) throws JavaModelException {
+		private TypeSingularPluralInformation getPluralInformationFromType(IType type)
+				throws JavaModelException {
 			TypeSingularPluralInformation pi = new TypeSingularPluralInformation(type);
 			for (IAnnotation annot : type.getAnnotations()) {
 				// If the annotation is the fully qualified name
