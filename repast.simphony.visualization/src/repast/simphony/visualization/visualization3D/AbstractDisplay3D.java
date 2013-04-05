@@ -1,20 +1,12 @@
 package repast.simphony.visualization.visualization3D;
 
-import repast.simphony.space.graph.Network;
-import repast.simphony.space.projection.Projection;
-import repast.simphony.ui.Imageable;
-import repast.simphony.valueLayer.ValueLayer;
-import repast.simphony.visualization.*;
-import repast.simphony.visualization.decorator.ProjectionDecorator3D;
-import repast.simphony.visualization.visualization2D.IDisplayLayer2D;
-import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
-import repast.simphony.visualization.visualization3D.style.Style3D;
-import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
-
-import javax.media.j3d.Behavior;
-import javax.media.j3d.Canvas3D;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.WindowEvent;
@@ -22,6 +14,31 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.media.j3d.Behavior;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import repast.simphony.space.graph.Network;
+import repast.simphony.space.projection.Projection;
+import repast.simphony.ui.Imageable;
+import repast.simphony.valueLayer.ValueLayer;
+import repast.simphony.visualization.AbstractDisplay;
+import repast.simphony.visualization.AddedRemovedLayoutUpdater;
+import repast.simphony.visualization.DisplayData;
+import repast.simphony.visualization.IDisplay;
+import repast.simphony.visualization.IDisplayLayer;
+import repast.simphony.visualization.IntervalLayoutUpdater;
+import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.LayoutUpdater;
+import repast.simphony.visualization.MovedLayoutUpdater;
+import repast.simphony.visualization.UpdateLayoutUpdater;
+import repast.simphony.visualization.decorator.ProjectionDecorator3D;
+import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
+import repast.simphony.visualization.visualization3D.style.Style3D;
+import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
+
+import com.sun.j3d.exp.swing.JCanvas3D;
 
 /**
  * Abstract base class for 3D displays.
@@ -326,5 +343,5 @@ public abstract class AbstractDisplay3D extends AbstractDisplay implements
     return initData;
   }
 
-  public abstract Canvas3D getCanvas();
+  public abstract JCanvas3D getCanvas();
 }
