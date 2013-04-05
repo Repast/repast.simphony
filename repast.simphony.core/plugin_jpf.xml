@@ -51,14 +51,35 @@
     <library id="velocity-1.4" path="lib/velocity-1.4.jar" type="code">
       <export prefix="*"/>
     </library>
-    <library id="opencsv" path="lib/opencsv-1.5.jar" type="code">
+    <library id="opencsv" path="lib/opencsv-2.3.jar" type="code">
       <export prefix="*"/>
     </library>
 
-    <library id="poi" path="lib/poi-3.6-20091214.jar" type="code">
+    <!-- poi related libs -->
+    <library id="poi" path="lib/poi-3.7-20101029.jar" type="code">
       <export prefix="*"/>
     </library>
 
+    <library id="poi-ooxml" path="lib/poi-ooxml-3.7-20101029.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="poi-ooxml-schemas" path="lib/poi-ooxml-schemas-3.7-20101029.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="dom4j" path="lib/dom4j-1.6.1.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="geronimo-stax" path="lib/geronimo-stax-api_1.0_spec-1.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="xmlbeans" path="lib/xmlbeans-2.3.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
     <!-- geotools libs -->
     <library id="gt-api-9.0.jar" path="lib/gt-api-9.0.jar" type="code">
       <export prefix="*"/>

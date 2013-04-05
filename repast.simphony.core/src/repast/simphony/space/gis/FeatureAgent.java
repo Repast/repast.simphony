@@ -326,12 +326,12 @@ public class FeatureAgent<T> implements SimpleFeature {
 		// this might be called after the agent is removed
 		// from a geography so we need to go through these
 		// hoops
-//		Geometry tmp = geography.getGeometry(agentObj);
-//		if (tmp == null)
-//			return (Geometry) geom.clone();
-//		else {
-//			geom = tmp;
-//		}
+		Geometry tmp = geography.getGeometry(agentObj);
+		if (tmp == null)
+			return (Geometry) geom.clone();
+		else {
+			geom = tmp;
+		}
 		return (Geometry) geom.clone();
 	}
 

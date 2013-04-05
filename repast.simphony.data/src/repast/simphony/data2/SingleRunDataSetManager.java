@@ -57,7 +57,7 @@ public class SingleRunDataSetManager extends AbstractDataSetManager {
     DataSetRegistry registry = (DataSetRegistry) runState.getFromRegistry(DataConstants.REGISTRY_KEY);
     for (DataSetBuilder<?> builder : builders.values()) {
       DataSet dataSet = builder.create();
-      addDataSet(dataSet, builder.getScheduleParameters());
+      addDataSet(dataSet, builder.getScheduleParameters(), builder.isScheduleAtEnd());
       for (DataSink sink : dataSet.sinks()) {
         if (sink instanceof FileDataSink) {
           registry.addFileDataSink((FileDataSink)sink);

@@ -51,8 +51,9 @@ public interface DataSetManager {
    *          the DataSet to add
    * @param scheduleParams
    *          the scheduling info for recording this dataset
+   * @param whether or not to record the data at the end of the sim
    */
-  void addDataSet(DataSet dataSet, ScheduleParameters scheduleParams);
+  void addDataSet(DataSet dataSet, ScheduleParameters scheduleParams, boolean atEnd);
 
   /**
    * Notifies this DataSetManager that the set of batch runs has started.
