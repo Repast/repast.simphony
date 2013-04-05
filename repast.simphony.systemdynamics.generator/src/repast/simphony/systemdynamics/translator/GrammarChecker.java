@@ -45,8 +45,8 @@ public class GrammarChecker {
 
 	public OperationResult checkGrammar() {
 
-		System.out
-				.println("######################## check Grammar #############################");
+//		System.out
+//				.println("######################## check Grammar #############################");
 
 		OperationResult or = new OperationResult();
 		String type = determineEquationType(or);
@@ -95,15 +95,15 @@ public class GrammarChecker {
 		while (pos.value() < tokens.size()) {
 			int posIn = pos.value();
 			String token = tokens.get(pos.value());
-			System.out.println("GCin: " + token + " LkBinOP: "
-					+ lookingForBinaryOperator.value() + " pos = "
-					+ pos.value());
+//			System.out.println("GCin: " + token + " LkBinOP: "
+//					+ lookingForBinaryOperator.value() + " pos = "
+//					+ pos.value());
 			grammerCheck(token, lhs, lookingForBinaryOperator,
 					lookingForArgumentSeparator, processingFunctionInvocation,
 					previousToken, pos, openParens, or);
-			System.out.println("###GCout: LkBinOP: "
-					+ lookingForBinaryOperator.value() + " pos = "
-					+ pos.value());
+//			System.out.println("###GCout: LkBinOP: "
+//					+ lookingForBinaryOperator.value() + " pos = "
+//					+ pos.value());
 			int posOut = pos.value();
 			calls++;
 			if (posIn == posOut) {
@@ -129,7 +129,7 @@ public class GrammarChecker {
 		or.clear();
 
 		if (token.startsWith(ARRAY)) {
-			System.out.println("Array " + token);
+//			System.out.println("Array " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -145,7 +145,7 @@ public class GrammarChecker {
 			lookingForBinaryOperator.setValue(true);
 			return;
 		} else if (token.startsWith(LOOKUP)) {
-			System.out.println("Lookup " + token);
+//			System.out.println("Lookup " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -166,7 +166,7 @@ public class GrammarChecker {
 			return;
 
 		} else if (token.startsWith(FUNCTION)) {
-			System.out.println("Function " + token);
+//			System.out.println("Function " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -187,7 +187,7 @@ public class GrammarChecker {
 			return;
 
 		} else if (token.startsWith(SCALAR)) {
-			System.out.println("Scalar " + token);
+//			System.out.println("Scalar " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -204,7 +204,7 @@ public class GrammarChecker {
 			return;
 
 		} else if (token.equals(LEFT_PAREN)) {
-			System.out.println("LeftParen " + token);
+//			System.out.println("LeftParen " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -220,7 +220,7 @@ public class GrammarChecker {
 			return;
 
 		} else if (token.equals(RIGHT_PAREN)) { // this is a grouping paren
-			System.out.println("RightParen " + token);
+//			System.out.println("RightParen " + token);
 			if (lookingForBinaryOperator.value()) {
 
 				// If this paren matches an open paren, we are OK
@@ -240,14 +240,14 @@ public class GrammarChecker {
 			pos.add(1);
 			return;
 		} else if (token.equals(COMMA)) {
-			System.out.println("Comma " + token);
+//			System.out.println("Comma " + token);
 			if (lookingForBinaryOperator.value() && !processingFunctionInvocation.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 		} else if (Parser.isOperator(token)) {
-			System.out.println("Operator " + token);
+//			System.out.println("Operator " + token);
 			if (!lookingForBinaryOperator.value()) {
 
 				if (Parser.isBinaryOperator(token)) {
@@ -255,7 +255,7 @@ public class GrammarChecker {
 							+ token + " in pos " + pos.value());
 					return;
 				} else if (Parser.isUnaryOperator(token)) {
-					System.out.println("Unary Operator OK" + token);
+//					System.out.println("Unary Operator OK" + token);
 					previousToken = token;
 					pos.add(1);
 					lookingForBinaryOperator.setValue(false);
@@ -270,7 +270,7 @@ public class GrammarChecker {
 			}
 
 		} else if (Parser.isNumber(token)) {
-			System.out.println("Number " + token);
+//			System.out.println("Number " + token);
 			if (lookingForBinaryOperator.value()) {
 				or.setErrorMessage("Looking for operator found " + token
 						+ " in pos " + pos.value());
@@ -286,17 +286,17 @@ public class GrammarChecker {
 			lookingForBinaryOperator.setValue(true);
 			return;
 		} else if (Parser.isQuotedString(token)) {
-			System.out.println("Quoted String " + token);
+//			System.out.println("Quoted String " + token);
 			previousToken = token;
 			pos.add(1);
 			lookingForBinaryOperator.setValue(true);
 		} else if (Parser.isLocalVariable(token)) {
-			System.out.println("Local variable " + token);
+//			System.out.println("Local variable " + token);
 			previousToken = token;
 			pos.add(1);
 			lookingForBinaryOperator.setValue(true);
 		} else {
-			System.out.println("Unknown token type" + token);
+//			System.out.println("Unknown token type" + token);
 			or.setErrorMessage("Unknown token type " + token);
 		}
 	}
@@ -325,7 +325,7 @@ public class GrammarChecker {
 		}
 		openParens.add(1);
 		localOpenParen++;
-		System.out.println("Left Paren "+token+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+//		System.out.println("Left Paren "+token+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
 		// point to first argument
 		pos.add(1);
 
@@ -334,7 +334,7 @@ public class GrammarChecker {
 			// look ahead for a left paren
 			if (token.equals(LEFT_PAREN)) {
 				localOpenParen++;
-				System.out.println("consumeFunc ahead LeftParen"+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+//				System.out.println("consumeFunc ahead LeftParen"+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
 			}
 			grammerCheck(token, lhs, lookingForBinaryOperator,
 					lookingForArgumentSeparator, processingFunctionInvocation,
@@ -354,19 +354,19 @@ public class GrammarChecker {
 				}
 				openParens.add(-1);
 				localOpenParen--;
-				System.out.println("Right Paren "+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+//				System.out.println("Right Paren "+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
 				
 				// found closing paren
 //				if (openParens.value() == 0) {
 				if (localOpenParen == 0) {
 					done = true;
-					System.out.println("ends function");
+//					System.out.println("ends function");
 					processingFunctionInvocation.setValue(false);
 					return;
 				}
 				pos.add(1);
 			} else if (tokens.get(pos.value()).equals(COMMA)) {
-				System.out.println("Comma ");
+//				System.out.println("Comma ");
 				// need to grab another function argument
 				pos.add(1);
 				lookingForArgumentSeparator.setValue(false);
@@ -528,15 +528,15 @@ public class GrammarChecker {
 	private boolean patternMatch(String[] pattern, List<String> tokens,
 			MutableInteger pos, OperationResult or) {
 
-		System.out.println("patternMatch: pos = " + pos.value());
+//		System.out.println("patternMatch: pos = " + pos.value());
 
 		for (int i = 0; i < pattern.length; i++) {
 			if (pattern[i].equals("#")) {
 				if (!Parser.isNumber(tokens.get(pos.value()))) {
 					or.setErrorMessage("Invalid numeric value "
 							+ tokens.get(pos.value()));
-					System.out.println("Invalid numeric value "
-							+ tokens.get(pos.value()));
+//					System.out.println("Invalid numeric value "
+//							+ tokens.get(pos.value()));
 					return false;
 				}
 			} else {
@@ -544,9 +544,9 @@ public class GrammarChecker {
 					or.setErrorMessage("Invalid token "
 							+ tokens.get(pos.value()) + " expecting "
 							+ pattern[i]);
-					System.out.println("Invalid token "
-							+ tokens.get(pos.value()) + " expecting "
-							+ pattern[i]);
+//					System.out.println("Invalid token "
+//							+ tokens.get(pos.value()) + " expecting "
+//							+ pattern[i]);
 					return false;
 				}
 			}

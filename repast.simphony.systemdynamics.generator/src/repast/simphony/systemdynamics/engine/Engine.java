@@ -73,7 +73,9 @@ public class Engine {
 		boolean result = getTranslator().validateGenerateMDL(mdlFile, generateCode, messages);
 		if (result) {
 			messages.add("Model syntax OK\n");
-			messages.add("Model units consistent");
+			messages.add("Model units consistent\n");
+			if (generateCode)
+				messages.add("Java source code generated");
 		}
 		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
 		return result;

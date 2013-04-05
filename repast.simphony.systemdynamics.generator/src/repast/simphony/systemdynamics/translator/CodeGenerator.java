@@ -1122,8 +1122,8 @@ public class CodeGenerator {
 	}
 
 	
-	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
-	equation.printTokensOneLine();
+//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
+//	equation.printTokensOneLine();
 	
 	generateLHScode(equation, ears);
 	generateRHScode(equation, ears);

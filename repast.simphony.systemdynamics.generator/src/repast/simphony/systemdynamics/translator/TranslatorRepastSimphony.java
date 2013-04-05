@@ -487,8 +487,8 @@ public class TranslatorRepastSimphony extends Translator {
     	//	ArrayManager.populateArraySubscriptSpace();
     	//	UnitsManager.performUnitsConsistencyCheck(equations, "./ConsistencyResults.xml");
 
-    	generateCausalTrees(sdObjectManager);
-    	generatePolarityCode(equations);
+//    	generateCausalTrees(sdObjectManager);
+//    	generatePolarityCode(equations);
 
 
     	if (equations != null) {
