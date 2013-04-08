@@ -6,13 +6,16 @@ import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.StereoOptionSceneController;
 import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.render.Renderable;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -53,6 +56,9 @@ import repast.simphony.visualization.gis3D.style.EdgeStyleGIS3D;
 import repast.simphony.visualization.gis3D.style.StyleGIS3D;
 import repast.simphony.visualization.network.NetworkDisplayLayerGIS3D;
 
+import com.jogamp.common.os.Platform;
+import com.jogamp.common.os.Platform.OSType;
+
 public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
   private static final String ANAGLYPH_ICON = "3d_smiley.png";
@@ -73,7 +79,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   private Map<Class, AbstractDisplayLayerGIS3D> classStyleMap;
   private Map<Object, AbstractDisplayLayerGIS3D> objectStyleMap;
 
-  private WorldWindowGLCanvas wwglCanvas;
+  private WorldWindow canvas;
   private String displayMode = AVKey.STEREO_MODE_NONE;
   private LayerPanel layerPanel;
 
@@ -87,7 +93,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     this.layoutUpdater = new UpdateLayoutUpdater(layout);
 
     Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
-    		StereoOptionSceneController.class.getName());
+        StereoOptionSceneController.class.getName());
 
     // TODO explore "flat world"
     // Configuration.setValue(AVKey.GLOBE_CLASS_NAME,
@@ -97,14 +103,19 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
     model = new BasicModel();
     // model.getLayers().add(new WorldBordersMetacartaLayer());
-    wwglCanvas = new WorldWindowGLCanvas();
-    wwglCanvas.setModel(model);
-
-    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
-    asc.setStereoMode(this.displayMode);
+    if (Platform.getOSType() == Platform.OSType.MACOS) {
+      // use the slower swing version to avoid problems on 
+      // OSX with jogl 2.0 under Java7
+      System.out.println("jpanel");
+      canvas = new WorldWindowGLJPanel();
+    } else {
+      canvas = new WorldWindowGLCanvas();
+    }
+    canvas.setModel(model);
+    StereoSceneController asc = (StereoSceneController) canvas.getSceneController();
+    asc.setStereoMode(displayMode);
 
     initListener();
-
   }
 
   /**
@@ -127,7 +138,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
    * Create the select listener.
    */
   private void initListener() {
-    wwglCanvas.addSelectListener(new SelectListener() {
+    canvas.addSelectListener(new SelectListener() {
       public void selected(SelectEvent event) {
         if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
           if (event.hasObjects()) {
@@ -153,7 +164,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   public void registerStyle(Class clazz, StyleGIS3D style) {
     AbstractDisplayLayerGIS3D layer = classStyleMap.get(clazz);
     if (layer == null) {
-      layer = new StyledMapLayer3D(clazz.getSimpleName(), style, wwglCanvas);
+      layer = new StyledMapLayer3D(clazz.getSimpleName(), style, canvas);
       classStyleMap.put(clazz, layer);
     } else {
       ((StyledMapLayer3D) layer).setStyle(style);
@@ -163,7 +174,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
   public void registerNetworkStyle(Network net, EdgeStyleGIS3D style) {
     AbstractDisplayLayerGIS3D layer = objectStyleMap.get(net);
     if (layer == null) {
-      layer = new NetworkDisplayLayerGIS3D(net, style, this, wwglCanvas, net.getName());
+      layer = new NetworkDisplayLayerGIS3D(net, style, this, canvas, net.getName());
       objectStyleMap.put(net, layer);
     } else {
       ((NetworkDisplayLayerGIS3D) layer).setStyle(style);
@@ -183,21 +194,21 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     });
 
     panel.setLayout(new BorderLayout());
-    wwglCanvas.setPreferredSize(new Dimension(800, 600));
+    ((Component) canvas).setPreferredSize(new Dimension(800, 600));
 
     JPanel wwPanel = new JPanel(new BorderLayout());
     wwPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
-    wwPanel.add(wwglCanvas, BorderLayout.CENTER);
+    wwPanel.add(((Component) canvas), BorderLayout.CENTER);
 
     panel.add(wwPanel, BorderLayout.CENTER);
 
     StatusBar statusBar = new StatusBar();
-    statusBar.setEventSource(wwglCanvas);
+    statusBar.setEventSource(canvas);
     panel.add(statusBar, BorderLayout.PAGE_END);
 
     JPanel leftPanel = new JPanel(new BorderLayout());
 
-    layerPanel = new LayerPanel(wwglCanvas);
+    layerPanel = new LayerPanel(canvas);
     leftPanel.add(layerPanel, BorderLayout.WEST);
 
     panel.add(leftPanel, BorderLayout.WEST);
@@ -267,7 +278,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
   public synchronized void render() {
 
-    if (doRender && wwglCanvas.isVisible()) {
+    if (doRender && ((Component) canvas).isVisible()) {
 
       for (AbstractDisplayLayerGIS3D layer : classStyleMap.values()) {
         layer.applyUpdates();
@@ -279,9 +290,9 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
       // Performance improvement. Null pick point skips the doPick() method on
       // the RenderableLayer. Set pick point to null for our rendering
       // since worldwind will update it on mouse input anyway.
-      wwglCanvas.getSceneController().setPickPoint(null);
+      canvas.getSceneController().setPickPoint(null);
 
-      wwglCanvas.redraw();
+      canvas.redraw();
       doRender = false;
     }
   }
@@ -449,10 +460,10 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     else
       displayMode = AVKey.STEREO_MODE_NONE;
 
-    StereoSceneController asc = (StereoSceneController) wwglCanvas.getSceneController();
+    StereoSceneController asc = (StereoSceneController) canvas.getSceneController();
     asc.setStereoMode(this.displayMode);
 
-    wwglCanvas.redraw();
+    canvas.redraw();
   }
 
   @Override
@@ -474,7 +485,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
     // Add the wms button
     JButton wmsButton = new JButton(new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        new WMSLayerManagerFrame(wwglCanvas, layerPanel);
+        new WMSLayerManagerFrame(canvas, layerPanel);
       }
     });
 
@@ -485,7 +496,7 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
     // Add a Gazetter
     try {
-      bar.add(new GazetteerPanel(wwglCanvas, null));
+      bar.add(new GazetteerPanel(canvas, null));
     } catch (IllegalAccessException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -505,9 +516,5 @@ public class DisplayGIS3D extends AbstractDisplay implements WindowListener {
 
   public Map<Class, AbstractDisplayLayerGIS3D> getClassStyleMap() {
     return this.classStyleMap;
-  }
-
-  public WorldWindowGLCanvas getWwglCanvas() {
-    return this.wwglCanvas;
   }
 }

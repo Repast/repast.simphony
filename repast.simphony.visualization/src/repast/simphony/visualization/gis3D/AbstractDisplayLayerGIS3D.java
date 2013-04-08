@@ -1,8 +1,8 @@
 package repast.simphony.visualization.gis3D;
 
 import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.DrawContext;
@@ -32,7 +32,7 @@ public abstract class AbstractDisplayLayerGIS3D extends RenderableLayer {
   protected Map<Object, Renderable> visualItemMap;
   protected Map<Renderable, Object> shapeToObjectMap;
 
-  protected WorldWindowGLCanvas wwglCanvas;
+  protected WorldWindow canvas;
   protected Model model;
   protected Geography geography;
   protected Set<Object> addedObjects;
@@ -47,8 +47,8 @@ public abstract class AbstractDisplayLayerGIS3D extends RenderableLayer {
 
   protected abstract RenderableShape createVisualItem(Object o);
 
-  protected void init(String name, WorldWindowGLCanvas wwglCanvas) {
-    this.wwglCanvas = wwglCanvas;
+  protected void init(String name, WorldWindow wwglCanvas) {
+    this.canvas = wwglCanvas;
 
     setName(name);
 
