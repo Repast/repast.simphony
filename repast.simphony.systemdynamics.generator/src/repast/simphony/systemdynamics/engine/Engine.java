@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
@@ -23,6 +25,8 @@ public class Engine {
 	private String currentModel;
 //	private SystemDynamicsObjectManager sdObjectManager;
 	private TranslatorRepastSimphony translator;
+	private IProject project;
+	private IProgressMonitor progressMonitor;
 
 
 	public TranslatorRepastSimphony getTranslator() {
@@ -40,8 +44,12 @@ public class Engine {
 		System.out.println("Engine created");
 	}
 	
-	public Engine(SystemModel systemModel) {
+	public Engine(SystemModel systemModel, IProject project, IProgressMonitor progressMonitor ) {
 		this();
+		this.project = project;
+		this.progressMonitor = progressMonitor;
+		translator = new TranslatorRepastSimphony(project, progressMonitor);
+		
 	}
 	
 	public void generateCodeForRSD(SystemModel systemModel) {
@@ -52,8 +60,12 @@ public class Engine {
 		boolean result = getTranslator().validateGenerateRSD(systemModel, generateCode, messages);
 		if (result) {
 			messages.add("Model syntax OK\n");
-			messages.add("Model units consistent");
+			messages.add("Model units consistent\n");
+			if (generateCode)
+				messages.add("Java source code generated");
+			
 		}
+		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
 		return result;
 	}
 	
@@ -61,8 +73,11 @@ public class Engine {
 		boolean result = getTranslator().validateGenerateMDL(mdlFile, generateCode, messages);
 		if (result) {
 			messages.add("Model syntax OK\n");
-			messages.add("Model units consistent");
+			messages.add("Model units consistent\n");
+			if (generateCode)
+				messages.add("Java source code generated");
 		}
+		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
 		return result;
 	}
 	public SystemModel loadMDL(String filename) {

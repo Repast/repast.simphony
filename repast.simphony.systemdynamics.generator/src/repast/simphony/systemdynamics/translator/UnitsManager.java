@@ -53,7 +53,7 @@ public class UnitsManager {
     		}
 
     		equationCount++;
-    		System.out.println("===================================");
+//    		System.out.println("===================================");
 
     		List<String> units = eqn.getEquationUnits();
 
@@ -62,7 +62,7 @@ public class UnitsManager {
     			errors.put(eqn.getLhs(), eqn);
     			consistent = false;
     		} else {
-    			System.out.println("!!!YES!!! CONSISTENT UNITS: "+eqn.getCleanEquation());
+//    			System.out.println("!!!YES!!! CONSISTENT UNITS: "+eqn.getCleanEquation());
     		}
     	}
     	unitConsistencyXMLWriter.setEquationCount(equationCount);
@@ -182,11 +182,12 @@ public class UnitsManager {
 
     	List<String> unitsExpanded = expandUnits(units);
     	unitsExpanded = addFunctionUnits(unitsExpanded);
-    	eqn.printTokensOneLine();
-    	printUnits(units);
-    	System.out.println("++++++++++++++++++++++++++++++++");
+
     	boolean isValid = valid(unitsExpanded, eqn);
     	if (!isValid) {
+        	eqn.printTokensOneLine();
+        	printUnits(units);
+        	System.out.println("++++++++++++++++++++++++++++++++");
     		printUnitsIndented(unitsExpanded, eqn);
     	}
     	return isValid;

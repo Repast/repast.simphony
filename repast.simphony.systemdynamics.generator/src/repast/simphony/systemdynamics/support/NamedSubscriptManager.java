@@ -42,10 +42,10 @@ public class NamedSubscriptManager {
 
 	public  List<String> getValuesFor(String subscript) {
 		List<String> al = new ArrayList<String>();
-		if (!isNamedSubscript(subscript)) {
+		if (!isNamedSubscript(subscript.replace("!", ""))) {
 			al.add(subscript);
 		} else {
-			for (String val : namedSubscripts.get(subscript).getValues()) {
+			for (String val : namedSubscripts.get(subscript.replace("!", "")).getValues()) {
 				al.addAll(getValuesFor(val));
 			}
 		}
@@ -61,7 +61,7 @@ public class NamedSubscriptManager {
 	}
 
 	public  boolean isNamedSubscript(String subscript) {
-		if (namedSubscripts.containsKey(subscript))
+		if (namedSubscripts.containsKey(subscript.replace("!", "")))
 			return true;
 		else
 			return false;

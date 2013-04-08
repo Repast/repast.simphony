@@ -32,8 +32,7 @@ public class UnitExpression {
 		this.equation = equation;
 		lhsSimplifiedUnit = new SimplifiedUnit(this.lhs);
 		//	lhsSimplifiedUnit.print();
-		if (equation.getVensimEquation().startsWith("ident agence[agence]=agence"))
-			System.out.println("ident agence[agence]=agence");
+		
 		simplifyRHS(this.rhs);
 	}
 
@@ -359,7 +358,7 @@ public class UnitExpression {
 						if (o instanceof SimplifiedUnit) {
 							sus[i] = (SimplifiedUnit) o;
 							//				System.out.println("su[i] = "+sus[i]);
-							System.out.println("ArgUnit "+i+" = "+argUnits[i]+" "+sus[i].formUnit());
+//							System.out.println("ArgUnit "+i+" = "+argUnits[i]+" "+sus[i].formUnit());
 							// this needs work
 							if (badFunctionArgumentUnits(argUnits[i], sus[i])) {
 								Stack<Object> reverse = reverseOrder(stack);
@@ -541,7 +540,7 @@ public class UnitExpression {
 		}
 
 
-		printUnitExpression();
+//		printUnitExpression();
 		if (equation.isArrayInitialization()) {
 			// is this really true?
 			valid = true;

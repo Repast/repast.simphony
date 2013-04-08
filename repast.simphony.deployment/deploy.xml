@@ -433,6 +433,22 @@
 				<include name="**/*.class" />
 			</fileset>
 			
+			<!--            MJB      -->
+			
+			<fileset dir="../repast.simphony.systemdynamics.generator/src" casesensitive="no">
+							<include name="**/*.java" />
+							<include name="**/*.groovy" />
+						</fileset>
+					<!--	<fileset dir="../repast.simphony.systemsdynamics/test" casesensitive="no">
+							<include name="**/*.java" />
+							<include name="**/*.groovy" />
+						</fileset>-->
+						<fileset dir="../repast.simphony.systemdynamics.generator/bin" casesensitive="no">
+							<include name="**/*.class" />
+						</fileset>
+			
+			<!--            MJB      -->
+			
 			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
 							<include name="**/*.class" />
 						</fileset>

@@ -17,6 +17,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor.DataSetType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.systemdynamics.support.ArrayReference;
+import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
 
 import com.thoughtworks.xstream.XStream;
@@ -49,15 +50,20 @@ public class NativeDataTypeManager {
 		arrayDeclarations = new HashSet<ArrayDeclaration>();
 	}
 	
-	public  OperationResult validateScalarReference(String token) {
+	public  OperationResult validateScalarReference(Map<String, Equation> equations, Equation equation, MutableInteger pos, MutableBoolean lhs) {
 		OperationResult or = new OperationResult();
+		String token = equation.getTokens().get(pos.value());
 		String original = getOriginalName(token);
-		if (scalars.contains(original))
+		if (equations.containsKey(original))
 			return or;
 		
-		or.setErrorMessage("Scaler not found - "+token);
+		or.setErrorMessage("Scalar not found - "+token);
 		return or;
 		
+	}
+	
+	public NativeArray getNativeArray(String array) {
+		return arrays.get(array);
 	}
 
 	public  void addVariable(Equation equation, String variable, String dataType) {
@@ -589,7 +595,7 @@ public class NativeDataTypeManager {
 			e.printStackTrace();
 		}
 
-		String ScenarioDirectory = translator.getDestinationDirectory()+"/" + objectName + ".rs/";
+		String ScenarioDirectory = translator.getScenarioDirectory();
 
 		serialize(dsd, ScenarioDirectory+"repast.simphony.action.data_set_0.xml");
 	}
@@ -612,23 +618,47 @@ public class NativeDataTypeManager {
 	}
 
 	private  String getInitialTimeVariable() {
-		for (String s : SYSTEM_INITIAL)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_INITIAL) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
 		return "ERROR_INITIAL";
 	}
 
 	private  String getFinalTimeVariable() {
-		for (String s : SYSTEM_FINAL)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_FINAL) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
 		return "ERROR_FINAL";
 	}
 
 	private  String getTimeStepVariable() {
-		for (String s : SYSTEM_TIMESTEP)
-			if (scalars.contains(s))
-				return makeLegal(s);
+		Iterator<String> iter = scalars.iterator();
+		while (iter.hasNext()) {
+			String s = iter.next();
+			for (String si : SYSTEM_TIMESTEP) {
+				if (si.equalsIgnoreCase(s)) {
+					return makeLegal(s);
+				}
+			}
+		}
+		
+		
 		return "ERROR_TIMESTEP";
 	}
 

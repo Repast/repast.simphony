@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import repast.simphony.systemdynamics.support.MutableBoolean;
+import repast.simphony.systemdynamics.support.MutableInteger;
+
 public class FunctionManager {
 
 	private Map<String, FunctionDescription> allFunctions;
@@ -25,8 +28,10 @@ public class FunctionManager {
 		load();
 	}
 
-	public OperationResult validateFunctionRerference(String token) {
+	public OperationResult validateFunctionReference(Map<String, Equation> equations, Equation equation, MutableInteger pos, MutableBoolean lhs) {
 		OperationResult or = new OperationResult();
+		List<String> tokens = equation.getTokens();
+		String token = tokens.get(pos.value());
 		FunctionDescription fd = getDescription(token);
 		if (fd != null)
 			return or;

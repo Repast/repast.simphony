@@ -19,6 +19,6 @@ public class ReaderConstants {
     public static String OUTPUT_DIRECTORY;
     public static String GENERATED_CODE_DIRECTORY;
     public static String PACKAGE;
-    public static String SUPPORT;
+    public static final String SUPPORT = "repast.simphony.systemdynamics.support";
 
 }

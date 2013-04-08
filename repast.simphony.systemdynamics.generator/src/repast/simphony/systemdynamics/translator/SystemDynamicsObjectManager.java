@@ -50,8 +50,8 @@ public class SystemDynamicsObjectManager {
 		    String var = iter.next();
 		    String screenName = getScreenName(var);
 		    if (!incomingArrows.contains(screenName)) {
-			System.out.println("\n\n###Validate###: "+eqn.getVensimEquation());
-			System.out.println("###Validate###: "+sdo.getScreenName()+" add "+screenName);
+//			System.out.println("\n\n###Validate###: "+eqn.getVensimEquation());
+//			System.out.println("###Validate###: "+sdo.getScreenName()+" add "+screenName);
 			incomingArrows.add(screenName);
 			addedScreenNames.add(screenName);
 		    }
