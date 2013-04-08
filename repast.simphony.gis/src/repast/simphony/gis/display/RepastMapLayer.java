@@ -17,8 +17,6 @@ import org.geotools.styling.Style;
 
 public class RepastMapLayer extends FeatureLayer {
 
-	private boolean dynamic;
-
 	public RepastMapLayer(FeatureCollection arg0, Style arg1, String arg2) {
 		super(arg0, arg1, arg2);
 	}
@@ -33,14 +31,6 @@ public class RepastMapLayer extends FeatureLayer {
 
 	public RepastMapLayer(FeatureSource arg0, Style arg1) {
 		super(arg0, arg1);
-	}
-
-	public boolean isDynamic() {
-		return dynamic;
-	}
-
-	public void setDynamic(boolean dynamic) {
-		this.dynamic = dynamic;
 	}
 
 	List<MapLayerListener> listenerList = new ArrayList<MapLayerListener>();

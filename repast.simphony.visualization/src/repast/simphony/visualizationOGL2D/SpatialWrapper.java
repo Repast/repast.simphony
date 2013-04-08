@@ -5,7 +5,7 @@ package repast.simphony.visualizationOGL2D;
 
 import java.util.ArrayList;
 
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.vecmath.Point3f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -91,7 +91,7 @@ public class SpatialWrapper extends VComposite implements TextureRenderable {
    * saf.v3d.render.RenderState)
    */
   @Override
-  public void draw(GL gl, RenderState state) {
+  public void draw(GL2 gl, RenderState state) {
     getChild().draw(gl, state);
   }
 

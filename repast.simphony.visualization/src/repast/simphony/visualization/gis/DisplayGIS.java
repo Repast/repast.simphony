@@ -55,6 +55,7 @@ import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.DisplayEditorLifecycle;
 import repast.simphony.visualization.DisplayEvent;
 import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.ProbeEvent;
 import repast.simphony.visualization.editor.gis.SelectionDecorator;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -199,18 +200,22 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     layerOrder.put(order, source);
   }
 
+  @Override
   protected void addObject(Object o) {
     updater.agentAdded(o);
   }
 
+  @Override
   protected void moveObject(Object o) {
     updater.agentMoved(o);
   }
 
+  @Override
   protected void removeObject(Object o) {
     updater.agentRemoved(o);
   }
 
+  @Override
   public void destroy() {
     super.destroy();
     for (Projection proj : initData.getProjections()) {
@@ -268,7 +273,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
         objs.add(obj);
     }
     if (objs.size() > 0)
-      probeSupport.fireProbeEvent(this, objs);
+      probeSupport.fireProbeEvent(this, objs, ProbeEvent.Type.REGION);
   }
 
   public void setLayout(Layout layout) {

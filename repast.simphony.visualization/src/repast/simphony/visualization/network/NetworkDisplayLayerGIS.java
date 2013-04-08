@@ -56,7 +56,7 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 //		}
 		
 		net.addProjectionListener(this);
-		setDynamic(true);
+		
 		this.geography = geography;
 		this.net = net;
 		

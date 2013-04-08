@@ -43,7 +43,7 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
     this.gui = gui;
     gui.addViewListener(this);
   }
-  
+
   /**
    * Adds a PPUICreator that will be used to create UIs for probed properties.
    * 
@@ -162,14 +162,20 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
   public void objectProbed(ProbeEvent evt) {
     List<?> objs = evt.getProbedObjects();
     int numElements = objs.size();
-    if (numElements > 0){
-    	probeObject(objs.get(numElements-1));
+    if (evt.getType() == ProbeEvent.Type.POINT) {
+      if (numElements > 0) {
+        probeObject(objs.get(numElements - 1));
+      }
+    } else if (evt.getType() == ProbeEvent.Type.REGION) {
+      for (Object obj : objs) {
+        probeObject(obj);
+      }
     }
   }
 
   /**
-   * Gets whether or no this ProbeManager has an PPUICreatorFactory
-   * registered for the specified class.
+   * Gets whether or no this ProbeManager has an PPUICreatorFactory registered
+   * for the specified class.
    * 
    * @param probedObjectClass
    * @return true if there is a PPUICreatorFactory otherwise false.

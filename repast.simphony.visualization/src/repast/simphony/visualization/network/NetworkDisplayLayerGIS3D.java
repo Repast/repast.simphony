@@ -1,10 +1,7 @@
 package repast.simphony.visualization.network;
 
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.LatLon;
-
-import java.awt.Color;
-
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.projection.ProjectionEvent;
@@ -12,7 +9,6 @@ import repast.simphony.space.projection.ProjectionListener;
 import repast.simphony.visualization.gis3D.AbstractDisplayLayerGIS3D;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
 import repast.simphony.visualization.gis3D.EdgeCylinder;
-import repast.simphony.visualization.gis3D.Material;
 import repast.simphony.visualization.gis3D.RenderableShape;
 import repast.simphony.visualization.gis3D.WWUtils;
 import repast.simphony.visualization.gis3D.style.DefaultEdgeStyleGIS3D;
@@ -29,7 +25,7 @@ public class NetworkDisplayLayerGIS3D extends AbstractDisplayLayerGIS3D implemen
 	private boolean isDirected = false;
 
 	public NetworkDisplayLayerGIS3D(Network<?> net, EdgeStyleGIS3D style, 
-			DisplayGIS3D display, WorldWindowGLCanvas wwglCanvas, String name) {
+			DisplayGIS3D display, WorldWindow wwglCanvas, String name) {
 
 		if (style == null) 
 			this.style = new DefaultEdgeStyleGIS3D();

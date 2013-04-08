@@ -9,7 +9,8 @@ Bundle-ClassPath: lib/cytoscape-graph-layout.jar,
  lib/phoebe.jar,
  lib/batik.jar,
  lib/xml-apis-ext.jar,
- lib/jung-visualization-2.0.1.jar
+ lib/jung-visualization-2.0.1.jar,
+ lib/worldwindx.jar
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.scenario,
@@ -18,7 +19,8 @@ Require-Bundle: repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
  repast.simphony.gis,
- org.codehaus.groovy;bundle-version="1.7.0"
+ org.codehaus.groovy;bundle-version="1.7.0",
+ libs.ext;bundle-version="2.0.1"
 Bundle-Vendor: %providerName
 Export-Package: org.apache.batik,
  org.apache.batik.anim,

@@ -20,7 +20,6 @@ import org.geotools.map.event.MapLayerEvent;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgent;
@@ -30,45 +29,51 @@ import simphony.util.ThreadUtilities;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Handles the updating of a DisplayGIS w/r to agent adding, moving and removal.
  * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class Updater {
 
   // used to synchronize add features to a feature collection
   // that exists in a maplayer and drawing the map layers
-  private Lock addFeaturesLock = new ReentrantLock();
   private Lock updateLock = new ReentrantLock();
 
   private Geography geog;
-  
+    
   // Note that DefaultFeatureCollection should be used to store an in memory
   //  FeatureCollection in the Geotools 9.0 API
   private Map<Class, DefaultFeatureCollection> featureMap = 
   		new HashMap<Class, DefaultFeatureCollection>();
-//  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
-  private Set<FeatureAgent> featureAgentsToAdd = new HashSet<FeatureAgent>();
   
+  // Map the object (agent) to the FeatureAgent instance that is displayed
+  private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
+  
+  // The FeatureAgent objects to be added/removed to/from the FeatureCollection
+  private Set<FeatureAgent> featureAgentsToAdd = new HashSet<FeatureAgent>();
+  private Set<FeatureAgent> featureAgentsToRemove = new HashSet<FeatureAgent>();
+  
+  // The actual agents to be added / removed
   private Set<Object> agentsToAdd = new HashSet<Object>();
   private Set<Object> agentsToRemove = new HashSet<Object>();
+  
   private Map<Class, DefaultFeatureAgentFactory> factoryMap;
   private Map<Class, DefaultFeatureAgentFactory> renderMap;
   private Map<String, RepastMapLayer> layerMap = new HashMap<String, RepastMapLayer>();
   private Map<FeatureSource, Layer> featureLayerMap = new HashMap<FeatureSource, Layer>();
-  private Set<Class> updateClasses = new HashSet<Class>();
+
   private Map<Integer, Object> layerOrder;
-  // maps the original geometry of a object to
-  // the object. This is necessary because GT renderer
-  // seems to render with only the orig geometry.
-  private Map<Object, Geometry> origGeomMap = new HashMap<Object, Geometry>();
+
+  // maps the original geometry of a object to the object. This is necessary 
+  // because GT renderer seems to render with only the orig geometry.
+//  private Map<Object, Geometry> origGeomMap = new HashMap<Object, Geometry>();
   private boolean addRender = true;
-  private boolean updateRender = true, reorder = false;
+  private boolean reorder = false;
   private Styler styler;
-  private CoordinateUpdater coordUpdater = new CoordinateUpdater();
+//  private CoordinateUpdater coordUpdater = new CoordinateUpdater();
 
   public Updater(MapContent mapContext, Geography geog, Styler styler,
       List<FeatureSource> featureSources, Map<Integer, Object> layerOrder) {
@@ -106,6 +111,10 @@ public class Updater {
     	Class<? extends Object> clazz = obj.getClass();
       DefaultFeatureAgentFactory fac = factoryMap.get(clazz);
       if (fac == null) {
+      	
+      	// TODO Geotools - The FeatureAgentFactory needs to be specific to this display
+      	//      Store it in the map with a different key...
+      	System.out.println("Updater.addAgents() > " + clazz.getName());
 
         fac = finder.getFeatureAgentFactory(clazz, geog.getGeometry(obj).getClass(), geog.getCRS());
         factoryMap.put(clazz, fac);
@@ -118,31 +127,31 @@ public class Updater {
       }
       renderMap.put(clazz, fac);
       FeatureAgent fa = fac.getFeature(obj, geog);
-//      agentMap.put(obj, fa);
+      agentMap.put(obj, fa);
       featureAgentsToAdd.add(fa);
-      origGeomMap.put(obj, fa.getDefaultGeometry());
+//      if (fa.getDefaultGeometry() == null)
+//      origGeomMap.put(obj, fa.getDefaultGeometry());
     }
 
     agentsToAdd.clear();
   }
 
-  private void resetFactories() {
-    for (DefaultFeatureAgentFactory fac : factoryMap.values()) {
-      fac.reset();
-    }
-  }
+//  private void resetFactories() {
+//    for (DefaultFeatureAgentFactory fac : factoryMap.values()) {
+//      fac.reset();
+//    }
+//  }
 
   public void render(MapContent mapContext) {
     if (addRender) {  // if new agents have been added
       for (Class clazz : renderMap.keySet()) {
         DefaultFeatureAgentFactory fac = renderMap.get(clazz);
                 
-        // Geotools TODO make sure this works correctly
-        
         // FeatureCollection of FeatureAgents for this agent class
         DefaultFeatureCollection agentCollection = featureMap.get(clazz);
         
-        if (agentCollection == null) {  // hasn't been created for this class yet
+        // If there is a new agent type, then create a new layer for the type
+        if (agentCollection == null) {  
         	List<SimpleFeature> featureAgentList = fac.getFeatures();
         	agentCollection = new DefaultFeatureCollection(null,null);
         	agentCollection.addAll(featureAgentList);
@@ -157,20 +166,23 @@ public class Updater {
           
           layerMap.put(clazz.getName(), layer);          
           reorder = true;
-        } else {
-          addFeaturesLock.lock();
+        } 
+        else { // otherwise just add the agents to the layer
+        	updateLock.lock();
           agentCollection.addAll(featureAgentsToAdd);
-          addFeaturesLock.unlock();
-        }
+          agentCollection.removeAll(featureAgentsToRemove);
+          updateLock.unlock();
+        }  
       }
 
       featureAgentsToAdd.clear();
+      featureAgentsToRemove.clear();
       renderMap.clear();
       addRender = false;
     }
 
     if (reorder)
-      ThreadUtilities.runInEventThread(new LayersAdder(mapContext, addFeaturesLock));
+      ThreadUtilities.runInEventThread(new LayersAdder(mapContext, updateLock));
     	
     // we need to update every layer because although we can track
     // agents being added, removed and moved and update accordingly
@@ -178,42 +190,45 @@ public class Updater {
     // styled display.
     for (RepastMapLayer layer : layerMap.values()) {
       // RepastMapLayer mapLayer = layerMap.get(clazz.getName());
-      ThreadUtilities.runInEventThread(new LayerUpdater(layer, addFeaturesLock));
+      ThreadUtilities.runInEventThread(new LayerUpdater(layer, updateLock));    	
     }
   }
 
+  // TODO Geotools - this doesn't seem to be needed to actually update the position
+  //      of the FeatureAgents since the Geometry would be directly manipulated
+  //      by the user model or through the Geograby.moveBy...().
+  //      This might only be needed if the geometry type changes...which it 
+  //      shouldn't.  Save for later?
   public void agentMoved(Object obj) {
-    updateClasses.add(obj.getClass());
-    Geometry geom = geog.getGeometry(obj);
-    Geometry origGeom = origGeomMap.get(obj);
-    // may be null if object is moved before
-    // the added update occurs.
-    if (origGeom != null && !geom.equals(origGeom)) {
-      if (geom.getNumPoints() == origGeom.getNumPoints()) {
-        coordUpdater.reset(geom.getCoordinates());
-        origGeom.apply(coordUpdater);
-        origGeom.geometryChanged();
-      } else {
-        // todo some scheme to clear the cached geometry
-        // so that this will repaint with the correct geometry
-      }
-    }
-    updateRender = true;
+//    Geometry geom = geog.getGeometry(obj);
+//    Geometry origGeom = origGeomMap.get(obj);
+//    // may be null if object is moved before
+//    // the added update occurs.
+//    if (origGeom != null && !geom.equals(origGeom)) {
+//      if (geom.getNumPoints() == origGeom.getNumPoints()) {
+//        coordUpdater.reset(geom.getCoordinates());
+//        origGeom.apply(coordUpdater);
+//        origGeom.geometryChanged();
+//      } else {
+//        // TODO (legacy) some scheme to clear the cached geometry
+//        // so that this will repaint with the correct geometry
+//      }
+//    }
   }
 
-  //  Geotools TODO make sure this works correctly...agents removed from feature collection??
-  public void removeAgents() {
+ 
+  private void removeAgents() {
     try {
-      addFeaturesLock.lock();
+      updateLock.lock();
       for (Object obj : agentsToRemove) {
-        origGeomMap.remove(obj);
-//        FeatureAgent fa = agentMap.remove(obj);
-        updateClasses.add(obj.getClass());
+//        origGeomMap.remove(obj);
+        FeatureAgent fa = agentMap.remove(obj);
+        
+        featureAgentsToRemove.add(fa);
       }
-      
       agentsToRemove.clear();
     } finally {
-      addFeaturesLock.unlock();
+    	updateLock.unlock();
     }
   }
 
@@ -221,31 +236,30 @@ public class Updater {
     try {
       updateLock.lock();
       if (agentsToAdd.size() > 0) {
-        resetFactories();
+//        resetFactories();
         addAgents();
         addRender = true;
       }
+      if (agentsToRemove.size() > 0) {
+        removeAgents();
+      }
     } finally {
       updateLock.unlock();
-    }
-
-    if (agentsToRemove.size() > 0) {
-      removeAgents();
-      updateRender = true;
-    }
-
+    }    
   }
 
   /**
    * Called when an agent has been added and the display needs to be updated.
    * 
-   * @param agent
-   *          the added agent
+   * @param agent the added agent
    */
   public void agentAdded(Object agent) {
     try {
       updateLock.lock();
       agentsToAdd.add(agent);
+
+      // in case the agent is removed and added in the same step
+      agentsToRemove.remove(agent);  
     } finally {
       updateLock.unlock();
     }
@@ -254,27 +268,26 @@ public class Updater {
   /**
    * Called when an agent has been removed and the display needs to be updated.
    * 
-   * @param agent
-   *          the removed agent
+   * @param agent the removed agent
    */
   public void agentRemoved(Object agent) {
     try {
-      addFeaturesLock.lock();
+    	updateLock.lock();
       if (!agentsToAdd.remove(agent)) {
         agentsToRemove.add(agent);
       }
     } finally {
-      addFeaturesLock.unlock();
+    	updateLock.unlock();
     }
   }
 
   class LayersAdder implements Runnable {
 
-    private MapContent context;
+    private MapContent mapContent;
     private Lock lock;
 
-    LayersAdder(MapContent context, Lock lock) {
-      this.context = context;
+    LayersAdder(MapContent mapContent, Lock lock) {
+      this.mapContent = mapContent;
       this.lock = lock;
     }
 
@@ -289,22 +302,22 @@ public class Updater {
       List<Integer> indices = new ArrayList<Integer>(layerOrder.keySet());
       Collections.sort(indices);
       Collections.reverse(indices);
-      List<Layer> layers = context.layers();
+      List<Layer> layers = mapContent.layers();
       for (Layer layer : layers) {
-        context.removeLayer(layer);
+      	mapContent.removeLayer(layer);
       }
 
       for (Integer val : indices) {
         Object obj = layerOrder.get(val);
         Layer layer = featureLayerMap.get(obj);
         if (layer != null)
-          context.addLayer(layer);
+        	mapContent.addLayer(layer);
         else {
           RepastMapLayer mapLayer = layerMap.get(obj);
           // layers may be null because agents of that type
           // might not have been added to the geography yet
           if (mapLayer != null){
-            context.addLayer(mapLayer);           
+          	mapContent.addLayer(mapLayer);           
           }
         }
       }
@@ -344,5 +357,4 @@ public class Updater {
       index = 0;
     }
   }
-
 }
