@@ -9,11 +9,23 @@ public interface StateChart<T> {
 	 * Receive a message into the statechart queue.
 	 */
 	public void receiveMessage(Object message);
+	
+	/**
+	 * Gets the agent associated with this StateChart.
+	 * 
+	 * @return the agent associated with this StateChart.
+	 */
+	T getAgent();
 
 	/**
 	 * Begin state chart.
 	 */
-	public void begin();
+	public void begin(StateChartSimIntegrator integrator);
+	
+	/**
+	 * Stops the state chart.
+	 */
+	public void stop();
 	
 	/**
 	 * Retrieve current state.
