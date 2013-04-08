@@ -200,18 +200,22 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     layerOrder.put(order, source);
   }
 
+  @Override
   protected void addObject(Object o) {
     updater.agentAdded(o);
   }
 
+  @Override
   protected void moveObject(Object o) {
     updater.agentMoved(o);
   }
 
+  @Override
   protected void removeObject(Object o) {
     updater.agentRemoved(o);
   }
 
+  @Override
   public void destroy() {
     super.destroy();
     for (Projection proj : initData.getProjections()) {
