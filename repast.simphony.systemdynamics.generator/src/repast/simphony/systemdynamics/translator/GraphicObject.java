@@ -18,6 +18,7 @@ public class GraphicObject {
     public static final String COMMENT = "12";
     public static final String BITMAP = "30";
     public static final String METAFILE = "31";
+    public static final String RATE = "99";
 
     private View view;
 
@@ -179,7 +180,9 @@ public class GraphicObject {
 	additionalText = new String(view.peekNextRawObject());
 	GraphicObject go = new GraphicObject(sdObjectManager, view, additionalText);
 	if (go.getType().equals(VARIABLE)) {
+		System.out.println("ASSOCIATED Variable "+go.name);
 	    associatedVariable = go;
+	    go.setType(GraphicObject.RATE);
 //	    view.getNextRawObject();
 	}
 	
@@ -442,4 +445,8 @@ public class GraphicObject {
     public GraphicObject getAssociatedVariable() {
         return associatedVariable;
     }
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

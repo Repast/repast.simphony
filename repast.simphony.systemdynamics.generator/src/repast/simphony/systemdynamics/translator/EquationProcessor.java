@@ -219,6 +219,7 @@ public class EquationProcessor {
     		// this is the beginning of the graphics, return as we do not do anything with the graphics
     		if (aLine.contains("---///")) {
     			markGenerated(equations);
+    			printVariableTypes(equations);
     			return equations;
     		}
 
@@ -366,6 +367,13 @@ public class EquationProcessor {
  
     	
 
+    }
+    
+    private void printVariableTypes(HashMap<String, Equation> equations) {
+    	for (String key : equations.keySet()) {
+    		System.out.println(equations.get(key).getVensimEquationOnly());
+    		System.out.println(equations.get(key).getVariableType());
+    	}
     }
     
     private void markGenerated(HashMap<String, Equation> equations) {

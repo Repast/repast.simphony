@@ -284,6 +284,10 @@ public class SystemDynamicsObjectManager {
 
 	    addSystemDynamicsObject(name);
 	    addGraphicObject(name, go);
+	    if (go.getAssociatedVariable() != null) {
+	    	System.out.println("adding associated "+go.getAssociatedVariable().getName());
+	    	addGraphicObject(go.getAssociatedVariable().getName(), go.getAssociatedVariable());
+	    }
 	}
 
 

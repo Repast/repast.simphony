@@ -204,7 +204,9 @@ public class Translator {
 	}
 	
 	protected boolean validateGenerate(List<String> mdlContents, boolean generateCode, List<String> messages) {
-		sdObjectManager = new SystemDynamicsObjectManager();
+		
+//		sdObjectManager = new SystemDynamicsObjectManager();
+		sdObjectManager = InformationManagers.getInstance().getSystemDynamicsObjectManager();
 
 		// process graphics first since we get screen name information from this portion of the file
 		Map<String, View> graphics = new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
