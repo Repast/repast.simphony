@@ -13,6 +13,7 @@ public class View {
     public static final String COMMENT = "COMMENT";
     public static final String BITMAP = "BITMAP";
     public static final String METAFILE = "METAFILE";
+    public static final String RATE = "RATE";
 
     private String name;
     private String versionCode;
@@ -60,6 +61,8 @@ public class View {
 	    return BITMAP;
 	else if (numeric.equals(GraphicObject.METAFILE))
 	    return METAFILE;
+	else if (numeric.equals(GraphicObject.RATE))
+	    return RATE;
 	else
 	    return "UNKNOWN";
 
