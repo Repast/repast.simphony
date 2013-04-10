@@ -39,7 +39,8 @@ public class Engine {
 	 */
 
 	public Engine() {
-		InformationManagers.init();
+	  // initializes the InformationManagers
+		InformationManagers.getInstance();
 		translator = new TranslatorRepastSimphony();
 		System.out.println("Engine created");
 	}

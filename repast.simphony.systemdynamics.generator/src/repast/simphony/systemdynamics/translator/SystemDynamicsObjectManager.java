@@ -27,6 +27,10 @@ public class SystemDynamicsObjectManager {
     	
     }
     
+    public Iterable<String> screenNames() {
+      return objectsMap.keySet();
+    }
+    
     public List<String> validate(Map<String, Equation> equations) {
 	// need to check consistency between equations and graphics objects and arrows
 	// the equations are always truth -- augment graphics as required
