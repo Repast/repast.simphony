@@ -74,23 +74,51 @@ public class GraphicObject {
     }
 
     public void parse() {
-	String[] fields = Parser.splitQuoted(rawObject, ",");
-	if (fields.length < 10)
-	    System.out.println("WTF!");
-	type = fields[0];
-	id = fields[1];
-	if (type.equals("1"))
-	    parseAsArrow(fields);
-	else if (type.equals("10"))
-	    parseAsVariable(fields);
-	else if (type.equals("11"))
-	    parseAsValve(fields);
-	else if (type.equals("12"))
-	    parseAsComment(fields);
-	else if (type.equals("30"))
-	    parseAsBitmap(fields);
-	else if (type.equals("31"))
-	    parseAsMetafile(fields);
+    	String[] fields = Parser.splitQuoted(rawObject, ",");
+    	if (fields.length < 10)
+    		System.out.println("WTF!");
+    	type = fields[0];
+    	id = fields[1];
+    	if (type.equals("1"))
+    		parseAsArrow(fields);
+    	else if (type.equals("10"))
+    		parseAsVariable(fields);
+    	else if (type.equals("11"))
+    		parseAsValve(fields);
+    	else if (type.equals("12"))
+    		parseAsComment(fields);
+    	else if (type.equals("30"))
+    		parseAsBitmap(fields);
+    	else if (type.equals("31"))
+    		parseAsMetafile(fields);
+    }
+    
+    public boolean isValve() {
+    	return type.equals("11");
+    }
+    
+    public boolean isVariable() {
+    	return type.equals("10");
+    }
+    
+    public boolean isRate() {
+    	return type.equals("99");
+    }
+    
+    public boolean isArrow() {
+    	return type.equals("1");
+    }
+    
+    public boolean isComment() {
+    	return type.equals("12");
+    }
+    
+    public boolean isBitmap() {
+    	return type.equals("30");
+    }
+    
+    public boolean isMetafile() {
+    	return type.equals("31");
     }
 
     private void parseAsArrow(String[] fields) {
@@ -177,12 +205,13 @@ public class GraphicObject {
 	}
 	
 	// is it always connect to a variable?
-	additionalText = new String(view.peekNextRawObject());
+	additionalText = new String(view.getNextRawObject());
 	GraphicObject go = new GraphicObject(sdObjectManager, view, additionalText);
 	if (go.getType().equals(VARIABLE)) {
 		System.out.println("ASSOCIATED Variable "+go.name);
 	    associatedVariable = go;
 	    go.setType(GraphicObject.RATE);
+	    go.setAssociatedVariable(this);
 //	    view.getNextRawObject();
 	}
 	
@@ -298,6 +327,13 @@ public class GraphicObject {
 	    System.out.println("    Height: "+height);
 	} else if (type.equals("31")) {
 	    System.out.println("    Type: "+"Metafile");
+	    System.out.println("    Name: "+name);
+	    System.out.println("    X: "+x);
+	    System.out.println("    Y: "+y);
+	    System.out.println("    Width: "+width);
+	    System.out.println("    Height: "+height);
+	} else if (type.equals("99")) {
+	    System.out.println("    Type: "+"Rate");
 	    System.out.println("    Name: "+name);
 	    System.out.println("    X: "+x);
 	    System.out.println("    Y: "+y);
@@ -448,5 +484,9 @@ public class GraphicObject {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public void setAssociatedVariable(GraphicObject associatedVariable) {
+		this.associatedVariable = associatedVariable;
 	}
 }

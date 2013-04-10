@@ -269,7 +269,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 		sdObjectManager.print();
-		printGraphics(graphics);
+//		printGraphics(graphics);
 
 //		sdObjectManager.print();
 		if (!generateCode)

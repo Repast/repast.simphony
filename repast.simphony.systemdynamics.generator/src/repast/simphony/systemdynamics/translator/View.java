@@ -37,9 +37,21 @@ public class View {
 
     	while(currentPtr < rawObjects.size()) {
     		String raw = rawObjects.get(currentPtr++);
-    		graphicObjects.add(new GraphicObject(sdObjectManager, this, raw));
+    		GraphicObject go = new GraphicObject(sdObjectManager, this, raw);
+    		graphicObjects.add(go);
+    		// if this go has an associated variable (can only be valve)
+    		// need to add to graphic objects as this was processed together
+    		// with valve
+    		if (go.isValve() && go.getAssociatedVariable() != null) {
+    			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+go.getName());
+    			
+    			graphicObjects.add(go.getAssociatedVariable());
+    		}
     	}
+
+//    	print();
     	sdObjectManager.extractStructure(this);
+ 
     }
 
 
