@@ -21,22 +21,25 @@ public class View {
     private List<String> rawObjects;
     private List<GraphicObject> graphicObjects;
     private int currentPtr = 0;
+    
+    private Map<String, String> idNameMap;
 
     public View(String name, String versionCode, String viewDefaultFont) {
 	this.name = name;
 	this.versionCode = versionCode;
 	this.viewDefaultFont = viewDefaultFont;
 	graphicObjects = new ArrayList<GraphicObject>();
+	idNameMap = new HashMap<String, String>();
 
     }
 
     public void parse(SystemDynamicsObjectManager sdObjectManager) {
 
-	while(currentPtr < rawObjects.size()) {
-	    String raw = rawObjects.get(currentPtr++);
-	    graphicObjects.add(new GraphicObject(sdObjectManager, this, raw));
-	}
-	sdObjectManager.extractStructure(this);
+    	while(currentPtr < rawObjects.size()) {
+    		String raw = rawObjects.get(currentPtr++);
+    		graphicObjects.add(new GraphicObject(sdObjectManager, this, raw));
+    	}
+    	sdObjectManager.extractStructure(this);
     }
 
 

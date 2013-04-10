@@ -230,7 +230,7 @@ public class SystemDynamicsObjectManager {
 
 	for (GraphicObject go : view.getGraphicObjects()) {
 	    if (go.getType().equals(GraphicObject.ARROW))
-		continue;
+	    	continue;
 
 	    String id = go.getId();
 	    String type = view.translateCodeToString(go.getType());
@@ -244,7 +244,7 @@ public class SystemDynamicsObjectManager {
 	// now extract arrows
 	for (GraphicObject go : view.getGraphicObjects()) {
 	    if (!go.getType().equals(GraphicObject.ARROW))
-		continue;
+	    	continue;
 
 
 	    String id = go.getId();

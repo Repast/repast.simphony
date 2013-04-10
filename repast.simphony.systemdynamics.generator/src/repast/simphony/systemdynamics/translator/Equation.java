@@ -216,8 +216,6 @@ public class Equation {
 				return VariableType.AUXILIARY;
 			} 
 			
-			// this will never work as written
-			// need to change the graphic object associated variable so that it is a "valve"
 			
 			if (go.get(0).getType().equals(GraphicObject.RATE))
 				return  VariableType.RATE;
@@ -1631,6 +1629,36 @@ public class Equation {
 			setOneTime(false);
 
 
+	}
+	
+	public String getIntialValue() {
+		// valid on for stock variables
+		// return empty string is not stock
+		if (!isStock())
+			return "";
+		
+		// need rpn and treeRoot
+		if (rpn.size() == 0)
+			generateRpn();
+		if (treeRoot == null)
+			generateTree();
+		
+		
+		StringBuffer sb = new StringBuffer();
+		
+		// extract from tree -- last Argument of the Integ function;
+		
+		Node integ = treeRoot.getChild().getNext();
+		Node arg = integ.getChild();
+		while (arg.getNext() != null)
+			arg = arg.getNext();
+		
+		// this is last arg, but can have a subtree
+		
+		sb.append(Node.expand(arg));
+		
+		
+		return sb.toString();
 	}
 	
 	private boolean isArrayReference(MutableInteger position) {

@@ -268,13 +268,15 @@ public class Translator {
 		List<String> addedScreenNames = sdObjectManager.validate(equations);
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
+		sdObjectManager.print();
+		printGraphics(graphics);
 
 //		sdObjectManager.print();
 		if (!generateCode)
 			return true;
 		
 		process(equations);
-//		printGraphics(graphics);
+		
 		return true;
 	}
 	
@@ -343,7 +345,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
-//		sdObjectManager.print();
+		sdObjectManager.print();
 
 		
 		
@@ -406,6 +408,7 @@ public class Translator {
 		for (String lhs : equations.keySet()) {
 			Equation eqn = equations.get(lhs);		
 			eqn.generateTree();
+			System.out.println("IV: "+eqn.getVensimEquationOnly()+" <<"+eqn.getIntialValue()+">>");
 		}
 	}
 
