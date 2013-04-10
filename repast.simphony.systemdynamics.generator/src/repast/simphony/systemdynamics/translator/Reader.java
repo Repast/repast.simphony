@@ -79,8 +79,13 @@ public class Reader {
 	try {
 	    aLine = fileReader.readLine();
 	    if (!aLine.contains("{UTF-8}")) {
-		System.out.println("Bad initial record: "+aLine);
-		return null;
+	    	System.out.println("Bad initial record: "+aLine);
+	    	System.out.println("Will try to comtinue");
+	    	boolean plusTab = false;
+			if (aLine.endsWith("\t"))
+			    plusTab = true;
+			mdlContents.add(aLine.trim()+(plusTab ? "\t" : ""));
+//		return null;
 	    }
 
 	} catch (IOException e) {
