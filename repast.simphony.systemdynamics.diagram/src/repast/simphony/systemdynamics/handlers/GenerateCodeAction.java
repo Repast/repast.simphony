@@ -3,18 +3,21 @@
  */
 package repast.simphony.systemdynamics.handlers;
 
+import java.io.Reader;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
 import repast.simphony.systemdynamics.engine.Engine;
+import repast.simphony.systemdynamics.subscripts.Equation;
 
 /**
  * @author Nick Collier
@@ -43,7 +46,7 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
 	  IFileEditorInput input = (IFileEditorInput)editor.getEditorInput();
 	  IFile file = input.getFile();
 	  IProject project = file.getProject();
-
+	  
 
 	  System.out.println("generate code");
 	  Engine engine = new Engine(model, project, progressMonitor);
@@ -51,6 +54,7 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
 	  // this is for testing purposes
 //	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
 //	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EPIDEMIC.mdl", true);
+//	  boolean success = engine.validateGenerateMDL("C:/Program Files (x86)/Vensim/models/guide/CHAP03/WFINV.mdl", true);
 
 //	  MessageBox msgBox = null;
 //	  int style = SWT.ICON_ERROR;
