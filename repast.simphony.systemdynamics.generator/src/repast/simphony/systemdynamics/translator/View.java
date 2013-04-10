@@ -14,6 +14,7 @@ public class View {
     public static final String BITMAP = "BITMAP";
     public static final String METAFILE = "METAFILE";
     public static final String RATE = "RATE";
+    public static final String CLOUD = "CLOUD";
 
     private String name;
     private String versionCode;
@@ -49,7 +50,7 @@ public class View {
     		}
     	}
 
-//    	print();
+    	print();
     	sdObjectManager.extractStructure(this);
  
     }
@@ -78,6 +79,8 @@ public class View {
 	    return METAFILE;
 	else if (numeric.equals(GraphicObject.RATE))
 	    return RATE;
+	else if (numeric.equals(GraphicObject.CLOUD))
+	    return CLOUD;
 	else
 	    return "UNKNOWN";
 

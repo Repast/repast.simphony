@@ -124,6 +124,8 @@ public class Translator {
 
 	public void checkUnitsConsistency() {
 		List<String> rawEquations = reader.readMDLFile();
+		if (rawEquations == null)
+			return;
 		sdObjectManager = new SystemDynamicsObjectManager();
 		HashMap<String, Equation> equations = new EquationProcessor().processRawEquations(sdObjectManager, rawEquations);
 		processSubscriptDefinition(equations);
@@ -306,6 +308,8 @@ public class Translator {
 	}
 
 	protected boolean execute(List<String> mdlContents) {
+		if (mdlContents == null)
+			return false;
 
 		sdObjectManager = new SystemDynamicsObjectManager();
 

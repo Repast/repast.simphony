@@ -116,6 +116,7 @@ public class SystemDynamicsObjectManager {
 		for (SystemDynamicsObject obj : objectsMap.values()) {
 			if (obj.getType().equals(View.VARIABLE) ||
 					obj.getType().equals(View.RATE) ||
+					obj.getType().equals(View.CLOUD) ||
 					obj.getType().equals(View.ARROW))
 				obj.print();
 		}
@@ -160,13 +161,13 @@ public class SystemDynamicsObjectManager {
 	}
 
 	public void addSystemDynamicsObject(String screenName) {
-//		System.out.println("SDOM: Add "+screenName);
+		System.out.println("SDOM: Add "+screenName);
 		if (!objectsMap.containsKey(screenName))
 			objectsMap.put(screenName, new SystemDynamicsObject(screenName));
 	}
 
 	private void addSystemDynamicsObjectPlaceHolder(String screenName) {
-//		System.out.println("SDOM: Adding placeholder for: "+screenName);
+		System.out.println("SDOM: Adding placeholder for: "+screenName);
 		objectsMap.put(screenName, new SystemDynamicsObject(screenName));
 	}
 
@@ -272,7 +273,11 @@ public class SystemDynamicsObjectManager {
 
 			// get the GO at the head of the arrow
 			// if pointing to a valve, set GO to its associated rate
-
+			
+			// Note that Vensim stores valve arrow information  
+			
+			boolean swap = false;
+			
 			GraphicObject EffectiveToGO = idToGraphicObject.get(go.getTo());
 			if (EffectiveToGO.isValve()) {
 				EffectiveToGO = EffectiveToGO.getAssociatedVariable();
@@ -286,11 +291,21 @@ public class SystemDynamicsObjectManager {
 			// if pointing to a valve, set GO to its associated rate
 
 			GraphicObject EffectiveFromGO = idToGraphicObject.get(go.getFrom());
-			if (EffectiveFromGO.isValve())
+			if (EffectiveFromGO.isValve()) {
+				if (!go.getShape().equals("4"))
+					swap = true;
 				EffectiveFromGO = EffectiveFromGO.getAssociatedVariable();
+			}
 
 			// get the name at the head of the arrow
 			String fromName = idToName.get(EffectiveFromGO.getId());
+			
+			
+			if (swap) {
+				String tmp = toName;
+				toName = fromName;
+				fromName = tmp;
+			}
 
 			// have lists been initialized?
 			if (!inArrows.containsKey(toName))
@@ -344,8 +359,8 @@ public class SystemDynamicsObjectManager {
 
 				// if this is a purely visual arrow (i.e. to/from cloud, just skip)
 
-				if (sdTo.getType().equals(View.COMMENT) || sdFrom.getType().equals(View.COMMENT))
-					continue;
+//				if (sdTo.getType().equals(View.COMMENT) || sdFrom.getType().equals(View.COMMENT))
+//					continue;
 
 				if (sdTo != null && sdFrom != null) {
 					// MJB 4/10 try this 
@@ -357,8 +372,8 @@ public class SystemDynamicsObjectManager {
 					//			effectiveFrom = getObjectWithName(getAssociatedVariableFor(sdFrom.getScreenName()));
 					//		    }
 					//		    
-					if ((effectiveTo.getType().equals(View.VARIABLE) || effectiveTo.getType().equals(View.RATE)) && 
-							(effectiveFrom.getType().equals(View.VARIABLE) || effectiveFrom.getType().equals(View.RATE))) {
+					if ((effectiveTo.getType().equals(View.VARIABLE) || effectiveTo.getType().equals(View.RATE) || effectiveTo.getType().equals(View.CLOUD)) && 
+							(effectiveFrom.getType().equals(View.VARIABLE) || effectiveFrom.getType().equals(View.RATE) ||  effectiveFrom.getType().equals(View.CLOUD))) {
 						addIncomingArrow(effectiveTo.getScreenName(), effectiveFrom.getScreenName());
 					} else {
 						//			System.out.println("Something not right");
@@ -385,8 +400,8 @@ public class SystemDynamicsObjectManager {
 					//			effectiveFrom = getObjectWithName(getAssociatedVariableFor(sdFrom.getScreenName()));
 					//		    }
 
-					if ((effectiveTo.getType().equals(View.VARIABLE) || effectiveTo.getType().equals(View.RATE)) && 
-							(effectiveFrom.getType().equals(View.VARIABLE) || effectiveFrom.getType().equals(View.RATE))) {
+					if ((effectiveTo.getType().equals(View.VARIABLE) || effectiveTo.getType().equals(View.RATE) || effectiveTo.getType().equals(View.CLOUD)) && 
+							(effectiveFrom.getType().equals(View.VARIABLE) || effectiveFrom.getType().equals(View.RATE) ||  effectiveFrom.getType().equals(View.CLOUD))) {
 						addOutgoingArrow(effectiveFrom.getScreenName(), effectiveTo.getScreenName());
 					} else {
 						//			System.out.println("Something not right");

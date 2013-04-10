@@ -19,6 +19,8 @@ public class GraphicObject {
     public static final String BITMAP = "30";
     public static final String METAFILE = "31";
     public static final String RATE = "99";
+    
+    public static final String CLOUD = "48";
 
     private View view;
 
@@ -120,6 +122,10 @@ public class GraphicObject {
     public boolean isMetafile() {
     	return type.equals("31");
     }
+    
+    public boolean isCloud() {
+    	return type.equals("48");
+    }
 
     private void parseAsArrow(String[] fields) {
 
@@ -219,6 +225,10 @@ public class GraphicObject {
 
     private void parseAsComment(String[] fields) {
 	name = fields[2].replace("\"", "");
+	if (name.equals(CLOUD)) {
+		name = "CLOUD_"+id;
+		type = CLOUD;
+	}
 	x = fields[3];
 	y = fields[4];
 	width = fields[5];
@@ -318,6 +328,14 @@ public class GraphicObject {
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
 	    System.out.println("    Comment: "+additionalText);
+	}   else if (type.equals("48")) {
+		System.out.println("    Type: "+"Cloud");
+		System.out.println("    Name: "+name);
+		System.out.println("    X: "+x);
+		System.out.println("    Y: "+y);
+		System.out.println("    Width: "+width);
+		System.out.println("    Height: "+height);
+		System.out.println("    Comment: "+additionalText);
 	} else if (type.equals("30")) {
 	    System.out.println("    Type: "+"BitMap");
 	    System.out.println("    Name: "+name);

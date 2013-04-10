@@ -221,6 +221,10 @@ public class TranslatorRepastSimphony extends Translator {
     	messages.add("********");
     	
     	List<String> mdlContents = new Reader(mdlFile).readMDLFile();
+    	if (mdlContents == null) {
+    		messages.add("MDL Read failure");
+    		return false;
+    	}
     	boolean success = validateGenerate(mdlContents, generateCode, messages);
     	return success;
     }
