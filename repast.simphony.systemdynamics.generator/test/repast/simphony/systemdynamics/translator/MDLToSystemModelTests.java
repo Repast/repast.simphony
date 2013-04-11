@@ -17,6 +17,7 @@ import org.junit.Test;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
+import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
@@ -24,6 +25,8 @@ import repast.simphony.systemdynamics.sdmodel.VariableType;
 public class MDLToSystemModelTests {
   
   private static final String EPIDEMIC_MDL = "./test_data/EPIDEMIC.MDL";
+  private static final String WFINV_MDL = "./test_data/WFINV.MDL";
+  
   private SystemModel model;
   private Diagram diagram;
   
@@ -144,7 +147,23 @@ public class MDLToSystemModelTests {
       assertTrue(subscripts.remove(sub.trim()));
     }
     assertEquals(0, subscripts.size());
-    
+  }
+  
+  private Variable findVar(String name) {
+    for (Variable var : model.getVariables()) {
+      if (var.getName().equals(name)) return var;
+    }
+    return null;
+  }
+  
+  @Test
+  public void testCloud() {
+    MDLToSystemModel trans = new MDLToSystemModel();
+    trans.run(model, diagram, WFINV_MDL);
+    Rate production = (Rate)findVar("production");
+    assertNotNull(production);
+    assertNotNull(production.getFrom());
+    assertEquals(SDModelPackage.Literals.CLOUD, production.getFrom().eClass());
     
   }
 

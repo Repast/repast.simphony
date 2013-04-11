@@ -3,6 +3,7 @@
  */
 package repast.simphony.systemdynamics.translator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
+import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
+import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
@@ -39,8 +42,10 @@ public class MDLToSystemModel {
   public SystemModel run(SystemModel model, Diagram diagram, String mdlFile) {
     Reader reader = new Reader(mdlFile);
     List<String> mdlContents = reader.readMDLFile();
-    InformationManagers.getInstance().getFunctionManager().load(getClass().getResourceAsStream("/implementedFunctions.csv"));
-    SystemDynamicsObjectManager sdObjectManager = InformationManagers.getInstance().getSystemDynamicsObjectManager();
+    InformationManagers.getInstance().getFunctionManager()
+        .load(getClass().getResourceAsStream("/implementedFunctions.csv"));
+    SystemDynamicsObjectManager sdObjectManager = InformationManagers.getInstance()
+        .getSystemDynamicsObjectManager();
 
     // process graphics first since we get screen name information from this
     // portion of the file
@@ -48,7 +53,7 @@ public class MDLToSystemModel {
     Map<String, Equation> equations = new EquationProcessor().processRawEquations(sdObjectManager,
         mdlContents);
     initModel(model, equations);
-  
+
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     for (String name : sdObjectManager.screenNames()) {
       if (!MODEL_VARS.contains(name)) {
@@ -60,28 +65,50 @@ public class MDLToSystemModel {
     }
 
     // create the links
+    createLinks(varMap, model, sdObjectManager);
+    return model;
+  }
+
+  private void createLinks(Map<String, Variable> varMap, SystemModel model,
+      SystemDynamicsObjectManager objMan) {
+    List<Rate> rates = new ArrayList<Rate>();
     for (String name : varMap.keySet()) {
-      List<String> sources = sdObjectManager.getIncomingArrows(name);
+      List<String> sources = objMan.getIncomingArrows(name);
       Variable target = varMap.get(name);
-      if (target.getType() == VariableType.RATE) {
-        //System.out.println("rate incoming arrow count: " + sources.size());
-      //  GraphicObject obj = sdObjectManager.getGraphicObjects(name).get(0);
-      }
-      for (String source : sources) {
-        Variable vSource = varMap.get(source);
-        InfluenceLink link = SDModelFactory.eINSTANCE.createInfluenceLink();
-        link.setFrom(vSource);
-        link.setTo(target);
-        link.setUuid(EcoreUtil.generateUUID());
-        model.getLinks().add(link);
+      VariableType targetType = target.getType();
+      if (targetType == VariableType.RATE)
+        rates.add((Rate) target);
+      else {
+        for (String source : sources) {
+          Variable vSource = varMap.get(source);
+          VariableType sourceType = vSource.getType();
+          
+          if (sourceType != VariableType.RATE) {
+          
+            InfluenceLink link = SDModelFactory.eINSTANCE.createInfluenceLink();
+            link.setFrom(vSource);
+            link.setTo(target);
+            link.setUuid(EcoreUtil.generateUUID());
+            // System.out.println("Link: " + source + " -> " +
+            // target.getName());
+            model.getLinks().add(link);
+          }
+          
+        }
       }
     }
-
-    return model;
+  }
+  
+  private void processRates(List<Rate> rates) {
+    for (Rate rate : rates) {
+      
+    }
+    
   }
 
   private Variable processEquations(String name, List<Equation> eqs, SystemModel model) {
     Variable var = null;
+    System.out.println(name);
     if (eqs.size() > 0) {
       Equation eq = eqs.get(0);
       VariableType type = eq.getVariableType();
@@ -111,10 +138,18 @@ public class MDLToSystemModel {
         var.setUuid(EcoreUtil.generateUUID());
         model.getVariables().add(var);
       }
+
+    } else if (name.startsWith("CLOUD")) {
+      var = SDModelFactory.eINSTANCE.createCloud();
+      var.setName(name);
+      var.setUuid(EcoreUtil.generateUUID());
+      var.setType(VariableType.STOCK);
+      model.getVariables().add(var);
     }
+
     return var;
   }
-  
+
   private void parseEquation(Variable var, Equation eq) {
     String equation = eq.getEquation().trim();
     String[] sides = equation.split("=");
