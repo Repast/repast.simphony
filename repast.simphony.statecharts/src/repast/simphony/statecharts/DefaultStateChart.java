@@ -15,36 +15,25 @@ import java.util.Set;
 
 import org.apache.commons.collections15.ListUtils;
 
-import repast.simphony.context.Context;
-import repast.simphony.context.ContextEvent;
-import repast.simphony.context.ContextEvent.EventType;
-import repast.simphony.context.ContextListener;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
-import repast.simphony.util.ContextUtils;
 import repast.simphony.util.SimUtilities;
 import cern.jet.random.Uniform;
 
-public class DefaultStateChart<T> implements StateChart<T>, ContextListener<T>{
- 
-  protected DefaultStateChart(T agent) {
-    this(agent, true);
-  }
+public class DefaultStateChart<T> implements StateChart<T> {
 
   /**
-   * Creates DefaultStateChart for the specified agent and
-   * sets whether or not the agent needs to be in a Context
-   * for the statechart to function. 
+   * Creates DefaultStateChart for the specified agent and sets whether or not
+   * the agent needs to be in a Context for the statechart to function.
    * 
    * @param agent
    * @param contextRequired
    */
-  protected DefaultStateChart(T agent, boolean contextRequired) {
+  protected DefaultStateChart(T agent) {
     this.agent = agent;
-    this.contextRequired = contextRequired;
-    
   }
+
   private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
 
   protected TransitionResolutionStrategy getTransitionResolutionStrategy() {
@@ -56,8 +45,7 @@ public class DefaultStateChart<T> implements StateChart<T>, ContextListener<T>{
     this.transitionResolutionStrategy = transitionResolutionStrategy;
   }
 
-  private boolean contextRequired;
-  
+
   private AbstractState<T> entryState;
   private Set<AbstractState<T>> states = new HashSet<AbstractState<T>>();
 
@@ -86,39 +74,25 @@ public class DefaultStateChart<T> implements StateChart<T>, ContextListener<T>{
     addState(state);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public void begin() {
+  public void begin(StateChartSimIntegrator integrator) {
     if (entryState == null) {
       // illegal state
       throw new IllegalStateException("An entry state was not registered in the StateChart.");
     }
-    
-    Context<T> context = ContextUtils.getContext(agent);
-    
-    if (context != null) {
-      context.addContextListener(this);
-    } else if (contextRequired) {
-      // if the context is required and no context 
-      // then return
-      return;
-    }
-    
-    clearTransitions(null);
-    List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
 
-    stateInit(statesToEnter);
-  }
-  
-  /* (non-Javadoc)
-   * @see repast.simphony.context.ContextListener#eventOccured(repast.simphony.context.ContextEvent)
-   */
-  @Override
-  public void eventOccured(ContextEvent<T> ev) {
-    if (ev.getType() == EventType.AGENT_REMOVED && ev.getTarget().equals(agent)) {
+    if (integrator.integrate(this)) {
       clearTransitions(null);
-      ev.getContext().removeContextListener(this);
+      List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
+      stateInit(statesToEnter);
     }
+  }
+
+  /**
+   * Stops this statechart.
+   */
+  public void stop() {
+    clearTransitions(null);
   }
 
   private void partitionQueueConsuming(List<Transition<T>> transitions,
@@ -553,7 +527,7 @@ public class DefaultStateChart<T> implements StateChart<T>, ContextListener<T>{
 
   private T agent;
 
-  protected T getAgent() {
+  public T getAgent() {
     if (agent == null) {
       throw new IllegalStateException("The agent was not set in: " + this);
     }

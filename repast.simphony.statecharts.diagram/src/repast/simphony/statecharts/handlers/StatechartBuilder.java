@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 import repast.simphony.statecharts.generator.CodeGenerator;
-import repast.simphony.statecharts.svg.SVGExporter;
+import repast.simphony.statecharts.generator.DirectoryCleaner;
+import repast.simphony.statecharts.generator.OrphanFilter;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
+import repast.simphony.statecharts.svg.SVGExporter;
 
 /**
  * @author Nick Collier
@@ -62,7 +64,10 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
   }
 
   private void fullBuild(IProgressMonitor monitor) throws CoreException {
-    getProject().accept(new FullBuildVisitor(getProject(), monitor));
+    FullBuildVisitor visitor = new FullBuildVisitor(getProject(), monitor);
+    getProject().accept(visitor);
+    visitor.removeOrphans();
+    getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
   }
 
   private static class FullBuildVisitor implements IResourceVisitor {
@@ -95,6 +100,13 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
         }
       }
       return true;
+    }
+    
+    public void removeOrphans() {
+      OrphanFilter filter = new OrphanFilter(generator.getGeneratorRecord());
+      DirectoryCleaner cleaner = new DirectoryCleaner(filter);
+      String rootPath = project.getLocation().append(CodeGenerator.SRC_GEN).toFile().getAbsolutePath();
+      cleaner.run(rootPath);
     }
 
   }

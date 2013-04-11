@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/worldwindx.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/phoebe.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-layout.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/MS3DLoader-1.0.8.jar"/>

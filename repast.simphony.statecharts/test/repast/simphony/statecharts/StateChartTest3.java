@@ -112,7 +112,28 @@ public class StateChartTest3 {
     assertEquals(expState, agent.getState());
   }
   
-  @Test
+  //@Test 
+  public void testManyRemoves() {
+    context.clear();
+    for (int i = 0; i < 100000; ++i) {
+      context.add(new Agent(i, 1));
+    }
+    
+    schedule.execute();
+    int id = 0;
+    int increment = 1000;
+    for (int i = 1; i < 20; ++i) {
+      schedule.execute();
+      while (id < increment * i) {    
+        //System.out.println("removing");
+        context.remove(getAgent(id));
+        //System.out.println("removed");
+        ++id;
+      }
+    }
+  }
+  
+  //@Test
   public void testScaling() {
     context.clear();
     for (int i = 0; i < 200000; ++i) {

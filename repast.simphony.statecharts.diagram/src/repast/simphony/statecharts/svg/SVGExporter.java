@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
@@ -70,7 +71,8 @@ public class SVGExporter {
 						new ExportToSVGUtil().copyToImage(dep, outPath, monitor);
 					}
 				} catch (CoreException e) {
-					e.printStackTrace();
+					StatechartDiagramEditorPlugin.getInstance().
+					logError("Error while exporting SVG", e);
 				}
 			}
 

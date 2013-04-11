@@ -21,7 +21,6 @@ public class StateChartBuilder<T> {
   private List<Transition<T>> regularTransitions = new ArrayList<Transition<T>>();
   private T agent;
   private Map<AbstractState<T>, String> stateUuidMap = new HashMap<AbstractState<T>, String>();
-  private boolean contextRequired = true;
 
   protected T getAgent() {
     return agent;
@@ -70,16 +69,6 @@ public class StateChartBuilder<T> {
     selfTransitions.add(transition);
   }
   
-  /**
-   * Sets whether or not the built state chart will required its
-   * agents to be part of a context in order to proceed. This defaults
-   * to true.
-   * @param required
-   */
-  public void setContextRequired(boolean required) {
-    this.contextRequired = required;
-  }
-
   public void addRegularTransition(Transition<T> transition) {
     addRootState(transition.getSource());
     addRootState(transition.getTarget());
@@ -151,7 +140,7 @@ public class StateChartBuilder<T> {
   }
 
   public StateChart<T> build() {
-    DefaultStateChart<T> result = new DefaultStateChart<T>(getAgent(), contextRequired);
+    DefaultStateChart<T> result = new DefaultStateChart<T>(getAgent());
     setStateChartProperties(result);
     return result;
   }
