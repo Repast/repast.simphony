@@ -8,14 +8,16 @@ public class SystemDynamicsObject {
     private String screenName;
     private List<GraphicObject> graphicObjects;
     private List<Equation> equations;
-    private List<String> incomingArrows;
-    private List<String> outgoingArrows;
+    private List<Arrow> incomingArrows;
+    private List<Arrow> outgoingArrows;
+   
 
     public SystemDynamicsObject() {
 	graphicObjects = new ArrayList<GraphicObject>();
 	equations = new ArrayList<Equation>();
-	incomingArrows = new ArrayList<String>();
-	outgoingArrows = new ArrayList<String>();
+	incomingArrows = new ArrayList<Arrow>();
+	outgoingArrows = new ArrayList<Arrow>();
+	
     }
 
     public SystemDynamicsObject(String name) {
@@ -56,15 +58,16 @@ public class SystemDynamicsObject {
 	System.out.println("Screen Name: "+screenName);
 	System.out.println("\tNumber of Graphic Representations: "+graphicObjects.size());
 	System.out.println("\tNumber of Equations: "+equations.size());
-	System.out.print("\tNumber of Incoming Arrows: "+incomingArrows.size());
-	for (String s : incomingArrows)
+	System.out.print("\tNumber of In Arrows: "+incomingArrows.size());
+	for (Arrow s : incomingArrows)
 	    System.out.print(", "+s);
 	System.out.print("\n");
-	System.out.print("\tNumber of Outgoing Arrows: "+outgoingArrows.size());
-	for (String s : outgoingArrows)
+	System.out.print("\tNumber of Out Arrows: "+outgoingArrows.size());
+	for (Arrow s : outgoingArrows)
 	    System.out.print(", "+s);
 	System.out.print("\n");
     }
+	
 
     public void addGraphicObject(GraphicObject graphicObject) {
 	if (!graphicObjects.contains(graphicObject))
@@ -76,14 +79,20 @@ public class SystemDynamicsObject {
 	    equations.add(equation);
     }
 
-    public void addIncomingArrow(String arrow) {
-	if (!incomingArrows.contains(arrow))
-	    incomingArrows.add(arrow);
+    public void addIncomingArrow(Arrow arrow) {
+	if (!incomingArrows.contains(arrow)) {
+		incomingArrows.add(arrow);
+		System.out.println(screenName+" SDO: AddIn "+arrow+" size "+incomingArrows.size());
+	}
+	print();
     }
 
-    public void addOutgoingArrow(String arrow) {
-	if (!outgoingArrows.contains(arrow))
-	    outgoingArrows.add(arrow);
+    public void addOutgoingArrow(Arrow arrow) {
+	if (!outgoingArrows.contains(arrow)) {
+		outgoingArrows.add(arrow);
+		System.out.println(screenName+" SDO: AddOut "+arrow+" size "+outgoingArrows.size());
+	}
+	print();
     }
 
     public String getScreenName() {
@@ -110,20 +119,22 @@ public class SystemDynamicsObject {
 	this.equations = equations;
     }
 
-    public List<String> getIncomingArrows() {
-	return incomingArrows;
-    }
+	public List<Arrow> getIncomingArrows() {
+		return incomingArrows;
+	}
 
-    public void setIncomingArrows(List<String> incomingArrows) {
-	this.incomingArrows = incomingArrows;
-    }
+	public void setIncomingArrows(List<Arrow> incomingArrows) {
+		this.incomingArrows = incomingArrows;
+	}
 
-    public List<String> getOutgoingArrows() {
-	return outgoingArrows;
-    }
+	public List<Arrow> getOutgoingArrows() {
+		return outgoingArrows;
+	}
 
-    public void setOutgoingArrows(List<String> outgoingArrows) {
-	this.outgoingArrows = outgoingArrows;
-    }
+	public void setOutgoingArrows(List<Arrow> outgoingArrows) {
+		this.outgoingArrows = outgoingArrows;
+	}
+
+
 
 }
