@@ -172,5 +172,20 @@ public class Node {
     public String toString() {
 	return token;
     }
+    
+    public static String expand(Node node) {
+    	StringBuffer sb = new StringBuffer();
+    	expand(node, sb);
+    	return sb.toString();
+    }
+	
+	private static void expand(Node node, StringBuffer sb) {
+	    if (node == null)
+	    	return;
+	    expand(node.getChild(), sb);
+	    String vensimVar = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(node.getToken());
+	    sb.append(vensimVar);
+	    expand(node.getNext(), sb);
+	}
 
 }

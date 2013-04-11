@@ -50,6 +50,21 @@ public class TranslatorRepastSimphony extends Translator {
 	
 	
 	public TranslatorRepastSimphony() {
+		
+		this.packageName = "Package";
+    	this.supportName = "support";
+    	
+    	this.unitsConsistency = true;
+    	this.generateC = false;
+    	this.generateJava = true;
+    	
+    	this.loadProperties();
+    	this.loadUnitsProperties();
+    	
+    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	loadUnitsEquivalences();
+    	
+    	Translator.target = ReaderConstants.JAVA;
 //		this.loadProperties();
 //		this.loadUnitsProperties();
 //		ReaderConstants.OUTPUT_DIRECTORY = PROPERTIES.getProperty("outputDirectory");
@@ -206,6 +221,10 @@ public class TranslatorRepastSimphony extends Translator {
     	messages.add("********");
     	
     	List<String> mdlContents = new Reader(mdlFile).readMDLFile();
+    	if (mdlContents == null) {
+    		messages.add("MDL Read failure");
+    		return false;
+    	}
     	boolean success = validateGenerate(mdlContents, generateCode, messages);
     	return success;
     }

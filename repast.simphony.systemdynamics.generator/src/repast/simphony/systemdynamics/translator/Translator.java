@@ -124,6 +124,8 @@ public class Translator {
 
 	public void checkUnitsConsistency() {
 		List<String> rawEquations = reader.readMDLFile();
+		if (rawEquations == null)
+			return;
 		sdObjectManager = new SystemDynamicsObjectManager();
 		HashMap<String, Equation> equations = new EquationProcessor().processRawEquations(sdObjectManager, rawEquations);
 		processSubscriptDefinition(equations);
@@ -268,13 +270,15 @@ public class Translator {
 		List<String> addedScreenNames = sdObjectManager.validate(equations);
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
+		sdObjectManager.print();
+//		printGraphics(graphics);
 
 //		sdObjectManager.print();
 		if (!generateCode)
 			return true;
 		
 		process(equations);
-//		printGraphics(graphics);
+		
 		return true;
 	}
 	
@@ -304,6 +308,8 @@ public class Translator {
 	}
 
 	protected boolean execute(List<String> mdlContents) {
+		if (mdlContents == null)
+			return false;
 
 		sdObjectManager = new SystemDynamicsObjectManager();
 
@@ -343,7 +349,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
-//		sdObjectManager.print();
+		sdObjectManager.print();
 
 		
 		
@@ -406,6 +412,7 @@ public class Translator {
 		for (String lhs : equations.keySet()) {
 			Equation eqn = equations.get(lhs);		
 			eqn.generateTree();
+			System.out.println("IV: "+eqn.getVensimEquationOnly()+" <<"+eqn.getIntialValue()+">>");
 		}
 	}
 

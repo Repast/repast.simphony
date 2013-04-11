@@ -71,6 +71,7 @@ public class Engine {
 	}
 	
 	public boolean validateGenerateMDL(String mdlFile, boolean generateCode) {
+		System.out.println("vg MDL: "+mdlFile);
 		boolean result = getTranslator().validateGenerateMDL(mdlFile, generateCode, messages);
 		if (result) {
 			messages.add("Model syntax OK\n");
