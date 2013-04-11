@@ -3,10 +3,7 @@
  */
 package repast.simphony.statecharts.generator;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +29,12 @@ public class DirectoryCleaner {
     excludes.add(".gitignore");
   }
 
-  private String match;
-  private String svgPath;
+ 
+  private ToDeleteFilter filter;
+  
+  public DirectoryCleaner(ToDeleteFilter filter) {
+    this.filter = filter;
+  }
 
   /**
    * Cleans the directories starting at root of all the java and groovy with 
@@ -43,11 +44,9 @@ public class DirectoryCleaner {
    * @param svgPath
    * @param uuid
    */
-  public void run(String root, String svgPath, String uuid) {
-    this.match = "@GeneratedFor(\"" + uuid + "\")";
-    this.svgPath = svgPath;
+  public void run(String root) {
     File f = new File(root);
-    process(f, uuid);
+    process(f);
   }
 
   private IFile getIFile(File file) {
@@ -56,46 +55,18 @@ public class DirectoryCleaner {
     return workspace.getRoot().getFileForLocation(location);
   }
 
-  private boolean doDelete(File file, String uuid) {
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new FileReader(file));
-      String line = null;
-      while ((line = in.readLine()) != null) {
-        if (line.contains(match))
-          return true;
-      }
-    } catch (IOException ex) {
-
-    } finally {
-      try {
-        if (in != null)
-          in.close();
-      } catch (IOException e) {
-      }
-    }
-
-    return false;
-  }
-
-  private void process(File file, String uuid) {
+  private void process(File file) {
     if (!excludes.contains(file.getName())) {
       if (file.isDirectory()) {
         for (File child : file.listFiles()) {
-          process(child, uuid);
-          if (file.list().length == 0) {
+          process(child);
+          if (file.list().length == 0 && !file.getName().equals(CodeGenerator.SRC_GEN)) {
             file.delete();
           }
         }
       } else {
         IFile ifile = getIFile(file);
-        if (ifile.getFileExtension().equals("java") || ifile.getFileExtension().equals("groovy")) {
-          if (doDelete(file, uuid))
-            try {
-              ifile.delete(true, null);
-            } catch (CoreException e) {
-            }
-        } else if (ifile.getProjectRelativePath().toString().equals(svgPath)) {
+        if (filter.delete(ifile)) {
           try {
             ifile.delete(true, null);
           } catch (CoreException e) {
