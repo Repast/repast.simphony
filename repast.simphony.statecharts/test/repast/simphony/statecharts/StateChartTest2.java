@@ -40,7 +40,7 @@ public class StateChartTest2 {
 			csb.addChildState(two);
 			CompositeState<MyAgent1> cs = csb.build();
 			this.registerEntryState(cs);
-			addState(csb.build());
+			addState(cs);
 			SimpleState<MyAgent1> three = new SimpleStateBuilder<MyAgent1>(
 					"three").build();
 			addState(three);
