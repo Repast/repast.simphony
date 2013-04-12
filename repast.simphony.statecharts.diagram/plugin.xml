@@ -96,18 +96,6 @@
             </ElementType>
          </ViewId>
       </GlobalActionHandlerProvider>
-      <GlobalActionHandlerProvider
-            class="org.eclipse.gmf.runtime.diagram.ui.render.providers.DiagramUIRenderGlobalActionHandlerProvider"
-            id="StatechartRender">
-         <Priority name="Lowest"/>
-         <ViewId id="repast.simphony.statecharts.part.StatechartDiagramEditorID">
-            <ElementType class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
-               <GlobalActionId actionId="cut"/>
-               <GlobalActionId actionId="copy"/>
-               <GlobalActionId actionId="paste"/>
-            </ElementType>
-         </ViewId>
-      </GlobalActionHandlerProvider>
    </extension>
 
 
@@ -958,10 +946,31 @@
    </configurator>
 </extension>
 
-
-
-
-
+<extension
+      point="org.eclipse.gmf.runtime.common.ui.services.action.contributionItemProviders">
+   <contributionItemProvider
+         checkPluginLoaded="false"
+         class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContributionItemProvider">
+      <Priority
+            name="Medium">
+      </Priority>
+      <popupContribution
+            class="org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider">
+         <popupPredefinedItem
+                 id="diagramAddMenu"
+                 remove="true">
+            </popupPredefinedItem>
+            <popupPredefinedItem
+                 id="navigateMenu"
+                 remove="true">
+            </popupPredefinedItem>
+             <popupPredefinedItem
+                 id="deleteFromDiagramAction"
+                 remove="true">
+            </popupPredefinedItem>
+      </popupContribution>
+   </contributionItemProvider>
+</extension>
 
 
    <!-- optionally, specify keybindings -->
