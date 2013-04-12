@@ -65,9 +65,9 @@ public class SymbolEditorDialog extends JDialog {
 		return rule;
 	}
 	
-	public PreviewLabel getPreview(){
-		return ruleEditPanel1.getPreview();
-	}
+//	public PreviewLabel getPreview(){
+//		return ruleEditPanel1.getPreview();
+//	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents

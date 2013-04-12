@@ -341,14 +341,12 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	private void fillOpacityChanged(ChangeEvent e) {
-		getPreview()
-				.setFillOpacity((Double) getFillOpacitySpinner().getValue());
+		getPreview().setFillOpacity((Double) getFillOpacitySpinner().getValue());
 		setFill();
 	}
 
 	private void outlineOpacityChanged(ChangeEvent e) {
-		getPreview().setOutlineOpacity(
-				(Double) getOutlineOpacitySpinner().getValue());
+		getPreview().setOutlineOpacity((Double) getOutlineOpacitySpinner().getValue());
 		setStroke();
 	}
 
@@ -358,14 +356,12 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	private void markSizeChanged(ChangeEvent e) {
-		getPreview().setMarkSize(
-				((Number) getMarkSizeSpinner().getValue()).intValue());
+		getPreview().setMarkSize(((Number) getMarkSizeSpinner().getValue()).intValue());
 		setMark();
 	}
 
 	private void outlineThicknessChanged(ChangeEvent e) {
-		getPreview().setOutlineThickness(
-				(Integer) getOutlineThicknessSpinner().getValue());
+		getPreview().setOutlineThickness((Integer) getOutlineThicknessSpinner().getValue());
 		setStroke();
 	}
 
@@ -410,9 +406,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		filterPanel = new JPanel();
 		separator5 = compFactory.createSeparator("Filter");
@@ -655,12 +648,9 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			previewPanel.add(preview, cc.xy(2, 3));
 		}
 		add(previewPanel);
-		// //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
+	// TODO Geotools clean up
 	private JPanel filterPanel;
 	private JComponent separator5;
 	private JLabel label10;
@@ -687,8 +677,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private JSpinner markSizeSpinner;
 	private JPanel previewPanel;
 	private JComponent separator6;
-	private PreviewLabel preview;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
+	private PreviewLabel preview;  // TODO Geotools [blocker] - change with JLabel, change to PreviewLabel.createIcon(rule)
+	
 
 	public Style getStyle() {
 		Style style = styleBuilder.createStyle();

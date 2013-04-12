@@ -8,29 +8,26 @@ import static org.geotools.map.event.MapLayerEvent.VISIBILITY_CHANGED;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.map.FeatureLayer;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.map.GridCoverageLayer;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Style;
 
-public class RepastMapLayer extends FeatureLayer {
+/**
+ * Repast Raster Layer that wraps Geotools GridCoverageLayer
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class RepastRasterLayer extends GridCoverageLayer {
 
-	public RepastMapLayer(FeatureCollection coll, Style style, String title) {
-		super(coll, style, title);
+	public RepastRasterLayer(GridCoverage2D coverage, Style style, String title) {
+		super(coverage, style, title);
 	}
 
-	public RepastMapLayer(FeatureCollection coll, Style style) {
-		super(coll, style);
-	}
-
-	public RepastMapLayer(FeatureSource source, Style style, String title) {
-		super(source, style, title);
-	}
-
-	public RepastMapLayer(FeatureSource source, Style style) {
-		super(source, style);
+	public RepastRasterLayer(GridCoverage2D coverage, Style style) {
+		super(coverage, style);
 	}
 
 	List<MapLayerListener> listenerList = new ArrayList<MapLayerListener>();
@@ -69,5 +66,4 @@ public class RepastMapLayer extends FeatureLayer {
 		fireMapLayerChangedEvent(new MapLayerEvent(this,
 				MapLayerEvent.VISIBILITY_CHANGED));
 	}
-
 }

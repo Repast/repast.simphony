@@ -236,7 +236,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		String att = attributeBox.getSelectedItem().toString();
 		
 		if (source == null){  
-			// TODO Geotools  need to create a rule from the FeatureType as with
+			// TODO Geotools [blocker]  need to create a rule from the FeatureType as with
 			//      the FeatureSource below
 		}
 		
@@ -270,7 +270,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
   private void addAll() {
   	
   	if (source == null){  // Create a rule from the FeatureType
-			// TODO Geotools  should this option even be available, ie only for 
+			// TODO Geotools [blocker]  should this option even be available, ie only for 
   		//      shapefile FeatureSources ?
 		}
 		
@@ -310,7 +310,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	}
 
 	public void init(FeatureType type, Style style, 
-			FeatureSource<SimpleFeatureType, SimpleFeature> source, PreviewLabel preview) {
+			FeatureSource<SimpleFeatureType, SimpleFeature> source) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		featureType = (SimpleFeatureType)type;
 		this.source = source;
@@ -322,7 +322,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		}
 		
 		attributeBox.setModel(model);
-		tableModel = new ValueTableModel(featureType, style, preview);
+		tableModel = new ValueTableModel(featureType, style);
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());

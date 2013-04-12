@@ -62,8 +62,9 @@ public class PreviewLabel extends JLabel {
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, 100, 100);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		// TODO Geotools
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,	RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		if (fillColor != null){
 			g2d.setColor(fillColor);
@@ -81,57 +82,43 @@ public class PreviewLabel extends JLabel {
 		g2d.draw(shape);
 		this.setIcon(new ImageIcon(image));
 	}
-	
-	public ImageIcon getSmallIcon() {
-		return getSmallIcon(null, null);
-	}
+
 	
 	/**
 	 * Provide a small icon for table cells or other locations where just the
-	 * small icon is needed. Optionally provide a new fill color.
+	 * small icon is needed. 
 	 * 
-	 * @param newFill the optional new fill color
+	 * 
 	 * @return the small icon
 	 */
-	public ImageIcon getSmallIcon(Color newFill, Color newLine) {
+	public ImageIcon getSmallIcon() {
 		Image img = new BufferedImage(2*SMALL_MARK_SIZE, 2*SMALL_MARK_SIZE, 
 				BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2d = (Graphics2D) img.getGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		//TODO Geotools
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		Shape s = null;
-		Color fill = null;
-		Color line = null;
 		
 		if (mark != null){
 			s  = AffineTransform.getScaleInstance(SMALL_MARK_SIZE, SMALL_MARK_SIZE)
 					.createTransformedShape(Java2DMark.getWellKnownMark(mark));
-	  AffineTransform transform = AffineTransform
-			.getTranslateInstance(SMALL_MARK_SIZE, SMALL_MARK_SIZE);
-	  s = transform.createTransformedShape(s);
+			AffineTransform transform = AffineTransform
+					.getTranslateInstance(SMALL_MARK_SIZE, SMALL_MARK_SIZE);
+			s = transform.createTransformedShape(s);
 		}
 		else
 			s = shape;
-		
-		if (newFill != null)
-			fill = newFill;
-		else
-			fill = fillColor;
-		
-		if (newLine != null)
-			line = newLine;
-		else
-			line = outlineColor;
-		
-		if (fill != null){
-			g2d.setColor(fill);
+				
+		if (fillColor != null){
+			g2d.setColor(fillColor);
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 					(float) fillOpacity));
 			g2d.fill(s);
 		}
-		if (line != null){
-			g2d.setColor(line);
+		if (outlineColor != null){
+			g2d.setColor(outlineColor);
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 					(float) outlineOpacity));
 			g2d.setStroke(new BasicStroke((float) outlineThickness));
@@ -238,37 +225,71 @@ public class PreviewLabel extends JLabel {
 	/**
 	 * Generate an Icon from a Rule.
 	 * 
-	 * @param label the PreviewLabel from which to get the base icon
 	 * @param rule the rule used to format the icon
 	 * 
 	 * @return the rule-based icon.
 	 * 
-	 * TODO Geotools this should be changed to be only dependent on the Rule
-	 *      and not require a preview label to be more flexible.
-	 */
-	public static Icon formatPreview(PreviewLabel label, Rule rule){
+	 */	
+	public static Icon createIcon(Rule rule){
+		PreviewLabel preview = new PreviewLabel();
 		Icon icon = null;
 		Symbolizer sym = rule.symbolizers().get(0);
-			
-		// TODO only does color...add mark, stroke, etc.
 		
 		if (sym instanceof PointSymbolizer){
 			PointSymbolizer ps = (PointSymbolizer) sym;	
 			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
-			Color c = Color.decode(mark.getFill().getColor().toString());	
-			icon = label.getSmallIcon(c,null);
+				
+			double size = Double.valueOf(ps.getGraphic().getSize().toString());
+			Color fillColor = Color.decode(mark.getFill().getColor().toString());	
+			double fillOpacity = Double.valueOf(ps.getGraphic().getOpacity().toString());
+			Color outlineColor = Color.decode(mark.getStroke().getColor().toString());
+			double outlineThickness = Double.valueOf(mark.getStroke().getWidth().toString());
+			double outlineOpacity = Double.valueOf(mark.getStroke().getOpacity().toString());
+			
+			preview.setMark(mark.getWellKnownName().toString());
+			preview.setMarkSize(size);
+			preview.setFillColor(fillColor);
+			preview.setFillOpacity(fillOpacity);
+			preview.setOutlineColor(outlineColor);
+			preview.setOutlineThickness(outlineThickness);
+			preview.setOutlineOpacity(outlineOpacity);
+			
 		}
 		else if (sym instanceof LineSymbolizer){
+			preview.setShapeToLine();
 			LineSymbolizer ls = (LineSymbolizer) sym;
+			
 			Color c = Color.decode(ls.getStroke().getColor().toString());
-			icon = label.getSmallIcon(null, c);
+			double width = Double.valueOf(ls.getStroke().getWidth().toString());
+			double opacity = Double.valueOf(ls.getStroke().getOpacity().toString());
+			
+			preview.setOutlineColor(c);
+			preview.setOutlineThickness(width);
+			preview.setOutlineOpacity(opacity);
+			
 		}
 		else if (sym instanceof PolygonSymbolizer){
-			PolygonSymbolizer ps = (PolygonSymbolizer) sym;		
-			Color c = Color.decode(ps.getFill().getColor().toString());	
-			icon = label.getSmallIcon(c,null);
+			preview.setShapeToPolygon();
+			PolygonSymbolizer ps = (PolygonSymbolizer) sym;
+			
+			Color fillColor = Color.decode(ps.getFill().getColor().toString());
+			double fillOpacity = Double.valueOf(ps.getFill().getOpacity().toString());
+			Color outlineColor = Color.decode(ps.getStroke().getColor().toString());
+			double outlineThickness = Double.valueOf(ps.getStroke().getWidth().toString());
+			double outlineOpacity = Double.valueOf(ps.getStroke().getOpacity().toString());
+			
+			preview.setFillColor(fillColor);
+			preview.setFillOpacity(fillOpacity);
+			preview.setOutlineColor(outlineColor);
+			preview.setOutlineThickness(outlineThickness);
+			preview.setOutlineOpacity(outlineOpacity);
+
 		}
 	
+		preview.updatePreview();
+		icon = preview.getSmallIcon();		
+		
 		return icon;
 	}
+	
 }

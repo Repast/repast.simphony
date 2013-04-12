@@ -437,6 +437,7 @@ public class GISStylePanel extends JPanel {
     SLDTransformer sldTransformer = new SLDTransformer();
     String xml = sldTransformer.transform(style);
     // fix the style xml
+    // TODO Geotools [minor] check if this is still neccessary.
     int index = xml.indexOf(SLD_NS);
     if (index != -1 && xml.indexOf(SLD_NS_2) == -1) {
       StringBuilder builder = new StringBuilder(xml);

@@ -11,7 +11,6 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.filter.AndImpl;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.FeatureTypeStyle;
@@ -60,12 +59,12 @@ public class ByRangePanelMediator {
 	private GeometryUtil.GeometryType type;
   private double min = 0, max = 10;
 
-  public ByRangePanelMediator(FeatureType featureType, Rule rule, PreviewLabel preview) {
+  public ByRangePanelMediator(FeatureType featureType, Rule rule) {
   	this.featureType = featureType;
 		
-  	tableModel = new SampleStyleTableModel(preview);
+  	tableModel = new SampleStyleTableModel();
   	
-  	// TODO Geotools add other range types in new GT 8 API?
+  	// TODO Geotools [major] add other range types in new GT 8 API?
   	cTypeModel.addElement(new IntervalItemType());
 		//cTypeModel.addElement(new QuantileItemType());
 		
@@ -122,7 +121,7 @@ public class ByRangePanelMediator {
 	 * @param classes the new number of classes
 	 */
 	public void classesChanged(int classes) {
-		// TODO Geotools restrict to max 11 classes
+		// TODO Geotools [blocker] restrict to max 11 classes
 		ignorePaletteChange = true;
 		this.classesCount = classes;
 		paletteModel.removeAllElements();
@@ -187,7 +186,8 @@ public class ByRangePanelMediator {
 	public void replaceRule(Rule oldRule, Rule newRule) {
 		for (Rule rule : fts.rules()){
 			if (rule.equals(oldRule)){
-				rule = newRule;
+				fts.rules().remove(rule);
+				fts.rules().add(newRule);
 				break;
 			}
 		}

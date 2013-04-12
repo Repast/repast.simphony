@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +20,14 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
@@ -42,9 +43,11 @@ import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.gis.data.DataUtilities;
+import repast.simphony.gis.display.CoverageStyleBuilder;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
 import repast.simphony.gis.display.RepastMapLayer;
+import repast.simphony.gis.display.RepastRasterLayer;
 import repast.simphony.gis.display.StatusBar;
 import repast.simphony.gis.legend.MapLegend;
 import repast.simphony.gis.tools.DistanceTool;
@@ -86,8 +89,7 @@ public class MapViewer {
 	
 	List<SimpleFeature> newAgents;
 	
-	SimpleFeature feature1;
-	SimpleFeature feature2;
+	
 	
 	public MapViewer() {
 		context = new MapContent();
@@ -100,11 +102,10 @@ public class MapViewer {
 		
 		initTools();
 		
-//		createLayers();  // create layers from shapefiles
+		createLayers();  // create layers from shapefiles
 		
-		createLayersFromAgents();  // create layers using agent factories
+//		createLayersFromAgents();  // create layers using agent factories
 		
-//		createLayers2();  // create layers from generated points
 		
 		System.out.println("Done creating layers.");
 	}
@@ -125,43 +126,6 @@ public class MapViewer {
      return LOCATION;
  }
 	
-	 /**
-	  * Test just adding plain GeoTools Features - not agents
-	  */
-	private void createLayers2() {
-		features = new ArrayList<SimpleFeature>();
-		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-
-		SimpleFeatureType type = createFeatureType();
-		EchoSimpleFeatureBuilder featureBuilder = new EchoSimpleFeatureBuilder(type);
-
-    int ats = type.getAttributeCount();
-		
-		for (int i=0; i<ats; i++){
-			System.out.println(" lulz " + type.getType(i));
-		}
-		
-		for (int i = 0; i < 10; i++) {
-			Coordinate coord = new Coordinate(-103.823 + i / 100.0, 44.373);
-			Point point = geometryFactory.createPoint(coord);
-
-			featureBuilder.add(point);
-			featureBuilder.add("Agent-" + i);
-			SimpleFeature feature = featureBuilder.buildFeature(null);
-			features.add(feature);
-			
-			feature1 = feature;
-		}
-
-		FeatureSource source = DataUtilities.createFeatureSource(features);
-
-		Style style = builder.createStyle(builder.createPointSymbolizer(
-				builder.createGraphic(null, builder.createMark("square", Color.RED), null)));
-
-		// !!! WORKS !!!!
-		addLayer(new RepastMapLayer(source, style));
-//		addLayer(new FeatureLayer(source, style));
-	}
 
 	/**
 	 * Create agents, add to geography with a feature
@@ -193,10 +157,10 @@ public class MapViewer {
 			Point geom = geoFac.createPoint(coord);
 			geography.move(agent, geom);
 
-			feature2 = agentFac.getFeature(agent, geography);
+			SimpleFeature f = agentFac.getFeature(agent, geography);
+			newAgents.add(f);
 		} 
 
-		newAgents = agentFac.getFeatures();
 		
 		FeatureSource source = DataUtilities.createFeatureSource(newAgents);
 		
@@ -208,8 +172,25 @@ public class MapViewer {
 	
 	private void createLayers() {
 		try {
-			String dataFileName = "sampleData/streams.shp"; 
-			String styleFileName = "sampleData/streams.xml";
+			// TODO Geotools [major] - the image doesnt initially line up with the shapefile
+			//      but does after the map is moved/zoomed
+			//      See Geotools JMapPane for how to handle resize and transforms
+			// Test GridCoverage
+			File file = new File("sampleData/earthlights.jpg");
+
+//			GridFormatFinder.scanForPlugins();
+			AbstractGridFormat format = GridFormatFinder.findFormat(file);
+			AbstractGridCoverage2DReader reader = format.getReader(file);
+
+			GridCoverage2D coverage = reader.read(null);
+			CoverageStyleBuilder styleBuilder = new CoverageStyleBuilder();
+			Style style = styleBuilder.buildRGBStyle(coverage);
+
+			addLayer(new RepastRasterLayer(coverage, style));
+			
+			
+			String dataFileName = "sampleData/countries.shp"; 
+			String styleFileName = "sampleData/countries.xml";
 			
 			URL shapefile = new File(dataFileName).toURL();
 			
@@ -219,28 +200,25 @@ public class MapViewer {
 			File styleFile = new File(styleFileName);
 			StyleFactory fac = CommonFactoryFinder.getStyleFactory(null);
 			SLDParser parser = new SLDParser(fac, styleFile);
-			Style style = parser.readXML()[0];
-			
-			addLayer(new RepastMapLayer(source, style, "Streams"));
-
-			dataFileName = "sampleData/archsites.shp"; 
-			styleFileName = "sampleData/archsites.xml"; 
-			store = new IndexedShapefileDataStore(new File(dataFileName).toURL());
-			source = store.getFeatureSource();
-			styleFile = new File(styleFileName);
-			fac = CommonFactoryFinder.getStyleFactory(null);
-			parser = new SLDParser(fac, styleFile);
 			style = parser.readXML()[0];
+			
+			addLayer(new RepastMapLayer(source, style));
 
-//			style = builder.createStyle(builder.createPointSymbolizer(builder.createGraphic(null,
-//							builder.createMark("square", Color.RED), null)));
-
-			addLayer(new RepastMapLayer(source, style, "Sites"));
+//			dataFileName = "sampleData/archsites.shp"; 
+//			styleFileName = "sampleData/archsi.xml"; 
+//			store = new IndexedShapefileDataStore(new File(dataFileName).toURL());
+//			source = store.getFeatureSource();
+//			styleFile = new File(styleFileName);
+//			fac = CommonFactoryFinder.getStyleFactory(null);
+//			parser = new SLDParser(fac, styleFile);
+//			style = parser.readXML()[0];
+//
+//			addLayer(new RepastMapLayer(source, style, "Sites"));
+			
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
 	}
 
 	public void addLayer(Layer layer) {

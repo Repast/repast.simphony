@@ -56,6 +56,8 @@ import com.jgoodies.forms.layout.Sizes;
  * The "Range Style" panel in the GisStyleEditor dialog that provides the
  * capability of setting the shape fill color using ranged rules.
  * 
+ * TODO Geotools [major] add mark size ranging
+ * 
  * @author Nick Collier
  * @author Eric Tatara
  */
@@ -68,8 +70,10 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 
 	private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		public Component getTableCellRendererComponent(JTable table, Object value, 
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, 
+					isSelected, hasFocus, row, column);
 			label.setText("");
 			label.setIcon((Icon) value);
 			label.setHorizontalAlignment(JLabel.CENTER);
@@ -78,9 +82,10 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	}
 
 	private class CellRenderer extends DefaultListCellRenderer {
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-		                                              boolean cellHasFocus) {
-			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		public Component getListCellRendererComponent(JList list, Object value, 
+				int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, 
+					index, isSelected, cellHasFocus);
 			if (value != null) {
 				Palette palette = (Palette) value;
 				label.setText(""); //palette.getDescription());
@@ -115,12 +120,10 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		FeatureTypeStyle fts = mediator.getFeatureTypeStyle();
 		StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 		Style style = fac.createStyle();
-		ArrayList<FeatureTypeStyle> styles = new ArrayList<FeatureTypeStyle>();
-		styles.add(fts);
-		style.featureTypeStyles().clear();
-		style.featureTypeStyles().addAll(styles);
-		
+		style.featureTypeStyles().clear();		
+		style.featureTypeStyles().add(fts);
 		style.getDescription().setAbstract(ID + ":" + attributeBox.getSelectedItem());
+		
 		return style;
 	}
 
@@ -176,17 +179,15 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 					SampleStyleTableModel tableModel = (SampleStyleTableModel) previewTable.getModel();
 					if (newRule != null) {
 						mediator.setDefaultRule(newRule);
-						symbolLbl.setIcon(dialog.getPreview().getSmallIcon());
-						tableModel.setDefaultPreview(dialog.getPreview());
+						symbolLbl.setIcon(PreviewLabel.createIcon(newRule));
+//						tableModel.setDefaultPreview(dialog.getPreview());
 					}
 				}
 			}
 		});
 
 
-    // Edit the shape for each row entry
-    // TODO currently there can be only a single shape for the range.  Should
-    //      we provide capability to have unique shapes in each row?
+    // Provide the style editor dialog to each row icon for custom styling.
 		previewTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -199,6 +200,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 										new SymbolEditorDialog((JDialog) SwingUtilities.getWindowAncestor(ByRangePanel.this));
 						dialog.init(type, rule);
 						Rule newRule = dialog.display();
+					
 						if (newRule != null) {
 							tableModel.setRule(row, newRule);
 							mediator.replaceRule(rule, newRule);
@@ -209,13 +211,13 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		});
 	}
 
-	public void init(FeatureType featureType, Style style, PreviewLabel preview) {
+	public void init(FeatureType featureType, Style style) {
 			this.type = (SimpleFeatureType)featureType;
 
 			Rule rule = style.featureTypeStyles().get(0).rules().get(0);
-			mediator = new ByRangePanelMediator(featureType, rule, preview);
-			
-			symbolLbl.setIcon(preview.getSmallIcon());
+			mediator = new ByRangePanelMediator(featureType, rule);
+					
+			symbolLbl.setIcon(PreviewLabel.createIcon(rule));
 			
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
@@ -261,8 +263,6 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		label1 = new JLabel();
 		attributeBox = new JComboBox();
@@ -371,11 +371,8 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			scrollPane1.setViewportView(previewTable);
 		}
 		add(scrollPane1, cc.xywh(1, 15, 9, 1));
-		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JLabel label1;
 	private JComboBox attributeBox;
 	private JLabel label2;
@@ -396,5 +393,4 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	private JComponent separator2;
 	private JScrollPane scrollPane1;
 	private JTable previewTable;
-	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

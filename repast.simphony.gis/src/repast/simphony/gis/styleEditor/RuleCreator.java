@@ -4,7 +4,9 @@ import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
 import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.LiteralExpressionImpl;
@@ -45,14 +47,12 @@ public class RuleCreator {
 	 * @return the created style
 	 */
 	public Style createStyle(String attributeName, java.util.List<Rule> rules) {
-		Rule[] ruleArray = new Rule[rules.size()];
-		rules.toArray(ruleArray);
 		FeatureTypeStyle fts = fac.createFeatureTypeStyle();
 		fts.rules().clear();
-		fts.rules().addAll(Arrays.asList(ruleArray));
+		fts.rules().addAll(rules);
 		Style style = builder.createStyle();		
 		style.featureTypeStyles().clear();
-		style.featureTypeStyles().addAll(Arrays.asList(new FeatureTypeStyle[]{fts}));
+		style.featureTypeStyles().add(fts);
 
 		return style;
 	}
@@ -69,22 +69,22 @@ public class RuleCreator {
 		rule.setIsElseFilter(true);
 		rule.setTitle("Default");
 
-		Symbolizer[] syms = new Symbolizer[1];
+		Symbolizer s = null;
 		if (type == LINE) {
-			LineSymbolizer sym = createLineSymbolizer(2, color);
-			syms[0] = sym;
-		} else if (type == POINT) {
-			PointSymbolizer sym = builder.createPointSymbolizer(builder.createGraphic(null,
+			s = createLineSymbolizer(2, color);
+		} 
+		else if (type == POINT) {
+			s = builder.createPointSymbolizer(builder.createGraphic(null,
 							builder.createMark("square", color, Color.BLACK, 1), null));
-			sym.getGraphic().setSize(builder.literalExpression(6));
-			syms[0] = sym;
-		} else {
-			// assume polygon then
-			Symbolizer sym = builder.createPolygonSymbolizer(color, Color.BLACK, 1);
-			syms[0] = sym;
+			
+			// TODO Geotools [blocker] why is the size = 6 ??
+			((PointSymbolizer)s).getGraphic().setSize(builder.literalExpression(6));
+		} 
+		else {// assume polygon 
+			s = builder.createPolygonSymbolizer(color, Color.BLACK, 1);
 		}
 		rule.symbolizers().clear();
-		rule.symbolizers().addAll(Arrays.asList(syms));
+		rule.symbolizers().add(s);
 		return rule;
 	}
 
@@ -109,7 +109,7 @@ public class RuleCreator {
 		rule.setFilter(filter);
 		Symbolizer sym = factory.createSymbolizer();
 		rule.symbolizers().clear();
-		rule.symbolizers().addAll(Arrays.asList(new Symbolizer[]{sym}));
+		rule.symbolizers().add(sym);
 		return rule;
 	}
 

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 
 /**
- * TODO Geotools replace this with another class that provides Java Shapes?
+ * TODO Geotools [major] replace this with another class that provides Java Shapes?
  * 
  * Utility class used to get well known marks
  *

@@ -568,7 +568,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     URL imageFile = null;
     Image image = null;
 
-    // TODO Geotools update icons with new GT versions?
+    // TODO Geotools [major] update icons with new GT versions?
     // zoomIn
     Map<String, Object> toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);

@@ -52,8 +52,8 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		
 		styleTitleField.setText(style.getDescription().getTitle().toString());
 
-		rangePanel.init(featureType, style, ruleEditPanel1.getPreview());
-		byValuePanel.init(featureType, style, source, ruleEditPanel1.getPreview());
+		rangePanel.init(featureType, style);
+		byValuePanel.init(featureType, style, source);
 	}
 
 	private void initComponents() {
