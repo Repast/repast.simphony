@@ -19,17 +19,14 @@ import edu.umd.cs.piccolo.event.PInputEventListener;
 /**
  * This is a very basic panel that holds a canvas and a toolbar.
  *
- * @author Howe
+ * @author Tom Howe
  */
 public class PiccoloMapPanel extends JPanel {
   private static final long serialVersionUID = -3638545744874130251L;
 
   private PGISCanvas canvas;
-
   private JToolBar toolBar;
-
   private MapContent context;
-
   private ToolManager toolMan = new ToolManager();
 
   /**
@@ -45,7 +42,6 @@ public class PiccoloMapPanel extends JPanel {
   private void init() {
     canvas = new PGISCanvas(context);
     toolBar = toolMan.getToolBar();
-    // toolMan.setTool(new PGISPanTool(context, canvas));
     setLayout(new BorderLayout());
     add(canvas, BorderLayout.CENTER);
     add(toolBar, BorderLayout.NORTH);

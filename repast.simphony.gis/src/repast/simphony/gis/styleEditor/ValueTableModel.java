@@ -34,16 +34,12 @@ public class ValueTableModel extends AbstractTableModel {
 	private Rule defaultRule;
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
-//	private PreviewLabel defaultPreview;
 
 	public ValueTableModel(SimpleFeatureType featureType, Style style) {
-//		RuleCreator creator = new RuleCreator();
 		
 		defaultRule = configureDefaultRule(style);
 		
 		addRule(defaultRule);
-
-//		defaultPreview = preview;
 		
 		convertors.put(Double.class, new DoubleConvertor());
 		convertors.put(double.class, new DoubleConvertor());
@@ -235,7 +231,7 @@ public class ValueTableModel extends AbstractTableModel {
 	}
 	
 	private Icon getIcon(Rule rule) {
-    return PreviewLabel.createIcon(rule);
+    return PreviewLabel.createSmallIcon(rule);
 	}
 	
 	private Literal findLiteralExpression(Rule rule) {
@@ -247,8 +243,8 @@ public class ValueTableModel extends AbstractTableModel {
 
 	private String literalValue(Rule rule) {
 		if (!rule.isElseFilter()) {
-			Literal exp = findLiteralExpression(rule);
-			return exp.getValue().toString();
+			Expression exp = findLiteralExpression(rule);
+			return exp.evaluate(null,String.class);
 		}
 		return "<Default>";
 	}

@@ -42,13 +42,11 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.gis.data.DataUtilities;
 import repast.simphony.gis.display.CoverageStyleBuilder;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
 import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.gis.display.RepastRasterLayer;
-import repast.simphony.gis.display.StatusBar;
 import repast.simphony.gis.legend.MapLegend;
 import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.LocationSetter;
@@ -57,6 +55,7 @@ import repast.simphony.gis.tools.PMarqueeZoomIn;
 import repast.simphony.gis.tools.PMarqueeZoomOut;
 import repast.simphony.gis.tools.PositionTool;
 import repast.simphony.gis.tools.ToolManager;
+import repast.simphony.gis.util.DataUtilities;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.Geography;
@@ -177,16 +176,17 @@ public class MapViewer {
 			//      See Geotools JMapPane for how to handle resize and transforms
 			// Test GridCoverage
 			File file = new File("sampleData/earthlights.jpg");
-
+			Style style;
+			
 //			GridFormatFinder.scanForPlugins();
-			AbstractGridFormat format = GridFormatFinder.findFormat(file);
-			AbstractGridCoverage2DReader reader = format.getReader(file);
-
-			GridCoverage2D coverage = reader.read(null);
-			CoverageStyleBuilder styleBuilder = new CoverageStyleBuilder();
-			Style style = styleBuilder.buildRGBStyle(coverage);
-
-			addLayer(new RepastRasterLayer(coverage, style));
+//			AbstractGridFormat format = GridFormatFinder.findFormat(file);
+//			AbstractGridCoverage2DReader reader = format.getReader(file);
+//
+//			GridCoverage2D coverage = reader.read(null);
+//			CoverageStyleBuilder styleBuilder = new CoverageStyleBuilder();
+//			style = styleBuilder.buildRGBStyle(coverage);
+//
+//			addLayer(new RepastRasterLayer(coverage, style));
 			
 			
 			String dataFileName = "sampleData/countries.shp"; 

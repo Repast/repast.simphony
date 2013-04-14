@@ -4,14 +4,12 @@ import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
 import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.LiteralExpressionImpl;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
@@ -24,7 +22,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
 
 import repast.simphony.gis.util.GeometryUtil.GeometryType;
 
@@ -32,6 +29,7 @@ import repast.simphony.gis.util.GeometryUtil.GeometryType;
  * Utility class for creating Styles from rules and rule editing.
  * 
  * @author Nick Collier
+ * @author Eric Tatara
  * 
  */
 public class RuleCreator {
@@ -99,9 +97,13 @@ public class RuleCreator {
 	 * @return the created rule.
 	 */
 	public Rule createValueRule(SimpleFeature feature, String attributeName, SymbolizerFactory factory) {
-		Object att = feature.getAttribute(attributeName);
+		Object att = null; 
+		
+		if (feature != null)
+		  att = feature.getAttribute(attributeName);
+		
 		Rule rule = fac.createRule();
-		rule.setTitle(att.toString());
+		rule.setTitle(attributeName);
 
 		Expression attExp = builder.attributeExpression(attributeName);
 		Expression lit = filterFactory.literal(att);
@@ -130,16 +132,19 @@ public class RuleCreator {
 	 */
 	public static Color getColor(Rule rule) {
 		Symbolizer sym = rule.getSymbolizers()[0];
-		Literal colorExp = null;
+		Expression colorExp = null;
 		if (sym instanceof PointSymbolizer) {
-			colorExp = (Literal) ((PointSymbolizer) sym).getGraphic().getMarks()[0].getFill().getColor();
-		} else if (sym instanceof PolygonSymbolizer) {
-			colorExp = (Literal) ((PolygonSymbolizer) sym).getFill().getColor();
-		} else if (sym instanceof LineSymbolizer) {
-			colorExp = (Literal) ((LineSymbolizer) sym).getStroke().getColor();
+			Mark mark = (Mark)((PointSymbolizer) sym).getGraphic().graphicalSymbols().get(0);
+			colorExp = mark.getFill().getColor();
+		} 
+		else if (sym instanceof PolygonSymbolizer) {
+			colorExp = ((PolygonSymbolizer) sym).getFill().getColor();
+		} 
+		else if (sym instanceof LineSymbolizer) {
+			colorExp = ((LineSymbolizer) sym).getStroke().getColor();
 		}
 		if (colorExp != null)
-			return Color.decode(colorExp.getValue().toString());
+			return Color.decode(colorExp.evaluate(null,String.class));
 
 		return null;
 	}
@@ -151,19 +156,22 @@ public class RuleCreator {
 	 */
 	public static void setColor(Rule rule, Color color) {
 		Symbolizer sym = rule.getSymbolizers()[0];
-		LiteralExpressionImpl colorExp = null;
+		Expression colorExp = null;
 		
 		if (sym instanceof PointSymbolizer) {
-			colorExp = (LiteralExpressionImpl) ((PointSymbolizer) sym).getGraphic().getMarks()[0].getFill().getColor();
-		} else if (sym instanceof PolygonSymbolizer) {
-			colorExp = (LiteralExpressionImpl) ((PolygonSymbolizer) sym).getFill().getColor();
-		} else if (sym instanceof LineSymbolizer) {
-			colorExp = (LiteralExpressionImpl) ((LineSymbolizer) sym).getStroke().getColor();
+			Mark mark = (Mark)((PointSymbolizer) sym).getGraphic().graphicalSymbols().get(0);
+			colorExp = mark.getFill().getColor();
+		} 
+		else if (sym instanceof PolygonSymbolizer) {
+			colorExp = ((PolygonSymbolizer) sym).getFill().getColor();
+		} 
+		else if (sym instanceof LineSymbolizer) {
+			colorExp = ((LineSymbolizer) sym).getStroke().getColor();
 		}
 		if (colorExp != null) {
 			String rgb = Integer.toHexString(color.getRGB());
 			// trim of the alpha portion
-			colorExp.setValue("#" + rgb.substring(2, rgb.length()));
+			((LiteralExpressionImpl)colorExp).setValue("#" + rgb.substring(2, rgb.length()));
 		}
 	}
 }

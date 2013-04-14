@@ -57,7 +57,6 @@ public class RepastRasterLayer extends GridCoverageLayer {
 				listener.layerHidden(event);
 			}
 		}
-
 	}
 
 	@Override

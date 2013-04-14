@@ -4,18 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
-import org.geotools.legend.Glyph;
 import org.geotools.styling.FeatureTypeStyle;
-import org.geotools.styling.LineSymbolizer;
-import org.geotools.styling.PointSymbolizer;
-import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
-import org.geotools.styling.Symbolizer;
-
-import repast.simphony.gis.util.GeometryUtil;
 
 /**
  * Table for the Range panel that shows how the icon fill appears according to
@@ -27,12 +19,9 @@ import repast.simphony.gis.util.GeometryUtil;
 public class SampleStyleTableModel extends AbstractTableModel {
 
 	private static String[] COL_NAMES = {"Symbol", "Range", "Label"};
-
 	private List<Rule> rules = new ArrayList<Rule>();
-//	private PreviewLabel defaultPreview;
 
 	public SampleStyleTableModel(){
-//		this.defaultPreview = preview;
 	}
 	
 	public void initStyle(FeatureTypeStyle style) {
@@ -128,7 +117,7 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	}
 	
 	private Icon getIcon(Rule rule) {
-		return PreviewLabel.createIcon(rule);
+		return PreviewLabel.createSmallIcon(rule);
 	}
 	
 	private String ruleTitleToRange(String title) {
@@ -139,8 +128,4 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		this.rules.clear();
 		this.rules.addAll(rules);
 	}
-
-//	public void setDefaultPreview(PreviewLabel defaultPreview) {
-//		this.defaultPreview = defaultPreview;
-//	}
 }

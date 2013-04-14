@@ -36,7 +36,6 @@ import edu.umd.cs.piccolo.nodes.PImage;
 public class PGisLayer extends PLayer implements MapLayerListener {
   private static final long serialVersionUID = 1732090043130770803L;
 
-  private static long layerKey = 0;
   protected MessageCenter center = MessageCenter.getMessageCenter(getClass());
   protected BufferedImage image;
   protected MapContent context;
@@ -174,34 +173,29 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     update();
   }
 
+  @Override
   public void layerChanged(MapLayerEvent arg0) {
-
   }
 
+  @Override
   public void layerHidden(MapLayerEvent arg0) {
     setVisible(false);
   }
 
+  @Override
   public void layerShown(MapLayerEvent arg0) {
     setVisible(true);
   }
 
 	@Override
 	public void layerDeselected(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void layerPreDispose(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void layerSelected(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

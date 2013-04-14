@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import org.geotools.data.FeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.feature.type.FeatureType;
@@ -39,7 +40,8 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 	}
 	
 	public void setData(FeatureType featureType, Style style, FeatureSource source) {
-		ruleEditPanel1.setData(featureType,style);
+		Rule rule = style.featureTypeStyles().get(0).rules().get(0);
+		ruleEditPanel.init(featureType, rule);
 		
 		FeatureTypeStyle fts = style.featureTypeStyles().get(0);
 		
@@ -57,99 +59,70 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
-		label1 = new JLabel();
+		layerLabel = new JLabel();
 		styleTitleField = new JTextField();
 		tb = new JTabbedPane();
-		ruleEditPanel1 = new RuleEditPanel();
+		ruleEditPanel = new RuleEditPanel();
 		byValuePanel = new ByValuePanel();
 		rangePanel = new ByRangePanel();
 		CellConstraints cc = new CellConstraints();
 
-		//======== this ========
 		setLayout(new BorderLayout());
 
-		//======== dialogPane ========
-		{
-			dialogPane.setBorder(Borders.DIALOG);
-			dialogPane.setLayout(new BorderLayout());
 
-			//======== contentPanel ========
-			{
-				contentPanel.setLayout(new FormLayout(
-					new ColumnSpec[] {
+		dialogPane.setBorder(Borders.DIALOG);
+		dialogPane.setLayout(new BorderLayout());
+
+		contentPanel.setLayout(new FormLayout(
+				new ColumnSpec[] {
 						FormSpecs.DEFAULT_COLSPEC,
 						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
-					},
-					new RowSpec[] {
+				},
+				new RowSpec[] {
 						new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.NO_GROW),
 						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
-					}));
-
-				//---- label1 ----
-				label1.setText("Layer Title");
-				contentPanel.add(label1, cc.xy(1, 1));
-				contentPanel.add(styleTitleField, cc.xy(3, 1));
-
-				//======== tb ========
-				{
-
-					//---- ruleEditPanel1 ----
-					ruleEditPanel1.setBorder(new EmptyBorder(5, 5, 5, 5));
-					ruleEditPanel1.showFilterPane(false);
-					tb.addTab("Simple Style", ruleEditPanel1);
+				}));
 
 
-					//---- byValuePanel ----
-					byValuePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-					tb.addTab("Value Style", byValuePanel);
+		layerLabel.setText("Layer Title");
+		contentPanel.add(layerLabel, cc.xy(1, 1));
+		contentPanel.add(styleTitleField, cc.xy(3, 1));
 
+		ruleEditPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		ruleEditPanel.showFilterPane(false);
+		tb.addTab("Simple Style", ruleEditPanel);
 
-					//---- rangePanel ----
-					rangePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-					tb.addTab("Range Style", rangePanel);
+		byValuePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tb.addTab("Value Style", byValuePanel);
 
-				}
-				contentPanel.add(tb, cc.xywh(1, 3, 3, 1));
-			}
-			dialogPane.add(contentPanel, BorderLayout.CENTER);
-		}
+		rangePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tb.addTab("Range Style", rangePanel);
+
+		contentPanel.add(tb, cc.xywh(1, 3, 3, 1));
+
+		dialogPane.add(contentPanel, BorderLayout.CENTER);
+
 		add(dialogPane, BorderLayout.CENTER);
-		// //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JPanel dialogPane;
 	private JPanel contentPanel;
-	private JLabel label1;
+	private JLabel layerLabel;
 	private JTextField styleTitleField;
 	private JTabbedPane tb;
-	private RuleEditPanel ruleEditPanel1;
+	private RuleEditPanel ruleEditPanel;
 	private ByValuePanel byValuePanel;
 	private ByRangePanel rangePanel;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	public Style getStyle() {
 		Style style = null;
 		IStyleEditor editor = (IStyleEditor) tb.getSelectedComponent();
 		style = editor.getStyle();
-		/*
-		if (tb.indexOfTab("Simple Style") == tb.getSelectedIndex()) {
-			style = ruleEditPanel1.getStyle();
-		} else if (tb.indexOfTab("Range Based Style") == tb.getSelectedIndex()) {
-			style = rangePanel.getStyle();
-		} else if (tb.indexOfTab("Value Based Style") == tb.getSelectedIndex()) {
-			style = byValuePanel.getStyle();
-		}
-		*/
+
 		style.getDescription().setTitle(styleTitleField.getText());
 		style.featureTypeStyles().get(0).getDescription().setTitle(styleTitleField.getText());
 		return style;

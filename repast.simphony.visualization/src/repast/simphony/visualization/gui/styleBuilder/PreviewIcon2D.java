@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.geotools.renderer.lite.Java2DMark;
+import repast.simphony.gis.styleEditor.SimpleMarkFactory;
 
 public class PreviewIcon2D extends JLabel implements PreviewIcon {
 
@@ -40,6 +40,8 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
   private Font font = new Font("Arial", Font.PLAIN, 12);
   private Color fontColor = Color.BLACK;
 
+  private static SimpleMarkFactory markFac = new SimpleMarkFactory();
+  
   public PreviewIcon2D() {
     image = new BufferedImage(200, 100, BufferedImage.TYPE_4BYTE_ABGR);
     setText("");
@@ -138,8 +140,9 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
   private void updateShape() {
     float ms = markSize == -1f ? 15.0f : markSize;
     if (this.mark != null) {
-      shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
-          Java2DMark.getWellKnownMark(mark));
+      //  TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
+    	shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
+      		markFac.getMark(mark));
     } else {
       shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
           this.previewShape);

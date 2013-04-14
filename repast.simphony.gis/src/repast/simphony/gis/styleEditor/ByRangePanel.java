@@ -36,7 +36,6 @@ import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -66,8 +65,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	private static final String ID = ByRangePanel.class.toString();
 
 	private SimpleFeatureType type;
-	private SimpleFeature sample;
-
+	
 	private class IconCellRenderer extends DefaultTableCellRenderer {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, 
@@ -179,13 +177,11 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 					SampleStyleTableModel tableModel = (SampleStyleTableModel) previewTable.getModel();
 					if (newRule != null) {
 						mediator.setDefaultRule(newRule);
-						symbolLbl.setIcon(PreviewLabel.createIcon(newRule));
-//						tableModel.setDefaultPreview(dialog.getPreview());
+						symbolLbl.setIcon(PreviewLabel.createSmallIcon(newRule));
 					}
 				}
 			}
 		});
-
 
     // Provide the style editor dialog to each row icon for custom styling.
 		previewTable.addMouseListener(new MouseAdapter() {
@@ -217,7 +213,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			Rule rule = style.featureTypeStyles().get(0).rules().get(0);
 			mediator = new ByRangePanelMediator(featureType, rule);
 					
-			symbolLbl.setIcon(PreviewLabel.createIcon(rule));
+			symbolLbl.setIcon(PreviewLabel.createSmallIcon(rule));
 			
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
@@ -257,27 +253,27 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 				rules.add((Rule) dsv.getCopy());
 			}
 			mediator.init(rules, attribName);
-      if (rules.size() > 1) classesSpn.setValue(new Integer(rules.size() - 1));
+      if (rules.size() > 1) 
+      	classesSpn.setValue(new Integer(rules.size() - 1));
     }
-
 	}
 
 	private void initComponents() {
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
-		label1 = new JLabel();
+		attributeLabel = new JLabel();
 		attributeBox = new JComboBox();
-		label2 = new JLabel();
+		paletteLabel = new JLabel();
 		paletteBox = new JComboBox();
-		label5 = new JLabel();
+		rangeStartLabel = new JLabel();
 		startFld = new JTextField();
-		label6 = new JLabel();
+		rangeEndLabel = new JLabel();
 		endFld = new JTextField();
-		separator1 = compFactory.createSeparator("Categories");
-		label3 = new JLabel();
+		categorySeparator = compFactory.createSeparator("Categories");
+		classesLabel = new JLabel();
 		classesSpn = new JSpinner();
-		label4 = new JLabel();
+		typeLabel = new JLabel();
 		typeBox = new JComboBox();
-		separator3 = compFactory.createSeparator("Default Symbol");
+		defaultSymbolSeparator = compFactory.createSeparator("Default Symbol");
 		symbolLbl = new JLabel();
 		panel1 = new JPanel();
 		moreBtn = new JButton();
@@ -317,76 +313,61 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 				new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 			}));
 
-		//---- label1 ----
-		label1.setText("Attribute:");
-		add(label1, cc.xy(1, 1));
+		attributeLabel.setText("Attribute:");
+		add(attributeLabel, cc.xy(1, 1));
 		add(attributeBox, cc.xy(3, 1));
 
-		//---- label2 ----
-		label2.setText("Palette:");
-		add(label2, cc.xy(5, 1));
+		paletteLabel.setText("Palette:");
+		add(paletteLabel, cc.xy(5, 1));
 		add(paletteBox, cc.xywh(7, 1, 3, 1));
 
-		//---- label5 ----
-		label5.setText("Range Start:");
-		add(label5, cc.xy(1, 3));
+		rangeStartLabel.setText("Range Start:");
+		add(rangeStartLabel, cc.xy(1, 3));
 		add(startFld, cc.xy(3, 3));
 
-		//---- label6 ----
-		label6.setText("Range End:");
-		add(label6, cc.xy(5, 3));
+		rangeEndLabel.setText("Range End:");
+		add(rangeEndLabel, cc.xy(5, 3));
 		add(endFld, cc.xywh(7, 3, 3, 1));
-		add(separator1, cc.xywh(1, 5, 9, 1));
+		add(categorySeparator, cc.xywh(1, 5, 9, 1));
 
-		//---- label3 ----
-		label3.setText("Intervals:");
-		add(label3, cc.xy(1, 7));
+		classesLabel.setText("Classes:");
+		add(classesLabel, cc.xy(1, 7));
 
-		//---- classesSpn ----
 		classesSpn.setModel(new SpinnerNumberModel(2, 2, 12, 1));
 		add(classesSpn, cc.xy(3, 7));
 
-		//---- label4 ----
-		label4.setText("Type:");
-		add(label4, cc.xy(5, 7));
+		typeLabel.setText("Type:");
+		add(typeLabel, cc.xy(5, 7));
 		add(typeBox, cc.xywh(7, 7, 3, 1));
-		add(separator3, cc.xywh(1, 9, 9, 1));
+		add(defaultSymbolSeparator, cc.xywh(1, 9, 9, 1));
 		add(symbolLbl, cc.xy(1, 11));
 
-		//======== panel1 ========
-		{
-			panel1.setLayout(new FormLayout(
-				"pref",
-				"pref"));
+		panel1.setLayout(new FormLayout("pref",	"pref"));
+		moreBtn.setText("Edit");
+		panel1.add(moreBtn, cc.xy(1, 1));
 
-			//---- moreBtn ----
-			moreBtn.setText("Edit");
-			panel1.add(moreBtn, cc.xy(1, 1));
-		}
 		add(panel1, cc.xy(3, 11));
 		add(separator2, cc.xywh(1, 13, 9, 1));
 
-		//======== scrollPane1 ========
-		{
-			scrollPane1.setViewportView(previewTable);
-		}
+		scrollPane1.setViewportView(previewTable);
+
 		add(scrollPane1, cc.xywh(1, 15, 9, 1));
 	}
-
-	private JLabel label1;
+	
+	private JLabel attributeLabel;
 	private JComboBox attributeBox;
-	private JLabel label2;
+	private JLabel paletteLabel;
 	private JComboBox paletteBox;
-	private JLabel label5;
+	private JLabel rangeStartLabel;
 	private JTextField startFld;
-	private JLabel label6;
+	private JLabel rangeEndLabel;
 	private JTextField endFld;
-	private JComponent separator1;
-	private JLabel label3;
+	private JComponent categorySeparator;
+	private JLabel classesLabel;
 	private JSpinner classesSpn;
-	private JLabel label4;
+	private JLabel typeLabel;
 	private JComboBox typeBox;
-	private JComponent separator3;
+	private JComponent defaultSymbolSeparator;
 	private JLabel symbolLbl;
 	private JPanel panel1;
 	private JButton moreBtn;

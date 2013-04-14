@@ -15,12 +15,12 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import org.geotools.renderer.lite.Java2DMark;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -35,7 +35,7 @@ public class PreviewLabel extends JLabel {
 	private static final int SMALL_MARK_SIZE = 10;
 	private GeneralPath polygonShape;
 	private Shape shape;
-	private String mark = null;
+	private String mark = null;  // TODO Geotools [major] preview mark is upside down.
 	private Color fillColor = Color.WHITE;
 	private double fillOpacity = 1;
 	private Color outlineColor = Color.BLACK;
@@ -43,7 +43,9 @@ public class PreviewLabel extends JLabel {
 	private double outlineThickness = 1;
 	private double markSize = 6;
 	private Image image;
-
+	
+	private static SimpleMarkFactory markFac = new SimpleMarkFactory();
+	
 	public PreviewLabel() {
 		image = new BufferedImage(100, 100, BufferedImage.TYPE_4BYTE_ABGR);
 		setText("");
@@ -103,7 +105,7 @@ public class PreviewLabel extends JLabel {
 		
 		if (mark != null){
 			s  = AffineTransform.getScaleInstance(SMALL_MARK_SIZE, SMALL_MARK_SIZE)
-					.createTransformedShape(Java2DMark.getWellKnownMark(mark));
+					.createTransformedShape(markFac.getMark(mark));
 			AffineTransform transform = AffineTransform
 					.getTranslateInstance(SMALL_MARK_SIZE, SMALL_MARK_SIZE);
 			s = transform.createTransformedShape(s);
@@ -179,7 +181,7 @@ public class PreviewLabel extends JLabel {
 
 	private void updateShape() {
 		shape = AffineTransform.getScaleInstance(markSize, markSize)
-				.createTransformedShape(Java2DMark.getWellKnownMark(mark));
+				.createTransformedShape(markFac.getMark(mark));
 		AffineTransform transform = AffineTransform
 				.getTranslateInstance(50, 50);
 		shape = transform.createTransformedShape(shape);
@@ -222,15 +224,7 @@ public class PreviewLabel extends JLabel {
 		updatePreview();
 	}
 	
-	/**
-	 * Generate an Icon from a Rule.
-	 * 
-	 * @param rule the rule used to format the icon
-	 * 
-	 * @return the rule-based icon.
-	 * 
-	 */	
-	public static Icon createIcon(Rule rule){
+	public static PreviewLabel createPreviewLabel(Rule rule){
 		PreviewLabel preview = new PreviewLabel();
 		Icon icon = null;
 		Symbolizer sym = rule.symbolizers().get(0);
@@ -239,14 +233,14 @@ public class PreviewLabel extends JLabel {
 			PointSymbolizer ps = (PointSymbolizer) sym;	
 			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
 				
-			double size = Double.valueOf(ps.getGraphic().getSize().toString());
-			Color fillColor = Color.decode(mark.getFill().getColor().toString());	
-			double fillOpacity = Double.valueOf(ps.getGraphic().getOpacity().toString());
-			Color outlineColor = Color.decode(mark.getStroke().getColor().toString());
-			double outlineThickness = Double.valueOf(mark.getStroke().getWidth().toString());
-			double outlineOpacity = Double.valueOf(mark.getStroke().getOpacity().toString());
+			double size = ps.getGraphic().getSize().evaluate(null,Double.class);
+			Color fillColor = Color.decode(mark.getFill().getColor().evaluate(null, String.class));	
+			double fillOpacity = mark.getFill().getOpacity().evaluate(null, Double.class);
+			Color outlineColor = Color.decode(mark.getStroke().getColor().evaluate(null,String.class));
+			double outlineThickness = mark.getStroke().getWidth().evaluate(null,Double.class);
+			double outlineOpacity = mark.getStroke().getOpacity().evaluate(null,Double.class);
 			
-			preview.setMark(mark.getWellKnownName().toString());
+			preview.setMark(mark.getWellKnownName().evaluate(null,String.class));
 			preview.setMarkSize(size);
 			preview.setFillColor(fillColor);
 			preview.setFillOpacity(fillOpacity);
@@ -259,9 +253,9 @@ public class PreviewLabel extends JLabel {
 			preview.setShapeToLine();
 			LineSymbolizer ls = (LineSymbolizer) sym;
 			
-			Color c = Color.decode(ls.getStroke().getColor().toString());
-			double width = Double.valueOf(ls.getStroke().getWidth().toString());
-			double opacity = Double.valueOf(ls.getStroke().getOpacity().toString());
+			Color c = Color.decode(ls.getStroke().getColor().evaluate(null,String.class));
+			double width = ls.getStroke().getWidth().evaluate(null,Double.class);
+			double opacity = ls.getStroke().getOpacity().evaluate(null,Double.class);
 			
 			preview.setOutlineColor(c);
 			preview.setOutlineThickness(width);
@@ -272,11 +266,11 @@ public class PreviewLabel extends JLabel {
 			preview.setShapeToPolygon();
 			PolygonSymbolizer ps = (PolygonSymbolizer) sym;
 			
-			Color fillColor = Color.decode(ps.getFill().getColor().toString());
-			double fillOpacity = Double.valueOf(ps.getFill().getOpacity().toString());
-			Color outlineColor = Color.decode(ps.getStroke().getColor().toString());
-			double outlineThickness = Double.valueOf(ps.getStroke().getWidth().toString());
-			double outlineOpacity = Double.valueOf(ps.getStroke().getOpacity().toString());
+			Color fillColor = Color.decode(ps.getFill().getColor().evaluate(null,String.class));
+			double fillOpacity = ps.getFill().getOpacity().evaluate(null,Double.class);
+			Color outlineColor = Color.decode(ps.getStroke().getColor().evaluate(null,String.class));
+			double outlineThickness = ps.getStroke().getWidth().evaluate(null,Double.class);
+			double outlineOpacity = ps.getStroke().getOpacity().evaluate(null,Double.class);
 			
 			preview.setFillColor(fillColor);
 			preview.setFillOpacity(fillOpacity);
@@ -287,9 +281,20 @@ public class PreviewLabel extends JLabel {
 		}
 	
 		preview.updatePreview();
-		icon = preview.getSmallIcon();		
-		
-		return icon;
+		return preview;		
+	}
+	
+	public static Icon createIcon(Style style){
+		Rule rule = style.featureTypeStyles().get(0).rules().get(0);
+		return createPreviewLabel(rule).getIcon();
+	}
+	
+	public static Icon createIcon(Rule rule){
+		return createPreviewLabel(rule).getIcon();
+	}
+	
+	public static Icon createSmallIcon(Rule rule){
+		return createPreviewLabel(rule).getSmallIcon();
 	}
 	
 }

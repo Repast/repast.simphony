@@ -1,4 +1,4 @@
-package repast.simphony.gis.data;
+package repast.simphony.gis.util;
 
 import java.io.IOException;
 import java.util.List;

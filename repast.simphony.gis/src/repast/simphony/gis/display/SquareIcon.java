@@ -3,6 +3,11 @@ package repast.simphony.gis.display;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A square-shaped icon for use on buttons like color pickers.
+ * 
+ *
+ */
 public class SquareIcon implements Icon {
 
 	private Color color;
@@ -36,5 +41,4 @@ public class SquareIcon implements Icon {
 		g.drawRect(x, y, getIconWidth(), getIconHeight());
 		g.setColor(oldColor);
 	}
-
 }

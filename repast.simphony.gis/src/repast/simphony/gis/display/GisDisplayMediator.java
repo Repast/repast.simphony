@@ -13,7 +13,14 @@ import java.awt.event.ComponentListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GisDisplayMediator2 implements MapLayerListener,
+/**
+ * Mediator for MapLayer events.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
+ *
+ */
+public class GisDisplayMediator implements MapLayerListener,
         ComponentListener, MapLayerListListener {
 
 
@@ -24,18 +31,21 @@ public class GisDisplayMediator2 implements MapLayerListener,
     gisLayer.getLayer().addMapLayerListener(this);
   }
 
+  @Override
   public void layerAdded(MapLayerListEvent event) {
   }
 
+  @Override
   public void layerChanged(MapLayerListEvent event) {
     PGisLayer layer = layerMap.get(event.getSource());
     layer.update();
   }
 
-
+  @Override
   public void layerMoved(MapLayerListEvent event) {
   }
 
+  @Override
   public void layerRemoved(MapLayerListEvent event) {
   }
 
@@ -44,12 +54,7 @@ public class GisDisplayMediator2 implements MapLayerListener,
     layer.removeMapLayerListener(this);
   }
 
-
-  public void addLayer(PGisLayer display, Dimension size) {
-    layerMap.put(display.getLayer(), display);
-    display.getLayer().addMapLayerListener(this);
-  }
-
+  @Override
   public void componentResized(ComponentEvent e) {
     for (PGisLayer layer : layerMap.values()) {
       Dimension size = e.getComponent().getSize();
@@ -62,7 +67,8 @@ public class GisDisplayMediator2 implements MapLayerListener,
       layer.update();
     }
   }
-
+  
+  @Override
   public void layerChanged(MapLayerEvent event) {
    	if (event.getSource() instanceof FeatureLayer) {
   		Layer layer = (FeatureLayer) event.getSource();
@@ -82,42 +88,39 @@ public class GisDisplayMediator2 implements MapLayerListener,
     }
   }
 
+  @Override
   public void layerHidden(MapLayerEvent event) {
   }
 
+  @Override
   public void layerShown(MapLayerEvent event) {
   }
 
+  @Override
   public void componentHidden(ComponentEvent e) {
   }
 
+  @Override
   public void componentMoved(ComponentEvent e) {
   }
 
+  @Override
   public void componentShown(ComponentEvent e) {
   }
 
 	@Override
 	public void layerPreDispose(MapLayerListEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void layerDeselected(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public void layerPreDispose(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void layerPreDispose(MapLayerEvent arg0) {		
 	}
 
 	@Override
 	public void layerSelected(MapLayerEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 }
