@@ -58,8 +58,8 @@ import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
+import repast.simphony.gis.styleEditor.StylePreviewFactory;
 import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
@@ -459,7 +459,7 @@ public class GISStylePanel extends JPanel {
   }
   
   private void updatePreview(Style style){
-  	previewLabel.setIcon(PreviewLabel.createIcon(style));
+  	previewLabel.setIcon(StylePreviewFactory.createIcon(style));
   }
 
   private String getSLDStyle(Style style) throws TransformerException {

@@ -231,7 +231,7 @@ public class ValueTableModel extends AbstractTableModel {
 	}
 	
 	private Icon getIcon(Rule rule) {
-    return PreviewLabel.createSmallIcon(rule);
+    return StylePreviewFactory.createSmallIcon(rule);
 	}
 	
 	private Literal findLiteralExpression(Rule rule) {

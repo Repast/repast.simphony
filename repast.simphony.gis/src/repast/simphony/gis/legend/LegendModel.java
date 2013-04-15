@@ -18,7 +18,7 @@ import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 
-import repast.simphony.gis.styleEditor.PreviewLabel;
+import repast.simphony.gis.styleEditor.StylePreviewFactory;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -85,7 +85,7 @@ public class LegendModel extends DefaultTreeModel {
     for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
 //      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
    // TODO Geotools [minor] - might ned to modify this to use the size.
-    	Icon icon = PreviewLabel.createIcon(rule);  
+    	Icon icon = StylePreviewFactory.createIcon(rule);  
       LegendRuleEntry ruleNode = new LegendRuleEntry(rule.getTitle(),
               icon, rule);
       insertNodeInto(ruleNode, layerNode, layerNode.getChildCount());

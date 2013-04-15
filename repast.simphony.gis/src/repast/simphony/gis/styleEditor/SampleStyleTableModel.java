@@ -117,7 +117,7 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	}
 	
 	private Icon getIcon(Rule rule) {
-		return PreviewLabel.createSmallIcon(rule);
+		return StylePreviewFactory.createSmallIcon(rule);
 	}
 	
 	private String ruleTitleToRange(String title) {

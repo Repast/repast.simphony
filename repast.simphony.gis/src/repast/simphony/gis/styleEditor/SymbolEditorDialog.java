@@ -3,6 +3,7 @@ package repast.simphony.gis.styleEditor;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +67,7 @@ public class SymbolEditorDialog extends JDialog {
 	}
 
 	private void initComponents() {
+		this.setPreferredSize(new Dimension(300, 525));
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		ruleEditPanel1 = new RuleEditPanel();

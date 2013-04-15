@@ -3,6 +3,7 @@ package repast.simphony.gis.styleEditor;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,6 @@ import com.jgoodies.forms.layout.Sizes;
  * @author Nick Collier
  * @author Eric Tatara
  * 
- * TODO Geotools [major] the dialog is too small when initialized
  */
 public class StyleDialog extends JDialog {
 	public StyleDialog(Frame owner) {
@@ -72,6 +72,7 @@ public class StyleDialog extends JDialog {
 	}
 
 	private void initComponents() {
+		this.setPreferredSize(new Dimension(350, 575));
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		styleEditorPanel1 = new StyleEditorPanel();

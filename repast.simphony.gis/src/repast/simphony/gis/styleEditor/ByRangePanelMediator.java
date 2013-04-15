@@ -120,7 +120,6 @@ public class ByRangePanelMediator {
 	 * @param classes the new number of classes
 	 */
 	public void classesChanged(int classes) {
-		// TODO Geotools [blocker] restrict to max 11 classes - change to listbox rather than spinner.
 		ignorePaletteChange = true;
 		this.classesCount = classes;
 		paletteModel.removeAllElements();
@@ -219,7 +218,8 @@ public class ByRangePanelMediator {
 			  Graphic gr = styleFactory.createDefaultGraphic();
 			  gr.graphicalSymbols().clear();
         gr.graphicalSymbols().add(newMark);
-        gr.setSize(defaultGraphic.getSize());								
+        gr.setSize(defaultGraphic.getSize());
+        gr.setRotation(defaultGraphic.getRotation());
 				sym.setGraphic(gr);
 			} 
 			else if (type == GeometryUtil.GeometryType.LINE) {

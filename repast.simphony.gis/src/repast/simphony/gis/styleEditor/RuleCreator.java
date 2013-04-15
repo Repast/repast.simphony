@@ -1,8 +1,5 @@
 package repast.simphony.gis.styleEditor;
 
-import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
-import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
-
 import java.awt.Color;
 
 import org.geotools.factory.CommonFactoryFinder;
@@ -13,7 +10,6 @@ import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
-import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
@@ -22,8 +18,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-
-import repast.simphony.gis.util.GeometryUtil.GeometryType;
 
 /**
  * Utility class for creating Styles from rules and rule editing.
@@ -56,37 +50,6 @@ public class RuleCreator {
 	}
 
 	/**
-	 * Creates a default else rule with a square mark of the specified
-	 * color and a black border
-	 *
-	 * @param color the color of the mark
-	 * @return the created default else rule.
-	 */
-	public Rule createDefaultRule(Color color, GeometryType type) {
-		Rule rule = fac.createRule();
-		rule.setIsElseFilter(true);
-		rule.setTitle("Default");
-
-		Symbolizer s = null;
-		if (type == LINE) {
-			s = createLineSymbolizer(2, color);
-		} 
-		else if (type == POINT) {
-			s = builder.createPointSymbolizer(builder.createGraphic(null,
-							builder.createMark("square", color, Color.BLACK, 1), null));
-			
-			// TODO Geotools [blocker] why is the size = 6 ??
-			((PointSymbolizer)s).getGraphic().setSize(builder.literalExpression(6));
-		} 
-		else {// assume polygon 
-			s = builder.createPolygonSymbolizer(color, Color.BLACK, 1);
-		}
-		rule.symbolizers().clear();
-		rule.symbolizers().add(s);
-		return rule;
-	}
-
-	/**
 	 * Creates a rule that matches on the specified attribute
 	 * and and the specified features attribute value. The Symoblizer
 	 * will use a clone of the specified mark and the specified color.
@@ -113,15 +76,6 @@ public class RuleCreator {
 		rule.symbolizers().clear();
 		rule.symbolizers().add(sym);
 		return rule;
-	}
-
-	private LineSymbolizer createLineSymbolizer(int strokeWidth, Color color) {
-		String rgb = Integer.toHexString(color.getRGB());
-		// trim of the alpha portion
-		Expression colorExp = builder.literalExpression("#" + rgb.substring(2, rgb.length()));
-		Expression widthExp = builder.literalExpression(strokeWidth);
-		Stroke newStroke = fac.createStroke(colorExp, widthExp);
-		return fac.createLineSymbolizer(newStroke, null);
 	}
 
 	/**

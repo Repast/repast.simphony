@@ -393,6 +393,8 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 										FormSpecs.LINE_GAP_ROWSPEC,
 										FormSpecs.DEFAULT_ROWSPEC,
 										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
 										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 										FormSpecs.LINE_GAP_ROWSPEC,
 										FormSpecs.DEFAULT_ROWSPEC,
@@ -400,23 +402,26 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 										FormSpecs.DEFAULT_ROWSPEC
 						}));
 
+		
+	  // Span the attribute and palette elements across multiple columns to 
+		//  provide room for large agent attribute names and palette icons
 		label1.setText("Attribute:");
 		add(label1, cc.xy(1, 1));
-		add(attributeBox, cc.xy(3, 1));
+		add(attributeBox, cc.xywh(3, 1, 5, 1));
 
 		paletteLabel.setText("Palette:");
-		add(paletteLabel, cc.xy(5, 1));
-		add(paletteBox, cc.xy(7, 1));
-		add(valuesSeparator, cc.xywh(1, 3, 7, 1));
+		add(paletteLabel, cc.xy(1, 3));
+		add(paletteBox, cc.xywh(3, 3, 5, 1));
+		add(valuesSeparator, cc.xywh(1, 5, 7, 1));
 
 		defaultBox.setText("Include Default");
 		defaultBox.setSelected(true);
-		add(defaultBox, cc.xywh(1, 5, 3, 1));
+		add(defaultBox, cc.xywh(1, 7, 3, 1));
 
 		scrollPane1.setViewportView(valueTable);
 		
-		add(scrollPane1, cc.xywh(1, 7, 7, 1));
-		add(separator2, cc.xywh(1, 9, 7, 1));
+		add(scrollPane1, cc.xywh(1, 9, 7, 1));
+		add(separator2, cc.xywh(1, 11, 7, 1));
 
 
 		panel1.setLayout(new FormLayout(
@@ -438,7 +443,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		deleteBtn.setText("Delete Value");
 		panel1.add(deleteBtn, cc.xy(5, 1));
 
-		add(panel1, cc.xywh(1, 11, 7, 1));
+		add(panel1, cc.xywh(1, 13, 7, 1));
 	}
 
 	private JLabel label1;

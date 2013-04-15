@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +14,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -27,11 +23,8 @@ import javax.swing.event.ChangeListener;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.expression.ExpressionBuilder;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
-import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -44,8 +37,6 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
 
 import repast.simphony.gis.display.SquareIcon;
 
@@ -73,7 +64,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	protected Rule rule;
 	protected Symbolizer symbolizer;
 	protected Dimension preferred = new Dimension(70, 18);
-	protected boolean ruleOnly = false;
 	protected boolean titlesVisible = true;
 	protected boolean filterVisible = true;
 	protected boolean fillVisible = true;
@@ -88,19 +78,13 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
 		dsv.visit(rule);
-		ruleOnly = true;
 		setRule((Rule)dsv.getCopy());
 		this.type = type;
 	}
 
 	public void setRule(Rule rule) {
 		this.rule = rule;
-		if (ruleOnly) {
-			filterField.setEnabled(false);
-		} else if (rule.getFilter() != null) {
-			filterField.setText(rule.getFilter().toString());
-		}
-
+		
 		symbolizer = rule.getSymbolizers()[0];
 		if (symbolizer instanceof PointSymbolizer) {
 			initPoint();
@@ -113,22 +97,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		}
 	}
 
-	public void showFilterPane(boolean show) {
-		filterPanel.setVisible(show);
-	}
-
-	public void showFillPane(boolean show) {
-		fillPanel.setVisible(show);
-	}
-
-	public void showMarkPane(boolean show) {
-		markPanel.setVisible(show);
-	}
-
-	public void showStrokePane(boolean show) {
-		strokePanel.setVisible(show);
-	}
-
 	/**
 	 * Setup the editor for a Point feature
 	 */
@@ -137,30 +105,32 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		PointSymbolizer ps = (PointSymbolizer) symbolizer;
 		Mark mark = SLD.mark(ps);
 		String wkn = SLD.wellKnownName(mark);
+		int markSize = SLD.pointSize(ps);
+	  
+		int markRotation = ps.getGraphic().getRotation().evaluate(null, Integer.class);
+		
 		markBox.setSelectedItem(wkn);
-		Graphic gr = SLD.graphic(ps);
-		Expression ex = gr.getSize();
-		double markSize = 0;
-		if (ex instanceof Literal ){
-			Double d = ex.evaluate(null,Double.class);
-			
-			if (d != null)
-			  markSize = d;
-		}	
 		markSizeSpinner.setValue(markSize);
+		markRotationSpinner.setValue(markRotation);
+				
 		Fill fill = mark.getFill();
 		Color fillColor = SLD.color(fill.getColor());
 		fillColorButton.setIcon(new SquareIcon(fillColor));
-		double fillOpacity = SLD.pointOpacity(ps);
+		
+		double fillOpacity = SLD.opacity(fill);
 		fillOpacitySpinner.setValue(fillOpacity);
-		Stroke stroke = SLD.stroke(ps);
+		
+		Stroke stroke = mark.getStroke();
 		Color strokeColor = SLD.color(stroke);
 		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
 		int outlineThickness = (int) SLD.width(stroke);
+		outlineThicknessSpinner.setValue(outlineThickness);
+		
 		double outlineOpacity = SLD.opacity(stroke);
 		outlineOpacitySpinner.setValue(outlineOpacity);
 		
-		updatePreview();
+		setMark();
 	}
 	
 	/**
@@ -171,15 +141,18 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		LineSymbolizer ls = (LineSymbolizer) symbolizer;
 		markPanel.setVisible(false);
 		fillPanel.setVisible(false);
+		
 		Stroke stroke = SLD.stroke(ls);
 		Color strokeColor = SLD.color(stroke);
 		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
 		int outlineThickness = (int) SLD.width(stroke);
 		outlineThicknessSpinner.setValue(outlineThickness);
+		
 		double outlineOpacity = SLD.opacity(stroke);
 		outlineOpacitySpinner.setValue(outlineOpacity);
 		
-		 updatePreview();
+		setStroke();
 	}
 	
 	/**
@@ -188,17 +161,26 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private void initPolygon() {
 		enablePolygonFields();
 		PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+		
 		Fill fill = SLD.fill(ps);
 		Color fillColor = SLD.color(fill.getColor());
 		fillColorButton.setIcon(new SquareIcon(fillColor));
+		
 		double fillOpacity = SLD.polyFillOpacity(ps);
 		fillOpacitySpinner.setValue(fillOpacity);
+		
 		Stroke stroke = SLD.stroke(ps);
-		strokeColorButton.setIcon(new SquareIcon(SLD.color(stroke.getColor())));
-		outlineOpacitySpinner.setValue(SLD.polyFillOpacity(ps));
-		outlineThicknessSpinner.setValue(((Number) stroke.getWidth().evaluate(null)).intValue());
-
-		updatePreview();
+		Color strokeColor = SLD.color(stroke);
+		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
+		double outlineOpacity = SLD.opacity(stroke);
+		outlineOpacitySpinner.setValue(outlineOpacity);
+		
+		int outlineThickness = (int) SLD.width(stroke);
+		outlineThicknessSpinner.setValue(outlineThickness);
+		
+		setFill();
+		setStroke();
 	}
 
 	private void enablePointFields() {
@@ -264,8 +246,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	/**
-	 * Sets the Mark type for Point features.  Note that stroke and color are set
-	 * via the appriate methods.
+	 * Sets the Mark type for Point features including size, fill, and stroke.
 	 */
 	private void setMark() {
 		if (symbolizer instanceof PointSymbolizer) {
@@ -274,13 +255,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 			Mark newMark = styleBuilder.createMark((String) markBox.getSelectedItem());
 			ps.getGraphic().graphicalSymbols().clear();
 			ps.getGraphic().graphicalSymbols().add(newMark);
-			
-			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(
-					((Number) markSizeSpinner.getValue()).intValue()));
-			
-			// TODO Geotools [blocker] - add rotation
-//			ps.getGraphic().setRotation(CommonFactoryFinder.getFilterFactory().literal(rotation));
-			
+				
 			setStroke();
 			setFill();
 		} else {
@@ -289,20 +264,35 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		}
 		updatePreview();
 	}
+	
+	private void setMarkSize(){
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(
+				((Number) markSizeSpinner.getValue()).intValue()));
+		
+		updatePreview();
+	}
+	
+	private void setMarkRotation(){
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		ps.getGraphic().setRotation(CommonFactoryFinder.getFilterFactory().literal(
+				((Number) markRotationSpinner.getValue()).intValue()));
+		
+		updatePreview();
+	}
 
-	private void setFilter() {
-		String filter = filterField.getText();
-		
-		if (filter == null || filter.length() < 1) {
-			return;
-		}
-		
-		try {
-			rule.setFilter(CQL.toFilter(filter));
-		} catch (CQLException e) {
-			filterField.setForeground(Color.RED);
-			JOptionPane.showConfirmDialog(this, e.getCause().getMessage());
-		}
+	public void showFillPane(boolean show) {
+		fillPanel.setVisible(show);
+	}
+
+	public void showMarkPane(boolean show) {
+		markPanel.setVisible(show);
+	}
+
+	public void showStrokePane(boolean show) {
+		strokePanel.setVisible(show);
 	}
 	
 	private void fillColorButtonClicked(ActionEvent e) {
@@ -336,27 +326,19 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 
 	private void markSizeChanged(ChangeEvent e) {
-		setMark();
+		setMarkSize();
+	}
+	private void markRotationChanged(ChangeEvent e) {
+		setMarkRotation();
 	}
 
 	private void outlineThicknessChanged(ChangeEvent e) {
 		setStroke();
 	}
 
-	private void filterFieldFocusLost(FocusEvent e) {
-		setFilter();
-	}
-
-	private void filterFieldFocusGained(FocusEvent e) {
-		filterField.setForeground(Color.BLACK);
-	}
-
 	private void initComponents() {
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
-		filterPanel = new JPanel();
-		filterSeparator = compFactory.createSeparator("Filter");
-		filterLabel = new JLabel();
-		filterField = new JTextField();
+		
 		fillPanel = new JPanel();
 		separator1 = compFactory.createSeparator("Fill");
 		fillColorLabel = compFactory.createLabel("Fill Color");
@@ -377,6 +359,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		markBox = new JComboBox();
 		markSizeLabel = compFactory.createLabel("Mark Size");
 		markSizeSpinner = new JSpinner();
+		markRotationLabel = compFactory.createLabel("Mark Rotation");
+		markRotationSpinner = new JSpinner();
 		previewPanel = new JPanel();
 		previewSeparator = compFactory.createSeparator("Preview");
 		previewLabel = new JLabel();
@@ -384,42 +368,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 
 		setBorder(new EmptyBorder(7, 7, 7, 7));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-		filterPanel.setLayout(new FormLayout(
-				new ColumnSpec[] {
-						FormSpecs.DEFAULT_COLSPEC,
-						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-						new ColumnSpec(Sizes.dluX(80)),
-						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-						new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
-				},
-				new RowSpec[] {
-						FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.LINE_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.LINE_GAP_ROWSPEC,
-						new RowSpec(Sizes.dluY(10))
-				}));
-		filterPanel.add(filterSeparator, cc.xywh(1, 1, 5, 1));
-
-		filterLabel.setText("Filter: ");
-		filterPanel.add(filterLabel, cc.xy(3, 3));
-
-
-		filterField.setColumns(20);
-		filterField.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				filterFieldFocusGained(e);
-			}
-			@Override
-			public void focusLost(FocusEvent e) {
-				filterFieldFocusLost(e);
-			}
-		});
-		filterPanel.add(filterField, cc.xy(5, 3));
-
-		add(filterPanel);
 
 		fillPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
@@ -532,6 +480,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 						FormSpecs.LINE_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC,
 						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(Sizes.dluY(10))
 				}));
 		markPanel.add(markSeparator, cc.xywh(1, 1, 6, 1));
@@ -545,8 +495,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		});
 		markBox.setPreferredSize(preferred);
 		markPanel.add(markBox, cc.xywh(5, 3, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
 		markPanel.add(markSizeLabel, cc.xy(3, 5));
-
 		markSizeSpinner.setModel(new SpinnerNumberModel(10, 0, null, 1));
 		markSizeSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -556,8 +506,17 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		markSizeSpinner.setPreferredSize(preferred);
 		markPanel.add(markSizeSpinner, cc.xywh(5, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
 
+		markPanel.add(markRotationLabel, cc.xy(3, 7));
+		markRotationSpinner.setModel(new SpinnerNumberModel(0, null, null, 1));
+		markRotationSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				markRotationChanged(e);
+			}
+		});
+		markRotationSpinner.setPreferredSize(preferred);
+		markPanel.add(markRotationSpinner, cc.xywh(5, 7, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
 		add(markPanel);
-
 
 		previewPanel.setLayout(new FormLayout(
 				ColumnSpec.decodeSpecs("default, center:default:grow"),
@@ -572,10 +531,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		add(previewPanel);
 	}
 
-	private JPanel filterPanel;
-	private JComponent filterSeparator;
-	private JLabel filterLabel;
-	private JTextField filterField;
+	
 	private JPanel fillPanel;
 	private JComponent separator1;
 	private JLabel fillColorLabel;
@@ -596,6 +552,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private JComboBox markBox;
 	private JLabel markSizeLabel;
 	private JSpinner markSizeSpinner;
+	private JLabel markRotationLabel;
+	private JSpinner markRotationSpinner;
 	private JPanel previewPanel;
 	private JComponent previewSeparator;
 	private JLabel previewLabel;
@@ -617,6 +575,6 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	}
 	
 	public void updatePreview(){
-		previewLabel.setIcon(PreviewLabel.createIcon(rule));
+		previewLabel.setIcon(StylePreviewFactory.createIcon(rule));
 	}
 }

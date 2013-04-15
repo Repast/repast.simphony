@@ -39,6 +39,9 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 	
+	// TODO Geotools [blocker] - need to reinitialize the range and value panels
+	//  when the style/rule is edited in the basic ruleEditPanel.
+	
 	public void setData(FeatureType featureType, Style style, FeatureSource source) {
 		Rule rule = style.featureTypeStyles().get(0).rules().get(0);
 		ruleEditPanel.init(featureType, rule);
@@ -93,7 +96,6 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 		contentPanel.add(styleTitleField, cc.xy(3, 1));
 
 		ruleEditPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		ruleEditPanel.showFilterPane(false);
 		tb.addTab("Simple Style", ruleEditPanel);
 
 		byValuePanel.setBorder(new EmptyBorder(5, 5, 5, 5));

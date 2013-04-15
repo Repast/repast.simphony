@@ -1,6 +1,7 @@
 package repast.simphony.gis.styleEditor;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,13 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.geotools.factory.CommonFactoryFinder;
@@ -55,7 +52,12 @@ import com.jgoodies.forms.layout.Sizes;
  * The "Range Style" panel in the GisStyleEditor dialog that provides the
  * capability of setting the shape fill color using ranged rules.
  * 
- * TODO Geotools [major] add mark size ranging
+ * TODO Geotools [major] add additional ranging:
+ * 				mark outline color
+ * 				mark size
+ * 				mark outline thickness
+ * 				mark opacity
+ * 				???
  * 
  * @author Nick Collier
  * @author Eric Tatara
@@ -63,6 +65,7 @@ import com.jgoodies.forms.layout.Sizes;
 public class ByRangePanel extends JPanel implements IStyleEditor {
 
 	private static final String ID = ByRangePanel.class.toString();
+	private static Integer[] CLASSES = new Integer[]{2,3,4,5,6,7,8,9,10,11};
 
 	private SimpleFeatureType type;
 	
@@ -126,9 +129,9 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initListeners() {
-		classesSpn.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				int classes = ((Integer) classesSpn.getValue()).intValue();
+		classesBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int classes = (Integer) classesBox.getSelectedItem();
 				mediator.classesChanged(classes);
 			}
 		});
@@ -177,7 +180,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 					SampleStyleTableModel tableModel = (SampleStyleTableModel) previewTable.getModel();
 					if (newRule != null) {
 						mediator.setDefaultRule(newRule);
-						symbolLbl.setIcon(PreviewLabel.createSmallIcon(newRule));
+						symbolLbl.setIcon(StylePreviewFactory.createSmallIcon(newRule));
 					}
 				}
 			}
@@ -213,7 +216,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			Rule rule = style.featureTypeStyles().get(0).rules().get(0);
 			mediator = new ByRangePanelMediator(featureType, rule);
 					
-			symbolLbl.setIcon(PreviewLabel.createSmallIcon(rule));
+			symbolLbl.setIcon(StylePreviewFactory.createSmallIcon(rule));
 			
 			paletteBox.setModel(mediator.getPaletteModel());
 			DefaultComboBoxModel model = mediator.getClassifcationTypeModel();
@@ -234,7 +237,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
       startFld.setText(String.valueOf(mediator.getMin()));
       endFld.setText(String.valueOf(mediator.getMax()));
 
-      mediator.classesChanged(((Integer) classesSpn.getValue()).intValue());
+      mediator.classesChanged((Integer) classesBox.getSelectedItem());
 	}
 
 	private void initFromStyle(Style style) {
@@ -254,7 +257,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			}
 			mediator.init(rules, attribName);
       if (rules.size() > 1) 
-      	classesSpn.setValue(new Integer(rules.size() - 1));
+      	classesBox.setSelectedItem(new Integer(rules.size() - 1));
     }
 	}
 
@@ -270,7 +273,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 		endFld = new JTextField();
 		categorySeparator = compFactory.createSeparator("Categories");
 		classesLabel = new JLabel();
-		classesSpn = new JSpinner();
+		classesBox = new JComboBox();
 		typeLabel = new JLabel();
 		typeBox = new JComboBox();
 		defaultSymbolSeparator = compFactory.createSeparator("Default Symbol");
@@ -287,7 +290,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 			new ColumnSpec[] {
 				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-				new ColumnSpec(ColumnSpec.FILL, Sizes.PREFERRED, FormSpec.DEFAULT_GROW),
+				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
@@ -310,48 +313,52 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 				FormSpecs.LINE_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.LINE_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.LINE_GAP_ROWSPEC,
 				new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 			}));
 
+		// Span the attribute and palette elements across multiple columns to 
+		//  provide room for large agent attribute names and palette icons
 		attributeLabel.setText("Attribute:");
 		add(attributeLabel, cc.xy(1, 1));
-		add(attributeBox, cc.xy(3, 1));
+		add(attributeBox, cc.xywh(3, 1, 5, 1));
 
 		paletteLabel.setText("Palette:");
-		add(paletteLabel, cc.xy(5, 1));
-		add(paletteBox, cc.xywh(7, 1, 3, 1));
+		add(paletteLabel, cc.xy(1, 3));
+		add(paletteBox, cc.xywh(3, 3, 5, 1));
 
 		rangeStartLabel.setText("Range Start:");
-		add(rangeStartLabel, cc.xy(1, 3));
-		add(startFld, cc.xy(3, 3));
+		add(rangeStartLabel, cc.xy(1, 5));
+		add(startFld, cc.xy(3, 5));
 
 		rangeEndLabel.setText("Range End:");
-		add(rangeEndLabel, cc.xy(5, 3));
-		add(endFld, cc.xywh(7, 3, 3, 1));
-		add(categorySeparator, cc.xywh(1, 5, 9, 1));
+		add(rangeEndLabel, cc.xy(5, 5));
+		add(endFld, cc.xywh(7, 5, 3, 1));
+		add(categorySeparator, cc.xywh(1, 7, 9, 1));
 
 		classesLabel.setText("Classes:");
-		add(classesLabel, cc.xy(1, 7));
+		add(classesLabel, cc.xy(1, 9));
 
-		classesSpn.setModel(new SpinnerNumberModel(2, 2, 12, 1));
-		add(classesSpn, cc.xy(3, 7));
+		classesBox.setModel(new DefaultComboBoxModel(CLASSES));
+		add(classesBox, cc.xy(3, 9));
 
 		typeLabel.setText("Type:");
-		add(typeLabel, cc.xy(5, 7));
-		add(typeBox, cc.xywh(7, 7, 3, 1));
-		add(defaultSymbolSeparator, cc.xywh(1, 9, 9, 1));
-		add(symbolLbl, cc.xy(1, 11));
+		add(typeLabel, cc.xy(5, 9));
+		add(typeBox, cc.xywh(7, 9, 3, 1));
+		add(defaultSymbolSeparator, cc.xywh(1, 11, 9, 1));
+		add(symbolLbl, cc.xy(1, 13));
 
 		panel1.setLayout(new FormLayout("pref",	"pref"));
 		moreBtn.setText("Edit");
 		panel1.add(moreBtn, cc.xy(1, 1));
 
-		add(panel1, cc.xy(3, 11));
-		add(separator2, cc.xywh(1, 13, 9, 1));
+		add(panel1, cc.xy(3, 13));
+		add(separator2, cc.xywh(1, 15, 9, 1));
 
 		scrollPane1.setViewportView(previewTable);
 
-		add(scrollPane1, cc.xywh(1, 15, 9, 1));
+		add(scrollPane1, cc.xywh(1, 17, 9, 1));
 	}
 	
 	private JLabel attributeLabel;
@@ -364,7 +371,7 @@ public class ByRangePanel extends JPanel implements IStyleEditor {
 	private JTextField endFld;
 	private JComponent categorySeparator;
 	private JLabel classesLabel;
-	private JSpinner classesSpn;
+	private JComboBox classesBox;
 	private JLabel typeLabel;
 	private JComboBox typeBox;
 	private JComponent defaultSymbolSeparator;
