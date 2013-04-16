@@ -7,11 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
-import repast.simphony.systemdynamics.sdmodel.Subscript;
-import repast.simphony.systemdynamics.sdmodel.SystemModel;
-import repast.simphony.systemdynamics.sdmodel.Variable;
-
 public class SystemDynamicsObjectManager {
 
   private Map<String, SystemDynamicsObject> objectsMap;
@@ -20,8 +15,10 @@ public class SystemDynamicsObjectManager {
     objectsMap = new HashMap<String, SystemDynamicsObject>();
   }
 
-  public void processRSD() {
-
+  public void processRSD() {}
+  
+  public Iterable<String> screenNames() {
+    return objectsMap.keySet();
   }
 
   public List<String> validate(Map<String, Equation> equations) {

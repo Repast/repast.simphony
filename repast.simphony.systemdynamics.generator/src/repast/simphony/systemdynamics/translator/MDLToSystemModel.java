@@ -55,55 +55,69 @@ public class MDLToSystemModel {
     initModel(model, equations);
 
     Map<String, Variable> varMap = new HashMap<String, Variable>();
+    List<Rate> rates = new ArrayList<Rate>();
     for (String name : sdObjectManager.screenNames()) {
       if (!MODEL_VARS.contains(name)) {
         List<Equation> eqs = sdObjectManager.getEquations(name);
         Variable var = processEquations(name, eqs, model);
-        if (var != null)
+        if (var != null) {
+          if (var.getType().equals(VariableType.RATE)) {
+            rates.add((Rate)var);
+          }
           varMap.put(name, var);
+        }
       }
     }
 
     // create the links
     createLinks(varMap, model, sdObjectManager);
+    processRates(rates, varMap, sdObjectManager);
+    
     return model;
   }
 
   private void createLinks(Map<String, Variable> varMap, SystemModel model,
       SystemDynamicsObjectManager objMan) {
-    List<Rate> rates = new ArrayList<Rate>();
+
     for (String name : varMap.keySet()) {
-      List<String> sources = objMan.getIncomingArrows(name);
+      List<Arrow> sources = objMan.getIncomingArrows(name);
       Variable target = varMap.get(name);
-      VariableType targetType = target.getType();
-      if (targetType == VariableType.RATE)
-        rates.add((Rate) target);
-      else {
-        for (String source : sources) {
-          Variable vSource = varMap.get(source);
-          VariableType sourceType = vSource.getType();
+
+      for (Arrow source : sources) {
+        if (source.getType().equals(Arrow.INFLUENCE)) {
+          Variable vSource = varMap.get(source.getOtherEnd());
+          InfluenceLink link = SDModelFactory.eINSTANCE.createInfluenceLink();
+          link.setFrom(vSource);
+          link.setTo(target);
+          link.setUuid(EcoreUtil.generateUUID());
           
-          if (sourceType != VariableType.RATE) {
-          
-            InfluenceLink link = SDModelFactory.eINSTANCE.createInfluenceLink();
-            link.setFrom(vSource);
-            link.setTo(target);
-            link.setUuid(EcoreUtil.generateUUID());
-            // System.out.println("Link: " + source + " -> " +
-            // target.getName());
-            model.getLinks().add(link);
-          }
-          
-        }
+          model.getLinks().add(link);
+        } 
       }
     }
   }
-  
-  private void processRates(List<Rate> rates) {
+
+  private void processRates(List<Rate> rates, Map<String, Variable> varMap, SystemDynamicsObjectManager objMan) {
     for (Rate rate : rates) {
+      Stock from = null;
+      Stock to = null;
       
+      for (Arrow arrow : objMan.getIncomingArrows(rate.getName())) {
+        if (arrow.getType().equals(Arrow.FLOW)) {
+          from = (Stock)varMap.get(arrow.getOtherEnd());
+          break;
+        }
+      }
+      
+      for (Arrow arrow : objMan.getOutgoingArrows(rate.getName())) {
+        if (arrow.getType().equals(Arrow.FLOW)) {
+          to = (Stock)varMap.get(arrow.getOtherEnd());
+          break;
+        }
+      }
+      rate.setFrom(from);
+      rate.setTo(to);
     }
-    
   }
 
   private Variable processEquations(String name, List<Equation> eqs, SystemModel model) {
