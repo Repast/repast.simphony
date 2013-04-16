@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
@@ -18,6 +20,7 @@ import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
+import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
@@ -26,6 +29,7 @@ public class MDLToSystemModelTests {
   
   private static final String EPIDEMIC_MDL = "./test_data/EPIDEMIC.MDL";
   private static final String WFINV_MDL = "./test_data/WFINV.MDL";
+  private static final String ARMS_MDL = "./test_data/arms4.mdl";
   
   private SystemModel model;
   private Diagram diagram;
@@ -164,6 +168,25 @@ public class MDLToSystemModelTests {
     assertNotNull(production);
     assertNotNull(production.getFrom());
     assertEquals(SDModelPackage.Literals.CLOUD, production.getFrom().eClass());
+  }
+  
+  @Test
+  public void testSubscripts() {
+    MDLToSystemModel trans = new MDLToSystemModel();
+    trans.run(model, diagram, ARMS_MDL);
+    List<Subscript> subscripts = model.getSubscripts();
+    assertEquals(1, subscripts.size());
+    Subscript sub = subscripts.get(0);
+    assertEquals("region", sub.getName());
+    Set<String> expected = new HashSet<String>();
+    expected.add("east");
+    expected.add("west");
+    
+    for (String val : sub.getElements()) {
+      assertTrue(expected.remove(val));
+    }
+    assertEquals(0, expected.size());
+    
     
   }
 

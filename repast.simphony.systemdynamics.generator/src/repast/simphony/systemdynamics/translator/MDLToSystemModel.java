@@ -50,10 +50,11 @@ public class MDLToSystemModel {
     // process graphics first since we get screen name information from this
     // portion of the file
     new GraphicsProcessor().processGraphics(sdObjectManager, mdlContents);
-    Map<String, Equation> equations = new EquationProcessor().processRawEquations(sdObjectManager,
+    EquationProcessor eqProcessor = new EquationProcessor();
+    Map<String, Equation> equations = eqProcessor.processRawEquations(sdObjectManager,
         mdlContents);
     initModel(model, equations);
-
+    
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
     for (String name : sdObjectManager.screenNames()) {
@@ -122,7 +123,7 @@ public class MDLToSystemModel {
 
   private Variable processEquations(String name, List<Equation> eqs, SystemModel model) {
     Variable var = null;
-    System.out.println(name);
+    System.out.println("Variable Name: " + name);
     if (eqs.size() > 0) {
       Equation eq = eqs.get(0);
       VariableType type = eq.getVariableType();
