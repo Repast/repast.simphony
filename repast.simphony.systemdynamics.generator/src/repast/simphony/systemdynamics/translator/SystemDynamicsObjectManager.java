@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
+import repast.simphony.systemdynamics.sdmodel.Subscript;
+import repast.simphony.systemdynamics.sdmodel.SystemModel;
+import repast.simphony.systemdynamics.sdmodel.Variable;
+
 public class SystemDynamicsObjectManager {
 
   private Map<String, SystemDynamicsObject> objectsMap;
@@ -19,10 +24,6 @@ public class SystemDynamicsObjectManager {
 
   }
 
-  public Iterable<String> screenNames() {
-    return objectsMap.keySet();
-  }
-
   public List<String> validate(Map<String, Equation> equations) {
     // need to check consistency between equations and graphics objects and
     // arrows
@@ -32,7 +33,7 @@ public class SystemDynamicsObjectManager {
 
     for (SystemDynamicsObject sdo : objectsMap.values()) {
 
-      List<String> incomingArrows = sdo.getIncomingArrows();
+      List<Arrow> incomingArrows = sdo.getIncomingArrows();
 
       List<Equation> eqns = sdo.getEquations();
       for (Equation eqn : eqns) {
@@ -53,7 +54,9 @@ public class SystemDynamicsObjectManager {
           if (!incomingArrows.contains(screenName)) {
             // System.out.println("\n\n###Validate###: "+eqn.getVensimEquation());
             // System.out.println("###Validate###: "+sdo.getScreenName()+" add "+screenName);
-            incomingArrows.add(screenName);
+            Arrow arrow = new Arrow(screenName, Arrow.IN, Arrow.INFLUENCE);
+            // incomingArrows.add(arrow);
+            System.out.println("Would add " + arrow);
             addedScreenNames.add(screenName);
           }
 
@@ -88,9 +91,9 @@ public class SystemDynamicsObjectManager {
         while (iter.hasNext()) {
           String var = iter.next();
           String screenName = getScreenName(var);
-          List<String> incomingArrows = sdo.getIncomingArrows();
+          List<Arrow> incomingArrows = sdo.getIncomingArrows();
           if (!incomingArrows.contains(screenName)) {
-            incomingArrows.add(screenName);
+            incomingArrows.add(new Arrow(screenName, Arrow.IN, Arrow.INFLUENCE));
             System.out.println("\n\n###AddObject###: " + eqn.getVensimEquation());
             System.out.println("###AddObject###: " + sdo.getScreenName() + " add " + screenName);
             addedScreenNames.add(screenName);
@@ -183,13 +186,13 @@ public class SystemDynamicsObjectManager {
     objectsMap.get(screenName).addEquation(equation);
   }
 
-  public void addIncomingArrow(String screenName, String incomingArrow) {
+  public void addIncomingArrow(String screenName, Arrow incomingArrow) {
     if (!objectsMap.containsKey(screenName))
       addSystemDynamicsObjectPlaceHolder(screenName);
     objectsMap.get(screenName).addIncomingArrow(incomingArrow);
   }
 
-  public void addOutgoingArrow(String screenName, String incomingArrow) {
+  public void addOutgoingArrow(String screenName, Arrow incomingArrow) {
     if (!objectsMap.containsKey(screenName))
       addSystemDynamicsObjectPlaceHolder(screenName);
     objectsMap.get(screenName).addOutgoingArrow(incomingArrow);
@@ -209,14 +212,14 @@ public class SystemDynamicsObjectManager {
     return objectsMap.get(screenName).getGraphicObjects();
   }
 
-  public List<String> getIncomingArrows(String screenName) {
+  public List<Arrow> getIncomingArrows(String screenName) {
     if (!objectsMap.containsKey(screenName))
       addSystemDynamicsObjectPlaceHolder(screenName);
     return objectsMap.get(screenName).getIncomingArrows();
 
   }
 
-  public List<String> getOutgoingArrows(String screenName) {
+  public List<Arrow> getOutgoingArrows(String screenName) {
     if (!objectsMap.containsKey(screenName))
       addSystemDynamicsObjectPlaceHolder(screenName);
     return objectsMap.get(screenName).getOutgoingArrows();
@@ -230,8 +233,8 @@ public class SystemDynamicsObjectManager {
     Map<String, String> nameToId = new HashMap<String, String>();
     Map<String, String> nameToType = new HashMap<String, String>();
 
-    Map<String, List<String>> inArrows = new HashMap<String, List<String>>();
-    Map<String, List<String>> outArrows = new HashMap<String, List<String>>();
+    Map<String, List<Arrow>> inArrows = new HashMap<String, List<Arrow>>();
+    Map<String, List<Arrow>> outArrows = new HashMap<String, List<Arrow>>();
 
     // need to combine the valve and associated rate into a single SDO
     for (GraphicObject go : view.getGraphicObjects()) {
@@ -275,15 +278,25 @@ public class SystemDynamicsObjectManager {
 
       // Note that Vensim stores valve arrow information
 
+      go.print();
+
       boolean swap = false;
 
+      String arrowType = "Unknown";
+      String direction = "Unknown";
+
+      if (go.isInfluenceArrow())
+        arrowType = Arrow.INFLUENCE;
+      if (go.isFlowArrow())
+        arrowType = Arrow.FLOW;
+
       GraphicObject EffectiveToGO = idToGraphicObject.get(go.getTo());
+      // if arrow is to a valve, point to rate associated with valve
       if (EffectiveToGO.isValve()) {
         EffectiveToGO = EffectiveToGO.getAssociatedVariable();
       }
 
       // get the name at the head of the arrow
-
       String toName = idToName.get(EffectiveToGO.getId());
 
       // get the GO at the tail of the arrow
@@ -291,10 +304,15 @@ public class SystemDynamicsObjectManager {
 
       GraphicObject EffectiveFromGO = idToGraphicObject.get(go.getFrom());
       if (EffectiveFromGO.isValve()) {
-        if (!go.getShape().equals("4"))
+        if (go.isInFlowArrow()) {
           swap = true;
+        } else {
+
+        }
         EffectiveFromGO = EffectiveFromGO.getAssociatedVariable();
       }
+
+      System.out.println("swap " + swap);
 
       // get the name at the head of the arrow
       String fromName = idToName.get(EffectiveFromGO.getId());
@@ -307,18 +325,26 @@ public class SystemDynamicsObjectManager {
 
       // have lists been initialized?
       if (!inArrows.containsKey(toName))
-        inArrows.put(toName, new ArrayList<String>());
+        inArrows.put(toName, new ArrayList<Arrow>());
       if (!outArrows.containsKey(fromName))
-        outArrows.put(fromName, new ArrayList<String>());
+        outArrows.put(fromName, new ArrayList<Arrow>());
 
-      // add names to in and out lists as needed
-      List<String> in = inArrows.get(toName);
-      if (!in.contains(fromName))
-        in.add(fromName);
+      // add arrows to in and out lists as needed
+      List<Arrow> in = inArrows.get(toName);
+      boolean found = hasArrowWithOtherEnd(in, fromName);
+      if (!found) {
+        Arrow inArrow = new Arrow(fromName, Arrow.IN, arrowType);
+        in.add(inArrow);
+        System.out.println(inArrow);
+      }
 
-      List<String> out = outArrows.get(fromName);
-      if (!out.contains(toName))
-        out.add(toName);
+      List<Arrow> out = outArrows.get(fromName);
+      found = hasArrowWithOtherEnd(out, toName);
+      if (!found) {
+        Arrow outArrow = new Arrow(toName, Arrow.OUT, arrowType);
+        out.add(outArrow);
+        System.out.println(outArrow);
+      }
     }
 
     // now pass this information to the SystemDynamicsOjbectManager;
@@ -347,10 +373,10 @@ public class SystemDynamicsObjectManager {
     // but handle both
 
     for (String to : inArrows.keySet()) {
-      for (String from : inArrows.get(to)) {
+      for (Arrow from : inArrows.get(to)) {
 
         SystemDynamicsObject sdTo = getObjectWithName(to);
-        SystemDynamicsObject sdFrom = getObjectWithName(from);
+        SystemDynamicsObject sdFrom = getObjectWithName(from.getOtherEnd());
 
         SystemDynamicsObject effectiveTo = sdTo;
         SystemDynamicsObject effectiveFrom = sdFrom;
@@ -379,7 +405,8 @@ public class SystemDynamicsObjectManager {
               && (effectiveFrom.getType().equals(View.VARIABLE)
                   || effectiveFrom.getType().equals(View.RATE) || effectiveFrom.getType().equals(
                   View.CLOUD))) {
-            addIncomingArrow(effectiveTo.getScreenName(), effectiveFrom.getScreenName());
+            addIncomingArrow(effectiveTo.getScreenName(), from);
+            // System.out.println("addIn: "+from);
           } else {
             // System.out.println("Something not right");
           }
@@ -388,8 +415,8 @@ public class SystemDynamicsObjectManager {
     }
 
     for (String from : outArrows.keySet()) {
-      for (String to : outArrows.get(from)) {
-        SystemDynamicsObject sdTo = getObjectWithName(to);
+      for (Arrow to : outArrows.get(from)) {
+        SystemDynamicsObject sdTo = getObjectWithName(to.getOtherEnd());
         SystemDynamicsObject sdFrom = getObjectWithName(from);
 
         SystemDynamicsObject effectiveTo = sdTo;
@@ -413,12 +440,22 @@ public class SystemDynamicsObjectManager {
               && (effectiveFrom.getType().equals(View.VARIABLE)
                   || effectiveFrom.getType().equals(View.RATE) || effectiveFrom.getType().equals(
                   View.CLOUD))) {
-            addOutgoingArrow(effectiveFrom.getScreenName(), effectiveTo.getScreenName());
+            addOutgoingArrow(effectiveFrom.getScreenName(), to);
+            // System.out.println("addOut: "+to);
           } else {
             // System.out.println("Something not right");
           }
         }
       }
     }
+  }
+
+  private boolean hasArrowWithOtherEnd(List<Arrow> in, String name) {
+    boolean found = false;
+    for (Arrow a : in) {
+      if (a.getOtherEnd().equals(name))
+        found = true;
+    }
+    return found;
   }
 }

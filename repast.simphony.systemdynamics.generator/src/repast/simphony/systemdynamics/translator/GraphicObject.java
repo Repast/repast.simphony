@@ -306,6 +306,7 @@ public class GraphicObject {
 	    System.out.println("    To: "+to);
 	    System.out.println("    NumPoints: "+numPoints);
 	    System.out.println("    PointList: "+pointList);
+	    System.out.println("    Shape: "+shape);
 	} else if (type.equals("10")) {
 	    System.out.println("    Type: "+"Variable");
 	    System.out.println("    Name: "+name);
@@ -313,6 +314,7 @@ public class GraphicObject {
 	    System.out.println("    Y: "+y);
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
+	    System.out.println("    Shape: "+shape);
 	} else if (type.equals("11")) {
 	    System.out.println("    Type: "+"Valve");
 	    System.out.println("    Name: "+name);
@@ -320,6 +322,7 @@ public class GraphicObject {
 	    System.out.println("    Y: "+y);
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
+	    System.out.println("    Shape: "+shape);
 	} else if (type.equals("12")) {
 	    System.out.println("    Type: "+"Comment");
 	    System.out.println("    Name: "+name);
@@ -328,6 +331,7 @@ public class GraphicObject {
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
 	    System.out.println("    Comment: "+additionalText);
+	    System.out.println("    Shape: "+shape);
 	}   else if (type.equals("48")) {
 		System.out.println("    Type: "+"Cloud");
 		System.out.println("    Name: "+name);
@@ -336,6 +340,7 @@ public class GraphicObject {
 		System.out.println("    Width: "+width);
 		System.out.println("    Height: "+height);
 		System.out.println("    Comment: "+additionalText);
+		System.out.println("    Shape: "+shape);
 	} else if (type.equals("30")) {
 	    System.out.println("    Type: "+"BitMap");
 	    System.out.println("    Name: "+name);
@@ -343,6 +348,7 @@ public class GraphicObject {
 	    System.out.println("    Y: "+y);
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
+	    System.out.println("    Shape: "+shape);
 	} else if (type.equals("31")) {
 	    System.out.println("    Type: "+"Metafile");
 	    System.out.println("    Name: "+name);
@@ -350,6 +356,7 @@ public class GraphicObject {
 	    System.out.println("    Y: "+y);
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
+	    System.out.println("    Shape: "+shape);
 	} else if (type.equals("99")) {
 	    System.out.println("    Type: "+"Rate");
 	    System.out.println("    Name: "+name);
@@ -357,7 +364,24 @@ public class GraphicObject {
 	    System.out.println("    Y: "+y);
 	    System.out.println("    Width: "+width);
 	    System.out.println("    Height: "+height);
+	    System.out.println("    Shape: "+shape);
 	}
+    }
+    
+    public boolean isInfluenceArrow() {
+    	return type.equals(ARROW) && (shape.equals("0") ||shape.equals("1"));
+    }
+    
+    public boolean isFlowArrow() {
+    	return type.equals(ARROW) && (shape.equals("4") ||shape.equals("100") ||shape.equals("68"));
+    }
+    
+    public boolean isInFlowArrow() {
+    	return isFlowArrow() && shape.equals("100");
+    }
+    
+    public boolean isOutFlowArrow() {
+    	return isFlowArrow() && (shape.equals("4")  ||shape.equals("68"));
     }
     
     public boolean isInputOutput() {

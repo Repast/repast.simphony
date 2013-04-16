@@ -23,8 +23,8 @@ public class CausalAnalyzer {
 	if (node == null)
 	    return;
 	Node currentNode = null;
-	for (String in : sdObjectManager.getIncomingArrows(node.getToken())) {
-	    Node n = new Node(in);
+	for (Arrow in : sdObjectManager.getIncomingArrows(node.getToken())) {
+	    Node n = new Node(in.getOtherEnd());
 	    if (currentNode == null) {
 		node.setChild(n);
 	    } else {
@@ -32,7 +32,7 @@ public class CausalAnalyzer {
 	    }
 	    currentNode = n;
 	    
-	    SystemDynamicsObject obj = sdObjectManager.getObjectWithName(in);
+	    SystemDynamicsObject obj = sdObjectManager.getObjectWithName(in.getOtherEnd());
 	    if (obj != null && !obj.isStock()) {
 		extend(n, sdObjectManager);
 	    }
