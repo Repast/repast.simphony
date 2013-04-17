@@ -131,9 +131,9 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     	@Override
     	public void mouseDragged(PInputEvent event) {
     		 if (currentListener instanceof MapTool) {
-           PGISCanvas.this.setCursor(((MapTool) currentListener)
-                   .getCursor());
-         } else {
+           PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+         } 
+    		 else {
            PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
          }
     	}
@@ -142,9 +142,9 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
       public void mouseEntered(PInputEvent event) {
         // The Distance Tool cursor should always be visible when enabled
       	if (currentListener instanceof DistanceTool) {
-          PGISCanvas.this.setCursor(((MapTool) currentListener)
-                  .getCursor());
-        } else {
+          PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+        } 
+      	else {
           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
         }
       }
