@@ -619,6 +619,23 @@
          </run>
       </runtime>
    </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="repast.simphony.systemdynamics.handlers.sampleCategory"
+            name="Repast Simphony">
+      </category>
+      <wizard
+            category="repast.simphony.systemdynamics.handlers.sampleCategory"
+            class="repast.simphony.systemdynamics.handlers.MDLImportWizard"
+            icon="icons/sample.gif"
+            id="repast.simphony.systemdynamics.handlers.MDLImportWizard"
+            name="Import MDL File">
+         <description>
+            Import a file from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
 
    <!-- optionally, specify keybindings -->
 </plugin>
