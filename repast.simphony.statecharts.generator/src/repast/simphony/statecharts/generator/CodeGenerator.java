@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -40,7 +41,18 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  */
 public class CodeGenerator {
   
-  private static final String SRC_GEN = "src-gen";
+  public static final String SRC_GEN = "src-gen";
+  
+  private GeneratorRecord genRec = new GeneratorRecord();
+  
+  /**
+   * Gets the GeneratorRecord for this CodeGenerator.
+   * 
+   * @return the GeneratorRecord for this CodeGenerator.
+   */
+  public GeneratorRecord getGeneratorRecord() {
+    return genRec;
+  }
   
   /**
    * Generates the code in the specified project from a diagram in the specified
@@ -69,6 +81,7 @@ public class CodeGenerator {
       // properties that will cause the generation to fail badly (e.g. there is
       // no class name so we can't construct a file name to write the code to).
       if (new StateMachineValidator().validate(statemachine).getSeverity() == IStatus.ERROR) return null;
+      genRec.addUUID(statemachine.getUuid());
       
       IPath srcPath = addSrcPath(project, statemachine, monitor);
       IPath projectLocation = project.getLocation();
@@ -134,10 +147,13 @@ public class CodeGenerator {
       }
 
     } else {
-      DirectoryCleaner cleaner = new DirectoryCleaner();
-      //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
       String svgPath = SRC_GEN + "/" + ((statemachine.getPackage() + "." + statemachine.getClassName()).replace(".", "/")) + ".svg";
-      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString(), svgPath, statemachine.getUuid());
+      genRec.addSVG(new Path(project.getFullPath().toPortableString()).append(svgPath));
+      CodeGenFilter filter = new CodeGenFilter(svgPath, statemachine.getUuid());
+      DirectoryCleaner cleaner = new DirectoryCleaner(filter);
+      //System.out.println("running cleaner on: " + project.getLocation().append(srcPath.lastSegment()).append(pkg.replace(".", "/")).toPortableString());
+     
+      cleaner.run(project.getLocation().append(srcPath.lastSegment()).toPortableString());
     }
     
     return srcPath;

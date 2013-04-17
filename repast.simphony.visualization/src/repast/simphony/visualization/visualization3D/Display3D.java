@@ -2,10 +2,12 @@ package repast.simphony.visualization.visualization3D;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.Window;
 import java.awt.event.HierarchyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -16,17 +18,15 @@ import javax.media.j3d.Background;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.GraphicsConfigTemplate3D;
+import javax.media.j3d.PickInfo;
 import javax.media.j3d.Shape3D;
-import javax.media.j3d.Texture;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.media.j3d.WakeupCondition;
 import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point3d;
@@ -47,17 +47,20 @@ import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
 
+import com.sun.j3d.exp.swing.JCanvas3D;
 import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
 import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
 import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
 import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
-import com.sun.j3d.utils.image.TextureLoader;
+import com.sun.j3d.utils.pickfast.PickCanvas;
+import com.sun.j3d.utils.picking.PickResult;
+import com.sun.j3d.utils.picking.PickTool;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * 3D Display class based on J3D. Uses a behavior to update the display.
- *
+ * 
  * @author Nick Collier
  */
 public class Display3D extends AbstractDisplay3D {
@@ -68,12 +71,13 @@ public class Display3D extends AbstractDisplay3D {
   private EdgeStyle3D defaultEdgeStyle = new DefaultEdgeStyle3D();
   private boolean firstRender = true;
   private Color backgroundColor = null;
-  
-	static {
+  private PickCanvas pick;
+
+  static {
     SimpleUniverse.setJ3DThreadPriority(1);
   }
 
-  private Canvas3D canvas;
+  private JCanvas3D canvas;
   private BranchGroup sceneRoot;
   private SimpleUniverse universe;
   private MainBehavior updater;
@@ -136,41 +140,52 @@ public class Display3D extends AbstractDisplay3D {
   }
 
   /**
-   * Called the first time the scene is rendered.  We need to create the
-   * canvas here because the GraphicsConfiguration must relate to the monitor
-   * on which the runtime window is located, and not the default monitor,
-   * otherwise an exception may be thrown.
+   * Called the first time the scene is rendered. We need to create the canvas
+   * here because the GraphicsConfiguration must relate to the monitor on which
+   * the runtime window is located, and not the default monitor, otherwise an
+   * exception may be thrown.
    */
   private void initFirstRender() {
     Window window = SwingUtilities.getWindowAncestor(panel);
     GraphicsDevice device = window.getGraphicsConfiguration().getDevice();
     GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
 
-    canvas = new Canvas3D(device.getBestConfiguration(template));
-    universe = new SimpleUniverse(canvas);
+    canvas = new JCanvas3D(template, device);
+    canvas.setResizeMode(JCanvas3D.RESIZE_IMMEDIATELY);
+    canvas.setPreferredSize(new Dimension(100, 100));
+    canvas.setSize(canvas.getPreferredSize());
+    canvas.addMouseListener(new MouseAdapter() {
+
+    });
+
+    panel.add(canvas, BorderLayout.CENTER);
+
+    universe = new SimpleUniverse(canvas.getOffscreenCanvas3D());
     universe.getViewingPlatform().setNominalViewingTransform();
- 
-    if (backgroundColor != null){    	
-    	float r = (float)backgroundColor.getRed()/255f;
-    	float g = (float)backgroundColor.getGreen()/255f;
-    	float b = (float)backgroundColor.getBlue()/255f;
-    	
-    	// TODO this can be used for background image
-//    	String textureFile = "../repast.simphony.demos/icons/stars3.jpg";
-//    	TextureLoader loader = new TextureLoader(textureFile, "RGB", new Container());
-//      Background background = new Background(loader.getImage());    
-//      background.setImageScaleMode(Background.SCALE_FIT_ALL);
-    	
-    	Background background = new Background(r,g,b); 
-    	
-    	BoundingSphere sphere = new BoundingSphere(new Point3d(0,0,0), 1000000); 
-    	background.setApplicationBounds(sphere); 
-    	sceneRoot.addChild(background); 
+
+    if (backgroundColor != null) {
+      float r = (float) backgroundColor.getRed() / 255f;
+      float g = (float) backgroundColor.getGreen() / 255f;
+      float b = (float) backgroundColor.getBlue() / 255f;
+
+      // TODO this can be used for background image
+      // String textureFile = "../repast.simphony.demos/icons/stars3.jpg";
+      // TextureLoader loader = new TextureLoader(textureFile, "RGB", new
+      // Container());
+      // Background background = new Background(loader.getImage());
+      // background.setImageScaleMode(Background.SCALE_FIT_ALL);
+
+      Background background = new Background(r, g, b);
+
+      BoundingSphere sphere = new BoundingSphere(new Point3d(0, 0, 0), 1000000);
+      background.setApplicationBounds(sphere);
+      sceneRoot.addChild(background);
     }
-    View view = canvas.getView();
+
+    View view = canvas.getOffscreenCanvas3D().getView();
     // this will "smooth" out the animation but make it slower
-    //view.setMinimumFrameCycleTime(20);
-    //view.setSceneAntialiasingEnable(true);
+    // view.setMinimumFrameCycleTime(20);
+    // view.setSceneAntialiasingEnable(true);
     view.setBackClipDistance(3000.0d);
     view.setFrontClipDistance(0.01d);
 
@@ -186,45 +201,53 @@ public class Display3D extends AbstractDisplay3D {
     setPause(true);
   }
 
-
   /**
    * Initialization additional components dependent on the canvas is necessary
-   * during first render, because that's when the canvas is created.  Was
+   * during first render, because that's when the canvas is created. Was
    * previously in initScene().
    */
   private void initAdditional() {
     BoundingSphere bounds = new BoundingSphere(new Point3d(), Integer.MAX_VALUE);
     // rotate
-    MouseRotate myMouseRotate = new MouseRotate();
+    MouseRotate myMouseRotate = new MouseRotate(canvas);
     myMouseRotate.setTransformGroup(topRotTransGroup);
     myMouseRotate.setSchedulingBounds(bounds);
-    myMouseRotate.setFactor(0.01);  // sensitivity
+    myMouseRotate.setFactor(0.01); // sensitivity
     sceneRoot.addChild(myMouseRotate);
 
     // View Translation
     TransformGroup vpTrans = universe.getViewingPlatform().getViewPlatformTransform();
-    MouseTranslate myMouseTranslate = new MouseTranslate(MouseBehavior.INVERT_INPUT);
+    MouseTranslate myMouseTranslate = new MouseTranslate(canvas, MouseBehavior.INVERT_INPUT);
     myMouseTranslate.setTransformGroup(vpTrans);
     myMouseTranslate.setSchedulingBounds(bounds);
     sceneRoot.addChild(myMouseTranslate);
 
     // View zoom
     // uses middle button
-    MouseZoom myMouseZoom = new MouseZoom();
+    MouseZoom myMouseZoom = new MouseZoom(canvas);
     myMouseZoom.setTransformGroup(vpTrans);
     myMouseZoom.setSchedulingBounds(bounds);
     sceneRoot.addChild(myMouseZoom);
 
     // View zoom alternative
     // uses mouse wheel
-    MouseWheelZoom myMouseWheelZoom = new MouseWheelZoom();
+    MouseWheelZoom myMouseWheelZoom = new MouseWheelZoom(canvas);
     myMouseWheelZoom.setTransformGroup(vpTrans);
     myMouseWheelZoom.setSchedulingBounds(bounds);
     sceneRoot.addChild(myMouseWheelZoom);
 
-    // picking
-    PickProbeBehavior probe = new PickProbeBehavior(this, new BoundingSphere(new Point3d(), Float.POSITIVE_INFINITY));
-    sceneRoot.addChild(probe);
+    pick = new PickCanvas(canvas.getOffscreenCanvas3D(), sceneRoot);
+    pick.setMode(PickInfo.PICK_GEOMETRY);
+    pick.setFlags(PickInfo.NODE | PickInfo.CLOSEST_INTERSECTION_POINT);
+    pick.setTolerance(4f);
+    canvas.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent event) {
+        int clicks = event.getClickCount();
+        if (clicks == 2 && SwingUtilities.isLeftMouseButton(event)) {
+          picked(event);
+        }
+      }
+    });
 
     // directional lighting
     DirectionalLight light = new DirectionalLight();
@@ -240,11 +263,11 @@ public class Display3D extends AbstractDisplay3D {
     // fog -- todo fog looks nice but
     // we need to set the back distance w/r to
     // the size of the scene.
-//		LinearFog fog = new LinearFog(0f, 0f, 0f);
-//		fog.setFrontDistance(2f);
-//		fog.setBackDistance(4f);
-//		fog.setInfluencingBounds(bounds);
-    //sceneRoot.addChild(fog);
+    // LinearFog fog = new LinearFog(0f, 0f, 0f);
+    // fog.setFrontDistance(2f);
+    // fog.setBackDistance(4f);
+    // fog.setInfluencingBounds(bounds);
+    // sceneRoot.addChild(fog);
 
     // todo we need to change this from BoundingSphere so that it will
     // always update regardless of what the activation volume contains
@@ -254,9 +277,27 @@ public class Display3D extends AbstractDisplay3D {
     sceneRoot.addChild(updater);
   }
 
+  private void picked(MouseEvent evt) {
+    pick.setShapeLocation(evt);
+
+    PickInfo pickResult = pick.pickClosest();
+    // PickResult[] pickResults = pickCanvas.pickAll();
+    if (pickResult != null) {
+      // for (PickResult pickResult : pickResults) {
+      Shape3D shape = (Shape3D) pickResult.getNode();
+      if (shape != null) {
+        probe(shape, pickResult.getClosestIntersectionPoint());
+
+        //shape.setAppearance(AppearanceFactory.setPolygonAppearance(shape.getAppearance(),
+        //AppearanceFactory.PolygonDraw.LINE));
+      }
+    }
+  }
+
   public void init() {
     super.init();
-    if (valueLayer == null) valueLayer = new DummyValueDisplayLayer();
+    if (valueLayer == null)
+      valueLayer = new DummyValueDisplayLayer();
     else if (valueLayer instanceof DefaultValueDisplayLayer3D) {
 
       ((DefaultValueDisplayLayer3D) valueLayer).registerGrid(projectionTransGroup);
@@ -295,17 +336,16 @@ public class Display3D extends AbstractDisplay3D {
     projectionTransGroup.setTransform(trans);
 
     /*
-      // pull the viewing platform back a bit.
-      TransformGroup group = universe.getViewingPlatform().getViewPlatformTransform();
-      trans = new Transform3D();
-      trans.lookAt(new Point3d(0, 0, bounds.getRadius() * 2.5), new Point3d(0, 0, 0), new Vector3d(0, 1, 0));
-      trans.invert();
-      group.setTransform(trans);
-      */
+     * // pull the viewing platform back a bit. TransformGroup group =
+     * universe.getViewingPlatform().getViewPlatformTransform(); trans = new
+     * Transform3D(); trans.lookAt(new Point3d(0, 0, bounds.getRadius() * 2.5),
+     * new Point3d(0, 0, 0), new Vector3d(0, 1, 0)); trans.invert();
+     * group.setTransform(trans);
+     */
 
   }
 
-  public Canvas3D getCanvas() {
+  public JCanvas3D getCanvas() {
     return canvas;
   }
 
@@ -315,23 +355,27 @@ public class Display3D extends AbstractDisplay3D {
 
   /**
    * Given the shape3D, probe the object that it represents.
-   *
-   * @param shape          the shape representing the object we want to probe
-   * @param intersectPoint the intersection point of the pick itself
+   * 
+   * @param shape
+   *          the shape representing the object we want to probe
+   * @param intersectPoint
+   *          the intersection point of the pick itself
    */
   public void probe(Shape3D shape, Point3d intersectPoint) {
     Object obj = null;
     for (IDisplayLayer3D layer : displayMap.values()) {
       IDisplayLayer3D layer3D = (IDisplayLayer3D) layer;
       obj = layer3D.findObjsForItem(shape);
-      if (obj != null) break;
+      if (obj != null)
+        break;
     }
 
     if (obj == null) {
       for (IDisplayLayer layer : networkMap.values()) {
         NetworkDisplayLayer3D layer3D = (NetworkDisplayLayer3D) layer;
         obj = layer3D.findObjsForItem(shape);
-        if (obj != null) break;
+        if (obj != null)
+          break;
       }
     }
 
@@ -352,7 +396,8 @@ public class Display3D extends AbstractDisplay3D {
   }
 
   protected AbstractDisplayLayer3D createDisplayLayer(Style3D style) {
-    if (style == null) return new DisplayLayer3D(defaultStyle, projectionTransGroup);
+    if (style == null)
+      return new DisplayLayer3D(defaultStyle, projectionTransGroup);
     return new DisplayLayer3D(style, projectionTransGroup);
   }
 
@@ -374,20 +419,20 @@ public class Display3D extends AbstractDisplay3D {
     if (panel == null) {
       createPanel();
       panel.setLayout(new BorderLayout());
-//			panel.add(canvas, BorderLayout.CENTER);
+      // panel.add(canvas, BorderLayout.CENTER);
     }
 
     return panel;
   }
 
-
   // this applies the updates by setting the trigger condition to true
-  // That forces Updater.doOnTrigger to be called and that tells all the displays
+  // That forces Updater.doOnTrigger to be called and that tells all the
+  // displays
   // to apply their updates.
   public synchronized void render() {
     if (firstRender) {
       initFirstRender();
-      //updatedLastRender = true;
+      // updatedLastRender = true;
       updater.setTriggered(true);
       lastRenderTS = System.currentTimeMillis();
       firstRender = false;
@@ -398,7 +443,7 @@ public class Display3D extends AbstractDisplay3D {
       if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
         updater.setTriggered(true);
         lastRenderTS = ts;
-      } 
+      }
     }
   }
 
@@ -413,16 +458,13 @@ public class Display3D extends AbstractDisplay3D {
   }
 
   /*
-   public synchronized void frameFinished() {
-     // we need to count frames like this because some kinds of changes take
-     // longer than others but everything should be completed within two frames
-     if (behaviorTracker.isRenderFinished() && frameCount == 1) {
-       // we only want to call fireRenderFinished if we have actually started a render
-       // and if that render is finished. The BehaviorTracker takes care of handling that
-       behaviorTracker.reset();
-       support.fireRenderFinished(this);
-     }
-   }
+   * public synchronized void frameFinished() { // we need to count frames like
+   * this because some kinds of changes take // longer than others but
+   * everything should be completed within two frames if
+   * (behaviorTracker.isRenderFinished() && frameCount == 1) { // we only want
+   * to call fireRenderFinished if we have actually started a render // and if
+   * that render is finished. The BehaviorTracker takes care of handling that
+   * behaviorTracker.reset(); support.fireRenderFinished(this); } }
    */
 
   /**
@@ -456,8 +498,9 @@ public class Display3D extends AbstractDisplay3D {
     }
     initData = null;
     Window window = SwingUtilities.getWindowAncestor(panel);
-    if (window != null) window.removeWindowListener(this);
-    canvas.stopRenderer();
+    if (window != null)
+      window.removeWindowListener(this);
+    canvas.getOffscreenCanvas3D().stopRenderer();
     panel.remove(canvas);
     for (HierarchyListener listener : panel.getHierarchyListeners()) {
       panel.removeHierarchyListener(listener);
@@ -475,11 +518,11 @@ public class Display3D extends AbstractDisplay3D {
 
     private boolean triggered = false;
     private boolean paused = false;
-    //private BehaviorTracker behaviorTracker;
+    // private BehaviorTracker behaviorTracker;
     private WakeupCondition wakeup;
 
     public MainBehavior() {
-      //this.behaviorTracker = counter;
+      // this.behaviorTracker = counter;
       wakeup = new WakeupOnElapsedFrames(0);
     }
 
@@ -514,9 +557,8 @@ public class Display3D extends AbstractDisplay3D {
           deco.update();
         }
 
-
         valueLayer.applyUpdates();
-         
+
         postId(Display3D.TRANSFORMS_APPLIED);
 
         triggered = false;
@@ -543,7 +585,7 @@ public class Display3D extends AbstractDisplay3D {
 
   /**
    * Creates an DisplayEditor appropriate for editing this display.
-   *
+   * 
    * @param panel
    * @return an DisplayEditor appropriate for editing this display or null if
    *         this display cannot be edited.
@@ -564,11 +606,11 @@ public class Display3D extends AbstractDisplay3D {
   }
 
   public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
+    this.backgroundColor = backgroundColor;
+  }
 
-	public void toggleInfoProbe() {
-		// TODO Auto-generated method stub
-		
-	}
+  public void toggleInfoProbe() {
+    // TODO Auto-generated method stub
+
+  }
 }

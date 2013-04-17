@@ -25,33 +25,22 @@ public class Probe {
   // code is updated
   private List<? extends PresentationModel<?>> models;
   private boolean buffered = false;
-  private Updater updater;
 
   private long lastUpdateTS = 0;
   private String title;
-
-  private class Updater implements Runnable {
-    public void run() {
-      for (PresentationModel<?> model : models) {
-        // TODO remove check when parameter code is updated
-        if (model instanceof ProbeModel) ((ProbeModel)model).update();
-        else ((OldProbeModel)model.getBean()).update();
-      }
-    }
-  }
 
   public Probe(List<? extends PresentationModel<?>> models, JPanel panel, String title) {
     this(models, panel, title, false);
   }
 
-  public Probe(List<? extends PresentationModel<?>> models, JPanel panel, String title, boolean buffered) {
+  public Probe(List<? extends PresentationModel<?>> models, JPanel panel, String title,
+      boolean buffered) {
     this.panel = panel;
     this.models = models;
     this.buffered = buffered;
     this.title = title;
-    updater = new Updater();
   }
-  
+
   /**
    * Gets the title of this Probe.
    * 
@@ -80,7 +69,18 @@ public class Probe {
     // the event queue
     long ts = System.currentTimeMillis();
     if (ts - lastUpdateTS > UPDATE_INTERVAL) {
-      ThreadUtilities.runInEventThread(updater);
+
+      for (final PresentationModel<?> model : models) {
+        // TODO remove check when parameter code is updated
+        if (model instanceof ProbeModel)
+          ((ProbeModel) model).update();
+        else
+          ThreadUtilities.runInEventThread(new Runnable() {
+            public void run() {
+              ((OldProbeModel) model.getBean()).update();
+            }
+          });
+      }
       lastUpdateTS = ts;
     }
   }
@@ -122,7 +122,7 @@ public class Probe {
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     for (PresentationModel<?> model : models) {
-      ((ProbeModel)model).addPropertyChangeListener(listener);
+      ((ProbeModel) model).addPropertyChangeListener(listener);
     }
   }
 
@@ -133,7 +133,7 @@ public class Probe {
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     for (PresentationModel<?> model : models) {
-      ((ProbeModel)model).removePropertyChangeListener(listener);
+      ((ProbeModel) model).removePropertyChangeListener(listener);
     }
   }
 }

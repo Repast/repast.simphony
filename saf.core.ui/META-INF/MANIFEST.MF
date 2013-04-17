@@ -55,12 +55,13 @@ Export-Package:
  saf.v3d.render,
  saf.v3d.scene,
  saf.v3d.util
-Bundle-ClassPath: lib/jgoodies-forms-1.7.1.jar,
+Bundle-ClassPath: saf.core.ui.jar,
+ saf.core.v3d.jar,
  lib/dockingFrames-1.0.8p3a-saf.jar,
+ lib/jgoodies-forms-1.7.1.jar,
  lib/jh.jar,
  lib/l2fprod-common-all.jar,
  lib/osx.jar,
  lib/TableLayout.jar,
- lib/wizard-0.1.12.jar,
- saf.core.ui.jar,
- saf.core.v3d.jar
+ lib/wizard-0.1.12.jar
+Require-Bundle: libs.ext;bundle-version="2.0.1"
