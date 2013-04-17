@@ -24,7 +24,7 @@ public enum StateChartScheduler {
 
   INSTANCE;
 
-  private final static long MAX_BEFOFE_CLEAR = 10000;
+  private final static long MAX_BEFOFE_CLEAR = 100;
   protected Map<Double, ResolveActionsMapValue> resolveActions = new HashMap<Double, ResolveActionsMapValue>();
 
   protected Map<Double, BeginActionsMapValue> beginActions = new HashMap<Double, BeginActionsMapValue>();
