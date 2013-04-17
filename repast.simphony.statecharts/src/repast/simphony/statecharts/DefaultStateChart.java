@@ -118,7 +118,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
     } else if (currentSimpleState instanceof BranchState) {
       List<Transition<T>> branchCandidateTransitions = new ArrayList<Transition<T>>();
       for (Transition<T> t : regularTransitions) {
-        if (currentSimpleState.getId().equals(t.getSource().getId())) {
+        if (currentSimpleState == t.getSource()) {
           branchCandidateTransitions.add(t);
         }
       }
@@ -145,16 +145,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
         makeRegularTransition(t);
 
     } else {
-      List<String> statesToEnterStateIds = new ArrayList<String>();
-      for (AbstractState<T> as : statesToEnter) {
-        statesToEnterStateIds.add(as.getId());
-      }
-      // look through all defined regular transitions and find those with
-      // source.id ==
-      // state.id
       List<Transition<T>> newCandidateTransitions = new ArrayList<Transition<T>>();
       for (Transition<T> t : regularTransitions) {
-        if (statesToEnterStateIds.contains(t.getSource().getId())) {
+        if (statesToEnter.contains(t.getSource())) {
           newCandidateTransitions.add(t);
         }
       }
@@ -220,7 +213,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
       else {
         // collect all relevant self transitions and initialize
         for (Transition<T> st : selfTransitions) {
-          if (statesToEnterStateIds.contains(st.getSource().getId())) {
+          if (statesToEnter.contains(st.getSource())) {
             activeSelfTransitions.add(st);
             st.initialize(this);
           }
