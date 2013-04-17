@@ -279,7 +279,7 @@ public class StateChartSVGDisplay {
 	}
 
 	private long lastRenderTS = 0;
-	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
+	private static final long FRAME_UPDATE_INTERVAL = 50; // in milliseconds
 	private volatile boolean isTimerScheduled = false;
 	private Timer timer = new Timer(true);
 
