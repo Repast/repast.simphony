@@ -24,6 +24,7 @@ import org.geotools.referencing.datum.DefaultEllipsoid;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.MapTool;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -58,8 +59,8 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
   protected PLayer toolLayer = new PLayer();
   protected MapContent context;
   protected Rectangle2D rect;
-  protected Map<String, PLayer> layerNames;
-  protected Map<Layer, PLayer> layers;
+  protected Map<String, PGisLayer> layerNames;
+  protected Map<Layer, PGisLayer> layers;
   protected double scaleDenominator;
   protected DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
   protected  PLayer layerListening;
@@ -91,10 +92,12 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     tooltipNode.setPickable(false);
     camera.addChild(tooltipNode);
     camera.addInputEventListener(new PBasicInputEventHandler() {
-      public void mouseMoved(PInputEvent event) {
+    	@Override
+    	public void mouseMoved(PInputEvent event) {
         updateToolTip(event);
       }
 
+      @Override
       public void mouseDragged(PInputEvent event) {
         updateToolTip(event);
       }
@@ -119,11 +122,26 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
       }
     });
     setBounds(0, 0, 800, 800);
+    
+    // Event handler to set cursor based on tool
     addInputEventListener(new PBasicInputEventHandler() {
+
+    	// TODO Geotools [major] - set the cursor for each tool.
+
+    	@Override
+    	public void mouseDragged(PInputEvent event) {
+    		 if (currentListener instanceof MapTool) {
+           PGISCanvas.this.setCursor(((MapTool) currentListener)
+                   .getCursor());
+         } else {
+           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
+         }
+    	}
 
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (currentListener instanceof MapTool) {
+        // The Distance Tool cursor should always be visible when enabled
+      	if (currentListener instanceof DistanceTool) {
           PGISCanvas.this.setCursor(((MapTool) currentListener)
                   .getCursor());
         } else {
@@ -199,8 +217,8 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
   }
 
   private void init() {
-    layers = new HashMap<Layer, PLayer>();
-    layerNames = new HashMap<String, PLayer>();
+    layers = new HashMap<Layer, PGisLayer>();
+    layerNames = new HashMap<String, PGisLayer>();
     removeInputEventListener(getZoomEventHandler());
     removeInputEventListener(this.getPanEventHandler());
     setEventHandler(getPanEventHandler());
@@ -408,5 +426,14 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
 	@Override
 	public void layerPreDispose(MapLayerListEvent event) {
+	}
+	
+	/**
+	 * Executes when simulation is paused.
+	 */
+	public void setPause(boolean pause) {
+		for (PGisLayer layer : layers.values()){
+			layer.setPause(pause);
+		}
 	}
 }

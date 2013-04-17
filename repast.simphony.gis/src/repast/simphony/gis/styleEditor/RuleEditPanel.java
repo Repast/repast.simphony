@@ -36,7 +36,8 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 
 import repast.simphony.gis.display.SquareIcon;
 
@@ -58,12 +59,15 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class RuleEditPanel extends JPanel implements IStyleEditor {
 
+	protected static final String NO_PROPERTY_LABEL = "-none-";
+	
 	protected StyleBuilder styleBuilder = new StyleBuilder();
 	protected ExpressionBuilder expBuilder = new ExpressionBuilder();
-	protected FeatureType type;
+	protected SimpleFeatureType type;
 	protected Rule rule;
 	protected Symbolizer symbolizer;
 	protected Dimension preferred = new Dimension(70, 18);
+	protected Dimension preferred_lg = new Dimension(100, 18);
 	protected boolean titlesVisible = true;
 	protected boolean filterVisible = true;
 	protected boolean fillVisible = true;
@@ -74,12 +78,23 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void init(FeatureType type, Rule rule) {
+	public void init(SimpleFeatureType type, Rule rule) {
+		this.type = type;
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
 		dsv.visit(rule);
 		setRule((Rule)dsv.getCopy());
-		this.type = type;
+		
+		// TODO Geotools [blocker] - property-based styling (needs a mediator)
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		model.addElement(NO_PROPERTY_LABEL);
+		
+		for (AttributeType at : type.getTypes()) {
+//		if (numberTypes.contains(at.getBinding())) {
+				model.addElement(at.getName().toString());
+//		}
+		}
+		markSizePropertyBox.setModel(model);
 	}
 
 	public void setRule(Rule rule) {
@@ -107,6 +122,8 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		String wkn = SLD.wellKnownName(mark);
 		int markSize = SLD.pointSize(ps);
 	  
+		// TODO Geotools [blocker] - need to initialized from property expressions too!
+		
 		int markRotation = ps.getGraphic().getRotation().evaluate(null, Integer.class);
 		
 		markBox.setSelectedItem(wkn);
@@ -274,6 +291,24 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		updatePreview();
 	}
 	
+	private void setMarkSizeProperty(){
+	  // TODO Geotools [blocker] - this is how to set using a property
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		String property = (String)markSizePropertyBox.getSelectedItem();
+		ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory2().property(property));
+		
+		// enable the mark size spinner when NOT using a property
+		if (NO_PROPERTY_LABEL.equals(property)){
+			markSizeSpinner.setEnabled(true);
+		}
+		else{  // disable the spinner when using a property
+			markSizeSpinner.setEnabled(false);
+		}
+		
+//		updatePreview();
+	}
+	
 	private void setMarkRotation(){
 		PointSymbolizer ps = (PointSymbolizer) symbolizer;
 		
@@ -335,6 +370,12 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private void outlineThicknessChanged(ChangeEvent e) {
 		setStroke();
 	}
+	
+	private void markSizePropertyChanged(ActionEvent e) {
+		setMarkSizeProperty();
+	}
+	
+	
 
 	private void initComponents() {
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
@@ -359,6 +400,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		markBox = new JComboBox();
 		markSizeLabel = compFactory.createLabel("Mark Size");
 		markSizeSpinner = new JSpinner();
+		markSizePropertyBox = new JComboBox();
 		markRotationLabel = compFactory.createLabel("Mark Rotation");
 		markRotationSpinner = new JSpinner();
 		previewPanel = new JPanel();
@@ -417,7 +459,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 						new ColumnSpec(Sizes.dluX(80)),
 						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				},
 				new RowSpec[] {
 						FormSpecs.DEFAULT_ROWSPEC,
@@ -470,7 +512,9 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 						new ColumnSpec(Sizes.dluX(80)),
 						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-						new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(80), FormSpec.DEFAULT_GROW),
+						FormSpecs.BUTTON_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.BUTTON_COLSPEC,
 						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
@@ -484,7 +528,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 						FormSpecs.LINE_GAP_ROWSPEC,
 						new RowSpec(Sizes.dluY(10))
 				}));
-		markPanel.add(markSeparator, cc.xywh(1, 1, 6, 1));
+		markPanel.add(markSeparator, cc.xywh(1, 1, 8, 1));
 		markPanel.add(markLabel, cc.xy(3, 3));
 
 		markBox.setModel(new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List()));
@@ -506,6 +550,17 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		markSizeSpinner.setPreferredSize(preferred);
 		markPanel.add(markSizeSpinner, cc.xywh(5, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
 
+		// TODO Geotools - working on property-based styling
+		
+		markSizePropertyBox.setModel(new DefaultComboBoxModel());
+		markSizePropertyBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				markSizePropertyChanged(e);
+			}
+		});
+		markSizePropertyBox.setPreferredSize(preferred_lg);
+		markPanel.add(markSizePropertyBox, cc.xywh(7, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
 		markPanel.add(markRotationLabel, cc.xy(3, 7));
 		markRotationSpinner.setModel(new SpinnerNumberModel(0, null, null, 1));
 		markRotationSpinner.addChangeListener(new ChangeListener() {
@@ -531,7 +586,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		add(previewPanel);
 	}
 
-	
+
 	private JPanel fillPanel;
 	private JComponent separator1;
 	private JLabel fillColorLabel;
@@ -552,6 +607,9 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	private JComboBox markBox;
 	private JLabel markSizeLabel;
 	private JSpinner markSizeSpinner;
+	
+	private JComboBox markSizePropertyBox;
+	
 	private JLabel markRotationLabel;
 	private JSpinner markRotationSpinner;
 	private JPanel previewPanel;

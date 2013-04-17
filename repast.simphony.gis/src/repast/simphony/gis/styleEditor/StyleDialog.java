@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.styling.Style;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -46,7 +46,7 @@ public class StyleDialog extends JDialog {
 
 	private boolean completed;
 	
-	public void setData(FeatureType featureType, Style style, FeatureSource source){
+	public void setData(SimpleFeatureType featureType, Style style, FeatureSource source){
 		styleEditorPanel1.setData(featureType, style, source);
 	}
 
@@ -72,7 +72,7 @@ public class StyleDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		this.setPreferredSize(new Dimension(350, 575));
+		this.setPreferredSize(new Dimension(400, 575));
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		styleEditorPanel1 = new StyleEditorPanel();

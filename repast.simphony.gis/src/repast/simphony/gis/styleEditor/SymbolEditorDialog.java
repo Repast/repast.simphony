@@ -13,7 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.geotools.styling.Rule;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -56,7 +56,7 @@ public class SymbolEditorDialog extends JDialog {
 		});
 	}
 
-	public void init(FeatureType type, Rule rule) {
+	public void init(SimpleFeatureType type, Rule rule) {
 		ruleEditPanel1.init(type, rule);
 	}
 
@@ -67,7 +67,7 @@ public class SymbolEditorDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		this.setPreferredSize(new Dimension(300, 525));
+		this.setPreferredSize(new Dimension(350, 525));
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		ruleEditPanel1 = new RuleEditPanel();

@@ -14,7 +14,7 @@ import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -42,7 +42,7 @@ public class StyleEditorPanel extends JPanel implements IStyleEditor {
 	// TODO Geotools [blocker] - need to reinitialize the range and value panels
 	//  when the style/rule is edited in the basic ruleEditPanel.
 	
-	public void setData(FeatureType featureType, Style style, FeatureSource source) {
+	public void setData(SimpleFeatureType featureType, Style style, FeatureSource source) {
 		Rule rule = style.featureTypeStyles().get(0).rules().get(0);
 		ruleEditPanel.init(featureType, rule);
 		

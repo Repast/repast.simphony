@@ -327,7 +327,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     }
   }
 
+  /**
+   * Executes when simulation is paused.
+   */
   public void setPause(boolean pause) {
+  	
+  	panel.getCanvas().setPause(pause);
+  	
   }
 
   // we calculate our own layer bounds

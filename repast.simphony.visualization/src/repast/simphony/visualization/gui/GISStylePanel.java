@@ -141,9 +141,9 @@ public class GISStylePanel extends JPanel {
     geomBox.setModel(model);
     addListeners();
 
-    defaultsMap.put(POINT, getDefaultStyle(POINT));
-    defaultsMap.put(LINE, getDefaultStyle(LINE));
-    defaultsMap.put(POLYGON, getDefaultStyle(POLYGON));
+    defaultsMap.put(POINT, StylePreviewFactory.getDefaultStyle(POINT));
+    defaultsMap.put(LINE, StylePreviewFactory.getDefaultStyle(LINE));
+    defaultsMap.put(POLYGON, StylePreviewFactory.getDefaultStyle(POLYGON));
   }
 
   private void initMyComponents() {
@@ -189,8 +189,8 @@ public class GISStylePanel extends JPanel {
                 updatePreview(style);
               } else {
                 geomBox.setSelectedItem(POINT);
-                element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), getDefaultStyle(POINT));
-                updatePreview(getDefaultStyle(POINT));
+                element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), StylePreviewFactory.getDefaultStyle(POINT));
+                updatePreview(StylePreviewFactory.getDefaultStyle(POINT));
               }
             } else {
               agentNameFld.setText(element.agentName);
@@ -224,7 +224,7 @@ public class GISStylePanel extends JPanel {
         if (element != null) {
           Style style = element.styleMap.get(type);
           if (style == null) {
-            style = getDefaultStyle(type);
+            style = StylePreviewFactory.getDefaultStyle(type);
             element.styleMap.put(type, style);
           }
           updatePreview(style);
@@ -379,35 +379,6 @@ public class GISStylePanel extends JPanel {
     return polygon;
   }
 
-  /**
-   * Provide a default style for the style editors.
-   * 
-   * @param geomType the geometry type for the selected agent class.
-   * @return the default style for the geometry type.
-   */
-  private Style getDefaultStyle(GeometryUtil.GeometryType geomType) {
-    StyleBuilder builder = new StyleBuilder();
-
-    if (geomType == POINT) {
-      Mark mark = builder.createMark("Square", Color.BLUE);
-      mark.setStroke(builder.createStroke());
-      Graphic gr = builder.createGraphic();   
-      gr.graphicalSymbols().clear();
-      gr.graphicalSymbols().add(mark);
-   
-      PointSymbolizer ps = builder.createPointSymbolizer(gr,null);
-      ps.getGraphic().setSize(builder.literalExpression(10));
-      
-      return builder.createStyle(ps);
-    }
-
-    if (geomType == LINE) {
-      return builder.createStyle(builder.createLineSymbolizer(Color.RED, 1));
-    }
-
-    return builder.createStyle(builder.createPolygonSymbolizer(Color.GREEN, Color.BLACK, 1));
-  }
-
   private void showStyleDialog() {
     StyleDialog dialog = new StyleDialog((JDialog) SwingUtilities.getWindowAncestor(this));
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
@@ -522,7 +493,7 @@ public class GISStylePanel extends JPanel {
       } else if (element.styleXML == null && element.source == null) {
         // if style xml == null that means never edited and never
         // click another element in list so just use current default.
-        Style style = getDefaultStyle((GeometryUtil.GeometryType) geomBox.getSelectedItem());
+        Style style = StylePreviewFactory.getDefaultStyle((GeometryUtil.GeometryType) geomBox.getSelectedItem());
         descriptor.addLayerOrder(element.agentClassName, i);
         try {
           descriptor.addStyle(element.agentClassName, getSLDStyle(style));
