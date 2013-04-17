@@ -9,7 +9,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import repast.simphony.systemdynamics.handlers.ApplySubscriptsAction;
 import repast.simphony.systemdynamics.handlers.EditSubscriptsAction;
 import repast.simphony.systemdynamics.handlers.GenerateCodeAction;
-import repast.simphony.systemdynamics.handlers.ImportMDLAction;
 import repast.simphony.systemdynamics.handlers.ValidateDiagramAction;
 
 /**
@@ -46,7 +45,6 @@ public class SystemdynamicsDiagramActionBarContributor extends DiagramActionBarC
     bars.getToolBarManager().add(new ApplySubscriptsAction(page));
     bars.getToolBarManager().add(new GenerateCodeAction(page));
     bars.getToolBarManager().add(new ValidateDiagramAction(page));
-    bars.getToolBarManager().add(new ImportMDLAction(page));
     
   }
 }
