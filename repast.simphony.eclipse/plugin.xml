@@ -219,6 +219,20 @@
             id="repast.simphony.eclipse.modelswizard"
             name="Import Repast Example Models">
       </wizard>
+      <category
+            id="repast.simphony.import.category"
+            name="Repast Simphony">
+      </category>
+      <wizard
+            category="repast.simphony.import.category"
+            class="repast.simphony.eclipse.ide.ImportSampleModelsWizard2"
+            icon="icons/sample.gif"
+            id="repast.simphony.eclipse.modelswizard"
+            name="Import Repast Example Models">
+         <description>
+            Import Repast Simphony Example Models
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
