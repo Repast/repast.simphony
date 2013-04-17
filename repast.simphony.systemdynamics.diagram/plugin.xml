@@ -621,12 +621,14 @@
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
+         <!--
       <category
             id="repast.simphony.systemdynamics.handlers.sampleCategory"
             name="Repast Simphony">
       </category>
+      -->
       <wizard
-            category="repast.simphony.systemdynamics.handlers.sampleCategory"
+            category="repast.simphony.import.category"
             class="repast.simphony.systemdynamics.handlers.MDLImportWizard"
             icon="icons/sample.gif"
             id="repast.simphony.systemdynamics.handlers.MDLImportWizard"
