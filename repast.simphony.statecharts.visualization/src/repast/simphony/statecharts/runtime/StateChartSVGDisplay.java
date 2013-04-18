@@ -1,8 +1,10 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -10,8 +12,11 @@ import java.awt.event.WindowEvent;
 import java.net.URI;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -186,6 +191,7 @@ public class StateChartSVGDisplay {
 	public StateChartSVGDisplay(StateChartSVGDisplayController controller, String frameTitle, URI uri) {
 		this.controller = controller;
 		frame = new JFrame(frameTitle);
+		frame.setAlwaysOnTop(true);
 		this.uri = uri;
 		frameCloseAction = new AbstractAction("Close Window") {
 	    @Override
@@ -202,7 +208,20 @@ public class StateChartSVGDisplay {
 	public void initialize() {
 
 		JPanel panel = createComponents();
-		
+		JMenuBar bar = new JMenuBar();
+		    JMenu menu = new JMenu("Options");
+		    menu.setMnemonic(KeyEvent.VK_O);
+		    JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
+		    item.setSelected(true);
+		    item.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent evt) {
+		       frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource()).isSelected());
+		      }
+		    });
+		    menu.add(item);
+		    bar.add(menu);
+		    panel.add(bar, BorderLayout.NORTH);
+		    
 		KeyStroke closeKey = KeyStroke.getKeyStroke(
 	      KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey, "closeWindow");
