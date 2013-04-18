@@ -471,7 +471,14 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				throws JavaModelException {
 			// IJavaProject javaProject =
 			List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
-			while (type != null && !type.getFullyQualifiedName().equals(BASE_PATCH)) {
+			while (type != null) {
+				IType sType = getSuperType(type);
+				// This keeps the super type traversal away from the ReLogoPatch src-gen class
+				// extending BasePatch, but allows for 
+				if (sType != null && !sType.getFullyQualifiedName().equals(BASE_PATCH)){
+					break;
+				}
+				
 				boolean isGroovySource = false;
 				if (!type.isBinary()) {
 					if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
@@ -492,7 +499,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 						nonPublicMethodNames.add(method.getElementName());
 					}
 				}
-				// TODO: also extract properties
 				List<PropertyInfo> properties = null;
 				try {
 					properties = getProperties(type);
@@ -592,7 +598,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					previousField = foundField;
 				}
 				// System.out.println("Type: " + type.getElementName());
-				type = getSuperType(type);
+				type = sType;
 				// System.out.println("Supertype: " + type.getElementName());
 
 			}
