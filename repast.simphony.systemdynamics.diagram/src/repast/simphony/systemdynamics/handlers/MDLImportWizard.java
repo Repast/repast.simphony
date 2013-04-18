@@ -16,13 +16,18 @@ import java.util.Collections;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.command.CommandParameter;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
@@ -43,6 +48,7 @@ import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditor;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorUtil;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
+import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.translator.MDLToSystemModel;
 
@@ -82,6 +88,9 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
       protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
           throws ExecutionException {
         SystemModel model = SDModelFactory.eINSTANCE.createSystemModel();
+        
+        model.setClassName(mainPage.getClassName());
+        model.setPackage(mainPage.getPackage());
 
         Diagram diagram = ViewService.createDiagram(model, SystemModelEditPart.MODEL_ID,
             SystemdynamicsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
@@ -122,6 +131,18 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
       SystemdynamicsDiagramEditorPlugin.getInstance().logError("Unable import mdl file", e); //$NON-NLS-1$
     }
   }
+  
+  private IResource extractSelection(IStructuredSelection selection) {
+    IStructuredSelection ss = (IStructuredSelection) selection;
+    Object element = ss.getFirstElement();
+    if (element instanceof IResource)
+      return (IResource) element;
+    if (!(element instanceof IAdaptable))
+      return null;
+    IAdaptable adaptable = (IAdaptable) element;
+    Object adapter = adaptable.getAdapter(IResource.class);
+    return (IResource) adapter;
+  }
 
   /*
    * (non-Javadoc)
@@ -132,7 +153,12 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
   public void init(IWorkbench workbench, IStructuredSelection selection) {
     setWindowTitle("MDL Import Wizard"); // NON-NLS-1
     setNeedsProgressMonitor(true);
-    mainPage = new MDLImportWizardPage("Import MDL File", selection); // NON-NLS-1
+    IResource resource = extractSelection(selection);
+    IProject project = null;
+    if (resource != null) {
+      project = resource.getProject();
+    }
+    mainPage = new MDLImportWizardPage("Import MDL File", selection, project); // NON-NLS-1
   }
 
   /*
