@@ -148,12 +148,19 @@ public class SystemModelSheet extends Composite {
   }
 
   protected void bind(EMFDataBindingContext context, EObject eObject, EAttribute attribute,
-      Widget widget) {
+      Widget widget, boolean isDouble) {
+    if (isDouble) {
     context.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, widget),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject), attribute).observe(
             eObject), createUpdateValueStrategy(new StringToDoubleConverter()),
         createUpdateValueStrategy(new DoubleToStringConverter()));
+    } else {
+      context.bindValue(
+          WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, widget),
+          EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject), attribute).observe(
+              eObject));
+    }
   }
 
   protected UpdateValueStrategy createUpdateValueStrategy(IConverter converter) {
@@ -172,11 +179,11 @@ public class SystemModelSheet extends Composite {
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             SDModelPackage.Literals.SYSTEM_MODEL__UNITS).observe(eObject));
 
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__START_TIME, txtStart);
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__END_TIME, txtEnd);
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__TIME_STEP, txtStep);
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__REPORTING_INTERVAL, txtInterval);
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__CLASS_NAME, txtClassName);
-    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__PACKAGE, txtPackage);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__START_TIME, txtStart, true);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__END_TIME, txtEnd, true);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__TIME_STEP, txtStep, true);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__REPORTING_INTERVAL, txtInterval, true);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__CLASS_NAME, txtClassName, false);
+    bind(context, eObject, SDModelPackage.Literals.SYSTEM_MODEL__PACKAGE, txtPackage, false);
   }
 }
