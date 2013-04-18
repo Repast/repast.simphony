@@ -33,8 +33,6 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 public class SystemDynamicsCreationWizardPage0 extends WizardNewFileCreationPage implements Listener {
 
-  private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
-
   private Text classNameTxt;
   private Text packageTxt;
 
