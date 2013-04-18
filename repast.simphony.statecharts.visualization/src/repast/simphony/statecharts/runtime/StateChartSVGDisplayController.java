@@ -85,7 +85,9 @@ public class StateChartSVGDisplayController implements StateChartListener {
 
   }
 
-  boolean tryAnotherUpdate = false;
+  // Accessed by multiple threads.
+  volatile boolean tryAnotherUpdate = false;
+  
   @Override
   public void update() {
     List<AbstractState> states = stateChart.getCurrentStates();

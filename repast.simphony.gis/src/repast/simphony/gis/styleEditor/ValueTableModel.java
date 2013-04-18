@@ -16,7 +16,6 @@ import org.geotools.styling.Style;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 
@@ -35,17 +34,12 @@ public class ValueTableModel extends AbstractTableModel {
 	private Rule defaultRule;
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
-	private PreviewLabel defaultPreview;
 
-	public ValueTableModel(SimpleFeatureType featureType, Style style, 
-			PreviewLabel preview) {
-		RuleCreator creator = new RuleCreator();
+	public ValueTableModel(SimpleFeatureType featureType, Style style) {
 		
 		defaultRule = configureDefaultRule(style);
 		
 		addRule(defaultRule);
-
-		defaultPreview = preview;
 		
 		convertors.put(Double.class, new DoubleConvertor());
 		convertors.put(double.class, new DoubleConvertor());
@@ -237,10 +231,9 @@ public class ValueTableModel extends AbstractTableModel {
 	}
 	
 	private Icon getIcon(Rule rule) {
-    return PreviewLabel.formatPreview(defaultPreview, rule);
+    return StylePreviewFactory.createSmallIcon(rule);
 	}
 	
-
 	private Literal findLiteralExpression(Rule rule) {
 		BinaryComparisonOperator filter = (BinaryComparisonOperator)rule.getFilter();
 		Expression exp = filter.getExpression2();
@@ -250,8 +243,8 @@ public class ValueTableModel extends AbstractTableModel {
 
 	private String literalValue(Rule rule) {
 		if (!rule.isElseFilter()) {
-			Literal exp = findLiteralExpression(rule);
-			return exp.getValue().toString();
+			Expression exp = findLiteralExpression(rule);
+			return exp.evaluate(null,String.class);
 		}
 		return "<Default>";
 	}

@@ -3,16 +3,18 @@ package repast.simphony.space.gis;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureStore;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -23,6 +25,7 @@ import simphony.util.messages.MessageCenter;
  * geography is written to a separate shapefile.
  *
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class ShapefileWriter {
 
@@ -40,7 +43,6 @@ public class ShapefileWriter {
     this.geography = geography;
   }
 
-
   /**
    * Writes named geography layer to the specified URL.
    *
@@ -48,9 +50,19 @@ public class ShapefileWriter {
    * @param url       url to write the layer to
    */
   public void write(String layerName, URL url) {
-    ShapefileFeatureAgentFactory fac = createFactory(layerName);
-    List<SimpleFeature> features = fac.getFeatures();
+    List<SimpleFeature> features = new ArrayList<SimpleFeature>();
+    Layer layer = geography.getLayer(layerName);
+    
+    ShapefileFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().
+            getShapefileFeatureAgentFactory(layer.getAgentType(), 
+            		layer.getGeomType(), geography.getCRS());
+
+    for (Object obj : layer.getAgentSet()) {
+      features.add(fac.getFeature(obj, geography));
+    }
+    
     SimpleFeatureType type = fac.getFeatureType();
+    
     try {
       write(url, features, type);
     } catch (IOException ex) {
@@ -74,29 +86,16 @@ public class ShapefileWriter {
     SimpleFeatureStore fs = (SimpleFeatureStore) store.getFeatureSource(featureName);
     fs.setTransaction(transaction);
     
-    DefaultFeatureCollection collection = new DefaultFeatureCollection(null,null);
-		collection.addAll(features);
-		
+    SimpleFeatureCollection collection = new ListFeatureCollection(type, features);
+    
     try {
-      fs.addFeatures(collection);
-      transaction.commit();
+    	fs.addFeatures(collection);
+    	transaction.commit();
+    } catch (Exception problem) {
+    	problem.printStackTrace();
+    	transaction.rollback();
     } finally {
-      transaction.close();
+    	transaction.close();
     }
-  }
-
-
-  private ShapefileFeatureAgentFactory createFactory(String layerName) {
-    Layer layer = geography.getLayer(layerName);
-    ShapefileFeatureAgentFactory fac = FeatureAgentFactoryFinder.getInstance().
-            getShapefileFeatureAgentFactory(layer.getAgentType(), layer.getGeomType(), geography.getCRS());
-
-    for (Object obj : layer.getAgentSet()) {
-      fac.getFeature(obj, geography);
-    }
-
-    return fac;
   }
 }
-
-

@@ -19,12 +19,9 @@ import org.geotools.styling.Rule;
 public class SampleStyleTableModel extends AbstractTableModel {
 
 	private static String[] COL_NAMES = {"Symbol", "Range", "Label"};
-
 	private List<Rule> rules = new ArrayList<Rule>();
-	private PreviewLabel defaultPreview;
 
-	public SampleStyleTableModel(PreviewLabel preview){
-		this.defaultPreview = preview;
+	public SampleStyleTableModel(){
 	}
 	
 	public void initStyle(FeatureTypeStyle style) {
@@ -118,11 +115,11 @@ public class SampleStyleTableModel extends AbstractTableModel {
 		else rules.add(row, rule);
 		fireTableRowsUpdated(row, row);
 	}
-
+	
 	private Icon getIcon(Rule rule) {
-		return PreviewLabel.formatPreview(defaultPreview, rule);
+		return StylePreviewFactory.createSmallIcon(rule);
 	}
-
+	
 	private String ruleTitleToRange(String title) {
 		return title.replace("..", " - ");
 	}
@@ -130,9 +127,5 @@ public class SampleStyleTableModel extends AbstractTableModel {
 	public void init(List<Rule> rules) {
 		this.rules.clear();
 		this.rules.addAll(rules);
-	}
-
-	public void setDefaultPreview(PreviewLabel defaultPreview) {
-		this.defaultPreview = defaultPreview;
 	}
 }

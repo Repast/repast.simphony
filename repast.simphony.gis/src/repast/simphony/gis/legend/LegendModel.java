@@ -1,18 +1,25 @@
 package repast.simphony.gis.legend;
 
-import org.geotools.map.FeatureLayer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultTreeModel;
+
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
-import repast.simphony.gis.display.LegendIconMaker;
-import simphony.util.messages.MessageCenter;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.*;
+import repast.simphony.gis.styleEditor.StylePreviewFactory;
+import simphony.util.messages.MessageCenter;
 
 /**
  * This is the data model for a legend representing a gis map. It consists of
@@ -76,7 +83,9 @@ public class LegendModel extends DefaultTreeModel {
 
   private void addRuleNodes(Style style, LegendLayerEntry layerNode) {
     for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
-      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
+//      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
+   // TODO Geotools [minor] - might ned to modify this to use the size.
+    	Icon icon = StylePreviewFactory.createIcon(rule);  
       LegendRuleEntry ruleNode = new LegendRuleEntry(rule.getTitle(),
               icon, rule);
       insertNodeInto(ruleNode, layerNode, layerNode.getChildCount());

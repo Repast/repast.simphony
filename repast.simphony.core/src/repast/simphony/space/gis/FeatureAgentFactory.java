@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.cglib.reflect.FastClass;
+import net.sf.cglib.reflect.FastMethod;
+
 import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -20,28 +23,37 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import simphony.util.messages.MessageCenter;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract factory for adapting agents to features. This creates a FeatureType
  * given an agent class.
  * 
+ * TODO Geotools [minor] - this class would benefit from cleanup since there's lots of
+ *      duplicate code, along with subclasses: 
+ *      		ShapefileFeatureAgentFactory
+ *      		DefaultFeatureAgentFactory
+ * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
-public abstract class FeatureAgentFactory {
+public abstract class FeatureAgentFactory<T> {
 
 	/*
 	 * The default name for the geometry attribute - an arbitrary string.  Note
 	 *  that Feature attribute names may not contain spaces or periods. 
 	 */
 	public static final String GEOM_ATTRIBUTE_NAME = "Location";
-	
+	MessageCenter msg = MessageCenter.getMessageCenter(getClass());	
 	private Map<Class, SimpleFeatureType> types = new HashMap<Class, SimpleFeatureType>();
-
 	private Map<Class, Class> primitiveMap = new HashMap<Class, Class>();
-
 	private Set<Class> legalShapefileAttribs = new HashSet<Class>();
-
+	protected List<ObjectClassAttributeData> classAttributeList;
+	
+	public abstract FeatureAgent getFeature(T agent, Geography geography);
+	
 	public FeatureAgentFactory() {
 		primitiveMap.put(double.class, Double.class);
 		primitiveMap.put(int.class, Integer.class);
@@ -215,5 +227,67 @@ public abstract class FeatureAgentFactory {
 		types.put(agentClass, type);
 		
 		return type;
+	}
+	
+	/**
+   * Hold method read / write info for agent class.
+   * 
+   *
+   */
+  static class ObjectClassAttributeData {
+		
+  	private String name;
+		private FastMethod readMethod;
+		private FastMethod writeMethod;
+  	
+  	public ObjectClassAttributeData(String name, FastMethod readMethod, 
+  			FastMethod writeMethod){
+  		
+  		this.name = name;
+  		this.readMethod = readMethod;
+  		this.writeMethod = writeMethod;
+  	}
+  	
+  	public String getName() {
+			return name;
+		}
+
+		public FastMethod getReadMethod() {
+			return readMethod;
+		}
+
+		public FastMethod getWriteMethod() {
+			return writeMethod;
+		}
+  }
+  
+  /**
+   * Create a list of class attributes for the FeatureAgent
+   * 
+   * @param agentClass
+   */
+	protected void createClassAttributes(Class<T> agentClass) {
+		classAttributeList = new ArrayList<ObjectClassAttributeData>();
+		try {
+			BeanInfo info = Introspector.getBeanInfo(agentClass,	Object.class);
+			PropertyDescriptor[] pds = info.getPropertyDescriptors();
+			FastClass fastClass = FastClass.create(agentClass);
+			
+			for (int i = 0; i < pds.length; i++) {
+				PropertyDescriptor pd = pds[i];
+				String featureName = pd.getName();
+				
+				if (pd.getReadMethod() != null) {
+					FastMethod readMethod = fastClass.getMethod(pd.getReadMethod());
+					FastMethod writeMethod = pd.getWriteMethod() == null ? null
+							: fastClass.getMethod(pd.getWriteMethod());
+					
+					classAttributeList.add(new ObjectClassAttributeData(featureName, 
+							readMethod, writeMethod));
+				}
+			}
+		} catch (IntrospectionException e) {
+			msg.error("Unable to create feature attributes from agent", e);
+		}
 	}
 }
