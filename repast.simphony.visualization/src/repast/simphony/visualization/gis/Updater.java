@@ -17,7 +17,6 @@ import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerEvent;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import repast.simphony.gis.display.RepastMapLayer;
@@ -111,11 +110,6 @@ public class Updater {
     	Class<? extends Object> clazz = obj.getClass();
       DefaultFeatureAgentFactory fac = factoryMap.get(clazz);
       if (fac == null) {
-      	
-      	// TODO Geotools - The FeatureAgentFactory needs to be specific to this display
-      	//      Store it in the map with a different key...
-      	System.out.println("Updater.addAgents() > " + clazz.getName());
-
         fac = finder.getFeatureAgentFactory(clazz, geog.getGeometry(obj).getClass(), geog.getCRS());
         factoryMap.put(clazz, fac);
         reorder = true;
@@ -132,15 +126,8 @@ public class Updater {
 //      if (fa.getDefaultGeometry() == null)
 //      origGeomMap.put(obj, fa.getDefaultGeometry());
     }
-
     agentsToAdd.clear();
   }
-
-//  private void resetFactories() {
-//    for (DefaultFeatureAgentFactory fac : factoryMap.values()) {
-//      fac.reset();
-//    }
-//  }
 
   public void render(MapContent mapContext) {
     if (addRender) {  // if new agents have been added
@@ -152,17 +139,15 @@ public class Updater {
         
         // If there is a new agent type, then create a new layer for the type
         if (agentCollection == null) {  
-        	List<SimpleFeature> featureAgentList = fac.getFeatures();
         	agentCollection = new DefaultFeatureCollection(null,null);
-        	agentCollection.addAll(featureAgentList);
+        	agentCollection.addAll(featureAgentsToAdd);
         	
           featureMap.put(clazz, agentCollection);
 
-          FeatureAgent agent = (FeatureAgent) featureAgentList.get(0);
+          Class geomClass = fac.getFeatureType().getGeometryDescriptor().getType().getBinding();
           
           RepastMapLayer layer = new RepastMapLayer(agentCollection, 
-          		styler.getStyle(clazz.getName(), 
-          				agent.getDefaultGeometry().getClass()));
+          		styler.getStyle(clazz.getName(), geomClass));
           
           layerMap.put(clazz.getName(), layer);          
           reorder = true;
@@ -189,12 +174,11 @@ public class Updater {
     // we cannot track changes to an agent that would update the agent's
     // styled display.
     for (RepastMapLayer layer : layerMap.values()) {
-      // RepastMapLayer mapLayer = layerMap.get(clazz.getName());
       ThreadUtilities.runInEventThread(new LayerUpdater(layer, updateLock));    	
     }
   }
 
-  // TODO Geotools - this doesn't seem to be needed to actually update the position
+  // TODO Geotools [minor] - this doesn't seem to be needed to actually update the position
   //      of the FeatureAgents since the Geometry would be directly manipulated
   //      by the user model or through the Geograby.moveBy...().
   //      This might only be needed if the geometry type changes...which it 
@@ -215,7 +199,6 @@ public class Updater {
 //      }
 //    }
   }
-
  
   private void removeAgents() {
     try {
@@ -236,7 +219,6 @@ public class Updater {
     try {
       updateLock.lock();
       if (agentsToAdd.size() > 0) {
-//        resetFactories();
         addAgents();
         addRender = true;
       }

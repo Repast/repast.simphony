@@ -15,22 +15,28 @@ import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Style;
 
+/**
+ * Simple wrapper for the Geotools FeatureLayer.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class RepastMapLayer extends FeatureLayer {
 
-	public RepastMapLayer(FeatureCollection arg0, Style arg1, String arg2) {
-		super(arg0, arg1, arg2);
+	public RepastMapLayer(FeatureCollection coll, Style style, String title) {
+		super(coll, style, title);
 	}
 
-	public RepastMapLayer(FeatureCollection arg0, Style arg1) {
-		super(arg0, arg1);
+	public RepastMapLayer(FeatureCollection coll, Style style) {
+		super(coll, style);
 	}
 
-	public RepastMapLayer(FeatureSource arg0, Style arg1, String arg2) {
-		super(arg0, arg1, arg2);
+	public RepastMapLayer(FeatureSource source, Style style, String title) {
+		super(source, style, title);
 	}
 
-	public RepastMapLayer(FeatureSource arg0, Style arg1) {
-		super(arg0, arg1);
+	public RepastMapLayer(FeatureSource source, Style style) {
+		super(source, style);
 	}
 
 	List<MapLayerListener> listenerList = new ArrayList<MapLayerListener>();
@@ -69,5 +75,4 @@ public class RepastMapLayer extends FeatureLayer {
 		fireMapLayerChangedEvent(new MapLayerEvent(this,
 				MapLayerEvent.VISIBILITY_CHANGED));
 	}
-
 }

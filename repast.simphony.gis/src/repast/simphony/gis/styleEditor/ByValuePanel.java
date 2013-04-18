@@ -234,21 +234,24 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	 */
 	private void addRule() {
 		String att = attributeBox.getSelectedItem().toString();
+		RuleCreator creator = new RuleCreator();
+		Rule rule;
 		
+		// When styling an agent class
 		if (source == null){  
-			// TODO Geotools  need to create a rule from the FeatureType as with
-			//      the FeatureSource below
+			rule = creator.createValueRule(null, att, 
+					getSymbolizerFactory(getColor(colorIndex++)));
+			tableModel.addRule(rule);
 		}
 		
+		// When styling a feature source as from a shapefile
 		else try {
-			RuleCreator creator = new RuleCreator();
-			
 			SimpleFeature feature = source.getFeatures().features().next();
-			Rule rule = creator.createValueRule(feature, att, 
+			rule = creator.createValueRule(feature, att, 
 					getSymbolizerFactory(getColor(colorIndex++)));
-			
 			tableModel.addRule(rule);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			msg.error("Error getting features", e);
 		}
 	}
@@ -264,17 +267,11 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 
   /**
    * Adds a list of rules based on the complete set of features in a shapefile
-   * FeatureSource.  If no shapefile is used, then addAll() has the same effect
-   * as addRule().
+   * FeatureSource. 
    */
   private void addAll() {
   	
-  	if (source == null){  // Create a rule from the FeatureType
-			// TODO Geotools  should this option even be available, ie only for 
-  		//      shapefile FeatureSources ?
-		}
-		
-  	else try {
+  	try {
   		RuleCreator creator = new RuleCreator();
   		String att = attributeBox.getSelectedItem().toString();
   		Set<Object> vals = new HashSet<Object>();
@@ -310,7 +307,7 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	}
 
 	public void init(FeatureType type, Style style, 
-			FeatureSource<SimpleFeatureType, SimpleFeature> source, PreviewLabel preview) {
+			FeatureSource<SimpleFeatureType, SimpleFeature> source) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		featureType = (SimpleFeatureType)type;
 		this.source = source;
@@ -322,11 +319,16 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		}
 		
 		attributeBox.setModel(model);
-		tableModel = new ValueTableModel(featureType, style, preview);
+		tableModel = new ValueTableModel(featureType, style);
 		valueTable.setModel(tableModel);
 		valueTable.getColumnModel().getColumn(0).setCellRenderer(new IconCellRenderer());
 		valueTable.getColumnModel().getColumn(1).setCellRenderer(new LabelCellRenderer());
 		valueTable.getColumnModel().getColumn(2).setCellRenderer(new LabelCellRenderer());
+		
+		// Disable the "Add All" button which is used to add all Feature attribute
+		//  values contained in a feature source, as from a shapefile.
+		if (source == null)
+			addAllBtn.setEnabled(false);
 		
 		initTable(style);
 	}
@@ -358,14 +360,12 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		label1 = new JLabel();
 		attributeBox = new JComboBox();
-		label2 = new JLabel();
+		paletteLabel = new JLabel();
 		paletteBox = new JComboBox();
-		separator1 = compFactory.createSeparator("Values");
+		valuesSeparator = compFactory.createSeparator("Values");
 		defaultBox = new JCheckBox();
 		scrollPane1 = new JScrollPane();
 		valueTable = new JTable();
@@ -376,7 +376,6 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 		deleteBtn = new JButton();
 		CellConstraints cc = new CellConstraints();
 
-		//======== this ========
 		setLayout(new FormLayout(
 						new ColumnSpec[]{
 										FormSpecs.DEFAULT_COLSPEC,
@@ -394,6 +393,8 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 										FormSpecs.LINE_GAP_ROWSPEC,
 										FormSpecs.DEFAULT_ROWSPEC,
 										FormSpecs.LINE_GAP_ROWSPEC,
+										FormSpecs.DEFAULT_ROWSPEC,
+										FormSpecs.LINE_GAP_ROWSPEC,
 										new RowSpec(RowSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
 										FormSpecs.LINE_GAP_ROWSPEC,
 										FormSpecs.DEFAULT_ROWSPEC,
@@ -401,64 +402,55 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 										FormSpecs.DEFAULT_ROWSPEC
 						}));
 
-		//---- label1 ----
+		
+	  // Span the attribute and palette elements across multiple columns to 
+		//  provide room for large agent attribute names and palette icons
 		label1.setText("Attribute:");
 		add(label1, cc.xy(1, 1));
-		add(attributeBox, cc.xy(3, 1));
+		add(attributeBox, cc.xywh(3, 1, 5, 1));
 
-		//---- label2 ----
-		label2.setText("Palette:");
-		add(label2, cc.xy(5, 1));
-		add(paletteBox, cc.xy(7, 1));
-		add(separator1, cc.xywh(1, 3, 7, 1));
+		paletteLabel.setText("Palette:");
+		add(paletteLabel, cc.xy(1, 3));
+		add(paletteBox, cc.xywh(3, 3, 5, 1));
+		add(valuesSeparator, cc.xywh(1, 5, 7, 1));
 
-		//---- defaultBox ----
 		defaultBox.setText("Include Default");
 		defaultBox.setSelected(true);
-		add(defaultBox, cc.xywh(1, 5, 3, 1));
+		add(defaultBox, cc.xywh(1, 7, 3, 1));
 
-		//======== scrollPane1 ========
-		{
-			scrollPane1.setViewportView(valueTable);
-		}
-		add(scrollPane1, cc.xywh(1, 7, 7, 1));
-		add(separator2, cc.xywh(1, 9, 7, 1));
+		scrollPane1.setViewportView(valueTable);
+		
+		add(scrollPane1, cc.xywh(1, 9, 7, 1));
+		add(separator2, cc.xywh(1, 11, 7, 1));
 
-		//======== panel1 ========
-		{
-			panel1.setLayout(new FormLayout(
-							new ColumnSpec[]{
-											FormSpecs.DEFAULT_COLSPEC,
-											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-											FormSpecs.DEFAULT_COLSPEC,
-											FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-											FormSpecs.PREF_COLSPEC
-							},
-							RowSpec.decodeSpecs("default")));
 
-			//---- addAllBtn ----
-			addAllBtn.setText("Add All Values");
-			panel1.add(addAllBtn, cc.xy(1, 1));
+		panel1.setLayout(new FormLayout(
+				new ColumnSpec[]{
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.PREF_COLSPEC
+				},
+				RowSpec.decodeSpecs("default")));
 
-			//---- addBtn ----
-			addBtn.setText("Add Value");
-			panel1.add(addBtn, cc.xy(3, 1));
+		addAllBtn.setText("Add All Values");
+		panel1.add(addAllBtn, cc.xy(1, 1));
 
-			//---- deleteBtn ----
-			deleteBtn.setText("Delete Value");
-			panel1.add(deleteBtn, cc.xy(5, 1));
-		}
-		add(panel1, cc.xywh(1, 11, 7, 1));
-		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+		addBtn.setText("Add Value");
+		panel1.add(addBtn, cc.xy(3, 1));
+
+		deleteBtn.setText("Delete Value");
+		panel1.add(deleteBtn, cc.xy(5, 1));
+
+		add(panel1, cc.xywh(1, 13, 7, 1));
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JLabel label1;
 	private JComboBox attributeBox;
-	private JLabel label2;
+	private JLabel paletteLabel;
 	private JComboBox paletteBox;
-	private JComponent separator1;
+	private JComponent valuesSeparator;
 	private JCheckBox defaultBox;
 	private JScrollPane scrollPane1;
 	private JTable valueTable;
@@ -467,5 +459,4 @@ public class ByValuePanel extends JPanel implements IStyleEditor {
 	private JButton addAllBtn;
 	private JButton addBtn;
 	private JButton deleteBtn;
-	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

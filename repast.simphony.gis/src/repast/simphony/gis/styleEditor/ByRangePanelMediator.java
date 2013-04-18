@@ -11,7 +11,6 @@ import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.StyleGenerator;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.filter.AndImpl;
 import org.geotools.filter.function.Classifier;
 import org.geotools.filter.function.RangedClassifier;
 import org.geotools.styling.FeatureTypeStyle;
@@ -46,8 +45,7 @@ public class ByRangePanelMediator {
 	private DefaultComboBoxModel paletteModel = new DefaultComboBoxModel();
 	private DefaultComboBoxModel cTypeModel = new DefaultComboBoxModel();
 	private DefaultComboBoxModel attributeModel = new DefaultComboBoxModel();
-	private DefaultComboBoxModel markModel = new DefaultComboBoxModel(new String[]{
-					"circle", "cross", "star", "square", "triangle"});
+	private DefaultComboBoxModel markModel = new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List());
 	private FeatureType featureType;
 	 static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
@@ -60,12 +58,12 @@ public class ByRangePanelMediator {
 	private GeometryUtil.GeometryType type;
   private double min = 0, max = 10;
 
-  public ByRangePanelMediator(FeatureType featureType, Rule rule, PreviewLabel preview) {
+  public ByRangePanelMediator(FeatureType featureType, Rule rule) {
   	this.featureType = featureType;
 		
-  	tableModel = new SampleStyleTableModel(preview);
+  	tableModel = new SampleStyleTableModel();
   	
-  	// TODO Geotools add other range types in new GT 8 API?
+  	// TODO Geotools [major] add other range types in new GT 8 API?
   	cTypeModel.addElement(new IntervalItemType());
 		//cTypeModel.addElement(new QuantileItemType());
 		
@@ -122,7 +120,6 @@ public class ByRangePanelMediator {
 	 * @param classes the new number of classes
 	 */
 	public void classesChanged(int classes) {
-		// TODO Geotools restrict to max 11 classes
 		ignorePaletteChange = true;
 		this.classesCount = classes;
 		paletteModel.removeAllElements();
@@ -173,12 +170,15 @@ public class ByRangePanelMediator {
 
 			Palette palette = (Palette) paletteModel.getSelectedItem();
 
+			// Get the FeatureTypeStyle based on the Classifier.  The FTS will only
+			//  have colors rules at this point.
 			fts = StyleGenerator.createFeatureTypeStyle(classifier, pn, 
 					palette.getColors(), "Generated FeatureTypeStyle", 
 					featureType.getGeometryDescriptor(),
 					StyleGenerator.ELSEMODE_INCLUDEASMIN, 0.95, null);
 
-			addSymbolizers(fts);
+			// Now add the symbolizer data (Mark, Fill, etc.)
+			formatSymbolizers(fts);
 
 			tableModel.initStyle(fts);
 		}
@@ -187,31 +187,39 @@ public class ByRangePanelMediator {
 	public void replaceRule(Rule oldRule, Rule newRule) {
 		for (Rule rule : fts.rules()){
 			if (rule.equals(oldRule)){
-				rule = newRule;
+				fts.rules().remove(rule);
+				fts.rules().add(newRule);
 				break;
 			}
 		}
 	}
 
-	private void addSymbolizers(FeatureTypeStyle style) {
+	/**
+	 * Adds the appropriate symbolizer data (Mark, Fill, etc.) based on the geometry
+	 * type to the basic FeatureTypeStyle created by the Classifier.
+	 * 
+	 * @param style a basic FeatureTypeStyle with only color rules.
+	 */
+	private void formatSymbolizers(FeatureTypeStyle style) {
 		StyleBuilder builder = new StyleBuilder();
 		for (Rule rule : style.rules()) {
 			if (type == GeometryUtil.GeometryType.POINT) {
 				PointSymbolizer sym = (PointSymbolizer) rule.getSymbolizers()[0];
-				Graphic ruleGraphic = ((PointSymbolizer)	defaultRule.getSymbolizers()[0]).getGraphic(); 
-				Mark ruleMark = (Mark)ruleGraphic.graphicalSymbols().get(0);		
-				Fill fill = ruleMark.getFill();
+				Graphic defaultGraphic = ((PointSymbolizer)	defaultRule.getSymbolizers()[0]).getGraphic(); 
+				Mark defaultMark = (Mark)defaultGraphic.graphicalSymbols().get(0);		
+				Fill fill = defaultMark.getFill();
 				Mark mark = (Mark)sym.getGraphic().graphicalSymbols().get(0);
 				Fill newFill = builder.createFill(mark.getFill().getColor(), fill.getOpacity());
 				
-				Stroke stroke = ruleMark.getStroke();
+				Stroke stroke = defaultMark.getStroke();
 				Stroke newStroke = builder.createStroke(stroke.getColor(), stroke.getWidth(), stroke.getOpacity());
-				Mark newMark = builder.createMark(ruleMark.getWellKnownName(), newFill, newStroke);
+				Mark newMark = builder.createMark(defaultMark.getWellKnownName(), newFill, newStroke);
 				
 			  Graphic gr = styleFactory.createDefaultGraphic();
 			  gr.graphicalSymbols().clear();
         gr.graphicalSymbols().add(newMark);
-        gr.setSize(filterFactory.literal(ruleGraphic.getSize()));								
+        gr.setSize(defaultGraphic.getSize());
+        gr.setRotation(defaultGraphic.getRotation());
 				sym.setGraphic(gr);
 			} 
 			else if (type == GeometryUtil.GeometryType.LINE) {

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -50,6 +51,7 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.DisplayEditorLifecycle;
@@ -77,6 +79,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
+	private final static String ICON_FORMAT = ".png";
   public static final String SHP_FILE_STYLE_PROP = DisplayGIS.class + ".SHP_FILE_STYLE_PROP";
   private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS.class);
 
@@ -324,7 +327,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     }
   }
 
+  /**
+   * Executes when simulation is paused.
+   */
   public void setPause(boolean pause) {
+  	
+  	panel.getCanvas().setPause(pause);
+  	
   }
 
   // we calculate our own layer bounds
@@ -562,28 +571,29 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     return decorator;
   }
 
+  public static Icon loadIcon(String name) {
+    try {
+      return new ImageIcon(RSGUIConstants.class.getClassLoader().getResource(name + ICON_FORMAT));
+    } catch (Exception e) {
+      msg.warn("Error loading: " + name + ", it will not be used.");
+      return new ImageIcon(new byte[0]);
+    }
+  }
+  
   public void createPanel() {
     panel = new PiccoloMapPanel(mapContext);
-    
-    URL imageFile = null;
-    Image image = null;
 
-    // TODO Geotools update icons with new GT versions?
     // zoomIn
     Map<String, Object> toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PMarqueeZoomIn.class.getResource("viewmag+.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionZoomIn"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Zoom In");
     panel.addTool(new PMarqueeZoomIn(mapContext), toolParams);
 
     // zoomOut
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PMarqueeZoomOut.class.getResource("viewmag-.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionZoomOut"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Zoom Out");
     panel.addTool(new PMarqueeZoomOut(mapContext), toolParams);
 
@@ -592,9 +602,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     toolParams = new HashMap<String, Object>();
     toolParams.put(Action.SHORT_DESCRIPTION, "Pan the map");
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PGISPanTool.class.getResource("move.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionPan"));
     toolParams.put("DEFAULT", Boolean.TRUE);
     toolParams.put(ToolManager.SELECTED, Boolean.TRUE);
     panel.addTool(new PGISPanTool(mapContext, canvas), toolParams);
@@ -602,9 +610,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     // ruler
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = DistanceTool.class.getResource("ruler-icon.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("ruler"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Calculate Distance between 2 points");
 
     DistanceSetter setter = new DistanceSetter() {
@@ -626,9 +632,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = DistanceTool.class.getResource("inform-icon.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionIdentify"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Probe");
     panel.addTool(new GISProbeHandler(this), toolParams);
 

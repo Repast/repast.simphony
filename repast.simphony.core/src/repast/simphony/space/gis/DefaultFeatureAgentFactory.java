@@ -1,12 +1,10 @@
 package repast.simphony.space.gis;
 
 import java.beans.IntrospectionException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.geotools.feature.SchemaException;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -17,11 +15,13 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * Default factory class for creating feature agents.
- * Instances of the this class
- * can be created using the FeatureAgentFactoryFinder.
+ * Instances of the this class can be created using the FeatureAgentFactoryFinder.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  *
  */
-public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
+public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory<T> {
 	MessageCenter msg = MessageCenter.getMessageCenter(getClass());
 
 	private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
@@ -30,7 +30,6 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
 
 	private SimpleFeatureType featureType;
 
-	private List<SimpleFeature> features;
   private List<FeatureAttributeAdapter> adapters;
 
   DefaultFeatureAgentFactory(Class<T> agentType, Class<? extends Geometry> geometryType,
@@ -59,32 +58,29 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
     return crs;
   }
 
-  /**
-   * Resets this factory by creating a new feature collection.
-   */
-  public void reset() {
-    features = new ArrayList<SimpleFeature>();
-  }
-
   private void init(Class<T> agentType) {
-		try {
+  	try {
 			featureType = getFeatureType(agentType, crs, geometryType, adapters);
-			features = new ArrayList<SimpleFeature>();
 		} catch (IntrospectionException e) {
 			msg.error("Unable to introspect feature class: "
 					+ agentType.getName(), e);
 		} catch (SchemaException e) {
 			msg.error("Error creating FeatureType", e);
 		}
+  	createClassAttributes(agentType);
 	}
 
+  /**
+   * Create a FeatureAgent instance from the provided agent.
+   * 
+   * @param agent the agent instance from which to create a FeatureAgent
+   * @param geography the geography in which the FeatureAgent resides
+   * @return the FeatureAgent instance
+   */
+  @Override
 	public FeatureAgent getFeature(T agent, Geography geography) {
-		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, geography, adapters);
-		features.add(featureAgent);
+		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, 
+				geography, adapters, classAttributeList);
 		return featureAgent;
-	}
-
-	public List<SimpleFeature> getFeatures() {
-		return features;
 	}
 }
