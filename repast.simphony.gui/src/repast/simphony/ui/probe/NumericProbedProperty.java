@@ -4,6 +4,10 @@ import java.awt.GridLayout;
 import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -82,56 +86,41 @@ public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
 
     switch (numType) {
     case BIGINTEGER: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          new BigInteger("0"));
-      // formatter.setValueClass(BigInteger.class);
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createIntegerField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
     case BIGDECIMAL: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          new BigDecimal("0"));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createFormattedTextField(valueModel, new ZeroNumberFormat(Utils.getNumberFormatInstance())));
 
     }
     case BYTE: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          new Byte((byte) 0));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createIntegerField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
     case SHORT: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          new Short((short) 0));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createIntegerField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
     case INT: {
-      //EmptyNumberFormat formatter = new EmptyNumberFormat(NumberFormat.getIntegerInstance(),
-       //   Integer.valueOf(0));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createIntegerField(valueModel, 0));
+          BasicComponentFactory.createIntegerField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
     case DOUBLE: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Double.valueOf(0));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createFormattedTextField(valueModel, new ZeroNumberFormat(Utils.getNumberFormatInstance())));
     }
     case LONG: {
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createLongField(valueModel, 0L));
+          BasicComponentFactory.createLongField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
     case FLOAT: {
-      EmptyNumberFormat formatter = new EmptyNumberFormat(Utils.getNumberFormatInstance(),
-          Float.valueOf(0));
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createFormattedTextField(valueModel, formatter));
+          BasicComponentFactory.createFormattedTextField(valueModel, new ZeroNumberFormat(Utils.getNumberFormatInstance())));
     }
     default:
       return this.wrapWithSparkLineButton(valueModel,
-          BasicComponentFactory.createIntegerField(valueModel, 0));
+          BasicComponentFactory.createIntegerField(valueModel, new ZeroNumberFormat(NumberFormat.getIntegerInstance())));
     }
   }
 
@@ -157,6 +146,82 @@ public class NumericProbedProperty extends DefaultProbedPropertyUICreator {
 
   }
 
+}
+
+class ZeroNumberFormat extends NumberFormat {
+  
+  private NumberFormat delegate;
+  
+  public ZeroNumberFormat(NumberFormat delegate) {
+    this.delegate = delegate;
+  }
+
+  /**
+   * @param number
+   * @param toAppendTo
+   * @param pos
+   * @return
+   * @see java.text.NumberFormat#format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition)
+   */
+  public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
+    return delegate.format(number, toAppendTo, pos);
+  }
+
+  /**
+   * @param source
+   * @return
+   * @throws ParseException
+   * @see java.text.Format#parseObject(java.lang.String)
+   */
+  public Object parseObject(String source) throws ParseException {
+    if (source == null || source.trim().length() == 0) source = "0";
+    return delegate.parseObject(source);
+  }
+
+  /**
+   * @param number
+   * @param toAppendTo
+   * @param pos
+   * @return
+   * @see java.text.NumberFormat#format(double, java.lang.StringBuffer, java.text.FieldPosition)
+   */
+  public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+    return delegate.format(number, toAppendTo, pos);
+  }
+
+  /**
+   * @param number
+   * @param toAppendTo
+   * @param pos
+   * @return
+   * @see java.text.NumberFormat#format(long, java.lang.StringBuffer, java.text.FieldPosition)
+   */
+  public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+    return delegate.format(number, toAppendTo, pos);
+  }
+
+  /**
+   * @param source
+   * @param parsePosition
+   * @return
+   * @see java.text.NumberFormat#parse(java.lang.String, java.text.ParsePosition)
+   */
+  public Number parse(String source, ParsePosition parsePosition) {
+    return delegate.parse(source, parsePosition);
+  }
+
+  /**
+   * @param source
+   * @return
+   * @throws ParseException
+   * @see java.text.NumberFormat#parse(java.lang.String)
+   */
+  public Number parse(String source) throws ParseException {
+    return delegate.parse(source);
+  }
+  
+  
+  
 }
 
 /*
