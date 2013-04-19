@@ -187,17 +187,6 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    *          the layer order
    */
   public void registerFeatureSource(FeatureSource source, Style style, Integer order) {
-//  	String styleFileName = "archsites.xml";
-//  	File styleFile = new File(styleFileName);
-//		StyleFactory fac = CommonFactoryFinder.getStyleFactory(null);
-//		SLDParser parser = null;
-//		try {
-//			parser = new SLDParser(fac, styleFile);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//		style = parser.readXML()[0];
-  	
   	featureSources.add(source);
     styler.registerStyle(source, style);
     layerOrder.put(order, source);

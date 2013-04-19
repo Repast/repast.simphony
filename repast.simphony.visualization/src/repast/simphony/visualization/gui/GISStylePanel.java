@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +67,7 @@ import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
+import repast.simphony.ui.RSApplication;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
@@ -109,7 +112,7 @@ public class GISStylePanel extends JPanel {
     String agentClassName;
     String styleXML;
     Map<GeometryUtil.GeometryType, Style> styleMap = new HashMap<GeometryUtil.GeometryType, Style>();
-    File source;
+    String source;
     Class<? extends Geometry> defaultGeometry;
 
     public AgentTypeElement(String agentName, String agentClassName, String styleXML) {
@@ -338,12 +341,28 @@ public class GISStylePanel extends JPanel {
    */
   private void addLayer(File[] files) {
     for (File file : files) {
+    
+    	// If the shapefile path is contained within model path, then set the
+    	// path to a relative path so that model distribution is easier.  Otherwise
+    	// set the path to absolute path.
+      String filePath = file.getAbsolutePath();
+      
+      File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+      
+      // Trim the actual .rs folder so we're left with the model folder
+      String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+      
+      if (filePath.contains(modelFolder)){
+      	filePath = filePath.replace(modelFolder, "." + File.separator);	
+        file = new File (filePath);
+      }  
+      
       try {
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         String name = source.getSchema().getName().getLocalPart();
         AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-        elem.source = file;
+        elem.source = filePath;
         elem.defaultGeometry = 
         		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
         DefaultListModel model = (DefaultListModel) agentList.getModel();
@@ -353,7 +372,6 @@ public class GISStylePanel extends JPanel {
         msg.error("Error while adding external background layer", ex);
       }
     }
-
   }
 
   private void setGeometryBox(Style style) {
@@ -399,7 +417,7 @@ public class GISStylePanel extends JPanel {
         
       } 
       else {
-        ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
+        ShapefileDataStore dataStore = new ShapefileDataStore(new File(element.source).toURL());
         source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         featureType = (SimpleFeatureType)source.getSchema();
       }
@@ -467,7 +485,7 @@ public class GISStylePanel extends JPanel {
           FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
           String name = source.getSchema().getName().getLocalPart();
           AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-          elem.source = file;
+          elem.source = entry.getKey();
           elem.defaultGeometry = 
           		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
           elem.styleXML = entry.getValue();
@@ -501,7 +519,7 @@ public class GISStylePanel extends JPanel {
           msg.warn("Error while transforming Style to xml", e);
         }
       } else if (element.source != null) {
-        String filePath = element.source.getAbsolutePath();
+        String filePath = element.source;
         shpStyles.put(filePath, element.styleXML == null ? "" : element.styleXML);
         descriptor.addLayerOrder(filePath, i);
       }
