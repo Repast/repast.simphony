@@ -15,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,15 +45,12 @@ import javax.xml.transform.TransformerException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
-import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -104,7 +99,6 @@ public class GISStylePanel extends JPanel {
   public static File lastDirectory;
   private static Geometry point, line, polygon;
   private DisplayDescriptor descriptor;
-  private Map<GeometryUtil.GeometryType, Style> defaultsMap = new HashMap<GeometryUtil.GeometryType, Style>();
   
   static class AgentTypeElement {
 
@@ -133,6 +127,12 @@ public class GISStylePanel extends JPanel {
     polygon = gFactory.createPolygon(gFactory.createLinearRing(new Coordinate[]{
             new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(0, 0)}),
             null);
+    
+    File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+    
+    // Trim the actual .rs folder so we're left with the model folder
+    String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+    lastDirectory = new File(modelFolder);
   }
 
   public GISStylePanel() {
@@ -143,10 +143,6 @@ public class GISStylePanel extends JPanel {
             new Object[]{POINT, LINE, POLYGON});
     geomBox.setModel(model);
     addListeners();
-
-    defaultsMap.put(POINT, StylePreviewFactory.getDefaultStyle(POINT));
-    defaultsMap.put(LINE, StylePreviewFactory.getDefaultStyle(LINE));
-    defaultsMap.put(POLYGON, StylePreviewFactory.getDefaultStyle(POLYGON));
   }
 
   private void initMyComponents() {
@@ -365,6 +361,16 @@ public class GISStylePanel extends JPanel {
         elem.source = filePath;
         elem.defaultGeometry = 
         		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
+        
+        // Provide the initial default style for this layer
+        Style style = StylePreviewFactory.getDefaultStyle(GeometryUtil.findGeometryType(elem.defaultGeometry));
+        
+        try {
+					elem.styleXML = getSLDStyle(style);
+				} catch (TransformerException e) {
+					msg.error("Error initializing style for shapefile layer", e);
+				}
+        
         DefaultListModel model = (DefaultListModel) agentList.getModel();
         model.addElement(elem);
         agentList.setSelectedIndex(model.size() - 1);
