@@ -131,7 +131,17 @@ public class ReLogoBuilderTests {
 		expected = null;
 
 		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		
+		packageName = "";
+		expected = null;
 
+		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+
+		packageName = "relogo";
+		expected = "";
+
+		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		
 		packageName = null;
 		expected = null;
 
