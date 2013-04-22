@@ -16,6 +16,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3f;
 
 import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.TaggedAppearance;
 import repast.simphony.visualization.visualization3D.style.TaggedBranchGroup;
@@ -269,7 +270,13 @@ public class VisualItem3D<T> {
 
 	public void updateLabel(Style3D style) {
 		String label = style.getLabel(visualizedObject, getLabel());
+		
+		// If the label is an empty string, set to NULL for faster rendering.
+		if (label != null && label.length() == 0)
+			label = null;
+		
 		setLabel(label, style.getLabelPosition(visualizedObject, getLabelPosition()));
+		
 		if (label != null && label.length() > 0) {
 			setLabelColor(style.getLabelColor(visualizedObject, getLabelColor()));
 			setLabelFont(style.getLabelFont(visualizedObject, getLabelFont()));

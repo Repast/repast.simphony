@@ -9,7 +9,7 @@ public class DefaultEditedStyleData3D<T> extends EditedStyleData<T> {
 	  shapeWkt = "sphere";
 	  size = 0.03f;
 	  
-	  label = "An Agent";
+	  label = "";
 	  labelOffset = 0.03f;
 	  labelPosition = "bottom";
 	  labelPrecision = 3;
