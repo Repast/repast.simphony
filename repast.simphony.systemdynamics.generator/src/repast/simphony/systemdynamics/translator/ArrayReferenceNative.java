@@ -119,11 +119,11 @@ public class ArrayReferenceNative {
 	
 	// Logging
 //	code.append("/* generateLHSFooter */\n");
-	code.append("logit(");
+	code.append("/* log1 */logit(");
 	code.append(ears.getLHSassignmentName());
 	code.append(",");
 	code.append("time,");
-	code.append(valueVariable+");\n");
+	code.append(valueVariable+",memory.get_SAVEPER());\n");
 	
 	// closing braces
 	for (String sub : subscripts) {

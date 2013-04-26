@@ -63,8 +63,10 @@ import java.util.Properties;
     	    logger.close();
     	}
         
-        protected void logit(String var, double time, double value) {
-            logger.log(var+","+time+","+value);
+        protected void logit(String var, double time, double value, double savper) {
+        	int t = (int) (time/savper);
+        	if ((time - ((double) t * savper)) == 0.0)
+        		logger.log(var+","+time+","+value);
         }
         
         protected void logitVector(String var, double time, int length, double[] value) {

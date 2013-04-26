@@ -91,6 +91,7 @@ public class StockSheet extends VariableSheet {
 
   @Override
   protected void updateVariables(EObject eObj) {
+	 
     super.updateVariables(eObj);
     Stock stock = ((Stock) eObj);
 

@@ -253,6 +253,7 @@ public class VariableSheet extends Composite {
   }
 
   private String formatSubscripts(Variable var) {
+	  System.out.println("StockSheet formatSubscripts");
     java.util.List<String> subs = var.getSubscripts();
     if (subs.isEmpty())
       return "";
@@ -284,26 +285,34 @@ public class VariableSheet extends Composite {
   }
 
   private void subSelected() {
+	  System.out.println("private void subSelected() {");
     if (lstSub.getSelectionIndex() != -1) {
+    	System.out.println("if (lstSub.getSelectionIndex() != -1) {");
       StyledText txtControl = getEquationControl();
       EquationCreator eqc = new EquationCreator(txtControl.getText().trim());
       Equation eq = eqc.createEquation(SDModelUtils.getVarNames((Variable) eObj));
       int pos = txtControl.getCaretOffset();
+      System.out.println("txtControl.getCaretOffset() "+pos);
       VariableBlock vb = null;
       for (VariableBlock block : eq.getBlocks()) {
+    	  System.out.println("block "+block.toString());
         if (block.getBlockStart() <= pos && block.getBlockEnd() >= pos) {
           vb = block;
           break;
         }
       }
 
+      System.out.println("vb != null: "+ (vb != null));
       if (vb != null) {
         String subscript = lstSub.getSelection()[0];
+        System.out.println("subscript = "+subscript);
         
         // add the subscript the lhs
         eqc = new EquationCreator(txtLHS.getText().trim());
+        System.out.println("lhs = "+txtLHS.getText().trim());
         Equation lhsEq = eqc.createEquation(((Variable) eObj).getName());
         java.util.List<VariableBlock> lhsBlocks = lhsEq.getBlocks();
+        System.out.println("lhsBlocks.size() > 0 "+ (lhsBlocks.size() > 0));
         if (lhsBlocks.size() > 0) {
           lhsBlocks.get(0).addSubscript(subscript);
           txtLHS.setText(lhsEq.getText());
@@ -381,6 +390,7 @@ public class VariableSheet extends Composite {
     lstSub.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
+    	  System.out.println("lstSub.addSelectionListener(new SelectionAdapter()");
         subSelected();
       }
     });
@@ -432,6 +442,7 @@ public class VariableSheet extends Composite {
   }
 
   protected UpdateValueStrategy createUpdateValueStrategy(IConverter converter) {
+	 
     UpdateValueStrategy strategy = new UpdateValueStrategy();
     strategy.setConverter(converter);
     return strategy;
@@ -471,6 +482,7 @@ public class VariableSheet extends Composite {
   }
 
   protected void updateVariables(EObject eObj) {
+	  
     FunctionManager.getInstance().clearLookups();
     varMap.clear();
     varList.clear();
@@ -493,6 +505,7 @@ public class VariableSheet extends Composite {
   }
 
   protected void updateSubscripts(EObject eObj) {
+	  
     java.util.List<Subscript> subs = ((SystemModel) eObj.eContainer()).getSubscripts();
     
     java.util.List<SubComboElement> cmbItems = new ArrayList<SubComboElement>();

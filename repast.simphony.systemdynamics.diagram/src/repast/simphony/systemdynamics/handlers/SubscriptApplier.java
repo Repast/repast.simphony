@@ -35,6 +35,7 @@ public class SubscriptApplier {
   private List<String> varNames = new ArrayList<String>();
 
   public SubscriptApplier(List<Subscript> subscripts, List<Variable> variables) {
+	  System.out.println("SubscriptApplier constructor");
     this.variables = new ArrayList<Variable>(variables);
     boolean notFirst = false;
     StringBuilder buf = new StringBuilder();
@@ -55,6 +56,7 @@ public class SubscriptApplier {
    * variables' equations if necessary.
    */
   public void run() {
+	  System.out.println("SubscriptApplier run");
     varNames.clear();
     for (Variable var : variables) {
       String[] vals = {"", ""};
@@ -113,6 +115,7 @@ public class SubscriptApplier {
   }
 
   private String[] applyToAuxRate(Variable var) {
+	  System.out.println("SubscriptApplier applyToAuxRate");
     String[] retVal = new String[2];
     String eq = var.getEquation().trim();
     String lhs = var.getLhs();
@@ -140,6 +143,7 @@ public class SubscriptApplier {
   }
 
   private String[] applyToStock(Variable var) {
+	  System.out.println("SubscriptApplier applyToStock");
     String[] retVal = new String[2];
     String eq = var.getEquation().trim();
     String lhs = var.getLhs();
@@ -165,6 +169,7 @@ public class SubscriptApplier {
   }
 
   private String[] applyToConstant(Variable var) {
+	  System.out.println("SubscriptApplier applyToConstant");
     String[] retVal = new String[2];
     String eq = var.getEquation().trim();
     String lhs = var.getLhs();
