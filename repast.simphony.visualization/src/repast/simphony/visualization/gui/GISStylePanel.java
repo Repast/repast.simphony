@@ -45,15 +45,12 @@ import javax.xml.transform.TransformerException;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
-import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -65,6 +62,7 @@ import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
+import repast.simphony.ui.RSApplication;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
@@ -101,7 +99,6 @@ public class GISStylePanel extends JPanel {
   public static File lastDirectory;
   private static Geometry point, line, polygon;
   private DisplayDescriptor descriptor;
-  private Map<GeometryUtil.GeometryType, Style> defaultsMap = new HashMap<GeometryUtil.GeometryType, Style>();
   
   static class AgentTypeElement {
 
@@ -109,7 +106,7 @@ public class GISStylePanel extends JPanel {
     String agentClassName;
     String styleXML;
     Map<GeometryUtil.GeometryType, Style> styleMap = new HashMap<GeometryUtil.GeometryType, Style>();
-    File source;
+    String source;
     Class<? extends Geometry> defaultGeometry;
 
     public AgentTypeElement(String agentName, String agentClassName, String styleXML) {
@@ -130,6 +127,12 @@ public class GISStylePanel extends JPanel {
     polygon = gFactory.createPolygon(gFactory.createLinearRing(new Coordinate[]{
             new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(0, 0)}),
             null);
+    
+    File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+    
+    // Trim the actual .rs folder so we're left with the model folder
+    String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+    lastDirectory = new File(modelFolder);
   }
 
   public GISStylePanel() {
@@ -140,10 +143,6 @@ public class GISStylePanel extends JPanel {
             new Object[]{POINT, LINE, POLYGON});
     geomBox.setModel(model);
     addListeners();
-
-    defaultsMap.put(POINT, StylePreviewFactory.getDefaultStyle(POINT));
-    defaultsMap.put(LINE, StylePreviewFactory.getDefaultStyle(LINE));
-    defaultsMap.put(POLYGON, StylePreviewFactory.getDefaultStyle(POLYGON));
   }
 
   private void initMyComponents() {
@@ -338,14 +337,40 @@ public class GISStylePanel extends JPanel {
    */
   private void addLayer(File[] files) {
     for (File file : files) {
+    
+    	// If the shapefile path is contained within model path, then set the
+    	// path to a relative path so that model distribution is easier.  Otherwise
+    	// set the path to absolute path.
+      String filePath = file.getAbsolutePath();
+      
+      File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+      
+      // Trim the actual .rs folder so we're left with the model folder
+      String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+      
+      if (filePath.contains(modelFolder)){
+      	filePath = filePath.replace(modelFolder, "." + File.separator);	
+        file = new File (filePath);
+      }  
+      
       try {
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         String name = source.getSchema().getName().getLocalPart();
         AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-        elem.source = file;
+        elem.source = filePath;
         elem.defaultGeometry = 
         		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
+        
+        // Provide the initial default style for this layer
+        Style style = StylePreviewFactory.getDefaultStyle(GeometryUtil.findGeometryType(elem.defaultGeometry));
+        
+        try {
+					elem.styleXML = getSLDStyle(style);
+				} catch (TransformerException e) {
+					msg.error("Error initializing style for shapefile layer", e);
+				}
+        
         DefaultListModel model = (DefaultListModel) agentList.getModel();
         model.addElement(elem);
         agentList.setSelectedIndex(model.size() - 1);
@@ -353,7 +378,6 @@ public class GISStylePanel extends JPanel {
         msg.error("Error while adding external background layer", ex);
       }
     }
-
   }
 
   private void setGeometryBox(Style style) {
@@ -399,7 +423,7 @@ public class GISStylePanel extends JPanel {
         
       } 
       else {
-        ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
+        ShapefileDataStore dataStore = new ShapefileDataStore(new File(element.source).toURL());
         source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         featureType = (SimpleFeatureType)source.getSchema();
       }
@@ -467,7 +491,7 @@ public class GISStylePanel extends JPanel {
           FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
           String name = source.getSchema().getName().getLocalPart();
           AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-          elem.source = file;
+          elem.source = entry.getKey();
           elem.defaultGeometry = 
           		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
           elem.styleXML = entry.getValue();
@@ -501,7 +525,7 @@ public class GISStylePanel extends JPanel {
           msg.warn("Error while transforming Style to xml", e);
         }
       } else if (element.source != null) {
-        String filePath = element.source.getAbsolutePath();
+        String filePath = element.source;
         shpStyles.put(filePath, element.styleXML == null ? "" : element.styleXML);
         descriptor.addLayerOrder(filePath, i);
       }
