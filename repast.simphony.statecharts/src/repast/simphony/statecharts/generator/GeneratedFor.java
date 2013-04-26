@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface GeneratedFor {
+//Fully qualified classname responsible for generated method
   String value();
 }

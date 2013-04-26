@@ -1,7 +1,7 @@
 /**
  * 
  */
-package repast.simphony.statecharts.generator;
+package repast.simphony.eclipse.util;
 
 import java.io.File;
 import java.util.HashSet;
@@ -36,17 +36,15 @@ public class DirectoryCleaner {
     this.filter = filter;
   }
 
+  File rootFile;
   /**
-   * Cleans the directories starting at root of all the java and groovy with 
-   * the specified uuid and any svg files that match svgPath
+   * Cleans the directories starting at root.
    * 
    * @param root
-   * @param svgPath
-   * @param uuid
    */
   public void run(String root) {
-    File f = new File(root);
-    process(f);
+    rootFile = new File(root);
+    process(rootFile);
   }
 
   private IFile getIFile(File file) {
@@ -60,7 +58,7 @@ public class DirectoryCleaner {
       if (file.isDirectory()) {
         for (File child : file.listFiles()) {
           process(child);
-          if (file.list().length == 0 && !file.getName().equals(CodeGenerator.SRC_GEN)) {
+          if (file.list().length == 0 && !file.equals(rootFile)) {
             file.delete();
           }
         }
