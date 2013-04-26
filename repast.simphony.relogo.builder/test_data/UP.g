@@ -1,4 +1,4 @@
-package anl.test.relogo
+package anl.relogo
 
 class UserPatch {
 
