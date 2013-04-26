@@ -38,12 +38,19 @@ public class MDLToSystemModel {
 
   public MDLToSystemModel() {
   }
-
+  
   public SystemModel run(SystemModel model, Diagram diagram, String mdlFile) {
-    Reader reader = new Reader(mdlFile);
-    List<String> mdlContents = reader.readMDLFile();
+	    Reader reader = new Reader(mdlFile);
+	    List<String> mdlContents = reader.readMDLFile();
+	    return run(model, diagram, mdlContents);
+  }
+  
+  public SystemModel run(SystemModel model, Diagram diagram, List<String> mdlContents) {
+//    Reader reader = new Reader(mdlFile);
+//    List<String> mdlContents = reader.readMDLFile();
     InformationManagers.getInstance().getFunctionManager()
         .load(getClass().getResourceAsStream("/implementedFunctions.csv"));
+    InformationManagers.getInstance().setSystemModel(model);
     SystemDynamicsObjectManager sdObjectManager = InformationManagers.getInstance()
         .getSystemDynamicsObjectManager();
 
@@ -58,6 +65,7 @@ public class MDLToSystemModel {
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
     for (String name : sdObjectManager.screenNames()) {
+    	System.out.println("MDL2RSD screenName: "+name);
       if (!MODEL_VARS.contains(name)) {
         List<Equation> eqs = sdObjectManager.getEquations(name);
         Variable var = processEquations(name, eqs, model);
@@ -69,6 +77,9 @@ public class MDLToSystemModel {
         }
       }
     }
+    
+    // need to create subscripts
+    createSubscripts(model, equations);
 
     // create the links
     createLinks(varMap, model, sdObjectManager);
@@ -76,6 +87,17 @@ public class MDLToSystemModel {
     
     return model;
   }
+
+  private void createSubscripts(SystemModel model, Map<String, Equation> equations) {
+	  for (Equation eqn : equations.values()) {
+		  if (eqn.isDefinesSubscript()) {
+			  System.out.println("%%%%%%%%%%%% subscripts");
+			  eqn.printTokensOneLine();
+		  }
+	  }
+  }
+
+
 
   private void createLinks(Map<String, Variable> varMap, SystemModel model,
       SystemDynamicsObjectManager objMan) {
@@ -158,8 +180,10 @@ public class MDLToSystemModel {
       var = SDModelFactory.eINSTANCE.createCloud();
       var.setName(name);
       var.setUuid(EcoreUtil.generateUUID());
-      var.setType(VariableType.STOCK);
+//      var.setType(VariableType.AUXILIARY);  // orginally STOCK
       model.getVariables().add(var);
+    } else {
+    	System.out.println("^^^^^^^^^^^^ No Equation, not cloud: "+name);
     }
 
     return var;
@@ -167,6 +191,7 @@ public class MDLToSystemModel {
 
   private void parseEquation(Variable var, Equation eq) {
     String equation = eq.getEquation().trim();
+    System.out.println("parseEquation: "+eq.getEquation());
     String[] sides = equation.split("=");
     if (sides.length == 2) {
       String lhs = sides[0].trim();

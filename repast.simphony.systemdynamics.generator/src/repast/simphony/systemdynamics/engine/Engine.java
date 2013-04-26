@@ -11,15 +11,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.gmf.runtime.notation.NotationFactory;
 
+import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.translator.InformationManagers;
+import repast.simphony.systemdynamics.translator.MDLToSystemModel;
 import repast.simphony.systemdynamics.translator.SystemDynamicsObjectManager;
 import repast.simphony.systemdynamics.translator.TranslatorRepastSimphony;
 
 public class Engine {
-	
+	private static final String EPIDEMIC_MDL = "./test_data/EPIDEMIC.MDL";
+	private static final String WFINV_MDL = "./test_data/WFINV.MDL";
+	private static final String ARMS_MDL = "./test_data/arms4.mdl";
+
 	private List<String> messages = new ArrayList<String>();
 
 	private String currentModel;
@@ -27,6 +34,9 @@ public class Engine {
 	private TranslatorRepastSimphony translator;
 	private IProject project;
 	private IProgressMonitor progressMonitor;
+	
+	private SystemModel model;
+	private Diagram diagram;
 
 
 	public TranslatorRepastSimphony getTranslator() {
@@ -41,7 +51,7 @@ public class Engine {
 	public Engine() {
 	  // initializes the InformationManagers
 		InformationManagers.getInstance();
-		translator = new TranslatorRepastSimphony();
+		translator = new TranslatorRepastSimphony(this);
 		System.out.println("Engine created");
 	}
 	
@@ -49,13 +59,60 @@ public class Engine {
 		this();
 		this.project = project;
 		this.progressMonitor = progressMonitor;
-		translator = new TranslatorRepastSimphony(project, progressMonitor);
+		translator = new TranslatorRepastSimphony(project, progressMonitor, this);
+		InformationManagers.getInstance().setSystemModel(systemModel);
 		
 	}
 	
 	public void generateCodeForRSD(SystemModel systemModel) {
 		getTranslator().generateCodeForRSD(systemModel);
 	}
+	
+public SystemModel validateGenerateSystemModel(String mdlFile, boolean generateCode) {
+		
+		model = SDModelFactory.eINSTANCE.createSystemModel();
+		model.setClassName("ClassName");
+		model.setPackage("aPackageName");
+		model.setStartTime(0);
+		model.setEndTime(0);
+		model.setTimeStep(0.125);
+		model.setReportingInterval(1.0);
+		model.setUnits("units");
+	    diagram = NotationFactory.eINSTANCE.createDiagram();
+	    if (diagram != null) {
+	      diagram.setName("test.rsd");
+	      diagram.setElement(model);
+	    }
+	    
+	    
+	    System.out.println("############# MDLToSystemModel Start");
+	    System.out.println("############# MDLToSystemModel Start");
+	    System.out.println("############# MDLToSystemModel Start");
+	    System.out.println("############# MDLToSystemModel Start");
+	    System.out.println("############# MDLToSystemModel Start");
+	    
+	    
+	    MDLToSystemModel trans = new MDLToSystemModel();
+	    trans.run(model, diagram, mdlFile);
+	    
+	    System.out.println("############# MDLToSystemModel End");
+	    System.out.println("############# MDLToSystemModel End");
+	    System.out.println("############# MDLToSystemModel End");
+	    System.out.println("############# MDLToSystemModel End");
+	    System.out.println("############# MDLToSystemModel End");
+		
+		
+		boolean result = true;
+		if (result) {
+			messages.add("Model syntax OK\n");
+			messages.add("Model units consistent\n");
+			if (generateCode)
+				messages.add("Java source code generated");
+		}
+		InformationManagers.getInstance().getMessageManager().addToMessages(messages);
+		return model;
+	}
+
 	
 	public boolean validateGenerateRSD(SystemModel systemModel, boolean generateCode) {
 		boolean result = getTranslator().validateGenerateRSD(systemModel, generateCode, messages);

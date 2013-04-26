@@ -1,5 +1,6 @@
 package repast.simphony.systemdynamics.translator;
 
+import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.support.MappedSubscriptManager;
 import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 import repast.simphony.systemdynamics.support.SubscriptManager;
@@ -18,6 +19,8 @@ public class InformationManagers {
   private SubscriptManager subscriptManager; // empty
   private MacroManager macroManager;
   private MessageManager messageManager;
+  
+  private SystemModel systemModel;
 
   public static InformationManagers getInstance() {
     if (instance == null) {
@@ -78,5 +81,13 @@ public class InformationManagers {
   public MessageManager getMessageManager() {
     return messageManager;
   }
+
+public SystemModel getSystemModel() {
+	return systemModel;
+}
+
+public void setSystemModel(SystemModel systemModel) {
+	this.systemModel = systemModel;
+}
 
 }

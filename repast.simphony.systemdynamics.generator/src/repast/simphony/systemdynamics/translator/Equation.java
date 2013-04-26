@@ -894,7 +894,7 @@ public class Equation {
 		
 		if (!inRange(position)) {
 			syntacticallyCorrect = false;
-			syntaxMessages.add("Parsing LHS: No Equation provided");
+			syntaxMessages.add("Parsing LHS: No Equation provided "+vensimEquation);
 			lhs = vensimEquation;
 			return false;
 		}
@@ -1337,7 +1337,7 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
-//							System.out.println("TokRHS: Lookup");
+							System.out.println("TokRHS: Lookup");
 							referencesLookup = true;
 							lookupRef = true;
 							rhsTokens.add(token);
@@ -1356,7 +1356,7 @@ public class Equation {
 						position.add(1);
 						skipWhiteSpace(position);
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) {
-//							System.out.println("TokRHS: Lookup2");
+							System.out.println("TokRHS: Lookup2");
 							referencesLookup = true;
 							lookupRef = true;
 							token = token.replace("array.", "");
@@ -1412,7 +1412,7 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
-//							System.out.println("TokRHS: Lookup3");
+							System.out.println("TokRHS: Lookup3");
 							lookupRef = true;
 							referencesLookup = true;
 							rhsTokens.add(token);
@@ -1432,7 +1432,7 @@ public class Equation {
 						theChar = characterAt(position.value());
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) { // MARK HERE
 							referencesLookup = true;
-//							System.out.println("TokRHS: Lookup4");
+							System.out.println("TokRHS: Lookup4");
 							lookupRef = true;
 							token = token.replace("array.", "");
 							rhsTokens.add(token);
@@ -3253,6 +3253,16 @@ public class Equation {
 	public void setAssignment(boolean assignment) {
 	    this.assignment = assignment;
 	}
+	
+	public boolean isGetExternalData() {
+		if (getVensimEquation().contains("GET XLS LOOKUPS") || 
+				getVensimEquation().contains("GET XLS DATA") ||
+				getVensimEquation().contains("GET XLS CONSTANTS"))
+			return true;
+		else
+			return false;
+	}
+
 	
 	
 	public void generateTree() {

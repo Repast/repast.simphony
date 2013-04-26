@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.JavaCore;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.systemdynamics.analysis.PolarityCodeBuilder;
+import repast.simphony.systemdynamics.engine.Engine;
 import repast.simphony.systemdynamics.generator.DirectoryCleaner;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Stock;
@@ -35,6 +36,8 @@ public class TranslatorRepastSimphony extends Translator {
 	public final static String FIELD_SEPARATOR = "\t~\t";
 	public final static String EQUATION_TERMINATOR = "\t|";
 	
+	public final static String CLOUD_IDENTIFIER = "CLOUD_";
+	
 	private static final String SRC_GEN = "src-gen";
 	private static final String OUTPUT = "output";
 
@@ -42,14 +45,16 @@ public class TranslatorRepastSimphony extends Translator {
 	private IProject project;
 	private IProgressMonitor progressMonitor;
 	
-	public TranslatorRepastSimphony(IProject project, IProgressMonitor progressMonitor) {
-		this();
+	private Engine engine;
+	
+	public TranslatorRepastSimphony(IProject project, IProgressMonitor progressMonitor, Engine engine) {
+		this(engine);
 		this.project = project;
 		this.progressMonitor = progressMonitor;
 	}
 	
 	
-	public TranslatorRepastSimphony() {
+	public TranslatorRepastSimphony(Engine engine) {
 		
 		this.packageName = "Package";
     	this.supportName = "support";
@@ -57,6 +62,8 @@ public class TranslatorRepastSimphony extends Translator {
     	this.unitsConsistency = true;
     	this.generateC = false;
     	this.generateJava = true;
+    	
+    	this.engine = engine;
     	
     	this.loadProperties();
     	this.loadUnitsProperties();
@@ -274,18 +281,28 @@ public class TranslatorRepastSimphony extends Translator {
     	System.out.println("Package: "+packageName);
     	System.out.println("********");
     	
+    	boolean success = true;
+    	
+    	if (systemModel.getPackage() == null) {
+    		messages.add("Package must be non-null on Properties tab");
+    		success = false;
+    	}
+    	
+    	if (systemModel.getClassName() == null) {
+    		messages.add("Class name must be non-null on Properties tab");
+    		success = false;
+    	}
+    	
+    	if (!success)
+    		return success;
+    	
     	messages.add("********");
-    	messages.add("RSD File: "+systemModel.getClassName());
-    	messages.add("Object Name: "+objectName);
-//    	messages.add("Target Language: "+target);
-//    	messages.add("Data Type: "+dataType);
-//    	messages.add("Dest Dir: "+destinationDirectory);
-//    	messages.add("Misc Dir: "+miscDirectory);
-//    	messages.add("Package: "+packageName);
+    	messages.add("Package: "+systemModel.getPackage());
+    	messages.add("Class Name: "+systemModel.getClassName());
     	messages.add("********");
     	
     	List<String> mdlContents = convertToMDL(systemModel);
-    	boolean success = validateGenerate(mdlContents, generateCode, messages);
+    	success = validateGenerate(mdlContents, generateCode, messages);
     	return success;
     }
     
@@ -351,24 +368,24 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	// set the various time parameters
     	
-    	mdlContents.add("InitialTime = "+systemModel.getStartTime());
+    	mdlContents.add(TranslatorConstants.INITIAL_TIME+" = "+systemModel.getStartTime());
     	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
     	mdlContents.add(FIELD_SEPARATOR);
     	mdlContents.add(EQUATION_TERMINATOR);
     	
-    	mdlContents.add("FinalTime = "+systemModel.getEndTime());
-    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
-    	mdlContents.add(FIELD_SEPARATOR);
-    	mdlContents.add(EQUATION_TERMINATOR);
-    	
-    	
-    	mdlContents.add("TimeStep = "+systemModel.getTimeStep());
+    	mdlContents.add(TranslatorConstants.FINAL_TIME+" = "+systemModel.getEndTime());
     	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
     	mdlContents.add(FIELD_SEPARATOR);
     	mdlContents.add(EQUATION_TERMINATOR);
     	
     	
-    	mdlContents.add("Savper = "+systemModel.getReportingInterval());
+    	mdlContents.add(TranslatorConstants.TIME_STEP+" = "+systemModel.getTimeStep());
+    	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
+    	mdlContents.add(FIELD_SEPARATOR);
+    	mdlContents.add(EQUATION_TERMINATOR);
+    	
+    	
+    	mdlContents.add(TranslatorConstants.SAVEPER+" = "+systemModel.getReportingInterval());
     	mdlContents.add(FIELD_SEPARATOR+ systemModel.getUnits());
     	mdlContents.add(FIELD_SEPARATOR);
     	mdlContents.add(EQUATION_TERMINATOR);
@@ -398,6 +415,14 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	
     	for (Variable variable : systemModel.getVariables()) {
+    		
+    		// clouds are just graphic objects, but treated as Variable within the SystemModel
+    		// we can safely ignore then...
+    		
+    		if (variable.getType().equals(VariableType.CONSTANT) &&
+    				variable.getName().startsWith(CLOUD_IDENTIFIER))
+    			continue;
+    		
     		System.out.println("Name: "+variable.getName());
     		System.out.println("Type: "+variable.getType());
     		
@@ -444,7 +469,8 @@ public class TranslatorRepastSimphony extends Translator {
         			Stock stk = (Stock) variable;
         			
         			mdlContents.add(variable.getLhs()+ "= INTEG(");
-    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+//    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+    				mdlContents.add(variable.getEquation()+")");
     				
         		} else if (variable.getType().equals(VariableType.RATE) || 
         				variable.getType().equals(VariableType.CONSTANT )|| 
@@ -452,8 +478,9 @@ public class TranslatorRepastSimphony extends Translator {
     				mdlContents.add(variable.getLhs()+ "=");
     				mdlContents.add(variable.getEquation());
     			} else if (variable.getType().equals(VariableType.LOOKUP)){
-    				mdlContents.add(variable.getLhs()+ "(");
-    				mdlContents.add(variable.getEquation()+")");
+//    				mdlContents.add(variable.getLhs()+ "(");
+//    				mdlContents.add(variable.getEquation()+")");
+    				mdlContents.add(variable.getEquation());
     			}
     			mdlContents.add(FIELD_SEPARATOR+(variable.getUnits() != null ? variable.getUnits() : ""));
     			mdlContents.add(FIELD_SEPARATOR+(variable.getComment() != null ? variable.getComment() : ""));
@@ -615,5 +642,10 @@ public class TranslatorRepastSimphony extends Translator {
     @Override
 	public String getScenarioDirectory() {
 		 return getProjectLocation() + "/" + getProjectName() + ".rs/";
+	}
+
+
+	public Engine getEngine() {
+		return engine;
 	}
 }

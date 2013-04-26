@@ -1,5 +1,7 @@
 package repast.simphony.systemdynamics.translator;
 
+import java.util.List;
+
 public class Arrow {
 	
 	public static final String IN = "IN";
@@ -59,7 +61,22 @@ public class Arrow {
 		this.otherEnd = otherEnd;
 	}
 	
+	public static boolean listContainsArrowWithOtherEnd(List<Arrow> listOfArrows, String name) {
+		for (Arrow arrow : listOfArrows) {
+			if (arrow.getOtherEnd().equals(name))
+				return true;
+		}
+		return false;
+	}
 	
+	public static Arrow getArrowWithOtherEnd(List<Arrow> listOfArrows, String name) {
+		for (Arrow arrow : listOfArrows) {
+			if (arrow.getOtherEnd().equals(name))
+				return arrow;
+		}
+		return null;
+	}
+
 	
 
 }

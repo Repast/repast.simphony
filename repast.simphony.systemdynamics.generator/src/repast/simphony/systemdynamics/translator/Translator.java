@@ -267,7 +267,7 @@ public class Translator {
 
 		//	sdObjectManager.print();
 		
-		List<String> addedScreenNames = sdObjectManager.validate(equations);
+		List<EquationGraphicValidation> addedScreenNames = sdObjectManager.validate(equations);
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 		sdObjectManager.print();
@@ -344,8 +344,7 @@ public class Translator {
 		
 		
 
-		List<String> addedScreenNames = sdObjectManager.validate(equations);
-		
+		List<EquationGraphicValidation> addedScreenNames = sdObjectManager.validate(equations);
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
