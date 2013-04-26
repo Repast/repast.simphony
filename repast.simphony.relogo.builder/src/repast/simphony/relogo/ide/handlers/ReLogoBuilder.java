@@ -477,170 +477,191 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		private List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes(IType type)
 				throws JavaModelException {
-			// IJavaProject javaProject =
+
 			List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
 			while (type != null && !type.getFullyQualifiedName().equals(BASE_PATCH)) {
-				// First check to see if this type is in a 'relogo' package
-				// Skip otherwise.
-				IPackageFragment ipf = type.getPackageFragment();
-				if (ipf != null) {
-					String instrumentingPackageName = getInstrumentingPackageName(ipf.getElementName());
-					if (instrumentingPackageName != null) {
-						// Note: in the unlikely case that there are more than one patches in the 'relogo' package
-						// and one inherits from the other, this bit of code prevents double counting
-						// of patch properties
-						boolean patchAlreadyProcessed = false;
-						InstrumentingInformation ii = iih
-								.getInstrumentingInformationFor(instrumentingPackageName);
-						if (ii != null) {
-							String fullyQualifiedName = type.getFullyQualifiedName();
-							for (PatchTypeFieldNameFieldTypeInformation pi : ii.getPatchFieldTypes()) {
-								if (pi.patchType.equals(fullyQualifiedName)) {
-									patchAlreadyProcessed = true;
-									break;
-								}
-							}
-						}
-						
-						if (!patchAlreadyProcessed) {
-							boolean isGroovySource = false;
-							if (!type.isBinary()) {
-								if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
-									isGroovySource = true;
-								}
-							}
-							// if (type.getCorrespondingResource())
-							IField[] fields = type.getFields();
-							IMethod[] methods = type.getMethods();
-							List<String> publicMethodNames = new ArrayList<String>();// may
-																																				// become
-																																				// unnecessary
-							List<String> nonPublicMethodNames = new ArrayList<String>();
-							// Separate methods into public and non-public
-							for (IMethod method : methods) {
-								if (Flags.isPublic(method.getFlags())) {
-									publicMethodNames.add(method.getElementName());
-								} else {
-									nonPublicMethodNames.add(method.getElementName());
-								}
-							}
-							List<PropertyInfo> properties = null;
-							try {
-								properties = getProperties(type);
-							} catch (JavaModelException jme) {
-								// ignore
-							}
-							boolean previousField = false;
-							for (IField field : fields) {
-								boolean foundField = false;
-								boolean needsGetterResolve = false;
-								int flags = field.getFlags();
-								// System.out.println("Field : " + field.getElementName() +
-								// " Flags: "
-								// + flags
-								// + " toString: " + Flags.toString(flags));
-								String getterName = "";
-								String setterName = "";
-								if (!Flags.isPublic(flags)) {
-									if (Flags.isPrivate(flags) && isGroovySource) {
-										// package default is seen as private in groovy source
-										// so need to check if it's truly private or not
-										String source = field.getSource();
-										if (source != null) {
-											if (!source.trim().startsWith("private ")) {
-												// This is to check if this is part of a comma separated
-												// list
-												// of fields
-												// since in that case the non-first elements won't show
-												// the
-												// private modifier
-												if (source.trim().equals(field.getElementName())) {
-													// check to see if the previous field was found
-													foundField = previousField;
-												} else {
-													foundField = true;
-												}
-												if (foundField) {
-													needsGetterResolve = true; // Groovy generated
-																											// accessors
-													// TODO: need to find the appropriate getter name
-													// depending
-													// on field type
-													// probably need to defer this resolution to below
-													// where
-													// the
-													// field type
-													// is deduced
-												}
-											}
-										}
-									} else {
-										// look for methods with is/get and set
-										String fieldName = field.getElementName();
-										String capitalizedFieldName = MetaClassHelper.capitalize(fieldName);
-
-										String isGetter = "is" + capitalizedFieldName;
-										String getGetter = "get" + capitalizedFieldName;
-										String setSetter = "set" + capitalizedFieldName;
-										boolean foundGetter = false, foundSetter = false;
-										if (publicMethodNames.contains(isGetter)) {
-											foundGetter = true;
-											getterName = isGetter;
-										}
-										if (publicMethodNames.contains(getGetter)) {
-											foundGetter = true;
-											getterName = getGetter;
-										}
-										if (publicMethodNames.contains(setSetter)) {
-											foundSetter = true;
-											setterName = setSetter;
-										}
-										if (foundGetter && foundSetter) {
-											foundField = true;
-										}
-									}
-
-								} else {
-									foundField = true;
-								}
-
-								if (foundField) {
-									try {
-										PatchTypeFieldNameFieldTypeInformation patchInfo = getFieldAndFieldTypePair(
-												field, type, getterName, setterName);
-										if (needsGetterResolve) {
-											String capitalizedFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
-											String localGetterName = null;
-											if (BOOLS_LIST.contains(patchInfo.fieldType)) {
-												localGetterName = "is" + capitalizedFieldName;
-											} else {
-												localGetterName = "get" + capitalizedFieldName;
-											}
-											String localSetterName = "set" + capitalizedFieldName;
-											patchInfo.patchGetter = localGetterName;
-											patchInfo.patchSetter = localSetterName;
-										}
-										// TODO: include check to see if patchInfo exists
-										// e.g., if there are two patches one inheriting from the
-										// other
-										patchFieldTypes.add(patchInfo);
-									} catch (IllegalArgumentException iae) {
-										// if IllegalArgumentException is caught, quietly ignore
-										// this
-										// field
-									}
-								}
-								previousField = foundField;
-							}
-						}
-					}
+				List<PatchTypeFieldNameFieldTypeInformation> individualPatchFieldTypes = getIndividualPatchFieldTypes(type);
+				if (individualPatchFieldTypes != null){
+					patchFieldTypes.addAll(individualPatchFieldTypes);
 				}
+				
 				// System.out.println("Type: " + type.getElementName());
 				type = getSuperType(type);
 				// System.out.println("Supertype: " + type.getElementName());
 
 			}
 			return patchFieldTypes;
+		}
+
+		protected List<PatchTypeFieldNameFieldTypeInformation> getIndividualPatchFieldTypes(IType type) throws JavaModelException {
+			List<PatchTypeFieldNameFieldTypeInformation> individualPatchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
+		// First check to see if this type is in a 'relogo' package
+			// Skip otherwise.
+			IPackageFragment ipf = type.getPackageFragment();
+			if (ipf != null) { // if ipf is null, skip this type
+				String instrumentingPackageName = getInstrumentingPackageName(ipf.getElementName());
+				if (instrumentingPackageName != null) { // if it's null, skip this
+																								// type
+					// Note: in the unlikely case that there are more than one patches
+					// in the 'relogo' package
+					// and one inherits from the other, this bit of code prevents double
+					// counting
+					// of patch properties
+					boolean patchAlreadyProcessed = false;
+					InstrumentingInformation ii = iih
+							.getInstrumentingInformationFor(instrumentingPackageName);
+					if (ii != null) {
+						String fullyQualifiedName = type.getFullyQualifiedName();
+						for (PatchTypeFieldNameFieldTypeInformation pi : ii.getPatchFieldTypes()) {
+							if (pi.patchType.equals(fullyQualifiedName)) {
+								patchAlreadyProcessed = true;
+								break;
+							}
+						}
+					}
+
+					if (!patchAlreadyProcessed) {
+						boolean isGroovySource = false;
+						if (!type.isBinary()) {
+							if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
+								isGroovySource = true;
+							}
+						}
+
+						IField[] fields = type.getFields();
+						IMethod[] methods = type.getMethods();
+						// List<String> publicMethodNames = new ArrayList<String>();// may
+						// become
+						// unnecessary
+						List<String> nonPublicMethodNames = new ArrayList<String>();
+						// Gather non-public methods
+						for (IMethod method : methods) {
+							if (!Flags.isPublic(method.getFlags())) {
+								nonPublicMethodNames.add(method.getElementName());
+							}
+						}
+
+						List<PropertyInfo> patchProperties = null;
+						try {
+							patchProperties = getPatchProperties(type);
+						} catch (JavaModelException jme) {
+							// ignore
+						}
+						boolean previousField = false;
+						for (IField field : fields) {
+							boolean foundField = false;
+							boolean needsGetterResolve = false;
+							int flags = field.getFlags();
+
+							String fieldName = field.getElementName();
+							String capitalizedFieldName = MetaClassHelper.capitalize(fieldName);
+
+							String isGetter = "is" + capitalizedFieldName;
+							String getGetter = "get" + capitalizedFieldName;
+							String setSetter = "set" + capitalizedFieldName;
+
+							// System.out.println("Field : " + field.getElementName() +
+							// " Flags: "
+							// + flags
+							// + " toString: " + Flags.toString(flags));
+
+//							String getterName = "";
+//							String setterName = "";
+							if (!Flags.isPublic(flags)) { // potentially cases 1a, 1b
+
+								if (Flags.isPrivate(flags) && isGroovySource) { // potentially
+																																// cases 1a &
+																																// 1b
+									// package default is seen as private in groovy source
+									// so need to check if it's truly private or not
+									String source = field.getSource();
+									if (source != null) {
+
+										// This is to differentiate between a default visibility
+										// and an actual private field within groovy source
+										if (!source.trim().startsWith("private ")) {
+											// This is to check if this is part of a comma separated
+											// list
+											// of fields
+											// since in that case the non-first elements won't show
+											// the
+											// private modifier
+											if (source.trim().equals(field.getElementName())) {
+												// check to see if the previous field was found
+												foundField = previousField;
+											} else {
+												foundField = true;
+											}
+											if (foundField) {
+												// check to see that there are no corresponding
+												// non-public accessors
+												if (nonPublicMethodNames.contains(isGetter)
+														|| nonPublicMethodNames.contains(getGetter)
+														|| nonPublicMethodNames.contains(setSetter)) { // case
+																																						// 1b
+													foundField = false;
+												} else { // case 1a
+													needsGetterResolve = true; // Groovy generated
+																											// accessors
+												}
+											}
+										}
+									}
+								} 
+							} else { // case 2
+								foundField = true;
+							}
+
+							if (foundField) {
+								try {
+									PatchTypeFieldNameFieldTypeInformation patchInfo = getPatchTypeFieldNameFieldTypeInformation(
+											field, type);
+									if (needsGetterResolve) {
+										String localGetterName = null;
+										if (BOOLS_LIST.contains(patchInfo.fieldType)) {
+											localGetterName = isGetter;
+										} else {
+											localGetterName = getGetter;
+										}
+										String localSetterName = setSetter;
+										patchInfo.patchGetter = localGetterName;
+										patchInfo.patchSetter = localSetterName;
+									}
+									individualPatchFieldTypes.add(patchInfo);
+								} catch (IllegalArgumentException iae) {
+									// if IllegalArgumentException is caught, quietly ignore
+									// this
+									// field
+								}
+							}
+							previousField = foundField;
+						}
+						if (patchProperties != null) {
+							// look for cases 3 and 4
+							for (PropertyInfo pi : patchProperties) {
+								String setterMethod = pi.writeMethod;
+								String getterMethod = pi.readMethod;
+								String propertyType = pi.propertyType;
+								boolean propertyFound = false;
+								for (PatchTypeFieldNameFieldTypeInformation patchInfo : individualPatchFieldTypes) {
+									if (patchInfo.patchSetter.equals(setterMethod)) {
+										propertyFound = true;
+										break;
+									}
+								}
+								if (!propertyFound) {
+									PatchTypeFieldNameFieldTypeInformation newPatchInfo = new PatchTypeFieldNameFieldTypeInformation(
+											type.getFullyQualifiedName(), "", propertyType, getterMethod, setterMethod);
+									individualPatchFieldTypes.add(newPatchInfo);
+								}
+							}
+						}
+						// TODO: look for case 4 (only public accessors with no backing
+						// field)
+					}
+				}
+			}
+			return individualPatchFieldTypes;
 		}
 
 		/**
@@ -651,7 +672,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		 * @return list of property infos
 		 * @throws JavaModelException
 		 */
-		private List<PropertyInfo> getProperties(IType type) throws JavaModelException {
+		private List<PropertyInfo> getPatchProperties(IType type) throws JavaModelException {
 			List<PropertyInfo> properties = new ArrayList<PropertyInfo>();
 			IMethod[] methods = type.getMethods();
 			List<IMethod> publicMethods = new ArrayList<IMethod>();
@@ -666,7 +687,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 						&& candidateSetterMethodName.length() > 3) {
 					String getterSuffix = candidateSetterMethodName.substring(3);
 					for (IMethod candidateGetterMethod : publicMethods) {
-						String candidateGetterMethodName = candidateSetterMethod.getElementName();
+						String candidateGetterMethodName = candidateGetterMethod.getElementName();
 						if (candidateGetterMethodName != null
 								&& candidateGetterMethodName.endsWith(getterSuffix)
 								&& (candidateGetterMethodName.equals("is" + getterSuffix) || candidateGetterMethodName
@@ -760,13 +781,19 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		}
 
-		private PatchTypeFieldNameFieldTypeInformation getFieldAndFieldTypePair(IField field,
-				IType type, String patchGetterName, String patchSetterName)
+		private PatchTypeFieldNameFieldTypeInformation getPatchTypeFieldNameFieldTypeInformation(
+				IField field, IType type, String patchGetterName, String patchSetterName)
 				throws IllegalArgumentException, JavaModelException {
 			String fieldTypeSignature = field.getTypeSignature();
 			return new PatchTypeFieldNameFieldTypeInformation(type.getFullyQualifiedName(),
 					field.getElementName(), getFullResolvedName(fieldTypeSignature, type), patchGetterName,
 					patchSetterName);
+		}
+		
+		private PatchTypeFieldNameFieldTypeInformation getPatchTypeFieldNameFieldTypeInformation(
+				IField field, IType type)
+				throws IllegalArgumentException, JavaModelException {
+			return getPatchTypeFieldNameFieldTypeInformation(field,type,"","");
 		}
 
 		private TypeSingularPluralInformation getPluralInformation(IType type)

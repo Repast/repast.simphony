@@ -149,7 +149,13 @@ public class Instrumenter {
 			// patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter
 			String patchType = patchInfo.patchType;
 			String fieldName = patchInfo.fieldName;
-			String capFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
+			String capFieldName = null;
+			if (fieldName.equals("")){
+				capFieldName = "";
+			}
+			else {
+				capFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
+			}
 			String fieldType = patchInfo.fieldType;
 			String patchGetter = patchInfo.patchGetter;
 			String patchSetter = patchInfo.patchSetter;

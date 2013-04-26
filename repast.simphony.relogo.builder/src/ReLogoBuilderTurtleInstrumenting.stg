@@ -236,10 +236,10 @@ patchGetterGetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSe
 	/**
 	 * Returns the value from the <patchGetter>() method of the underlying patch.
 	 * 
-	 * @return <fieldName> of type <fieldType>
+	 * @return <patchGetter>() of type <fieldType>
 	 */
 @ReLogoBuilderGeneratedFor("<patchType>")
-public <fieldType> get<capFieldName>(){
+public <fieldType> <patchGetter>(){
 	<patchType> p = (<patchType>)patchHere();
 	return p.<patchGetter>();
 }
@@ -265,7 +265,7 @@ patchSetterSetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSe
 	 * 
 	 */
 @ReLogoBuilderGeneratedFor("<patchType>")
-public void set<capFieldName>(<fieldType> value){
+public void <patchSetter>(<fieldType> value){
 	<patchType> p = (<patchType>)patchHere();
 	p.<patchSetter>(value);
 }
