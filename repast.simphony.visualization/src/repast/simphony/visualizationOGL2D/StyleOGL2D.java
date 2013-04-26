@@ -146,4 +146,12 @@ public interface StyleOGL2D<T> {
    * @return the label color. Can return null if there is no label.
    */
   Color getLabelColor(T object);
+  
+  /**
+   * Gets whether or not the labels (if any) produced by this style will be drawn
+   * with antialiasing (i.e. smoothing).
+   * 
+   * @return true if the labels should be drawn with antialiasing on, otherwise false.
+   */
+  boolean getLabelAntialiased();
 }
