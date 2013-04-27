@@ -3,6 +3,9 @@
  */
 package repast.simphony.relogo.ide.handlers;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +28,8 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -51,9 +56,12 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ide.IDE;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
+import repast.simphony.eclipse.util.DirectoryCleaner;
 import repast.simphony.relogo.builder.Activator;
-import repast.simphony.util.collections.Pair;
 
 /**
  * @author Nick Collier
@@ -107,6 +115,14 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	private static final ClassNode PLURAL_CLASSNODE = ClassHelper
 			.make("repast.simphony.relogo.Plural");
 
+	protected static STGroup reLogoOTPLTemplateGroup;
+	static public String RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE = "/templates/reLogoOTPLclasses.stg";
+
+	private static final String[] TEMPLATE_INSTANCES = { "reLogoTurtle", "reLogoPatch", "reLogoLink",
+			"reLogoObserver" };
+	private static final String[] DEFAULT_RELOGO_FILENAMES = { "ReLogoTurtle.java",
+			"ReLogoPatch.java", "ReLogoLink.java", "ReLogoObserver.java" };
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -145,6 +161,10 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				project, monitor);
 		project.accept(visitor);
 		System.out.println(visitor.iih);
+		System.out.println(visitor.cih);
+		visitor.removeReLogoBuilderFiles();
+		visitor.initializeClassSources();
+		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		FullBuildInstrumentingVisitor fbiv = new FullBuildInstrumentingVisitor(visitor.iih, project,
 				monitor);
 		project.accept(fbiv);
@@ -178,8 +198,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 						IPath path = resource.getRawLocation();
 						if (path != null && path.getFileExtension() != null
 								&& path.getFileExtension().equals("java")) {
+
+							// TODO:
+
 							// okay to get first type since we control these
 							IType type = cu.getTypes()[0];
+
 							// get package
 							IPackageFragment pf = (IPackageFragment) javaElement
 									.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
@@ -227,6 +251,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		IProgressMonitor monitor;
 		IProject project;
 		InstrumentingInformationHolder iih = new InstrumentingInformationHolder();
+		GeneratedFilesInformationHolder cih = new GeneratedFilesInformationHolder();
 
 		public FullBuildInstrumentationInformationVisitor(IProject project, IProgressMonitor monitor) {
 			this.monitor = monitor;
@@ -244,6 +269,75 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		// }
 		// return null;
 		// }
+
+		/**
+		 * Initializes all the existing generated source files. This enables a clean
+		 * and rebuild to fix any errors caused by any mistake that would cause the
+		 * java model to not parse the source files properly (e.g., errant curly
+		 * brace).
+		 */
+		public void initializeClassSources() {
+			for (String instrumentingPackageName : cih.instrumentingPackageNames) {
+				try {
+					generateDefaultReLogoFiles(instrumentingPackageName);
+				} catch (UnsupportedEncodingException uee) {
+					uee.printStackTrace();
+				}
+			}
+			
+		}
+
+		private void generateDefaultReLogoFiles(String instrumentingPackageName)
+				throws UnsupportedEncodingException {
+			String[] packageNames = instrumentingPackageName.split("\\.");
+			IFolder srcGenNewFolder = project.getFolder(SRCGEN_ROOT_PACKAGE_FRAGMENT);
+			for (String subpackage : packageNames) {
+				srcGenNewFolder = createFolderResource(srcGenNewFolder, subpackage);
+			}
+			if (reLogoOTPLTemplateGroup == null) {
+				reLogoOTPLTemplateGroup = new STGroupFile(RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
+			}
+			for (int i = 0; i < TEMPLATE_INSTANCES.length; i++) {
+				ST st = reLogoOTPLTemplateGroup.getInstanceOf(TEMPLATE_INSTANCES[i]);
+				st.add("packageName", instrumentingPackageName);
+				createFileResource(srcGenNewFolder, DEFAULT_RELOGO_FILENAMES[i], new ByteArrayInputStream(
+						st.render().getBytes("UTF-8")));
+			}
+		}
+
+		/**
+		 * Code snippet from Eclipse wiki showing how to create resources for a
+		 * project, a folder, and a file.
+		 */
+		private IFolder createFolderResource(IFolder parentFolder, String name) {
+			IFolder folder = parentFolder.getFolder(name);
+			// at this point, no resources have been created
+			if (!folder.exists()) {
+				try {
+					folder.create(IResource.NONE, true, null);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+			return folder;
+		}
+
+		/**
+		 * Create a new file in the specified folder, containing the specified
+		 * contents. Forces a write of the contents to the file system.
+		 */
+		private void createFileResource(IFolder folder, String name, InputStream contents) {
+			IFile file = folder.getFile(name);
+			// at this point, no resources have been created
+			if (!file.exists()) {
+				try {
+					file.create(contents, IResource.FORCE, null);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 
 		private static class ReLogoResourceResult {
 			boolean isInReLogoPackage = false;
@@ -337,7 +431,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					// classes share instrumentation.
 
 					String instrumentingPackageName = rrr.instrumentingPackageName;
-
+					boolean targetFound = false;
 					Object obj = resource.getAdapter(IJavaElement.class);
 					if (obj != null) {
 						IJavaElement javaElement = (IJavaElement) obj;
@@ -345,18 +439,22 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 							ICompilationUnit cu = (ICompilationUnit) javaElement;
 							for (IType type : cu.getTypes()) {
 								if (ITypeUtils.extendsClass(type, BASE_TURTLE, monitor)) {
+									targetFound = true;
 									// find plural
 									TypeSingularPluralInformation pi = getPluralInformation(type);
 									if (pi != null) {
 										iih.putTurtlePluralInformation(pi, instrumentingPackageName);
 									}
+
 								} else if (ITypeUtils.extendsClass(type, BASE_PATCH, monitor)) {
+									targetFound = true;
 									// find fields and type info
 									List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = getPatchFieldTypes(type);
 									// put in iih
 									iih.putPatchFieldTypes(patchFieldTypes, instrumentingPackageName);
 
 								} else if (ITypeUtils.extendsClass(type, BASE_LINK, monitor)) {
+									targetFound = true;
 									// find plural
 									TypeSingularPluralInformation pi = getPluralInformation(type);
 									if (pi != null) {
@@ -375,10 +473,17 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 									}
 
 								} else if (ITypeUtils.extendsClass(type, ABSTRACT_GLOBALS_AND_PANEL, monitor)) {
-
+									targetFound = true;
 									List<String> listOfGlobalFields = getGlobalFields(type);
 									iih.putGlobalsInfo(listOfGlobalFields, instrumentingPackageName);
+								} else if (ITypeUtils.extendsClass(type, BASE_OBSERVER, monitor)) {
+									targetFound = true;
 								}
+							}
+							if (targetFound) {
+								// If a candidate PLOT or Globals class was found, add
+								// the instrumentingPackageName into the cleaning information.
+								cih.addInstrumentingPackageName(instrumentingPackageName);
 							}
 						}
 					}
@@ -386,6 +491,14 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 			}
 			return true;
+		}
+
+		public void removeReLogoBuilderFiles() {
+			GeneratedByReLogoBuilderFilter filter = new GeneratedByReLogoBuilderFilter();
+			DirectoryCleaner cleaner = new DirectoryCleaner(filter);
+			String rootPath = project.getLocation().append(SRCGEN_ROOT_PACKAGE_FRAGMENT).toFile()
+					.getAbsolutePath();
+			cleaner.run(rootPath);
 		}
 
 		private List<String> getGlobalFields(IType type) throws JavaModelException {
@@ -481,10 +594,10 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			List<PatchTypeFieldNameFieldTypeInformation> patchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
 			while (type != null && !type.getFullyQualifiedName().equals(BASE_PATCH)) {
 				List<PatchTypeFieldNameFieldTypeInformation> individualPatchFieldTypes = getIndividualPatchFieldTypes(type);
-				if (individualPatchFieldTypes != null){
+				if (individualPatchFieldTypes != null) {
 					patchFieldTypes.addAll(individualPatchFieldTypes);
 				}
-				
+
 				// System.out.println("Type: " + type.getElementName());
 				type = getSuperType(type);
 				// System.out.println("Supertype: " + type.getElementName());
@@ -493,9 +606,10 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return patchFieldTypes;
 		}
 
-		protected List<PatchTypeFieldNameFieldTypeInformation> getIndividualPatchFieldTypes(IType type) throws JavaModelException {
+		protected List<PatchTypeFieldNameFieldTypeInformation> getIndividualPatchFieldTypes(IType type)
+				throws JavaModelException {
 			List<PatchTypeFieldNameFieldTypeInformation> individualPatchFieldTypes = new ArrayList<PatchTypeFieldNameFieldTypeInformation>();
-		// First check to see if this type is in a 'relogo' package
+			// First check to see if this type is in a 'relogo' package
 			// Skip otherwise.
 			IPackageFragment ipf = type.getPackageFragment();
 			if (ipf != null) { // if ipf is null, skip this type
@@ -565,8 +679,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 							// + flags
 							// + " toString: " + Flags.toString(flags));
 
-//							String getterName = "";
-//							String setterName = "";
+							// String getterName = "";
+							// String setterName = "";
 							if (!Flags.isPublic(flags)) { // potentially cases 1a, 1b
 
 								if (Flags.isPrivate(flags) && isGroovySource) { // potentially
@@ -607,7 +721,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 											}
 										}
 									}
-								} 
+								}
 							} else { // case 2
 								foundField = true;
 							}
@@ -789,11 +903,10 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					field.getElementName(), getFullResolvedName(fieldTypeSignature, type), patchGetterName,
 					patchSetterName);
 		}
-		
+
 		private PatchTypeFieldNameFieldTypeInformation getPatchTypeFieldNameFieldTypeInformation(
-				IField field, IType type)
-				throws IllegalArgumentException, JavaModelException {
-			return getPatchTypeFieldNameFieldTypeInformation(field,type,"","");
+				IField field, IType type) throws IllegalArgumentException, JavaModelException {
+			return getPatchTypeFieldNameFieldTypeInformation(field, type, "", "");
 		}
 
 		private TypeSingularPluralInformation getPluralInformation(IType type)

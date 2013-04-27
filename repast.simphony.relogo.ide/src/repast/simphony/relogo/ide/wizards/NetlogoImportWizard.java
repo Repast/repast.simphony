@@ -67,6 +67,8 @@ import repast.simphony.relogo.ide.code.Attribute;
 import repast.simphony.relogo.ide.code.ProcedureDefinition;
 import repast.simphony.relogo.ide.code.ProcedureInvocation;
 import repast.simphony.relogo.ide.code.RelogoClass;
+import repast.simphony.relogo.ide.handlers.ReLogoBuilder;
+import repast.simphony.relogo.ide.handlers.ReLogoBuilderTests;
 import repast.simphony.relogo.ide.image.NLImage;
 import repast.simphony.relogo.ide.intf.NLChooser;
 import repast.simphony.relogo.ide.intf.NLControl;
@@ -745,7 +747,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 	static public String RELOGO_CUSTOM_UGPF_TEMPLATE_GROUP_FILE = "/templates/" + RELOGO_CUSTOM_UGPF
 			+ ".stg";
 	static public String RELOGO_USER_OTPL_CLASSES_TEMPLATE_GROUP_FILE = "/templates/userOTPLclasses.stg";
-	static public String RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE = "/templates/reLogoOTPLclasses.stg";
+
 	static protected StringTemplateGroup templateGroup;
 	static protected StringTemplateGroup ugpfTemplateGroup;
 	static protected StringTemplateGroup javaTemplateGroup;
@@ -891,7 +893,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 		if (reLogoOTPLTemplateGroup == null) {
 			InputStream reLogoOTPLTemplateStream = getClass().getResourceAsStream(
-					RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
+					ReLogoBuilder.RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
 			reLogoOTPLTemplateGroup = new StringTemplateGroup(new InputStreamReader(
 					reLogoOTPLTemplateStream));
 		}

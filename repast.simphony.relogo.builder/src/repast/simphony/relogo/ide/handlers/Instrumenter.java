@@ -145,39 +145,39 @@ public class Instrumenter {
 
 	private void createTurtlePatchMethods(IType type) throws JavaModelException {
 		StringBuilder sb = new StringBuilder();
-		for (PatchTypeFieldNameFieldTypeInformation patchInfo : ii.getPatchFieldTypes()) {
-			// patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter
-			String patchType = patchInfo.patchType;
-			String fieldName = patchInfo.fieldName;
-			String capFieldName = null;
-			if (fieldName.equals("")){
-				capFieldName = "";
+		if (!ii.getPatchFieldTypes().isEmpty()) {
+			for (PatchTypeFieldNameFieldTypeInformation patchInfo : ii.getPatchFieldTypes()) {
+				// patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter
+				String patchType = patchInfo.patchType;
+				String fieldName = patchInfo.fieldName;
+				String capFieldName = null;
+				if (fieldName.equals("")) {
+					capFieldName = "";
+				} else {
+					capFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
+				}
+				String fieldType = patchInfo.fieldType;
+				String patchGetter = patchInfo.patchGetter;
+				String patchSetter = patchInfo.patchSetter;
+				String[] instanceNames = null;
+				if (patchGetter.isEmpty()) {
+					instanceNames = TURTLE_PATCH_SIMPLE_METHOD_INSTANCE_NAMES;
+				} else {
+					instanceNames = TURTLE_PATCH_ACCESSOR_METHOD_INSTANCE_NAMES;
+				}
+				for (String instanceName : instanceNames) {
+					ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
+					st.add("patchType", patchType);
+					st.add("fieldName", fieldName);
+					st.add("capFieldName", capFieldName);
+					st.add("fieldType", fieldType);
+					st.add("patchGetter", patchGetter);
+					st.add("patchSetter", patchSetter);
+					sb.append(st.render());
+					sb.append("\n\n");
+				}
 			}
-			else {
-				capFieldName = MetaClassHelper.capitalize(patchInfo.fieldName);
-			}
-			String fieldType = patchInfo.fieldType;
-			String patchGetter = patchInfo.patchGetter;
-			String patchSetter = patchInfo.patchSetter;
-			String[] instanceNames = null;
-			if (patchGetter.isEmpty()) {
-				instanceNames = TURTLE_PATCH_SIMPLE_METHOD_INSTANCE_NAMES;
-			} else {
-				instanceNames = TURTLE_PATCH_ACCESSOR_METHOD_INSTANCE_NAMES;
-			}
-			for (String instanceName : instanceNames) {
-				ST st = turtleInstumentingTemplateGroup.getInstanceOf(instanceName);
-				st.add("patchType", patchType);
-				st.add("fieldName", fieldName);
-				st.add("capFieldName", capFieldName);
-				st.add("fieldType",fieldType);
-				st.add("patchGetter", patchGetter);
-				st.add("patchSetter", patchSetter);
-				sb.append(st.render());
-				sb.append("\n\n");
-			}
+			type.createMethod(sb.toString(), null, true, monitor);
 		}
-		type.createMethod(sb.toString(), null, true, monitor);
 	}
-
 }
