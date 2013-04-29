@@ -33,8 +33,8 @@ public class GeneratedFilesInformationHolder {
 
 	static private final String[] standardReLogoClasses = {"ReLogoTurtle", "ReLogoPatch", "ReLogoLink", "ReLogoObserver"};
 	
-	
-	public List<String> getAllReLogoSrcGenClasses(){
+	// This is likely not needed. But kept it for the toString() below.
+	private List<String> getAllReLogoSrcGenClasses(){
 		List<String> allClasses = new ArrayList<String>();
 		for (String instrumentingPackageName : instrumentingPackageNames){
 			for (String className : standardReLogoClasses){

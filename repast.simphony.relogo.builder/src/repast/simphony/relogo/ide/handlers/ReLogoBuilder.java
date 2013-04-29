@@ -36,7 +36,10 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -147,6 +150,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			throw new CoreException(new Status(IResourceStatus.BUILD_FAILED, Activator.PLUGIN_ID,
 					ex.getLocalizedMessage(), ex));
 		}
+
 		return null;
 	}
 
@@ -163,13 +167,17 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		System.out.println(visitor.iih);
 		System.out.println(visitor.cih);
 		visitor.removeReLogoBuilderFiles();
-		visitor.initializeClassSources();
+		visitor.createClassSources();
+
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		FullBuildInstrumentingVisitor fbiv = new FullBuildInstrumentingVisitor(visitor.iih, project,
-				monitor);
-		project.accept(fbiv);
 	}
 
+	/**
+	 * Unneeded.
+	 * TODO: delete
+	 * @author jozik
+	 *
+	 */
 	protected static class FullBuildInstrumentingVisitor implements IResourceVisitor {
 		IProgressMonitor monitor;
 		IProject project;
@@ -214,19 +222,13 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 										.getInstrumentingInformationFor(instrumentingPackageName);
 								// If information exists for this instrumenting package name
 								if (ii != null) {
-									// get corresponding instrumenting package info from iih
-									try {
-										new Instrumenter(ii, monitor).createAllMethods(type);
-										final IResource[] resources = { resource };
-										Display.getDefault().asyncExec(new Runnable() {
-											public void run() {
-												IDE.saveAllEditors(resources, false);
-											}
-										});
-
-									} catch (JavaModelException jme) {
-										jme.printStackTrace();
-									}
+									// new Instrumenter(ii, monitor).createAllMethods(type);
+									final IResource[] resources = { resource };
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											IDE.saveAllEditors(resources, false);
+										}
+									});
 								}
 							}
 						}
@@ -276,19 +278,21 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		 * java model to not parse the source files properly (e.g., errant curly
 		 * brace).
 		 */
-		public void initializeClassSources() {
+		public void createClassSources() {
+
 			for (String instrumentingPackageName : cih.instrumentingPackageNames) {
 				try {
 					generateDefaultReLogoFiles(instrumentingPackageName);
-				} catch (UnsupportedEncodingException uee) {
-					uee.printStackTrace();
+				} catch (UnsupportedEncodingException | CoreException e) {
+					e.printStackTrace();
 				}
 			}
-			
+
+			// TODO: do the library extending classes here
 		}
 
 		private void generateDefaultReLogoFiles(String instrumentingPackageName)
-				throws UnsupportedEncodingException {
+				throws UnsupportedEncodingException, CoreException {
 			String[] packageNames = instrumentingPackageName.split("\\.");
 			IFolder srcGenNewFolder = project.getFolder(SRCGEN_ROOT_PACKAGE_FRAGMENT);
 			for (String subpackage : packageNames) {
@@ -297,11 +301,45 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			if (reLogoOTPLTemplateGroup == null) {
 				reLogoOTPLTemplateGroup = new STGroupFile(RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
 			}
+			Instrumenter instrumenter = new Instrumenter(
+					iih.getInstrumentingInformationFor(instrumentingPackageName));
 			for (int i = 0; i < TEMPLATE_INSTANCES.length; i++) {
 				ST st = reLogoOTPLTemplateGroup.getInstanceOf(TEMPLATE_INSTANCES[i]);
 				st.add("packageName", instrumentingPackageName);
-				createFileResource(srcGenNewFolder, DEFAULT_RELOGO_FILENAMES[i], new ByteArrayInputStream(
-						st.render().getBytes("UTF-8")));
+				StringBuilder sb = new StringBuilder();
+				String fileName = DEFAULT_RELOGO_FILENAMES[i];
+				if (fileName.contains("Turtle")) {
+					instrumenter.createAllTurtleMethods(sb);
+				} else if (fileName.contains("Patch")) {
+					// TODO:
+				} else if (fileName.contains("Link")) {
+					// TODO:
+				} else { // observer
+					// TODO:
+				}
+
+				st.add("classBody", sb.toString());
+				IFile localFile = srcGenNewFolder.getFile(fileName);
+
+				// For creation:
+				localFile.create(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true, null);
+
+				final IFile fileToSave = localFile;
+				final IResource[] resources = { fileToSave };
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						IDE.saveAllEditors(resources, false);
+					}
+				});
+				// For contents:
+				// localFile.setContents(new ByteArrayInputStream(
+				// st.render().getBytes("UTF-8")), true, true, null);
+
+				// localFile.touch(null);
+
+				// createFileResource(srcGenNewFolder, DEFAULT_RELOGO_FILENAMES[i], new
+				// ByteArrayInputStream(
+				// st.render().getBytes("UTF-8")));
 			}
 		}
 
@@ -336,7 +374,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					e.printStackTrace();
 				}
 			}
-
 		}
 
 		private static class ReLogoResourceResult {
@@ -494,6 +531,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		}
 
 		public void removeReLogoBuilderFiles() {
+
 			GeneratedByReLogoBuilderFilter filter = new GeneratedByReLogoBuilderFilter();
 			DirectoryCleaner cleaner = new DirectoryCleaner(filter);
 			String rootPath = project.getLocation().append(SRCGEN_ROOT_PACKAGE_FRAGMENT).toFile()

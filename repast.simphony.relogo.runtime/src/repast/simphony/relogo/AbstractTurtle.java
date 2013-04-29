@@ -1769,11 +1769,13 @@ public abstract class AbstractTurtle implements Turtle {
 	 *            a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksFrom(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet createLinksFrom(Collection a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		AgentSet links = new AgentSet();
-		for (Turtle t : a) {
-			links.add(network.addEdge(t, this));
+		for (Object t : a) {
+			if (t instanceof Turtle){
+				links.add(network.addEdge((Turtle)t, this));
+			}
 		}
 		if (closure != null) {
 			ask(links, closure);
