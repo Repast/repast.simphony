@@ -1,0 +1,3 @@
+jogl-2.0-b981-2013045
+gluegen-2.0-b667-20130426
+java3d  1.6.0-pre7-daily-experimental
