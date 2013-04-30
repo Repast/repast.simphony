@@ -120,32 +120,32 @@ public class ReLogoBuilderTests {
 		String packageName = "a.b.c.relogo";
 		String expected = "a.b.c";
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 
 		packageName = "a.b.c.relogo.d";
 		expected = "a.b.c";
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 
 		packageName = "a.b.c.reLogo.d";
 		expected = null;
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 		
 		packageName = "";
 		expected = null;
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 
 		packageName = "relogo";
 		expected = "";
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 		
 		packageName = null;
 		expected = null;
 
-		assertEquals(expected, visitor.getInstrumentingPackageName(packageName));
+		assertEquals(expected, ReLogoBuilder.getInstrumentingPackageName(packageName));
 
 	}
 }

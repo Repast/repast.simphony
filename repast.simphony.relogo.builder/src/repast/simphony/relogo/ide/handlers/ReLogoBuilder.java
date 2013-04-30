@@ -36,10 +36,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -98,6 +95,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	private static final String BASE_PATCH = "repast.simphony.relogo.BasePatch";
 	private static final String BASE_LINK = "repast.simphony.relogo.BaseLink";
 	private static final String ABSTRACT_GLOBALS_AND_PANEL = "repast.simphony.relogo.factories.AbstractReLogoGlobalsAndPanelFactory";
+	private static final String[] TPL = {BASE_TURTLE,BASE_PATCH,BASE_LINK};
+	private static final String[] TPLA = {BASE_TURTLE,BASE_PATCH,BASE_LINK,ABSTRACT_GLOBALS_AND_PANEL};
 	private static final String LIB_TURTLE_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibTurtle";
 	private static final String LIB_PATCH_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibPatch";
 	private static final String LIB_LINK_ANNOTATION = "repast.simphony.relogo.ast.ExtendsLibLink";
@@ -156,7 +155,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 	private void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor)
 			throws CoreException {
-		delta.accept(new InstrumentationInformationDeltaVisitor(getProject(), monitor));
+		InstrumentationInformationDeltaVisitor iidv = new InstrumentationInformationDeltaVisitor(getProject(), monitor); 
+		delta.accept(iidv);
+		if (iidv.needsRebuild){
+			fullBuild(monitor);
+		}
+		// look for changes to trigger full build.
 	}
 
 	private void fullBuild(IProgressMonitor monitor) throws CoreException {
@@ -164,89 +168,84 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		FullBuildInstrumentationInformationVisitor visitor = new FullBuildInstrumentationInformationVisitor(
 				project, monitor);
 		project.accept(visitor);
-		System.out.println(visitor.iih);
-		System.out.println(visitor.cih);
+//		System.out.println(visitor.iih);
+//		System.out.println(visitor.cih);
 		visitor.removeReLogoBuilderFiles();
 		visitor.createClassSources();
 
 		getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 
-	/**
-	 * Unneeded.
-	 * TODO: delete
-	 * @author jozik
-	 *
-	 */
-	protected static class FullBuildInstrumentingVisitor implements IResourceVisitor {
-		IProgressMonitor monitor;
-		IProject project;
-		InstrumentingInformationHolder iih;
-
-		public FullBuildInstrumentingVisitor(InstrumentingInformationHolder iih, IProject project,
-				IProgressMonitor monitor) {
-			this.iih = iih;
-			this.monitor = monitor;
-			this.project = project;
-		}
-
-		@Override
-		public boolean visit(IResource resource) throws CoreException {
-			Object obj = resource.getAdapter(IJavaElement.class);
-			if (obj != null) {
-				IJavaElement javaElement = (IJavaElement) obj;
-				IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElement
-						.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-				// Check that it's in the src-gen root package fragment
-				if (pfr != null && pfr.getElementName().equals(SRCGEN_ROOT_PACKAGE_FRAGMENT)) {
-					// Check that it's a compilation unit
-					if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
-						ICompilationUnit cu = (ICompilationUnit) javaElement;
-						// Check that it's a java file (not a groovy file)
-						IPath path = resource.getRawLocation();
-						if (path != null && path.getFileExtension() != null
-								&& path.getFileExtension().equals("java")) {
-
-							// TODO:
-
-							// okay to get first type since we control these
-							IType type = cu.getTypes()[0];
-
-							// get package
-							IPackageFragment pf = (IPackageFragment) javaElement
-									.getAncestor(IJavaElement.PACKAGE_FRAGMENT);
-							if (pf != null && pf.getElementName() != null) {
-								String instrumentingPackageName = pf.getElementName();
-
-								InstrumentingInformation ii = iih
-										.getInstrumentingInformationFor(instrumentingPackageName);
-								// If information exists for this instrumenting package name
-								if (ii != null) {
-									// new Instrumenter(ii, monitor).createAllMethods(type);
-									final IResource[] resources = { resource };
-									Display.getDefault().asyncExec(new Runnable() {
-										public void run() {
-											IDE.saveAllEditors(resources, false);
-										}
-									});
-								}
-							}
-						}
+	static public ReLogoResourceResult examineResourceReLogo(IResource resource) throws CoreException {
+		ReLogoResourceResult rrr = new ReLogoResourceResult();
+		Object obj = resource.getAdapter(IJavaElement.class);
+		if (obj != null) {
+			IJavaElement javaElement = (IJavaElement) obj;
+			IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElement
+					.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+			if (pfr != null && pfr.getElementName().equals(SRC_ROOT_PACKAGE_FRAGMENT)) {
+				IJavaElement parent = javaElement.getParent();
+				if (parent != null && parent instanceof IPackageFragment) {
+					IPackageFragment pf = (IPackageFragment) parent;
+					String packageName = pf.getElementName();
+					String instrumentingPackageName = getInstrumentingPackageName(packageName);
+					if (instrumentingPackageName != null) {
+						rrr.isInReLogoPackage = true;
+						rrr.instrumentingPackageName = instrumentingPackageName;
 					}
 				}
 			}
-			// is in src gen ?
-			// is java file
-			// extends base class
+		}
+		return rrr;
+	}
 
-			return true;
+	/**
+	 * Returns the instrumenting package name associated with the package or null
+	 * if the packageName is not a valid package that contains 'relogo' in it or
+	 * if it's null.
+	 * 
+	 * @param packageName
+	 * @return
+	 */
+	static protected String getInstrumentingPackageName(String packageName) {
+		if (packageName != null) {
+			String[] segments = packageName.split("\\.");
+			boolean isFirst = true;
+			StringBuilder sb = new StringBuilder();
+			for (String string : segments) {
+				if (string.equals("relogo")) {
+					return sb.toString();
+				} else {
+					if (!isFirst) {
+						sb.append(".");
+					}
+					isFirst = false;
+					sb.append(string);
+				}
+			}
+		}
+		return null;
+	}
+
+	public static class ReLogoResourceResult {
+		public boolean isInReLogoPackage() {
+			return isInReLogoPackage;
 		}
 
-		private void fullInstrumentTurtle(IType type, InstrumentingInformation ii) {
-
-			// TODO Auto-generated method stub
-
+		public void setInReLogoPackage(boolean isInReLogoPackage) {
+			this.isInReLogoPackage = isInReLogoPackage;
 		}
+
+		public String getInstrumentingPackageName() {
+			return instrumentingPackageName;
+		}
+
+		public void setInstrumentingPackageName(String instrumentingPackageName) {
+			this.instrumentingPackageName = instrumentingPackageName;
+		}
+
+		boolean isInReLogoPackage = false;
+		String instrumentingPackageName = "";
 	}
 
 	protected static class FullBuildInstrumentationInformationVisitor implements IResourceVisitor {
@@ -259,18 +258,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			this.monitor = monitor;
 			this.project = project;
 		}
-
-		// private IPackageFragment findIPackageFragmentParent(IResource resource) {
-		// Object obj = resource.getAdapter(IJavaElement.class);
-		// if (obj != null) {
-		// IJavaElement javaElement = (IJavaElement) obj;
-		// IJavaElement jElePFrag = javaElement.getParent();
-		// if (jElePFrag != null && jElePFrag instanceof IPackageFragment) {
-		// return (IPackageFragment) jElePFrag;
-		// }
-		// }
-		// return null;
-		// }
 
 		/**
 		 * Initializes all the existing generated source files. This enables a clean
@@ -311,11 +298,11 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				if (fileName.contains("Turtle")) {
 					instrumenter.createAllTurtleMethods(sb);
 				} else if (fileName.contains("Patch")) {
-					// TODO:
+					instrumenter.createAllPatchMethods(sb);
 				} else if (fileName.contains("Link")) {
-					// TODO:
+					instrumenter.createAllLinkMethods(sb);
 				} else { // observer
-					// TODO:
+					instrumenter.createAllObserverMethods(sb);
 				}
 
 				st.add("classBody", sb.toString());
@@ -331,15 +318,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 						IDE.saveAllEditors(resources, false);
 					}
 				});
-				// For contents:
-				// localFile.setContents(new ByteArrayInputStream(
-				// st.render().getBytes("UTF-8")), true, true, null);
-
-				// localFile.touch(null);
-
-				// createFileResource(srcGenNewFolder, DEFAULT_RELOGO_FILENAMES[i], new
-				// ByteArrayInputStream(
-				// st.render().getBytes("UTF-8")));
 			}
 		}
 
@@ -362,7 +340,8 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		/**
 		 * Create a new file in the specified folder, containing the specified
-		 * contents. Forces a write of the contents to the file system.
+		 * contents. Forces a write of the contents to the file system. TODO: delete
+		 * if not used when ReLogo2 completed
 		 */
 		private void createFileResource(IFolder folder, String name, InputStream contents) {
 			IFile file = folder.getFile(name);
@@ -374,62 +353,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 					e.printStackTrace();
 				}
 			}
-		}
-
-		private static class ReLogoResourceResult {
-			boolean isInReLogoPackage = false;
-			String instrumentingPackageName = "";
-		}
-
-		/**
-		 * Returns the instrumenting package name associated with the package or
-		 * null if the packageName is not a valid package that contains 'relogo' in
-		 * it or if it's null.
-		 * 
-		 * @param packageName
-		 * @return
-		 */
-		protected String getInstrumentingPackageName(String packageName) {
-			if (packageName != null) {
-				String[] segments = packageName.split("\\.");
-				boolean isFirst = true;
-				StringBuilder sb = new StringBuilder();
-				for (String string : segments) {
-					if (string.equals("relogo")) {
-						return sb.toString();
-					} else {
-						if (!isFirst) {
-							sb.append(".");
-						}
-						isFirst = false;
-						sb.append(string);
-					}
-				}
-			}
-			return null;
-		}
-
-		private ReLogoResourceResult examineResourceReLogo(IResource resource) throws CoreException {
-			ReLogoResourceResult rrr = new ReLogoResourceResult();
-			Object obj = resource.getAdapter(IJavaElement.class);
-			if (obj != null) {
-				IJavaElement javaElement = (IJavaElement) obj;
-				IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElement
-						.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-				if (pfr != null && pfr.getElementName().equals(SRC_ROOT_PACKAGE_FRAGMENT)) {
-					IJavaElement parent = javaElement.getParent();
-					if (parent != null && parent instanceof IPackageFragment) {
-						IPackageFragment pf = (IPackageFragment) parent;
-						String packageName = pf.getElementName();
-						String instrumentingPackageName = getInstrumentingPackageName(packageName);
-						if (instrumentingPackageName != null) {
-							rrr.isInReLogoPackage = true;
-							rrr.instrumentingPackageName = instrumentingPackageName;
-						}
-					}
-				}
-			}
-			return rrr;
 		}
 
 		@SuppressWarnings("restriction")
@@ -544,6 +467,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			// get compilation unit
 			if (!type.isBinary()) {
 				// TODO: do we need a Java version as well?
+				// probably not.
 				if (type.getCompilationUnit() instanceof GroovyCompilationUnit) {
 
 					GroovyCompilationUnit icu = (GroovyCompilationUnit) type.getCompilationUnit();
@@ -808,8 +732,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 								}
 							}
 						}
-						// TODO: look for case 4 (only public accessors with no backing
-						// field)
 					}
 				}
 			}
@@ -1005,20 +927,6 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return true;
 		}
 
-		/*
-		 * protected String getValueFromSimplePluralAnnotationLine(String line) {
-		 * Matcher matcher = SIMPLE_PLURAL.matcher(line); if (matcher.find()) {
-		 * String result = matcher.group(1); matcher =
-		 * SIMPLE_COMMENTED_PLURAL.matcher(line); if (!matcher.find()) return
-		 * result; } return null; }
-		 * 
-		 * protected String getValueFromFullPluralAnnotationLine(String line) {
-		 * 
-		 * Matcher matcher = FULL_PLURAL.matcher(line); if (matcher.find()) { String
-		 * result = matcher.group(1); matcher = FULL_COMMENTED_PLURAL.matcher(line);
-		 * if (!matcher.find()) return result; } return null; }
-		 */
-
 		private TypeSingularPluralInformation getPluralInformationFromGroovySource(IType type)
 				throws JavaModelException {
 			TypeSingularPluralInformation pi = new TypeSingularPluralInformation(type);
@@ -1047,28 +955,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 			return pi;
 		}
 
-		/*
-		 * private PluralInformation getPluralInformationFromSource(IType type)
-		 * throws JavaModelException { PluralInformation pi = new
-		 * PluralInformation(type); String source =
-		 * type.getCompilationUnit().getSource(); if (source != null) { Scanner
-		 * scanner = new Scanner(source); while (scanner.hasNextLine()) { String
-		 * line = scanner.nextLine(); if (line.contains("@Plural")) { String[][]
-		 * resolve = type.resolveType("Plural"); for (String[] res : resolve) { if
-		 * (StringUtils.join(res, '.').equals(PLURAL_ANNOTATION)) { String plural =
-		 * getValueFromSimplePluralAnnotationLine(line); if (plural != null) {
-		 * pi.plural = plural; } scanner.close(); return pi; } } } if
-		 * (line.contains("@repast.simphony.relogo.Plural")) { String plural =
-		 * getValueFromFullPluralAnnotationLine(line); if (plural != null) {
-		 * pi.plural = plural; } scanner.close(); return pi; } } scanner.close(); }
-		 * return pi; }
-		 */
-
 	}
 
 	private static class InstrumentationInformationDeltaVisitor implements IResourceDeltaVisitor {
 		IProgressMonitor monitor;
 		IProject project;
+		boolean needsRebuild = false; // TODO: use this
 
 		public InstrumentationInformationDeltaVisitor(IProject project, IProgressMonitor monitor) {
 			this.monitor = monitor;
@@ -1084,85 +976,71 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		 */
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			IPath path = delta.getResource().getRawLocation();
-			// System.out.println("statechart builder running: " + delta);
-			if ((delta.getKind() == IResourceDelta.ADDED) && path != null
-					&& path.getFileExtension() != null
-					&& (path.getFileExtension().equals("groovy") || path.getFileExtension().equals("java"))) {
-				boolean isInReLogoPackage = false;
-				for (String segment : path.segments()) {
-					if (segment.equalsIgnoreCase("relogo")) {
-						isInReLogoPackage = true;
-						break;
+			IResource resource = delta.getResource();
+			if (resource != null) {
+				IPath path = resource.getRawLocation();
+				// System.out.println("statechart builder running: " + delta);
+				if (path != null && path.getFileExtension() != null
+						&& (path.getFileExtension().equals("groovy") || path.getFileExtension().equals("java"))) {
+
+					ReLogoResourceResult rrr = examineResourceReLogo(resource);
+					if (rrr.isInReLogoPackage) {
+
+						if (delta.getKind() == IResourceDelta.ADDED) {
+							 
+							if (doesResourceExtendThese(resource,TPL)){
+								needsRebuild = true;
+//								System.out.println("Needs Rebuild: Added Delta: Found " + delta.getResource().getName());
+							}
+
+						} else if (delta.getKind() == IResourceDelta.REMOVED) {
+							// can't easily check extending class so need to fire this always
+							needsRebuild = true;
+//							System.out.println("Needs Rebuild: Removed Delta: Found " + delta.getResource().getName());
+						} else if (delta.getKind() == IResourceDelta.CHANGED) {
+							if (doesResourceExtendThese(resource,TPLA)){
+								needsRebuild = true;
+//								System.out.println("Needs Rebuild: Changed Delta: Found " + delta.getResource().getName());
+							}
+						}
 					}
-				}
-				if (isInReLogoPackage) {
-					System.out.println("Delta Visitor: Found " + delta.getResource().getName());
 				}
 			}
 			return true;
 		}
+
+		private boolean doesResourceExtendThese(IResource resource, String[] fullyQualifiedNames) {
+			Object obj = resource.getAdapter(IJavaElement.class);
+			if (obj != null) {
+				IJavaElement javaElement = (IJavaElement) obj;
+				if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
+					ICompilationUnit cu = (ICompilationUnit) javaElement;
+					IType[] types = null;
+					try {
+						types = cu.getTypes();
+					} catch (JavaModelException e) {
+						return false;
+					}
+					if (types != null) {
+						for (IType type : types) {
+							for (String fullyQualifiedName : fullyQualifiedNames) {
+								if (extendsClass(type, fullyQualifiedName)) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		private boolean extendsClass(IType type, String fullyQualifiedName) {
+			try {
+				return ITypeUtils.extendsClass(type, fullyQualifiedName, monitor);
+			} catch (JavaModelException e) {
+				return false;
+			}
+		}
 	}
-
-	// protected static String extractInstrumentingPackageName(String[] segments)
-	// {
-	// StringBuilder sb = new StringBuilder();
-	// for (String string : segments) {
-	// if (string.equals("relogo")) {
-	// break;
-	// } else {
-	// sb.append(string);
-	// sb.append(".");
-	// }
-	// }
-	// return sb.toString();
-	// }
-
-	/*
-	 * private static class FullBuildVisitor implements IResourceVisitor {
-	 * 
-	 * IProgressMonitor monitor; IProject project; CodeGenerator generator;
-	 * 
-	 * public FullBuildVisitor(IProject project, IProgressMonitor monitor) {
-	 * this.monitor = monitor; this.project = project; generator = new
-	 * CodeGenerator(); }
-	 * 
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core
-	 * .resources.IResource)
-	 * 
-	 * @Override public boolean visit(IResource resource) throws CoreException {
-	 * IPath path = resource.getRawLocation(); if (path != null &&
-	 * path.getFileExtension() != null &&
-	 * path.getFileExtension().equals(STATECHART_EXTENSION)) { IPath srcPath =
-	 * generator.run(project, path, monitor); if (srcPath != null) { new
-	 * SVGExporter().run(path, srcPath, monitor);
-	 * project.getFolder(srcPath.lastSegment
-	 * ()).refreshLocal(IResource.DEPTH_INFINITE, monitor); } } return true; }
-	 * 
-	 * }
-	 */
-
-	/*
-	 * private static class Visitor implements IResourceDeltaVisitor {
-	 * 
-	 * IProgressMonitor monitor; IProject project;
-	 * 
-	 * public Visitor(IProject project, IProgressMonitor monitor) { this.monitor =
-	 * monitor; this.project = project; }
-	 * 
-	 * @Override public boolean visit(IResourceDelta delta) throws CoreException {
-	 * IPath path = delta.getResource().getRawLocation(); //
-	 * System.out.println("statechart builder running: " + delta); if
-	 * ((delta.getKind() == IResourceDelta.CHANGED || delta.getKind() ==
-	 * IResourceDelta.ADDED) && path != null && path.getFileExtension() != null &&
-	 * path.getFileExtension().equals(STATECHART_EXTENSION)) { // create svg file
-	 * here IPath srcPath = new CodeGenerator().run(project, path, monitor); if
-	 * (srcPath != null) { new SVGExporter().run(path, srcPath, monitor);
-	 * project.getFolder
-	 * (srcPath.lastSegment()).refreshLocal(IResource.DEPTH_INFINITE, monitor); }
-	 * } return true; } }
-	 */
 }
