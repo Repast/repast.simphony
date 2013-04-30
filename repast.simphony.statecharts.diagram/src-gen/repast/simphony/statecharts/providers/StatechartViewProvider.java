@@ -766,13 +766,13 @@ public class StatechartViewProvider extends AbstractProvider implements IViewPro
   }
 
   /**
-   * @generated NOT -- added smoothness 
+   * @generated NOT --
    */
   public Edge createTransition_4001(EObject domainElement, View containerView, int index,
       boolean persisted, PreferencesHint preferencesHint) {
     Edge edge = NotationFactory.eINSTANCE.createEdge();
     RoutingStyle routingStyle = NotationFactory.eINSTANCE.createRoutingStyle();
-    routingStyle.setSmoothness(Smoothness.get(Smoothness.NORMAL));
+    routingStyle.setSmoothness(Smoothness.get(Smoothness.NONE));
     edge.getStyles().add(routingStyle);
     edge.getStyles().add(NotationFactory.eINSTANCE.createFontStyle());
     RelativeBendpoints bendpoints = NotationFactory.eINSTANCE.createRelativeBendpoints();
