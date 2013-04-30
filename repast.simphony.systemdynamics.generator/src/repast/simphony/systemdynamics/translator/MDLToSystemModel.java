@@ -197,14 +197,20 @@ public class MDLToSystemModel {
       String lhs = sides[0].trim();
       String rhs = sides[1].trim();
       if (var.getType() == VariableType.STOCK && rhs.startsWith("INTEG")) {
+    	  System.out.println("parseEquation: found STOCK & INTEG");
+    	  
+    	 
         int index = rhs.indexOf("(");
         if (index != -1) {
           rhs = rhs.substring(index + 1);
           if (rhs.endsWith(")"))
             rhs = rhs.substring(0, rhs.length() - 1);
+          Stock svar = (Stock) var;
+    	  svar.setInitialValue(rhs.split(",")[1].trim());
         }
+        
 
-        var.setEquation(rhs.trim());
+        var.setEquation(rhs.split(",")[0].trim());  // just rhs
       } else {
         var.setEquation(rhs.trim());
       }

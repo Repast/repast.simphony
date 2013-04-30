@@ -469,8 +469,10 @@ public class TranslatorRepastSimphony extends Translator {
         			Stock stk = (Stock) variable;
         			
         			mdlContents.add(variable.getLhs()+ "= INTEG(");
-//    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
-    				mdlContents.add(variable.getEquation()+")");
+    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+//    				mdlContents.add(variable.getEquation()+")");
+    				
+    				
     				
         		} else if (variable.getType().equals(VariableType.RATE) || 
         				variable.getType().equals(VariableType.CONSTANT )|| 

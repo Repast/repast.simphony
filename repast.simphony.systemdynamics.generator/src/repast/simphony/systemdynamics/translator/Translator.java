@@ -409,7 +409,8 @@ public class Translator {
 
 	protected void generateTrees(Map<String, Equation> equations) {
 		for (String lhs : equations.keySet()) {
-			Equation eqn = equations.get(lhs);		
+			Equation eqn = equations.get(lhs);	
+			System.out.println("IV: "+eqn.getVensimEquationOnly());
 			eqn.generateTree();
 			System.out.println("IV: "+eqn.getVensimEquationOnly()+" <<"+eqn.getIntialValue()+">>");
 		}

@@ -388,14 +388,14 @@ public class CodeGenerator {
 				//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
 				if (Translator.target.equals(ReaderConstants.C)) {
 				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-				    "logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+");\n"; // 2\n";
+				    "/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
 				} else {
 //				    bw.append("/* oneTime */\n");
 				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
 				    	" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
 				    	"\"); // 2;\n" +
-				    	"logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
-				    	InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"));\n"; // 2\n";
+				    	"/* log3 */logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
+				    	InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
 
 				    // none Repast Execution
 				    //				statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
@@ -604,7 +604,7 @@ public class CodeGenerator {
 		    }
 		    bw.append(");\n");
 //		    bw.append("/* timeSeriesReferences */\n");
-		    bw.append("logit("+equation.getEars().getLHSassignmentName()+",time,"+equation.getEars().getLHSassignment()+");\n");
+		    bw.append("/* log4 */logit("+equation.getEars().getLHSassignmentName()+",time,"+equation.getEars().getLHSassignment()+",memory.get_SAVEPER());\n");
 		    
 		    
 		    for (int i = 0; i < equation.getEars().getOuterClosingCount(); i++) {
@@ -1229,7 +1229,7 @@ public class CodeGenerator {
 	    if (linesOfCode[i].contains("["+removedLoopVar+"]")) {
 		newTail.append(linesOfCode[i].replace("["+removedLoopVar+"]", ""));
 	    } else if (linesOfCode[i].contains("logit"))  {
-		String newLog = linesOfCode[i].replace("logit", "logitVector").replace(resultsVariable, vectorLength+","+resultsVariable).replace(removedLoopVar, "0");
+		String newLog = linesOfCode[i].replace("logit", "/* log5 */logitVector").replace(resultsVariable, vectorLength+","+resultsVariable).replace(removedLoopVar, "0");
 		newTail.append(newLog);
 	    } else {
 		newTail.append(linesOfCode[i]);
@@ -1380,7 +1380,7 @@ public class CodeGenerator {
 	  
 		lhs.getGeneratedCodeTail().append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs.getToken())+" = "+resultsVariable+";\n");
 //		lhs.getGeneratedCodeTail().append("/* generateLHScode */\n");
-		lhs.getGeneratedCodeTail().append("logit(\""+lhs.getToken()+"\",time,"+resultsVariable+");\n");
+		lhs.getGeneratedCodeTail().append("/* log6 */logit(\""+lhs.getToken()+"\",time,"+resultsVariable+",memory.get_SAVEPER());\n");
 	   
 	} else {
 	    
