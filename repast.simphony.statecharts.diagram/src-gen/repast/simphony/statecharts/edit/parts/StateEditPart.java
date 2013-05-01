@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.PositionConstants;
@@ -378,19 +379,30 @@ public class StateEditPart extends ShapeNodeEditPart {
     private WrappingLabel fFigureStateNameFigure;
 
     /**
-     * @generated
+     * @generated NOT
      */
     public StateFigure() {
 
-      FlowLayout layoutThis = new FlowLayout();
-     layoutThis.setStretchMinorAxis(false);
-     layoutThis.setMinorAlignment(FlowLayout.ALIGN_TOPLEFT);
-      layoutThis.setMajorAlignment(FlowLayout.ALIGN_TOPLEFT);
-      layoutThis.setMajorSpacing(5);
-      layoutThis.setMinorSpacing(5);
-      layoutThis.setHorizontal(true);
+      GridLayout layoutThis = new GridLayout();
+      layoutThis.numColumns = 1;
+      layoutThis.makeColumnsEqualWidth = true;
+      layoutThis.horizontalSpacing = 0;
+      layoutThis.verticalSpacing = 0;
+      layoutThis.marginWidth = 0;
+      layoutThis.marginHeight = 0;
 
       this.setLayoutManager(layoutThis);
+
+      /*
+       * FlowLayout layoutThis = new FlowLayout();
+       * layoutThis.setStretchMinorAxis(false);
+       * layoutThis.setMinorAlignment(FlowLayout.ALIGN_TOPLEFT);
+       * layoutThis.setMajorAlignment(FlowLayout.ALIGN_TOPLEFT);
+       * layoutThis.setMajorSpacing(5); layoutThis.setMinorSpacing(5);
+       * layoutThis.setHorizontal(true);
+       * 
+       * this.setLayoutManager(layoutThis);
+       */
 
       this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(8), getMapMode().DPtoLP(8)));
 
@@ -404,11 +416,20 @@ public class StateEditPart extends ShapeNodeEditPart {
      */
     private void createContents() {
 
+      GridData gd = new GridData();
+      gd.verticalAlignment = GridData.CENTER;
+      gd.horizontalAlignment = GridData.CENTER;
+      gd.horizontalIndent = 0;
+      gd.horizontalSpan = 1;
+      gd.verticalSpan = 1;
+      gd.grabExcessHorizontalSpace = true;
+      gd.grabExcessVerticalSpace = true;
+
       fFigureStateNameFigure = new WrappingLabel();
       fFigureStateNameFigure.setText("<É>");
       fFigureStateNameFigure.setAlignment(PositionConstants.CENTER);
 
-      this.add(fFigureStateNameFigure);
+      this.add(fFigureStateNameFigure, gd);
 
     }
 
