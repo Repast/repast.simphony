@@ -123,8 +123,13 @@ public class StandAloneMain {
       if (bundleDir.length() == 0) {
         URL runtimeSource = StandAloneMain.class.getProtectionDomain().getCodeSource().getLocation();
         File location = new File(runtimeSource.toURI());
-        File dir = location.getParentFile().getParentFile();
-        bundleDir = dir.getAbsolutePath();
+        if (location.getName().endsWith("batch_runner.jar")) {
+          // assume this is being run from executable jar just below the eclipse dir
+          bundleDir = location.getParent() + "/eclipse/plugins";
+        } else {
+          File dir = location.getParentFile().getParentFile();
+          bundleDir = dir.getAbsolutePath();
+        }
       }
       new StandAloneMain().run(bundleDir, modelDir);
     } catch (Exception ex) {
