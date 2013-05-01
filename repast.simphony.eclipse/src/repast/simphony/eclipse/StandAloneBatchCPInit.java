@@ -18,6 +18,8 @@ import org.osgi.framework.Bundle;
  * @author Nick Collier
  */
 public class StandAloneBatchCPInit extends ClasspathVariableInitializer {
+  
+  public static final String CP_VARIABLE_NAME = "STAND_ALONE_BATCH_CLASSPATH";
 
   /*
    * (non-Javadoc)
