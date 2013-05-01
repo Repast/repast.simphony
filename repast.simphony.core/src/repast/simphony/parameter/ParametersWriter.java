@@ -1,6 +1,6 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang.math.IntRange;
+import org.apache.commons.lang3.Range;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
@@ -85,7 +85,7 @@ public class ParametersWriter {
       p.addParameter("test", "Test Number", int.class, 10, false);
 
       p.addConstraint("foo", Arrays.asList("Hello", "Test 1", "test2", "test 3"));
-      p.addConstraint("bar", new IntRange(10, 15));
+      p.addConstraint("bar", Range.between(10, 15));
 
       ParametersWriter writer = new ParametersWriter();
       writer.writeValuesToFile(p, new File("/Users/kehrer/tmp/params.xml"));

@@ -3,7 +3,7 @@ package repast.simphony.grass.launch;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data.analysis.PluginOutputStream;
 import simphony.util.messages.MessageCenter;

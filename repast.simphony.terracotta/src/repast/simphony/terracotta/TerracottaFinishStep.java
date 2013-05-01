@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import repast.simphony.data.analysis.PluginOutputStream;
 import simphony.util.messages.MessageCenter;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.pietschy.wizard.PanelWizardStep;
 
 /**

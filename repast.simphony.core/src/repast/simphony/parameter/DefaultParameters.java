@@ -1,7 +1,7 @@
 /*CopyrightHere*/
 package repast.simphony.parameter;
 
-import org.apache.commons.lang.math.Range;
+import org.apache.commons.lang3.Range;
 import repast.simphony.util.ClassUtilities;
 
 import java.util.*;

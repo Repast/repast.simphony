@@ -3,7 +3,7 @@
  */
 package repast.simphony.data2;
 
-import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import simphony.util.messages.MessageCenter;
 

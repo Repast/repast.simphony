@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data.analysis.AnalysisPluginWizard;
 import repast.simphony.data2.DataSetRegistry;

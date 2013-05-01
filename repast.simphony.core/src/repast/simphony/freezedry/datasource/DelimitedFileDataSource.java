@@ -2,7 +2,7 @@ package repast.simphony.freezedry.datasource;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import repast.simphony.freezedry.AbstractDataSource;
 import repast.simphony.freezedry.FreezeDryedObject;
 import repast.simphony.freezedry.FreezeDryingException;

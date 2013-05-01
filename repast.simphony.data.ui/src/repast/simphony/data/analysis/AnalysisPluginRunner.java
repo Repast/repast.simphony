@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data2.DataConstants;
 import repast.simphony.data2.DataSetRegistry;
