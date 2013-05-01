@@ -283,20 +283,16 @@ public class RSProjectConfigurator {
           IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "repast.simphony.runtime.RepastBatchMain");
+          "repast.simphony.batch.standalone.StandAloneMain");
       launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-          "-params \"${file_prompt:the Batch Run Parameters File Name:params.xml}\""
-              + " \"${workspace_loc:" + javaProject.getElementName() + "}" + "/"
-              + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
+          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
+      
       favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
         favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+      
       favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
       launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
           favoritesList);
@@ -305,8 +301,8 @@ public class RSProjectConfigurator {
           IRuntimeClasspathEntry.STANDARD_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
       classpath.add(r.getMemento());
-      jarPath = new Path(RepastLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
+      jarPath = new Path(StandAloneBatchCPInit.CP_VARIABLE_NAME);
+      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       launchConfigurationWorkingCopy.setAttribute(
@@ -499,19 +495,16 @@ public class RSProjectConfigurator {
           IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "repast.simphony.runtime.RepastBatchMain");
+          "repast.simphony.batch.standalone.StandAloneMain");
       launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-          "-params ${file_prompt:the Batch Run Parameters File Name:params.xml} \"${workspace_loc:"
-              + javaProject.getElementName() + "}" + "/" + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
+          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
+      
       favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
         favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+      
       favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
       launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
           favoritesList);
@@ -520,8 +513,8 @@ public class RSProjectConfigurator {
           IRuntimeClasspathEntry.STANDARD_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
       classpath.add(r.getMemento());
-      jarPath = new Path(RepastLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
+      jarPath = new Path(StandAloneBatchCPInit.CP_VARIABLE_NAME);
+      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       launchConfigurationWorkingCopy.setAttribute(

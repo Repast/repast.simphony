@@ -271,6 +271,12 @@
             name="Repast Simphony">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathVariableInitializer">
+         <classpathVariableInitializer                                          
+      variable="STAND_ALONE_BATCH_CLASSPATH"                                                        
+      class="repast.simphony.eclipse.StandAloneBatchCPInit"/>     
+   </extension>
    
    
 

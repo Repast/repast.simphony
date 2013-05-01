@@ -35,13 +35,15 @@ Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/gt-shapefile-9.0.jar,
  lib/jts-1.13.jar,
  lib/dom4j-1.6.1.jar,
- lib/geronimo-stax-api_1.0_spec-1.0.jar,
  lib/xmlbeans-2.3.0.jar,
  lib/opencsv-2.3.jar,
  lib/commons-math3-3.2.jar,
  lib/commons-lang3-3.1.jar,
  lib/cglib-nodep-2.2.3.jar,
- lib/poi-3.9-20121203.jar
+ lib/poi-3.9-20121203.jar,
+ lib/poi-ooxml-3.9-20121203.jar,
+ lib/poi-ooxml-schemas-3.9-20121203.jar,
+ lib/stax-api-1.0.1.jar
 Bundle-Localization: plugin
 Export-Package: .,
  EDU.oswego.cs.dl.util.concurrent,

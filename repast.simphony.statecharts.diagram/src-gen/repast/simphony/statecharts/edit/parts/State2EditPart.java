@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.PositionConstants;
@@ -372,18 +374,18 @@ public class State2EditPart extends ShapeNodeEditPart {
     private WrappingLabel fFigureStateNameFigure;
 
     /**
-     * @generated
+     * @generated NOT
      */
     public StateFigure() {
 
-      FlowLayout layoutThis = new FlowLayout();
-      layoutThis.setStretchMinorAxis(false);
-      layoutThis.setMinorAlignment(FlowLayout.ALIGN_LEFTTOP);
+      GridLayout layoutThis = new GridLayout();
+      layoutThis.numColumns = 1;
+      layoutThis.makeColumnsEqualWidth = true;
+      layoutThis.horizontalSpacing = 0;
+      layoutThis.verticalSpacing = 0;
+      layoutThis.marginWidth = 0;
+      layoutThis.marginHeight = 0;
 
-      layoutThis.setMajorAlignment(FlowLayout.ALIGN_LEFTTOP);
-      layoutThis.setMajorSpacing(5);
-      layoutThis.setMinorSpacing(5);
-      layoutThis.setHorizontal(true);
 
       this.setLayoutManager(layoutThis);
 
@@ -398,6 +400,15 @@ public class State2EditPart extends ShapeNodeEditPart {
      * @generated NOT
      */
     private void createContents() {
+      
+      GridData gd = new GridData();
+      gd.verticalAlignment = GridData.CENTER;
+      gd.horizontalAlignment = GridData.CENTER;
+      gd.horizontalIndent = 0;
+      gd.horizontalSpan = 1;
+      gd.verticalSpan = 1;
+      gd.grabExcessHorizontalSpace = true;
+      gd.grabExcessVerticalSpace = true;
 
       fFigureStateNameFigure = new WrappingLabel();
 
@@ -405,7 +416,7 @@ public class State2EditPart extends ShapeNodeEditPart {
       fFigureStateNameFigure.setAlignment(PositionConstants.CENTER);
 
 
-      this.add(fFigureStateNameFigure);
+      this.add(fFigureStateNameFigure, gd);
 
     }
 
