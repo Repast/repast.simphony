@@ -21,7 +21,6 @@ import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.ComboBoxAdapter;
 import com.jgoodies.binding.value.AbstractValueModel;
-import com.jgoodies.common.format.EmptyNumberFormat;
 
 /**
  * ProbedProperty for numeric types.

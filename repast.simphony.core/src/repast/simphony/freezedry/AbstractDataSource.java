@@ -1,7 +1,7 @@
 /*CopyrightHere*/
 package repast.simphony.freezedry;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import simphony.util.messages.MessageCenter;
 
 import java.util.*;

@@ -1,6 +1,6 @@
 package repast.simphony.R;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**

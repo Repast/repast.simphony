@@ -16,6 +16,12 @@
 		<library id="sql_bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
+		<library id="josql" path="lib/JoSQL-2.2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		<library id="gentlyWEB" path="lib/gentlyWEB-utils-1.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
 	</runtime>
 
 	<extension id="sql.actions" plugin-id="saf.core.ui" point-id="ui.Actions">

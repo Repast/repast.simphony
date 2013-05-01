@@ -30,7 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
 import repast.simphony.gis.styleEditor.SimpleMarkFactory;

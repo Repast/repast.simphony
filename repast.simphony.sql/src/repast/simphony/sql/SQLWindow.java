@@ -39,7 +39,6 @@ import org.jscience.physics.amount.Amount;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunState;
-import repast.simphony.essentials.RepastJoSQLFunctionHandler;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.ui.filters.FileExtensionFilter;

@@ -15,14 +15,5 @@
 		<library id="essential_bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-		<library id="sql" path="bin/" type="code">
-			<export prefix="*"/>
-		</library>
-		<library id="josql" path="lib/JoSQL-1.9.jar" type="code">
-			<export prefix="*"/>
-		</library>
-		<library id="gentlyWEB" path="lib/gentlyWEB-utils-1.1.jar" type="code">
-			<export prefix="*"/>
-		</library>
 	</runtime>
 </plugin>

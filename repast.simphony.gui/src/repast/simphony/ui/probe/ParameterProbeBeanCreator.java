@@ -14,7 +14,7 @@ import javassist.CtNewMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;

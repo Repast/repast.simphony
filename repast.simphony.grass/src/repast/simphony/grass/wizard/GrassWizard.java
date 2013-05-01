@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.StaticModel;
 

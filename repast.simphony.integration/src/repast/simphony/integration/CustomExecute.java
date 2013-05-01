@@ -4,8 +4,10 @@ package repast.simphony.integration;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
-import org.apache.commons.exec.Execute;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteStreamHandler;
 import org.apache.commons.exec.OS;
 import org.apache.commons.exec.PumpStreamHandler;
@@ -18,10 +20,12 @@ import simphony.util.messages.MessageCenter;
  * 
  * @author Jerry Vos
  */
-public class CustomExecute extends Execute {
+public class CustomExecute extends DefaultExecutor {
 	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(CustomExecute.class);
 
 	private File workingDirectory;
+	private CommandLine commandLine;
+	private Map environment;
 
 	@Override
 	public void setWorkingDirectory(File wd) {
@@ -41,7 +45,7 @@ public class CustomExecute extends Execute {
 		if (workingDirectory != null && !workingDirectory.exists()) {
 			throw new IOException(workingDirectory + " doesn't exist.");
 		}
-		final Process process = launch(getCommandline(), getEnvironment(), workingDirectory);
+		final Process process = launch(commandLine, environment, workingDirectory);
 		if (OS.isFamilyWindows()) {
 			try {
 				Thread.sleep(1000);
@@ -65,4 +69,14 @@ public class CustomExecute extends Execute {
 
 		return process;
 	}
+
+	public void setCommandLine(CommandLine commandLine) {
+		this.commandLine = commandLine;
+	}
+
+	public void setEnvironment(Map environment) {
+		this.environment = environment;
+	}
+	
+	
 }

@@ -1,6 +1,6 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang.math.Range;
+import org.apache.commons.lang3.Range;
 import repast.simphony.util.collections.Pair;
 
 import java.util.HashMap;

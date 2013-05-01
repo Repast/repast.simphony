@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data.analysis.AnalysisPluginWizard;
 import repast.simphony.data2.DataSetRegistry;
