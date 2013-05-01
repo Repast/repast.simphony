@@ -15,11 +15,6 @@
 		<library id="rspu" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-
-		<library id="wizard" path="lib/wizard-0.1.12.jar" type="code">
-			<export prefix="*"/>
-		</library>
-
 	</runtime>
 	
 	<extension-point extension-multiplicity="any" id="wizard.options"> 
