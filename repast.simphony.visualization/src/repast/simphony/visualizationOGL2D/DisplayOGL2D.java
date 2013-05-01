@@ -18,7 +18,6 @@ import java.util.concurrent.locks.Lock;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3f;
