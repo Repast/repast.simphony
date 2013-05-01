@@ -13,27 +13,16 @@
 	<runtime>
 		<!-- <library type="resources" path="icons/" id="icons"/> -->
 		<library id="rsIntegration" path="bin/" type="code"/>
-
-		<library id="commons-jxpath-1.2" path="lib/commons-jxpath-1.2.jar" type="code">
-			<export prefix="*"/>
-		</library>
-
-		<library id="jaxen-core-1.0.FCS" path="lib/jaxen-core-1.0-FCS.jar" type="code">
+		
+		<library id="jaxen" path="lib/jaxen-1.1.6.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
-		<library id="jaxen-jdom-1.0" path="lib/jaxen-jdom-1.0.jar" type="code">
+		<library id="jdom" path="lib/jdom-1.1.3.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
-		<library id="jdom-1.0" path="lib/jdom-1.0.jar" type="code">
-			<export prefix="*"/>
-		</library>
-		
-		<library id="saxpath-1.0-FCS" path="lib/saxpath-1.0-FCS.jar" type="code">
-			<export prefix="*"/>
-		</library>
-		<library id="exec-1.0-FCS" path="lib/exec-1.0-SNAPSHOT.jar" type="code"/>		
+		<library id="commons-exec" path="lib/commons-exec-1.1.jar" type="code"/>		
 	</runtime>
 
 <!--

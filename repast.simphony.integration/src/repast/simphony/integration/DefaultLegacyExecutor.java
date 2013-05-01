@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.Execute;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.Executor;
 
 import simphony.util.messages.MessageCenter;
 
@@ -26,21 +27,22 @@ public class DefaultLegacyExecutor implements LegacyExecutor {
 		super();
 
 		this.commandLine = new CommandLine(executable);
-		for (String arg : args) {
-			this.commandLine.addArgument(arg);
+		
+		if (args != null){
+			for (String arg : args) {
+				this.commandLine.addArgument(arg);
+			}
 		}
-
 		this.environment = environment;
 	}
 
 	public int execute() throws IOException {
-		Execute exec = new Execute();
-		exec.setCommandline(commandLine);
-		if (environment != null) {
-			exec.setEnvironment(environment);
-		}
-
-		return exec.execute();
+		Executor exec = new DefaultExecutor();
+	
+		if (environment != null)
+		  return exec.execute(commandLine, environment);
+		else
+			return exec.execute(commandLine);
 	}
 
 	public void spawn() throws IOException {
@@ -52,7 +54,7 @@ public class DefaultLegacyExecutor implements LegacyExecutor {
 		this.readExitSig = false;
 
 		CustomExecute exec = new CustomExecute();
-		exec.setCommandline(commandLine);
+		exec.setCommandLine(commandLine);
 		if (environment != null) {
 			exec.setEnvironment(environment);
 		}
@@ -71,5 +73,32 @@ public class DefaultLegacyExecutor implements LegacyExecutor {
 		readExitSig = true;
 
 		return spawnedProcess.exitValue();
+	}
+	
+	public static void main (String[] args){
+		String command = "C:\\Program Files (x86)\\Microsoft Office\\Office14\\EXCEL.EXE";
+		String commandargs[] = new String[1];
+		
+		// Test a simple command line and command line arguments.
+		// Forces Excel to start without displaying the startup screen and creating 
+		// a new workbook (Book1.xls).
+		commandargs[0] = "/e"; 
+	
+		DefaultLegacyExecutor exec = new DefaultLegacyExecutor(command, commandargs, null);
+		
+//		try {
+//			exec.execute();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		try {
+			exec.spawn();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
