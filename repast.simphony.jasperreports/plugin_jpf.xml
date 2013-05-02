@@ -16,9 +16,24 @@
 		<library id="rsjasperreports" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-		<library id="jasperreports-1.3.4" path="lib/jasperreports-1.3.4.jar" type="code">
+		<library id="jasperreports" path="lib/jasperreports-5.1.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
+		
+		<!-- Note that Jasper Reports has specific runtime requirements on these libraries. -->
+		
+		<library id="commons-beanutils" path="lib/commons-beanutils-1.8.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-digester" path="lib/commons-digester-2.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="iText" path="lib/iText-2.1.7.js2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
 	</runtime>
 
 </plugin>

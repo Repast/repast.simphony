@@ -51,13 +51,13 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
       "ECLIPSE_HOME/plugins/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/saf.core.runtime.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION
-          + "/lib/commons-logging-1.1.1.jar",
-      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javassist-3.15.0.GA.jar",
+          + "/lib/commons-logging-1.1.2.jar",
+      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javassist-3.17.1-GA.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf-boot.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-1.2.16.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
-      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.2.jar",
+      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.4.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar" };
 
