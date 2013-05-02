@@ -13,6 +13,9 @@ class ClassA {
 
 	public void ask(ClassB b, Closure closure){
 	}
+	public void ask(ClassA a,Closure closure){
+	
+}
 
 	public void ask(Collection<ClassB> cb, Closure closure){
 	}
@@ -38,6 +41,10 @@ class ClassA {
 
 		public void sayGoodByeB(){
 		}
+		
+		public ClassB method3(){
+			return new ClassB()
+		}
 	}
 
 	public void hello(){
@@ -46,10 +53,13 @@ class ClassA {
 		ClassB bbb = new ClassB()
 		ClassA a = new ClassA()
 		
-		ask(bb) {
-			
-			ask(a) {
-				
+		ask(a) {
+			ask(b) {
+				ask(bb){
+					ask(bbb){
+						
+					}
+				}
 			}
 		}
 		
@@ -59,7 +69,7 @@ class ClassA {
 //			}
 //		}
 		
-//		ask(method3()){
+//		a.ask(method3()){
 //			sayHelloB()
 //			
 //		}
@@ -67,13 +77,13 @@ class ClassA {
 //			sayHelloB()
 //			
 //		}
-		ask(method2()){
-			
-			ask(a) {
-				
-				
-			}
-		}
+//		ask(method2()){
+//			
+//			ask(a) {
+//				
+//				
+//			}
+//		}
 	}
 	
 	public void test1(ClassB b, Closure closure){

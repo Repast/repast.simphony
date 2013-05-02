@@ -71,39 +71,52 @@ ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType)
 //	provider "Testing"
 //}
 
-/*contribute(bind(set1 : enclosingCallName(name("ask"))) & enclosingClosure() & bind(set2: enclosingCallDeclaringType())) {
+contribute(bind(set1 : enclosingCallName(name("ask"))) & enclosingClosure() /*& bind(set2: enclosingCallDeclaringType())*/) {
 	log "In ask pointcut"
-	log "Set1 is \n${set1}"
-	log "Set1 class is \n${set1.class}"
-	int numEnclosed = set1.size()
+	for (obj in set1){
+		log obj
+	}
+	
+	def list1 = set1.toList()
+	log "list1 is \n${list1}"
+	/*def list2 = set2.toList()
+	log "list2 is \n${list2}"
+	int numEnclosed = list1.size()
+	int counter = 0 
 	log "Numenclosed is ${numEnclosed}"
-	
-	log "Set2 is ${set2}"
+	if (counter < numEnclosed){
+		Object l1 = list1[counter]
 
-	Object s1 = set1.iterator().next()
-	
-	if (s1 instanceof MethodCallExpression){
-		MethodCallExpression mce = (MethodCallExpression)s1
-//		mce.isImplicitThis()
-		log "The enclosingCall method returned:\n${mce}"
-		Object s2 = set2.iterator().next()
-		if (s2 instanceof ClassNode){
-			ClassNode declaringType = (ClassNode)s2
-			log "The enclosingCallDeclaringType returned:\n${declaringType}"
-			ClassNode cn = getTypeOfFirstParam(mce,declaringType)
-			log "The type of the first param is ${cn}"
-			if (cn){
-				delegatesTo type:cn, except:[
-					"methodMissing",
-					"propertyMissing",
-					"<clinit>",
-					"getMetaClass"
-				]
+		if (l1 instanceof MethodCallExpression){
+			MethodCallExpression mce = (MethodCallExpression)l1
+			log "The outermost enclosingCall method returned:\n${mce}"
+			Object l2 = list2[counter]
+			
+			if (l2 instanceof ClassNode){
+				ClassNode declaringType = (ClassNode)l2
+				log "The outermost enclosingCallDeclaringType returned:\n${declaringType}"
+				ClassNode cn = getTypeOfFirstParam(mce,declaringType)
+				log "The type of the first param is ${cn}"
+				if (cn){
+					delegatesTo type:cn, except:[
+						"methodMissing",
+						"propertyMissing",
+						"<clinit>",
+						"getMetaClass"
+					]
+				}
+				else {
+					counter = numEnclosed
+				}
 			}
 		}
-	}
-	//	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
-	//	return mn.getReturnType();
-	//	return null
+		while(counter < numEnclosed){
+			//
+			counter++
+		}
+		//	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
+		//	return mn.getReturnType();
+		//	return null
+	}*/
 	provider "ReLogo"
-}*/
+}
