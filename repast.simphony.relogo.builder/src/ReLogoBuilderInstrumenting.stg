@@ -14,7 +14,14 @@ turtleHatchTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,
  */
 @ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number, Closure closure) {
-	return this.hatch(number,closure,"<lowerPlural>");
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.hatch(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result;
 }
 
 /**
@@ -759,7 +766,14 @@ patchSproutTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,
  */
 @ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> sprout<capPlural>(int number, Closure closure) {
-	return this.sprout(number,closure,"<lowerPlural>");
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.sprout(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result;
 }
 
 /**
@@ -827,7 +841,14 @@ observerCreateTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlur
  */
 @ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> create<capPlural>(int number, Closure closure) {
-	return this.crt(number,closure,"<capSingular>");
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.crt(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result; 
 }
 
 /**
@@ -860,7 +881,14 @@ observerCreateOrderedTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lo
  */
 @ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
 public AgentSet\<<fullyQualifiedName>\> createOrdered<capPlural>(int number, Closure closure) {
-	return this.cro(number,closure,"<capSingular>");
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.cro(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result; 
 }
 
 /**

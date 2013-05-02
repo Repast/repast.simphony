@@ -1,0 +1,109 @@
+package dsld
+
+import org.codehaus.groovy.ast.ClassHelper;
+import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.GenericsType
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.expr.ArgumentListExpression
+import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.expr.Expression
+import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.ast.expr.VariableExpression
+
+// this is a DSLD file
+// start off creating a custom DSL Descriptor for your Groovy DSL
+
+ClassNode collection(){
+	return  ClassHelper.make("java.util.Collection")
+}
+
+ClassNode extractType(ClassNode orig){
+
+}
+
+/**
+ * Extract the first generic type from the ClassNode, if it exists
+ * @param orig
+ * @return
+ */
+ClassNode extractGeneric(ClassNode orig) {
+	GenericsType[] gt = orig.genericsTypes
+	if (gt?.length == 1) {
+		return gt[0].type
+	}
+	null
+}
+
+ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType){
+	Expression argumentsExpression = mce.getArguments()
+	if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+		List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+		Object arg = arguments.get(0)
+		if (arg != null){
+			if( arg instanceof ConstantExpression){
+				ConstantExpression ce = (ConstantExpression) arg
+				return ce.getType()
+			} else if (arg instanceof VariableExpression){
+				return ((VariableExpression)arg).getType()
+			} else if (arg instanceof MethodCallExpression){
+				MethodCallExpression mce2 = (MethodCallExpression) arg
+				log "mce2's method is: ${mce2.getMethod()}"
+				MethodNode mn = declaringType.getDeclaredMethod(mce2.getMethodAsString(), [] as Parameter[])
+				if (mn != null){
+					ClassNode returnType = mn.getReturnType()
+					if (returnType.isDerivedFrom(collection())){
+						return extractGeneric(returnType)
+					}
+					return returnType;
+				}
+			}
+		}
+	}
+	return null
+}
+
+// The following snippet adds the 'newProp' to all types that are a subtype of GroovyObjects
+
+//contribute(enclosingCallName("test1") & enclosingClosure() & bind(ec: enclosingCallDeclaringType())){
+//	log "############# In test1"
+//	log "ec is ${ec}"
+//	provider "Testing"
+//}
+
+/*contribute(bind(set1 : enclosingCallName(name("ask"))) & enclosingClosure() & bind(set2: enclosingCallDeclaringType())) {
+	log "In ask pointcut"
+	log "Set1 is \n${set1}"
+	log "Set1 class is \n${set1.class}"
+	int numEnclosed = set1.size()
+	log "Numenclosed is ${numEnclosed}"
+	
+	log "Set2 is ${set2}"
+
+	Object s1 = set1.iterator().next()
+	
+	if (s1 instanceof MethodCallExpression){
+		MethodCallExpression mce = (MethodCallExpression)s1
+//		mce.isImplicitThis()
+		log "The enclosingCall method returned:\n${mce}"
+		Object s2 = set2.iterator().next()
+		if (s2 instanceof ClassNode){
+			ClassNode declaringType = (ClassNode)s2
+			log "The enclosingCallDeclaringType returned:\n${declaringType}"
+			ClassNode cn = getTypeOfFirstParam(mce,declaringType)
+			log "The type of the first param is ${cn}"
+			if (cn){
+				delegatesTo type:cn, except:[
+					"methodMissing",
+					"propertyMissing",
+					"<clinit>",
+					"getMetaClass"
+				]
+			}
+		}
+	}
+	//	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
+	//	return mn.getReturnType();
+	//	return null
+	provider "ReLogo"
+}*/

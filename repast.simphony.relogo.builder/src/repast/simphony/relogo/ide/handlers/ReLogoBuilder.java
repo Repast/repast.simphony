@@ -309,7 +309,12 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				IFile localFile = srcGenNewFolder.getFile(fileName);
 
 				// For creation:
-				localFile.create(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true, null);
+				if (!localFile.exists()){ 
+					localFile.create(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true, null);
+				}
+				else{// It shouldn't exist, but just in case it does
+					localFile.setContents(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true,true,null);
+				}
 
 				final IFile fileToSave = localFile;
 				final IResource[] resources = { fileToSave };
