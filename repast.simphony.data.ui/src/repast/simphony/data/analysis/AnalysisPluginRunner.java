@@ -196,7 +196,17 @@ public class AnalysisPluginRunner extends AbstractAction implements
 //  	command[4] = "DELIMITER0=,";
   	
   	command[0] = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
-  	command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test3.xml";
+  	command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test7.xml";
+//  	command[1] = "test7.xml";
+  	
+//  	command[0] = "C:\\Program Files (x86)\\JasperSoft\\iReport-5.1.0\\bin\\ireport.exe";
+//  	command[1] = "C:\\Users\\eric\\Desktop\\ireport connection.xml";
+//  	command[1] = "--open file";
+//  	command[1] = "C:\\Users\\eric\\Desktop\\report1.jrxml";
+  	
+  	for (String s : command)
+			System.out.print(s + " ");
+		System.out.print("\n");
   	
   	try {
 			Runtime.getRuntime().exec(command);
