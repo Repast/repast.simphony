@@ -18,7 +18,7 @@ public class BrowseForHomeStep extends PanelWizardStep {
 	public JTextField homeDirField;
 
 	public BrowseForHomeStep(String name, String installHome, String defaultLocation) {
-		super(name + " home", "<HTML>Please browse to " + name + "'s home directory.<BR>" +
+		super(name + " home", "<HTML>Please select " + name + "'s executable file.  " +
 				"The default installation location for " + name+ " is " + defaultLocation + ".");
 
 		this.installHome = installHome;
@@ -39,7 +39,7 @@ public class BrowseForHomeStep extends PanelWizardStep {
 		browseButton.setMnemonic('b');
 		browseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				homeDirField.setText(browseForDirectory());
+				homeDirField.setText(browseForExecutable());
 			}
 		});
 
@@ -47,18 +47,14 @@ public class BrowseForHomeStep extends PanelWizardStep {
 
 		setComplete(true);
 	}
-	private String browseForDirectory() {
-		File home = FileChooserUtilities.getOpenDirectory(new File(defaultLocation));
+	private String browseForExecutable() {
+		File home = FileChooserUtilities.getOpenFile(new File(defaultLocation));
 
 		String directory;
 		if (home != null) {
 			directory = home.getAbsolutePath();
 		} else {
 			directory = homeDirField.getText();
-		}
-
-		if (!directory.endsWith(SystemConstants.DIR_SEPARATOR)) {
-			directory += SystemConstants.DIR_SEPARATOR;
 		}
 
 		return directory;

@@ -49,14 +49,10 @@ public class IReportWizard extends AnalysisPluginWizard {
 	
 	@Override
 	public String[] getExecutionCommand() {
-		StringBuilder logFileBuilder = new StringBuilder();
 		List<String> commands = new ArrayList<String>();
-
 
 		List<FileDataSink> outputters = fileStep.getChosenOutputters();
 		for (int i = 0; i < outputters.size(); i++) {
-
-			logFileBuilder.append(" -config-file ");
 
 			csvFileName = prepFileNameFor(outputters.get(i).getFile().getAbsolutePath());
 
@@ -69,13 +65,11 @@ public class IReportWizard extends AnalysisPluginWizard {
 
 			connectionName = outputters.get(i).getName();
 			columnNames = ((TabularFormatter)outputters.get(i).getFormatter()).getColumnNames();
-			
-
 		}
 
 		commands.add(getExecutableLoc());
-		commands.add("-config-file");
-		commands.add(createConfigFile());
+//		commands.add("-config-file");
+		commands.add(csvFileName);
 
 		return commands.toArray(new String[commands.size()]);
 	}

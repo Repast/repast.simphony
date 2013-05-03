@@ -56,7 +56,7 @@ public class RWizard extends AnalysisPluginWizard {
     // NOTE: the LOGFILE and DELIMMTER args are processed by our .Rprofile.
     
     if (SystemUtils.IS_OS_WINDOWS) {
-    	commands.add(getInstallHome() + SystemConstants.DIR_SEPARATOR + "RGui.exe");
+    	commands.add(getInstallHome());
     	commands.add("--sdi");
     	commands.add("HOME=" + prepFileNameForR(getRHome()));
     	

@@ -18,7 +18,7 @@ public class RunORAModel extends AnalysisPluginRunner {
 	    if (SystemUtils.IS_OS_MAC) 
 	    	path = "/Applications/ORA/";
 	    else if (SystemUtils.IS_OS_WINDOWS)
-	    	path = "C:\\Program Files\\ORA\\";
+	    	path = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
 	    else
 	    	path = "/usr/local/bin/ORA/";
   }

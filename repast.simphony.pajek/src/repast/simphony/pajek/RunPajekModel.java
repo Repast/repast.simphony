@@ -17,7 +17,7 @@ public class RunPajekModel extends AnalysisPluginRunner {
 
   static {
     if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\pajek\\Pajek\\";
+    	path = "C:\\Pajek\\Pajek.exe";
     else
     	path = "";
   }

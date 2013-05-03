@@ -2,7 +2,6 @@ package repast.simphony.weka;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,7 +13,6 @@ import repast.simphony.data.analysis.AnalysisPluginWizard;
 import repast.simphony.data2.DataSetRegistry;
 import repast.simphony.data2.FileDataSink;
 import repast.simphony.data2.FormatType;
-import repast.simphony.data2.Formatter;
 
 /**
  * A wizard for executing Weka on a file outputter's output.
@@ -106,9 +104,11 @@ public class WekaWizard extends AnalysisPluginWizard {
 	}
 
 	public String getExecutableLoc() {
-    String home = getInstallHome();
-    if (!home.endsWith(File.separator)) home += File.separator;
-    return home + "weka.jar";
+//    String home = getInstallHome();
+//    if (!home.endsWith(File.separator)) home += File.separator;
+//    return home + "weka.jar";
+		
+		return getInstallHome();
 	}
 
 	@Override

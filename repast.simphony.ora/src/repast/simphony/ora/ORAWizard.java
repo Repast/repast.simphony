@@ -83,12 +83,14 @@ public class ORAWizard extends NetworkAnalysisPluginWizard {
 	}
 
 	private String getExecutableLoc() {
-		String home = getInstallHome();
-		if (!home.endsWith(File.separator))
-			home += File.separator;
-		return home + "ORA";
+//		String home = getInstallHome();
+//		if (!home.endsWith(File.separator))
+//			home += File.separator;
+//		return home + "ORA-NetScenes-cst-iw-64";
+		return getInstallHome();
 	}
 
+	@Override
 	public String getCannotRunMessage() {
 		return "An output file or files have been created, but *ORA itself can only be executed under Windows.";
 	}

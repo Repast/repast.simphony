@@ -184,16 +184,19 @@ public class AnalysisPluginRunner extends AbstractAction implements
   }
   
   public static void main (String [] args){
-  	String[] command = new String[5];
+  	String[] command = new String[2];
   	
 //  	command[0] = "C:\\Program Files (x86)\\Microsoft Office\\OFFICE14\\Excel.exe";
 //  	command[1] = "C:\\Users\\tatara\\Repast-Simphony\\Schelling\\ModelOutput.2013.May.01.17_12_19.txt.csv ";
   	
-  	command[0] = "C:/R-3.0.0/bin/x64/RGui.exe";
-  	command[1] = "--sdi";
-  	command[2] = "HOME=C:/Users/eric/repast-simphony/Schelling/RHome";
-  	command[3] = "LOG_FILE0=C:/Users/eric/repast-simphony/Schelling/ModelOutput.2013.May.02.17_35_41.txt.csv";
-  	command[4] = "DELIMITER0=,";
+//  	command[0] = "C:/R-3.0.0/bin/x64/RGui.exe";
+//  	command[1] = "--sdi";
+//  	command[2] = "HOME=C:/Users/eric/repast-simphony/Schelling/RHome";
+//  	command[3] = "LOG_FILE0=C:/Users/eric/repast-simphony/Schelling/ModelOutput.2013.May.02.17_35_41.txt.csv";
+//  	command[4] = "DELIMITER0=,";
+  	
+  	command[0] = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
+  	command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test3.xml";
   	
   	try {
 			Runtime.getRuntime().exec(command);

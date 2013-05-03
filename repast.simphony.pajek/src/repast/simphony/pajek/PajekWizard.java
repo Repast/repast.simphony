@@ -83,10 +83,11 @@ public class PajekWizard extends NetworkAnalysisPluginWizard {
 	}
 
 	private String getExecutableLoc() {
-		String home = getInstallHome();
-		if (!home.endsWith(File.separator))
-			home += File.separator;
-		return home + "pajek.exe";
+//		String home = getInstallHome();
+//		if (!home.endsWith(File.separator))
+//			home += File.separator;
+//		return home + "pajek.exe";
+		return getInstallHome();
 	}
 
 	public String getCannotRunMessage() {
