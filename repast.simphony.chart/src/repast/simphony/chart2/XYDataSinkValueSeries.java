@@ -137,7 +137,7 @@ public class XYDataSinkValueSeries extends AbstractXYSeriesDataSink {
         data.addSeries = true;
         addedSeries.add(id);
       }
-      data.key = id;
+      data.key = id + " " + dataValueSourceId;
     } else if (key.equals(dataValueSourceId)) {
       data.val = converter.convert(value);
     }
