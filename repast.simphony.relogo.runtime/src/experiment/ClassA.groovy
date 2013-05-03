@@ -53,13 +53,19 @@ class ClassA {
 		ClassB bbb = new ClassB()
 		ClassA a = new ClassA()
 		
-		ask(a) {
-			ask(b) {
-				ask(bb){
-					ask(bbb){
-						
-					}
-				}
+//		ask(a) {
+//			ask(b) {
+//				ask(bb){
+//					ask(bbb){
+//						
+//					}
+//				}
+//			}
+//		}
+		
+		ask(bbb){
+			ask(bb){
+				
 			}
 		}
 		
@@ -69,9 +75,9 @@ class ClassA {
 //			}
 //		}
 		
-//		a.ask(method3()){
-//			sayHelloB()
+//		ask(method3()){
 //			
+//			sayHelloB()
 //		}
 //		ask(method2()){
 //			sayHelloB()

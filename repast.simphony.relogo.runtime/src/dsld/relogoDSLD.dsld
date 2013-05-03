@@ -1,10 +1,11 @@
 package dsld
 
-import org.codehaus.groovy.ast.ClassHelper;
+import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.GenericsType
 import org.codehaus.groovy.ast.MethodNode
-import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
@@ -16,10 +17,6 @@ import org.codehaus.groovy.ast.expr.VariableExpression
 
 ClassNode collection(){
 	return  ClassHelper.make("java.util.Collection")
-}
-
-ClassNode extractType(ClassNode orig){
-
 }
 
 /**
@@ -63,6 +60,33 @@ ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType)
 	return null
 }
 
+class MyCodeVisitor extends CodeVisitorSupport {
+	
+			int askFound = 0;
+			
+			public int getAskFound() {
+				return askFound;
+			}
+			public void setAskFound(int askFound) {
+				this.askFound = askFound;
+			}
+			public void visitMethodCallExpression(MethodCallExpression call) {
+				if (call!=null && call.getMethodAsString().equals("ask")){
+					askFound++;
+				}
+				call.getObjectExpression().visit(this);
+				call.getMethod().visit(this);
+				call.getArguments().visit(this);
+			}
+	
+	}
+
+void lookAtMce(MethodCallExpression mce){
+	log "looking"
+	MyCodeVisitor mcv = new MyCodeVisitor()
+	mce.visit(mcv)
+	log "asks found = ${mcv.getAskFound()}"
+}
 // The following snippet adds the 'newProp' to all types that are a subtype of GroovyObjects
 
 //contribute(enclosingCallName("test1") & enclosingClosure() & bind(ec: enclosingCallDeclaringType())){
@@ -71,52 +95,62 @@ ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType)
 //	provider "Testing"
 //}
 
-contribute(bind(set1 : enclosingCallName(name("ask"))) & enclosingClosure() /*& bind(set2: enclosingCallDeclaringType())*/) {
+contribute(bind(set1 : enclosingCallName("ask")) & bind(ec: enclosingClosure()) /*& bind(set2: enclosingCallDeclaringType())*/) {
 	log "In ask pointcut"
 	for (obj in set1){
 		log obj
 	}
-	
+
+	log "ec is \n${ec}"
 	def list1 = set1.toList()
 	log "list1 is \n${list1}"
-	/*def list2 = set2.toList()
-	log "list2 is \n${list2}"
-	int numEnclosed = list1.size()
-	int counter = 0 
-	log "Numenclosed is ${numEnclosed}"
-	if (counter < numEnclosed){
-		Object l1 = list1[counter]
+	log "list1 lentgh is ${list1.size()}"
+	// Testing here
+	Object l1 = list1[0]
+	if (l1 instanceof MethodCallExpression){
+		MethodCallExpression mce = (MethodCallExpression)l1
+		lookAtMce(mce)
 
-		if (l1 instanceof MethodCallExpression){
-			MethodCallExpression mce = (MethodCallExpression)l1
-			log "The outermost enclosingCall method returned:\n${mce}"
-			Object l2 = list2[counter]
-			
-			if (l2 instanceof ClassNode){
-				ClassNode declaringType = (ClassNode)l2
-				log "The outermost enclosingCallDeclaringType returned:\n${declaringType}"
-				ClassNode cn = getTypeOfFirstParam(mce,declaringType)
-				log "The type of the first param is ${cn}"
-				if (cn){
-					delegatesTo type:cn, except:[
-						"methodMissing",
-						"propertyMissing",
-						"<clinit>",
-						"getMetaClass"
-					]
-				}
-				else {
-					counter = numEnclosed
-				}
-			}
-		}
-		while(counter < numEnclosed){
-			//
-			counter++
-		}
-		//	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
-		//	return mn.getReturnType();
-		//	return null
-	}*/
+	}
+
+	// to here
+
+	/*def list2 = set2.toList()
+	 log "list2 is \n${list2}"
+	 int numEnclosed = list1.size()
+	 int counter = 0 
+	 log "Numenclosed is ${numEnclosed}"
+	 if (counter < numEnclosed){
+	 Object l1 = list1[counter]
+	 if (l1 instanceof MethodCallExpression){
+	 MethodCallExpression mce = (MethodCallExpression)l1
+	 log "The outermost enclosingCall method returned:\n${mce}"
+	 Object l2 = list2[counter]
+	 if (l2 instanceof ClassNode){
+	 ClassNode declaringType = (ClassNode)l2
+	 log "The outermost enclosingCallDeclaringType returned:\n${declaringType}"
+	 ClassNode cn = getTypeOfFirstParam(mce,declaringType)
+	 log "The type of the first param is ${cn}"
+	 if (cn){
+	 delegatesTo type:cn, except:[
+	 "methodMissing",
+	 "propertyMissing",
+	 "<clinit>",
+	 "getMetaClass"
+	 ]
+	 }
+	 else {
+	 counter = numEnclosed
+	 }
+	 }
+	 }
+	 while(counter < numEnclosed){
+	 //
+	 counter++
+	 }
+	 //	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
+	 //	return mn.getReturnType();
+	 //	return null
+	 }*/
 	provider "ReLogo"
 }
