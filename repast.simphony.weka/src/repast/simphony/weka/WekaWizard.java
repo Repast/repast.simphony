@@ -68,7 +68,6 @@ public class WekaWizard extends AnalysisPluginWizard {
 
     List<String> commands = new ArrayList<String>();
 
-
     commands.add("java");
     commands.add("-Xmx400M");
     commands.add("-cp");
@@ -110,6 +109,12 @@ public class WekaWizard extends AnalysisPluginWizard {
     String home = getInstallHome();
     if (!home.endsWith(File.separator)) home += File.separator;
     return home + "weka.jar";
+	}
+
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 

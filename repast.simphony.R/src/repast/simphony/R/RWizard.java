@@ -53,15 +53,29 @@ public class RWizard extends AnalysisPluginWizard {
 
     List<String> commands = new ArrayList<String>();
 
+    // NOTE: the LOGFILE and DELIMMTER args are processed by our .Rprofile.
+    
     if (SystemUtils.IS_OS_WINDOWS) {
-      StringBuilder logFileBuilder = new StringBuilder();
+    	commands.add(getInstallHome() + SystemConstants.DIR_SEPARATOR + "RGui.exe");
+    	commands.add("--sdi");
+    	commands.add("HOME=" + prepFileNameForR(getRHome()));
+    	
+      StringBuilder builder;
       List<FileDataSink> outputters = fileStep.getChosenOutputters();
+      
+      // For each outputter, define the log file and delimitter
       for (int i = 0; i < outputters.size(); i++) {
-        logFileBuilder.append(" LOG_FILE").append(i).append("=\"");
-        logFileBuilder.append(prepFileNameFor(outputters.get(i).getFile().getAbsolutePath()))
-            .append("\"");
-
-        logFileBuilder.append(" DELIMITER").append(i).append("=\"");
+     
+      	// First the log file
+      	builder = new StringBuilder();
+      	builder.append("LOG_FILE").append(i).append("=");
+      	builder.append(prepFileNameFor(outputters.get(i).getFile().getName()));
+        
+      	commands.add(prepFileNameForR(builder.toString()));
+        
+      	// and the delimitter for that file
+        builder = new StringBuilder();
+        builder.append("DELIMITER").append(i).append("=");
         Formatter formatter = outputters.get(i).getFormatter();
         if (outputters.get(i).getFormat() != FormatType.TABULAR) {
           LOG.warn("When invoking R, an outputter without a delimited formatter "
@@ -69,13 +83,12 @@ public class RWizard extends AnalysisPluginWizard {
           break;
         }
         String delimiter = formatter.getDelimiter();
-        logFileBuilder.append(delimiter).append("\"");
+        builder.append(delimiter);
+        
+        commands.add(builder.toString());
       }
-
-      commands.add(getInstallHome() + SystemConstants.DIR_SEPARATOR + "RGui.exe"
-          + " --sdi HOME=\"" + prepFileNameForR(getRHome()) + "\""
-          + prepFileNameForR(logFileBuilder.toString()));
-    } else if (SystemUtils.IS_OS_MAC) {
+    } 
+    else if (SystemUtils.IS_OS_MAC) {
       List<FileDataSink> outputters = fileStep.getChosenOutputters();
       List<String> files = new ArrayList<String>();
       List<String> delims = new ArrayList<String>();
@@ -116,7 +129,7 @@ public class RWizard extends AnalysisPluginWizard {
       commands.add(cwd);
 
     } else {
-      // linux command
+      // TODO linux command
     }
 
     return commands.toArray(new String[commands.size()]);
@@ -168,4 +181,10 @@ public class RWizard extends AnalysisPluginWizard {
 
     return R_HOME;
   }
+
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

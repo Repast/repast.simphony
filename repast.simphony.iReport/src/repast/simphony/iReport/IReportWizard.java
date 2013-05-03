@@ -167,5 +167,11 @@ public class IReportWizard extends AnalysisPluginWizard {
 		return filename;
 	}
 
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 

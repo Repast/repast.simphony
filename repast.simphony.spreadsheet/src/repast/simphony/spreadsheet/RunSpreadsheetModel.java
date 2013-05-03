@@ -12,7 +12,7 @@ public class RunSpreadsheetModel extends AnalysisPluginRunner  {
 	    if (SystemUtils.IS_OS_MAC)
 	    	path = "/Applications/Microsoft Office 2011/Microsoft Excel.app";
 	    else if (SystemUtils.IS_OS_WINDOWS)
-	    	path = "C:\\Program Files\\Microsoft Office\\OFFICE11\\Excel.exe";
+	    	path = "C:\\Program Files (x86)\\Microsoft Office\\Office14\\Excel.exe";
 	    else
 	    	path = "/usr/bin/oocalc";
 	  }

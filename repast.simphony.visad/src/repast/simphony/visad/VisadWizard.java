@@ -163,4 +163,10 @@ public class VisadWizard extends AnalysisPluginWizard {
    
     return value;
   }
+
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

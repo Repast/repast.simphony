@@ -11,7 +11,7 @@ public class RunWekaModel extends AnalysisPluginRunner  {
     if (SystemUtils.IS_OS_MAC) 
     	path = "/Applications/weka-3-6/";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files (x86)\\Weka-3-6\\";
+    	path = "C:\\Program Files\\Weka-3-6";
     else
     	path = "/usr/local/bin/Weka-3-6/";
   }

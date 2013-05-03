@@ -23,7 +23,7 @@ import simphony.util.messages.MessageCenter;
  * @author Eric Tatara
  * @author Jerry Vos
  */
-public class AnalysisPluginWizard {
+public abstract class AnalysisPluginWizard {
   protected static final MessageCenter LOG = MessageCenter
       .getMessageCenter(AnalysisPluginWizard.class);
 
@@ -168,18 +168,22 @@ public class AnalysisPluginWizard {
     homeStep.homeDirField.setText(settingsRHome);
   }
 
-  public String[] getExecutionCommand() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  /**
+   * Subclasses must specify the execution command including executable location
+   *  and arguments required to run the external plugin.
+   *  
+   * @return the execution command path and arguments.
+   */
+  public abstract String[] getExecutionCommand();
   
   public Map<String, String> getEnvVars() {
     return new HashMap<String, String>();
   }
 
-  public String getCannotRunMessage() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  /**
+   * Message for when the plugin executable fails.
+   * 
+   * @return Message for when the plugin executable fails.
+   */
+  public abstract String getCannotRunMessage();
 }
