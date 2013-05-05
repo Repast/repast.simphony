@@ -63,8 +63,12 @@ class ClassA {
 //			}
 //		}
 		
-		ask(bbb){
-			ask(bb){
+//		ask(a){
+//			
+//		}
+		ask(a){
+			
+			ask(b){
 				
 			}
 		}

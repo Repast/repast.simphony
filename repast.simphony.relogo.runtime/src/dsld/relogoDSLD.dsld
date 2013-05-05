@@ -7,6 +7,7 @@ import org.codehaus.groovy.ast.GenericsType
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
+import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
@@ -14,6 +15,7 @@ import org.codehaus.groovy.ast.expr.VariableExpression
 
 // this is a DSLD file
 // start off creating a custom DSL Descriptor for your Groovy DSL
+
 
 ClassNode collection(){
 	return  ClassHelper.make("java.util.Collection")
@@ -30,6 +32,67 @@ ClassNode extractGeneric(ClassNode orig) {
 		return gt[0].type
 	}
 	null
+}
+
+// Gets the target type of an ask MethodCallExpression
+ClassNode getTargetType(List<ClassNode> context, MethodCallExpression askMce){
+	ClassNode targetType = null
+	Expression argumentsExpression = askMce.getArguments()
+	if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+		List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+		Object arg = arguments.get(0)
+		if (arg != null){
+			if( arg instanceof ConstantExpression){
+				targetType = ((ConstantExpression) arg).getType()
+			} else if (arg instanceof VariableExpression){
+				targetType = ((VariableExpression)arg).getType()
+			} else if (arg instanceof MethodCallExpression){
+				targetType = resolveMCEReturnType(context,(MethodCallExpression)arg)
+			}
+		}
+	}
+	// TODO: might want to check to see if TPL or ReLogoAgent class and return null otherwise
+	// either here or upstream
+	if (targetType && targetType.isDerivedFrom(collection())){
+		return extractGeneric(targetType)
+	}
+	return targetType
+}
+
+ClassNode resolveMCEReturnType(List<ClassNode> context, MethodCallExpression mce){
+	log "mce2's method is: ${mce.getMethod()}"
+	String methodName = mce.getMethodAsString()
+	if (mce.isImplicitThis()){
+		for (ClassNode candidate : context){
+			MethodNode mn = candidate.getDeclaredMethod(methodName, [] as Parameter[])
+			if (mn!= null){
+				ClassNode returnType = mn.getReturnType()
+				return returnType;
+			}
+		}
+		// no candidate declared methods were found in context
+		return null;
+	}
+	// Not implicit case
+	Expression objectExpression = mce.getObjectExpression()
+	ClassNode candidate = null
+	if (objectExpression != null){
+		if( objectExpression instanceof ConstantExpression){
+			candidate = ((ConstantExpression) objectExpression).getType()
+		} else if (objectExpression instanceof VariableExpression){
+			candidate = ((VariableExpression)objectExpression).getType()
+		} else if (objectExpression instanceof MethodCallExpression){
+			candidate = resolveMCEReturnType(context, (MethodCallExpression)objectExpression)
+		}
+		if (candidate){
+			MethodNode mn = candidate.getDeclaredMethod(methodName, [] as Parameter[])
+			if (mn != null){
+				ClassNode returnType = mn.getReturnType()
+				return returnType;
+			}
+		}
+	}
+	return null
 }
 
 ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType){
@@ -61,31 +124,159 @@ ClassNode getTypeOfFirstParam(MethodCallExpression mce, ClassNode declaringType)
 }
 
 class MyCodeVisitor extends CodeVisitorSupport {
-	
-			int askFound = 0;
-			
-			public int getAskFound() {
-				return askFound;
-			}
-			public void setAskFound(int askFound) {
-				this.askFound = askFound;
-			}
-			public void visitMethodCallExpression(MethodCallExpression call) {
-				if (call!=null && call.getMethodAsString().equals("ask")){
-					askFound++;
-				}
-				call.getObjectExpression().visit(this);
-				call.getMethod().visit(this);
-				call.getArguments().visit(this);
-			}
-	
+	private final ClassNode collection = ClassHelper.make("java.util.Collection")
+	private final ClassNode baseTurtle = ClassHelper.make('repast.simphony.relogo.BaseTurtle')
+	private final ClassNode basePatch =  ClassHelper.make('repast.simphony.relogo.BasePatch')
+	private final ClassNode baseLink =  ClassHelper.make('repast.simphony.relogo.BaseLink')
+
+	ClosureExpression myClosure;
+	ClassNode currentType;
+	public List<ClassNode> context = [];
+	public StringBuilder sb = new StringBuilder()
+
+	public MyCodeVisitor(ClosureExpression myClosure, ClassNode enclosingClass){
+		this.myClosure = myClosure
+		context.add(enclosingClass)
+	}
+	int askFound = 0;
+
+	public int getAskFound() {
+		return askFound;
+	}
+	public void setAskFound(int askFound) {
+		this.askFound = askFound;
 	}
 
-void lookAtMce(MethodCallExpression mce){
+
+	public void visitMethodCallExpression(MethodCallExpression call)	{
+		if (call!=null && call.getMethodAsString().equals("ask")){
+			askFound++;
+		}
+		else {
+			return
+		}
+		ClassNode targetType = getTargetType(context,call)
+
+		if (targetType /*&& (targetType.isDerivedFrom(baseTurtle) || targetType.isDerivedFrom(basePatch) || targetType.isDerivedFrom(baseLink))*/){
+			context.add(targetType)
+		}
+		else {
+			return
+		}
+
+		// TODO: remove below bit
+		Expression objectExpression = call.getObjectExpression()
+		ClassNode objectExpressionType = null
+		objectExpressionType = currentType
+		if (!call.isImplicitThis()){
+			objectExpressionType = objectExpression.getType()
+		}
+		sb.append("simple objectExpressionType = ${objectExpressionType}\n")
+		//		objectExpression.visit(this);
+
+		//		call.getMethod().visit(this);
+		// TODO: remove above bit
+
+		Expression argumentsExpression = call.getArguments()
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List<Expression> arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			//			sb.append("arguments[0].getType() = ${arguments[0].getType()}\n")
+			if (arguments){
+				if (arguments[-1] == myClosure){
+					// stop descending
+				}
+				else {
+					argumentsExpression.visit(this);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Extract the first generic type from the ClassNode, if it exists
+	 * @param orig
+	 * @return
+	 */
+	ClassNode extractGeneric(ClassNode orig) {
+		GenericsType[] gt = orig.genericsTypes
+		if (gt?.length == 1) {
+			return gt[0].type
+		}
+		null
+	}
+
+	// Gets the target type of an ask MethodCallExpression
+	ClassNode getTargetType(List<ClassNode> context, MethodCallExpression askMce){
+		ClassNode targetType = null
+		Expression argumentsExpression = askMce.getArguments()
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			Object arg = arguments.get(0)
+			if (arg != null){
+				if( arg instanceof ConstantExpression){
+					targetType = ((ConstantExpression) arg).getType()
+				} else if (arg instanceof VariableExpression){
+					targetType = ((VariableExpression)arg).getType()
+				} else if (arg instanceof MethodCallExpression){
+					targetType = resolveMCEReturnType(context,(MethodCallExpression)arg)
+				}
+			}
+		}
+		// TODO: might want to check to see if TPL or ReLogoAgent class and return null otherwise
+		// either here or upstream
+		if (targetType && targetType.isDerivedFrom(collection)){
+			return extractGeneric(targetType)
+		}
+		return targetType
+	}
+
+	ClassNode resolveMCEReturnType(List<ClassNode> context, MethodCallExpression mce){
+		//		log "mce2's method is: ${mce.getMethod()}"
+		String methodName = mce.getMethodAsString()
+		if (mce.isImplicitThis()){
+			for (ClassNode candidate : context){
+				MethodNode mn = candidate.getDeclaredMethod(methodName, [] as Parameter[])
+				if (mn!= null){
+					ClassNode returnType = mn.getReturnType()
+					return returnType;
+				}
+			}
+			// no candidate declared methods were found in context
+			return null;
+		}
+		// Not implicit case
+		Expression objectExpression = mce.getObjectExpression()
+		ClassNode candidate = null
+		if (objectExpression != null){
+			if( objectExpression instanceof ConstantExpression){
+				candidate = ((ConstantExpression) objectExpression).getType()
+			} else if (objectExpression instanceof VariableExpression){
+				candidate = ((VariableExpression)objectExpression).getType()
+			} else if (objectExpression instanceof MethodCallExpression){
+				candidate = resolveMCEReturnType(context, (MethodCallExpression)objectExpression)
+			}
+			if (candidate){
+				MethodNode mn = candidate.getDeclaredMethod(methodName, [] as Parameter[])
+				if (mn != null){
+					ClassNode returnType = mn.getReturnType()
+					return returnType;
+				}
+			}
+		}
+		return null
+	}
+
+}
+
+List<ClassNode> lookAtMce(MethodCallExpression mce, ClosureExpression ce, ClassNode enclosingClass){
 	log "looking"
-	MyCodeVisitor mcv = new MyCodeVisitor()
+	MyCodeVisitor mcv = new MyCodeVisitor(ce,enclosingClass)
 	mce.visit(mcv)
 	log "asks found = ${mcv.getAskFound()}"
+	log "StringBuilder contents are:"
+	log mcv.sb.toString()
+	return mcv.context
 }
 // The following snippet adds the 'newProp' to all types that are a subtype of GroovyObjects
 
@@ -95,62 +286,44 @@ void lookAtMce(MethodCallExpression mce){
 //	provider "Testing"
 //}
 
-contribute(bind(set1 : enclosingCallName("ask")) & bind(ec: enclosingClosure()) /*& bind(set2: enclosingCallDeclaringType())*/) {
+contribute(bind(set1 : enclosingCallName("ask")) & bind(enclosingClosureSet: enclosingClosure()) & bind(enclosingClassSet : enclosingClass()) /*& bind(set2: enclosingCallDeclaringType())*/) {
 	log "In ask pointcut"
 	for (obj in set1){
 		log obj
 	}
 
-	log "ec is \n${ec}"
+
 	def list1 = set1.toList()
 	log "list1 is \n${list1}"
-	log "list1 lentgh is ${list1.size()}"
-	// Testing here
-	Object l1 = list1[0]
-	if (l1 instanceof MethodCallExpression){
-		MethodCallExpression mce = (MethodCallExpression)l1
-		lookAtMce(mce)
+	log "list1.size() is ${list1.size()}"
+	//	log "ec.class is \n${ec.class}"
+	//	log "ec is \n${ec}"
+	//	log "ec.size() is ${ec.size()}"
 
+	if (enclosingClosureSet && enclosingClassSet){
+		ClosureExpression enclosingClosure = enclosingClosureSet.iterator().next()
+		ClassNode enclosingClass = enclosingClassSet.iterator().next()
+		Object l1 = list1[0]
+		if (l1 instanceof MethodCallExpression){
+			MethodCallExpression mce = (MethodCallExpression)l1
+			List<ClassNode> context = lookAtMce(mce,enclosingClosure,enclosingClass)
+			// remove first element
+			// contribute the rest
+			if (context){
+				context = context.drop(1)
+				
+				for (ClassNode contrib : context){
+					
+						delegatesTo type:contrib, except:[
+							"methodMissing",
+							"propertyMissing",
+							"<clinit>",
+							"getMetaClass"
+						]
+					
+				}
+			}
+		}
 	}
-
-	// to here
-
-	/*def list2 = set2.toList()
-	 log "list2 is \n${list2}"
-	 int numEnclosed = list1.size()
-	 int counter = 0 
-	 log "Numenclosed is ${numEnclosed}"
-	 if (counter < numEnclosed){
-	 Object l1 = list1[counter]
-	 if (l1 instanceof MethodCallExpression){
-	 MethodCallExpression mce = (MethodCallExpression)l1
-	 log "The outermost enclosingCall method returned:\n${mce}"
-	 Object l2 = list2[counter]
-	 if (l2 instanceof ClassNode){
-	 ClassNode declaringType = (ClassNode)l2
-	 log "The outermost enclosingCallDeclaringType returned:\n${declaringType}"
-	 ClassNode cn = getTypeOfFirstParam(mce,declaringType)
-	 log "The type of the first param is ${cn}"
-	 if (cn){
-	 delegatesTo type:cn, except:[
-	 "methodMissing",
-	 "propertyMissing",
-	 "<clinit>",
-	 "getMetaClass"
-	 ]
-	 }
-	 else {
-	 counter = numEnclosed
-	 }
-	 }
-	 }
-	 while(counter < numEnclosed){
-	 //
-	 counter++
-	 }
-	 //	MethodNode mn = cn.getDeclaredMethod("method3", [] as Parameter[])
-	 //	return mn.getReturnType();
-	 //	return null
-	 }*/
 	provider "ReLogo"
 }
