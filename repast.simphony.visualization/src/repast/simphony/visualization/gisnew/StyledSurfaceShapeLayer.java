@@ -1,5 +1,6 @@
 package repast.simphony.visualization.gisnew;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
@@ -12,20 +13,19 @@ import gov.nasa.worldwind.render.SurfaceShape;
 
 import java.util.List;
 
+import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.WWUtils;
 
-public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
+/**
+ * Styled display layer for WorldWind display layers.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
 
-  StyleGIS style;
-
-  public StyledSurfaceShapeLayer(String name, StyleGIS style) {
-
-    if (style == null)
-      this.style = new DefaultStyleGIS();
-    else
-      this.style = style;
-
-    init(name);
+  public StyledSurfaceShapeLayer(String name, StyleGIS<?> style) {
+    super(name, style);
   }
 
   protected void applyUpdatesToShape(Object o) {
@@ -47,15 +47,13 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
     // Paint fill = style.getFillColor(o);
     // shape.setFill(fill);
 
-    // TODO update the rest of the shape properties
+    // TODO WWJ - update the rest of the shape properties
 
-    // TODO use shape attributes
+    // TODO WWJ - use shape attributes
   }
 
   protected GeoShape createVisualItem(Object o) {
     GeoShape shape = style.getShape(o);
-
-    // System.out.print("Creating visual item for " + o + " ");
 
     Renderable renderable = shape.getRenderable();
 
@@ -64,18 +62,16 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
     if (style.getFeatureType(o) == GeoShape.FeatureType.POINT) {
       LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
       ((SurfacePointShape) s).setLocation(pt);
-
-      System.out.print(" POINT\n");
-    } else if (style.getFeatureType(o) == GeoShape.FeatureType.LINE) {
+    } 
+    else if (style.getFeatureType(o) == GeoShape.FeatureType.LINE) {
       List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
       ((SurfacePolyline) s).setLocations(pts);
-      System.out.print(" LINE\n");
-    } else if (style.getFeatureType(o) == GeoShape.FeatureType.POLYGON) {
+    } 
+    else if (style.getFeatureType(o) == GeoShape.FeatureType.POLYGON) {
       List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
       ((SurfacePolygon) s).setLocations(pts);
-      System.out.print(" POLYGON\n");
     } else {
-      // TODO nothing?
+      // TODO WWJ - Do we need a special NULL object for this case?
     }
 
     ShapeAttributes attrs = s.getAttributes();
@@ -88,11 +84,11 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
     attrs.setOutlineMaterial(new Material(style.getBorderColor(o)));
     attrs.setOutlineOpacity(style.getBorderOpacity(o));
 
-    // TODO
+    // TODO WWJ
     attrs.setOutlineWidth(3);
 
     s.setAttributes(attrs);
-    // TODO all of this
+    // TODO WWJ - all of this
     // shape.setGeometry(geography.getGeometry(o));
     // shape.setIsScaled(style.isScaled(o));
     // renderable.setScale(style.getScale(o));
@@ -101,12 +97,43 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
 
     return shape;
   }
-
-  public void setStyle(StyleGIS style) {
-    this.style = style;
+  
+  protected void updateExistingObjects(LayoutUpdater updater){
+  	for (Object o : visualItemMap.keySet()){
+  		applyUpdatesToShape(o);
+  	}
+  }
+  
+  protected void processAddedObjects() {
+    for (Object o : addedObjects) {
+    	GeoShape shape = createVisualItem(o);
+    	renderableToObjectMap.put(shape.getRenderable(), o);
+    	addRenderable(shape.getRenderable());
+    }
+    addedObjects.clear();
   }
 
-  // public Map<GeoShape, Object> getShapeToObjectMap() {
-  // return this.shapeToObjectMap;
-  // }
+  protected void processRemovedObjects() {
+    for (Object o : removeObjects) {
+      GeoShape shape = visualItemMap.remove(o);
+      if (shape != null) {
+        removeRenderable(shape.getRenderable());
+        renderableToObjectMap.remove(shape.getRenderable());
+      }
+    }
+    removeObjects.clear();
+  }
+  
+  /**
+   * Updates the displayed nodes by applying styles etc. The display is not
+   * updated to reflect these changes.
+   */
+  public void update(LayoutUpdater updater) {
+    // remove what needs to be removed
+    processRemovedObjects();
+    updateExistingObjects(updater);
+    processAddedObjects();
+    
+    firePropertyChange(AVKey.LAYER, null, this);
+  }
 }

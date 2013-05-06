@@ -22,26 +22,24 @@ import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.projection.Projection;
@@ -60,43 +58,59 @@ import repast.simphony.visualization.gis3D.GazetteerPanel;
 import repast.simphony.visualization.gis3D.LayerPanel;
 import repast.simphony.visualization.gis3D.WMSLayerManagerFrame;
 import repast.simphony.visualization.gis3D.WWUtils;
+import simphony.util.ThreadUtilities;
 
 import com.jogamp.common.os.Platform;
 
-public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
+public class NewDisplayGIS extends AbstractDisplay {
 
   static {
     // this seems to fix jogl canvas flicker issues on windows
     System.setProperty("sun.awt.noerasebackground", "true");
   }
+  
+  private Runnable updater = new Runnable() {
+    public void run() {
+      // Performance improvement. Null pick point skips the doPick() method on
+      // the RenderableLayer. Set pick point to null for our rendering
+      // since worldwind will update it on mouse input anyway.
+      worldWindow.getSceneController().setPickPoint(null);
+
+      try {
+        updateLock.lock();
+        worldWindow.redraw();
+      } 
+      finally {
+      	updateLock.unlock();
+      }
+    }
+  };
 
   private static final String ANAGLYPH_ICON = "3d_smiley.png";
   private static final String WMS_ICON = "wms2.png";
 
+  private Lock updateLock = new ReentrantLock();
   protected JPanel panel;
-  private boolean addWindowListener = true;
   private Layout layout;
   private LayoutUpdater layoutUpdater;
   protected DisplayData<?> initData;
-  // private Styler styler = new Styler();
-  // private java.util.List<FeatureSource> featureSources = new
-  // ArrayList<FeatureSource>();
-  // private Map<Integer, Object> layerOrder = new HashMap<Integer, Object>();
+
   private Geography geog;
   private Model model;
 
-  private Map<Class, AbstractSurfaceLayer> classStyleMap;
-  private Map<Object, AbstractSurfaceLayer> objectStyleMap;
+  private Map<Class, StyledSurfaceShapeLayer> classStyleMap;
 
-  private WorldWindow canvas;
+  private WorldWindow worldWindow;
   private String displayMode = AVKey.STEREO_MODE_NONE;
   private LayerPanel layerPanel;
 
   private boolean doRender = true;
+  private boolean iconified = false;
+  private JTabbedPane tabParent = null;
+  private Component tabChild = null;
 
   public NewDisplayGIS(DisplayData<?> data, Layout layout) {
-    classStyleMap = new LinkedHashMap<Class, AbstractSurfaceLayer>();
-    objectStyleMap = new HashMap<Object, AbstractSurfaceLayer>();
+    classStyleMap = new LinkedHashMap<Class, StyledSurfaceShapeLayer>();
     initData = data;
     this.layout = layout;
     this.layoutUpdater = new UpdateLayoutUpdater(layout);
@@ -115,20 +129,20 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     if (Platform.getOSType() == Platform.OSType.MACOS) {
       // use the slower swing version to avoid problems on
       // OSX with jogl 2.0 under Java7
-      System.out.println("jpanel");
-      canvas = new WorldWindowGLJPanel();
+
+      worldWindow = new WorldWindowGLJPanel();
     } else {
-      canvas = new WorldWindowGLCanvas();
+      worldWindow = new WorldWindowGLCanvas();
     }
-    canvas.setModel(model);
+    worldWindow.setModel(model);
 
     // Create and install the view controls layer and register a controller for
     // it with the World Window.
     ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-    WWUtils.insertBeforeCompass(canvas, viewControlsLayer);
-    canvas.addSelectListener(new ViewControlsSelectListener(canvas, viewControlsLayer));
+    WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
+    worldWindow.addSelectListener(new ViewControlsSelectListener(worldWindow, viewControlsLayer));
 
-    StereoSceneController asc = (StereoSceneController) canvas.getSceneController();
+    StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
     asc.setStereoMode(this.displayMode);
 
     initListener();
@@ -143,18 +157,11 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     return initData;
   }
 
-  // public void registerAgentStyle(String agentName, Style style, Integer
-  // order) {
-  // styler.registerStyle(agentName, style);
-  // layerOrder.put(order, agentName);
-
-  // }
-
   /**
    * Create the select listener.
    */
   private void initListener() {
-    canvas.addSelectListener(new SelectListener() {
+    worldWindow.addSelectListener(new SelectListener() {
       public void selected(SelectEvent event) {
         if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
           if (event.hasObjects()) {
@@ -177,59 +184,66 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
       probeSupport.fireProbeEvent(this, objList);
   }
 
-  public void registerStyle(Class clazz, StyleGIS style) {
-    AbstractSurfaceLayer layer = classStyleMap.get(clazz);
+  public void registerStyle(Class clazz, StyleGIS<?> style) {
+  	StyledSurfaceShapeLayer layer = classStyleMap.get(clazz);
     if (layer == null) {
       layer = new StyledSurfaceShapeLayer(clazz.getSimpleName(), style);
       classStyleMap.put(clazz, layer);
     } else {
-      ((StyledSurfaceShapeLayer) layer).setStyle(style);
+       layer.setStyle(style);
     }
   }
 
-  // public void registerNetworkStyle(Network net, EdgeStyleGIS3D style) {
-  // AbstractSurfaceDisplayLayerGIS layer = objectStyleMap.get(net);
-  // if (layer == null) {
-  // layer = new NetworkDisplayLayerGIS3D(net, style, this, wwglCanvas,
-  // net.getName());
-  // objectStyleMap.put(net, layer);
-  // } else {
-  // ((NetworkDisplayLayerGIS3D) layer).setStyle(style);
-  // }
-  // }
+  // TODO WWJ - register network and raster styles  
 
   public void createPanel() {
     panel = new JPanel();
-    panel.addHierarchyListener(new HierarchyListener() {
-      public void hierarchyChanged(HierarchyEvent e) {
-        if (e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED && addWindowListener) {
-          Window window = SwingUtilities.getWindowAncestor(panel);
-          window.addWindowListener(NewDisplayGIS.this);
-          addWindowListener = false;
-        }
-      }
-    });
 
     panel.setLayout(new BorderLayout());
-    ((Component) canvas).setPreferredSize(new Dimension(0, 0));
+    ((Component) worldWindow).setPreferredSize(new Dimension(0, 0));
 
     JPanel wwPanel = new JPanel(new BorderLayout());
     wwPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
-    wwPanel.add(((Component) canvas), BorderLayout.CENTER);
+    wwPanel.add(((Component) worldWindow), BorderLayout.CENTER);
 
     panel.add(wwPanel, BorderLayout.CENTER);
 
     StatusBar statusBar = new StatusBar();
-    statusBar.setEventSource(canvas);
+    statusBar.setEventSource(worldWindow);
     panel.add(statusBar, BorderLayout.PAGE_END);
 
     JPanel leftPanel = new JPanel(new BorderLayout());
 
-    layerPanel = new LayerPanel(canvas);
+    layerPanel = new LayerPanel(worldWindow);
     leftPanel.add(layerPanel, BorderLayout.WEST);
 
     panel.add(leftPanel, BorderLayout.WEST);
+    
+    
+    panel.addPropertyChangeListener("ancestor", new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        Component child = panel;
+        Component parent = child.getParent();
+        while (parent != null) {
+          if (parent instanceof JTabbedPane) {
+            // if (tabParent != null)
+            // tabParent.removeChangeListener(DisplayOGL2D.this);
+            tabParent = (JTabbedPane) parent;
+            // tabParent.addChangeListener(DisplayOGL2D.this);
+            tabChild = child;
+            return;
+          }
+          child = parent;
+          parent = parent.getParent();
+        }
 
+        // if (tabParent != null)
+        // tabParent.removeChangeListener(DisplayOGL2D.this);
+        tabParent = null;
+        tabChild = null;
+      }
+    });
   }
 
   public JPanel getPanel() {
@@ -238,7 +252,17 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     }
     return panel;
   }
+  
+  private boolean isVisible() {
+    if (iconified || !((Component) worldWindow).isVisible())
+      return false;
+    
+    if (tabParent != null)
+      return tabParent.getSelectedComponent().equals(tabChild);
 
+    return true;
+  }
+  
   /**
    * Finds the object for which the specified PNode is the representation.
    * 
@@ -248,20 +272,15 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
    *         null if the object is not found.
    */
   public Object findObjForItem(Renderable renderable) {
-    Collection<AbstractSurfaceLayer> layers = classStyleMap.values();
-    for (AbstractSurfaceLayer layer : layers) {
+    Collection<StyledSurfaceShapeLayer> layers = classStyleMap.values();
+    for (StyledSurfaceShapeLayer layer : layers) {
       Object obj = layer.findObjectForRenderable(renderable);
       if (obj != null)
         return obj;
     }
-
-    // more to find, so search for edges
-    Collection<AbstractSurfaceLayer> netLayers = objectStyleMap.values();
-    for (AbstractSurfaceLayer layer : netLayers) {
-      Object obj = layer.findObjectForRenderable(renderable);
-      if (obj != null)
-        return obj;
-    }
+    
+    // TODO WWJ also loop through network and raster styles TBD
+    
     return null;
   }
 
@@ -284,57 +303,44 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
       layer.setModel(model);
       model.getLayers().add(layer);
     }
-    for (AbstractSurfaceLayer layer : objectStyleMap.values()) {
-      layer.setGeography(geog);
-      layer.setModel(model);
-      model.getLayers().add(layer);
-    }
+
+    // TODO WWJ also loop through network and raster styles TBD
 
     update();
     render();
   }
-
-  public synchronized void render() {
-
-    if (doRender && ((Component) canvas).isVisible()) {
-
-      for (AbstractSurfaceLayer layer : classStyleMap.values()) {
-        layer.applyUpdates();
-      }
-      for (AbstractSurfaceLayer layer : objectStyleMap.values()) {
-        layer.applyUpdates();
-      }
-
-      // Performance improvement. Null pick point skips the doPick() method on
-      // the RenderableLayer. Set pick point to null for our rendering
-      // since worldwind will update it on mouse input anyway.
-      canvas.getSceneController().setPickPoint(null);
-
-      canvas.redraw();
-      doRender = false;
-    }
-  }
-
+  
   public void destroy() {
     super.destroy();
     for (Projection proj : initData.getProjections()) {
       proj.removeProjectionListener(this);
     }
     initData = null;
-    Window window = SwingUtilities.getWindowAncestor(panel);
-    if (window != null)
-      window.removeWindowListener(this);
+  
     EditorFactory.getInstance().reset();
 
-    WorldWind.shutDown();
+    // TODO WWJ shutdown properly - currently WorldWind and WorldWindow.shutdown() 
+    //      doesn't work with jogl_981, so we can try to set = null.
+    //
+    //      There still seems to be a memory leak with multiple resets !!
+//    WorldWind.shutDown();
+//    worldWindow.shutdown();
+    worldWindow = null;
+    
   }
 
   @Override
   protected void addObject(Object o) {
     AbstractSurfaceLayer layer = classStyleMap.get(o.getClass());
     if (layer != null) {
-      layer.addObject(o);
-      layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.ADDED);
+    	try{
+    		updateLock.lock();
+    	  layer.addObject(o);
+        layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.ADDED);
+    	}
+    	finally {
+    		updateLock.unlock();
+    	}
     }
   }
 
@@ -348,11 +354,18 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     Class clazz = o.getClass();
     AbstractSurfaceLayer layer = classStyleMap.get(clazz);
     if (layer != null) {
-      layer.removeObject(o);
-      layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.REMOVED);
+    	try{
+    		updateLock.lock();
+    	  layer.removeObject(o);
+        layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.REMOVED);
+    	}
+    	finally{
+    		updateLock.unlock();
+    	}
     }
   }
 
+  @Override
   public void setLayout(Layout layout) {
     this.layout = layout;
     layoutUpdater.setLayout(layout);
@@ -372,77 +385,51 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     }
   }
 
-  public synchronized void update() {
-    layoutUpdater.update();
+  /*
+   * (non-Javadoc)
+   * 
+   * @see repast.simphony.visualization.IDisplay#update()
+   */
+  public void update() {
+  	if (isVisible()){
+  		layoutUpdater.update();
+  		try{
+  			updateLock.lock();
 
-    for (AbstractSurfaceLayer layer : classStyleMap.values())
-      layer.update(layoutUpdater);
+  			for (AbstractSurfaceLayer layer : classStyleMap.values())
+  				layer.update(layoutUpdater);
 
-    for (AbstractSurfaceLayer layer : objectStyleMap.values())
-      layer.update(layoutUpdater);
+  			// TODO WWJ also loop through network and raster styles TBD
 
-    doRender = true;
+  			doRender = true;
+  		}
+  		finally {
+  			updateLock.unlock();
+  		}
+  	}
   }
-
-  // public Renderable getVisualItem(Object o) {
-  // Class clazz = o.getClass();
-  // AbstractSurfaceDisplayLayerGIS layer = classStyleMap.get(clazz);
-  // Renderable pNode = null;
-  // if (layer != null) {
-  // pNode = layer.getVisualItem(o);
-  // }
-  //
-  // if (pNode == null) {
-  // // try the net layer
-  // for (AbstractSurfaceDisplayLayerGIS netLayer : objectStyleMap.values()) {
-  // pNode = netLayer.getVisualItem(o);
-  // if (pNode != null) break;
-  // }
-  // }
-  // return pNode;
-  // }
-
-  public void windowActivated(WindowEvent arg0) {
-    System.out.println("Window Activated");
-  }
-
-  public void windowClosed(WindowEvent arg0) {
-    System.out.println("Window Closed");
-  }
-
-  public void windowClosing(WindowEvent arg0) {
-    System.out.println("Window Closing");
-  }
-
-  public void windowDeactivated(WindowEvent arg0) {
-    System.out.println("Window Deactivated");
-  }
-
-  public void windowDeiconified(WindowEvent e) {
-    System.out.println("Window Deiconified");
-  }
-
-  public void windowIconified(WindowEvent e) {
-    System.out.println("Window Iconified");
-  }
-
-  public void windowOpened(WindowEvent arg0) {
-    System.out.println("Window Opened");
+  /*
+   * (non-Javadoc)
+   * 
+   * @see repast.simphony.render.Renderer#render()
+   */
+  public void render() {
+    long ts = System.currentTimeMillis();
+    if (doRender && isVisible()) {
+      if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+        ThreadUtilities.runInEventThread(updater);
+        lastRenderTS = ts;
+      }
+      doRender = false;
+    }
   }
 
   public void setPause(boolean pause) {
-  }
-
-  public void iconified() {
-    System.out.println("Iconified");
-  }
-
-  public void closed() {
-    System.out.println("Closed");
-  }
-
-  public void deIconified() {
-    System.out.println("Deiconified");
+  	 if (pause) {
+       update();
+       render();
+     }
+     ThreadUtilities.runInEventThread(updater);
   }
 
   public Layout getLayout() {
@@ -477,10 +464,10 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     else
       displayMode = AVKey.STEREO_MODE_NONE;
 
-    StereoSceneController asc = (StereoSceneController) canvas.getSceneController();
+    StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
     asc.setStereoMode(this.displayMode);
 
-    canvas.redraw();
+    worldWindow.redraw();
   }
 
   @Override
@@ -489,7 +476,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     // replace its screenshot action with the WWJ Screenshot action
     JButton cameraButton = (JButton) bar.getComponent(0);
 
-    cameraButton.setAction(new ScreenShotAction(canvas));
+    cameraButton.setAction(new ScreenShotAction(worldWindow));
     cameraButton.setIcon(CAMERA_ICON);
     cameraButton.setText("");
 
@@ -510,7 +497,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
     // Add the wms button
     JButton wmsButton = new JButton(new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        new WMSLayerManagerFrame(canvas, layerPanel);
+        new WMSLayerManagerFrame(worldWindow, layerPanel);
       }
     });
 
@@ -521,7 +508,7 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
 
     // Add a Gazetter
     try {
-      bar.add(new GazetteerPanel(canvas, null));
+      bar.add(new GazetteerPanel(worldWindow, null));
     } catch (IllegalAccessException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -539,11 +526,37 @@ public class NewDisplayGIS extends AbstractDisplay implements WindowListener {
 
   }
 
-  public Map<Class, AbstractSurfaceLayer> getClassStyleMap() {
+  public Map<Class, StyledSurfaceShapeLayer> getClassStyleMap() {
     return this.classStyleMap;
   }
 
   public WorldWindow getWwglCanvas() {
-    return this.canvas;
+    return this.worldWindow;
   }
+  
+	/*
+   * (non-Javadoc)
+   * 
+   * @see repast.simphony.visualization.IDisplay#deIconified()
+   */
+	@Override
+  public void deIconified() {
+    iconified = false;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see repast.simphony.visualization.IDisplay#iconified()
+   */
+	@Override
+  public void iconified() {
+    iconified = true;
+  }
+
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+		
+	}
 }
