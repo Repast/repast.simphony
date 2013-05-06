@@ -388,11 +388,9 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
    * @see repast.simphony.visualization.IDisplay#update()
    */
   public void update() {
-    System.out.println("DisplayOGL2D.update 1");
     if (glInitialized && !iconified) {
       layoutUpdater.update();
       try {
-        System.out.println("DisplayOGL2D.update 2");
         canvas.getRenderLock().lock();
 
         for (ValueLayerDisplayLayer layer : valueLayerStyleMap.values()) {
@@ -411,7 +409,6 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
         canvas.getRenderLock().unlock();
       }
     }
-    System.out.println("DisplayOGL2D.update finished");
   }
 
   /*
@@ -583,7 +580,6 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
    * float, float, saf.ui.v3d.VNode)
    */
   public void reshape(GLAutoDrawable drawable, float width, float height, VRoot root) {
-    System.out.println("DisplayOGL2D.reshape");
     glInitialized = true;
     update();
     // System.out.printf("width: %f, height: %f%n", width, height);
