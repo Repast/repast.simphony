@@ -24,6 +24,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -44,12 +46,25 @@ import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
-import repast.simphony.systemdynamics.subscripts.Equation;
-import repast.simphony.systemdynamics.subscripts.EquationCreator;
-import repast.simphony.systemdynamics.subscripts.VariableBlock;
+import repast.simphony.systemdynamics.subscripts.SubscriptFormatter;
 import repast.simphony.systemdynamics.util.SDModelUtils;
 
 public class VariableSheet extends Composite {
+
+  private class WhoHadFocus extends FocusAdapter {
+
+    @Override
+    public void focusGained(FocusEvent e) {
+      if (e.getSource().equals(txtEquation))
+        lastEqControl = EqControl.EQ;
+      else if (e.getSource().equals(txtLHS))
+        lastEqControl = EqControl.LHS;
+    }
+  }
+
+  protected enum EqControl {
+    EQ, LHS, INIT_VAL, NONE
+  };
 
   private Text txtId;
   protected StyledText txtEquation;
@@ -60,13 +75,14 @@ public class VariableSheet extends Composite {
   protected Map<String, Variable> varMap = new HashMap<String, Variable>();
   protected java.util.List<String> subList = new ArrayList<String>();
   protected java.util.List<String> varList = new ArrayList<String>();
-  //protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
-  private EObject eObj;
+  // protected Map<String, Subscript> subMap = new HashMap<String, Subscript>();
   private CTabFolder tabFolder;
   private Composite comp;
   private ComboViewer cmbSubViewer;
-  private Text txtLHS;
+  protected StyledText txtLHS;
   protected Label lblEq;
+
+  protected EqControl lastEqControl;
 
   public VariableSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -119,7 +135,7 @@ public class VariableSheet extends Composite {
     GridData gd_lstFunc = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
     gd_lstFunc.heightHint = 150;
     lstFunc.setLayoutData(gd_lstFunc);
-    //toolkit.adapt(lstFunc, true, true);
+    // toolkit.adapt(lstFunc, true, true);
     fillListFunc();
 
     SashForm sashForm_1 = new SashForm(sashForm, SWT.NONE);
@@ -151,7 +167,7 @@ public class VariableSheet extends Composite {
     lstVar = new List(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     toolkit.adapt(lstVar, true, true);
     tbVariables.setControl(lstVar);
-   
+
     CTabItem tbSubscripts = new CTabItem(tabFolder, SWT.NONE);
     tbSubscripts.setText("Subscripts");
     Composite c1 = new Composite(tabFolder, SWT.NONE);
@@ -161,7 +177,7 @@ public class VariableSheet extends Composite {
     gl_c1.marginHeight = 0;
     gl_c1.marginWidth = 0;
     c1.setLayout(gl_c1);
-    
+
     cmbSubViewer = new ComboViewer(c1, SWT.READ_ONLY);
     cmbSubViewer.getCombo().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     cmbSubViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -172,8 +188,8 @@ public class VariableSheet extends Composite {
         cmbSubSelected();
       }
     });
-    //toolkit.adapt(cmbSub);
-    //toolkit.paintBordersFor(cmbSub);
+    // toolkit.adapt(cmbSub);
+    // toolkit.paintBordersFor(cmbSub);
     lstSub = new List(c1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     lstSub.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     toolkit.adapt(lstSub, true, true);
@@ -205,19 +221,19 @@ public class VariableSheet extends Composite {
 
     addListeners();
   }
-  
+
   protected void createEquation(Composite parent, FormToolkit toolkit) {
     comp.setLayout(new GridLayout(2, false));
-    
+
     Label lblNewLabel = new Label(comp, SWT.NONE);
     toolkit.adapt(lblNewLabel, true, true);
     lblNewLabel.setText("LHS:");
-    
-    txtLHS = new Text(comp, SWT.BORDER);
+
+    txtLHS = new StyledText(comp, SWT.BORDER);
     txtLHS.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
     txtLHS.setFont(SWTResourceManager.getFont("Lucida Grande", 12, SWT.BOLD));
     toolkit.adapt(txtLHS, true, true);
-    
+
     lblEq = new Label(comp, SWT.NONE);
     lblEq.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
     toolkit.adapt(lblEq, true, true);
@@ -253,7 +269,6 @@ public class VariableSheet extends Composite {
   }
 
   private String formatSubscripts(Variable var) {
-	  System.out.println("StockSheet formatSubscripts");
     java.util.List<String> subs = var.getSubscripts();
     if (subs.isEmpty())
       return "";
@@ -266,63 +281,42 @@ public class VariableSheet extends Composite {
     buf.append("]");
     return buf.toString();
   }
-  
+
   protected StyledText getEquationControl() {
-    return txtEquation;
+    if (lastEqControl == EqControl.EQ)
+      return txtEquation;
+    if (lastEqControl == EqControl.LHS)
+      return txtLHS;
+    return null;
   }
 
   private void varSelected() {
     if (lstVar.getSelectionIndex() != -1) {
-      String name = lstVar.getSelection()[0];
-      Variable var = varMap.get(name);
       StyledText txtControl = getEquationControl();
-      int offset = txtControl.getSelection().x;
-      String txtToInsert = name + formatSubscripts(var);
-      txtControl.insert(txtToInsert);
-      txtControl.setCaretOffset(offset + txtToInsert.length());
-      txtControl.setFocus();
+      if (txtControl != null) {
+        String name = lstVar.getSelection()[0];
+        Variable var = varMap.get(name);
+
+        int offset = txtControl.getSelection().x;
+        String txtToInsert = name + formatSubscripts(var);
+        txtControl.insert(txtToInsert);
+        txtControl.setCaretOffset(offset + txtToInsert.length());
+        txtControl.setFocus();
+      }
     }
   }
 
   private void subSelected() {
-	  System.out.println("private void subSelected() {");
     if (lstSub.getSelectionIndex() != -1) {
-    	System.out.println("if (lstSub.getSelectionIndex() != -1) {");
       StyledText txtControl = getEquationControl();
-      EquationCreator eqc = new EquationCreator(txtControl.getText().trim());
-      Equation eq = eqc.createEquation(SDModelUtils.getVarNames((Variable) eObj));
-      int pos = txtControl.getCaretOffset();
-      System.out.println("txtControl.getCaretOffset() "+pos);
-      VariableBlock vb = null;
-      for (VariableBlock block : eq.getBlocks()) {
-    	  System.out.println("block "+block.toString());
-        if (block.getBlockStart() <= pos && block.getBlockEnd() >= pos) {
-          vb = block;
-          break;
-        }
-      }
-
-      System.out.println("vb != null: "+ (vb != null));
-      if (vb != null) {
+      if (txtControl != null) {
+        int offset = txtControl.getSelection().x;
+        SubscriptFormatter adder = new SubscriptFormatter(txtControl.getText());
         String subscript = lstSub.getSelection()[0];
-        System.out.println("subscript = "+subscript);
-        
-        // add the subscript the lhs
-        eqc = new EquationCreator(txtLHS.getText().trim());
-        System.out.println("lhs = "+txtLHS.getText().trim());
-        Equation lhsEq = eqc.createEquation(((Variable) eObj).getName());
-        java.util.List<VariableBlock> lhsBlocks = lhsEq.getBlocks();
-        System.out.println("lhsBlocks.size() > 0 "+ (lhsBlocks.size() > 0));
-        if (lhsBlocks.size() > 0) {
-          lhsBlocks.get(0).addSubscript(subscript);
-          txtLHS.setText(lhsEq.getText());
-        }
-        
-        // add the subscript to the equation or init value
-        vb.addSubscript(subscript, pos);
-        txtControl.setText(eq.getText());
+        String txtToInsert = adder.format(offset, subscript);
+        txtControl.insert(txtToInsert);
+        txtControl.setCaretOffset(offset + txtToInsert.length());
         txtControl.setFocus();
-        txtControl.setCaretOffset(pos);
       }
     }
   }
@@ -373,6 +367,10 @@ public class VariableSheet extends Composite {
   }
 
   private void addListeners() {
+    WhoHadFocus who = new WhoHadFocus();
+    txtEquation.addFocusListener(who);
+    txtLHS.addFocusListener(who);
+
     lstFunc.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -390,7 +388,6 @@ public class VariableSheet extends Composite {
     lstSub.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-    	  System.out.println("lstSub.addSelectionListener(new SelectionAdapter()");
         subSelected();
       }
     });
@@ -442,14 +439,12 @@ public class VariableSheet extends Composite {
   }
 
   protected UpdateValueStrategy createUpdateValueStrategy(IConverter converter) {
-	 
     UpdateValueStrategy strategy = new UpdateValueStrategy();
     strategy.setConverter(converter);
     return strategy;
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
-    eObj = eObject;
     java.util.List<String> allUnits = SDModelUtils.getAllUnits(eObject);
     Collections.sort(allUnits);
     cmbUnits.setItems(allUnits.toArray(new String[0]));
@@ -482,7 +477,6 @@ public class VariableSheet extends Composite {
   }
 
   protected void updateVariables(EObject eObj) {
-	  
     FunctionManager.getInstance().clearLookups();
     varMap.clear();
     varList.clear();
@@ -505,14 +499,13 @@ public class VariableSheet extends Composite {
   }
 
   protected void updateSubscripts(EObject eObj) {
-	  
     java.util.List<Subscript> subs = ((SystemModel) eObj.eContainer()).getSubscripts();
-    
+
     java.util.List<SubComboElement> cmbItems = new ArrayList<SubComboElement>();
     SubComboElement rangeItem = new SubComboElement("Range");
     cmbItems.add(rangeItem);
     SubComboElement allElementsItem = new SubComboElement("All Elements");
-    
+
     for (Subscript sub : subs) {
       rangeItem.addString(sub.getName());
       allElementsItem.addSubscript(sub);
@@ -526,43 +519,43 @@ public class VariableSheet extends Composite {
     cmbSubViewer.getCombo().select(0);
     cmbSubSelected();
   }
-  
+
   private void cmbSubSelected() {
     IStructuredSelection selection = (IStructuredSelection) cmbSubViewer.getSelection();
     SubComboElement element = (SubComboElement) selection.getFirstElement();
     lstSub.setItems(element.getItems());
   }
-  
+
   private class SubComboElement {
-     String label;
-     java.util.List<String> items = new ArrayList<String>();
-    
+    String label;
+    java.util.List<String> items = new ArrayList<String>();
+
     public SubComboElement(String label) {
       this.label = label;
     }
-    
+
     public void addSubscript(Subscript sub) {
       items.addAll(sub.getElements());
     }
-    
+
     public void addString(String val) {
       items.add(val);
     }
-    
+
     public String[] getItems() {
-      return items.toArray(new String[]{});
+      return items.toArray(new String[] {});
     }
-    
+
     public String getLabel() {
       return label;
     }
   }
-  
+
   private class SubComboElementProvider extends LabelProvider {
 
     @Override
     public String getText(Object element) {
-      return ((SubComboElement)element).getLabel();
+      return ((SubComboElement) element).getLabel();
     }
   }
 

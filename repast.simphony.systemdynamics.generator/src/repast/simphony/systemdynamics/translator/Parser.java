@@ -19,9 +19,16 @@ public class Parser {
 
     static {
 
-	for (char c : terminators) {
-	    terminatorSet.add(c);
-	}
+    	for (char c : terminators) {
+    		terminatorSet.add(c);
+    	}
+    }
+    
+    public static String translateUnaryOperator(String u) {
+    	if (u.equals(INTERNAL_UNARY_MINUS))
+    		return "-";
+    	else
+    		return u;
     }
 
     public static boolean isOperator(String token) {
@@ -49,6 +56,10 @@ public class Parser {
 	else
 	    return false;
     }
+    
+    public static boolean isEqualSign(String token) {
+    	return token.equals("=");
+        }
 
     public static boolean isUnaryOperator(String token) {
 	return ! isBinaryOperator(token);

@@ -107,9 +107,9 @@ public class View {
 	System.out.println("View Name: "+name);
 	System.out.println("View Version: "+versionCode);
 	System.out.println("View Default Font: "+viewDefaultFont);
-	System.out.println("Graphic Objects:");
-	for (GraphicObject go : graphicObjects)
-	    go.print();
+//	System.out.println("Graphic Objects:");
+//	for (GraphicObject go : graphicObjects)
+//	    go.print();
     }
 
     public List<String> getRawObjects() {

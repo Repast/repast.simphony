@@ -55,11 +55,12 @@ public class Engine {
 		System.out.println("Engine created");
 	}
 	
-	public Engine(SystemModel systemModel, IProject project, IProgressMonitor progressMonitor ) {
+	public Engine(SystemModel systemModel, IProject project, IProgressMonitor progressMonitor, boolean reinitialize ) {
 		this();
 		this.project = project;
 		this.progressMonitor = progressMonitor;
 		translator = new TranslatorRepastSimphony(project, progressMonitor, this);
+		translator.setInitializeScenarioDirectory(reinitialize);
 		InformationManagers.getInstance().setSystemModel(systemModel);
 		
 	}

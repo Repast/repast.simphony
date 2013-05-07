@@ -129,6 +129,16 @@ public class NativeDataTypeManager {
 
 		return legalName;
 	}
+	
+	public static String getAsJavaLocalVariable(String var) {
+		
+		System.out.println("getAsJavaLocalVariable "+var);
+		
+		// remove annotations that may have been added (e.g. memory. lookup. etc)
+		
+		return var.replace("memory.", "").replace("lookup.", "");
+		
+	}
 
 	public  String makeLegal(String name) {
 		return name.replace(" ", "_").replace("/", "_")
@@ -144,13 +154,56 @@ public class NativeDataTypeManager {
 		}
 		return aPossible;
 	}
+	
+	public String quoteIfNecessary(String vensimVariable) {
+		
+		// allow the operators to pass through
+		if (Parser.isOperator(vensimVariable)) {
+			System.out.println("========== quoted in/out (operator) ///"+vensimVariable+"/// "+vensimVariable);
+			return vensimVariable;
+		}
+		
+		if (vensimVariable.contains("/") ||
+				vensimVariable.contains(":") ||
+				vensimVariable.contains("-") ||
+				vensimVariable.contains("&") ||
+				vensimVariable.contains("+") ||
+				vensimVariable.contains("*") ||
+				vensimVariable.contains(".") ||
+				vensimVariable.contains("(") ||
+				vensimVariable.contains(")") ) {
+			String quoted = "\""+ vensimVariable + "\"";
+			
+			if (quoted.contains("[")) {
+				quoted = quoted.replace("]\"", "]").replace("[", "\"[");
+			}
+			System.out.println("========== quoted in/out ///"+vensimVariable+"/// "+quoted);
+			return quoted;
+		} else {
+			System.out.println("========== quoted in/out (no change)///"+vensimVariable+"/// "+vensimVariable);
+			return vensimVariable;
+		}
+		
+	}
 
 	public  String getOriginalName(String legalized) {
+		if (legalized.startsWith("array."))
+			return legalized.replace("array.", "");
 		String s = legalized.replace("memory.", "").replace("lookup.", "");
 		if (original.containsKey(s))
 			return original.get(s);
 		else
 			return legalized;
+	}
+	
+	public  String getOriginalNameQuotedIfNecessary(String legalized) {
+		if (legalized.startsWith("array."))
+			return quoteIfNecessary(legalized.replace("array.", ""));
+		String s = legalized.replace("memory.", "").replace("lookup.", "");
+		if (original.containsKey(s))
+			return quoteIfNecessary(original.get(s));
+		else
+			return quoteIfNecessary(legalized);
 	}
 
 	public  String getLegalName(String variable) {
@@ -164,20 +217,29 @@ public class NativeDataTypeManager {
 		else if (variable.contains("lookup."))
 			referenceType = "lookup.";
 		String in = variable.replace("memory.", "").replace("lookup.", "");
-		if (ArrayReference.isArrayReference(in))
+		if (ArrayReference.isArrayReference(in)) {
 			in = new ArrayReference(in).getArrayName();
+			System.out.println("Array Reference: "+variable+" /// "+in);
+		}
 		String name = legal.get(in);
 		if (name == null) {
-			if (Parser.isInteger(in) || Parser.isReal(in))
+			if (Parser.isInteger(in) || Parser.isReal(in)) {
 				return in;
+			}
 			// we haven't seen this yet
-			//	    System.out.println("Legal -> <"+in+"><"+name+">");
+			if (in.equals("array")) {
+				new Exception("Stack trace").printStackTrace();
+			}
+			System.out.println("First getLegalName Legal -> <"+in+"><"+name+">");
 			addVariable(equation, variable, "double");
 		}
 		name = legal.get(in);
 		if (name == null) {
+			if (in.equals("array")) {
+				new Exception("Stack trace").printStackTrace();
+			}
 			// we haven't seen this yet
-			System.out.println("Legal -> <"+in+"><"+name+">");
+			System.out.println("SEcond Legal -> <"+in+"><"+name+">");
 		}
 
 		if (Translator.target.equals(ReaderConstants.JAVA)) {
@@ -700,7 +762,7 @@ public class NativeDataTypeManager {
 	    if (Parser.isInteger(in) || Parser.isReal(in))
 		return in;
 	    // we haven't seen this yet
-//	    System.out.println("Legal -> <"+in+"><"+name+">");
+	    System.out.println("getLegalNameWithSubscripts Legal -> <"+in+"><"+name+">");
 	    addVariable(equation, variable, "double");
 	}
 	name = legal.get(in);

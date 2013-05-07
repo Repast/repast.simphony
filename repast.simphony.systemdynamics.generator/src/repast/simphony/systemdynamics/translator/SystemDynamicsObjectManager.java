@@ -54,7 +54,9 @@ public class SystemDynamicsObjectManager {
 
 	}
 
-	public List<Equation> findEquationsWithScreenName(String screenName, Map<String, Equation> equations) {
+	public List<Equation> findEquationsWithScreenName(String screenNameE, Map<String, Equation> equations) {
+		
+			String screenName = getScreenName(screenNameE);  // make sure that we translate to screen name if passed LHS
 		List<Equation> list = new ArrayList<Equation>();
 		for (String lhs : equations.keySet()) {
 			if (getScreenName(lhs).equals(screenName))
@@ -106,53 +108,64 @@ public class SystemDynamicsObjectManager {
 		    return objectsMap.keySet();
 		  }
 
-	public SystemDynamicsObject getObjectWithName(String screenName) {
+	public SystemDynamicsObject getObjectWithName(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		return objectsMap.get(screenName);
 	}
 
-	public String getAssociatedVariableFor(String screenName) {
+	public String getAssociatedVariableFor(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		SystemDynamicsObject sdo = objectsMap.get(screenName);
 		return sdo.getAssociatedVariableName();
 	}
 
-	public void addSystemDynamicsObject(String screenName) {
-		System.out.println("SDOM: Add "+screenName);
-		if (!objectsMap.containsKey(screenName))
+	public void addSystemDynamicsObject(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
+		
+		if (!objectsMap.containsKey(screenName)) {
+			System.out.println("SDOM: Add "+screenName);
 			objectsMap.put(screenName, new SystemDynamicsObject(screenName));
+		}
 	}
 
-	private void addSystemDynamicsObjectPlaceHolder(String screenName) {
+	private void addSystemDynamicsObjectPlaceHolder(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		System.out.println("SDOM: Adding placeholder for: "+screenName);
 		objectsMap.put(screenName, new SystemDynamicsObject(screenName));
 	}
 
-	public void addGraphicObject(String screenName, GraphicObject graphicObject) {
+	public void addGraphicObject(String screenNameE, GraphicObject graphicObject) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 
 		objectsMap.get(screenName).addGraphicObject(graphicObject);
 	}
 
-	public void addEquation(String screenName, Equation equation) {
+	public void addEquation(String screenNameE, Equation equation) {
+		String screenName = getScreenName(screenNameE);
 		System.out.println("addEquation: "+screenName+" "+equation.getEquation());
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		objectsMap.get(screenName).addEquation(equation);
 	}
 
-	public void addIncomingArrow(String screenName, Arrow incomingArrow) {
+	public void addIncomingArrow(String screenNameE, Arrow incomingArrow) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		objectsMap.get(screenName).addIncomingArrow(incomingArrow);
 	}
 
-	public void addOutgoingArrow(String screenName, Arrow incomingArrow) {
+	public void addOutgoingArrow(String screenNameE, Arrow incomingArrow) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		objectsMap.get(screenName).addOutgoingArrow(incomingArrow);
 	}
 
-	public List<Equation> getEquations(String screenName) {
+	public List<Equation> getEquations(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 
@@ -160,20 +173,23 @@ public class SystemDynamicsObjectManager {
 
 	}
 
-	public List<GraphicObject> getGraphicObjects(String screenName) {
+	public List<GraphicObject> getGraphicObjects(String screenNameE) {
+		String screenName = getScreenName(screenNameE);  // make sure that we translate to screen name if passed LHS
 		if (!objectsMap.containsKey(screenName)) 
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		return objectsMap.get(screenName).getGraphicObjects();
 	}
 
-	public List<Arrow> getIncomingArrows(String screenName) {
+	public List<Arrow> getIncomingArrows(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		return objectsMap.get(screenName).getIncomingArrows();
 
 	}
 
-	public List<Arrow> getOutgoingArrows(String screenName) {
+	public List<Arrow> getOutgoingArrows(String screenNameE) {
+		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		return objectsMap.get(screenName).getOutgoingArrows();
@@ -239,8 +255,10 @@ public class SystemDynamicsObjectManager {
 			String arrowType = "Unknown";
 			String direction = "Unknown";
 			
-			if (go.isInfluenceArrow()) arrowType = Arrow.INFLUENCE;
-			if (go.isFlowArrow()) arrowType = Arrow.FLOW;
+			if (go.isInfluenceArrow()) 
+				arrowType = Arrow.INFLUENCE;
+			if (go.isFlowArrow()) 
+				arrowType = Arrow.FLOW;
 			
 			GraphicObject EffectiveToGO = idToGraphicObject.get(go.getTo());
 			// if arrow is to a valve, point to rate associated with valve
@@ -310,7 +328,7 @@ public class SystemDynamicsObjectManager {
 			// arrows are processed separately
 			if (go.isArrow())
 				continue;
-
+System.out.println("Extract Structure add");
 			addSystemDynamicsObject(name);
 			addGraphicObject(name, go);
 			//	    if (go.getAssociatedVariable() != null) {

@@ -34,5 +34,9 @@ public class MutableInteger {
 	    value++;
 	    return retVal;
 	}
+	
+	public String toString() {
+		return Integer.toString(value);
+	}
 
 }

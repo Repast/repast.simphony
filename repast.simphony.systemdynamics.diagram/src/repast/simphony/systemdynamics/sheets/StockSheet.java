@@ -35,20 +35,17 @@ public class StockSheet extends VariableSheet {
 
     @Override
     public void focusGained(FocusEvent e) {
-      if (e.getSource().equals(txtInitVal)) initValHadFocus = true;
-      else if (e.getSource().equals(txtEquation)) initValHadFocus = false;
+      if (e.getSource().equals(txtInitVal)) lastEqControl = EqControl.INIT_VAL;
     }
   }
   
 
   private StyledText txtInitVal;
-  private boolean initValHadFocus = false;
 
   public StockSheet(FormToolkit toolkit, Composite parent) {
     super(toolkit, parent);
     WhoHadFocus who = new WhoHadFocus();
     txtInitVal.addFocusListener(who);
-    txtEquation.addFocusListener(who);
   }
 
   
@@ -74,8 +71,8 @@ public class StockSheet extends VariableSheet {
 
   @Override
   protected StyledText getEquationControl() {
-    if (initValHadFocus) return txtInitVal;
-    return txtEquation;
+    if (lastEqControl == EqControl.INIT_VAL) return txtInitVal;
+    return super.getEquationControl();
   }
 
   @Override
@@ -91,7 +88,6 @@ public class StockSheet extends VariableSheet {
 
   @Override
   protected void updateVariables(EObject eObj) {
-	 
     super.updateVariables(eObj);
     Stock stock = ((Stock) eObj);
 

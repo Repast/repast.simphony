@@ -81,6 +81,7 @@ public class EquationGraphicValidation {
 
 		for (String addedScreenName : addedScreenNames) {
 
+			System.out.println("EquationGraphicValidation add");
 			// create a SDO for this variable
 			systemDynamicsObjectManager
 					.addSystemDynamicsObject(addedScreenName);

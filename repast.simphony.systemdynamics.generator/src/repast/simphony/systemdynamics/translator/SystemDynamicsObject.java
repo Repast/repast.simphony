@@ -80,19 +80,28 @@ public class SystemDynamicsObject {
     }
 
     public void addIncomingArrow(Arrow arrow) {
-	if (!incomingArrows.contains(arrow)) {
+	if (!arrowExists(incomingArrows, arrow)) {
 		incomingArrows.add(arrow);
 		System.out.println(screenName+" SDO: AddIn "+arrow+" size "+incomingArrows.size());
 	}
-	print();
+//	print();
     }
 
     public void addOutgoingArrow(Arrow arrow) {
-	if (!outgoingArrows.contains(arrow)) {
+    	if (!arrowExists(outgoingArrows, arrow)) {
 		outgoingArrows.add(arrow);
 		System.out.println(screenName+" SDO: AddOut "+arrow+" size "+outgoingArrows.size());
 	}
-	print();
+//	print();
+    }
+    
+    public boolean arrowExists(List<Arrow> arrows, Arrow newArrow) {
+    	for (Arrow arrow : arrows) {
+    		if (arrow.getOtherEnd().equals(newArrow.getOtherEnd()))
+    			return true;
+    	}
+    	
+    	return false;
     }
 
     public String getScreenName() {

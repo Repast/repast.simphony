@@ -107,6 +107,11 @@ public class Reader {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}	
+	
+//	for (String mdl : mdlContents) {
+//		System.out.println("MDLCont: <"+mdl+">");
+//	}
+	
 	return mdlContents;
     }
 }

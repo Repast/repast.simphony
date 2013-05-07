@@ -28,6 +28,10 @@ public class InformationManagers {
     }
     return instance;
   }
+  
+  public static void clear() {
+	   instance = null;
+	  }
 
   private InformationManagers() {
     arrayManager = new ArrayManager();

@@ -13,10 +13,12 @@ import java.util.Set;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
+import repast.simphony.systemdynamics.sdmodel.Cloud;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Rate;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.Stock;
+import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
@@ -48,6 +50,7 @@ public class MDLToSystemModel {
   public SystemModel run(SystemModel model, Diagram diagram, List<String> mdlContents) {
 //    Reader reader = new Reader(mdlFile);
 //    List<String> mdlContents = reader.readMDLFile();
+	  InformationManagers.clear();
     InformationManagers.getInstance().getFunctionManager()
         .load(getClass().getResourceAsStream("/implementedFunctions.csv"));
     InformationManagers.getInstance().setSystemModel(model);
@@ -64,18 +67,42 @@ public class MDLToSystemModel {
     
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
-    for (String name : sdObjectManager.screenNames()) {
+    for (String names : sdObjectManager.screenNames()) {
+    	String name = SystemDynamicsObjectManager.getScreenName(names);
     	System.out.println("MDL2RSD screenName: "+name);
-      if (!MODEL_VARS.contains(name)) {
-        List<Equation> eqs = sdObjectManager.getEquations(name);
-        Variable var = processEquations(name, eqs, model);
-        if (var != null) {
-          if (var.getType().equals(VariableType.RATE)) {
-            rates.add((Rate)var);
-          }
-          varMap.put(name, var);
-        }
-      }
+    	if (!MODEL_VARS.contains(name)) {
+    		List<Equation> eqs = sdObjectManager.getEquations(name);
+    		if (eqs.size() > 0) {
+    			Equation peek = eqs.get(0);
+    			if (peek.isDefinesSubscript()) {
+
+    			} else {
+    				Variable var = processEquations(name, eqs, model);
+    				if (var != null) {
+    					System.out.println("MDL2RSD var type: "+var.getType().toString());
+    					if (var.getType().equals(VariableType.RATE)) {
+    						rates.add((Rate)var);
+    					}
+    					varMap.put(name, var);
+    				}
+    			}
+    		} else {
+    			if (name.startsWith("CLOUD")) {
+    				Variable var = processEquations(name, eqs, model);
+    				if (var != null) {
+    					System.out.println("MDL2RSD var type: "+var.getType().toString());
+    					if (var.getType().equals(VariableType.RATE)) {
+    						rates.add((Rate)var);
+    					}
+    					varMap.put(name, var);
+    					//    				Cloud cloud = SDModelFactory.eINSTANCE.createCloud();
+    					//    				cloud.setName(name);
+    					//    				System.out.println("Created Cloud "+name);
+    					//    				varMap.put(name, cloud);
+    				}
+    			}
+    		}
+    	}
     }
     
     // need to create subscripts
@@ -93,6 +120,13 @@ public class MDLToSystemModel {
 		  if (eqn.isDefinesSubscript()) {
 			  System.out.println("%%%%%%%%%%%% subscripts");
 			  eqn.printTokensOneLine();
+			  Subscript sub = SDModelFactory.eINSTANCE.createSubscript();
+			  sub.setName(eqn.getTokens().get(0));
+			  
+			  for (int ind = 2; ind < eqn.getTokens().size(); ind += 2) {
+				  sub.getElements().add(eqn.getTokens().get(ind));
+			  }
+			  model.getSubscripts().add(sub);
 		  }
 	  }
   }
@@ -121,26 +155,39 @@ public class MDLToSystemModel {
   }
 
   private void processRates(List<Rate> rates, Map<String, Variable> varMap, SystemDynamicsObjectManager objMan) {
-    for (Rate rate : rates) {
-      Stock from = null;
-      Stock to = null;
-      
-      for (Arrow arrow : objMan.getIncomingArrows(rate.getName())) {
-        if (arrow.getType().equals(Arrow.FLOW)) {
-          from = (Stock)varMap.get(arrow.getOtherEnd());
-          break;
-        }
-      }
-      
-      for (Arrow arrow : objMan.getOutgoingArrows(rate.getName())) {
-        if (arrow.getType().equals(Arrow.FLOW)) {
-          to = (Stock)varMap.get(arrow.getOtherEnd());
-          break;
-        }
-      }
-      rate.setFrom(from);
-      rate.setTo(to);
-    }
+	  for (Rate rate : rates) {
+		  Stock from = null;
+		  Stock to = null;
+
+		  for (Arrow arrow : objMan.getIncomingArrows(rate.getName())) {
+			  if (arrow.getType().equals(Arrow.FLOW)) {
+				  if (arrow.getOtherEnd().startsWith("CLOUD")) {
+					  System.out.println("CLOUD: "+arrow.getOtherEnd());
+					  System.out.println("Incoming from cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
+				  }
+				  from = (Stock)varMap.get(arrow.getOtherEnd());
+
+				  break;
+			  }
+		  }
+
+		  for (Arrow arrow : objMan.getOutgoingArrows(rate.getName())) {
+			  if (arrow.getType().equals(Arrow.FLOW)) {
+				  if (arrow.getOtherEnd().startsWith("CLOUD")) {
+					  System.out.println("CLOUD: "+arrow.getOtherEnd());
+					  System.out.println("Outgoing to cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
+				  }
+				  to = (Stock)varMap.get(arrow.getOtherEnd());
+
+				  break;
+			  }
+		  }
+
+		  System.out.println("Rate: from,to "+(from == null ? "NULL" : from.getName())+" "+(to == null ? "NULL" : to.getName()));
+
+		  rate.setFrom(from);
+		  rate.setTo(to);
+	  }
   }
 
   private Variable processEquations(String name, List<Equation> eqs, SystemModel model) {
@@ -149,6 +196,7 @@ public class MDLToSystemModel {
     if (eqs.size() > 0) {
       Equation eq = eqs.get(0);
       VariableType type = eq.getVariableType();
+      System.out.println("Variable Type: "+type.toString());
       if (type == VariableType.RATE) {
         var = SDModelFactory.eINSTANCE.createRate();
         var.setType(VariableType.RATE);
@@ -192,25 +240,43 @@ public class MDLToSystemModel {
   private void parseEquation(Variable var, Equation eq) {
     String equation = eq.getEquation().trim();
     System.out.println("parseEquation: "+eq.getEquation());
-    String[] sides = equation.split("=");
+    String[] sides = equation.split("=", 2);
     if (sides.length == 2) {
       String lhs = sides[0].trim();
       String rhs = sides[1].trim();
       if (var.getType() == VariableType.STOCK && rhs.startsWith("INTEG")) {
     	  System.out.println("parseEquation: found STOCK & INTEG");
     	  
+    	  // this must be done via the parse tree rather than on simple expression matching
+    	  Node root = eq.getTreeRoot();
+    	  Node lhsNode = root.getChild();
+    	  Node rhsNode = lhsNode.getNext();  // this is pointing to "INTEG"
+    	  Node arg1 = rhsNode.getChild();  // firsth arg -> the varname
+    	  Node arg5 = arg1.getNext().getNext().getNext().getNext();  // this is the "equation"
+    	  eq.printTree(arg5);
+    	  Node arg6 = arg5.getNext(); // this is the 
+    	  Stock svar = (Stock) var;
+    	  
+    	  String arg6Expression = arg6.generateExpression();
+    	  String arg5Expression = arg5.generateExpression();
+    	  
+    	  svar.setInitialValue(arg6Expression);
+    	  var.setEquation(arg5Expression);  // just rhs
+    	  
+    	  System.out.println("$$$$$$$5 "+arg5Expression);
+    	  System.out.println("$$$$$$$6 "+arg6Expression);
     	 
-        int index = rhs.indexOf("(");
-        if (index != -1) {
-          rhs = rhs.substring(index + 1);
-          if (rhs.endsWith(")"))
-            rhs = rhs.substring(0, rhs.length() - 1);
-          Stock svar = (Stock) var;
-    	  svar.setInitialValue(rhs.split(",")[1].trim());
-        }
+//        int index = rhs.indexOf("(");
+//        if (index != -1) {
+//          rhs = rhs.substring(index + 1);
+//          if (rhs.endsWith(")"))
+//            rhs = rhs.substring(0, rhs.length() - 1);
+//          Stock svar = (Stock) var;
+//    	  svar.setInitialValue(rhs.split(",")[1].trim());
+//        }
         
 
-        var.setEquation(rhs.split(",")[0].trim());  // just rhs
+//        var.setEquation(rhs.split(",")[0].trim());  // just rhs
       } else {
         var.setEquation(rhs.trim());
       }

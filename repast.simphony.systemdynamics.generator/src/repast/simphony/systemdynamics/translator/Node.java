@@ -20,6 +20,15 @@ public class Node {
     
     private boolean initialized = false;
     
+    public Node(Node anotherNode) {
+    	// make an exact copy;
+    	this.parent = anotherNode.parent;
+    	this.child = anotherNode.child;
+    	this.next = anotherNode.next;
+    	this.previous = anotherNode.previous;
+    	this.token = new String(anotherNode.token);
+    }
+    
     public Node(String token) {
 	this.token = token;
     }
@@ -186,6 +195,70 @@ public class Node {
 	    String vensimVar = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(node.getToken());
 	    sb.append(vensimVar);
 	    expand(node.getNext(), sb);
+	}
+	
+	public static String generateExpression(Node node) {
+		StringBuffer sb = new StringBuffer();
+		NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+
+		if (node != null) {
+
+			// node is the root node of an expression
+			// if an operator:
+			// left child
+			// operator
+			// right child
+			
+			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
+				if (!Parser.isUnaryOperator(node.getToken())) {
+				sb.append(generateExpression(node.getChild()));
+				sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
+				sb.append(generateExpression(node.getChild().getNext()));
+				} else {
+					sb.append(Parser.translateUnaryOperator(node.getToken()));
+					sb.append(generateExpression(node.getChild()));
+				}
+				return sb.toString();
+
+			} else {
+				sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
+			}
+
+		}
+		return sb.toString();
+	}
+	
+	public String generateExpression() {
+		
+		Node node = this;
+		StringBuffer sb = new StringBuffer();
+		NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+
+		if (node != null) {
+
+			// node is the root node of an expression
+			// if an operator:
+			// left child
+			// operator
+			// right child
+			
+			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
+				if (!Parser.isUnaryOperator(node.getToken())) {
+					sb.append(generateExpression(node.getChild()));
+					sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
+					sb.append(generateExpression(node.getChild().getNext()));
+				} else {
+					sb.append(Parser.translateUnaryOperator(node.getToken()));
+					sb.append(generateExpression(node.getChild()));
+				}
+				return sb.toString();
+
+			} else {
+				sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
+			}
+
+		}
+		return sb.toString();
 	}
 
 }

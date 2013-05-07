@@ -212,7 +212,7 @@ public class Equation {
 					getSystemDynamicsObjectManager().getGraphicObjects(lhs);
 			// this should never occur
 			if (go == null || go.size() == 0) {
-//				System.out.println("WTF getVariableType "+vensimEquation);
+				System.out.println("WTF getVariableType "+vensimEquation);
 				return VariableType.AUXILIARY;
 			} 
 			
@@ -583,6 +583,7 @@ public class Equation {
 				definition = definition + "[holder1,holder2]";
 			}
 
+			System.out.println("Process Lookup add variable");
 			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, definition, typeString ? "String" : "double");
 
 			// the specification of the lookup data can appear as x[0],x[n],y[0],,,y[n]
@@ -829,6 +830,10 @@ public class Equation {
 		// do some preliminary cleanup
 		// replace := with = not that options such as :INTERPOLATE: can occur on the LHS
 		equation = eqn[0];
+		
+		if (equation.contains("="))
+			rhs = equation.split("=", 2)[1];
+		
 		if (canRemoveColonEqual())
 			equation = eqn[0].replace(":=", "=").trim();
 		if (eqn.length> 1)
@@ -876,6 +881,7 @@ public class Equation {
 		}
 		
 		if (this.isAssignment()) {
+			System.out.println("Adding from Equation "+getLhs());
 			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, this.getLhs(), typeString ? "String" : "double");
 		}
 	}
@@ -3281,6 +3287,9 @@ public class Equation {
 	    Node end = null;
 
 	    int nPtr = 0;
+	    
+	    if (rpn.size() == 0)
+	    	this.generateRpn();
 
 	    for (String token : rpn) {
 //		System.out.println("Token: "+token);
@@ -3645,6 +3654,8 @@ public class Equation {
 	}
 
 	public Node getTreeRoot() {
+		if (treeRoot == null)
+			this.generateTree();
 	    return treeRoot;
 	}
 
