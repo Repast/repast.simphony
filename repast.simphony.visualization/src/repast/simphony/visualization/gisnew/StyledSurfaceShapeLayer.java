@@ -43,8 +43,8 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
     	SurfacePointShape rend = (SurfacePointShape)renderable;
       LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinate());
     	// Update the renderable if a new type is returned from the style
-    	GeoShape styleShape = style.getShape(obj);
-    	if (!styleShape.getRenderable().getClass().equals(rend.getClass())){
+    	GeoShape styleShape = style.getShape(obj, shape);
+    	if (styleShape != null){
     		shape.setRenderable(styleShape.getRenderable());
     	}
     	
@@ -53,8 +53,13 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
         ((SurfacePointShape) renderable).setCenter(pt);
       }
     	
-    	rend.setSize(style.getScale(obj));
+    	double size = style.getScale(obj); 
+    	
+    	if (rend.getSize() != size)
+    	  rend.setSize(size);
     }
+    
+    // TODO WWJ do a check on points and only update when new
     else if (renderable instanceof SurfacePolygon){
     	SurfacePolygon polygon = (SurfacePolygon)renderable;
     	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
@@ -84,7 +89,7 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
   }
 
   protected GeoShape createVisualItem(Object o) {
-    GeoShape shape = style.getShape(o);
+    GeoShape shape = style.getShape(o,null);
     SurfaceShape renderable = (SurfaceShape)shape.getRenderable();
     
     if (renderable instanceof SurfacePointShape){
