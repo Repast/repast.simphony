@@ -3,13 +3,13 @@
  */
 package repast.simphony.systemdynamics.handlers;
 
-import java.io.Reader;
-import java.util.List;
-import java.util.Map;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin;
 import repast.simphony.systemdynamics.engine.Engine;
-import repast.simphony.systemdynamics.subscripts.Equation;
+
 
 /**
  * @author Nick Collier
@@ -41,33 +41,21 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
    */
   @Override
   protected void doRun(IProgressMonitor progressMonitor) {
-	  
+
 	  IEditorPart editor = getWorkbenchPage().getActiveEditor();
 	  IFileEditorInput input = (IFileEditorInput)editor.getEditorInput();
 	  IFile file = input.getFile();
 	  IProject project = file.getProject();
 	  
-
-	  System.out.println("generate code");
-	  Engine engine = new Engine(model, project, progressMonitor);
-	      boolean success = engine.validateGenerateRSD(model, true);
-	  // this is for testing purposes
-//	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EnergySecurity8_3_1.mdl", true);
-//	  boolean success = engine.validateGenerateMDL("C:/eclipse15Dec2010/eclipse/workspaces/workspaceMSC/RSSD/mdl/EPIDEMIC.mdl", true);
-//	  boolean success = engine.validateGenerateMDL("C:/Program Files (x86)/Vensim/models/guide/CHAP03/WFINV.mdl", true);
-
-//	  MessageBox msgBox = null;
-//	  int style = SWT.ICON_ERROR;
-//	  if (success)
-//		  style = SWT.ICON_INFORMATION;
-//
-//
-//	  msgBox = new MessageBox(Display.getCurrent().getActiveShell(), style);
-//
-//
-//	  msgBox.setMessage(engine.getMessages());
-//	  msgBox.open();
+	  boolean reinitialize = MessageDialog.openQuestion(null, "Overwrite scenario xml files", "Reinitialize Scenario Directory?");
 	  
+//	  int res = JOptionPane.showConfirmDialog(null,
+//				"Reinitialize Scenario Directory?", "Reinitialize Scenario Directory",
+//				JOptionPane.YES_NO_OPTION);
+
+	  Engine engine = new Engine(model, project, progressMonitor, reinitialize);
+	  boolean success = engine.validateGenerateRSD(model, true);
+
 	  GenerateCodeDialog dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), success, "Code Generation:   ", engine.getMessages());
 	  dialog.open();
 

@@ -65,6 +65,8 @@ public class CodeGenerator {
     private Set<String> outerSubscripts = new HashSet<String>();
 
     private Equation currentGenerate;
+    
+    private boolean initializeScenarioDirectory = true;
 
     private boolean currentHasLhsArrayReference = false;
 
@@ -476,7 +478,9 @@ public class CodeGenerator {
 	    
 	   
 		String ScenarioDirectory = translator.getScenarioDirectory();
-		RepastSimphonyEnvironment.generateParametersXml(Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
+//		if (isInitializeScenarioDirectory())
+			RepastSimphonyEnvironment.generateParametersXml(
+					Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
 	   
 
 	} catch (IOException e) {
@@ -1496,10 +1500,10 @@ public class CodeGenerator {
 	try {
 	    Node root = equation.getTreeRoot();
 
-	    //		System.out.println("T R E E *********************************************************************");
-	    //		    equation.printTree();
-	    //		    System.out.println("T R E E   C O D E ===========================================================");
-	    //		    equation.printTreeCode();
+//	    		System.out.println("T R E E *********************************************************************");
+//	    		    equation.printTree();
+//	    		    System.out.println("T R E E   C O D E ===========================================================");
+//	    		    equation.printTreeCode();
 
 
 	    Node lhs = root.getChild();
@@ -2592,6 +2596,14 @@ public class CodeGenerator {
     public void performUnitsConsistencyCheck() {
 //	UnitsManager.performUnitsConsistencyCheck(evaluationOrder, equations, "./ConsistencyResults.xml");
     }
+
+	public boolean isInitializeScenarioDirectory() {
+		return initializeScenarioDirectory;
+	}
+
+	public void setInitializeScenarioDirectory(boolean inializeScenarioDirectory) {
+		this.initializeScenarioDirectory = inializeScenarioDirectory;
+	}
 
 
 }

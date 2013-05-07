@@ -1,6 +1,8 @@
 package repast.simphony.systemdynamics.translator;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +22,14 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.systemdynamics.analysis.PolarityCodeBuilder;
 import repast.simphony.systemdynamics.engine.Engine;
-import repast.simphony.systemdynamics.generator.DirectoryCleaner;
+import repast.simphony.systemdynamics.ode.ODECodeGenerator;
 import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
 import repast.simphony.systemdynamics.sdmodel.Stock;
 import repast.simphony.systemdynamics.sdmodel.Subscript;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
 import repast.simphony.systemdynamics.sdmodel.Variable;
 import repast.simphony.systemdynamics.sdmodel.VariableType;
+import repast.simphony.systemdynamics.support.Utilities;
 
 public class TranslatorRepastSimphony extends Translator {
 	
@@ -131,6 +134,8 @@ public class TranslatorRepastSimphony extends Translator {
     }
     
     public void ingest(SystemModel systemModel) {
+    	
+    	System.out.println("\n\n\n\n ingest \n\n\n\n\n");
     	
     	Map<String, String> linksTo = new HashMap<String, String>();
     	Map<String, String> linksFrom = new HashMap<String, String>();
@@ -356,6 +361,9 @@ public class TranslatorRepastSimphony extends Translator {
     }
     
     private List<String> convertToMDL(SystemModel systemModel) {
+    	
+    	System.out.println("\n\n\n\n convert to MDL \n\n\n\n\n");
+    	
     	List<String> mdlContents = new ArrayList<String>();
     	
     	Map<String, String> linksTo = new HashMap<String, String>();
@@ -546,7 +554,23 @@ public class TranslatorRepastSimphony extends Translator {
     			String dir = getSourceDirectory() + "/" + asDirectoryPath(packageName)+ "/";
     			new File(dir).mkdirs();
     			cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
+    			cg.setInitializeScenarioDirectory(isInitializeScenarioDirectory());
     			cg.generateCode();
+    			
+    			// ################# ODE Stock Experiment
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName);
+    			BufferedWriter bw = Utilities.openFileForWriting(dir+"/compatible.java");
+    			odecg.generate(bw);
+    			try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    			odecg.print();
+    			
+    			
     		}
     		try {
     			project.refreshLocal(IResource.DEPTH_INFINITE, null);

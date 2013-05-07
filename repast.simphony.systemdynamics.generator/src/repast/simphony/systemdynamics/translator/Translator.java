@@ -22,8 +22,6 @@ import java.util.Properties;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import repast.simphony.systemdynamics.support.ArrayReference;
-import repast.simphony.systemdynamics.support.MappedSubscriptManager;
-import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 import repast.simphony.systemdynamics.support.SubscriptCombination;
 import repast.simphony.systemdynamics.support.Utilities;
 
@@ -50,6 +48,8 @@ public class Translator {
 	protected String miscDirectory;
 	protected String packageName;
 	protected String supportName;
+	
+	private boolean initializeScenarioDirectory = true;
 
 	protected String unitsConsistencyCheckMdlFile = "";
 	protected String unitsConsistencyCheckResultsFile = "./UnitsConsistencyCheckResults.txt";
@@ -270,6 +270,11 @@ public class Translator {
 		List<EquationGraphicValidation> addedScreenNames = sdObjectManager.validate(equations);
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
+		
+		System.out.println("############################");
+		System.out.println("############################");
+		System.out.println("############################");
+		System.out.println("############################");
 		sdObjectManager.print();
 //		printGraphics(graphics);
 
@@ -436,10 +441,12 @@ public class Translator {
 
 				String ScenarioDirectory = getScenarioDirectory();
 
-				RepastSimphonyEnvironment.generateScenarioXml(Translator.openReport(ScenarioDirectory+"scenario.xml"), objectName);
-				RepastSimphonyEnvironment.generateUserPathXml(Translator.openReport(ScenarioDirectory+"user_path.xml"), objectName);
-				RepastSimphonyEnvironment.generateClassLoaderXml(Translator.openReport(ScenarioDirectory+"repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_1.xml"), objectName, this);
-				RepastSimphonyEnvironment.generateContextXml(Translator.openReport(ScenarioDirectory+"context.xml"), objectName);
+				if (this.isInitializeScenarioDirectory()) {
+					RepastSimphonyEnvironment.generateScenarioXml(Translator.openReport(ScenarioDirectory+"scenario.xml"), objectName);
+					RepastSimphonyEnvironment.generateUserPathXml(Translator.openReport(ScenarioDirectory+"user_path.xml"), objectName);
+					RepastSimphonyEnvironment.generateClassLoaderXml(Translator.openReport(ScenarioDirectory+"repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_1.xml"), objectName, this);
+					RepastSimphonyEnvironment.generateContextXml(Translator.openReport(ScenarioDirectory+"context.xml"), objectName);
+				}
 
 				InformationManagers.getInstance().getNativeDataTypeManager().generateMemoryJava(Translator.openReport(SourceDirectory+"Memory"+objectName+".java"), objectName, this);
 
@@ -1468,5 +1475,13 @@ public class Translator {
 	
 	public String getScenarioDirectory() {
 		return destinationDirectory +"/" + objectName + ".rs/";
+	}
+
+	public boolean isInitializeScenarioDirectory() {
+		return initializeScenarioDirectory;
+	}
+
+	public void setInitializeScenarioDirectory(boolean initializeScenarioDirectory) {
+		this.initializeScenarioDirectory = initializeScenarioDirectory;
 	}
 }
