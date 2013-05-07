@@ -6,11 +6,11 @@ import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
-import gov.nasa.worldwind.render.SurfaceEllipse;
 import gov.nasa.worldwind.render.SurfacePolygon;
 import gov.nasa.worldwind.render.SurfacePolyline;
 import gov.nasa.worldwind.render.SurfaceShape;
 
+import java.awt.BasicStroke;
 import java.util.List;
 
 import repast.simphony.visualization.LayoutUpdater;
@@ -28,53 +28,85 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
     super(name, style);
   }
 
-  protected void applyUpdatesToShape(Object o) {
-    GeoShape shape = getVisualItem(o);
+  protected void applyUpdatesToShape(Object obj) {
+    GeoShape shape = getVisualItem(obj);
+
+    // TODO WWJ Test for code hot spots here
+    // TODO WWJ Refactor this method and createVisualItem since they are similar
 
     // update location
-    // TODO update polygons and lines?
+    SurfaceShape renderable = (SurfaceShape)shape.getRenderable();
 
-    LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
-
-    Renderable renderable = shape.getRenderable();
-
-    if (renderable instanceof SurfaceEllipse) {
-      if (!pt.equals(((SurfaceEllipse) renderable).getCenter())) {
-        ((SurfaceEllipse) renderable).setCenter(pt);
+    // For the special case of surface point shapes, we update the shape center
+    //  location and shape implementation
+    if (renderable instanceof SurfacePointShape) {
+    	SurfacePointShape rend = (SurfacePointShape)renderable;
+      LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinate());
+    	// Update the renderable if a new type is returned from the style
+    	GeoShape styleShape = style.getShape(obj);
+    	if (!styleShape.getRenderable().getClass().equals(rend.getClass())){
+    		shape.setRenderable(styleShape.getRenderable());
+    	}
+    	
+    	// Update the center lat/lon if the shape has moved
+    	if (!pt.equals(((SurfacePointShape) renderable).getCenter())) {
+        ((SurfacePointShape) renderable).setCenter(pt);
       }
+    	
+    	rend.setSize(style.getScale(obj));
     }
-
-    // Paint fill = style.getFillColor(o);
-    // shape.setFill(fill);
-
-    // TODO WWJ - update the rest of the shape properties
-
-    // TODO WWJ - use shape attributes
+    else if (renderable instanceof SurfacePolygon){
+    	SurfacePolygon polygon = (SurfacePolygon)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	polygon.setLocations(pts);
+    }
+    else if (renderable instanceof SurfacePolyline){
+    	SurfacePolyline line = (SurfacePolyline)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	line.setLocations(pts);
+    }
+    else {  // TODO WWJ - How to handle other types?
+    	
+    }
+    
+    ShapeAttributes attrs = renderable.getAttributes();
+    
+    if (attrs == null)
+      attrs = new BasicShapeAttributes();
+    
+    attrs.setInteriorMaterial(new Material(style.getFillColor(obj)));
+    attrs.setInteriorOpacity(style.getFillOpacity(obj));
+    attrs.setOutlineMaterial(new Material(style.getBorderColor(obj)));
+    attrs.setOutlineOpacity(style.getBorderOpacity(obj));
+    attrs.setOutlineWidth(style.getBorderWidth(obj));
+    
+    renderable.setAttributes(attrs);
   }
 
   protected GeoShape createVisualItem(Object o) {
     GeoShape shape = style.getShape(o);
-
-    Renderable renderable = shape.getRenderable();
-
-    SurfaceShape s = (SurfaceShape) renderable;
-
-    if (style.getFeatureType(o) == GeoShape.FeatureType.POINT) {
+    SurfaceShape renderable = (SurfaceShape)shape.getRenderable();
+    
+    if (renderable instanceof SurfacePointShape){
+    	SurfacePointShape rend = (SurfacePointShape)renderable;
       LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
-      ((SurfacePointShape) s).setLocation(pt);
+      rend.setCenter(pt);
+      rend.setSize(style.getScale(o));
     } 
-    else if (style.getFeatureType(o) == GeoShape.FeatureType.LINE) {
-      List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
-      ((SurfacePolyline) s).setLocations(pts);
+    else if (renderable instanceof SurfacePolyline) {
+    	SurfacePolyline line = (SurfacePolyline)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
+      line.setLocations(pts);
     } 
-    else if (style.getFeatureType(o) == GeoShape.FeatureType.POLYGON) {
+    else if (renderable instanceof SurfacePolygon){
+    	SurfacePolygon polygon = (SurfacePolygon)renderable;
       List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
-      ((SurfacePolygon) s).setLocations(pts);
+    	polygon.setLocations(pts);
     } else {
       // TODO WWJ - Do we need a special NULL object for this case?
     }
-
-    ShapeAttributes attrs = s.getAttributes();
+    
+    ShapeAttributes attrs = renderable.getAttributes();
 
     if (attrs == null)
       attrs = new BasicShapeAttributes();
@@ -83,11 +115,9 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
     attrs.setInteriorOpacity(style.getFillOpacity(o));
     attrs.setOutlineMaterial(new Material(style.getBorderColor(o)));
     attrs.setOutlineOpacity(style.getBorderOpacity(o));
+    attrs.setOutlineWidth(style.getBorderWidth(o));
 
-    // TODO WWJ
-    attrs.setOutlineWidth(3);
-
-    s.setAttributes(attrs);
+    renderable.setAttributes(attrs);
     // TODO WWJ - all of this
     // shape.setGeometry(geography.getGeometry(o));
     // shape.setIsScaled(style.isScaled(o));

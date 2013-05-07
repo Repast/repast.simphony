@@ -186,7 +186,9 @@ public class NewDisplayGIS extends AbstractDisplay {
 
   public void registerStyle(Class clazz, StyleGIS<?> style) {
   	StyledSurfaceShapeLayer layer = classStyleMap.get(clazz);
-    if (layer == null) {
+    
+  	// TODO WWJ - set the layer type based on the style
+  	if (layer == null) {
       layer = new StyledSurfaceShapeLayer(clazz.getSimpleName(), style);
       classStyleMap.put(clazz, layer);
     } else {
