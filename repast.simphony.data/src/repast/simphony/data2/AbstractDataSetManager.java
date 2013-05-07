@@ -15,6 +15,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.ContextEvent;
 import repast.simphony.context.ContextListener;
 import repast.simphony.data2.builder.DataSetBuilder;
+import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
@@ -29,7 +30,7 @@ import repast.simphony.parameter.Parameters;
  * 
  * @author Nick Collier
  */
-public abstract class AbstractDataSetManager implements DataSetManager {
+public abstract class AbstractDataSetManager implements DataSetManager, RunListener {
 
   @SuppressWarnings("rawtypes")
   protected static class ObjList implements ContextListener, SizedIterable<Object> {
@@ -199,6 +200,7 @@ public abstract class AbstractDataSetManager implements DataSetManager {
    */
   @Override
   public void runStarted(RunState runState, Object contextId, Parameters parameters) {
+    runState.getScheduleRegistry().getScheduleRunner().addRunListener(this);
     
     tickCountDataSource.resetSchedule(runState.getScheduleRegistry().getModelSchedule());
     rndSeedDataSource.resetSeed((Integer) parameters
@@ -231,6 +233,7 @@ public abstract class AbstractDataSetManager implements DataSetManager {
   }
 
   public void runEnded(RunState runState, Object contextId) {
+    runState.getScheduleRegistry().getScheduleRunner().removeRunListener(this);
     for (ScheduledDataSet source : dataSets) {
       source.reset(runState.getMasterContext());
     }
@@ -258,4 +261,33 @@ public abstract class AbstractDataSetManager implements DataSetManager {
   public DataSetBuilder<?> getDataSetBuilder(String id) {
     return builders.get(id);
   }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#stopped()
+   */
+  @Override
+  public void stopped() {
+    flush();
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#paused()
+   */
+  @Override
+  public void paused() {
+    flush();
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#started()
+   */
+  @Override
+  public void started() {}
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#restarted()
+   */
+  @Override
+  public void restarted() {}
+  
 }
