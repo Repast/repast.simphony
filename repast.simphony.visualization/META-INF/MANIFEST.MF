@@ -108,6 +108,5 @@ Bundle-ClassPath: lib/batik.jar,
  lib/MS3DLoader-1.0.8.jar,
  lib/phoebe.jar,
  lib/worldwind.jar,
- lib/worldwindx.jar,
  lib/xml-apis-ext.jar,
  bin/

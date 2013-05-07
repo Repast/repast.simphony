@@ -1,91 +1,120 @@
 package repast.simphony.visualization.gisnew;
 
 import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javolution.util.FastSet;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
 
 /**
+ * Abstract base class for WorldWind GIS display layers.
  * 
  * @author Eric Tatara
  * 
  */
-public abstract class AbstractSurfaceLayer extends RenderableLayer {
+public abstract class AbstractSurfaceLayer<S> extends RenderableLayer implements IDisplayLayer<GeoShape>{
 
   protected Map<Object, GeoShape> visualItemMap;
   protected Map<Renderable, Object> renderableToObjectMap;
 
-  // protected WorldWindowGLCanvas wwglCanvas;
+  protected S style;
   protected Model model;
   protected Geography geography;
   protected Set<Object> addedObjects;
   protected Set<Object> removeObjects;
-  protected List<GeoShape> addedShapes;
 
   protected abstract void applyUpdatesToShape(Object o);
 
-  protected abstract GeoShape createVisualItem(Object o);
+  public AbstractSurfaceLayer(String name, S style){
+  	setName(name);
+  	this.style = style;
+  	
+  	addedObjects = new FastSet<Object>();
+  	removeObjects = new FastSet<Object>();
+  	visualItemMap = new HashMap<Object, GeoShape>();
+  	renderableToObjectMap = new HashMap<Renderable, Object>();
 
-  protected void init(String name) {
-    setName(name);
-    addedObjects = new FastSet<Object>();
-    removeObjects = new FastSet<Object>();
-    addedShapes = new ArrayList<GeoShape>();
-    visualItemMap = new HashMap<Object, GeoShape>();
-    renderableToObjectMap = new HashMap<Renderable, Object>();
-
-    this.setPickEnabled(true);
+  	this.setPickEnabled(true);
   }
 
+  /**
+   * Gets the style used by this display layer.
+   * 
+   * @return the style used by this display layer.
+   */
+  public S getStyle() {
+    return style;
+  }
+
+  /**
+   * Sets the style used by this display layer.
+   * 
+   * @param style the new style
+   */
+  public void setStyle(S style) {
+    this.style = style;
+  }
+  
+  /**
+   * Set the geography for this display.
+   * 
+   * @param geography
+   */
+  public void setGeography(Geography geography) {
+    this.geography = geography;
+  }
+
+  /**
+   * Set the gov.nasa.worldwind.Model for this display.
+   * 
+   * @param model
+   */
+  public void setModel(Model model) {
+    this.model = model;
+  }
+  
+  @Override
+  public void addObject(Object o) {
+    // remove it from the removed objects because
+    // there might be a remove and then add in the same
+    // update -- for example when a object switches contexts
+    // the display is part of their parent context
+  	removeObjects.remove(o);
+  	addedObjects.add(o);
+  }
+  
+  /**
+   * No-op for WWJ based code as the displaying the Renderable will reflect
+   * the updates. Nothing needs to be done here.
+   */
+  @Override 
+  public void applyUpdates() {}
+  
   @Override
   /**
-   * Override dispose() to prevent losing renderables on frame resize/dock.
+   * Gets the visual item that represents the specified object in the display.
+   * 
+   * @return the visual item that represents the specified object in the display.
    */
-  public void dispose() {
-
+  public GeoShape getVisualItem(Object o) {
+    return visualItemMap.get(o);
   }
-
-  public synchronized void applyUpdates() {
-    // try{
-    // lock.lock();
-    for (GeoShape shape : addedShapes) {
-      this.addRenderable(shape.getRenderable());
-    }
-
-    for (Object o : visualItemMap.keySet()) {
-      applyUpdatesToShape(o);
-    }
-
-    addedShapes.clear();
-
-    // TODO sufficient to fire layer update?
-    firePropertyChange(AVKey.LAYER, null, this);
-    // }
-    // finally{
-    // lock.unlock();
-    // }
-  }
-
-  public synchronized void update(LayoutUpdater updater) {
-    addAddedObjects();
-    removeRemovedObjects();
-  }
-
-  public void addObject(Object o) {
-    addedObjects.add(o);
-  }
-
+  
+  /**
+   * Removes this specified object from this layer.
+   * 
+   * @param obj
+   *          the object to remove
+   */
+  @Override
   public void removeObject(Object o) {
     // if the object to remove is addedObjects
     // we don't need to actually remove it because it
@@ -94,47 +123,28 @@ public abstract class AbstractSurfaceLayer extends RenderableLayer {
     if (!addedObjects.remove(o))
       removeObjects.add(o);
   }
+  
+  /**
+   * Updates the displayed nodes by applying styles etc. The display is not
+   * updated to reflect these changes.
+   */
+  @Override
+  public abstract void update(LayoutUpdater updater);
+  
+  @Override   // TODO WWJ - find out if this can be handled better
+  /**
+   * 
+   * Override dispose() to prevent losing renderables on frame resize/dock.
+   */
+  public void dispose() {}
 
-  protected void addAddedObjects() {
-    for (Object o : addedObjects) {
-      GeoShape shape = createVisualItem(o);
-
-      if (shape != null) {
-        renderableToObjectMap.put(shape.getRenderable(), o);
-        addedShapes.add(shape);
-      }
-    }
-    addedObjects.clear();
-  }
-
-  protected void removeRemovedObjects() {
-    for (Object o : removeObjects) {
-      GeoShape shape = visualItemMap.remove(o);
-      if (shape != null) {
-        this.removeRenderable(shape.getRenderable());
-        renderableToObjectMap.remove(shape.getRenderable());
-      }
-    }
-    removeObjects.clear();
-  }
-
-  // public Map<GeoShape,Object> getShapeToObjectMap(){
-  // return this.shapeToObjectMap;
-  // }
-
+  /**
+   * Returns the object that is associated with the renderable argument.
+   *   
+   * @param renderable the Renderable
+   * @return the object associated with the renderable in this display.
+   */
   public Object findObjectForRenderable(Renderable renderable) {
     return renderableToObjectMap.get(renderable);
-  }
-
-  public GeoShape getVisualItem(Object o) {
-    return visualItemMap.get(o);
-  }
-
-  public void setGeography(Geography geography) {
-    this.geography = geography;
-  }
-
-  public void setModel(Model model) {
-    this.model = model;
   }
 }

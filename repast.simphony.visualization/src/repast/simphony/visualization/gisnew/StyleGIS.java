@@ -10,8 +10,6 @@ import java.awt.Stroke;
  *
  */
 public interface StyleGIS<T> {
-
-	public GeoShape.FeatureType getFeatureType(T obj);
 	
   public GeoShape getShape(T obj);
 
@@ -23,7 +21,7 @@ public interface StyleGIS<T> {
   
   public double getBorderOpacity(T obj);
   
-  public Stroke getBorder(T obj);
+  public double getBorderWidth(T obj);
   
   public boolean isScaled(T object);
   
