@@ -133,11 +133,12 @@ public class XYDataSinkValueSeries extends AbstractXYSeriesDataSink {
       data.tick = ((Number) value).doubleValue();
     else if (key.equals(dsSeriesKey)) {
       String id = value.toString();
-      if (!addedSeries.contains(id)) {
-        data.addSeries = true;
-        addedSeries.add(id);
-      }
       data.key = id + " " + dataValueSourceId;
+      if (!addedSeries.contains(data.key)) {
+        data.addSeries = true;
+        addedSeries.add(data.key);
+      }
+      
     } else if (key.equals(dataValueSourceId)) {
       data.val = converter.convert(value);
     }
