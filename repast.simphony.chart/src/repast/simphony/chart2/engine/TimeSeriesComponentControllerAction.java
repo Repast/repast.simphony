@@ -61,7 +61,8 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
    */
   @Override
   public void batchInitialize(RunState runState, Object contextId) {
-    DataSetRegistry registry = (DataSetRegistry)runState.getFromRegistry(DataConstants.REGISTRY_KEY);
+    DataSetRegistry registry = (DataSetRegistry) runState
+        .getFromRegistry(DataConstants.REGISTRY_KEY);
     DataSetManager manager = registry.getDataSetManager(contextId);
     DataSetBuilder<?> builder = manager.getDataSetBuilder(descriptor.getDataSet());
 
@@ -78,15 +79,16 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
       XYDataSinkSourceSeries sink = new XYDataSinkSourceSeries(chartData, sourceIds);
       builder.addDataSink(sink);
     } else {
-      
+
       // non-aggregate uses the seriesId as a data value that
       // will create a series for each unique value it gets from the
       // source with that id.
       String seriesId = sourceIds.get(0);
-      String dataValueId = descriptor.getDataValueId();
-      
-      XYDataSinkValueSeries sink = new XYDataSinkValueSeries(chartData, seriesId, dataValueId);
-      builder.addDataSink(sink);
+      for (String dataValueId : descriptor.dataValueIds()) {
+        // String dataValueId = descriptor.getDataValueId();
+        XYDataSinkValueSeries sink = new XYDataSinkValueSeries(chartData, seriesId, dataValueId);
+        builder.addDataSink(sink);
+      }
     }
 
     if (!added) {
@@ -111,35 +113,47 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
     chartData = null;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.engine.environment.RunListener#stopped()
    */
   @Override
   public void stopped() {
-    if (chartData != null) chartData.setRunning(false);
+    if (chartData != null)
+      chartData.setRunning(false);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.engine.environment.RunListener#paused()
    */
   @Override
   public void paused() {
-    if (chartData != null) chartData.setRunning(false);
+    if (chartData != null)
+      chartData.setRunning(false);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.engine.environment.RunListener#started()
    */
   @Override
   public void started() {
-    if (chartData != null) chartData.setRunning(true);
+    if (chartData != null)
+      chartData.setRunning(true);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see repast.simphony.engine.environment.RunListener#restarted()
    */
   @Override
   public void restarted() {
-    if (chartData != null) chartData.setRunning(true);
+    if (chartData != null)
+      chartData.setRunning(true);
   }
 }

@@ -34,6 +34,7 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
   // key is the series id, value is the chart series label to use for that id.
   private Map<String, SeriesData> seriesIds = new HashMap<String, SeriesData>();
   private String dataValueId;
+  private List<String> dataValueIds = new ArrayList<String>();
   private int plotRangeLength = -1;
   
   // used by xstream to deserialize uisng the JavaReflectionProvider
@@ -87,6 +88,7 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
    */
   public void setDataValueId(String dataValueId) {
     this.dataValueId = dataValueId;
+    
   }
   
   /**
@@ -97,6 +99,25 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
    */
   public void addSeriesId(String id, String label, Color color) {
     seriesIds.put(id, new SeriesData(label, color));
+  }
+  
+  /**
+   * Adds the id of a data source to to record
+   * as a series. 
+   */
+  public void addDataValueId(String dataValueId) {
+    dataValueIds.add(dataValueId);
+  }
+  
+  /**
+   * Gets an iterable over the data value ids.
+   * @return
+   */
+  public Iterable<String> dataValueIds() {
+    // this is necessary to make this version of the descriptor
+    // compatible with previous serialized versions.
+    if (dataValueId != null && !dataValueIds.contains(dataValueId)) dataValueIds.add(dataValueId);
+    return dataValueIds;
   }
   
   /**
