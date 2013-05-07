@@ -19,7 +19,7 @@ public class DefaultStyleGIS<T> implements StyleGIS<T> {
 	public FeatureType getFeatureType(T obj) {
 		return FeatureType.POINT;
 	}
-	public GeoShape getShape(T obj) {		
+	public GeoShape getShape(T obj, GeoShape shape) {		
 		return GeoShapeFactory.createCircle();
 	}
 	public double getBorderWidth(T obj) {

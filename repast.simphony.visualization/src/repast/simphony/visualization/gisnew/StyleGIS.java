@@ -11,7 +11,7 @@ import java.awt.Stroke;
  */
 public interface StyleGIS<T> {
 	
-  public GeoShape getShape(T obj);
+  public GeoShape getShape(T obj, GeoShape shape);
 
   public Color getFillColor(T obj);
   
