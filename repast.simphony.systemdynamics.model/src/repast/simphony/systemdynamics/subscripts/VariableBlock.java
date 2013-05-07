@@ -107,6 +107,8 @@ public class VariableBlock implements TextBlock {
    * @param subscript
    */
   public void addSubscript(String subscript) {
+	  System.out.println("VariableBlock addSubscript "+subscript);
+	  new Exception("Stack trace").printStackTrace();
     if (!subscripts.contains(subscript)) subscripts.add(subscript);
   }
   
@@ -140,6 +142,7 @@ public class VariableBlock implements TextBlock {
    */
   public void addSubscripts(List<Subscript> subs) {
     for (Subscript sub : subs) {
+    	System.out.println("VariableBlock addSubscripts "+sub.getName());
       if (!subscripts.contains(sub.getName())) {
         subscripts.add(sub.getName());
       }

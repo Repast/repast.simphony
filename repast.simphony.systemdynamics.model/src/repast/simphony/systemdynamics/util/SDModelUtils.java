@@ -82,7 +82,7 @@ public class SDModelUtils {
     for (Variable var : model.getVariables()) {
       if (var.getType() == VariableType.RATE) {
         Rate rate = (Rate)var;
-        if (rate.getTo().equals(stock)) rates.add(rate);
+        if (rate.getTo() != null && rate.getTo().equals(stock)) rates.add(rate);
       }
     }
     
@@ -101,7 +101,7 @@ public class SDModelUtils {
     for (Variable var : model.getVariables()) {
       if (var.getType() == VariableType.RATE) {
         Rate rate = (Rate)var;
-        if (rate.getFrom().equals(stock)) rates.add(rate);
+        if (rate.getFrom() != null && rate.getFrom().equals(stock)) rates.add(rate);
       }
     }
     
