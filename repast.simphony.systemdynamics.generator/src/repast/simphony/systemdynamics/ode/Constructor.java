@@ -43,7 +43,7 @@ public class Constructor {
 			}
 
 			// generate empty constructor
-			code.append("\n\tpublic "+className+"() {\n}");
+			code.append("\n\tpublic "+className+"() {\n\t}");
 
 			// generate constructor 
 			code.append("\n\tpublic "+className+"(");

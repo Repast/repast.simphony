@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -558,8 +559,8 @@ public class TranslatorRepastSimphony extends Translator {
     			cg.generateCode();
     			
     			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName);
-    			BufferedWriter bw = Utilities.openFileForWriting(dir+"/compatible.java");
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName+"_ODESolverCompatible");
+    			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
     			odecg.generate(bw);
     			try {
 					bw.close();
@@ -567,10 +568,7 @@ public class TranslatorRepastSimphony extends Translator {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-    			
-    			odecg.print();
-    			
-    			
+   
     		}
     		try {
     			project.refreshLocal(IResource.DEPTH_INFINITE, null);

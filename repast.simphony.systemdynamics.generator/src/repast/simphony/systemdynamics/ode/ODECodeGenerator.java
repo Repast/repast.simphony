@@ -31,11 +31,9 @@ public class ODECodeGenerator {
 		MethodHeader.generate(this, code, analyzer);
 		MethodCalculations.generate(this, code, analyzer);
 		MethodFooter.generate(this, code, analyzer);
+		SetterGetter.generate(this, code, analyzer);
 		ObjectFooter.generate(this, code, analyzer);
-	}
-	
-	public void print() {
-		System.out.println("ODE Generator");
+		
 	}
 	
 	public String generateExpression(Node node) {
@@ -121,37 +119,7 @@ public class ODECodeGenerator {
 		stockLhs.setNext(arg4);
 		arg4.setPrevious(stockLhs);
 		arg4.setNext(null);
-		
-		
-		
-//		Node rateRoot = analyzer.getEquations().get(origRateName).getTreeRoot();
-//		Node rateRhs = rateRoot.getChild().getNext();
-//		
-//		// now plug the rate rhs into stock equation
-//		
-//		arg3.setNext(rateRhs);
-//		arg5.setPrevious(rateRhs);
-//		rateRhs.setPrevious(arg3);
-//		rateRhs.setNext(arg5);
-//		
-//		stockEqn.printTree(stockRoot);
-//		
-//		// generate an ODE Tree
-//		
-//		Node ODEroot = new Node("=");
-//		
-//		Node dup = new Node(stockRoot.getChild());
-//		ODEroot.setChild(dup); // this points to the old LHS
-//		
-//		Node newLHS = ODEroot.getChild();
-//		dup = new Node(rateRhs);
-//		
-//		newLHS.setNext(dup);
-//		dup.setPrevious(newLHS);
-//		dup.setNext(null);
-//		
-//		newLHS.setParent(ODEroot);
-//		dup.setParent(ODEroot);
+
 		
 }
 

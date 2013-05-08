@@ -43,9 +43,8 @@ public class ValidateDiagramAction extends AbstractToolbarAction {
     IFileEditorInput input = (IFileEditorInput) editor.getEditorInput();
     IFile file = input.getFile();
     IProject project = file.getProject();
-
-    System.out.println("check syntax");
-    Engine engine = new Engine(model, project, progressMonitor);
+    boolean reinitialize = false;
+    Engine engine = new Engine(model, project, progressMonitor, reinitialize);
     boolean success = engine.validateGenerateRSD(model, false);
     // this is for testing purposes
     // boolean success =
