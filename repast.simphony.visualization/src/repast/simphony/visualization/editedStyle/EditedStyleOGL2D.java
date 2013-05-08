@@ -263,12 +263,4 @@ public class EditedStyleOGL2D implements StyleOGL2D<Object> {
   public Color getLabelColor(Object object) {
     return labelColor;
   }
-
-  /* (non-Javadoc)
-   * @see repast.simphony.visualizationOGL2D.StyleOGL2D#getLabelAntialiased()
-   */
-  @Override
-  public boolean getLabelAntialiased() {
-    return true;
-  }
 }

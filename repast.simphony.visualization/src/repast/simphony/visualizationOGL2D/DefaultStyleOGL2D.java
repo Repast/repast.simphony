@@ -117,12 +117,4 @@ public class DefaultStyleOGL2D implements StyleOGL2D {
   public Color getLabelColor(Object object) {
     return Color.BLACK;
   }
-
-  /* (non-Javadoc)
-   * @see repast.simphony.visualizationOGL2D.StyleOGL2D#getLabelAntialiased()
-   */
-  @Override
-  public boolean getLabelAntialiased() {
-    return true;
-  }
 }
