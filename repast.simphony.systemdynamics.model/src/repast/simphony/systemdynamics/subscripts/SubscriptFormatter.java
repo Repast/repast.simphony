@@ -35,7 +35,7 @@ public class SubscriptFormatter {
     }
     
     if (inBrackets) {
-      return "," + subscript;
+    	 return "," + subscript;
     } else {
       return "[" + subscript + "]";
     }
