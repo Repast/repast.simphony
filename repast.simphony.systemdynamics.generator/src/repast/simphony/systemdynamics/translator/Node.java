@@ -211,9 +211,9 @@ public class Node {
 			
 			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
 				if (!Parser.isUnaryOperator(node.getToken())) {
-				sb.append(generateExpression(node.getChild()));
+				sb.append(generateExpression(TreeTraversal.getLhs(node)));
 				sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
-				sb.append(generateExpression(node.getChild().getNext()));
+				sb.append(generateExpression(TreeTraversal.getRhs(node)));
 				} else {
 					sb.append(Parser.translateUnaryOperator(node.getToken()));
 					sb.append(generateExpression(node.getChild()));
@@ -244,9 +244,9 @@ public class Node {
 			
 			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
 				if (!Parser.isUnaryOperator(node.getToken())) {
-					sb.append(generateExpression(node.getChild()));
+					sb.append(generateExpression(TreeTraversal.getLhs(node)));
 					sb.append(ndtm.getOriginalNameQuotedIfNecessary(node.getToken()));
-					sb.append(generateExpression(node.getChild().getNext()));
+					sb.append(generateExpression(TreeTraversal.getRhs(node)));
 				} else {
 					sb.append(Parser.translateUnaryOperator(node.getToken()));
 					sb.append(generateExpression(node.getChild()));

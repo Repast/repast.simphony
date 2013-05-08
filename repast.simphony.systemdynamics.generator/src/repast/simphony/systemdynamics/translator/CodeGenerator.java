@@ -870,7 +870,8 @@ public class CodeGenerator {
 	if (type.equals("VMAX")) {
 	    code.append("if ("+tVar+" < ");
 
-	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+//	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+	    Node expressionRoot = TreeTraversal.getFunctionArgument(node, 1);
 
 	    String exp = generateExpression(expressionRoot,  rhsStatements);
 	    code.append(exp);
@@ -885,7 +886,8 @@ public class CodeGenerator {
 	} else if (type.equals("VMIN")) {
 	    code.append("if ("+tVar+" > ");
 
-	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+//	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+	    Node expressionRoot = TreeTraversal.getFunctionArgument(node, 1);
 
 	    String exp = generateExpression(expressionRoot,  rhsStatements);
 	    code.append(exp);
@@ -904,7 +906,8 @@ public class CodeGenerator {
 	    // generate the code as specified in arg # 5 of the range function
 	    // note that this can be a complex tree for the computation
 
-	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+//	    Node expressionRoot = node.getChild().getNext().getNext().getNext().getNext();
+	    Node expressionRoot = TreeTraversal.getFunctionArgument(node, 1);
 	    code.append(generateExpression(expressionRoot,  rhsStatements));
 	    code.append(");\n");
 	    
@@ -934,28 +937,28 @@ public class CodeGenerator {
 
     private String generateExpression(Node node, Map<Node, String> rhsStatements) {
 
-	StringBuffer sb = new StringBuffer();
+    	StringBuffer sb = new StringBuffer();
 
-	if (node == null)
-	    return "";
+    	if (node == null)
+    		return "";
 
-	if (isLeaf(node)) {
-	    if (rhsStatements.containsKey(node)) {
+    	if (isLeaf(node)) {
+    		if (rhsStatements.containsKey(node)) {
 
-		return rhsStatements.get(node);
-	    } else {
-		return node.getToken();
-	    }
-	}
-	if (node.getChild() != null) {
-	    sb.append(generateExpression(node.getChild(), rhsStatements));
-	}
-	sb.append(node.getToken());
-	if (node.getChild() != null && node.getChild().getNext() != null) {
-	    sb.append(generateExpression(node.getChild().getNext(), rhsStatements));
-	}
+    			return rhsStatements.get(node);
+    		} else {
+    			return node.getToken();
+    		}
+    	}
+    	if (node.getChild() != null) {
+    		sb.append(generateExpression(node.getChild(), rhsStatements));
+    	}
+    	sb.append(node.getToken());
+    	if (node.getChild() != null && node.getChild().getNext() != null) {
+    		sb.append(generateExpression(node.getChild().getNext(), rhsStatements));
+    	}
 
-	return sb.toString();
+    	return sb.toString();
 
     }
 
@@ -1400,7 +1403,8 @@ public class CodeGenerator {
     private void generateRHScode(Equation equation, EquationArrayReferenceStructure ears) {
 	// generate the code for the RHS
 
-	Node node = equation.getTreeRoot().getChild().getNext(); // -> this is RHS
+//	Node node = equation.getTreeRoot().getChild().getNext(); // -> this is RHS
+	Node node = TreeTraversal.getRhs(equation.getTreeRoot()); 
 
 	generateRHSCode(node);
 
@@ -1414,7 +1418,8 @@ public class CodeGenerator {
 	if (Equation.isITENode(node)) {
 
 	    // skip placeholders
-	    Node condition = node.getChild().getNext().getNext().getNext().getNext();
+//	    Node condition = node.getChild().getNext().getNext().getNext().getNext();
+	    Node condition = TreeTraversal.getFunctionArgument(node, 1);
 	    Node thenExpression = condition.getNext();
 	    Node elseExpression = thenExpression.getNext();
 
@@ -1668,8 +1673,12 @@ public class CodeGenerator {
 		String suffix2 = getNextInt();
 		ArrayReference ar1 = null;
 		ArrayReference ar2 = null;
-		Node arg1 = node.getChild().getNext().getNext().getNext().getNext();
-		Node arg2 = arg1.getNext();
+//		Node arg1 = node.getChild().getNext().getNext().getNext().getNext();
+//		Node arg2 = arg1.getNext();
+		
+		Node arg1 = TreeTraversal.getFunctionArgument(node, 1);
+		Node arg2 = TreeTraversal.getFunctionArgument(node, 2);
+
 
 		// these should be arrays and their range subscripts show be the same
 		if (ArrayReference.isArrayReference(arg1.getToken())) {
@@ -2238,18 +2247,21 @@ public class CodeGenerator {
     private Node getCONDITION(Node node) {
 
 	// skip the first four and return # 5
-	return node.getChild().getNext().getNext().getNext().getNext();
+//	return node.getChild().getNext().getNext().getNext().getNext();
+    	return TreeTraversal.getFunctionArgument(node, 1);
     }
 
     private Node getTHEN(Node node) {
 	// skip the first four and return # 6
-	return node.getChild().getNext().getNext().getNext().getNext().getNext();
+//	return node.getChild().getNext().getNext().getNext().getNext().getNext();
+	return TreeTraversal.getFunctionArgument(node, 2);
 
     }
 
     private Node getELSE(Node node) {
 	// skip the first four and return # 7
-	return node.getChild().getNext().getNext().getNext().getNext().getNext().getNext();
+//	return node.getChild().getNext().getNext().getNext().getNext().getNext().getNext();
+	return TreeTraversal.getFunctionArgument(node, 3);
 
     }
 

@@ -1732,7 +1732,8 @@ public class Equation {
 	    if (c == null)
 		System.out.println("MISSING ARG");
 	    
-	    Node conditionNode = iteNode.getChild().getNext().getNext().getNext().getNext();
+//	    Node conditionNode = iteNode.getChild().getNext().getNext().getNext().getNext();
+	    Node conditionNode = TreeTraversal.getFunctionArgument(iteNode, 1);
 	    if (conditionNode.isTerminal()) {
 		replaceBooleanVariable(conditionNode);
 	    } else {

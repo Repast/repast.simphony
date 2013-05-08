@@ -10,6 +10,7 @@ import repast.simphony.systemdynamics.translator.InformationManagers;
 import repast.simphony.systemdynamics.translator.NativeDataTypeManager;
 import repast.simphony.systemdynamics.translator.Node;
 import repast.simphony.systemdynamics.translator.Parser;
+import repast.simphony.systemdynamics.translator.TreeTraversal;
 
 public class ODECodeGenerator {
 	
@@ -48,12 +49,12 @@ public class ODECodeGenerator {
 			// right child
 			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
 				if (!Parser.isUnaryOperator(node.getToken())) {
-				sb.append(generateExpression(node.getChild()));
+				sb.append(generateExpression(TreeTraversal.getLhs(node))); // node.getChild()
 				sb.append(node.getToken());
-				sb.append(generateExpression(node.getChild().getNext()));
+				sb.append(generateExpression(TreeTraversal.getRhs(node))); // node.getChild().getNext()
 				} else {
 					sb.append(Parser.translateUnaryOperator(node.getToken()));
-					sb.append(generateExpression(node.getChild()));
+					sb.append(generateExpression(node.getChild())); // this is really a LHS location, but RHS of unary
 				}
 				return sb.toString();
 
@@ -74,8 +75,8 @@ public class ODECodeGenerator {
 	}
 	
 	public void makeODESolverCompatible(Node node) {
-		makeLHSCompatible(node.getChild());
-		makeRHSCompatible(node.getChild().getNext());
+		makeLHSCompatible(TreeTraversal.getLhs(node)); // node.getChild()
+		makeRHSCompatible(TreeTraversal.getRhs(node)); // node.getChild().getNext()
 		
 	}
 	
@@ -107,10 +108,15 @@ public class ODECodeGenerator {
 //		Equation stockEqn = analyzer.getEquations().get(stock);
 		Node stockRoot = stockEqn.getTreeRoot();   		// root of tree (=)
 		Node stockLhs = stockRoot.getChild();
-		Node stockRhs = stockLhs.getNext();   	// stock rhs -> INTEG
-		Node arg3 = stockRhs.getChild().getNext().getNext().getNext();
-		Node arg4 = arg3.getNext(); 	// this is the rate. Assume that it is not an expression
-		Node arg5 = arg4.getNext();
+		Node functionNode = stockLhs.getNext();   	// stock rhs -> INTEG
+//		Node arg3 = stockRhs.getChild().getNext().getNext().getNext();
+//		Node arg4 = arg3.getNext(); 	// this is the rate. Assume that it is not an expression
+//		Node arg5 = arg4.getNext();
+		
+		
+		Node arg4 = TreeTraversal.getFunctionArgument(functionNode, 1); 	// this is the rate. Assume that it is not an expression
+		
+		
 		String origRateName = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(arg4.getToken());
 		System.out.println("I think rate variable is: "+origRateName);
 		
