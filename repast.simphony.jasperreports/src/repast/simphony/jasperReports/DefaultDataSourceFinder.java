@@ -1,6 +1,5 @@
 package repast.simphony.jasperReports;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 import net.sf.jasperreports.engine.JRDataSource;

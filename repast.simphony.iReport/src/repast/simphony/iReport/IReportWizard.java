@@ -49,33 +49,42 @@ public class IReportWizard extends AnalysisPluginWizard {
 	
 	@Override
 	public String[] getExecutionCommand() {
-		StringBuilder logFileBuilder = new StringBuilder();
 		List<String> commands = new ArrayList<String>();
-
 
 		List<FileDataSink> outputters = fileStep.getChosenOutputters();
 		for (int i = 0; i < outputters.size(); i++) {
-
-			logFileBuilder.append(" -config-file ");
 
 			csvFileName = prepFileNameFor(outputters.get(i).getFile().getAbsolutePath());
 
 			Formatter formatter = outputters.get(i).getFormatter();
 			if (outputters.get(i).getFormat() != FormatType.TABULAR) {
-				LOG.warn("When invoking iReort, an outputter without a delimited formatter was found. iReport can only be invoked on output files with using a delimiter.");
+				LOG.warn("When invoking iReort, an outputter without a delimited " +
+						"formatter was found. iReport can only be invoked on output files " +
+						"with using a delimiter.");
 				break;
 			}
 			csvFiledelimiter = formatter.getDelimiter();
 
 			connectionName = outputters.get(i).getName();
 			columnNames = ((TabularFormatter)outputters.get(i).getFormatter()).getColumnNames();
-			
-
 		}
 
+		// TODO The new iReport Designer no longer supports command line arguments 
+		//      to set the connection configuration file, so just launch the app.
+		//      Users will have to import data set connection files created here.
+		//      It might be good in the future to have the Repast iReport wizard
+		//      GUI provide two buttons - one to open the iReport designer editor,
+		//      and a second to actually generate the report (PDF, HTML, etc.)
+		//      programmatically since the jasperreports plugin contains the engine
+		//      to actually compile the report.
+		//
+		//      You can pass the .jrxml report template to iReport Designer via the
+		//      command line, but the data source connection must be imported
+		//      in the iReport Designer GUI manually.
+		
 		commands.add(getExecutableLoc());
-		commands.add("-config-file");
-		commands.add(createConfigFile());
+//		commands.add("-config-file");
+//		commands.add(createConfigFile());
 
 		return commands.toArray(new String[commands.size()]);
 	}
@@ -85,6 +94,10 @@ public class IReportWizard extends AnalysisPluginWizard {
 		return getInstallHome();
 	}
 
+	/**
+	 * Create the iReport Designer data connection configuration file.
+	 * @return
+	 */
 	private String createConfigFile(){
 		String filename = csvFileName + ".iReport.xml";
 
@@ -92,13 +105,13 @@ public class IReportWizard extends AnalysisPluginWizard {
 		CDATASection cdata;
 		Document doc= new DocumentImpl();
 
-		Element root = doc.createElement("iReportProperties");
+		Element root = doc.createElement("iReportConnectionSet");
 		doc.appendChild(root);
 
 		// Define the connection element
 		Element con = doc.createElement("iReportConnection");
 		con.setAttribute("name", connectionName);
-		con.setAttribute("connectionClass", "it.businesslogic.ireport.connection.JRCSVDataSourceConnection");
+		con.setAttribute("connectionClass", "com.jaspersoft.ireport.designer.connection.JRCSVDataSourceConnection");
 		root.appendChild(con);
 
 		// Create the column entries
@@ -122,7 +135,7 @@ public class IReportWizard extends AnalysisPluginWizard {
 		// Indicate use first row as column headers
 		e = doc.createElement("connectionParameter");
 		e.setAttribute("name", "useFirstRowAsHeader");
-		cdata = doc.createCDATASection("false");
+		cdata = doc.createCDATASection("true");
 		e.appendChild(cdata);
 		con.appendChild(e);
 
@@ -136,7 +149,8 @@ public class IReportWizard extends AnalysisPluginWizard {
 		// record delimiter (newline)
 		e = doc.createElement("connectionParameter");
 		e.setAttribute("name", "recordDelimiter");
-		cdata = doc.createCDATASection("\n");
+		// Important that the delimiter string is actually "\n" and not a newline
+		cdata = doc.createCDATASection("\\n");
 		e.appendChild(cdata);
 		con.appendChild(e);
 
@@ -150,9 +164,9 @@ public class IReportWizard extends AnalysisPluginWizard {
 
 		OutputFormat of = new OutputFormat("XML","UTF-8",true);
 
-		String docType = "-//iReport/DTD iReport Configuration//EN";
-		String schema = "http://ireport.sourceforge.net/dtds/iReportProperties.dtd";
-		of.setDoctype(docType,schema);
+//		String docType = "-//iReport/DTD iReport Configuration//EN";
+//		String schema = "http://ireport.sourceforge.net/dtds/iReportProperties.dtd";
+//		of.setDoctype(docType,schema);
 
 		XMLSerializer serializer = new XMLSerializer(fos,of);
 
@@ -165,6 +179,12 @@ public class IReportWizard extends AnalysisPluginWizard {
 		} 
 
 		return filename;
+	}
+
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

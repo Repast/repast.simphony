@@ -8,6 +8,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +65,31 @@ public class ProbeIntrospector {
     return info;
   }
 
+  /**
+   * Gets the probe id for the specified object. This will return
+   * the result of calling the method annotated with @ProbeId in
+   * specfied object, or the class name of the object if there is no
+   * @ProbeId. 
+   * 
+   * @param probedObject
+   * @return the result of calling the method annotated with @ProbeId in
+   * specfied object, or the class name of the object if there is no
+   * @ProbeId. 
+   */
+  public String getProbeId(Object probedObject) {
+    String id = probedObject.toString();
+    try {
+      ProbeInfo pbInfo = getProbeInfo(probedObject.getClass());
+      if (pbInfo.getIDProperty() != null) {
+        id = (String) pbInfo.getIDProperty().getReadMethod().invoke(probedObject, new Object[0]);
+      }
+    } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException
+        | InvocationTargetException ex) {
+    }
+
+    return id;
+  }
+
   @SuppressWarnings("unchecked")
   private void findID(PBI info) throws IntrospectionException {
     Method[] methods = ClassUtilities.findMethods(info.getProbedClass(), ProbeID.class);
@@ -97,8 +123,8 @@ public class ProbeIntrospector {
       field.setAccessible(true);
       ProbedProperty pprop = field.getAnnotation(ProbedProperty.class);
       String fieldName = pprop.usageName().trim();
-      if (fieldName.isEmpty()){
-      	fieldName = field.getName();
+      if (fieldName.isEmpty()) {
+        fieldName = field.getName();
       }
       FieldPropertyDescriptor fp = new FieldPropertyDescriptor(field, fieldName);
       if (pprop.displayName().trim().length() > 0)
@@ -153,23 +179,22 @@ public class ProbeIntrospector {
         ProbedProperty pprop = method.getAnnotation(ProbedProperty.class);
         String usageName = pprop.usageName().trim();
         // If usage name is empty, infer appropriate usage name
-        if (usageName.isEmpty()){
-        	usageName = method.getName();
-        	if (usageName.startsWith("get") || usageName.startsWith("set")){
-        		if (usageName.length() > 3){
-        			usageName = Introspector.decapitalize(usageName.substring(3));
-        		}
-        	}
-        	else if (usageName.startsWith("is")){
-        		if (usageName.length() > 2){
-        			usageName = Introspector.decapitalize(usageName.substring(2));
-        		}
-        	}
+        if (usageName.isEmpty()) {
+          usageName = method.getName();
+          if (usageName.startsWith("get") || usageName.startsWith("set")) {
+            if (usageName.length() > 3) {
+              usageName = Introspector.decapitalize(usageName.substring(3));
+            }
+          } else if (usageName.startsWith("is")) {
+            if (usageName.length() > 2) {
+              usageName = Introspector.decapitalize(usageName.substring(2));
+            }
+          }
         }
         MethodPropertyDescriptor pd = pdMap.get(usageName);
         if (pd == null) {
-//        	method.
-          pd = new MethodPropertyDescriptor(usageName,null,null);
+          // method.
+          pd = new MethodPropertyDescriptor(usageName, null, null);
           pd.setDisplayName(usageName);
           info.pds.add(pd);
           pdMap.put(usageName, pd);

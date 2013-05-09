@@ -1,84 +1,117 @@
 package repast.simphony.visualization.gisnew;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
-import gov.nasa.worldwind.render.SurfaceEllipse;
 import gov.nasa.worldwind.render.SurfacePolygon;
 import gov.nasa.worldwind.render.SurfacePolyline;
 import gov.nasa.worldwind.render.SurfaceShape;
 
+import java.awt.BasicStroke;
 import java.util.List;
 
+import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.WWUtils;
 
-public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
+/**
+ * Styled display layer for WorldWind display layers.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer<StyleGIS> {
 
-  StyleGIS style;
-
-  public StyledSurfaceShapeLayer(String name, StyleGIS style) {
-
-    if (style == null)
-      this.style = new DefaultStyleGIS();
-    else
-      this.style = style;
-
-    init(name);
+  public StyledSurfaceShapeLayer(String name, StyleGIS<?> style) {
+    super(name, style);
   }
 
-  protected void applyUpdatesToShape(Object o) {
-    GeoShape shape = getVisualItem(o);
+  protected void applyUpdatesToShape(Object obj) {
+    GeoShape shape = getVisualItem(obj);
+
+    // TODO WWJ Test for code hot spots here
+    // TODO WWJ Refactor this method and createVisualItem since they are similar
 
     // update location
-    // TODO update polygons and lines?
+    SurfaceShape renderable = (SurfaceShape)shape.getRenderable();
 
-    LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
-
-    Renderable renderable = shape.getRenderable();
-
-    if (renderable instanceof SurfaceEllipse) {
-      if (!pt.equals(((SurfaceEllipse) renderable).getCenter())) {
-        ((SurfaceEllipse) renderable).setCenter(pt);
+    // For the special case of surface point shapes, we update the shape center
+    //  location and shape implementation
+    if (renderable instanceof SurfacePointShape) {
+    	SurfacePointShape rend = (SurfacePointShape)renderable;
+      LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinate());
+    	// Update the renderable if a new type is returned from the style
+    	GeoShape styleShape = style.getShape(obj, shape);
+    	if (styleShape != null){
+    		shape.setRenderable(styleShape.getRenderable());
+    	}
+    	
+    	// Update the center lat/lon if the shape has moved
+    	if (!pt.equals(((SurfacePointShape) renderable).getCenter())) {
+        ((SurfacePointShape) renderable).setCenter(pt);
       }
+    	
+    	double size = style.getScale(obj); 
+    	
+    	if (rend.getSize() != size)
+    	  rend.setSize(size);
     }
-
-    // Paint fill = style.getFillColor(o);
-    // shape.setFill(fill);
-
-    // TODO update the rest of the shape properties
-
-    // TODO use shape attributes
+    
+    // TODO WWJ do a check on points and only update when new
+    else if (renderable instanceof SurfacePolygon){
+    	SurfacePolygon polygon = (SurfacePolygon)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	polygon.setLocations(pts);
+    }
+    else if (renderable instanceof SurfacePolyline){
+    	SurfacePolyline line = (SurfacePolyline)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	line.setLocations(pts);
+    }
+    else {  // TODO WWJ - How to handle other types?
+    	
+    }
+    
+    ShapeAttributes attrs = renderable.getAttributes();
+    
+    if (attrs == null)
+      attrs = new BasicShapeAttributes();
+    
+    attrs.setInteriorMaterial(new Material(style.getFillColor(obj)));
+    attrs.setInteriorOpacity(style.getFillOpacity(obj));
+    attrs.setOutlineMaterial(new Material(style.getBorderColor(obj)));
+    attrs.setOutlineOpacity(style.getBorderOpacity(obj));
+    attrs.setOutlineWidth(style.getBorderWidth(obj));
+    
+    renderable.setAttributes(attrs);
   }
 
   protected GeoShape createVisualItem(Object o) {
-    GeoShape shape = style.getShape(o);
-
-    // System.out.print("Creating visual item for " + o + " ");
-
-    Renderable renderable = shape.getRenderable();
-
-    SurfaceShape s = (SurfaceShape) renderable;
-
-    if (style.getFeatureType(o) == GeoShape.FeatureType.POINT) {
+    GeoShape shape = style.getShape(o,null);
+    SurfaceShape renderable = (SurfaceShape)shape.getRenderable();
+    
+    if (renderable instanceof SurfacePointShape){
+    	SurfacePointShape rend = (SurfacePointShape)renderable;
       LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
-      ((SurfacePointShape) s).setLocation(pt);
-
-      System.out.print(" POINT\n");
-    } else if (style.getFeatureType(o) == GeoShape.FeatureType.LINE) {
+      rend.setCenter(pt);
+      rend.setSize(style.getScale(o));
+    } 
+    else if (renderable instanceof SurfacePolyline) {
+    	SurfacePolyline line = (SurfacePolyline)renderable;
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
+      line.setLocations(pts);
+    } 
+    else if (renderable instanceof SurfacePolygon){
+    	SurfacePolygon polygon = (SurfacePolygon)renderable;
       List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
-      ((SurfacePolyline) s).setLocations(pts);
-      System.out.print(" LINE\n");
-    } else if (style.getFeatureType(o) == GeoShape.FeatureType.POLYGON) {
-      List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
-      ((SurfacePolygon) s).setLocations(pts);
-      System.out.print(" POLYGON\n");
+    	polygon.setLocations(pts);
     } else {
-      // TODO nothing?
+      // TODO WWJ - Do we need a special NULL object for this case?
     }
-
-    ShapeAttributes attrs = s.getAttributes();
+    
+    ShapeAttributes attrs = renderable.getAttributes();
 
     if (attrs == null)
       attrs = new BasicShapeAttributes();
@@ -87,12 +120,10 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
     attrs.setInteriorOpacity(style.getFillOpacity(o));
     attrs.setOutlineMaterial(new Material(style.getBorderColor(o)));
     attrs.setOutlineOpacity(style.getBorderOpacity(o));
+    attrs.setOutlineWidth(style.getBorderWidth(o));
 
-    // TODO
-    attrs.setOutlineWidth(3);
-
-    s.setAttributes(attrs);
-    // TODO all of this
+    renderable.setAttributes(attrs);
+    // TODO WWJ - all of this
     // shape.setGeometry(geography.getGeometry(o));
     // shape.setIsScaled(style.isScaled(o));
     // renderable.setScale(style.getScale(o));
@@ -101,12 +132,43 @@ public class StyledSurfaceShapeLayer extends AbstractSurfaceLayer {
 
     return shape;
   }
-
-  public void setStyle(StyleGIS style) {
-    this.style = style;
+  
+  protected void updateExistingObjects(LayoutUpdater updater){
+  	for (Object o : visualItemMap.keySet()){
+  		applyUpdatesToShape(o);
+  	}
+  }
+  
+  protected void processAddedObjects() {
+    for (Object o : addedObjects) {
+    	GeoShape shape = createVisualItem(o);
+    	renderableToObjectMap.put(shape.getRenderable(), o);
+    	addRenderable(shape.getRenderable());
+    }
+    addedObjects.clear();
   }
 
-  // public Map<GeoShape, Object> getShapeToObjectMap() {
-  // return this.shapeToObjectMap;
-  // }
+  protected void processRemovedObjects() {
+    for (Object o : removeObjects) {
+      GeoShape shape = visualItemMap.remove(o);
+      if (shape != null) {
+        removeRenderable(shape.getRenderable());
+        renderableToObjectMap.remove(shape.getRenderable());
+      }
+    }
+    removeObjects.clear();
+  }
+  
+  /**
+   * Updates the displayed nodes by applying styles etc. The display is not
+   * updated to reflect these changes.
+   */
+  public void update(LayoutUpdater updater) {
+    // remove what needs to be removed
+    processRemovedObjects();
+    updateExistingObjects(updater);
+    processAddedObjects();
+    
+    firePropertyChange(AVKey.LAYER, null, this);
+  }
 }

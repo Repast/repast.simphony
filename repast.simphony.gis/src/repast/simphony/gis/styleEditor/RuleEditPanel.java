@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +14,8 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -27,11 +23,8 @@ import javax.swing.event.ChangeListener;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.filter.expression.ExpressionBuilder;
-import org.geotools.filter.text.cql2.CQL;
-import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
-import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
@@ -43,9 +36,8 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.visitor.DuplicatingStyleVisitor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
 
 import repast.simphony.gis.display.SquareIcon;
 
@@ -59,7 +51,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * Panel for basic GIS style editing that lets the user specify the style
+ * Editor panel for single rule GIS style that lets the user specify the style
  * shape, fill, line color, etc.
  * 
  * @author Tom Howe
@@ -67,14 +59,15 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class RuleEditPanel extends JPanel implements IStyleEditor {
 
+	protected static final String NO_PROPERTY_LABEL = "-none-";
+	
 	protected StyleBuilder styleBuilder = new StyleBuilder();
 	protected ExpressionBuilder expBuilder = new ExpressionBuilder();
-	protected boolean point = false;
-	protected FeatureType type;
+	protected SimpleFeatureType type;
 	protected Rule rule;
 	protected Symbolizer symbolizer;
 	protected Dimension preferred = new Dimension(70, 18);
-	protected boolean ruleOnly = false;
+	protected Dimension preferred_lg = new Dimension(100, 18);
 	protected boolean titlesVisible = true;
 	protected boolean filterVisible = true;
 	protected boolean fillVisible = true;
@@ -85,48 +78,244 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		initComponents();
 	}
 
-	public void setData(FeatureType featureType, Style style) {
-		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
-				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
-		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
-		setRule((Rule) dsv.getCopy());
-		type = featureType;
-	}
-
-	public void init(FeatureType type, Rule rule) {
+	public void init(SimpleFeatureType type, Rule rule) {
+		this.type = type;
 		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
 				CommonFactoryFinder.getStyleFactory(null), CommonFactoryFinder.getFilterFactory2(null));
 		dsv.visit(rule);
-		ruleOnly = true;
 		setRule((Rule)dsv.getCopy());
-		this.type = type;
+		
+		// TODO Geotools [blocker] - property-based styling (needs a mediator)
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		model.addElement(NO_PROPERTY_LABEL);
+		
+		for (AttributeType at : type.getTypes()) {
+//		if (numberTypes.contains(at.getBinding())) {
+				model.addElement(at.getName().toString());
+//		}
+		}
+		markSizePropertyBox.setModel(model);
 	}
 
 	public void setRule(Rule rule) {
 		this.rule = rule;
-		if (ruleOnly) {
-			filterField.setEnabled(false);
-		} else if (rule.getFilter() != null) {
-			filterField.setText(rule.getFilter().toString());
-		}
-
+		
 		symbolizer = rule.getSymbolizers()[0];
-		if (PointSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
-			point = true;
-		}
-		if (PointSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
+		if (symbolizer instanceof PointSymbolizer) {
 			initPoint();
 		}
-		if (PolygonSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
+		else if (symbolizer instanceof PolygonSymbolizer) {
 			initPolygon();
 		}
-		if (LineSymbolizer.class.isAssignableFrom(symbolizer.getClass())) {
+		else if (symbolizer instanceof LineSymbolizer) {
 			initLine();
 		}
 	}
 
-	public void showFilterPane(boolean show) {
-		filterPanel.setVisible(show);
+	/**
+	 * Setup the editor for a Point feature
+	 */
+	private void initPoint() {
+		enablePointFields();
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		Mark mark = SLD.mark(ps);
+		String wkn = SLD.wellKnownName(mark);
+		int markSize = SLD.pointSize(ps);
+	  
+		// TODO Geotools [blocker] - need to initialized from property expressions too!
+		
+		int markRotation = ps.getGraphic().getRotation().evaluate(null, Integer.class);
+		
+		markBox.setSelectedItem(wkn);
+		markSizeSpinner.setValue(markSize);
+		markRotationSpinner.setValue(markRotation);
+				
+		Fill fill = mark.getFill();
+		Color fillColor = SLD.color(fill.getColor());
+		fillColorButton.setIcon(new SquareIcon(fillColor));
+		
+		double fillOpacity = SLD.opacity(fill);
+		fillOpacitySpinner.setValue(fillOpacity);
+		
+		Stroke stroke = mark.getStroke();
+		Color strokeColor = SLD.color(stroke);
+		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
+		int outlineThickness = (int) SLD.width(stroke);
+		outlineThicknessSpinner.setValue(outlineThickness);
+		
+		double outlineOpacity = SLD.opacity(stroke);
+		outlineOpacitySpinner.setValue(outlineOpacity);
+		
+		setMark();
+	}
+	
+	/**
+	 * Setup the editor for a Line feature
+	 */
+	private void initLine() {
+		enableLineFields();
+		LineSymbolizer ls = (LineSymbolizer) symbolizer;
+		markPanel.setVisible(false);
+		fillPanel.setVisible(false);
+		
+		Stroke stroke = SLD.stroke(ls);
+		Color strokeColor = SLD.color(stroke);
+		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
+		int outlineThickness = (int) SLD.width(stroke);
+		outlineThicknessSpinner.setValue(outlineThickness);
+		
+		double outlineOpacity = SLD.opacity(stroke);
+		outlineOpacitySpinner.setValue(outlineOpacity);
+		
+		setStroke();
+	}
+	
+	/**
+	 * Setup the editor for a Polygon feature
+	 */
+	private void initPolygon() {
+		enablePolygonFields();
+		PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+		
+		Fill fill = SLD.fill(ps);
+		Color fillColor = SLD.color(fill.getColor());
+		fillColorButton.setIcon(new SquareIcon(fillColor));
+		
+		double fillOpacity = SLD.polyFillOpacity(ps);
+		fillOpacitySpinner.setValue(fillOpacity);
+		
+		Stroke stroke = SLD.stroke(ps);
+		Color strokeColor = SLD.color(stroke);
+		strokeColorButton.setIcon(new SquareIcon(strokeColor));
+		
+		double outlineOpacity = SLD.opacity(stroke);
+		outlineOpacitySpinner.setValue(outlineOpacity);
+		
+		int outlineThickness = (int) SLD.width(stroke);
+		outlineThicknessSpinner.setValue(outlineThickness);
+		
+		setFill();
+		setStroke();
+	}
+
+	private void enablePointFields() {
+		fillPanel.setVisible(true);
+		strokePanel.setVisible(true);
+		markPanel.setVisible(true);
+	}
+
+	private void enablePolygonFields() {
+		fillPanel.setVisible(true);
+		strokePanel.setVisible(true);
+		markPanel.setVisible(false);
+	}
+
+	private void enableLineFields() {
+		strokePanel.setVisible(true);
+	}
+
+	/**
+	 * Sets the fill color and opacity for point and polygon features
+	 */
+	private void setFill() {
+		if (symbolizer instanceof PolygonSymbolizer) {
+			PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+			ps.setFill(styleBuilder.createFill(
+					((SquareIcon) fillColorButton.getIcon()).getColor(),
+					(Double) fillOpacitySpinner.getValue()));
+		} 
+		else if (symbolizer instanceof PointSymbolizer) {
+			PointSymbolizer ps = (PointSymbolizer) symbolizer;
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
+			
+			mark.setFill(styleBuilder.createFill(
+					((SquareIcon) fillColorButton.getIcon()).getColor(), 
+					(Double) fillOpacitySpinner.getValue()));
+		}
+		updatePreview();
+	}
+
+	/**
+	 * Set the stroke color, thickness, and opacity for all feature types.
+	 */
+	private void setStroke() {
+		Stroke stroke = styleBuilder.createStroke(
+				((SquareIcon) strokeColorButton.getIcon()).getColor(),	
+				(Integer) outlineThicknessSpinner.getValue(), 
+				(Double) outlineOpacitySpinner.getValue());
+		
+		if (symbolizer instanceof PolygonSymbolizer) {
+			PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
+			ps.setStroke(stroke);
+		} 
+		else if (symbolizer instanceof PointSymbolizer) {
+			PointSymbolizer ps = (PointSymbolizer) symbolizer;
+			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
+			mark.setStroke(stroke);
+		} 
+		else if (symbolizer instanceof LineSymbolizer) {
+			LineSymbolizer ls = (LineSymbolizer) symbolizer;
+			ls.setStroke(stroke);
+		}
+		updatePreview();
+	}
+
+	/**
+	 * Sets the Mark type for Point features including size, fill, and stroke.
+	 */
+	private void setMark() {
+		if (symbolizer instanceof PointSymbolizer) {
+			PointSymbolizer ps = (PointSymbolizer) symbolizer;
+			
+			Mark newMark = styleBuilder.createMark((String) markBox.getSelectedItem());
+			ps.getGraphic().graphicalSymbols().clear();
+			ps.getGraphic().graphicalSymbols().add(newMark);
+				
+			setStroke();
+			setFill();
+		} else {
+			throw new IllegalArgumentException("Cannot apply a mark to a "
+					+ symbolizer.getClass().getName());
+		}
+		updatePreview();
+	}
+	
+	private void setMarkSize(){
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(
+				((Number) markSizeSpinner.getValue()).intValue()));
+		
+		updatePreview();
+	}
+	
+	private void setMarkSizeProperty(){
+	  // TODO Geotools [blocker] - this is how to set using a property
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		String property = (String)markSizePropertyBox.getSelectedItem();
+		ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory2().property(property));
+		
+		// enable the mark size spinner when NOT using a property
+		if (NO_PROPERTY_LABEL.equals(property)){
+			markSizeSpinner.setEnabled(true);
+		}
+		else{  // disable the spinner when using a property
+			markSizeSpinner.setEnabled(false);
+		}
+		
+//		updatePreview();
+	}
+	
+	private void setMarkRotation(){
+		PointSymbolizer ps = (PointSymbolizer) symbolizer;
+		
+		ps.getGraphic().setRotation(CommonFactoryFinder.getFilterFactory().literal(
+				((Number) markRotationSpinner.getValue()).intValue()));
+		
+		updatePreview();
 	}
 
 	public void showFillPane(boolean show) {
@@ -140,555 +329,292 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 	public void showStrokePane(boolean show) {
 		strokePanel.setVisible(show);
 	}
-
-	private void initLine() {
-		enableLineFields();
-		preview.setShapeToLine();
-		LineSymbolizer ls = (LineSymbolizer) symbolizer;
-		markPanel.setVisible(false);
-		fillPanel.setVisible(false);
-		Stroke stroke = SLD.stroke(ls);
-		Color strokeColor = SLD.color(stroke);
-		getPreview().setOutlineColor(strokeColor);
-		getStrokeColorButton().setIcon(new SquareIcon(strokeColor));
-		int outlineThickness = (int) SLD.width(stroke);
-		getOutlineThicknessSpinner().setValue(outlineThickness);
-		getPreview().setOutlineThickness(outlineThickness);
-		double outlineOpacity = SLD.opacity(stroke);
-		getPreview().setOutlineOpacity(outlineOpacity);
-		getOutlineOpacitySpinner().setValue(outlineOpacity);
-	}
-
-	public Color getFillColor() {
-		return preview.getFillColor();
-	}
-
-	public float getFillTransparency() {
-		return (float) preview.getFillOpacity();
-	}
-
-	public double getStrokeWidth() {
-		return preview.getOutlineThickness();
-	}
-
-	public float getStrokeTransparency() {
-		return (float) preview.getOutlineOpacity();
-	}
-
-	public Color getStrokeColor() {
-		return preview.getOutlineColor();
-	}
-
-	public String getMark() {
-		return preview.getMark();
-	}
-
-	public double getMarkSize() {
-		return preview.getMarkSize();
-	}
-
-	private void enablePointFields() {
-		fillPanel.setVisible(true);
-		strokePanel.setVisible(true);
-		markPanel.setVisible(true);
-	}
-
-	private void enablePolygonFields() {
-		// titlePanel.setVisible(true);
-		fillPanel.setVisible(true);
-		strokePanel.setVisible(true);
-		markPanel.setVisible(false);
-	}
-
-	private void enableLineFields() {
-		strokePanel.setVisible(true);
-	}
-
-	private void initPoint() {
-		enablePointFields();
-		PointSymbolizer ps = (PointSymbolizer) symbolizer;
-		Mark mark = SLD.mark(ps);
-		String wkn = SLD.wellKnownName(mark);
-		getPreview().setMark(wkn);
-		getMarkBox().setSelectedItem(wkn);
-		Graphic gr = SLD.graphic(ps);
-		Expression ex = gr.getSize();
-		double markSize = 0;
-		if (ex instanceof Literal ){
-			Double d = ex.evaluate(null,Double.class);
-			
-			if (d != null)
-			  markSize = d;
-		}	
-		getPreview().setMarkSize(markSize);
-		getMarkSizeSpinner().setValue(markSize);
-		Fill fill = mark.getFill();
-		Color fillColor = SLD.color(fill.getColor());
-		getFillColorButton().setIcon(new SquareIcon(fillColor));
-		getPreview().setFillColor(fillColor);
-		double fillOpacity = SLD.pointOpacity(ps);
-		getFillOpacitySpinner().setValue(fillOpacity);
-		getPreview().setFillOpacity(fillOpacity);
-		Stroke stroke = SLD.stroke(ps);
-		Color strokeColor = SLD.color(stroke);
-		getPreview().setOutlineColor(strokeColor);
-		getStrokeColorButton().setIcon(new SquareIcon(strokeColor));
-		int outlineThickness = (int) SLD.width(stroke);
-		getPreview().setOutlineThickness(outlineThickness);
-		double outlineOpacity = SLD.opacity(stroke);
-		getPreview().setOutlineOpacity(outlineOpacity);
-		getOutlineOpacitySpinner().setValue(outlineOpacity);
-	}
-
-	private void initPolygon() {
-		enablePolygonFields();
-		PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
-		Fill fill = SLD.fill(ps);
-		Color fillColor = SLD.color(fill.getColor());
-		getFillColorButton().setIcon(new SquareIcon(fillColor));
-		getPreview().setFillColor(fillColor);
-		double fillOpacity = SLD.polyFillOpacity(ps);
-		getFillOpacitySpinner().setValue(fillOpacity);
-		getPreview().setFillOpacity(fillOpacity);
-		Stroke stroke = SLD.stroke(ps);
-		getPreview().setOutlineColor(SLD.color(stroke.getColor()));
-		getStrokeColorButton().setIcon(
-				new SquareIcon(SLD.color(stroke.getColor())));
-		getOutlineOpacitySpinner().setValue(SLD.polyFillOpacity(ps));
-		getOutlineThicknessSpinner().setValue(
-				((Number) stroke.getWidth().evaluate(null)).intValue());
-
-	}
-
+	
 	private void fillColorButtonClicked(ActionEvent e) {
 		Color color = JColorChooser.showDialog(this, "Select a Fill Color",
-				((SquareIcon) getFillColorButton().getIcon()).getColor());
+				((SquareIcon) fillColorButton.getIcon()).getColor());
 		if (color != null) {
-			getFillColorButton().setIcon(new SquareIcon(color));
-			getPreview().setFillColor(color);
+			fillColorButton.setIcon(new SquareIcon(color));
 			setFill();
 		}
 	}
-
-	private void setFill() {
-		if (symbolizer instanceof PolygonSymbolizer) {
-			PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
-			ps.setFill(styleBuilder.createFill(getFillColor(),
-					(Double) fillOpacitySpinner.getValue()));
-		} else if (symbolizer instanceof PointSymbolizer) {
-			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
-			mark.setFill(styleBuilder.createFill(getFillColor(), (Double) fillOpacitySpinner.getValue()));
-		}
-	}
-
-	private void setStroke() {
-		Stroke stroke = styleBuilder.createStroke(getStrokeColor(),
-				getStrokeWidth(), getStrokeTransparency());
-		if (symbolizer instanceof PolygonSymbolizer) {
-			PolygonSymbolizer ps = (PolygonSymbolizer) symbolizer;
-			ps.setStroke(stroke);
-		} else if (symbolizer instanceof PointSymbolizer) {
-			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Mark mark = (Mark)ps.getGraphic().graphicalSymbols().get(0);
-			mark.setStroke(stroke);
-		} else if (symbolizer instanceof LineSymbolizer) {
-			LineSymbolizer ls = (LineSymbolizer) symbolizer;
-			ls.setStroke(stroke);
-		}
-	}
-
-	private void setFilter() {
-		String filter = filterField.getText();
-		
-		if (filter == null || filter.length() < 1) {
-			return;
-		}
-		
-		try {
-			rule.setFilter(CQL.toFilter(filter));
-		} catch (CQLException e) {
-			filterField.setForeground(Color.RED);
-			JOptionPane.showConfirmDialog(this, e.getCause().getMessage());
-		}
-	}
-
-	private void setMark() {
-		if (symbolizer instanceof PointSymbolizer) {
-			PointSymbolizer ps = (PointSymbolizer) symbolizer;
-			Fill fill = styleBuilder.createFill(getFillColor(),	getFillTransparency());
-			Stroke stroke = styleBuilder.createStroke(getStrokeColor(),
-					getStrokeWidth(), getStrokeTransparency());
-			List<Mark> markList = new ArrayList<Mark>();
-			markList.add(styleBuilder.createMark(getMark(), fill,	stroke));
-			ps.getGraphic().graphicalSymbols().clear();
-			ps.getGraphic().graphicalSymbols().addAll(markList);
-			ps.getGraphic().setSize(CommonFactoryFinder.getFilterFactory().literal(getMarkSize())); 
-		} else {
-			throw new IllegalArgumentException("Cannot apply a mark to a "
-					+ symbolizer.getClass().getName());
-		}
-	}
-
-	private void outlineButtonClicked(ActionEvent e) {
+	
+	private void outlineColorButtonClicked(ActionEvent e) {
 		Color color = JColorChooser.showDialog(this, "Select an Outline Color",
-				((SquareIcon) getStrokeColorButton().getIcon()).getColor());
+				((SquareIcon) strokeColorButton.getIcon()).getColor());
 		if (color != null) {
-			getStrokeColorButton().setIcon(new SquareIcon(color));
-			getPreview().setOutlineColor(color);
+			strokeColorButton.setIcon(new SquareIcon(color));
 			setStroke();
 		}
 	}
 
 	private void fillOpacityChanged(ChangeEvent e) {
-		getPreview()
-				.setFillOpacity((Double) getFillOpacitySpinner().getValue());
 		setFill();
 	}
 
 	private void outlineOpacityChanged(ChangeEvent e) {
-		getPreview().setOutlineOpacity(
-				(Double) getOutlineOpacitySpinner().getValue());
 		setStroke();
 	}
 
 	private void markBoxChanged(ActionEvent e) {
-		getPreview().setMark((String) getMarkBox().getSelectedItem());
 		setMark();
 	}
 
 	private void markSizeChanged(ChangeEvent e) {
-		getPreview().setMarkSize(
-				((Number) getMarkSizeSpinner().getValue()).intValue());
-		setMark();
+		setMarkSize();
+	}
+	private void markRotationChanged(ChangeEvent e) {
+		setMarkRotation();
 	}
 
 	private void outlineThicknessChanged(ChangeEvent e) {
-		getPreview().setOutlineThickness(
-				(Integer) getOutlineThicknessSpinner().getValue());
 		setStroke();
 	}
-
-	public JButton getFillColorButton() {
-		return fillColorButton;
+	
+	private void markSizePropertyChanged(ActionEvent e) {
+		setMarkSizeProperty();
 	}
-
-	public JSpinner getFillOpacitySpinner() {
-		return fillOpacitySpinner;
-	}
-
-	public JButton getStrokeColorButton() {
-		return strokeColorButton;
-	}
-
-	public JSpinner getOutlineOpacitySpinner() {
-		return outlineOpacitySpinner;
-	}
-
-	public JSpinner getOutlineThicknessSpinner() {
-		return outlineThicknessSpinner;
-	}
-
-	public JComboBox getMarkBox() {
-		return markBox;
-	}
-
-	public JSpinner getMarkSizeSpinner() {
-		return markSizeSpinner;
-	}
-
-	public PreviewLabel getPreview() {
-		return preview;
-	}
-
-	private void filterFieldFocusLost(FocusEvent e) {
-		setFilter();
-	}
-
-	private void filterFieldFocusGained(FocusEvent e) {
-		filterField.setForeground(Color.BLACK);
-	}
+	
+	
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
-		filterPanel = new JPanel();
-		separator5 = compFactory.createSeparator("Filter");
-		label10 = new JLabel();
-		filterField = new JTextField();
+		
 		fillPanel = new JPanel();
 		separator1 = compFactory.createSeparator("Fill");
-		label1 = compFactory.createLabel("Fill Color");
+		fillColorLabel = compFactory.createLabel("Fill Color");
 		fillColorButton = new JButton();
-		label3 = compFactory.createLabel("Fill Transparency");
+		fillOpacityLabel = compFactory.createLabel("Fill Transparency");
 		fillOpacitySpinner = new JSpinner();
 		strokePanel = new JPanel();
-		separator2 = compFactory.createSeparator("Outline");
-		label2 = compFactory.createLabel("Outline Color");
+		outlineSeparator = compFactory.createSeparator("Outline");
+		strokeColorLabel = compFactory.createLabel("Outline Color");
 		strokeColorButton = new JButton();
-		label4 = compFactory.createLabel("Outline Transparency");
+		strokeOpacityLabel = compFactory.createLabel("Outline Transparency");
 		outlineOpacitySpinner = new JSpinner();
-		label7 = compFactory.createLabel("Outline Thickness");
+		strokeThicknessLabel = compFactory.createLabel("Outline Thickness");
 		outlineThicknessSpinner = new JSpinner();
 		markPanel = new JPanel();
-		separator3 = compFactory.createSeparator("Mark");
-		label5 = compFactory.createLabel("Mark");
+		markSeparator = compFactory.createSeparator("Mark");
+		markLabel = compFactory.createLabel("Mark");
 		markBox = new JComboBox();
-		label6 = compFactory.createLabel("Mark Size");
+		markSizeLabel = compFactory.createLabel("Mark Size");
 		markSizeSpinner = new JSpinner();
+		markSizePropertyBox = new JComboBox();
+		markRotationLabel = compFactory.createLabel("Mark Rotation");
+		markRotationSpinner = new JSpinner();
 		previewPanel = new JPanel();
-		separator6 = compFactory.createSeparator("Preview");
-		preview = new PreviewLabel();
+		previewSeparator = compFactory.createSeparator("Preview");
+		previewLabel = new JLabel();
 		CellConstraints cc = new CellConstraints();
 
-		//======== this ========
 		setBorder(new EmptyBorder(7, 7, 7, 7));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		//======== filterPanel ========
-		{
-			filterPanel.setLayout(new FormLayout(
+		fillPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormSpecs.DEFAULT_COLSPEC,
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(Sizes.dluX(80)),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(Sizes.dluX(80)),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				},
 				new RowSpec[] {
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					new RowSpec(Sizes.dluY(10))
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						new RowSpec(Sizes.dluY(10))
 				}));
-			filterPanel.add(separator5, cc.xywh(1, 1, 5, 1));
+		fillPanel.add(separator1, cc.xywh(1, 1, 5, 1));
+		fillPanel.add(fillColorLabel, cc.xy(3, 3));
 
-			//---- label10 ----
-			label10.setText("Filter: ");
-			filterPanel.add(label10, cc.xy(3, 3));
+		fillColorButton.setIcon(new SquareIcon(Color.RED));
+		fillColorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fillColorButtonClicked(e);
+			}
+		});
+		fillColorButton.setPreferredSize(preferred);
+		fillPanel.add(fillColorButton, cc.xy(5, 3));
+		fillPanel.add(fillOpacityLabel, cc.xy(3, 5));
 
-			//---- filterField ----
-			filterField.setColumns(20);
-			filterField.addFocusListener(new FocusAdapter() {
-				@Override
-				public void focusGained(FocusEvent e) {
-					filterFieldFocusGained(e);
-				}
-				@Override
-				public void focusLost(FocusEvent e) {
-					filterFieldFocusLost(e);
-				}
-			});
-			filterPanel.add(filterField, cc.xy(5, 3));
-		}
-		add(filterPanel);
+		fillOpacitySpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 1.0, 0.01));
+		fillOpacitySpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				fillOpacityChanged(e);
+			}
+		});
+		fillOpacitySpinner.setPreferredSize(preferred);
+		fillPanel.add(fillOpacitySpinner, cc.xy(5, 5));
 
-		//======== fillPanel ========
-		{
-			fillPanel.setLayout(new FormLayout(
-				new ColumnSpec[] {
-					FormSpecs.DEFAULT_COLSPEC,
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(Sizes.dluX(80)),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
-				},
-				new RowSpec[] {
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					new RowSpec(Sizes.dluY(10))
-				}));
-			fillPanel.add(separator1, cc.xywh(1, 1, 5, 1));
-			fillPanel.add(label1, cc.xy(3, 3));
-
-			//---- fillColorButton ----
-			fillColorButton.setIcon(new SquareIcon(Color.RED));
-			fillColorButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					fillColorButtonClicked(e);
-				}
-			});
-			fillColorButton.setPreferredSize(preferred);
-			fillPanel.add(fillColorButton, cc.xy(5, 3));
-			fillPanel.add(label3, cc.xy(3, 5));
-
-			//---- fillOpacitySpinner ----
-			fillOpacitySpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 1.0, 0.01));
-			fillOpacitySpinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					fillOpacityChanged(e);
-				}
-			});
-			fillOpacitySpinner.setPreferredSize(preferred);
-			fillPanel.add(fillOpacitySpinner, cc.xy(5, 5));
-		}
 		add(fillPanel);
 
-		//======== strokePanel ========
-		{
-			strokePanel.setLayout(new FormLayout(
+		strokePanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					FormSpecs.DEFAULT_COLSPEC,
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(Sizes.dluX(80)),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(Sizes.dluX(80)),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				},
 				new RowSpec[] {
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					new RowSpec(Sizes.dluY(10))
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						new RowSpec(Sizes.dluY(10))
 				}));
-			strokePanel.add(separator2, cc.xywh(1, 1, 6, 1));
-			strokePanel.add(label2, cc.xy(3, 3));
+		strokePanel.add(outlineSeparator, cc.xywh(1, 1, 6, 1));
+		strokePanel.add(strokeColorLabel, cc.xy(3, 3));
 
-			//---- strokeColorButton ----
-			strokeColorButton.setIcon(new SquareIcon(Color.RED));
-			strokeColorButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					outlineButtonClicked(e);
-				}
-			});
-			strokeColorButton.setPreferredSize(preferred);
-			strokePanel.add(strokeColorButton, cc.xywh(5, 3, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			strokePanel.add(label4, cc.xy(3, 5));
+		strokeColorButton.setIcon(new SquareIcon(Color.RED));
+		strokeColorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				outlineColorButtonClicked(e);
+			}
+		});
+		strokeColorButton.setPreferredSize(preferred);
+		strokePanel.add(strokeColorButton, cc.xywh(5, 3, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		strokePanel.add(strokeOpacityLabel, cc.xy(3, 5));
 
-			//---- outlineOpacitySpinner ----
-			outlineOpacitySpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 1.0, 0.01));
-			outlineOpacitySpinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					outlineOpacityChanged(e);
-				}
-			});
-			outlineOpacitySpinner.setPreferredSize(preferred);
-			strokePanel.add(outlineOpacitySpinner, cc.xywh(5, 5, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			strokePanel.add(label7, cc.xy(3, 7));
+		outlineOpacitySpinner.setModel(new SpinnerNumberModel(1.0, 0.0, 1.0, 0.01));
+		outlineOpacitySpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				outlineOpacityChanged(e);
+			}
+		});
+		outlineOpacitySpinner.setPreferredSize(preferred);
+		strokePanel.add(outlineOpacitySpinner, cc.xywh(5, 5, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		strokePanel.add(strokeThicknessLabel, cc.xy(3, 7));
 
-			//---- outlineThicknessSpinner ----
-			outlineThicknessSpinner.setModel(new SpinnerNumberModel(1, 0, null, 1));
-			outlineThicknessSpinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					outlineThicknessChanged(e);
-				}
-			});
-			outlineThicknessSpinner.setPreferredSize(preferred);
-			strokePanel.add(outlineThicknessSpinner, cc.xywh(5, 7, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-		}
+		outlineThicknessSpinner.setModel(new SpinnerNumberModel(1, 0, null, 1));
+		outlineThicknessSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				outlineThicknessChanged(e);
+			}
+		});
+		outlineThicknessSpinner.setPreferredSize(preferred);
+		strokePanel.add(outlineThicknessSpinner, cc.xywh(5, 7, 2, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+
 		add(strokePanel);
 
-		//======== markPanel ========
-		{
-			markPanel.setLayout(new FormLayout(
+		markPanel.setLayout(new FormLayout(
 				new ColumnSpec[] {
-					new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.NO_GROW),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(Sizes.dluX(80)),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-					new ColumnSpec(ColumnSpec.LEFT, Sizes.dluX(80), FormSpec.DEFAULT_GROW),
-					FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
+						new ColumnSpec(ColumnSpec.LEFT, Sizes.DEFAULT, FormSpec.NO_GROW),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(Sizes.dluX(80)),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.BUTTON_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						FormSpecs.BUTTON_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC
 				},
 				new RowSpec[] {
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.LINE_GAP_ROWSPEC,
-					new RowSpec(Sizes.dluY(10))
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						new RowSpec(Sizes.dluY(10))
 				}));
-			markPanel.add(separator3, cc.xywh(1, 1, 6, 1));
-			markPanel.add(label5, cc.xy(3, 3));
+		markPanel.add(markSeparator, cc.xywh(1, 1, 8, 1));
+		markPanel.add(markLabel, cc.xy(3, 3));
 
-			//---- markBox ----
-			markBox.setModel(new DefaultComboBoxModel(new String[] {
-				"circle",
-				"cross",
-				"star",
-				"square",
-				"triangle"
-			}));
-			markBox.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					markBoxChanged(e);
-				}
-			});
-			markBox.setPreferredSize(preferred);
-			markPanel.add(markBox, cc.xywh(5, 3, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-			markPanel.add(label6, cc.xy(3, 5));
+		markBox.setModel(new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List()));
+		markBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				markBoxChanged(e);
+			}
+		});
+		markBox.setPreferredSize(preferred);
+		markPanel.add(markBox, cc.xywh(5, 3, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
+		markPanel.add(markSizeLabel, cc.xy(3, 5));
+		markSizeSpinner.setModel(new SpinnerNumberModel(10, 0, null, 1));
+		markSizeSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				markSizeChanged(e);
+			}
+		});
+		markSizeSpinner.setPreferredSize(preferred);
+		markPanel.add(markSizeSpinner, cc.xywh(5, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
 
-			//---- markSizeSpinner ----
-			markSizeSpinner.setModel(new SpinnerNumberModel(10, 0, null, 1));
-			markSizeSpinner.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					markSizeChanged(e);
-				}
-			});
-			markSizeSpinner.setPreferredSize(preferred);
-			markPanel.add(markSizeSpinner, cc.xywh(5, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
-		}
+		// TODO Geotools - working on property-based styling
+		
+		markSizePropertyBox.setModel(new DefaultComboBoxModel());
+		markSizePropertyBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				markSizePropertyChanged(e);
+			}
+		});
+		markSizePropertyBox.setPreferredSize(preferred_lg);
+		markPanel.add(markSizePropertyBox, cc.xywh(7, 5, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
+		markPanel.add(markRotationLabel, cc.xy(3, 7));
+		markRotationSpinner.setModel(new SpinnerNumberModel(0, null, null, 1));
+		markRotationSpinner.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				markRotationChanged(e);
+			}
+		});
+		markRotationSpinner.setPreferredSize(preferred);
+		markPanel.add(markRotationSpinner, cc.xywh(5, 7, 1, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		
 		add(markPanel);
 
-		//======== previewPanel ========
-		{
-			previewPanel.setLayout(new FormLayout(
+		previewPanel.setLayout(new FormLayout(
 				ColumnSpec.decodeSpecs("default, center:default:grow"),
 				new RowSpec[] {
 					FormSpecs.DEFAULT_ROWSPEC,
 					FormSpecs.LINE_GAP_ROWSPEC,
 					new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
 				}));
-			previewPanel.add(separator6, cc.xywh(1, 1, 2, 1));
-			previewPanel.add(preview, cc.xy(2, 3));
-		}
+		previewPanel.add(previewSeparator, cc.xywh(1, 1, 2, 1));
+		previewPanel.add(previewLabel, cc.xy(2, 3));
+
 		add(previewPanel);
-		// //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
-	private JPanel filterPanel;
-	private JComponent separator5;
-	private JLabel label10;
-	private JTextField filterField;
+
 	private JPanel fillPanel;
 	private JComponent separator1;
-	private JLabel label1;
+	private JLabel fillColorLabel;
 	private JButton fillColorButton;
-	private JLabel label3;
+	private JLabel fillOpacityLabel;
 	private JSpinner fillOpacitySpinner;
 	private JPanel strokePanel;
-	private JComponent separator2;
-	private JLabel label2;
+	private JComponent outlineSeparator;
+	private JLabel strokeColorLabel;
 	private JButton strokeColorButton;
-	private JLabel label4;
+	private JLabel strokeOpacityLabel;
 	private JSpinner outlineOpacitySpinner;
-	private JLabel label7;
+	private JLabel strokeThicknessLabel;
 	private JSpinner outlineThicknessSpinner;
 	private JPanel markPanel;
-	private JComponent separator3;
-	private JLabel label5;
+	private JComponent markSeparator;
+	private JLabel markLabel;
 	private JComboBox markBox;
-	private JLabel label6;
+	private JLabel markSizeLabel;
 	private JSpinner markSizeSpinner;
+	
+	private JComboBox markSizePropertyBox;
+	
+	private JLabel markRotationLabel;
+	private JSpinner markRotationSpinner;
 	private JPanel previewPanel;
-	private JComponent separator6;
-	private PreviewLabel preview;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
+	private JComponent previewSeparator;
+	private JLabel previewLabel;
 
 	public Style getStyle() {
 		Style style = styleBuilder.createStyle();
@@ -706,7 +632,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		return rule;
 	}
 	
-	public PreviewLabel getPreviewLabel(){
-		return preview;
+	public void updatePreview(){
+		previewLabel.setIcon(StylePreviewFactory.createIcon(rule));
 	}
 }

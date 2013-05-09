@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import repast.simphony.statecharts.DefaultStateChart;
@@ -31,6 +32,8 @@ import com.jgoodies.binding.PresentationModel;
  * @author Nick Collier
  */
 public class UICreatorFactory implements PPUICreatorFactory {
+  
+ 
 
   /*
    * (non-Javadoc)
@@ -40,8 +43,6 @@ public class UICreatorFactory implements PPUICreatorFactory {
    */
   @Override
   public void init(RSApplication app) {
-    // TODO Auto-generated method stub
-
   }
 
   /*
@@ -102,8 +103,10 @@ public class UICreatorFactory implements PPUICreatorFactory {
           RSApplication rsApp = RSApplication.getRSApplicationInstance();
           if (rsApp != null) {
             RSGui rsGui = rsApp.getGui();
-            if (rsGui != null)
+            if (rsGui != null) {
               rsGui.addViewListener(PPUICreator.this);
+            }
+            
           }
           scsdc.createAndShowDisplay();
         }

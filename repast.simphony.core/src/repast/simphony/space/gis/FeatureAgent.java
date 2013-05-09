@@ -1,9 +1,5 @@
 package repast.simphony.space.gis;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.server.UID;
 import java.util.ArrayList;
@@ -12,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
 
 import org.geotools.feature.GeometryAttributeImpl;
@@ -32,6 +27,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 
+import repast.simphony.space.gis.FeatureAgentFactory.ObjectClassAttributeData;
 import simphony.util.messages.MessageCenter;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -40,7 +36,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * Wraps a POJO in a GIS feature. The POJO's properties become feature
  * attributes. The feature's geometry is derived from the POJO and a Geography.
  * 
- * TODO Geotools - if this class is used only for visualization, then move it.
+ * TODO Geotools [minor] - if this class is used only for visualization, then move it.
  * 
  * @author Nick Collier
  * @author Eric Tatara
@@ -56,6 +52,7 @@ public class FeatureAgent<T> implements SimpleFeature {
 	protected String geometryName;
 	private Geometry geom;
 	private Geography geography;
+	private Map<Object,Object> userData;
 
 	static class ObjectFeatureAgentAttribute implements FeatureAttributeAdapter {
 		private static final Object[] EMPTY_ARRAY = new Object[0];
@@ -63,6 +60,12 @@ public class FeatureAgent<T> implements SimpleFeature {
 		private FastMethod readMethod;
 		private FastMethod writeMethod;
 
+		public ObjectFeatureAgentAttribute(ObjectClassAttributeData data){
+			name = data.getName();
+			readMethod = data.getReadMethod();
+			writeMethod = data.getWriteMethod();
+		}
+		
 		public ObjectFeatureAgentAttribute(String name, FastMethod readMethod,
 				FastMethod writeMethod) {
 			this.name = name;
@@ -101,19 +104,6 @@ public class FeatureAgent<T> implements SimpleFeature {
 	/**
 	 * Creates a FeatureAgent from the specified FeatureType, agent and
 	 * geography. The geometry of the feature will be supplied by the geography.
-	 * The agent's properties will become attributes of the feature.
-	 * 
-	 * @param type
-	 * @param agent
-	 * @param geography
-	 */
-	public FeatureAgent(SimpleFeatureType type, T agent, Geography geography) {
-		this(type, agent, geography, new ArrayList<FeatureAttributeAdapter>());
-	}
-
-	/**
-	 * Creates a FeatureAgent from the specified FeatureType, agent and
-	 * geography. The geometry of the feature will be supplied by the geography.
 	 * The agent's properties will become attributes of the feature. The list of
 	 * adapters will become additional attributes for those that cannot be mapped
 	 * directly to an agents properties.
@@ -124,7 +114,8 @@ public class FeatureAgent<T> implements SimpleFeature {
 	 * @param adapters
 	 */
 	public FeatureAgent(SimpleFeatureType type, T agent, Geography geog,
-			List<FeatureAttributeAdapter> adapters) {
+			List<FeatureAttributeAdapter> adapters, 
+			List<ObjectClassAttributeData> classAttributeList) {
 				
 		id = new FeatureIdImpl("fid-" + new UID().toString().replace(':', '_'));
 		featureType = type;
@@ -135,36 +126,23 @@ public class FeatureAgent<T> implements SimpleFeature {
 		  geom = geography.getGeometry(agent);
 	  
 		geometryName = FeatureAgentFactory.GEOM_ATTRIBUTE_NAME;
+		userData = new HashMap<Object,Object>();
 		
-		createAttributes(adapters);
+		createAttributes(adapters, classAttributeList);
 	}
 
 	// creates the feature attributes from object properties
-	private void createAttributes(List<FeatureAttributeAdapter> adapters) {
+	private void createAttributes(List<FeatureAttributeAdapter> adapters, 
+			List<ObjectClassAttributeData> classAttributeList) {
 		attributeMap = new HashMap<String, FeatureAttributeAdapter>();
-		try {
-			BeanInfo info = Introspector.getBeanInfo(agentObj.getClass(),
-					Object.class);
-			PropertyDescriptor[] pds = info.getPropertyDescriptors();
-			for (int i = 0; i < pds.length; i++) {
-				PropertyDescriptor pd = pds[i];
-				String featureName = pd.getName();
-				FastClass fastClass = FastClass.create(agentObj.getClass());
-				if (pd.getReadMethod() != null) {
-					FastMethod readMethod = fastClass.getMethod(pd.getReadMethod());
-					FastMethod writeMethod = pd.getWriteMethod() == null ? null
-							: fastClass.getMethod(pd.getWriteMethod());
-					attributeMap.put(featureName, new ObjectFeatureAgentAttribute(
-							featureName, readMethod, writeMethod));
-				}
-			}
+		
+		for (ObjectClassAttributeData attrData : classAttributeList){
+			attributeMap.put(attrData.getName(), new ObjectFeatureAgentAttribute(
+					attrData));
+		}
 
-			for (FeatureAttributeAdapter adapter : adapters) {
-				attributeMap.put(adapter.getAttributeName(), adapter);
-			}
-		} catch (IntrospectionException e) {
-			msgCenter.error("Unable to create feature attributes from agent", e);
-			// todo error center
+		for (FeatureAttributeAdapter adapter : adapters) {
+			attributeMap.put(adapter.getAttributeName(), adapter);
 		}
 	}
 
@@ -408,6 +386,13 @@ public class FeatureAgent<T> implements SimpleFeature {
       return new AttributeDescriptorImpl(featureType, featureType.getName(), 0,
               Integer.MAX_VALUE, true, null);
   }
+  
+  /**
+   * @see Property#getUserData()
+   */
+  public Map<Object, Object> getUserData() {
+		return userData;
+	}
 	
 	//**************************************************************************
 	//
@@ -415,7 +400,7 @@ public class FeatureAgent<T> implements SimpleFeature {
   //  however they may be necessary to implement if the FeatureAgent is used
   //  with any GeoTools API that requires them.
   //
-	//  TODO Geotools - determine what stubs are required to be implemented
+	//  TODO Geotools [minor] - determine what stubs are required to be implemented
   //
 	//**************************************************************************
 
@@ -455,11 +440,6 @@ public class FeatureAgent<T> implements SimpleFeature {
 
 	public void validate() throws IllegalAttributeException {
 		// TODO Auto-generated method stub
-	}
-
-	public Map<Object, Object> getUserData() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public void setValue(Object arg0) {

@@ -43,10 +43,10 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
     layer.getParent().addChild(textureLayer);
   }
 
-  private VLabelLayer getLabelLayer(Font font) {
+  private VLabelLayer getLabelLayer(Font font, boolean antialias) {
     VLabelLayer labelLayer = labelLayers.get(font);
     if (labelLayer == null) {
-      labelLayer = new VLabelLayer(font);
+      labelLayer = new VLabelLayer(font, antialias);
       labelLayers.put(font, labelLayer);
       layer.getParent().addChild(labelLayer);
     }
@@ -76,7 +76,7 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
           // create new label
           entry.label = new Label(label, wrapper);
           entry.font = font;
-          VLabelLayer labelLayer = getLabelLayer(font);
+          VLabelLayer labelLayer = getLabelLayer(font, true);
           labelLayer.addLabel(entry.label);
         }
 
@@ -87,8 +87,8 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
 
         if (!entry.font.equals(font)) {
           // font was updated so need to move it to a new label layer
-          getLabelLayer(entry.font).removeLabel(entry.label);
-          VLabelLayer labelLayer = getLabelLayer(font);
+          getLabelLayer(entry.font, true).removeLabel(entry.label);
+          VLabelLayer labelLayer = getLabelLayer(font, true);
           labelLayer.addLabel(entry.label);
           entry.label.fontChanged();
           entry.font = font;
@@ -162,7 +162,7 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
           layer.removeChild(item);
         LabelEntry entry = (LabelEntry) item.getProperty(LABEL_KEY);
         if (entry.label != null) {
-          getLabelLayer(entry.font).removeLabel(entry.label);
+          getLabelLayer(entry.font, true).removeLabel(entry.label);
         }
       }
 

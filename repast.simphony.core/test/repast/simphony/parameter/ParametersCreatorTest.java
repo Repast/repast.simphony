@@ -1,7 +1,7 @@
 package repast.simphony.parameter;
 
 import junit.framework.TestCase;
-import org.apache.commons.lang.math.DoubleRange;
+import org.apache.commons.lang3.Range;
 import repast.simphony.parameter.*;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class ParametersCreatorTest extends TestCase {
   public void testConstraints() {
     ParametersCreator creator = new ParametersCreator();
     creator.addParameter("int", "My Int", int.class, 3, false);
-    creator.addConstraint("int", new DoubleRange(0, 11.2));
+    creator.addConstraint("int", Range.between(0.0, 11.2));
     List<String> list = new ArrayList<String>();
     list.add("foo");
     list.add("bar");
@@ -83,7 +83,7 @@ public class ParametersCreatorTest extends TestCase {
     assertEquals("int", details.getName());
     assertEquals(int.class, details.getType());
     assertEquals(3, details.getDefaultValue());
-    assertEquals(new DoubleRange(0, 11.2), details.getConstrainingRange());
+    assertEquals(Range.between(0d, 11.2d), details.getConstrainingRange());
 
     assertEquals(3, params.getValue("int"));
     assertEquals("foo", params.getValue("string"));
@@ -122,7 +122,7 @@ public class ParametersCreatorTest extends TestCase {
     ParametersCreator creator = new ParametersCreator();
     creator.addParameter("int", "My Int", int.class, 3, false);
     try {
-      creator.addConstraint("int", new DoubleRange(-3, 0));
+      creator.addConstraint("int", Range.between(-3.0, 0.0));
       fail("should throw exception");
     } catch (IllegalParameterException ex) {
       //ex.printStackTrace();

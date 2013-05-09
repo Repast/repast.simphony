@@ -9,7 +9,19 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
- repast.simphony.data.ui,
- repast.simphony.essentials;bundle-version="1.1.0"
+ repast.simphony.data.ui
 Bundle-Vendor: %providerName
-Export-Package: repast.simphony.sql
+Export-Package: com.gentlyweb.utils,
+ org.josql,
+ org.josql.events,
+ org.josql.expressions,
+ org.josql.filters,
+ org.josql.functions,
+ org.josql.functions.regexp,
+ org.josql.incubator,
+ org.josql.internal,
+ org.josql.parser,
+ org.josql.utils,
+ repast.simphony.sql
+Bundle-ClassPath: lib/JoSQL-2.2.jar,
+ lib/gentlyWEB-utils-1.1.jar

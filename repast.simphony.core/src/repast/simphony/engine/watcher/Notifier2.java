@@ -1,5 +1,12 @@
 package repast.simphony.engine.watcher;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.ClassUtils;
+
 import repast.simphony.engine.schedule.CallBackAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.watcher.query.AndBooleanCondition;
@@ -10,13 +17,6 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.util.ClassUtilities;
 import repast.simphony.util.SimUtilities;
 import simphony.util.messages.MessageCenter;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.lang.ClassUtils;
 
 /**
  * Notifies watchers that their watchee state has changed. This includes evaluating

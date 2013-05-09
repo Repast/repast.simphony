@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: repast.simphony.eclipse
 Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
 Bundle-Version: 2.0.1
-Bundle-ClassPath: bin/,
- lib/commons-lang-2.6.jar
+Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-Vendor: Provider
 Require-Bundle: org.eclipse.ui,
@@ -25,6 +24,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.variables,
  org.eclipse.core.expressions,
  org.eclipse.gef,
+ repast.simphony.core;bundle-version="2.0.1",
  repast.simphony.runtime;bundle-version="2.0.0",
  org.codehaus.groovy.eclipse.core;bundle-version="2.0.1",
  org.eclipse.wst.xml.ui;bundle-version="1.1.2",

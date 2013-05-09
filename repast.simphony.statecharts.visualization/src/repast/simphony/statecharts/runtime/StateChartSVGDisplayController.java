@@ -2,18 +2,20 @@ package repast.simphony.statecharts.runtime;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JFrame;
+
 import org.w3c.dom.svg.SVGDocument;
 
 import repast.simphony.statecharts.AbstractState;
 import repast.simphony.statecharts.StateChart;
 import repast.simphony.statecharts.StateChartListener;
+import repast.simphony.ui.probe.ProbeIntrospector;
 
 public class StateChartSVGDisplayController implements StateChartListener {
 
@@ -31,7 +33,7 @@ public class StateChartSVGDisplayController implements StateChartListener {
   private String createFrameTitle() {
     StringBuilder sb = new StringBuilder();
     sb.append("Agent: ");
-    sb.append(agent);
+    sb.append(ProbeIntrospector.getInstance().getProbeId(agent));
     sb.append(", ");
     sb.append("Statechart: ");
     sb.append(stateChart.getClass().getName());
@@ -83,7 +85,9 @@ public class StateChartSVGDisplayController implements StateChartListener {
 
   }
 
-  boolean tryAnotherUpdate = false;
+  // Accessed by multiple threads.
+  volatile boolean tryAnotherUpdate = false;
+  
   @Override
   public void update() {
     List<AbstractState> states = stateChart.getCurrentStates();

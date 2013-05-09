@@ -1,17 +1,25 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -36,16 +44,17 @@ public class StateChartSVGDisplay {
 	CustomJSVGCanvas svgCanvas;
 	StateChartSVGDisplayController controller;
 	StateChartSVGModel model;
-	
+
 	AbstractAction frameCloseAction;
 
 	/**
-	 * Custom JSVGCanvas.
-	 * This is needed to account for the IllegalStateException thrown by RunnableQueue
-	 * when updates related to mouse events or resizing events collide with the
-	 * dynamic SVG updates we make to the statechart images.
+	 * Custom JSVGCanvas. This is needed to account for the IllegalStateException
+	 * thrown by RunnableQueue when updates related to mouse events or resizing
+	 * events collide with the dynamic SVG updates we make to the statechart
+	 * images.
+	 * 
 	 * @author jozik
-	 *
+	 * 
 	 */
 	private static class CustomJSVGCanvas extends JSVGCanvas {
 
@@ -186,28 +195,48 @@ public class StateChartSVGDisplay {
 	public StateChartSVGDisplay(StateChartSVGDisplayController controller, String frameTitle, URI uri) {
 		this.controller = controller;
 		frame = new JFrame(frameTitle);
+		frame.setAlwaysOnTop(true);
 		this.uri = uri;
 		frameCloseAction = new AbstractAction("Close Window") {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	   // For when the GUI is closed via keyboard shortcut
-	      frame.setVisible(false);
-	      frame.dispose();
-	      StateChartSVGDisplay.this.controller.notifyCloseListeners();
-	    }
-	  };
-		
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// For when the GUI is closed via keyboard shortcut
+				timer.cancel();
+				frame.setVisible(false);
+				frame.dispose();
+				
+				StateChartSVGDisplay.this.controller.notifyCloseListeners();
+			}
+		};
+
 	}
 
 	public void initialize() {
 
 		JPanel panel = createComponents();
+
+		JMenuBar bar = new JMenuBar();
+		    JMenu menu = new JMenu("Options");
+		    menu.setMnemonic(KeyEvent.VK_O);
+		    JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
+		    item.setSelected(true);
+		    item.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent evt) {
+		       frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource()).isSelected());
+		      }
+		    });
+		    menu.add(item);
+		    bar.add(menu);
+		    panel.add(bar, BorderLayout.NORTH);
+		    
 		
-		KeyStroke closeKey = KeyStroke.getKeyStroke(
-	      KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+
+
+		KeyStroke closeKey = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit()
+				.getMenuShortcutKeyMask());
 		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey, "closeWindow");
 		panel.getActionMap().put("closeWindow", frameCloseAction);
-		
+
 		frame.getContentPane().add(panel);
 		// Display the frame.
 		frame.setSize(600, 400);
@@ -221,11 +250,12 @@ public class StateChartSVGDisplay {
 		frame.setVisible(true);
 
 	}
-	
-	protected void closeFrame(){
+
+	protected void closeFrame() {
+		timer.cancel();
 		frame.setVisible(false);
 		frame.dispose();
-		// no need to notify close listeners since the this is triggered by 
+		// no need to notify close listeners since the this is triggered by
 		// the originating dock frame closing
 	}
 
@@ -233,8 +263,8 @@ public class StateChartSVGDisplay {
 	 * Indicates whether the canvas has finished its first render, the canvas is
 	 * now ready for modification of the dom
 	 */
-	private boolean isReadyForModification = false;
-	private boolean needsInitialUpdate = true;
+	private AtomicBoolean isReadyForModification = new AtomicBoolean(false);
+	private AtomicBoolean needsInitialUpdate = new AtomicBoolean(true);
 
 	private JPanel createComponents() {
 		// Create a panel and add the button, status label and the SVG canvas.
@@ -251,14 +281,15 @@ public class StateChartSVGDisplay {
 
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
-				isReadyForModification = true;
 				
-				if (needsInitialUpdate){
-					needsInitialUpdate = false;
+				isReadyForModification.set(true);
+				if (needsInitialUpdate.compareAndSet(true, false)) {
 					controller.update();
-				}
-				if (controller.tryAnotherUpdate){
-					renewDocument();
+				} else {
+
+					if (controller.tryAnotherUpdate) {
+						renewDocument();
+					}
 				}
 			}
 
@@ -270,9 +301,10 @@ public class StateChartSVGDisplay {
 		return panel;
 	}
 
-	
 	private long lastRenderTS = 0;
-	private static final long FRAME_UPDATE_INTERVAL = 16; // in milliseconds
+	private static final long FRAME_UPDATE_INTERVAL = 50; // in milliseconds
+	private volatile boolean isTimerScheduled = false;
+	private Timer timer = new Timer(true);
 
 	/**
 	 * Renew the document by replacing the root node with the one of the new
@@ -288,26 +320,23 @@ public class StateChartSVGDisplay {
 	 */
 	public void renewDocument() {
 		long ts = System.currentTimeMillis();
-//		System.out.println("Attempting to update, checking update interval.");
-		if (/*ts - lastRenderTS > FRAME_UPDATE_INTERVAL*/ true) { // No throttling to avoid missing changes
-//			System.out.println("###########   Passed update interval, checking is ready for modification.");
-			if (isReadyForModification) {
-				isReadyForModification = false;
+
+		// Throttling here.
+		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL /* true */) { 
+			if (isReadyForModification.compareAndSet(true, false)) {
 				controller.tryAnotherUpdate = false;
-//				System.out.println("#################################   Passed is ready for modification, updating.");
 				final SVGDocument doc = model.getCurrentSVGDocument();
 
-				// SVGUtils.printDocument(doc, System.out);
 				UpdateManager um = svgCanvas.getUpdateManager();
 				if (um != null) {
 					RunnableQueue rq = um.getUpdateRunnableQueue();
 					if (rq.getQueueState().equals(RunnableQueue.RUNNING)) {
-						
+
 						try {
 							rq.invokeLater(new Runnable() {
 								@Override
 								public void run() {
-									// isReadyForModification = false;
+
 									// Get the root tags of the documents
 									DOMImplementation impl;
 									impl = SVGDOMImplementation.getDOMImplementation();
@@ -327,14 +356,28 @@ public class StateChartSVGDisplay {
 							});
 							lastRenderTS = ts;
 						} catch (Exception e) {
-//							System.out.println("Caught exception.");
-//							e.printStackTrace();
+							// exceptions are ignored
 						}
 					}
 				}
-			}
-			else {// wasn't ready for update, wait to be notified
+			} else {// wasn't ready for update, wait for gvt notification
 				controller.tryAnotherUpdate = true;
+			}
+		}
+		else {
+			synchronized (this) {
+				if (!isTimerScheduled){
+					isTimerScheduled = true;
+					timer.schedule(new TimerTask(){
+
+						@Override
+						public void run() {
+							renewDocument();
+							isTimerScheduled = false;
+						}
+						
+					}, FRAME_UPDATE_INTERVAL);
+				}
 			}
 		}
 	}

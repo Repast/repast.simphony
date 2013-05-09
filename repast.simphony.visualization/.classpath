@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/worldwindx.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/phoebe.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/cytoscape-graph-layout.jar"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/batik.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jung-visualization-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/MS3DLoader-1.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/phoebe.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/worldwind.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xml-apis-ext.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="lib/batik.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xml-apis-ext.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jung-visualization-2.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/worldwind.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

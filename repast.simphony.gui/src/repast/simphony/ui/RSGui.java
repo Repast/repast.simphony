@@ -562,7 +562,9 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     ProbePanelCreator creator = new ProbePanelCreator(params);
     Probe probe = creator.getProbe("Simulation Parameters", false);
     JPanel panel = new JPanel(new BorderLayout());
-    panel.add(new JScrollPane(probe.getPanel()), BorderLayout.CENTER);
+    JScrollPane pane = new JScrollPane(probe.getPanel());
+    pane.getViewport().setBackground(panel.getBackground());
+    panel.add(pane, BorderLayout.CENTER);
    
     LoadParams lp = new LoadParams(params, probe);
     JToolBar tbar = new JToolBar();
@@ -821,7 +823,11 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   public DockableFrame addProbeView(String id, String title, JPanel panel) {
-    DockableFrame view = dockingManager.createDockable(id, new JScrollPane(panel),
+    // on OSX java 7, the scrollpane has a white background and
+    // this looks odd when any of the widgets have a gray background
+    JScrollPane pane = new JScrollPane(panel);
+    pane.getViewport().setBackground(panel.getBackground());
+    DockableFrame view = dockingManager.createDockable(id, pane,
         MinimizeLocation.BOTTOM);
     view.setTitle(title);
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, PROBE_GROUP, view);

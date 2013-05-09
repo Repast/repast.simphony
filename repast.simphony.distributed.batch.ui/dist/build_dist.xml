@@ -27,7 +27,7 @@
 
 		<jarbundler dir="${batch_runner.dir}" name="${app.name}-1.0" 
 			shortname="Batch Runner" mainclass="repast.simphony.batch.standalone.StandAloneMain" 
-			arguments="$APP_PACKAGE/../eclipse/plugins"
+			arguments="-plugin_dir $APP_PACKAGE/../eclipse/plugins"
 			vmoptions="-Xmx256M" jvmversion="1.6+" 
 			workingdirectory="$APP_PACKAGE/.." icon="./icons/agents.icns">
 			

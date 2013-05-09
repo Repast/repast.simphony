@@ -34,7 +34,7 @@ public class OrphanFilter implements ToDeleteFilter {
     if (start != -1) {
       int end = line.indexOf("\"", start + 1);
       if (end != -1) {
-        System.out.println(line.substring(start + 1, end));
+//        System.out.println(line.substring(start + 1, end));
         return line.substring(start + 1, end);
       }
     }
@@ -84,7 +84,7 @@ public class OrphanFilter implements ToDeleteFilter {
         // so ignore the file completely
         return uuid == null ? false : !genRecord.containsUUID(uuid);
       } else if (ext.equals("svg")) {
-        System.out.println(file.getFullPath());
+//        System.out.println(file.getFullPath());
         return !genRecord.containsSVG(file.getFullPath());
       }
     }

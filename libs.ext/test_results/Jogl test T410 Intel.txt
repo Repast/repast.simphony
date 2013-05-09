@@ -1,0 +1,56 @@
+Thread[main,5,main] GearsES2.init ...
+GearsES2 init on Thread[main,5,main]
+Chosen GLCapabilities: GLCaps[wgl vid 0x8 arb: rgba 8/8/8/8, opaque, accum-rgba 16/16/16/16, dp/st/ms 16/0/0, dbl, mono  , hw, GLProfile[GL2/GL2.hw], on-scr[.]]
+INIT GL IS: jogamp.opengl.gl4.GL4bcImpl
+GL_VENDOR: Intel
+GL_RENDERER: Intel(R) HD Graphics
+GL_VERSION: 2.1.0 - Build 8.15.10.2401
+GL GLSL: true, has-compiler: true, version 1.20  - Intel Build 8.15.10.2401, 1.20.15
+GL FBO: basic true, full true
+GL Profile: GLProfile[GL2/GL2.hw]
+GL Renderer Quirks:[NoDoubleBufferedBitmap]
+GL:jogamp.opengl.gl4.GL4bcImpl@6fcb4b09, 2.1 (hardware) - 2.1.0 - Build 8.15.10.2401
+gear1 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@43f22b2c
+gear2 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@4ff0788d
+gear3 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@347a99fb
+Thread[main,5,main] GearsES2.init FIN
+Thread[main,5,main] GearsES2.reshape 0/0 400x300, swapInterval 1, drawable 0x40114c6
+Thread[main,5,main] GearsES2.display 400x300, swapInterval 1, drawable 0x40114c6
+Thread[main,5,main] GearsES2.display 400x300, swapInterval 1, drawable 0xffffffff8b0114d2
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.reshape 0/0 200x150, swapInterval 1, drawable 0xffffffffaa0114c0
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0xffffffffaa0114c0
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0x650114d3
+Thread[main,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0xffffffffaa0114c0
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.reshape 0/0 800x600, swapInterval 1, drawable 0x40114c6
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 800x600, swapInterval 1, drawable 0x40114c6
+Thread[main,5,main] GearsES2.display 800x600, swapInterval 1, drawable 0x6f0114c9
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 800x600, swapInterval 1, drawable 0x40114c6
+Thread[main,5,main] GearsES2.dispose ... 
+Thread[main,5,main] GearsES2.dispose FIN
+Fin Drawable: WindowsOnscreenWGLDrawable[Realized false,
+	Factory   jogamp.opengl.windows.wgl.WindowsWGLDrawableFactory@352fa163,
+	Handle    0x0,
+	Surface   jogamp.newt.driver.windows.WindowDriver[Config null
+, NEWT-Screen[.windows_nil-1-s0, idx 0, refCount 0, 1440x900, null, NEWT-Display[.windows_nil-1, excl false, refCount 0, hasEDT true, edtRunning false, null]]
+, ParentWindow null
+, ParentWindowHandle 0x0 (false)
+, WindowHandle 0x0
+, SurfaceHandle 0x0 (lockedExt window false, surface false)
+, Pos 70/89 (auto false), size 800x600
+, Visible false, focus false
+, Undecorated false (false)
+, AlwaysOnTop false, Fullscreen false
+, WrappedSurface null
+, ChildWindows 0, SurfaceUpdatedListeners num 0 [], WindowListeners num 1 [lib.ext.test.JoglBug$3@4a0c85dc, ], MouseListeners num 1 [jogamp.newt.driver.windows.WindowDriver$1@7c28547e, ], KeyListeners num 0 [], windowLock <3bc35be0, 16c4edc7>[count 0, qsz 0, owner <NULL>], surfaceLockCount 0]]
+Fin Window: jogamp.newt.driver.windows.WindowDriver[Config null
+, NEWT-Screen[.windows_nil-1-s0, idx 0, refCount 0, 1440x900, null, NEWT-Display[.windows_nil-1, excl false, refCount 0, hasEDT true, edtRunning false, null]]
+, ParentWindow null
+, ParentWindowHandle 0x0 (false)
+, WindowHandle 0x0
+, SurfaceHandle 0x0 (lockedExt window false, surface false)
+, Pos 70/89 (auto false), size 800x600
+, Visible false, focus false
+, Undecorated false (false)
+, AlwaysOnTop false, Fullscreen false
+, WrappedSurface null
+, ChildWindows 0, SurfaceUpdatedListeners num 0 [], WindowListeners num 1 [lib.ext.test.JoglBug$3@4a0c85dc, ], MouseListeners num 1 [jogamp.newt.driver.windows.WindowDriver$1@7c28547e, ], KeyListeners num 0 [], windowLock <3bc35be0, 16c4edc7>[count 0, qsz 0, owner <NULL>], surfaceLockCount 0]

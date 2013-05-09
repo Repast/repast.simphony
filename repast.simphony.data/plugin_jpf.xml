@@ -14,10 +14,6 @@
 		<library id="data.bin" path="bin/" type="code">
 			<export prefix="*" />
 	  </library>
-		
-		<library id="commons-math-2.1" path="lib/commons-math-2.1.jar" type="code">
-			<export prefix="*"/>
-		</library>
 	</runtime>
 
 	<extension plugin-id="repast.simphony.core" point-id="composite.action" id="data.composite.action">

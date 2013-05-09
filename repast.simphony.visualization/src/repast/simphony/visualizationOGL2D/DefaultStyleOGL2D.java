@@ -115,6 +115,6 @@ public class DefaultStyleOGL2D implements StyleOGL2D {
    * @see repast.simphony.visualizationOGL2D.StyleOGL2D#getLabelColor(java.lang.Object)
    */
   public Color getLabelColor(Object object) {
-    return null;
+    return Color.BLACK;
   }
 }

@@ -17,7 +17,7 @@ import java.awt.Componentimport javax.swing.BoxLayoutimport java.awt.Colorimp
 import javax.swing.AbstractButton;
 import javax.swing.JPanelimport javax.swing.JButtonimport javax.swing.JToggleButtonimport javax.swing.JSliderimport repast.simphony.relogo.BaseObserverimport repast.simphony.relogo.BaseTurtleimport repast.simphony.relogo.BasePatchimport repast.simphony.relogo.BaseLinkimport javax.swing.event.ChangeListener
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import simphony.util.messages.MessageCenterimport java.awt.BorderLayoutimport java.awt.FlowLayout
 import java.awt.Font;

@@ -221,7 +221,14 @@ public class NetworkAnalysisPluginWizard extends AnalysisPluginWizard {
 		homeStep.homeDirField.setText(settingsRHome);
 	}
 
+	@Override
 	public String[] getExecutionCommand() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCannotRunMessage() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -5,8 +5,11 @@ import gov.nasa.worldwind.render.Renderable;
 
 public interface SurfacePointShape extends Renderable{
 
-	public LatLon getLocation();
+	public LatLon getCenter();
 	
-	public void setLocation(LatLon latlon);
+	public void setCenter(LatLon latlon);
 	
+	public double getSize();
+	
+	public void setSize(double size);
 }

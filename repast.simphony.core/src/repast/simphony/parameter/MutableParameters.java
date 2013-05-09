@@ -2,7 +2,7 @@ package repast.simphony.parameter;
 
 import java.util.List;
 
-import org.apache.commons.lang.math.Range;
+import org.apache.commons.lang3.Range;
 
 /**
  * Encapsulates a mutable set of simulation time model parameters.

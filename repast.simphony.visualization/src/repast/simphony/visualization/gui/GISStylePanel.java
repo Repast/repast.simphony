@@ -28,6 +28,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -43,30 +44,25 @@ import javax.xml.transform.TransformerException;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.styling.Graphic;
 import org.geotools.styling.LineSymbolizer;
-import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
-import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.FilterFactory;
 
-import repast.simphony.gis.styleEditor.PreviewLabel;
 import repast.simphony.gis.styleEditor.StyleDialog;
+import repast.simphony.gis.styleEditor.StylePreviewFactory;
 import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.gis.DefaultFeatureAgentFactory;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
+import repast.simphony.ui.RSApplication;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
@@ -100,17 +96,17 @@ public class GISStylePanel extends JPanel {
   private static MessageCenter msg = MessageCenter.getMessageCenter(GISStylePanel.class);
   private static final String SLD_NS = "<sld:UserStyle xmlns=\"http://www.opengis.net/sld\"";
   private static final String SLD_NS_2 = " xmlns:sld=\"http://www.opengis.net/sld\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"";
-  static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory();
-  static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
   public static File lastDirectory;
-
+  private static Geometry point, line, polygon;
+  private DisplayDescriptor descriptor;
+  
   static class AgentTypeElement {
 
     String agentName;
     String agentClassName;
     String styleXML;
     Map<GeometryUtil.GeometryType, Style> styleMap = new HashMap<GeometryUtil.GeometryType, Style>();
-    File source;
+    String source;
     Class<? extends Geometry> defaultGeometry;
 
     public AgentTypeElement(String agentName, String agentClassName, String styleXML) {
@@ -124,8 +120,6 @@ public class GISStylePanel extends JPanel {
     }
   }
 
-  private static Geometry point, line, polygon;
-
   static {
     GeometryFactory gFactory = new GeometryFactory();
     point = gFactory.createPoint(new Coordinate(0, 0));
@@ -133,12 +127,13 @@ public class GISStylePanel extends JPanel {
     polygon = gFactory.createPolygon(gFactory.createLinearRing(new Coordinate[]{
             new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(0, 0)}),
             null);
+    
+    File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+    
+    // Trim the actual .rs folder so we're left with the model folder
+    String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+    lastDirectory = new File(modelFolder);
   }
-
-  private DisplayDescriptor descriptor;
-  private Map<GeometryUtil.GeometryType, Style> defaultsMap = new HashMap<GeometryUtil.GeometryType, Style>();
-  private StylePreviewer previewer;
-
 
   public GISStylePanel() {
     initComponents();
@@ -148,11 +143,6 @@ public class GISStylePanel extends JPanel {
             new Object[]{POINT, LINE, POLYGON});
     geomBox.setModel(model);
     addListeners();
-
-    defaultsMap.put(POINT, getDefaultStyle(POINT));
-    defaultsMap.put(LINE, getDefaultStyle(LINE));
-    defaultsMap.put(POLYGON, getDefaultStyle(POLYGON));
-    previewer = new StylePreviewer(previewLabel1);
   }
 
   private void initMyComponents() {
@@ -171,7 +161,7 @@ public class GISStylePanel extends JPanel {
 
     loadBtn.setToolTipText("Load Style from Styled Layer Descriptor (SLD) file");
     geomBox.setToolTipText("Specifies the geometry of the selected agent class");
-    previewLabel1.setToolTipText("This is a sample of how the agent will appear");
+    previewLabel.setToolTipText("This is a sample of how the agent will appear");
   }
 
   private void addListeners() {
@@ -195,10 +185,11 @@ public class GISStylePanel extends JPanel {
                 Style style = parser.readXML()[0];
                 setGeometryBox(style);
                 element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), style);
-                previewer.update(style);
+                updatePreview(style);
               } else {
                 geomBox.setSelectedItem(POINT);
-                previewer.update(getDefaultStyle(POINT));
+                element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), StylePreviewFactory.getDefaultStyle(POINT));
+                updatePreview(StylePreviewFactory.getDefaultStyle(POINT));
               }
             } else {
               agentNameFld.setText(element.agentName);
@@ -210,7 +201,7 @@ public class GISStylePanel extends JPanel {
                 Style style = parser.readXML()[0];
                 setGeometryBox(style);
                 element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), style);
-                previewer.update(style);
+                updatePreview(style);
               }
 
             }
@@ -232,9 +223,10 @@ public class GISStylePanel extends JPanel {
         if (element != null) {
           Style style = element.styleMap.get(type);
           if (style == null) {
-            style = getDefaultStyle(type);
+            style = StylePreviewFactory.getDefaultStyle(type);
+            element.styleMap.put(type, style);
           }
-          previewer.update(style);
+          updatePreview(style);
         }
       }
     });
@@ -318,6 +310,11 @@ public class GISStylePanel extends JPanel {
     });
   }
 
+  /**
+   * Provide a SLD file to style a layer.
+   * 
+   * @param file SLD file for the selected layer.
+   */
   private void addStyle(File file) {
     try {
       AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
@@ -325,7 +322,7 @@ public class GISStylePanel extends JPanel {
       Style style = parser.readXML()[0];
       element.styleXML = new SLDTransformer().transform(style);
       element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), style);
-      previewer.update(style);
+      updatePreview(style);
     } catch (FileNotFoundException e) {
       msg.error("Error while reading style from file", e);
     } catch (TransformerException e) {
@@ -333,16 +330,47 @@ public class GISStylePanel extends JPanel {
     }
   }
 
+  /**
+   * Add a ESRI shapefile layer to the display.
+   * 
+   * @param files list of shapefiles to add to the display.
+   */
   private void addLayer(File[] files) {
     for (File file : files) {
+    
+    	// If the shapefile path is contained within model path, then set the
+    	// path to a relative path so that model distribution is easier.  Otherwise
+    	// set the path to absolute path.
+      String filePath = file.getAbsolutePath();
+      
+      File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
+      
+      // Trim the actual .rs folder so we're left with the model folder
+      String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
+      
+      if (filePath.contains(modelFolder)){
+      	filePath = filePath.replace(modelFolder, "." + File.separator);	
+        file = new File (filePath);
+      }  
+      
       try {
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         String name = source.getSchema().getName().getLocalPart();
         AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-        elem.source = file;
+        elem.source = filePath;
         elem.defaultGeometry = 
         		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
+        
+        // Provide the initial default style for this layer
+        Style style = StylePreviewFactory.getDefaultStyle(GeometryUtil.findGeometryType(elem.defaultGeometry));
+        
+        try {
+					elem.styleXML = getSLDStyle(style);
+				} catch (TransformerException e) {
+					msg.error("Error initializing style for shapefile layer", e);
+				}
+        
         DefaultListModel model = (DefaultListModel) agentList.getModel();
         model.addElement(elem);
         agentList.setSelectedIndex(model.size() - 1);
@@ -350,7 +378,6 @@ public class GISStylePanel extends JPanel {
         msg.error("Error while adding external background layer", ex);
       }
     }
-
   }
 
   private void setGeometryBox(Style style) {
@@ -376,32 +403,14 @@ public class GISStylePanel extends JPanel {
     return polygon;
   }
 
-  private Style getDefaultStyle(GeometryUtil.GeometryType geomType) {
-    StyleBuilder builder = new StyleBuilder();
-
-    if (geomType == POINT) {
-      Mark mark = builder.createMark("Square", Color.BLUE);
-      mark.setStroke(builder.createStroke());
-      Graphic gr = builder.createGraphic();   
-      gr.graphicalSymbols().clear();
-      gr.graphicalSymbols().add(mark);
-   
-      return builder.createStyle(builder.createPointSymbolizer(gr,null));
-    }
-
-    if (geomType == LINE) {
-      return builder.createStyle(builder.createLineSymbolizer(Color.RED, 1));
-    }
-
-    return builder.createStyle(builder.createPolygonSymbolizer(Color.GREEN, Color.BLACK, 1));
-  }
-
   private void showStyleDialog() {
     StyleDialog dialog = new StyleDialog((JDialog) SwingUtilities.getWindowAncestor(this));
     AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
     try {
     	FeatureSource source = null;  // used only for shapefiles
-      Style style = previewer.getStyle();
+    	
+    	Style style = element.styleMap.get((GeometryUtil.GeometryType) geomBox.getSelectedItem());
+    	
       SimpleFeatureType featureType = null;
       if (element.source == null) {
         Class agentClass = Class.forName(element.agentClassName, true, this.getClass().getClassLoader());
@@ -414,29 +423,45 @@ public class GISStylePanel extends JPanel {
         
       } 
       else {
-        ShapefileDataStore dataStore = new ShapefileDataStore(element.source.toURL());
+        ShapefileDataStore dataStore = new ShapefileDataStore(new File(element.source).toURL());
         source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         featureType = (SimpleFeatureType)source.getSchema();
       }
+      
+      // Make sure the selected class has at least one feature attribute.
+      if (featureType.getTypes().size() > 1){
 
-      dialog.setData(featureType, style, source);
-      if (dialog.display()) {
-        style = dialog.getStyle();
-        element.styleXML = getSLDStyle(style);
-        element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), style);
-        previewer.update(style);
+      	dialog.setData(featureType, style, source);
+      	if (dialog.display()) {
+      		style = dialog.getStyle();
+      		element.styleXML = getSLDStyle(style);
+      		element.styleMap.put((GeometryUtil.GeometryType) geomBox.getSelectedItem(), style);
+      		updatePreview(style);
+      	}
       }
+      else{
+      	JOptionPane.showMessageDialog(null,
+      	    "Can't style an agent class without properties.",
+      	    "Style Editor Warning",
+      	    JOptionPane.WARNING_MESSAGE);      	
+      }
+      
     } catch (ClassNotFoundException e) {
       msg.error("Error creating agent class while invoking style editor", e);
     } catch (Exception ex) {
       msg.error("Error creating style", ex);
     }
   }
+  
+  private void updatePreview(Style style){
+  	previewLabel.setIcon(StylePreviewFactory.createIcon(style));
+  }
 
   private String getSLDStyle(Style style) throws TransformerException {
     SLDTransformer sldTransformer = new SLDTransformer();
     String xml = sldTransformer.transform(style);
     // fix the style xml
+    // TODO Geotools [minor] check if this is still neccessary.
     int index = xml.indexOf(SLD_NS);
     if (index != -1 && xml.indexOf(SLD_NS_2) == -1) {
       StringBuilder builder = new StringBuilder(xml);
@@ -444,7 +469,6 @@ public class GISStylePanel extends JPanel {
       xml = builder.toString();
     }
     return xml;
-
   }
 
   public void init(ContextData context, DisplayDescriptor descriptor) {
@@ -453,10 +477,12 @@ public class GISStylePanel extends JPanel {
 
     for (AgentData agent : context.getAgentData(true)) {
         String styleXML = descriptor.getStyleClassName(agent.getClassName());
-        listModel.addElement(new AgentTypeElement(agent.getShortName(), agent.getClassName(), styleXML));
+        listModel.addElement(new AgentTypeElement(agent.getShortName(), 
+        		agent.getClassName(), styleXML));
     }
 
-    Map<String, String> shpStyles = (Map<String, String>) descriptor.getProperty(DisplayGIS.SHP_FILE_STYLE_PROP);
+    Map<String, String> shpStyles = 
+    		(Map<String, String>) descriptor.getProperty(DisplayGIS.SHP_FILE_STYLE_PROP);
     if (shpStyles != null) {
       for (Map.Entry<String, String> entry : shpStyles.entrySet()) {
         try {
@@ -465,7 +491,7 @@ public class GISStylePanel extends JPanel {
           FeatureSource source = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
           String name = source.getSchema().getName().getLocalPart();
           AgentTypeElement elem = new AgentTypeElement(name + " (SHP)", "", null);
-          elem.source = file;
+          elem.source = entry.getKey();
           elem.defaultGeometry = 
           		(Class<? extends Geometry>) source.getSchema().getGeometryDescriptor().getType().getBinding();
           elem.styleXML = entry.getValue();
@@ -474,7 +500,6 @@ public class GISStylePanel extends JPanel {
           msg.error("Error while loading external shapefile", ex);
         }
       }
-
     }
     agentList.setModel(listModel);
     agentList.setSelectedIndex(0);
@@ -492,7 +517,7 @@ public class GISStylePanel extends JPanel {
       } else if (element.styleXML == null && element.source == null) {
         // if style xml == null that means never edited and never
         // click another element in list so just use current default.
-        Style style = getDefaultStyle((GeometryUtil.GeometryType) geomBox.getSelectedItem());
+        Style style = StylePreviewFactory.getDefaultStyle((GeometryUtil.GeometryType) geomBox.getSelectedItem());
         descriptor.addLayerOrder(element.agentClassName, i);
         try {
           descriptor.addStyle(element.agentClassName, getSLDStyle(style));
@@ -500,7 +525,7 @@ public class GISStylePanel extends JPanel {
           msg.warn("Error while transforming Style to xml", e);
         }
       } else if (element.source != null) {
-        String filePath = element.source.getAbsolutePath();
+        String filePath = element.source;
         shpStyles.put(filePath, element.styleXML == null ? "" : element.styleXML);
         descriptor.addLayerOrder(filePath, i);
       }
@@ -508,30 +533,27 @@ public class GISStylePanel extends JPanel {
   }
 
   private void initComponents() {
-    // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-    // Generated using JFormDesigner non-commercial license
     DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
     upBtn = new JButton();
     downBtn = new JButton();
-    label3 = new JLabel();
-    separator1 = compFactory.createSeparator("Layer Order");
+    agentClassLabel = new JLabel();
+    agentClassSeparator = compFactory.createSeparator("Layer Order");
     agentNameFld = new JTextField();
-    label1 = new JLabel();
-    label4 = new JLabel();
+    foregroundLabel = new JLabel();
+    geomLabel = new JLabel();
     scrollPane1 = new JScrollPane();
     agentList = new JList();
     geomBox = new JComboBox();
-    panel1 = new JPanel();
-    panel2 = new JPanel();
-    previewLabel1 = new PreviewLabel();
+    previewPanel = new JPanel();
+    previewLabelPanel = new JPanel();
+    previewLabel = new JLabel();
     loadBtn = new JButton();
     editBtn = new JButton();
     addLayerBtn = new JButton();
     removeLayerBtn = new JButton();
-    label2 = new JLabel();
+    backgroundLabel = new JLabel();
     CellConstraints cc = new CellConstraints();
 
-    //======== this ========
     setBorder(new EmptyBorder(5, 5, 5, 5));
     setLayout(new FormLayout(
             new ColumnSpec[]{
@@ -577,111 +599,90 @@ public class GISStylePanel extends JPanel {
     add(upBtn, cc.xy(1, 1));
     add(downBtn, cc.xy(3, 1));
 
-    //---- label3 ----
-    label3.setText("Agent Class:");
-    add(label3, cc.xywh(9, 1, 4, 1));
-    add(separator1, cc.xywh(1, 3, 5, 1));
+    agentClassLabel.setText("Agent Class:");
+    add(agentClassLabel, cc.xywh(9, 1, 4, 1));
+    add(agentClassSeparator, cc.xywh(1, 3, 5, 1));
     add(agentNameFld, cc.xywh(9, 3, 7, 1));
 
-    //---- label1 ----
-    label1.setText("Foreground");
-    add(label1, cc.xywh(1, 5, 7, 1));
+    foregroundLabel.setText("Foreground");
+    add(foregroundLabel, cc.xywh(1, 5, 7, 1));
 
-    //---- label4 ----
-    label4.setText("Geometry:");
-    add(label4, cc.xywh(9, 5, 3, 1));
+    geomLabel.setText("Geometry:");
+    add(geomLabel, cc.xywh(9, 5, 3, 1));
 
-    //======== scrollPane1 ========
-    {
-      scrollPane1.setViewportView(agentList);
-    }
+    scrollPane1.setViewportView(agentList);
+
     add(scrollPane1, cc.xywh(1, 7, 6, 9));
     add(geomBox, cc.xy(9, 7));
 
-    //======== panel1 ========
-    {
-      panel1.setBorder(new TitledBorder("Preview"));
-      panel1.setLayout(null);
+    previewPanel.setBorder(new TitledBorder("Preview"));
+    previewPanel.setLayout(null);
 
-      //======== panel2 ========
-      {
-        panel2.setBackground(Color.white);
-        panel2.setLayout(null);
+    previewLabelPanel.setBackground(Color.white);
+    previewLabelPanel.setLayout(null);
 
-        //---- previewLabel1 ----
-        previewLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        previewLabel1.setBackground(Color.white);
-        panel2.add(previewLabel1);
-        previewLabel1.setBounds(10, 5, 105, 100);
+    previewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    previewLabel.setBackground(Color.white);
+    previewLabelPanel.add(previewLabel);
+    previewLabel.setBounds(10, 5, 105, 100);
 
-        { // compute preferred size
-          Dimension preferredSize = new Dimension();
-          for (int i = 0; i < panel2.getComponentCount(); i++) {
-            Rectangle bounds = panel2.getComponent(i).getBounds();
-            preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-            preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-          }
-          Insets insets = panel2.getInsets();
-          preferredSize.width += insets.right;
-          preferredSize.height += insets.bottom;
-          panel2.setMinimumSize(preferredSize);
-          panel2.setPreferredSize(preferredSize);
-        }
-      }
-      panel1.add(panel2);
-      panel2.setBounds(8, 22, 127, 108);
-
-      { // compute preferred size
-        Dimension preferredSize = new Dimension();
-        for (int i = 0; i < panel1.getComponentCount(); i++) {
-          Rectangle bounds = panel1.getComponent(i).getBounds();
-          preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
-          preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
-        }
-        Insets insets = panel1.getInsets();
-        preferredSize.width += insets.right;
-        preferredSize.height += insets.bottom;
-        panel1.setMinimumSize(preferredSize);
-        panel1.setPreferredSize(preferredSize);
-      }
+    Dimension preferredSize = new Dimension();
+    for (int i = 0; i < previewLabelPanel.getComponentCount(); i++) {
+    	Rectangle bounds = previewLabelPanel.getComponent(i).getBounds();
+    	preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+    	preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
     }
-    add(panel1, cc.xywh(13, 7, 1, 14));
+    Insets insets = previewLabelPanel.getInsets();
+    preferredSize.width += insets.right;
+    preferredSize.height += insets.bottom;
+    previewLabelPanel.setMinimumSize(preferredSize);
+    previewLabelPanel.setPreferredSize(preferredSize);
 
-    //---- loadBtn ----
+    previewPanel.add(previewLabelPanel);
+    previewLabelPanel.setBounds(8, 22, 127, 108);
+
+    preferredSize = new Dimension();
+    for (int i = 0; i < previewPanel.getComponentCount(); i++) {
+    	Rectangle bounds = previewPanel.getComponent(i).getBounds();
+    	preferredSize.width = Math.max(bounds.x + bounds.width, preferredSize.width);
+    	preferredSize.height = Math.max(bounds.y + bounds.height, preferredSize.height);
+    }
+    insets = previewPanel.getInsets();
+    preferredSize.width += insets.right;
+    preferredSize.height += insets.bottom;
+    previewPanel.setMinimumSize(preferredSize);
+    previewPanel.setPreferredSize(preferredSize);
+
+    add(previewPanel, cc.xywh(13, 7, 1, 14));
+
     loadBtn.setText("Load SLD");
     add(loadBtn, cc.xy(9, 9));
 
-    //---- editBtn ----
     editBtn.setToolTipText("Edit a custom style");
     add(editBtn, cc.xy(9, 11));
     add(addLayerBtn, cc.xy(9, 13));
     add(removeLayerBtn, cc.xy(9, 15));
 
-    //---- label2 ----
-    label2.setText("Background");
-    add(label2, cc.xywh(1, 17, 7, 1));
-    // JFormDesigner - End of component initialization  //GEN-END:initComponents
+    backgroundLabel.setText("Background");
+    add(backgroundLabel, cc.xywh(1, 17, 7, 1));
   }
 
-  // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-  // Generated using JFormDesigner non-commercial license
   private JButton upBtn;
   private JButton downBtn;
-  private JLabel label3;
-  private JComponent separator1;
+  private JLabel agentClassLabel;
+  private JComponent agentClassSeparator;
   private JTextField agentNameFld;
-  private JLabel label1;
-  private JLabel label4;
+  private JLabel foregroundLabel;
+  private JLabel geomLabel;
   private JScrollPane scrollPane1;
   private JList agentList;
   private JComboBox geomBox;
-  private JPanel panel1;
-  private JPanel panel2;
-  private PreviewLabel previewLabel1;
+  private JPanel previewPanel;
+  private JPanel previewLabelPanel;
+  private JLabel previewLabel;
   private JButton loadBtn;
   private JButton editBtn;
   private JButton addLayerBtn;
   private JButton removeLayerBtn;
-  private JLabel label2;
-  // JFormDesigner - End of variables declaration  //GEN-END:variables
+  private JLabel backgroundLabel;
 }

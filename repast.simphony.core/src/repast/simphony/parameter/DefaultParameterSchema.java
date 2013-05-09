@@ -1,6 +1,6 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang.math.Range;
+import org.apache.commons.lang3.Range;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -201,7 +201,7 @@ public class DefaultParameterSchema implements ParameterSchema {
     if (testingType == null) testingType = type;
     if (testingType.isAssignableFrom(setType)) {
       if (isANumber) {
-        if (range != null) return range.containsDouble((Number) obj);
+        if (range != null) return range.contains(((Number) obj).doubleValue());
       }
 
       if (list != null) return list.contains(obj);

@@ -24,6 +24,7 @@ import org.geotools.referencing.datum.DefaultEllipsoid;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.MapTool;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -52,29 +53,19 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
         PropertyChangeListener, MapBoundsListener {
   private static final long serialVersionUID = 2739102421248235987L;
 
-  MessageCenter msg = MessageCenter.getMessageCenter(getClass());
+  protected MessageCenter msg = MessageCenter.getMessageCenter(getClass());
 
-  PInputEventListener currentListener;
-
-  PLayer toolLayer = new PLayer();
-
-  MapContent context;
-
-  Rectangle2D rect;
-
-  Map<String, PLayer> layerNames;
-
-  Map<Layer, PLayer> layers;
-
-  double scaleDenominator;
-
-  DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
-
-  private PLayer layerListening;
-
-  private PLayer mapLayer = new PLayer();
-
-  private GisDisplayMediator2 mediator = new GisDisplayMediator2();
+  protected PInputEventListener currentListener;
+  protected PLayer toolLayer = new PLayer();
+  protected MapContent context;
+  protected Rectangle2D rect;
+  protected Map<String, PGisLayer> layerNames;
+  protected Map<Layer, PGisLayer> layers;
+  protected double scaleDenominator;
+  protected DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
+  protected  PLayer layerListening;
+  protected  PLayer mapLayer = new PLayer();
+  protected  GisDisplayMediator mediator = new GisDisplayMediator();
 
   /**
    * Create and new Canvas for the given context.
@@ -101,10 +92,12 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     tooltipNode.setPickable(false);
     camera.addChild(tooltipNode);
     camera.addInputEventListener(new PBasicInputEventHandler() {
-      public void mouseMoved(PInputEvent event) {
+    	@Override
+    	public void mouseMoved(PInputEvent event) {
         updateToolTip(event);
       }
 
+      @Override
       public void mouseDragged(PInputEvent event) {
         updateToolTip(event);
       }
@@ -129,14 +122,29 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
       }
     });
     setBounds(0, 0, 800, 800);
+    
+    // Event handler to set cursor based on tool
     addInputEventListener(new PBasicInputEventHandler() {
+
+    	// TODO Geotools [major] - set the cursor for each tool.
+
+    	@Override
+    	public void mouseDragged(PInputEvent event) {
+    		 if (currentListener instanceof MapTool) {
+           PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+         } 
+    		 else {
+           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
+         }
+    	}
 
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (currentListener instanceof MapTool) {
-          PGISCanvas.this.setCursor(((MapTool) currentListener)
-                  .getCursor());
-        } else {
+        // The Distance Tool cursor should always be visible when enabled
+      	if (currentListener instanceof DistanceTool) {
+          PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+        } 
+      	else {
           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
         }
       }
@@ -174,6 +182,14 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   }
 
+  /**
+   * Probe event handler for clicks on the Piccolo GIS canvas.
+   * 
+   * ---- NOTE THAT THIS IS CURRENTLY NOT USED ----	
+   *    
+   *   Kept in case a mouse click handler is used in the future.
+   *
+   */
   class ProbeEventHandler extends PBasicInputEventHandler {
     ProbeHandler handler;
 
@@ -201,8 +217,8 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
   }
 
   private void init() {
-    layers = new HashMap<Layer, PLayer>();
-    layerNames = new HashMap<String, PLayer>();
+    layers = new HashMap<Layer, PGisLayer>();
+    layerNames = new HashMap<String, PGisLayer>();
     removeInputEventListener(getZoomEventHandler());
     removeInputEventListener(this.getPanEventHandler());
     setEventHandler(getPanEventHandler());
@@ -360,22 +376,16 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     return mapLayer;
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
+  @Override
   public void layerAdded(MapLayerListEvent event) {
     addMapLayer(event.getToIndex(), event.getElement());
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
+  @Override
   public void layerChanged(MapLayerListEvent event) {
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
+  @Override
   public void layerMoved(MapLayerListEvent event) {
     Layer layer = event.getElement();
     int toIndex = event.getToIndex();
@@ -383,14 +393,13 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     addMapLayer(toIndex, event.getElement());
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
+  @Override
   public void layerRemoved(MapLayerListEvent event) {
     Layer mapLayer = event.getElement();
     removeMapLayer(mapLayer);
   }
 
+  @Override
   public void repaint() {
     ThreadUtilities.runInEventThread(new Runnable() {
       public void run() {
@@ -401,6 +410,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     });
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent arg0) {
     if (!arg0.getPropertyName().equals(PCamera.PROPERTY_VIEW_TRANSFORM)) {
       return;
@@ -408,10 +418,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     calcScaleDenominator(context);
   }
 
-  /**
-   * Implement MapBoundsListener interface
-   */
-
+  @Override
   public void mapBoundsChanged(MapBoundsEvent event) {
     zoomToAreaOfInterest();
     mediator.update();
@@ -419,6 +426,14 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
 	@Override
 	public void layerPreDispose(MapLayerListEvent event) {
-		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * Executes when simulation is paused.
+	 */
+	public void setPause(boolean pause) {
+		for (PGisLayer layer : layers.values()){
+			layer.setPause(pause);
+		}
 	}
 }

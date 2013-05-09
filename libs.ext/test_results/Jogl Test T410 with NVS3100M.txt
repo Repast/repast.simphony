@@ -1,0 +1,32 @@
+Thread[main,5,main] GearsES2.init ...
+GearsES2 init on Thread[main,5,main]
+Chosen GLCapabilities: GLCaps[wgl vid 0x7 arb: rgba 8/8/8/0, opaque, accum-rgba 16/16/16/16, dp/st/ms 24/0/0, dbl, mono  , hw, GLProfile[GL2/GL2.hw], on-scr[.]]
+INIT GL IS: jogamp.opengl.gl4.GL4bcImpl
+GL_VENDOR: NVIDIA Corporation
+GL_RENDERER: NVS 3100M/PCIe/SSE2
+GL_VERSION: 3.3.0
+GL GLSL: true, has-compiler: true, version 3.30 NVIDIA via Cg compiler, 3.30.0
+GL FBO: basic true, full true
+GL Profile: GLProfile[GL2/GL2.hw]
+GL Renderer Quirks:[NoDoubleBufferedBitmap]
+GL:jogamp.opengl.gl4.GL4bcImpl@da3fdb5, 3.3 (hardware) - 3.3.0
+gear1 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@4ff8254f
+gear2 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@2c598e8d
+gear3 created: com.jogamp.opengl.test.junit.jogl.demos.es2.GearsObjectES2@2b9de1ba
+Thread[main,5,main] GearsES2.init FIN
+Thread[main,5,main] GearsES2.reshape 0/0 400x300, swapInterval 1, drawable 0xffffffffaa010e86
+Thread[main,5,main] GearsES2.display 400x300, swapInterval 1, drawable 0xffffffffaa010e86
+Thread[main,5,main] GearsES2.display 400x300, swapInterval 1, drawable 0xffffffffaa010e86
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.reshape 0/0 200x150, swapInterval 1, drawable 0xffffffffcb011179
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0xffffffffcb011179
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0xffffffffcb011179
+Thread[main,5,main] GearsES2.display 200x150, swapInterval 1, drawable 0x62010815
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.reshape 0/0 800x600, swapInterval 1, drawable 0x62010815
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 800x600, swapInterval 1, drawable 0x62010815
+Thread[main-Display-.windows_nil-1-EDT-1,5,main] GearsES2.display 800x600, swapInterval 1, drawable 0x62010815
+Exception in thread "main" java.lang.RuntimeException: Waited 5000ms for: <416f48e4, 711a924b>[count 1, qsz 0, owner <main-Display-.windows_nil-1-EDT-1>] - <main>
+    at jogamp.common.util.locks.RecursiveLockImpl01Unfairish.lock(RecursiveLockImpl01Unfairish.java:198)
+    at jogamp.opengl.GLAutoDrawableBase.defaultDisplay(GLAutoDrawableBase.java:388)
+    at com.jogamp.opengl.GLAutoDrawableDelegate.display(GLAutoDrawableDelegate.java:160)
+    at lib.ext.test.JoglBug.doTest(JoglBug.java:98)
+    at lib.ext.test.JoglBug.main(JoglBug.java:116)

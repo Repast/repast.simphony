@@ -22,7 +22,6 @@ public class StateChartTest2 {
 
     @Override
     public void reset() {
-
     }
   }
 
@@ -51,7 +50,7 @@ public class StateChartTest2 {
       csb.addChildState(two);
       CompositeState<MyAgent1> cs = csb.build();
       this.registerEntryState(cs);
-      addState(csb.build());
+      addState(cs);
       SimpleState<MyAgent1> three = new SimpleStateBuilder<MyAgent1>("three").build();
       addState(three);
       TransitionBuilder<MyAgent1> tb = new TransitionBuilder<StateChartTest2.MyAgent1>(one, two);

@@ -2,12 +2,13 @@ package repast.simphony.data.analysis;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data2.DataConstants;
 import repast.simphony.data2.DataSetRegistry;
@@ -139,12 +140,7 @@ public class AnalysisPluginRunner extends AbstractAction implements
 				PluginOutputStream pos;
 
 				if (SystemUtils.IS_OS_WINDOWS) {
-					if (command.length > 1)
-						process = Runtime.getRuntime().exec(command);
-					else
-						process = Runtime.getRuntime().exec(command[0]);
-					
-					
+					process = Runtime.getRuntime().exec(command);
 
 					pos = new PluginOutputStream(process.getInputStream());
 					pos.start();
@@ -185,5 +181,38 @@ public class AnalysisPluginRunner extends AbstractAction implements
   		buf.append(s);
 
   	return buf.toString();
+  }
+  
+  public static void main (String [] args){
+  	String[] command = new String[2];
+  	
+//  	command[0] = "C:\\Program Files (x86)\\Microsoft Office\\OFFICE14\\Excel.exe";
+//  	command[1] = "C:\\Users\\tatara\\Repast-Simphony\\Schelling\\ModelOutput.2013.May.01.17_12_19.txt.csv ";
+  	
+//  	command[0] = "C:/R-3.0.0/bin/x64/RGui.exe";
+//  	command[1] = "--sdi";
+//  	command[2] = "HOME=C:/Users/eric/repast-simphony/Schelling/RHome";
+//  	command[3] = "LOG_FILE0=C:/Users/eric/repast-simphony/Schelling/ModelOutput.2013.May.02.17_35_41.txt.csv";
+//  	command[4] = "DELIMITER0=,";
+  	
+  	command[0] = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
+  	command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test7.xml";
+//  	command[1] = "test7.xml";
+  	
+//  	command[0] = "C:\\Program Files (x86)\\JasperSoft\\iReport-5.1.0\\bin\\ireport.exe";
+//  	command[1] = "C:\\Users\\eric\\Desktop\\ireport connection.xml";
+//  	command[1] = "--open file";
+//  	command[1] = "C:\\Users\\eric\\Desktop\\report1.jrxml";
+  	
+  	for (String s : command)
+			System.out.print(s + " ");
+		System.out.print("\n");
+  	
+  	try {
+			Runtime.getRuntime().exec(command);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
   }
 }

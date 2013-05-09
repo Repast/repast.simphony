@@ -1,6 +1,6 @@
 package repast.simphony.R;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**
@@ -18,7 +18,7 @@ public class RunRModel extends AnalysisPluginRunner  {
     if (SystemUtils.IS_OS_MAC)
     	path = "/Applications/R.app";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files\\R\\R-2.14.1\\bin\\i386"; 
+    	path = "C:\\R-3.0.0\\bin\\x64\\RGui.exe"; 
     else
     	path = "/usr/bin/R";
   }

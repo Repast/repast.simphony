@@ -19,20 +19,20 @@ public class LayerManagerTest extends TestCase {
 	public void testAddLayer() {
 		Layer layer = new TestMapLayer();
 		manager.addLayer(layer);
-		manager.addPath("Actions", "CBC");
-		manager.addPath("Actions", "HPAC");
+		manager.addPath("Actions", "ABC");
+		manager.addPath("Actions", "DEF");
 		assertTrue(manager.getLayers(new Object[] {}).contains(layer));
-		manager.addLayer(layer, "Actions", "CBC");
-		assertTrue(manager.getLayers("Actions", "CBC").contains(layer));
-		manager.addLayer(new TestMapLayer(), "Actions", "CBC");
-		assertEquals(2, manager.getLayers("Actions", "CBC").size());
+		manager.addLayer(layer, "Actions", "ABC");
+		assertTrue(manager.getLayers("Actions", "ABC").contains(layer));
+		manager.addLayer(new TestMapLayer(), "Actions", "ABC");
+		assertEquals(2, manager.getLayers("Actions", "ABC").size());
 	}
 
 	public void testRemoveLayer() {
 		Layer layer = new TestMapLayer();
-		manager.addLayer(layer, "Actions", "CBC");
-		manager.removeLayer(layer, "Actions", "CBC");
-		assertEquals(0, manager.getLayers("Actions", "CBC").size());
+		manager.addLayer(layer, "Actions", "ABC");
+		manager.removeLayer(layer, "Actions", "ABC");
+		assertEquals(0, manager.getLayers("Actions", "ABC").size());
 		manager.addLayer(layer);
 		manager.removeLayer(layer);
 		assertEquals(0, manager.getLayers(new Object[] {}).size());
@@ -40,32 +40,32 @@ public class LayerManagerTest extends TestCase {
 
 	public void testRemoveChild() {
 		Layer layer = new TestMapLayer();
-		manager.addLayer(layer, "Actions", "CBC");
-		manager.removePath("Actions", "CBC");
+		manager.addLayer(layer, "Actions", "ABC");
+		manager.removePath("Actions", "ABC");
 		assertEquals(0, manager.getChildren("Actions").size());
 	}
 
 	public void testGetChildren() {
-		manager.addPath("Actions", "CBC");
-		assertTrue(manager.getChildren("Actions").contains("CBC"));
+		manager.addPath("Actions", "ABC");
+		assertTrue(manager.getChildren("Actions").contains("ABC"));
 	}
 
 	public void testGetLayers() {
 		Layer layer = new TestMapLayer();
-		manager.addLayer(layer, "Actions", "CBC");
-		assertTrue(manager.getLayers("Actions", "CBC").contains(layer));
+		manager.addLayer(layer, "Actions", "ABC");
+		assertTrue(manager.getLayers("Actions", "ABC").contains(layer));
 	}
 
 	public void testAddPath() {
-		manager.addPath("Actions", "CBC");
-		assertTrue(manager.getChildren("Actions").contains("CBC"));
-		manager.addPath("Actions", "CBC");
+		manager.addPath("Actions", "ABC");
+		assertTrue(manager.getChildren("Actions").contains("ABC"));
+		manager.addPath("Actions", "ABC");
 		Collection<Object> children = manager.getChildren("Actions");
-		boolean cbc = false;
+		boolean ABC = false;
 		for (Object child : children) {
-			if (child.equals("CBC") && !cbc) {
-				cbc = true;
-			} else if (cbc) {
+			if (child.equals("ABC") && !ABC) {
+				ABC = true;
+			} else if (ABC) {
 				fail();
 			}
 		}

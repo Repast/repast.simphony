@@ -1,7 +1,7 @@
 package repast.simphony.engine.watcher.query;
 
 import javassist.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import repast.simphony.util.collections.Pair;
 import simphony.util.messages.MessageCenter;
 

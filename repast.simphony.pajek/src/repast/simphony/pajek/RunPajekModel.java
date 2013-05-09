@@ -1,6 +1,6 @@
 package repast.simphony.pajek;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**
@@ -17,7 +17,7 @@ public class RunPajekModel extends AnalysisPluginRunner {
 
   static {
     if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\pajek\\Pajek\\";
+    	path = "C:\\Pajek\\Pajek.exe";
     else
     	path = "";
   }

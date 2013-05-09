@@ -68,6 +68,7 @@ public class StateChartResolveAction implements IAction {
 		for(DefaultStateChart<?> sc : temp){
 			sc.resolve();
 		}
+		scCountsMap.clear();
 	}
 	
 	public boolean hasListeners(){

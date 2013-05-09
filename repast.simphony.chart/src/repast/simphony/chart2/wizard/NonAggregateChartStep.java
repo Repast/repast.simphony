@@ -1,6 +1,8 @@
 package repast.simphony.chart2.wizard;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -16,6 +18,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.MethodDataSourceDefinition;
 import repast.simphony.data2.util.AggregateFilter;
 import repast.simphony.data2.util.DataUtilities;
+import repast.simphony.ui.widget.ListSelector;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -34,7 +37,8 @@ public class NonAggregateChartStep extends PanelWizardStep {
 
   private TimeSeriesWizardModel model;
   private JComboBox seriesBox = new JComboBox(new DefaultComboBoxModel());
-  private JComboBox dataBox = new JComboBox(new DefaultComboBoxModel());
+  //private JComboBox dataBox = new JComboBox(new DefaultComboBoxModel());
+  private ListSelector<String> dataList = new ListSelector<String>();
   
   // we use an aggregate filter because it allows for only numeric
   // and possibly numeric objects.
@@ -48,8 +52,16 @@ public class NonAggregateChartStep extends PanelWizardStep {
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.append("Series ID:", seriesBox);
     builder.nextLine();
-    builder.append("Data To Display:", dataBox);
+    builder.append("Data To Display:");
+    builder.nextLine();
+    builder.append(dataList, 3);
     add(builder.getPanel(), BorderLayout.CENTER);
+    
+    dataList.addActionListeners(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        setComplete(dataList.getTargetListModel().size() > 0 && seriesBox.getModel().getSize() > 0);
+      }
+    });
   }
 
   public void init(WizardModel wizardModel) {
@@ -76,24 +88,25 @@ public class NonAggregateChartStep extends PanelWizardStep {
       boxModel.setSelectedItem(descriptor.getSeriesIds().get(0));
     }
 
-    boxModel = (DefaultComboBoxModel) dataBox.getModel();
-    boxModel.removeAllElements();
+    dataList.getSourceListModel().removeAllElements();
+    dataList.getTargetListModel().removeAllElements();
 
     for (MethodDataSourceDefinition def : data.methodDataSources()) {
       if (isNumeric(def))
-        boxModel.addElement(def.getId());
+        dataList.getSourceListModel().addElement(def.getId());
     }
 
     for (CustomDataSourceDefinition def : data.customNonAggDataSources()) {
       if (isNumeric(def))
-        boxModel.addElement(def.getId());
+        dataList.getSourceListModel().addElement(def.getId());
     }
     
-    if (descriptor.getDataValueId() != null) {
-      dataBox.setSelectedItem(descriptor.getDataValueId());
+    for (String id : descriptor.dataValueIds()) {
+      dataList.getSourceListModel().removeElement(id);
+      dataList.getTargetListModel().addElement(id);
     }
     
-    setComplete(dataBox.getModel().getSize() > 0 && seriesBox.getModel().getSize() > 0);
+    setComplete(dataList.getTargetListModel().size() > 0 && seriesBox.getModel().getSize() > 0);
   }
   
   private boolean isNumeric(CustomDataSourceDefinition def) {
@@ -121,6 +134,8 @@ public class NonAggregateChartStep extends PanelWizardStep {
     descriptor.setDataValueId(null);
 
     descriptor.addSeriesId(seriesBox.getSelectedItem().toString(), "", null);
-    descriptor.setDataValueId(dataBox.getSelectedItem().toString());
+    for (String id : dataList.getSelectedItems()) {
+      descriptor.addDataValueId(id);
+    }
   }
 }

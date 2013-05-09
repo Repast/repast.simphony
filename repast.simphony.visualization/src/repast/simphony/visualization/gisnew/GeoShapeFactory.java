@@ -1,6 +1,9 @@
 package repast.simphony.visualization.gisnew;
 
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.render.SurfaceCircle;
 import gov.nasa.worldwind.render.SurfacePolygon;
+import gov.nasa.worldwind.render.SurfaceSquare;
 
 
 public class GeoShapeFactory {
@@ -45,21 +48,73 @@ public class GeoShapeFactory {
 //		return shape;
 //	}
 	
-	public static GeoShape createCircle(double radius){
+	public static GeoShape createCircle(){
 		GeoShape shape = new GeoShape();
-		
-		SurfacePointShape c = new SurfaceCircleShape(radius);
-				
+		SurfacePointShape c = new SurfaceCircleShape();
 		shape.setRenderable(c);
-		
+		return shape;
+	}
+	
+	public static GeoShape createSquare(){
+		GeoShape shape = new GeoShape();
+		SurfacePointShape c = new SurfaceSquareShape();
+		shape.setRenderable(c);
 		return shape;
 	}
 	
 	public static GeoShape createPolygon(){
-		GeoShape shape = new GeoShape();
-				
+		GeoShape shape = new GeoShape();	
 		shape.setRenderable(new SurfacePolygon());
-		
 		return shape;
+	}
+	
+	// TODO WWJ - add other types (square, cross, star, ...).
+	
+	public static class SurfaceCircleShape extends SurfaceCircle implements SurfacePointShape {
+
+		public SurfaceCircleShape(){
+			super();
+			setRadius(1);
+		}
+		
+		public LatLon getLocation() {
+			return getCenter();
+		}
+		
+		public void setLocation(LatLon latlon) {
+			setCenter(latlon);		
+		}
+
+		public double getSize() {
+			return 2*getRadius();
+		}
+		
+		public void setSize(double size) {
+			setRadius(size/2);
+		}
+	}
+	
+	public static class SurfaceSquareShape extends SurfaceSquare implements SurfacePointShape {
+
+		public SurfaceSquareShape(){
+			super();
+			super.setSize(1);
+		}
+		
+		public LatLon getLocation() {
+			return getCenter();
+		}
+		
+		public void setLocation(LatLon latlon) {
+			setCenter(latlon);		
+		}
+
+		public double getSize() {
+			return super.getSize();
+		}
+		
+		public void setSize(double size) {
+			super.setSize(size);
+		}
 	}
 }

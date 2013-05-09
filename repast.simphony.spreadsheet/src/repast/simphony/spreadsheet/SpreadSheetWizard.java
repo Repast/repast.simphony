@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data.analysis.AnalysisPluginWizard;
 import repast.simphony.data2.DataSetRegistry;
@@ -76,15 +76,10 @@ public class SpreadSheetWizard extends AnalysisPluginWizard {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
-//				JOptionPane.showMessageDialog(null, "Spreadsheets requires a .csv filname extension.  The file " +
-//						outputters.get(i).getFileName() + " has been copied to " + filename + " for your " +
-//								"convienience.");
 			}
 
 			logFileBuilder.append(prepFileNameFor(filename));
 
-			
 			if (outputters.get(i).getFormat() != FormatType.TABULAR) {
 				LOG
 				.warn("When invoking a spreadsheet, an outputter without a delimited formatter was found. " +
@@ -100,6 +95,11 @@ public class SpreadSheetWizard extends AnalysisPluginWizard {
 			command[2] = getExecutableLoc();
 			command[3] = logFileBuilder.toString();
 		}
+		else if (SystemUtils.IS_OS_WINDOWS){
+			command = new String[2];
+			command[0] = getExecutableLoc();
+			command[1] = logFileBuilder.toString();
+		}
 		else {
 			command = new String[1];
 			command[0] = getExecutableLoc() + " " + logFileBuilder.toString();
@@ -111,5 +111,10 @@ public class SpreadSheetWizard extends AnalysisPluginWizard {
 	public String getExecutableLoc() {
 		return getInstallHome();
 	}
-}
 
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

@@ -1,7 +1,7 @@
 /*CopyRightHere*/
 package repast.simphony.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import simphony.util.messages.MessageCenter;
 
 import java.io.File;

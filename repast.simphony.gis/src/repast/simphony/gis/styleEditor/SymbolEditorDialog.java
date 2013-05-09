@@ -3,6 +3,7 @@ package repast.simphony.gis.styleEditor;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.geotools.styling.Rule;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -55,7 +56,7 @@ public class SymbolEditorDialog extends JDialog {
 		});
 	}
 
-	public void init(FeatureType type, Rule rule) {
+	public void init(SimpleFeatureType type, Rule rule) {
 		ruleEditPanel1.init(type, rule);
 	}
 
@@ -64,14 +65,9 @@ public class SymbolEditorDialog extends JDialog {
 		setVisible(true);
 		return rule;
 	}
-	
-	public PreviewLabel getPreview(){
-		return ruleEditPanel1.getPreview();
-	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
+		this.setPreferredSize(new Dimension(350, 525));
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		ruleEditPanel1 = new RuleEditPanel();
@@ -80,59 +76,47 @@ public class SymbolEditorDialog extends JDialog {
 		cancelButton = new JButton();
 		CellConstraints cc = new CellConstraints();
 
-		//======== this ========
 		setTitle("Edit Symbol");
 		setModal(true);
 		Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
-		//======== dialogPane ========
-		{
-			dialogPane.setBorder(Borders.DIALOG);
-			dialogPane.setLayout(new BorderLayout());
+		dialogPane.setBorder(Borders.DIALOG);
+		dialogPane.setLayout(new BorderLayout());
 
-			//======== contentPanel ========
-			{
-				contentPanel.setLayout(new BorderLayout());
-				contentPanel.add(ruleEditPanel1, BorderLayout.CENTER);
-			}
-			dialogPane.add(contentPanel, BorderLayout.NORTH);
+		contentPanel.setLayout(new BorderLayout());
+		contentPanel.add(ruleEditPanel1, BorderLayout.CENTER);
 
-			//======== buttonBar ========
-			{
-				buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
-				buttonBar.setLayout(new FormLayout(
-					new ColumnSpec[] {
+		dialogPane.add(contentPanel, BorderLayout.NORTH);
+
+		buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
+		buttonBar.setLayout(new FormLayout(
+				new ColumnSpec[] {
 						FormSpecs.GLUE_COLSPEC,
 						FormSpecs.BUTTON_COLSPEC,
 						FormSpecs.RELATED_GAP_COLSPEC,
 						FormSpecs.BUTTON_COLSPEC
-					},
-					RowSpec.decodeSpecs("pref")));
+				},
+				RowSpec.decodeSpecs("pref")));
 
-				//---- okButton ----
-				okButton.setText("OK");
-				buttonBar.add(okButton, cc.xy(2, 1));
 
-				//---- cancelButton ----
-				cancelButton.setText("Cancel");
-				buttonBar.add(cancelButton, cc.xy(4, 1));
-			}
-			dialogPane.add(buttonBar, BorderLayout.SOUTH);
-		}
+		okButton.setText("OK");
+		buttonBar.add(okButton, cc.xy(2, 1));
+
+		cancelButton.setText("Cancel");
+		buttonBar.add(cancelButton, cc.xy(4, 1));
+
+		dialogPane.add(buttonBar, BorderLayout.SOUTH);
+
 		contentPane.add(dialogPane, BorderLayout.CENTER);
 		pack();
 		setLocationRelativeTo(getOwner());
-		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JPanel dialogPane;
 	private JPanel contentPanel;
 	private RuleEditPanel ruleEditPanel1;
 	private JPanel buttonBar;
 	private JButton okButton;
 	private JButton cancelButton;
-	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

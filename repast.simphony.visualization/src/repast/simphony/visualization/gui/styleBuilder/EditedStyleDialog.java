@@ -30,9 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
+import repast.simphony.gis.styleEditor.SimpleMarkFactory;
 import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
@@ -152,12 +153,8 @@ public class EditedStyleDialog extends JDialog {
       if (userStyleData == null)
         userStyleData = new DefaultEditedStyleData2D();
 
-      shapeModel = new DefaultComboBoxModel(new String[]{
-              "circle",
-              "square",
-              "triangle",
-              "cross",
-              "star"});
+      // TODO Eliminate GIS plugin depedency.
+      shapeModel = new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List());
 
       shapeModel.setSelectedItem(userStyleData.getShapeWkt());
     } else {

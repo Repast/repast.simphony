@@ -12,6 +12,8 @@
 	</requires>
 	
 	<runtime>
+	    <library id="icons" path="icons/" type="resources"/>
+	    
 		<library id="gis.bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
