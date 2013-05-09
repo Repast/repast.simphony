@@ -27,6 +27,7 @@
 
 
 	<property name="libs.bsf" location="${plugins.prefix}/libs.bsf${plugins.suffix}" />
+	<property name="libs.ext" location="${plugins.prefix}/libs.ext${plugins.suffix}" />
 	<property name="batch" location="${plugins.prefix}/repast.simphony.batch${plugins.suffix}" />
 	<property name="distributed.batch" location="${plugins.prefix}/repast.simphony.distributed.batch${plugins.suffix}" />
 	<echo message="${distributed.batch}" />
@@ -133,16 +134,16 @@
 				<include name="*.jar" />
 			</fileset>
 
+			<fileset dir="${libs.ext}/lib">
+				<include name="vecmath.jar" />
+				<include name="jai_*.jar"/>
+			</fileset>
+
 			<fileset dir="${core}/lib">
 				<include name="*.jar" />
-
-				<!-- exclude the geotools jars for now 
-				<exclude name="gt2*.jar" />
-				<exclude name="geoapi*.jar" />
-				<exclude name="hsqldb*.jar" />
-				<exclude name="imageio**.jar" />
-				-->
 			</fileset>
+
+
 
 			<fileset dir="${runtime}/lib">
 				<include name="*.jar" />
