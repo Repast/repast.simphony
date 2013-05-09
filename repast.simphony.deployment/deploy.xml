@@ -104,7 +104,8 @@
 		</fileset>
 
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
-			<map from="${workspaceDirectory}" to="." />
+		<!-- MJB 5/9/2013 Comment out to prevent duplication of directory name in path (John Murphy) -->
+		<!--	<map from="${workspaceDirectory}" to="." /> -->
 			<map from="${NewProjectDirectory}" to="." />
 		</pathconvert>
 
