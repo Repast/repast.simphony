@@ -39,6 +39,8 @@ public class MethodHeader {
 		}
 	}
 
-
+	public static void generateRunner(ODECodeGenerator odeCG, BufferedWriter code, ODEAnalyzer analyzer) {
+		
+	}
 
 }

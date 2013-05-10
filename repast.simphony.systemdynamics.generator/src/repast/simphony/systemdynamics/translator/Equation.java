@@ -1655,6 +1655,7 @@ public class Equation {
 		// extract from tree -- last Argument of the Integ function;
 		
 		Node integ = treeRoot.getChild().getNext();
+		
 		Node arg = integ.getChild();
 		while (arg.getNext() != null)
 			arg = arg.getNext();

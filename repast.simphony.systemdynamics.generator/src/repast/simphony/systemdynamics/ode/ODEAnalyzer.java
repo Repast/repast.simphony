@@ -141,4 +141,8 @@ public class ODEAnalyzer {
 	public Map<String, Equation> getEquations() {
 		return equations;
 	}
+	
+	public Equation getEquationForLHS(String s) {
+		return equations.get(s);
+	}
 }

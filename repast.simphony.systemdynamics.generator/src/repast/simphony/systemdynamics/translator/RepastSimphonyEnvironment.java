@@ -130,9 +130,6 @@ public class RepastSimphonyEnvironment {
 	 source.append("<classpath>\n");
 	 source.append("<agents path=\"../bin\" />\n");
 	 source.append("<entry path=\"../lib\" />\n");
-	 source.append("<entry path=\"../lib/colt\" />\n");
-	 source.append("<entry path=\"../lib/poi/poi-3.7\" />\n");
-	 source.append("<entry path=\"../lib/poi/poi-3.7/ooxml-lib\" />\n");
 	 source.append("</classpath>\n");
 	 source.append("</model>\n");
 

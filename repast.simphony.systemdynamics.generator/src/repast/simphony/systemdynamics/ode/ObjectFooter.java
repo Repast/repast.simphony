@@ -36,5 +36,7 @@ public class ObjectFooter {
 		}
 	}
 
-
+	public static void generateRunner(ODECodeGenerator odeCG, BufferedWriter code, ODEAnalyzer analyzer) {
+		
+	}
 }
