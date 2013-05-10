@@ -579,7 +579,7 @@ public class TranslatorRepastSimphony extends Translator {
 				}
     			
     			bw = Utilities.openFileForWriting(dir+"/ContextBuilder"+objectName+"_ODESolverCompatible.java");
-    			odecg.generateContextBuilderClass(bw, "ContextBuilder"+objectName+"_ODESolverCompatible", 
+    			odecg.generateContextBuilderClass(bw, "ContextBuilder"+objectName+"_ODESolverCompatible",
     					objectName+"Runner_ODESolverCompatible");
     			try {
 					bw.close();
@@ -588,6 +588,8 @@ public class TranslatorRepastSimphony extends Translator {
 					e.printStackTrace();
 				}
    
+    			if (isInitializeScenarioDirectory())
+    				odecg.generateScenarioDirectoryFiles(this.getScenarioDirectory());
     		}
     		try {
     			project.refreshLocal(IResource.DEPTH_INFINITE, null);
