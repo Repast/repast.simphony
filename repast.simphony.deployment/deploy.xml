@@ -326,11 +326,13 @@
 			</fileset>
 
 			<fileset dir="../repast.simphony.relogo.runtime/src" casesensitive="no">
+				<include name="**/*.dsld" />
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
 			<fileset dir="../repast.simphony.relogo.runtime/bin" casesensitive="no">
 				<include name="**/*.class" />
+				<exclude name="**/dsld/**" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.relogo.ide/src" casesensitive="no">
