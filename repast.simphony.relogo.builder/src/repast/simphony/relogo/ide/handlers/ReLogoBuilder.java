@@ -43,14 +43,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotation;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
@@ -282,6 +285,28 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				throws UnsupportedEncodingException, CoreException {
 			String[] packageNames = instrumentingPackageName.split("\\.");
 			IFolder srcGenNewFolder = project.getFolder(SRCGEN_ROOT_PACKAGE_FRAGMENT);
+			if(!srcGenNewFolder.exists()){
+				
+				IJavaProject javaProject = JavaCore.create(project);
+				IPath srcPath = javaProject.getPath().append(SRCGEN_ROOT_PACKAGE_FRAGMENT + "/");
+				srcGenNewFolder.create(true, true, monitor);
+	      IClasspathEntry[] entries = javaProject.getRawClasspath();
+	      boolean found = false;
+	      for (IClasspathEntry entry : entries) {
+	        if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getPath().equals(srcPath)) {
+	          found = true;
+	          break;
+	        }
+	      }
+
+	      if (!found) {
+	        IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
+	        System.arraycopy(entries, 0, newEntries, 0, entries.length);
+	        IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath, null);
+	        newEntries[entries.length] = srcEntry;
+	        javaProject.setRawClasspath(newEntries, null);
+	      }
+			}
 			for (String subpackage : packageNames) {
 				srcGenNewFolder = createFolderResource(srcGenNewFolder, subpackage);
 			}

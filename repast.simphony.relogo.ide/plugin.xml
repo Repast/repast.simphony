@@ -169,5 +169,71 @@
          </perspectiveShortcut>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.relogo.ide.rs_projectContribution_add">
+         <visibility>
+            <not>
+               <objectState
+                     name="projectNature"
+                     value="repast.simphony.eclipse.repast_simphony_nature">
+               </objectState>
+             </not>
+              
+         </visibility>
+         <action
+               label="Add ReLogo Nature"
+               class="repast.simphony.relogo.ide.actions.AddReLogo"
+               menubarPath="rs_main/natureGroup"
+               id="addReLogoAction">
+         </action>
+      </objectContribution>
+      
+      <objectContribution
+       objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.relogo.ide.rs_projectContribution_update">
+         <visibility>
+            <and>
+               <objectState
+                     name="projectNature"
+                     value="repast.simphony.eclipse.repast_simphony_nature">
+               </objectState>
+             <not>
+               <objectState
+                     name="projectNature"
+                     value="repast.simphony.relogo.builder.relogo_nature">
+               </objectState>
+             </not>
+             </and>
+         </visibility>
+         <action
+               label="Add ReLogo Nature"
+               class="repast.simphony.relogo.ide.actions.AddOnlyReLogo"
+               menubarPath="rs_main/natureGroup"
+               id="updateReLogoAction">
+         </action>
+      </objectContribution>
+      
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.relogo.ide.rs_projectContribution_remove">
+         <filter
+               name="projectNature"
+               value="repast.simphony.relogo.builder.relogo_nature">
+         </filter>
+         <action
+               label="Remove ReLogo Nature"
+               class="repast.simphony.relogo.ide.actions.RemoveReLogo"
+               menubarPath="rs_main/natureGroup"
+               id="removeReLogoAction">
+         </action>
+      </objectContribution>
+      
+   </extension>
 
 </plugin>
