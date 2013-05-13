@@ -303,8 +303,8 @@ public class Utility {
 		return a;
 	}
 
-	public static AgentSet agentSetFromIterator(Iterator i) {
-		AgentSet a = new AgentSet();
+	public static <E> AgentSet<E> agentSetFromIterator(Iterator<E> i) {
+		AgentSet<E> a = new AgentSet<>();
 		while (i.hasNext()) {
 			a.add(i.next());
 		}
@@ -923,8 +923,8 @@ public class Utility {
 	 *            a list
 	 * @return list randomly reordered
 	 */
-	public static ArrayList shuffle(List a) {
-		ArrayList result = new ArrayList(a);
+	public static <E> ArrayList<E> shuffle(List<E> a) {
+		ArrayList<E> result = new ArrayList<>(a);
 		SimUtilities.shuffle(result, RandomHelper.getUniform());
 		return result;
 	}
@@ -1067,9 +1067,9 @@ public class Utility {
 	}
 
 	/**
-	 * Returns the number for pi (¹).
+	 * Returns the number for pi (ï¿½).
 	 * 
-	 * @returns number for pi (¹).
+	 * @returns number for pi (ï¿½).
 	 */
 	public static double pi() {
 		return Math.PI;
@@ -1422,7 +1422,7 @@ public class Utility {
 	public static void display() {
 	}
 
-	public static AgentSet getTurtleAgentSetOfType(String typeName,
+	public static AgentSet<Turtle> getTurtleAgentSetOfType(String typeName,
 			Observer observer) {
 		Class clazz = observer.getTurtleFactory().getTurtleTypeClass(typeName);
 		return getAgentSetOfClass(clazz, observer);
@@ -1811,14 +1811,14 @@ public class Utility {
 	 *            a list
 	 * @return list minus first list item
 	 */
-	public static ArrayList butFirst(List a) {
+	public static <E> List<E> butFirst(List<E> a) {
 
 		if (a.size() > 1) {
-			ArrayList result = new ArrayList(a);
+			ArrayList<E> result = new ArrayList<>(a);
 			result.subList(0, 1).clear();
 			return result;
 		} else {
-			return new ArrayList();
+			return new ArrayList<E>();
 		}
 	}
 
@@ -1845,14 +1845,14 @@ public class Utility {
 	 *            a list
 	 * @return list minus last list item
 	 */
-	public static ArrayList butLast(List a) {
+	public static <E> List<E> butLast(List<E> a) {
 		int size = a.size();
 		if (size > 1) {
-			ArrayList result = new ArrayList(a);
+			ArrayList<E> result = new ArrayList<>(a);
 			result.subList(size - 1, size).clear();
 			return result;
 		} else {
-			return new ArrayList();
+			return new ArrayList<E>();
 		}
 	}
 
@@ -1908,12 +1908,12 @@ public class Utility {
 	 *            an agentset
 	 * @return random subset of agentset a of size number
 	 */
-	public static AgentSet nOf(int number, AgentSet a) {
+	public static <E> AgentSet<E> nOf(int number, AgentSet<E> a) {
 		int size = a.size();
 		if (size <= number) {
 			return a;
 		}
-		AgentSet b = new AgentSet(a);
+		AgentSet<E> b = new AgentSet<>(a);
 		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		b.subList(number, size).clear();
 		return b;
@@ -1928,20 +1928,20 @@ public class Utility {
 	 *            a collection
 	 * @return random subset of collection c of size number
 	 */
-	public static List nOf(int number, Collection c) {
-		List a = new ArrayList(c);
+	public static <E> List<E> nOf(int number, Collection<E> c) {
+		List<E> a = new ArrayList<>(c);
 		int size = a.size();
 		if (size <= number) {
 			return a;
 		}
-		ArrayList<Integer> indices = new ArrayList();
+		ArrayList<Integer> indices = new ArrayList<>();
 		for (int i = 0; i < number; i++) {
 			indices.add(i);
 		}
 		SimUtilities.shuffle(indices, RandomHelper.getUniform());
 		indices.subList(number, size).clear();
 		Collections.sort(indices);
-		ArrayList result = new ArrayList();
+		ArrayList<E> result = new ArrayList<>();
 		for (Integer o : indices) {
 			result.add(a.get(o));
 		}
@@ -1959,7 +1959,7 @@ public class Utility {
 	 * @return list of length number from running the set of commands number
 	 *         times
 	 */
-	public static ArrayList nValues(int number, Closure closure) {
+	public static List nValues(int number, Closure closure) {
 		ArrayList temp = new ArrayList();
 		for (int i = 0; i < number; i++) {
 			temp.add(closure.call(i));
@@ -2021,7 +2021,7 @@ public class Utility {
 	 *            a list
 	 * @return list minus item
 	 */
-	public static Collection remove(Object item, Collection c) {
+	public static <E> Collection<E> remove(Object item, Collection<E> c) {
 		while(c.remove(item));
 		return c;
 	}
@@ -2046,10 +2046,10 @@ public class Utility {
 	 *            a list
 	 * @return list minus duplicated items
 	 */
-	public static ArrayList removeDuplicates(List list) {
-		Set set = new HashSet();
-		ArrayList newList = new ArrayList();
-		for (Object o : list) {
+	public static <E> List<E> removeDuplicates(List<E> list) {
+		Set<E> set = new HashSet<>();
+		ArrayList<E> newList = new ArrayList<E>();
+		for (E o : list) {
 			if (set.add(o)) {
 				newList.add(o);
 			}
@@ -2066,8 +2066,8 @@ public class Utility {
 	 *            a list
 	 * @return list minus the index item
 	 */
-	public static ArrayList removeItem(int index, List list) {
-		ArrayList temp = new ArrayList(list);
+	public static <E> List<E> removeItem(int index, List<E> list) {
+		ArrayList<E> temp = new ArrayList<>(list);
 		temp.remove(index);
 		return temp;
 	}
@@ -2145,8 +2145,8 @@ public class Utility {
 	 *            a list
 	 * @return list in reversed order
 	 */
-	public static ArrayList reverse(List list) {
-		ArrayList result = new ArrayList(list);
+	public static <E> List<E> reverse(List<E> list) {
+		ArrayList<E> result = new ArrayList<>(list);
 		Collections.reverse(result);
 		return result;
 	}
@@ -2235,8 +2235,8 @@ public class Utility {
 	 *            a zero-based index
 	 * @return portion of a from position1 to before position2
 	 */
-	public static List sublist(List a, int position1, int position2) {
-		return new ArrayList(a.subList(position1, position2));
+	public static <E> List<E> sublist(List<E> a, int position1, int position2) {
+		return new ArrayList<E>(a.subList(position1, position2));
 	}
 
 	/**
@@ -2261,7 +2261,7 @@ public class Utility {
 	 *            a collection
 	 * @return largest number in collection
 	 */
-	public static Object max(Collection c) {
+	public static Number max(Collection c) {
 		return Collections.max(c, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {
@@ -2289,7 +2289,7 @@ public class Utility {
 	 *            a collection
 	 * @return smallest number in collection
 	 */
-	public static Object min(Collection c) {
+	public static Number min(Collection c) {
 		return Collections.min(c, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {

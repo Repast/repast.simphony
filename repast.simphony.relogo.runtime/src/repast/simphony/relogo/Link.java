@@ -242,7 +242,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 * 
 	 * @returns agentset of two linked agents
 	 */
-	public abstract AgentSet bothEnds();
+	public abstract AgentSet<Turtle> bothEnds();
 
 	/**
 	 * Removes the link.

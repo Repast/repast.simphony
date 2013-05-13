@@ -1,7 +1,7 @@
 /**
  * 
  */
-package repast.simphony.statecharts.generator;
+package repast.simphony.eclipse.util;
 
 import org.eclipse.core.resources.IFile;
 

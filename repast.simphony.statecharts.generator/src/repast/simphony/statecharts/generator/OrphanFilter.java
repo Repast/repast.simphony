@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import repast.simphony.eclipse.util.ToDeleteFilter;
+
 /**
  * Filters for classes that do not have one of a set of uuids in their @GeneratedBy
  * annotations, and for svg files on a certain path.

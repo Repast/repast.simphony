@@ -191,7 +191,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return agentset of the eight neighboring patches
 	 */
-	public AgentSet neighbors();
+	public AgentSet<Patch> neighbors();
 	
 	/**
 	 * Returns the agentset of patches making up the Moore
@@ -202,7 +202,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return Moore agentset of patches with extent
 	 */
-	public AgentSet neighbors(int extent);
+	public AgentSet<Patch> neighbors(int extent);
 	
 	/**
 	 * Returns the agentset of patches making up the Moore
@@ -215,7 +215,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return Moore agentset of patches with extents
 	 */
-	public AgentSet neighbors(int extentX, int extentY);
+	public AgentSet<Patch> neighbors(int extentX, int extentY);
 
 	/**
 	 * Returns the agentset of the four neighboring patches (von Neumann
@@ -223,7 +223,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return agentset of the four neighboring patches
 	 */
-	public AgentSet neighbors4();
+	public AgentSet<Patch> neighbors4();
 	
 	/**
 	 * Returns the agentset of patches making up the von Neumann
@@ -234,7 +234,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return von Neumann agentset of patches with extent
 	 */
-	public AgentSet neighbors4(int extent);
+	public AgentSet<Patch> neighbors4(int extent);
 	
 	/**
 	 * Returns the agentset of patches making up the von Neumann
@@ -247,7 +247,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 * 
 	 * @return von Neumann agentset of patches with extents
 	 */
-	public AgentSet neighbors4(int extentX, int extentY);
+	public AgentSet<Patch> neighbors4(int extentX, int extentY);
 
 	/**
 	 * Returns an agentset minus the caller.
@@ -342,7 +342,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a number
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number);
+	public AgentSet<Turtle> sprout(Number number);
 
 	/**
 	 * Makes a number of random new turtles then executes a set of commands on
@@ -354,7 +354,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure);
+	public AgentSet<Turtle> sprout(Number number, Closure closure);
 
 	/**
 	 * Makes a number of random new turtles of a specific type then executes a
@@ -368,7 +368,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, String turtleType);
+	public AgentSet<Turtle> sprout(Number number, Closure closure, String turtleType);
 	
 	/**
 	 * Makes a number of random new turtles of a specific type then executes a
@@ -382,7 +382,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a turtle class
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, Class turtleType);
+	public AgentSet<Turtle> sprout(Number number, Closure closure, Class turtleType);
 
 	/**
 	 * Prints value with agent identifier to current file with a newline.
@@ -616,14 +616,14 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	 *            a number
 	 * @returns agentset at the direction (ndx, ndy) from the caller
 	 */
-	public AgentSet turtlesAt(Number ndx, Number ndy);
+	public AgentSet<Turtle> turtlesAt(Number ndx, Number ndy);
 	
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
 	 * @return agentset of turtles from the caller's patch
 	 */
-	public AgentSet turtlesHere();
+	public AgentSet<Turtle> turtlesHere();
 	
 	/**
 	 * Returns the height of the world.

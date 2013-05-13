@@ -24,14 +24,16 @@ Require-Bundle: org.eclipse.debug.core;bundle-version="3.5.1",
  repast.simphony.core;bundle-version="2.0.0",
  org.codehaus.groovy.eclipse.ui;bundle-version="2.0.2",
  org.eclipse.jdt.groovy.core;bundle-version="2.0.2",
- org.eclipse.ui.navigator
+ org.eclipse.ui.navigator,
+ repast.simphony.relogo.builder;bundle-version="1.0.0",
+ org.codehaus.groovy.eclipse.codeassist.completion;bundle-version="2.7.2"
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/commons-io-1.4.jar,
  bin/,
  libs/antlrworks-1.1.7.jar,
  .,
  libs/groovy-all-1.8.2.jar
-Export-Package: repast.simphony.relogo.ide,
+Export-Package:  repast.simphony.relogo.ide,
  repast.simphony.relogo.ide.image,
  repast.simphony.relogo.ide.runtime,
  repast.simphony.relogo.ide.wizards

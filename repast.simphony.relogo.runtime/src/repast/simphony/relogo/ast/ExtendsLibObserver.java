@@ -1,10 +1,14 @@
 package repast.simphony.relogo.ast;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface ExtendsLibObserver {
+	//Fully qualified classname of the observer being extended
+	String value();
 
 }

@@ -1,8 +1,8 @@
 /*
  * Copyright (c) 2003, Alexander Greif All rights reserved. (Adapted by Michael
- * J. North for Use in Repast Simphony from Alexander Greif’s Flow4J-Eclipse
+ * J. North for Use in Repast Simphony from Alexander Greifï¿½s Flow4J-Eclipse
  * (http://flow4jeclipse.sourceforge.net/docs/index.html), with Thanks to the
- * Original Author) (Michael J. North’s Modifications are Copyright 2007 Under
+ * Original Author) (Michael J. Northï¿½s Modifications are Copyright 2007 Under
  * the Repast Simphony License, All Rights Reserved)
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ import repast.simphony.agents.model.codegen.Consts;
 
 /**
  * @author agreif (Adapted by Michael J. North for Use in Repast Simphony from
- *         Alexander Greif’s Flow4J-Eclipse
+ *         Alexander Greifï¿½s Flow4J-Eclipse
  *         (http://flow4jeclipse.sourceforge.net/docs/index.html), with Thanks
  *         to the Original Author)
  * 
@@ -104,6 +104,7 @@ public class BuildDeltaVisitor implements IResourceDeltaVisitor {
 							file, monitor);
 					return true;
 				} else {
+					if (file.exists())
 					removeOutputFile(file, monitor);
 				}
 			}
