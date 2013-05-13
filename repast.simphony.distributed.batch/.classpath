@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry exported="true" kind="lib" path="bin/"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsch-0.1.48.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>

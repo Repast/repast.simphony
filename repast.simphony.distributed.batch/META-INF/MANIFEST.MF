@@ -17,4 +17,6 @@ Export-Package: com.jcraft.jsch,
  repast.simphony.batch.ssh
 Bundle-ClassPath: .,
  lib/jsch-0.1.48.jar,
- lib/ant.jar
+ lib/ant.jar,
+ lib/ant-launcher.jar,
+ lib/xmltask.jar
