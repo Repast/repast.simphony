@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import repast.simphony.relogo.Turtle;
-import repast.simphony.relogo.ide.image.NLImage;
-import repast.simphony.relogo.ide.runtime.ReLogoSupport;
+import repast.simphony.relogo.image.NLImage;
+import repast.simphony.relogo.util.ReLogoSupport;
 import repast.simphony.relogo.styles.NLImageSpatialSource;
 import repast.simphony.relogo.styles.ReLogoImageSpatialSource;
 import repast.simphony.relogo.styles.ReLogoSVGSpatialSource;

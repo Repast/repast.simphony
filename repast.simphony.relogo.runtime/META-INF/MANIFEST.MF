@@ -3,12 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ReLogo Runtime
 Bundle-SymbolicName: repast.simphony.relogo.runtime
 Bundle-Version: 2.0.1
-Export-Package: repast.simphony.relogo,
- repast.simphony.relogo.factories,
- repast.simphony.relogo.styles
+Export-Package: repast.simphony.relogo;uses:="groovy.util",
+ repast.simphony.relogo.factories;uses:="groovy.util,junit.framework",
+ repast.simphony.relogo.image,
+ repast.simphony.relogo.styles;
+  uses:="saf.v3d,
+   repast.simphony.relogo.image,
+   repast.simphony.visualizationOGL2D,
+   edu.umd.cs.piccolo.nodes",
+ repast.simphony.relogo.util;uses:="groovy.util"
 Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  repast.simphony.core;bundle-version="2.0.0",
- repast.simphony.relogo.ide;bundle-version="2.0.0",
  libs.bsf;bundle-version="2.0.0",
  libs.piccolo;bundle-version="2.0.0",
  repast.simphony.userpanel.ui;bundle-version="2.0.0",

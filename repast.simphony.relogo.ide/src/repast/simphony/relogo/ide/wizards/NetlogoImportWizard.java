@@ -69,7 +69,6 @@ import repast.simphony.relogo.ide.code.ProcedureInvocation;
 import repast.simphony.relogo.ide.code.RelogoClass;
 import repast.simphony.relogo.ide.handlers.ReLogoBuilder;
 import repast.simphony.relogo.ide.handlers.ReLogoBuilderTests;
-import repast.simphony.relogo.ide.image.NLImage;
 import repast.simphony.relogo.ide.intf.NLChooser;
 import repast.simphony.relogo.ide.intf.NLControl;
 import repast.simphony.relogo.ide.intf.NLGraphicsWindow;
@@ -77,6 +76,7 @@ import repast.simphony.relogo.ide.intf.NLInputBox;
 import repast.simphony.relogo.ide.intf.NLMonitor;
 import repast.simphony.relogo.ide.intf.NLSlider;
 import repast.simphony.relogo.ide.intf.NLSwitch;
+import repast.simphony.relogo.image.NLImage;
 
 import com.thoughtworks.xstream.XStream;
 

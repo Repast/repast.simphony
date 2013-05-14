@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.List;
 import org.antlr.runtime.*;
 
+import repast.simphony.relogo.image.NLImage;
+
 
 public class ImageSectionParser {
 
