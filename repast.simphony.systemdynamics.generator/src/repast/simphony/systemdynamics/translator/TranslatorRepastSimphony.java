@@ -363,7 +363,7 @@ public class TranslatorRepastSimphony extends Translator {
     
     private List<String> convertToMDL(SystemModel systemModel) {
     	
-    	System.out.println("\n\n\n\n convert to MDL \n\n\n\n\n");
+    	System.out.println("convert to MDL");
     	
     	List<String> mdlContents = new ArrayList<String>();
     	
@@ -403,7 +403,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	for (Subscript subscript : systemModel.getSubscripts()) {
     		
-    		System.out.println("Subscript: "+subscript.getName());
+//    		System.out.println("Subscript: "+subscript.getName());
     		mdlContents.add(subscript.getName()+":");
     		int i = 0;
     		StringBuffer sb = new StringBuffer("\t");
@@ -411,7 +411,7 @@ public class TranslatorRepastSimphony extends Translator {
     			if (i++ > 0)
     				sb.append(",");
     			sb.append(element.replace("\n", ""));
-    			System.out.println("   Element: "+element);
+//    			System.out.println("   Element: "+element);
     		}
     		mdlContents.add(sb.toString());
     		mdlContents.add(FIELD_SEPARATOR);
@@ -432,24 +432,24 @@ public class TranslatorRepastSimphony extends Translator {
     				variable.getName().startsWith(CLOUD_IDENTIFIER))
     			continue;
     		
-    		System.out.println("Name: "+variable.getName());
-    		System.out.println("Type: "+variable.getType());
+//    		System.out.println("Name: "+variable.getName());
+//    		System.out.println("Type: "+variable.getType());
     		
     		if (variable.getType().equals(VariableType.STOCK)) {
     			Stock stk = (Stock) variable;
     			stk.getInitialValue();
     		}
     		
-    		System.out.println("Units: "+variable.getUnits());
-    		System.out.println("LHS: "+variable.getLhs());
-    		System.out.println("Equation: "+variable.getEquation());
-    		System.out.println("Subscripts: "+variable.getSubscripts());
-    		for (String s : variable.getSubscripts()) {
-    			System.out.println("<"+s+">");
-    		}
-    		System.out.println("Comment: "+variable.getComment());
-    		System.out.println("Uuid: "+variable.getUuid());
-    		System.out.println("#####\n");
+//    		System.out.println("Units: "+variable.getUnits());
+//    		System.out.println("LHS: "+variable.getLhs());
+//    		System.out.println("Equation: "+variable.getEquation());
+//    		System.out.println("Subscripts: "+variable.getSubscripts());
+//    		for (String s : variable.getSubscripts()) {
+//    			System.out.println("<"+s+">");
+//    		}
+//    		System.out.println("Comment: "+variable.getComment());
+//    		System.out.println("Uuid: "+variable.getUuid());
+//    		System.out.println("#####\n");
     		
     		uuidToName.put(variable.getUuid(), variable.getName());
     		nameToUuid.put(variable.getName(), variable.getUuid());
@@ -526,8 +526,8 @@ public class TranslatorRepastSimphony extends Translator {
     	mdlContents.add(EQUATIONS_TERMINATOR);
     	mdlContents.add(GRAPHICS_TERMINATOR);
     	
-    	for (String s : mdlContents)
-    		System.out.println("<"+s+">");
+//    	for (String s : mdlContents)
+//    		System.out.println("<"+s+">");
     	
     	
     	return mdlContents;
@@ -558,8 +558,18 @@ public class TranslatorRepastSimphony extends Translator {
     			cg.setInitializeScenarioDirectory(isInitializeScenarioDirectory());
     			cg.generateCode();
     			
+    			// we currently do not support arrays in ODE compatible mode. Simply do not generate
+    			
+    			if (InformationManagers.getInstance().getArrayManager().areArraysUsed())
+    				return;
+    			
+    			
     			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName+"_ODESolverCompatible");
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName+"ODE", objectName+"_ODESolverCompatible");
+    			
+    			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
+    			new File(dir).mkdirs();
+    			
     			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
     			odecg.generateDerivativeClass(bw);
     			try {

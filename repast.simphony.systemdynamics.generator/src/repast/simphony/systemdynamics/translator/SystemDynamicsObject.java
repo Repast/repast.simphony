@@ -58,6 +58,9 @@ public class SystemDynamicsObject {
 	System.out.println("Screen Name: "+screenName);
 	System.out.println("\tNumber of Graphic Representations: "+graphicObjects.size());
 	System.out.println("\tNumber of Equations: "+equations.size());
+	for (Equation eqn : equations) {
+		System.out.println("\t\t"+eqn.getEquation());
+	}
 	System.out.print("\tNumber of In Arrows: "+incomingArrows.size());
 	for (Arrow s : incomingArrows)
 	    System.out.print(", "+s);
@@ -82,7 +85,7 @@ public class SystemDynamicsObject {
     public void addIncomingArrow(Arrow arrow) {
 	if (!arrowExists(incomingArrows, arrow)) {
 		incomingArrows.add(arrow);
-		System.out.println(screenName+" SDO: AddIn "+arrow+" size "+incomingArrows.size());
+//		System.out.println(screenName+" SDO: AddIn "+arrow+" size "+incomingArrows.size());
 	}
 //	print();
     }
@@ -90,7 +93,7 @@ public class SystemDynamicsObject {
     public void addOutgoingArrow(Arrow arrow) {
     	if (!arrowExists(outgoingArrows, arrow)) {
 		outgoingArrows.add(arrow);
-		System.out.println(screenName+" SDO: AddOut "+arrow+" size "+outgoingArrows.size());
+//		System.out.println(screenName+" SDO: AddOut "+arrow+" size "+outgoingArrows.size());
 	}
 //	print();
     }

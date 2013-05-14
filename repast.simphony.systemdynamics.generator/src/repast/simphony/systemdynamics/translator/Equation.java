@@ -583,7 +583,7 @@ public class Equation {
 				definition = definition + "[holder1,holder2]";
 			}
 
-			System.out.println("Process Lookup add variable");
+//			System.out.println("Process Lookup add variable");
 			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, definition, typeString ? "String" : "double");
 
 			// the specification of the lookup data can appear as x[0],x[n],y[0],,,y[n]
@@ -881,7 +881,7 @@ public class Equation {
 		}
 		
 		if (this.isAssignment()) {
-			System.out.println("Adding from Equation "+getLhs());
+//			System.out.println("Adding from Equation "+getLhs());
 			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, this.getLhs(), typeString ? "String" : "double");
 		}
 	}
@@ -1343,7 +1343,7 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
-							System.out.println("TokRHS: Lookup");
+//							System.out.println("TokRHS: Lookup");
 							referencesLookup = true;
 							lookupRef = true;
 							rhsTokens.add(token);
@@ -1362,7 +1362,7 @@ public class Equation {
 						position.add(1);
 						skipWhiteSpace(position);
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) {
-							System.out.println("TokRHS: Lookup2");
+//							System.out.println("TokRHS: Lookup2");
 							referencesLookup = true;
 							lookupRef = true;
 							token = token.replace("array.", "");
@@ -1418,7 +1418,7 @@ public class Equation {
 							// move past "(" as code below will be adding it back
 							position.add(1);
 						} else {
-							System.out.println("TokRHS: Lookup3");
+//							System.out.println("TokRHS: Lookup3");
 							lookupRef = true;
 							referencesLookup = true;
 							rhsTokens.add(token);
@@ -1438,7 +1438,7 @@ public class Equation {
 						theChar = characterAt(position.value());
 						if (inRange(position.value()) && characterAt(position.value()).equals("(")) { // MARK HERE
 							referencesLookup = true;
-							System.out.println("TokRHS: Lookup4");
+//							System.out.println("TokRHS: Lookup4");
 							lookupRef = true;
 							token = token.replace("array.", "");
 							rhsTokens.add(token);
@@ -3635,6 +3635,7 @@ public class Equation {
 	    
 	    if (node.getToken().equals("sdFunctions.INTEG") ||
 		    node.getToken().equals("sdFunctions.SMOOTHI") || 
+		    node.getToken().equals("sdFunctions.DELAY3I") || 
 		    node.getToken().equals("sdFunctions.ACTIVEINITIAL")) {
 		Node child = node.getChild();
 		while (child.getNext() != null)

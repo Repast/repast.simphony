@@ -937,7 +937,7 @@ public class EquationArrayReferenceStructure {
     
     public int getRangeIndexFor(String rangeSubscript) {
 	if (rangeIndexMap == null || rangeSubscript == null) {
-	    System.out.println("WTF!");
+//	    System.out.println("WTF!");
 	}
 	return rangeIndexMap.get(rangeSubscript);
     }

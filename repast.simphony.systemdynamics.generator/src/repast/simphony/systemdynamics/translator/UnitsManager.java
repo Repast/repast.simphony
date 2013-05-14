@@ -245,8 +245,8 @@ public class UnitsManager {
 		
 		// should be pointing to the next argument
 		for (int p = 0; p < fd.getNumArgs(); p++) {
-		    if (i.value() >= units.size())
-			System.out.println("WTF!");
+//		    if (i.value() >= units.size())
+//			System.out.println("WTF!");
 		    String s1 = units.get(i.value());
 		    
 		    // if null, there is no dimension for this thing

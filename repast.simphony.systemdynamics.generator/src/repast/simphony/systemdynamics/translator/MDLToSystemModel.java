@@ -65,6 +65,8 @@ public class MDLToSystemModel {
         mdlContents);
     initModel(model, equations);
     
+    sdObjectManager.print();
+    
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
     for (String names : sdObjectManager.screenNames()) {

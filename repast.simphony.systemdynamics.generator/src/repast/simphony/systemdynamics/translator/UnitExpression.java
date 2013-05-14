@@ -393,7 +393,7 @@ public class UnitExpression {
 					} else if (!requiresUnitExpression) {
 						SimplifiedUnit funcRetSU = sus[funcReturnIndex];
 						if (funcRetSU == null) {
-							System.out.println("WTF!");
+//							System.out.println("WTF!");
 							Stack<Object> reverse = reverseOrder(stack);
 							while (!reverse.isEmpty()) {
 								rhsSimplifiedUnit.add(reverse.pop());

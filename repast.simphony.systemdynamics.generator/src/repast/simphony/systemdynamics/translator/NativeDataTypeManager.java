@@ -219,7 +219,7 @@ public class NativeDataTypeManager {
 		String in = variable.replace("memory.", "").replace("lookup.", "");
 		if (ArrayReference.isArrayReference(in)) {
 			in = new ArrayReference(in).getArrayName();
-			System.out.println("Array Reference: "+variable+" /// "+in);
+//			System.out.println("Array Reference: "+variable+" /// "+in);
 		}
 		String name = legal.get(in);
 		if (name == null) {
@@ -230,7 +230,7 @@ public class NativeDataTypeManager {
 			if (in.equals("array")) {
 				new Exception("Stack trace").printStackTrace();
 			}
-			System.out.println("First getLegalName Legal -> <"+in+"><"+name+">");
+//			System.out.println("First getLegalName Legal -> <"+in+"><"+name+">");
 			addVariable(equation, variable, "double");
 		}
 		name = legal.get(in);
@@ -239,7 +239,7 @@ public class NativeDataTypeManager {
 				new Exception("Stack trace").printStackTrace();
 			}
 			// we haven't seen this yet
-			System.out.println("SEcond Legal -> <"+in+"><"+name+">");
+//			System.out.println("SEcond Legal -> <"+in+"><"+name+">");
 		}
 
 		if (Translator.target.equals(ReaderConstants.JAVA)) {

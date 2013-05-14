@@ -242,7 +242,7 @@ public class EquationProcessor {
     		// this is the beginning of the graphics, return as we do not do anything with the graphics
     		if (aLine.contains("---///")) {
     			markGenerated(equations);
-    			printVariableTypes(equations);
+//    			printVariableTypes(equations);
     			return equations;
     		}
 
@@ -357,11 +357,11 @@ public class EquationProcessor {
     					if (aVensimEquation.contains("WITH LOOKUP") /* || isLookup */) {
     						processWithLookup(aVensimEquation, equations);
     					} else {
-    						System.out.println(aVensimEquation);
+//    						System.out.println(aVensimEquation);
     						
     						Equation equation = new Equation(aVensimEquation);
     						
-    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
+//    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
     						
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set
@@ -397,7 +397,11 @@ public class EquationProcessor {
     }
     
     private void printVariableTypes(HashMap<String, Equation> equations) {
+    	System.out.println("###printVariableTypes###");
     	for (String key : equations.keySet()) {
+    		// subscript definitions have no type in this context
+    		if (equations.get(key).isDefinesSubscript())
+    			continue;
     		System.out.println(equations.get(key).getVensimEquationOnly());
     		System.out.println(equations.get(key).getVariableType());
     	}

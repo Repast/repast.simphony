@@ -77,8 +77,8 @@ public class GraphicObject {
 
     public void parse() {
     	String[] fields = Parser.splitQuoted(rawObject, ",");
-    	if (fields.length < 10)
-    		System.out.println("WTF!");
+//    	if (fields.length < 10)
+//    		System.out.println("WTF!");
     	type = fields[0];
     	id = fields[1];
     	if (type.equals("1"))
