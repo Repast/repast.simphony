@@ -12,7 +12,7 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
  repast.simphony.gis,
  org.codehaus.groovy;bundle-version="1.7.0",
- libs.ext;bundle-version="2.0.1"
+ libs.ext
 Bundle-Vendor: %providerName
 Export-Package: org.apache.batik,
  org.apache.batik.anim,
