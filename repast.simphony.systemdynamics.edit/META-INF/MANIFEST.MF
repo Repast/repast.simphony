@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: repast.simphony.systemdynamics.sdmodel.provider.SystemdynamicsEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: repast.simphony.systemdynamics.sdmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.systemdynamics.model;visibility:=reexport,
