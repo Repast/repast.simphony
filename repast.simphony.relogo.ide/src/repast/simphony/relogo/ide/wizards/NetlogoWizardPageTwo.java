@@ -67,6 +67,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
 import repast.simphony.eclipse.RSProjectConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
+import repast.simphony.eclipse.util.Utilities;
+import repast.simphony.relogo.ide.handlers.ReLogoNature;
 
 
 
@@ -258,22 +261,13 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 			initializeBuildPath(JavaCore.create(fCurrProject), new SubProgressMonitor(monitor, 2));
 			configureJavaProject(new SubProgressMonitor(monitor, 3)); // create the Java project to allow the use of the new source folder page
 			RSProjectConfigurator configurator = new RSProjectConfigurator();
-			configurator.configureNewProject(JavaCore.create(fCurrProject), new SubProgressMonitor(monitor, 1));
+			IJavaProject javaProject = JavaCore.create(fCurrProject);
+			configurator.configureNewProject(javaProject, new SubProgressMonitor(monitor, 1));
+			// The new project configurator adds the regular repast natures (statechart and flowchart)
+			// So the ReLogo nature is added here to keep it within the ReLogo ide project
+			Utilities.addNature(javaProject.getProject(), ReLogoNature.RELOGO_NATURE_ID);
+		  javaProject.save(monitor, true);
 						
-//			Display.getDefault().syncExec(new Runnable() {
-//			      public void run() {
-//			    	  try {
-//						AgentBuilderPlugin.addRepastSimphonyNature(fCurrProject, null, false, false);
-//					} catch (CoreException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//			      }
-//			});
-			
-			
-
-
 			
 		} finally {
 			monitor.done();

@@ -44,11 +44,11 @@ import repast.simphony.eclipse.util.Utilities;
  */
 public class RSProjectConfigurator {
   
-  public final static String PREFERRED_LAUNCHERS = "org.eclipse.debug.core.preferred_launchers";
-  public final static String RELOGO_LAUNCH_DELEGATE = "repast.simphony.relogo.ide.relogoLaunchDelegate";
-  public final static String LOCAL_JAVA_LAUNCH_DELEGATE = "org.eclipse.jdt.launching.localJavaApplication";
-  public final static String LAUNCH_DELEGATE_RUN = "[run]";
-  public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
+//  public final static String PREFERRED_LAUNCHERS = "org.eclipse.debug.core.preferred_launchers";
+//  public final static String RELOGO_LAUNCH_DELEGATE = "repast.simphony.relogo.ide.relogoLaunchDelegate";
+//  public final static String LOCAL_JAVA_LAUNCH_DELEGATE = "org.eclipse.jdt.launching.localJavaApplication";
+//  public final static String LAUNCH_DELEGATE_RUN = "[run]";
+//  public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
   
   /**
    * Configures a new project for Repast Simphony. This adds the GroovyRuntime to the project,
@@ -154,10 +154,10 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "repast.simphony.runtime.RepastMain");
-      Map<String, String> preferredLaunchers = new HashMap<String, String>();
-      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, LOCAL_JAVA_LAUNCH_DELEGATE);
-      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, LOCAL_JAVA_LAUNCH_DELEGATE);
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      Map<String, String> preferredLaunchers = new HashMap<String, String>();
+//      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, LOCAL_JAVA_LAUNCH_DELEGATE);
+//      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, LOCAL_JAVA_LAUNCH_DELEGATE);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
@@ -210,7 +210,7 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "org.apache.tools.ant.launch.Launcher");
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       if (SystemUtils.IS_OS_MAC)
         launchConfigurationWorkingCopy
             .setAttribute(
@@ -284,8 +284,9 @@ public class RSProjectConfigurator {
           IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+
           "repast.simphony.batch.standalone.StandAloneMain");
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
       
@@ -371,10 +372,10 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "repast.simphony.runtime.RepastMain");
-      Map<String, String> preferredLaunchers = new HashMap<String, String>();
-      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, RELOGO_LAUNCH_DELEGATE);
-      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, RELOGO_LAUNCH_DELEGATE);
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      Map<String, String> preferredLaunchers = new HashMap<String, String>();
+//      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, RELOGO_LAUNCH_DELEGATE);
+//      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, RELOGO_LAUNCH_DELEGATE);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
@@ -427,7 +428,7 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "org.apache.tools.ant.launch.Launcher");
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       if (SystemUtils.IS_OS_MAC)
         launchConfigurationWorkingCopy
             .setAttribute(
@@ -501,8 +502,9 @@ public class RSProjectConfigurator {
           IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
+
           "repast.simphony.batch.standalone.StandAloneMain");
-      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
+//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
       

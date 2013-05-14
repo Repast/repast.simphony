@@ -561,7 +561,26 @@ public class TranslatorRepastSimphony extends Translator {
     			// ################# ODE Stock Experiment
     			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName+"_ODESolverCompatible");
     			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
-    			odecg.generate(bw);
+    			odecg.generateDerivativeClass(bw);
+    			try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    			bw = Utilities.openFileForWriting(dir+"/"+objectName+"Runner_ODESolverCompatible.java");
+    			odecg.generateRunnerClass(bw, objectName+"Runner_ODESolverCompatible");
+    			try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    			bw = Utilities.openFileForWriting(dir+"/ContextBuilder"+objectName+"_ODESolverCompatible.java");
+    			odecg.generateContextBuilderClass(bw, "ContextBuilder"+objectName+"_ODESolverCompatible",
+    					objectName+"Runner_ODESolverCompatible");
     			try {
 					bw.close();
 				} catch (IOException e) {
@@ -569,6 +588,8 @@ public class TranslatorRepastSimphony extends Translator {
 					e.printStackTrace();
 				}
    
+    			if (isInitializeScenarioDirectory())
+    				odecg.generateScenarioDirectoryFiles(this.getScenarioDirectory());
     		}
     		try {
     			project.refreshLocal(IResource.DEPTH_INFINITE, null);

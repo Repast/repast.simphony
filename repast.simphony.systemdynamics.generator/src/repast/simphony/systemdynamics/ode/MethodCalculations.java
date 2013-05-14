@@ -65,8 +65,8 @@ public class MethodCalculations {
 					continue;
 				
 				
-				odeCG.alterEquationTreeForStock(eqn);
-				Node root = eqn.getTreeRoot();
+				
+				Node root = odeCG.alterEquationTreeForStock(eqn);
 				odeCG.makeLocal(root);
 				odeCG.makeODESolverCompatible(root);
 				code.append("\t// "+eqn.getVensimEquationOnly()+"\n");
@@ -77,6 +77,5 @@ public class MethodCalculations {
 			e.printStackTrace();
 		}
 	}
-	
 
 }

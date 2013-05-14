@@ -640,6 +640,6 @@ Export-Package: .,
  watcherOOP.test
 Require-Bundle: repast.simphony.runtime,
  org.junit4,
- libs.ext;bundle-version="2.0.1"
+ libs.ext
 Bundle-Vendor: %providerName
 Eclipse-LazyStart: false

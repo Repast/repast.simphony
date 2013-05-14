@@ -3,11 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Userpanel
 Bundle-SymbolicName: repast.simphony.userpanel.ui
 Bundle-Version: 2.0.1
-Require-Bundle: repast.simphony.gui;bundle-version="2.0.0",
+Require-Bundle: repast.simphony.gui,
  saf.core.ui,
  repast.simphony.plugin.util,
  repast.simphony.runtime,
- repast.simphony.scenario;bundle-version="2.0.0",
- repast.simphony.core;bundle-version="2.0.0"
+ repast.simphony.scenario,
+ repast.simphony.core
 Export-Package: 
  repast.simphony.userpanel.ui

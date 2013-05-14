@@ -488,7 +488,7 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 * 
 	 * @returns agentset of two linked agents
 	 */
-	public AgentSet bothEnds() {
+	public AgentSet<Turtle> bothEnds() {
 		List list = new ArrayList();
 		list.add(this.getSource());
 		list.add(this.getTarget());

@@ -527,7 +527,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a number
 	 * @returns agentset at the direction (ndx, ndy) from the caller
 	 */
-	public AgentSet turtlesAt(Number ndx, Number ndy) {
+	public AgentSet<Turtle> turtlesAt(Number ndx, Number ndy) {
 		double dx = ndx.doubleValue();
 		double dy = ndy.doubleValue();
 		double[] displacement = { dx, dy };
@@ -543,9 +543,9 @@ public abstract class AbstractPatch implements Patch {
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the caller’s patch
+	 * @return agentset of turtles from the caller's patch
 	 */
-	public AgentSet turtlesHere() {
+	public AgentSet<Turtle> turtlesHere() {
 		// get grid and space
 		Grid grid = getMyObserver().getGrid();
 		// get the turtle's grid location
@@ -771,7 +771,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a number
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number) {
+	public AgentSet<Turtle> sprout(Number number) {
 		return sprout(number, null);
 	}
 
@@ -785,7 +785,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure) {
 		return sprout(number, null, "default");
 	}
 
@@ -801,9 +801,9 @@ public abstract class AbstractPatch implements Patch {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, String turtleType) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure, String turtleType) {
 
-		AgentSet newTurtles = new AgentSet();
+		AgentSet<Turtle> newTurtles = new AgentSet<>();
 
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyObserver().getTurtleFactory().createTurtle(
@@ -827,7 +827,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a turtle class
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, Class turtleType) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure, Class turtleType) {
 		return sprout(number, closure, turtleType.getSimpleName());
 	}
 

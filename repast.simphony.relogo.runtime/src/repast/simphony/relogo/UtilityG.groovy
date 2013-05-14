@@ -55,7 +55,7 @@ public class UtilityG{
 	 * @param a a collection
 	 * @return the filtered collection consisting of items satisfying the closure
 	 */
-	public static Collection filter(Closure reporter, Collection a){
+	public static <E> Collection<E> filter(Closure reporter, Collection<E> a){
 		return a.findAll(reporter)
 	}
 	
@@ -182,8 +182,8 @@ public class UtilityG{
 	 * @param c a collection
 	 * @return list sorted by the closure
 	 */
-	public static List sortBy(Closure reporter, Collection c){
-		List temp = new ArrayList(c)
+	public static <E> List<E> sortBy(Closure reporter, Collection<E> c){
+		List<E> temp = new ArrayList<>(c)
 		temp.sort(reporter)
 		return temp
 	}
@@ -542,7 +542,7 @@ public class UtilityG{
 	
 	/**
 	 * Allows the user to choose a user directory and returns the directory path.
-	 * @return the chosen directory’s absolute path
+	 * @return the chosen directory's absolute path
 	 */
 	public static String userDirectory(){
 		
@@ -563,7 +563,7 @@ public class UtilityG{
 	
 	/**
 	 * Allows the user to choose a user file and returns the file path.
-	 * @return the chosen file’s absolute path
+	 * @return the chosen file's absolute path
 	 */
 	public static String userFile(){
 		SwingBuilder swing = new SwingBuilder()
@@ -583,7 +583,7 @@ public class UtilityG{
 	
 	/**
 	 * Returns a new file chosen by the user.
-	 * @return new file’s absolute path
+	 * @return new file's absolute path
 	 */
 	public static String userNewFile(){
 		SwingBuilder swing = new SwingBuilder()
@@ -639,9 +639,9 @@ public class UtilityG{
 	}
 	
 	/**
-	 * Queries for user’s answer to a question.
+	 * Queries for user's answer to a question.
 	 * @param value question
-	 * @return  true or false based on the user’s answer to value
+	 * @return  true or false based on the user's answer to value
 	 */
 	public static boolean userYesOrNoQ(Object value){
 		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null,value,

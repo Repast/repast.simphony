@@ -64,4 +64,4 @@ Bundle-ClassPath: saf.core.ui.jar,
  lib/osx.jar,
  lib/TableLayout.jar,
  lib/wizard-0.1.12.jar
-Require-Bundle: libs.ext;bundle-version="2.0.1"
+Require-Bundle: libs.ext

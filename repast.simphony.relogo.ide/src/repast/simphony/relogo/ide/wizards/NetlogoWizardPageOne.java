@@ -943,15 +943,15 @@ public class NetlogoWizardPageOne extends WizardPage {
 
 			}
 			
-			IWorkspaceDescription desc= workspace.getDescription();
-			if (desc.isAutoBuilding()){
-				desc.setAutoBuilding(false);
-				try {
-					workspace.setDescription(desc);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
+//			IWorkspaceDescription desc= workspace.getDescription();
+//			if (desc.isAutoBuilding()){
+//				desc.setAutoBuilding(false);
+//				try {
+//					workspace.setDescription(desc);
+//				} catch (CoreException e) {
+//					e.printStackTrace();
+//				}
+//			}
 			
 //			if (packageName.equals("")){
 //				fNameGroup.setPackageName(name.toLowerCase());

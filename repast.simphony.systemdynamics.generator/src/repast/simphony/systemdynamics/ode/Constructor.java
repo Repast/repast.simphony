@@ -41,7 +41,7 @@ public class Constructor {
 					code.append("\tprivate double "+ndtm.makeLegal(eqn.getLhs())+";\n");
 				}
 			}
-
+			
 			// generate empty constructor
 			code.append("\n\tpublic "+className+"() {\n\t}");
 

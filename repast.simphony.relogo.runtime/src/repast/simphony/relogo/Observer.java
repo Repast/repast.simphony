@@ -144,7 +144,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number);
+	public AgentSet<Turtle> createTurtles(int number);
 
 	/**
 	 * Makes a number of randomly oriented turtles then executes a set of
@@ -156,7 +156,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -170,7 +170,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, String type);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -184,7 +184,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, Class type);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of randomly oriented turtles.
@@ -194,7 +194,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createTurtles()
 	 */
-	public AgentSet crt(int number);
+	public AgentSet<Turtle> crt(int number);
 
 	/**
 	 * Makes a number of randomly oriented turtles then executes a set of
@@ -208,7 +208,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure)
 	 */
-	public AgentSet crt(int number, Closure closure);
+	public AgentSet<Turtle> crt(int number, Closure closure);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -224,7 +224,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure, String)
 	 */
-	public AgentSet crt(int number, Closure closure, String type);
+	public AgentSet<Turtle> crt(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -240,7 +240,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure, Class)
 	 */
-	public AgentSet crt(int number, Closure closure, Class type);
+	public AgentSet<Turtle> crt(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles.
@@ -250,7 +250,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int)
 	 */
-	public AgentSet cro(int number);
+	public AgentSet<Turtle> cro(int number);
 
 	/**
 	 * Makes a number of uniformly fanned turtles.
@@ -259,7 +259,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number);
+	public AgentSet<Turtle> createOrderedTurtles(int number);
 
 	/**
 	 * Makes a number of uniformly fanned turtles then executes a set of
@@ -272,7 +272,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int, Closure)
 	 */
-	public AgentSet cro(int number, Closure closure);
+	public AgentSet<Turtle> cro(int number, Closure closure);
 
 	/**
 	 * Makes a number of uniformly fanned turtles then executes a set of
@@ -284,7 +284,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -298,7 +298,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, String type);
+	public AgentSet<Turtle> cro(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -312,7 +312,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, Class type);
+	public AgentSet<Turtle> cro(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -326,7 +326,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, String type);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -340,7 +340,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, Class type);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, Class type);
 
 	/**
 	 * Executes a set of commands for an agentset.
@@ -495,7 +495,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @return agentset containing all patches
 	 */
-	public AgentSet patches();
+	public AgentSet<Patch> patches();
 
 	/**
 	 * Queries if all agents in a collection are true for a boolean closure.
