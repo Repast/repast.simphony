@@ -5,22 +5,24 @@ Bundle-SymbolicName: repast.simphony.relogo.runtime
 Bundle-Version: 2.1.0
 Export-Package: repast.simphony.relogo,
  repast.simphony.relogo.factories,
- repast.simphony.relogo.styles
-Require-Bundle: repast.simphony.visualization,
- repast.simphony.core,
- repast.simphony.relogo.ide,
- libs.bsf,
- libs.piccolo,
- repast.simphony.userpanel.ui,
- repast.simphony.runtime,
- repast.simphony.essentials,
- repast.simphony.gui,
- repast.simphony.scenario,
- repast.simphony.integration,
- saf.core.ui,
- repast.simphony.data,
+ repast.simphony.relogo.image,
+ repast.simphony.relogo.styles,
+ repast.simphony.relogo.util
+Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
+ repast.simphony.core;bundle-version="2.0.0",
+ libs.bsf;bundle-version="2.0.0",
+ libs.piccolo;bundle-version="2.0.0",
+ repast.simphony.userpanel.ui;bundle-version="2.0.0",
+ repast.simphony.runtime;bundle-version="2.0.0",
+ repast.simphony.essentials;bundle-version="2.0.0",
+ repast.simphony.gui;bundle-version="2.0.0",
+ repast.simphony.scenario;bundle-version="2.0.0",
+ repast.simphony.integration;bundle-version="2.0.0",
+ saf.core.ui;bundle-version="2.0.0",
+ repast.simphony.data;bundle-version="2.0.1",
  org.apache.ant;bundle-version="1.7.0",
  repast.simphony.statecharts
 Bundle-ClassPath: lib/asm-3.2.jar,
- lib/poi-ooxml-3.6-20091214.jar
+ lib/poi-ooxml-3.6-20091214.jar,
+ bin/
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -16,6 +16,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 
+import repast.simphony.relogo.image.NLImagePrimitive;
+
 /**
  *
  * @author CBURKE

@@ -25,6 +25,9 @@ plugin editor, this is in the plugin.xml tab:
 5. In repast.simphony.eclipse.RepastSimphonyPlugin.java in r.s.eclipse
 change the REPAST_SIMPHONY_PLUGIN_VERSION to the new version number.
 
+5.5 Update the version number in repast.simphony.distributed.batch.ui/src-standalone 
+StandAloneMain.
+
 6. Update the plugin_jpf.xmls to the new version number: use the update_jpf_plugins.xml 
 in r.s.deployment. FIRST change the rs.version number in this file. Note that this
 requires the xmltask.jar in antlib so run it accordingly.

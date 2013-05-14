@@ -1,4 +1,4 @@
-package repast.simphony.relogo.ide.runtime;
+package repast.simphony.relogo.util;
 
 import java.awt.Color;
 import java.util.LinkedList;

@@ -16,6 +16,8 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 
+import repast.simphony.relogo.image.NLImage;
+
 /**
  *
  * @author CBURKE

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package repast.simphony.relogo.ide.image;
+package repast.simphony.relogo.image;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;

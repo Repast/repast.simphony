@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
+import repast.simphony.relogo.image.NLImage;
+
 class ImagePanel extends JPanel {
 
     NLImage img;

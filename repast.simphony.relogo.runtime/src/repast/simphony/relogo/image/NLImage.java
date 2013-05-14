@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package repast.simphony.relogo.ide.image;
+package repast.simphony.relogo.image;
 
 import java.awt.Color;
 import java.util.*;
