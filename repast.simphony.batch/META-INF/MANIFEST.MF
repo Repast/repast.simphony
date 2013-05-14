@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.batch;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: libs.bsf,
  repast.simphony.dataLoader,
@@ -28,3 +28,4 @@ Bundle-ClassPath: lib/batch_groovy.jar,
  lib/jms-1.1.jar,
  bin/
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

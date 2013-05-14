@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ReLogo IDE
 Bundle-SymbolicName: repast.simphony.relogo.ide;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Activator: relogo.Activator
 Require-Bundle: org.eclipse.debug.core;bundle-version="3.5.1",
  org.eclipse.debug.ui;bundle-version="3.5.2",
@@ -18,10 +18,10 @@ Require-Bundle: org.eclipse.debug.core;bundle-version="3.5.1",
  org.eclipse.ant.ui;bundle-version="3.4.0",
  org.eclipse.ui.externaltools;bundle-version="3.2.0",
  org.codehaus.groovy.eclipse.core;bundle-version="2.0.1",
- repast.simphony.runtime;bundle-version="2.0.0",
+ repast.simphony.runtime,
  org.eclipse.ui.console;bundle-version="3.4.0",
- repast.simphony.eclipse;bundle-version="2.0.0",
- repast.simphony.core;bundle-version="2.0.0",
+ repast.simphony.eclipse,
+ repast.simphony.core,
  org.codehaus.groovy.eclipse.ui;bundle-version="2.0.2",
  org.eclipse.jdt.groovy.core;bundle-version="2.0.2",
  org.eclipse.ui.navigator,
@@ -36,3 +36,5 @@ Bundle-ClassPath: libs/commons-io-1.4.jar,
  libs/groovy-all-1.8.2.jar
 Import-Package: repast.simphony.relogo.image,
  repast.simphony.relogo.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

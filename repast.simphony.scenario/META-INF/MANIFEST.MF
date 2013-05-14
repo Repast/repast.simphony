@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.scenario;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.core,
@@ -22,3 +22,4 @@ Export-Package: repast.simphony.annotate;uses:="simphony.util.messages",
  repast.simphony.score
 Bundle-Vendor: %providerName
 Bundle-ClassPath: bin/
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

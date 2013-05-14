@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Terracotta Plug-in
 Bundle-SymbolicName: repast.simphony.terracotta; singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Import-Package: org.java.plugin,
  repast.simphony.terracotta,
  repast.simphony.terracotta.datagrid
@@ -32,3 +32,4 @@ Bundle-ClassPath:
  lib/tim-tclib-1.0.5-SNAPSHOT.jar,
  lib/commonj-twm-1.1.jar,
  lib/slf4j-nop-1.0.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

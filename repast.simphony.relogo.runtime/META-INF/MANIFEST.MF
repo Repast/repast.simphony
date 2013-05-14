@@ -3,15 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ReLogo Runtime
 Bundle-SymbolicName: repast.simphony.relogo.runtime
 Bundle-Version: 2.0.1
-Export-Package: repast.simphony.relogo;uses:="groovy.util",
- repast.simphony.relogo.factories;uses:="groovy.util,junit.framework",
+Export-Package: repast.simphony.relogo,
+ repast.simphony.relogo.factories,
  repast.simphony.relogo.image,
- repast.simphony.relogo.styles;
-  uses:="saf.v3d,
-   repast.simphony.relogo.image,
-   repast.simphony.visualizationOGL2D,
-   edu.umd.cs.piccolo.nodes",
- repast.simphony.relogo.util;uses:="groovy.util"
+ repast.simphony.relogo.styles,
+ repast.simphony.relogo.util
 Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  repast.simphony.core;bundle-version="2.0.0",
  libs.bsf;bundle-version="2.0.0",
@@ -25,7 +21,8 @@ Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  saf.core.ui;bundle-version="2.0.0",
  repast.simphony.data;bundle-version="2.0.1",
  org.apache.ant;bundle-version="1.7.0",
- repast.simphony.statecharts;bundle-version="2.0.1"
+ repast.simphony.statecharts
 Bundle-ClassPath: lib/asm-3.2.jar,
  lib/poi-ooxml-3.6-20091214.jar,
  bin/
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

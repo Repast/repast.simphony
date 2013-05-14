@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.integration;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: bin/,
  lib/cglib-nodep-2.1_3.jar,
  lib/commons-exec-1.1.jar,
@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.wst.xml.core
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

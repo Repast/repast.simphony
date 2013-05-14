@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: distributed.batch
 Bundle-SymbolicName: repast.simphony.distributed.batch
-Bundle-Version: 2.0.1
-Require-Bundle: repast.simphony.batch;bundle-version="2.0.1",
- repast.simphony.core;bundle-version="2.0.1",
- repast.simphony.data;bundle-version="2.0.1",
- repast.simphony.scenario;bundle-version="2.0.1",
- repast.simphony.runtime;bundle-version="2.0.1";visibility:=reexport,
+Bundle-Version: 2.1.0
+Require-Bundle: repast.simphony.batch,
+ repast.simphony.core,
+ repast.simphony.data,
+ repast.simphony.scenario,
+ repast.simphony.runtime;visibility:=reexport,
  org.junit
 Export-Package: com.jcraft.jsch,
  org.apache.tools.ant,
@@ -17,4 +17,7 @@ Export-Package: com.jcraft.jsch,
  repast.simphony.batch.ssh
 Bundle-ClassPath: .,
  lib/jsch-0.1.48.jar,
- lib/ant.jar
+ lib/ant.jar,
+ lib/ant-launcher.jar,
+ lib/xmltask.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

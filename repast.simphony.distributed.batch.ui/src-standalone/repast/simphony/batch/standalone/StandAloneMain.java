@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class StandAloneMain {
   
-  private static final String PLUGINS_VERSION = "2.0.1";
+  private static final String PLUGINS_VERSION = "2.1.0";
   private static final String PLUGIN_DIR = "-plugin_dir";
   private static final String MODEL_DIR = "-model_dir";
   
@@ -89,7 +89,9 @@ public class StandAloneMain {
         urls.add(bundle.getLocation().toURI().toURL());
       }
 
+      // this is the classpath part of the manifest.mf
       for (String path : bundle.classPathEntries()) {
+        if (path.equals(".")) path = "bin";
         urls.add(new File(bundle.getLocation(), path).toURI().toURL());
       }
     }
@@ -101,7 +103,10 @@ public class StandAloneMain {
         urls.add(new File(rsRuntime.getLocation(), path).toURI().toURL());
     }
     
-  
+    BundleData batch = new BundleData("repast.simphony.batch", new Version(PLUGINS_VERSION));
+    finder.findBundle(new File(bundleDir), batch);
+    urls.add(new File(batch.getLocation(), "bin").toURI().toURL());
+   
     URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]), this.getClass()
         .getClassLoader());
     Class<?> clazz = Class.forName("repast.simphony.batch.gui.Main", true, loader);

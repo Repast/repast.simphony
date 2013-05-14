@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.codehaus.groovy.eclipse.core.builder.GroovyClasspathContainer;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProjectDescription;
@@ -306,6 +307,11 @@ public class RSProjectConfigurator {
       r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
+      
+      jarPath = GroovyClasspathContainer.CONTAINER_ID;
+      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
+      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+      classpath.add(r.getMemento());
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
       launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
@@ -519,6 +525,12 @@ public class RSProjectConfigurator {
       r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
+      
+      jarPath = GroovyClasspathContainer.CONTAINER_ID;
+      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
+      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+      classpath.add(r.getMemento());
+      
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
       launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,

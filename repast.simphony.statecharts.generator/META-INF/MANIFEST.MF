@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: repast.simphony.statecharts.generator
 Bundle-SymbolicName: repast.simphony.statecharts.generator; singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Require-Bundle: org.eclipse.jdt.core;bundle-version="3.5.0",
  org.eclipse.xtend.profiler;resolution:=optional,
  org.apache.commons.logging,
@@ -18,13 +18,13 @@ Require-Bundle: org.eclipse.jdt.core;bundle-version="3.5.0",
  org.eclipse.xtend.typesystem.emf;bundle-version="0.7.0";visibility:=reexport,
  org.eclipse.xtend.backend;bundle-version="1.0.0";resolution:=optional,
  org.eclipse.xtend.middleend.xpand;bundle-version="1.0.0";resolution:=optional,
- repast.simphony.statecharts.model;bundle-version="1.0.0",
+ repast.simphony.statecharts.model,
  org.eclipse.gmf.runtime.notation;bundle-version="1.5.0",
- repast.simphony.statecharts;bundle-version="1.0.0",
+ repast.simphony.statecharts,
  org.eclipse.core.resources;bundle-version="3.8.0",
  org.junit,
- repast.simphony.eclipse;bundle-version="2.0.1"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+ repast.simphony.eclipse
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: bin/,
  .
 Export-Package: repast.simphony.statecharts.generator

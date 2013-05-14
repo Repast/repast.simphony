@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.statecharts.diagram; singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: .
 Bundle-Activator: repast.simphony.statecharts.part.StatechartDiagramEditorPlugin
 Bundle-Vendor: %providerName
@@ -44,7 +44,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.databinding.property;bundle-version="1.4.100",
  repast.simphony.statecharts.model;visibility:=reexport,
  org.eclipse.jdt.core;bundle-version="3.8.2",
- repast.simphony.statecharts.generator;bundle-version="1.0.0",
+ repast.simphony.statecharts.generator,
  org.eclipse.emf.validation;visibility:=reexport,
  org.eclipse.emf.validation.ocl;visibility:=reexport,
  org.eclipse.gmf.runtime.notation;visibility:=reexport,
@@ -54,9 +54,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.batik.svggen;bundle-version="1.6.0",
  org.apache.batik.svggen.source;bundle-version="1.6.0";resolution:=optional,
  org.apache.batik.ext.awt;bundle-version="1.6.0",
- repast.simphony.eclipse;bundle-version="2.0.1",
+ repast.simphony.eclipse,
  org.eclipse.jdt.groovy.core;bundle-version="2.7.1",
  org.junit,
  org.codehaus.groovy.eclipse.ui;bundle-version="2.7.1"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
