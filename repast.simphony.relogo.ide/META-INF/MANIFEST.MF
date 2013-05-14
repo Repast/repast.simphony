@@ -37,4 +37,3 @@ Bundle-ClassPath: libs/commons-io-1.4.jar,
 Import-Package: repast.simphony.relogo.image,
  repast.simphony.relogo.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-
