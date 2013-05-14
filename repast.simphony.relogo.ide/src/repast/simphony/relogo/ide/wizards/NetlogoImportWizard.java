@@ -18,6 +18,7 @@ import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.codehaus.groovy.eclipse.dsl.RefreshDSLDJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -272,6 +274,10 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 					}
 				}
 			});
+			
+		// Ensure that dslds are all available
+      final RefreshDSLDJob job = new RefreshDSLDJob(relogoProject);
+      job.run(new NullProgressMonitor());
 		}
 		monitor.worked(1);
 		return res;
