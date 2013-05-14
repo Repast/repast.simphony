@@ -18,3 +18,4 @@ Export-Package: edu.umd.cs.piccolo,
  edu.umd.cs.piccolox.swing,
  edu.umd.cs.piccolox.swt,
  edu.umd.cs.piccolox.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

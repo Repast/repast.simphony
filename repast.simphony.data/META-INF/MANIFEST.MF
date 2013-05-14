@@ -14,3 +14,4 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
  org.junit
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

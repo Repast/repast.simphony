@@ -65,3 +65,4 @@ Bundle-ClassPath: saf.core.ui.jar,
  lib/TableLayout.jar,
  lib/wizard-0.1.12.jar
 Require-Bundle: libs.ext
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -17,3 +17,4 @@ Export-Package: org.geotools.renderer.lite,
  repast.simphony.gis.styleEditor,
  repast.simphony.gis.tools,
  repast.simphony.gis.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

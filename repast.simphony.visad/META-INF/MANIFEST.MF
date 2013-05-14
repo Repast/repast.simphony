@@ -12,3 +12,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.data.ui
 Bundle-Vendor: %providerName
 Export-Package: repast.simphony.visad
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

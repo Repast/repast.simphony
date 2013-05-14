@@ -23,3 +23,4 @@ Require-Bundle: repast.simphony.visualization,
  repast.simphony.statecharts
 Bundle-ClassPath: lib/asm-3.2.jar,
  lib/poi-ooxml-3.6-20091214.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

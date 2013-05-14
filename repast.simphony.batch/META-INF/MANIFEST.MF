@@ -28,3 +28,4 @@ Bundle-ClassPath: lib/batch_groovy.jar,
  lib/jms-1.1.jar,
  bin/
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

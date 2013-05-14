@@ -37,3 +37,4 @@ Export-Package:  repast.simphony.relogo.ide,
  repast.simphony.relogo.ide.image,
  repast.simphony.relogo.ide.runtime,
  repast.simphony.relogo.ide.wizards
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

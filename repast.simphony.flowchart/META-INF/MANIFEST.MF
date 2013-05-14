@@ -71,3 +71,4 @@ Export-Package: repast.simphony.agents,
  repast.simphony.agents.model.codegen,
  repast.simphony.agents.tools.ant
 Plugin-Class: repast.simphony.agents.designer.core.AgentBuilderPlugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

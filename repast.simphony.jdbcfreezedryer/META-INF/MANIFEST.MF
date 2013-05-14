@@ -26,3 +26,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.runtime,
  repast.simphony.dataLoader.ui
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -110,3 +110,4 @@ Bundle-ClassPath: lib/batik.jar,
  lib/worldwind.jar,
  lib/xml-apis-ext.jar,
  bin/
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -11,3 +11,4 @@ Require-Bundle: repast.simphony.integration,
  repast.simphony.runtime
 Export-Package: repast.simphony.essentials
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

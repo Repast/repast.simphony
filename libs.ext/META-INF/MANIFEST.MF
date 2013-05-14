@@ -248,3 +248,4 @@ Export-Package: com.jogamp.common,
  jogamp.opengl.windows.wgl,
  jogamp.opengl.windows.wgl.awt,
  jogamp.opengl.x11.glx
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

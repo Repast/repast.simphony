@@ -5,3 +5,4 @@ Bundle-SymbolicName: repast.simphony.groovy
 Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Export-Package: repast.simphony.groovy.math
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

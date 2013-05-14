@@ -120,3 +120,4 @@ Export-Package:
  simphony.util.error,
  simphony.util.messages
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

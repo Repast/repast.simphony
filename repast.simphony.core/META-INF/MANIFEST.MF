@@ -643,3 +643,4 @@ Require-Bundle: repast.simphony.runtime,
  libs.ext
 Bundle-Vendor: %providerName
 Eclipse-LazyStart: false
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

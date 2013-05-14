@@ -20,3 +20,4 @@ Bundle-ClassPath: .,
  lib/ant.jar,
  lib/ant-launcher.jar,
  lib/xmltask.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

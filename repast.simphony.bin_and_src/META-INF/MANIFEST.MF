@@ -4,3 +4,4 @@ Bundle-Name: Bin_and_src Plug-in
 Bundle-SymbolicName: repast.simphony.bin_and_src
 Bundle-Version: 2.1.0
 Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -12,3 +12,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.plugin.util,
  repast.simphony.data.ui
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

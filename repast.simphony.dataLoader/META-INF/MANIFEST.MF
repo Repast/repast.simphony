@@ -13,3 +13,4 @@ Export-Package: repast.simphony.dataLoader,
  repast.simphony.dataLoader.engine,
  repast.simphony.dataLoader.util
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -6,3 +6,4 @@ Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Export-Package: repast.simphony.systemsdynamics
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

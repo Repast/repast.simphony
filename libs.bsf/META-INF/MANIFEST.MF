@@ -34,3 +34,4 @@ Export-Package: bsh,
  org.apache.bsf.util.event.generator,
  org.apache.bsf.util.type,
  org.apache.taglibs.bsf
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

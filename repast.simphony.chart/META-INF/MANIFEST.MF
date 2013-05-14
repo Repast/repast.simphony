@@ -71,3 +71,4 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
  saf.core.ui
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

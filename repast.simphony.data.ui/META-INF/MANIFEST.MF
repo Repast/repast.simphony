@@ -14,3 +14,4 @@ Export-Package: repast.simphony.data.analysis,
  repast.simphony.data2.gui,
  repast.simphony.data2.wizard
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

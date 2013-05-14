@@ -59,4 +59,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.codehaus.groovy.eclipse.ui;bundle-version="2.7.1"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

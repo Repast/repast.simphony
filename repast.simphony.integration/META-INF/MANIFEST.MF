@@ -19,3 +19,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.wst.xml.core
 Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
