@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gis
 Bundle-SymbolicName: repast.simphony.gis
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,

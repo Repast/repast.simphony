@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: repast.simphony.eclipse
 Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-Vendor: Provider
