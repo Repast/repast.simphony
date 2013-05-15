@@ -1356,7 +1356,7 @@ public class Translator {
 					}
 				}
 				if (problem) {
-					bw.append("######### P R O B L E M #########\n");
+					bw.append("######### P R O B L E M ######### \n");
 					orderProblem = true;
 				}
 
