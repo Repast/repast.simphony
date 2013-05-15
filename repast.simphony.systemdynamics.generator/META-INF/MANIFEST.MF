@@ -26,5 +26,5 @@ Require-Bundle: org.eclipse.jdt.core;bundle-version="3.8.2",
 Export-Package: repast.simphony.systemdynamics.engine,
  repast.simphony.systemdynamics.translator
 Bundle-ClassPath: lib/commons-lang3-3.1.jar,
- .
+ bin/
 Import-Package: org.apache.commons.lang

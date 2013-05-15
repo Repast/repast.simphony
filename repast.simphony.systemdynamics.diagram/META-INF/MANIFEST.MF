@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.systemdynamics.diagram; singleton:=true
 Bundle-Version: 2.1.0
-Bundle-ClassPath: .
+Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

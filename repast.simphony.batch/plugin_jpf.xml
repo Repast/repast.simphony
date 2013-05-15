@@ -23,6 +23,5 @@
 		
     <library id="groovy_batch" path="./lib/batch_groovy.jar" type="code"/>
     <library id="bindings" path="./lib/binding-2.0.6.jar" type="code"/>
-    <library id="forms" path="./lib/forms-1.0.5.jar" type="code"/>
   </runtime>
 </plugin>
