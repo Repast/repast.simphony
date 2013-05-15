@@ -26,6 +26,16 @@
 		<library id="jgoodies-forms-1.7.1.jar" path="lib/jgoodies-forms-1.7.1.jar" type="code">
 			<export prefix="*"/>
 		</library>
+		
+		<library id="jgoodies-common-1.6.0.jar" path="lib/jgoodies-common-1.6.0.jar" type="code">
+            <export prefix="*"/>
+        </library>
+        
+        <library id="jgoodies-binding-2.9.0.jar" path="lib/jgoodies-binding-2.9.0.jar" type="code">
+            <export prefix="*"/>
+        </library>
+		
+		
 	</runtime>
 
 	<extension id="distributed.batch.ui.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
