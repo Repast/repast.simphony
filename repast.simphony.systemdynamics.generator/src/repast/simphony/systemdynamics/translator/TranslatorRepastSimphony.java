@@ -39,6 +39,8 @@ public class TranslatorRepastSimphony extends Translator {
 	public final static String MDL_HEADER = "{UTF-8}";
 	public final static String FIELD_SEPARATOR = "\t~\t";
 	public final static String EQUATION_TERMINATOR = "\t|";
+	public final static String MULTIPLE_SEPARATOR = "~~|";
+	public final static String MULTIPLE_SEPARATOR_REGEX = "~~\\|";
 	
 	public final static String CLOUD_IDENTIFIER = "CLOUD_";
 	
@@ -419,10 +421,6 @@ public class TranslatorRepastSimphony extends Translator {
     		mdlContents.add(EQUATION_TERMINATOR);
     	}
     	
-    	
-    	
-    	
-    	
     	for (Variable variable : systemModel.getVariables()) {
     		
     		// clouds are just graphic objects, but treated as Variable within the SystemModel
@@ -475,19 +473,28 @@ public class TranslatorRepastSimphony extends Translator {
 //    			mdlContents.add(lhs+" =");
     			
     			if (variable.getType().equals(VariableType.STOCK)) {
-        			Stock stk = (Stock) variable;
-        			
-        			mdlContents.add(variable.getLhs()+ "= INTEG(");
-    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
-//    				mdlContents.add(variable.getEquation()+")");
-    				
-    				
-    				
-        		} else if (variable.getType().equals(VariableType.RATE) || 
+    				Stock stk = (Stock) variable;
+
+    				// are there multiple equations? if so, must play some games
+    				String equation = variable.getEquation();
+    				if (!equation.contains("~~|")) {
+    					mdlContents.add(variable.getLhs()+ "= INTEG(");
+    					mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+    				} else {
+    					// must place initial value in the correct place
+    					mdlContents.add(variable.getLhs()+ "= INTEG(");
+    					String[] parts = equation.split("~~\\|");
+    					String cmdHead = parts[0] + ","+stk.getInitialValue()+")";
+    					for (int i = 1; i < parts.length; i++) {
+    						cmdHead += "~~|" + parts[i];
+    					}
+    					mdlContents.add(cmdHead);
+    				}    				
+    			} else if (variable.getType().equals(VariableType.RATE) || 
         				variable.getType().equals(VariableType.CONSTANT )|| 
         				variable.getType().equals(VariableType.AUXILIARY )) {
     				mdlContents.add(variable.getLhs()+ "=");
-    				mdlContents.add(variable.getEquation());
+    				mdlContents.addAll(processMultiples(variable.getEquation()));
     			} else if (variable.getType().equals(VariableType.LOOKUP)){
 //    				mdlContents.add(variable.getLhs()+ "(");
 //    				mdlContents.add(variable.getEquation()+")");
@@ -526,11 +533,34 @@ public class TranslatorRepastSimphony extends Translator {
     	mdlContents.add(EQUATIONS_TERMINATOR);
     	mdlContents.add(GRAPHICS_TERMINATOR);
     	
-//    	for (String s : mdlContents)
-//    		System.out.println("<"+s+">");
+    	for (String s : mdlContents)
+    		System.out.println("<"+s+">");
     	
     	
     	return mdlContents;
+    }
+    
+    private List<String> processMultiples(String anEquation) {
+
+    	List<String> al = new ArrayList<String>();
+    	// if no MULTIPLE_SEPARATOR -> single equation, just return
+    	if (!anEquation.contains(MULTIPLE_SEPARATOR)) {
+    		al.add(anEquation);
+    		return al;
+    	} else {
+    		// have multiple equations
+    		String[] eqns = anEquation.split(MULTIPLE_SEPARATOR_REGEX);
+    		int numEqn = eqns.length;
+    		int proc = 0;
+    		for (String eqn : eqns) {
+    			if (proc++ == numEqn - 1)
+    				al.add((eqn).replace("\n", ""));
+    			else
+    				al.add((eqn + MULTIPLE_SEPARATOR).replace("\n", ""));
+    		}
+    		return al;
+    	}
+
     }
     
     @Override

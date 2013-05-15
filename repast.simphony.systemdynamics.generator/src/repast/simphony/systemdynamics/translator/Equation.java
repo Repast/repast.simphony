@@ -1168,11 +1168,11 @@ public class Equation {
 					if (inRange(position.value()+1) && characterAt(position.value()+1).equals("="))
 						position.add(1);
 				} else {
-					System.out.println("ERROR: Bad Array Reference (A)!");
+					System.out.println("ERROR: Bad Array Reference (A)!character found is <"+characterAt(position)+"> position "+position);
 					ignore = true;
 				}
 			} else {
-				System.out.println("ERROR: Bad Array Reference (B)!");
+				System.out.println("ERROR: Bad Array Reference (B)! character found is <"+characterAt(position)+"> position "+position);
 				ignore = true;
 			}
 			// Left Bracket Processing Ends

@@ -361,7 +361,7 @@ public class EquationProcessor {
     						
     						Equation equation = new Equation(aVensimEquation);
     						
-//    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
+    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
     						
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set
@@ -428,8 +428,10 @@ public class EquationProcessor {
 
     private List<String> splitMultipleEquations(String vensimEquation) {
 	List<String> eqn = new ArrayList<String>();
-
+//	System.out.println("CHECKING FOR MULTIPLE EQUATION");
 	if (vensimEquation.contains("~~|")) {
+		
+//		System.out.println("FOUND MULTIPLE EQUATION");
 
 	    // split multi-equation definition into multiple single equation definitions
 
