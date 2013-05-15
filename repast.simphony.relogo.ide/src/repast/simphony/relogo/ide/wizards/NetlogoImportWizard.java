@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -213,12 +214,12 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 	 */
 
 	private boolean doFinish(String projectName, IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		subMonitor.subTask("Creating " + projectName);
 		// create a sample file
-		monitor.beginTask("Creating " + projectName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(projectName));
-		monitor.worked(1);
-		boolean res = superPerformFinish(monitor); // super.performFinish();
+		boolean res = superPerformFinish(subMonitor.newChild(40)); // super.performFinish();
 		if (res) {
 			final IJavaElement newElement = getCreatedElement();
 
@@ -232,7 +233,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			// preferenceStore(relogoProject).setValue(
 			// "groovy.compiler.output.path", groovyOutputPath );;
 			try {
-				createStandardRelogoDirectories(relogoProject, monitor);
+				createStandardRelogoDirectories(relogoProject, subMonitor.newChild(50));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -279,7 +280,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
       final RefreshDSLDJob job = new RefreshDSLDJob(relogoProject);
       job.run(new NullProgressMonitor());
 		}
-		monitor.worked(1);
+		subMonitor.worked(10);
 		return res;
 	}
 
@@ -380,14 +381,15 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 	 */
 	protected IFolder createStandardRelogoDirectories(IProject project, IProgressMonitor monitor)
 			throws CoreException, UnsupportedEncodingException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Creating ReLogo Directories",100);
 		// IFolder projectFolder = project.getFolder(".");
 		String projectName = project.getDescription().getName();
 		String packageName = pageOne.getPackageName();
 		IJavaProject javaProject = pageTwo.getJavaProject();
 
-		IPath srcPath = checkAndGetSourcePath(SRC, project, javaProject, monitor);
+		IPath srcPath = checkAndGetSourcePath(SRC, project, javaProject, subMonitor.newChild(1));
 
-		IPath srcGenPath = checkAndGetSourcePath(SRC_GEN, project, javaProject, monitor);
+		IPath srcGenPath = checkAndGetSourcePath(SRC_GEN, project, javaProject, subMonitor.newChild(1));
 
 		if (srcPath != null) {
 			IFolder srcFolder = project.getFolder(SRC);
@@ -406,15 +408,15 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			newFolder = createFolderResource(project, "batch");
 
 			Utilities.copyFileFromPluginInstallation("batch/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("batch/batch_params.xml", newFolder,
-					"batch_params.xml", variableMap, monitor);
+					"batch_params.xml", variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "docs");
 			Utilities.copyFileFromPluginInstallation("docs/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("docs/index.html", newFolder, "index.html",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			// for distributed batch (see SIM-459)
 			newFolder = createFolderResource(project, "transferFiles");
@@ -424,22 +426,22 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 			newFolder = createFolderResource(project, "freezedried_data");
 			Utilities.copyFileFromPluginInstallation("freezedried_data/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
+					"ReadMe.txt", variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "icons");
 
 			Utilities.copyFileFromPluginInstallation("icons/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("icons/model.bmp", newFolder, "model.bmp",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "integration");
 			Utilities.copyFileFromPluginInstallation("integration/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "launchers");
 			Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder,
 					scenarioDirectory);
@@ -448,134 +450,134 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 			newFolder = createFolderResource(project, "lib");
 			Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "misc");
 			Utilities.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "installer");
 			Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
-					"installation_components.xml", variableMap, monitor);
+					"installation_components.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
-					"shortcuts_Windows.xml", variableMap, monitor);
+					"shortcuts_Windows.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows_Registry.xml",
-					newFolder, "shortcuts_Windows_Registry.xml", variableMap, monitor);
+					newFolder, "shortcuts_Windows_Registry.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
-					"shortcuts_Xnix.xml", variableMap, monitor);
+					"shortcuts_Xnix.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
-					"splash_screen.png", monitor);
+					"splash_screen.png", subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
-					"start_model.bat", variableMap, monitor);
+					"start_model.bat", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
-					"start_model.command", variableMap, monitor);
+					"start_model.command", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
-					"installation_coordinator.xml", variableMap, monitor);
-
+					"installation_coordinator.xml", variableMap, subMonitor.newChild(1));
+			
 			newFolder = createFolderResource(project, "repast-licenses");
 			Utilities.copyFileFromPluginInstallation("repast-licenses/apache-license.txt", newFolder,
-					"apache-license.txt", variableMap, monitor);
+					"apache-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/asm-license.txt", newFolder,
-					"asm-license.txt", variableMap, monitor);
+					"asm-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/axion-license.txt", newFolder,
-					"axion-license.txt", variableMap, monitor);
+					"axion-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/binding-license.txt", newFolder,
-					"binding-license.txt", variableMap, monitor);
+					"binding-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/common-public-license.txt",
-					newFolder, "common-public-license.txt", variableMap, monitor);
+					newFolder, "common-public-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/concurrent-license.pdf", newFolder,
-					"concurrent-license.pdf", variableMap, monitor);
+					"concurrent-license.pdf", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/CPL.txt", newFolder, "CPL.txt",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/forms-license.txt", newFolder,
-					"forms-license.txt", variableMap, monitor);
+					"forms-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/geotools-license.txt", newFolder,
-					"geotools-license.txt", variableMap, monitor);
+					"geotools-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/groovy-license.txt", newFolder,
-					"groovy-license.txt", variableMap, monitor);
+					"groovy-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/hsqldb-license.txt", newFolder,
-					"hsqldb-license.txt", variableMap, monitor);
+					"hsqldb-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation(
 					"repast-licenses/jakarta-commons-collections-license.txt", newFolder,
-					"jakarta-commons-collections-license.txt", variableMap, monitor);
+					"jakarta-commons-collections-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jaxen-license.txt", newFolder,
-					"jaxen-license.txt", variableMap, monitor);
+					"jaxen-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jh-license.txt", newFolder,
-					"jh-license.txt", variableMap, monitor);
+					"jh-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jide-oss-license.txt", newFolder,
-					"jide-oss-license.txt", variableMap, monitor);
+					"jide-oss-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jmatlink-license.txt", newFolder,
-					"jmatlink-license.txt", variableMap, monitor);
+					"jmatlink-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jmf-license.txt", newFolder,
-					"jmf-license.txt", variableMap, monitor);
+					"jmf-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jmock-license.txt", newFolder,
-					"jmock-license.txt", variableMap, monitor);
+					"jmock-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jscience-license.txt", newFolder,
-					"jscience-license.txt", variableMap, monitor);
+					"jscience-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jsp-servlet-api-license.txt",
-					newFolder, "jsp-servlet-api-license.txt", variableMap, monitor);
+					newFolder, "jsp-servlet-api-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jts-license.txt", newFolder,
-					"jts-license.txt", variableMap, monitor);
+					"jts-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/jung-license.txt", newFolder,
-					"jung-license.txt", variableMap, monitor);
+					"jung-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/lgpl-2.1.txt", newFolder,
-					"lgpl-2.1.txt", variableMap, monitor);
+					"lgpl-2.1.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/LICENSE-jgoodies.txt", newFolder,
-					"LICENSE-jgoodies.txt", variableMap, monitor);
+					"LICENSE-jgoodies.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/log4j-license.txt", newFolder,
-					"log4j-license.txt", variableMap, monitor);
+					"log4j-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation(
 					"repast-licenses/mitre-relogo-import-wizard-license.txt", newFolder,
-					"mitre-relogo-import-wizard-license.txt", variableMap, monitor);
+					"mitre-relogo-import-wizard-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/MPL-license.txt", newFolder,
-					"MPL-license.txt", variableMap, monitor);
+					"MPL-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/msql-connector-license.txt",
-					newFolder, "msql-connector-license.txt", variableMap, monitor);
+					newFolder, "msql-connector-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/mx4j-license.txt", newFolder,
-					"mx4j-license.txt", variableMap, monitor);
+					"mx4j-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/openforecast-license.txt",
-					newFolder, "openforecast-license.txt", variableMap, monitor);
+					newFolder, "openforecast-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/piccolo-license.txt", newFolder,
-					"piccolo-license.txt", variableMap, monitor);
+					"piccolo-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/proactive-license.txt", newFolder,
-					"proactive-license.txt", variableMap, monitor);
+					"proactive-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/repast-license.txt", newFolder,
-					"repast-license.txt", variableMap, monitor);
+					"repast-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/saxpath-license.txt", newFolder,
-					"saxpath-license.txt", variableMap, monitor);
+					"saxpath-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/swingx-license.txt", newFolder,
-					"swingx-license.txt", variableMap, monitor);
+					"swingx-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/table-layout-license.txt",
-					newFolder, "table-layout-license.txt", variableMap, monitor);
+					newFolder, "table-layout-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/violinstrings-license.txt",
-					newFolder, "violinstrings-license.txt", variableMap, monitor);
+					newFolder, "violinstrings-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/wizard-license.txt", newFolder,
-					"wizard-license.txt", variableMap, monitor);
+					"wizard-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/xpp3-license.txt", newFolder,
-					"xpp3-license.txt", variableMap, monitor);
+					"xpp3-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/xstream-license.txt", newFolder,
-					"xstream-license.txt", variableMap, monitor);
+					"xstream-license.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache.txt", newFolder,
-					"license_apache.txt", variableMap, monitor);
+					"license_apache.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache11.txt", newFolder,
-					"license_apache11.txt", variableMap, monitor);
+					"license_apache11.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4j.txt", newFolder,
-					"license_flow4j.txt", variableMap, monitor);
+					"license_flow4j.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4J-eclipse.txt",
-					newFolder, "license_flow4J-eclipse.txt", variableMap, monitor);
+					newFolder, "license_flow4J-eclipse.txt", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("repast-licenses/license_xstream.txt", newFolder,
-					"license_xstream.txt", variableMap, monitor);
-
+					"license_xstream.txt", variableMap, subMonitor.newChild(1));
+			
 			newFolder = srcFolder.getFolder("../license.txt");
-			Utilities.copyFileFromPluginInstallation("license.txt", newFolder, "", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("license.txt", newFolder, "", variableMap, subMonitor.newChild(1));
 
 			newFolder = srcFolder.getFolder("../MessageCenter.log4j.properties");
 			Utilities.copyFileFromPluginInstallation("MessageCenter.log4j.properties", newFolder, "",
-					variableMap, monitor);
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = srcFolder.getFolder("../model_description.txt");
 			Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,
-					monitor);
+					subMonitor.newChild(1));
 
 			// Utilities.copyFileFromPluginInstallation("license.txt", projectFolder,
 			// "",
@@ -611,7 +613,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			// create XML files defining model and UI
 			IFolder rsFolder = createFolderResource(project, projectName + ".rs");
 			Utilities.copyFileFromPluginInstallation("package.rs/default_frame_layout.xml", rsFolder,
-					"default_frame_layout.xml", variableMap, monitor);
+					"default_frame_layout.xml", variableMap, subMonitor.newChild(1));
 			exportReLogoParameters(rsFolder, projectName);
 			exportReLogoModel(rsFolder, projectName);
 			exportReLogoDataLoader(rsFolder, packageName);
@@ -635,6 +637,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 			try {
 				exportRelogoTemplates(newFolder, srcGenNewFolder, rsFolder, styleFolder);
+				subMonitor.setWorkRemaining(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
