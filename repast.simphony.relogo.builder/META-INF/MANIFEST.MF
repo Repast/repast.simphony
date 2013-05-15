@@ -21,7 +21,8 @@ Import-Package: org.codehaus.jdt.groovy.model,
  repast.simphony.util.collections
 Bundle-ClassPath: lib/commons-io-1.4.jar,
  lib/ST-4.0.7.jar,
- .
+ .,
+ bin/
 Export-Package: repast.simphony.relogo.ide.handlers,
  templates
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

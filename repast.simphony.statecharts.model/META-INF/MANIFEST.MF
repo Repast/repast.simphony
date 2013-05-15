@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.statecharts.model;singleton:=true
 Bundle-Version: 2.1.0
-Bundle-ClassPath: .
+Bundle-ClassPath: bin/
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
