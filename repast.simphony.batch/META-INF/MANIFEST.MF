@@ -21,11 +21,7 @@ Export-Package: repast.simphony.batch,
  repast.simphony.parameter.xml
 Bundle-Vendor: %providerName
 Bundle-ClassPath: lib/batch_groovy.jar,
- lib/forms-1.0.5.jar,
  lib/binding-2.0.6.jar,
- lib/trove-1.0.2.jar,
- lib/jtidy-4aug2000r7-dev.jar,
- lib/jms-1.1.jar,
  bin/
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
