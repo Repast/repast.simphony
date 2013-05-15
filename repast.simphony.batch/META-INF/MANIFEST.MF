@@ -21,7 +21,6 @@ Export-Package: repast.simphony.batch,
  repast.simphony.parameter.xml
 Bundle-Vendor: %providerName
 Bundle-ClassPath: lib/batch_groovy.jar,
- lib/binding-2.0.6.jar,
  bin/
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
