@@ -82,8 +82,8 @@ import org.osgi.framework.Bundle;
 import repast.simphony.relogo.ide.code.MethodPartition;
 import repast.simphony.relogo.ide.code.RelogoClass;
 import repast.simphony.relogo.ide.gui.NetlogoSimulation;
-import repast.simphony.relogo.ide.image.NLImage;
 import repast.simphony.relogo.ide.intf.NLPlot;
+import repast.simphony.relogo.image.NLImage;
 
 
 /**
@@ -943,15 +943,15 @@ public class NetlogoWizardPageOne extends WizardPage {
 
 			}
 			
-			IWorkspaceDescription desc= workspace.getDescription();
-			if (desc.isAutoBuilding()){
-				desc.setAutoBuilding(false);
-				try {
-					workspace.setDescription(desc);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
+//			IWorkspaceDescription desc= workspace.getDescription();
+//			if (desc.isAutoBuilding()){
+//				desc.setAutoBuilding(false);
+//				try {
+//					workspace.setDescription(desc);
+//				} catch (CoreException e) {
+//					e.printStackTrace();
+//				}
+//			}
 			
 //			if (packageName.equals("")){
 //				fNameGroup.setPackageName(name.toLowerCase());

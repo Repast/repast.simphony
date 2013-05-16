@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Matlab
 Bundle-SymbolicName: repast.simphony.matlab
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: lib/jmatlink-1.0.jar
 Export-Package: jmatlink,
  jmatlink.testsuite,
@@ -16,3 +16,4 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
  saf.core.ui,
  repast.simphony.data.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

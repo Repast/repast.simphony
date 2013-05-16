@@ -26,7 +26,6 @@ import repast.simphony.relogo.ide.code.NetLogoRGWParser;
 import repast.simphony.relogo.ide.code.Profile;
 import repast.simphony.relogo.ide.dynamics.SystemDynamicsParser;
 import repast.simphony.relogo.ide.image.ImageSectionParser;
-import repast.simphony.relogo.ide.image.NLImage;
 import repast.simphony.relogo.ide.intf.ControlSectionParser;
 import repast.simphony.relogo.ide.intf.NLButton;
 import repast.simphony.relogo.ide.intf.NLChooser;
@@ -37,6 +36,7 @@ import repast.simphony.relogo.ide.intf.NLPlot;
 import repast.simphony.relogo.ide.intf.NLSlider;
 import repast.simphony.relogo.ide.intf.NLSwitch;
 import repast.simphony.relogo.ide.wizards.WizardUtilities;
+import repast.simphony.relogo.image.NLImage;
 
 /**
  *

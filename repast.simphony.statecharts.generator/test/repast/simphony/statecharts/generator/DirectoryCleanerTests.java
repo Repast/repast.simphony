@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
 
+import repast.simphony.eclipse.util.DirectoryCleaner;
+
 /**
  * THIS HAS TO BE RUN AS A JUNIT PLUGIN-TEST AS IT USES WORKSPACE ETC.
  * 

@@ -2,7 +2,7 @@
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
 <plugin id="repast.simphony.chart" version="">
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 
 	<requires>
@@ -18,7 +18,7 @@
 
 		
 		<library id="jfreechart" path="lib/jfreechart-1.0.14.jar" type="code">
-		  <export prefix="*" />
+		  <export prefix="*"/>
 		</library>
 		<library id="jcommon" path="lib/jcommon-1.0.17.jar" type="code">
 			<export prefix="*"/>
@@ -26,12 +26,12 @@
 	</runtime>
 
 
-	<extension plugin-id="repast.simphony.gui" point-id="composite.action" id="chart.composite.action">
+	<extension id="chart.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
         <parameter id="creatorClass" value="repast.simphony.chart2.engine.ChartActionCreator"/>
         <parameter id="label" value="Charts"/>
     </extension>
 
-    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="time.series.component.action">
+    <extension id="time.series.component.action" plugin-id="repast.simphony.gui" point-id="component.action">
         <parameter id="actionIO" value="repast.simphony.chart2.engine.TimeSeriesControllerActionIO"/>
         <parameter id="editorCreator" value="repast.simphony.chart2.gui.TimeSeriesActionEditorCreator"/>
         <parameter id="parentMenuItem" value="repast.simphony.chart2.gui.TimeSeriesChartMenuItem"/>
@@ -39,7 +39,7 @@
         <parameter id="parentID" value="repast.controller.action.charts"/>
     </extension>
 
-    <extension plugin-id="repast.simphony.gui" point-id="component.action" id="histogram.component.action">
+    <extension id="histogram.component.action" plugin-id="repast.simphony.gui" point-id="component.action">
         <parameter id="actionIO" value="repast.simphony.chart2.engine.HistogramControllerActionIO"/>
         <parameter id="editorCreator" value="repast.simphony.chart2.gui.HistogramChartActionEditorCreator"/>
         <parameter id="parentMenuItem" value="repast.simphony.chart2.gui.HistogramMenuItem"/>

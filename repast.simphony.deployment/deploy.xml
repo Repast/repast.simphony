@@ -125,7 +125,8 @@
 			<manifest id="RepastJARManifest">
 				<attribute name="Class-Path" value="${JARClasspath}" />
 			</manifest>
-			<service type="org.codehaus.groovy.transform.ASTTransformation" provider="repast.simphony.relogo.ast.ReLogoGlobalASTTransformation" />
+			<!-- <service type="org.codehaus.groovy.transform.ASTTransformation" 
+				provider="repast.simphony.relogo.ast.ReLogoGlobalASTTransformation"/>-->
 
 			<fileset dir="../repast.simphony.batch/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -331,6 +332,7 @@
 			</fileset>
 			<fileset dir="../repast.simphony.relogo.runtime/bin" casesensitive="no">
 				<include name="**/*.class" />
+				<exclude name="**/dsld/**" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.relogo.ide/src" casesensitive="no">

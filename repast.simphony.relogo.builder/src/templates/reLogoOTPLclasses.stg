@@ -1,0 +1,92 @@
+group reLogoOTPLclasses;
+
+reLogoObserver(packageName,classBody) ::= <<
+package <packageName>;
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
+import repast.simphony.relogo.builder.GeneratedByReLogoBuilder;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+
+@GeneratedByReLogoBuilder
+@SuppressWarnings({"unused","rawtypes","unchecked"})
+public class ReLogoObserver extends BaseObserver{
+
+	<classBody>
+}
+>>
+
+reLogoTurtle(packageName,classBody) ::= <<
+package <packageName>;
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
+import repast.simphony.relogo.builder.GeneratedByReLogoBuilder;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+import repast.simphony.space.SpatialException;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
+
+@GeneratedByReLogoBuilder
+@SuppressWarnings({"unused","rawtypes","unchecked"})
+public class ReLogoTurtle extends BaseTurtle{
+	
+	<classBody>
+}
+>>
+
+reLogoPatch(packageName,classBody) ::= <<
+package <packageName>;
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
+import repast.simphony.relogo.ast.Diffusible;
+import repast.simphony.relogo.builder.GeneratedByReLogoBuilder;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+import repast.simphony.space.SpatialException;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridPoint;
+
+@GeneratedByReLogoBuilder
+@SuppressWarnings({"unused","rawtypes","unchecked"})
+public class ReLogoPatch extends BasePatch{
+	
+	<classBody>
+}
+>>
+
+reLogoLink(packageName,classBody) ::= <<
+package <packageName>;
+
+import static repast.simphony.relogo.Utility.*;
+import static repast.simphony.relogo.UtilityG.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import groovy.lang.Closure;
+import repast.simphony.relogo.*;
+import repast.simphony.relogo.builder.GeneratedByReLogoBuilder;
+import repast.simphony.relogo.builder.ReLogoBuilderGeneratedFor;
+
+@GeneratedByReLogoBuilder
+@SuppressWarnings({"unused","rawtypes","unchecked"})
+public class ReLogoLink\<T> extends BaseLink\<T>	{
+	
+	<classBody>
+}
+>>

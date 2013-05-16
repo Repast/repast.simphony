@@ -17,12 +17,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
+import repast.simphony.eclipse.util.DirectoryCleaner;
 import repast.simphony.statecharts.generator.CodeGenerator;
-import repast.simphony.statecharts.generator.DirectoryCleaner;
 import repast.simphony.statecharts.generator.OrphanFilter;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.svg.SVGExporter;
-
 /**
  * @author Nick Collier
  */

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Bsf
 Bundle-SymbolicName: libs.bsf
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: lib/bsf.jar,
  lib/bsh-2.0b4.jar
 Export-Package: bsh,
@@ -34,3 +34,4 @@ Export-Package: bsh,
  org.apache.bsf.util.event.generator,
  org.apache.bsf.util.type,
  org.apache.taglibs.bsf
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

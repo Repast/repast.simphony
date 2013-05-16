@@ -5,12 +5,12 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseObserver;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import <packageName>.ReLogoObserver;
 
-class UserObserver extends BaseObserver{
+class UserObserver extends ReLogoObserver{
 
 	/**
 	 * Add observer methods here. For example:
@@ -45,14 +45,13 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseTurtle;
-import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import <packageName>.ReLogoTurtle;
 
-class UserTurtle extends BaseTurtle{
+class UserTurtle extends ReLogoTurtle{
 
 	<turtleVars>
 	<bodyCode>
@@ -64,8 +63,6 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseTurtle;
-import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
@@ -83,13 +80,13 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BasePatch;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 import repast.simphony.relogo.ast.Diffusible;
+import <packageName>.ReLogoPatch;
 
-class UserPatch extends BasePatch{
+class UserPatch extends ReLogoPatch{
 
 	<patchVars>
 	<bodyCode>
@@ -101,15 +98,15 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseLink;
 import repast.simphony.relogo.Directed;
 import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Undirected;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import <packageName>.ReLogoLink;
 
-class UserLink extends BaseLink	{
+class UserLink extends ReLogoLink	{
 
 	<linkVars>
 	<bodyCode>
@@ -121,17 +118,17 @@ package <packageName>.relogo
 
 import static repast.simphony.relogo.Utility.*;
 import static repast.simphony.relogo.UtilityG.*;
-import repast.simphony.relogo.BaseLink;
 import repast.simphony.relogo.Directed;
 import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Undirected;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import <packageName>.ReLogoLink;
 
 <directedAnnotation>
 <pluralAnnotation>
-class <linkClassName> extends BaseLink	{
+class <linkClassName> extends ReLogoLink	{
 
 	<linkVars>
 }

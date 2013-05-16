@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.jasperreports
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Export-Package: 
  net.sf.jasperreports.ant,
@@ -118,3 +118,4 @@ Bundle-ClassPath: lib/jasperreports-5.1.0.jar,
  lib/commons-digester-2.1.jar,
  lib/iText-2.1.7.js2.jar
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

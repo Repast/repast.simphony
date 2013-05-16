@@ -13,6 +13,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
 
+/**
+ * This is not used anymore after move to ReLogo2.
+ * @author jozik
+ *
+ */
 public class ReLogoLaunchConfigurationDelegate extends
 		JavaLaunchDelegate {
 

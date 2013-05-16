@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: libs.ext
 Bundle-SymbolicName: libs.ext
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: lib/clibwrapper_jiio.jar,
  lib/gluegen-rt.jar,
  lib/j3dcore.jar,
@@ -248,3 +248,4 @@ Export-Package: com.jogamp.common,
  jogamp.opengl.windows.wgl,
  jogamp.opengl.windows.wgl.awt,
  jogamp.opengl.x11.glx
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

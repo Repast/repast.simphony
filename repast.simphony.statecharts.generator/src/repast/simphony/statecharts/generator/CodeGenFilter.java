@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import repast.simphony.eclipse.util.ToDeleteFilter;
+
 public class CodeGenFilter implements ToDeleteFilter {
 
   private String match;
