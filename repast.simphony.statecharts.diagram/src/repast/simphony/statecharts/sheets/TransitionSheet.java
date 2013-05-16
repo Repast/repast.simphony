@@ -88,7 +88,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.paintBordersFor(this);
 
     createHeaderSection(toolkit);
-    
+
     tabFolder = new CTabFolder(this, SWT.FLAT);
     tabFolder.setTabHeight(20);
     GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
@@ -98,7 +98,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.paintBordersFor(tabFolder);
     tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
         SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-    
+
     createTriggerSection(toolkit, tabFolder);
     createGuardSection(toolkit, tabFolder);
     createTransitionSection(toolkit, tabFolder);
@@ -219,7 +219,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
     tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
     tbtmTrigger.setText("Trigger");
-    
+
     compTrigger = new Composite(tabFolder, SWT.NONE);
     compTrigger.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     tbtmTrigger.setControl(compTrigger);
@@ -437,7 +437,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder) {
     tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
     tbtmOnTrans.setText("On Transition");
-    
+
     compTrans = new Composite(tabFolder, SWT.NONE);
     compTrans.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     tbtmOnTrans.setControl(compTrans);
@@ -508,24 +508,24 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
      * sctnGuard.getParent().s } });
      */
   }
-  
+
   private void resetTabs() {
     if (!tbtmOnTrans.isDisposed()) {
       tbtmOnTrans.dispose();
     }
-    
+
     if (tbtmTrigger.isDisposed()) {
       tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
       tbtmTrigger.setText("Trigger");
       tbtmTrigger.setControl(compTrigger);
     }
-    
+
     if (tbtmGuard.isDisposed()) {
       tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
       tbtmGuard.setText("Guard");
       tbtmGuard.setControl(compGuard);
     }
-    
+
     if (tbtmOnTrans.isDisposed()) {
       tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
       tbtmOnTrans.setText("On Transition");
@@ -538,11 +538,11 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     // default out from branch cannot have any triggers
     if (object != null && ((Transition) object).isOutOfBranch()) {
       if (isSelected) {
-        
+
         if (!tbtmTrigger.isDisposed()) {
           tbtmTrigger.dispose();
         }
-        
+
         if (!tbtmGuard.isDisposed()) {
           tbtmGuard.dispose();
         }
@@ -551,10 +551,9 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
       } else {
         // add them all so the order will stay the same
         resetTabs();
-        
+
         // can only have a conditional trigger
         cmbTriggerType.select(CONDITION_INDEX);
-        cmbTriggerType.update();
         cmbTriggerType.setEnabled(false);
         triggerChanged();
       }
@@ -682,7 +681,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__SELF_TRANSITION).observe(eObject));
     doSelfCheck();
-    
+
     for (int i = 0; i < tabFolder.getTabList().length; ++i) {
       if (tabFolder.getTabList()[i].isEnabled()) {
         tabFolder.setSelection(i);
