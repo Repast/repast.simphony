@@ -39,6 +39,8 @@ public class TranslatorRepastSimphony extends Translator {
 	public final static String MDL_HEADER = "{UTF-8}";
 	public final static String FIELD_SEPARATOR = "\t~\t";
 	public final static String EQUATION_TERMINATOR = "\t|";
+	public final static String MULTIPLE_SEPARATOR = "~~|";
+	public final static String MULTIPLE_SEPARATOR_REGEX = "~~\\|";
 	
 	public final static String CLOUD_IDENTIFIER = "CLOUD_";
 	
@@ -363,7 +365,7 @@ public class TranslatorRepastSimphony extends Translator {
     
     private List<String> convertToMDL(SystemModel systemModel) {
     	
-    	System.out.println("\n\n\n\n convert to MDL \n\n\n\n\n");
+    	System.out.println("convert to MDL");
     	
     	List<String> mdlContents = new ArrayList<String>();
     	
@@ -403,7 +405,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	for (Subscript subscript : systemModel.getSubscripts()) {
     		
-    		System.out.println("Subscript: "+subscript.getName());
+//    		System.out.println("Subscript: "+subscript.getName());
     		mdlContents.add(subscript.getName()+":");
     		int i = 0;
     		StringBuffer sb = new StringBuffer("\t");
@@ -411,17 +413,13 @@ public class TranslatorRepastSimphony extends Translator {
     			if (i++ > 0)
     				sb.append(",");
     			sb.append(element.replace("\n", ""));
-    			System.out.println("   Element: "+element);
+//    			System.out.println("   Element: "+element);
     		}
     		mdlContents.add(sb.toString());
     		mdlContents.add(FIELD_SEPARATOR);
     		mdlContents.add(FIELD_SEPARATOR);
     		mdlContents.add(EQUATION_TERMINATOR);
     	}
-    	
-    	
-    	
-    	
     	
     	for (Variable variable : systemModel.getVariables()) {
     		
@@ -432,24 +430,24 @@ public class TranslatorRepastSimphony extends Translator {
     				variable.getName().startsWith(CLOUD_IDENTIFIER))
     			continue;
     		
-    		System.out.println("Name: "+variable.getName());
-    		System.out.println("Type: "+variable.getType());
+//    		System.out.println("Name: "+variable.getName());
+//    		System.out.println("Type: "+variable.getType());
     		
     		if (variable.getType().equals(VariableType.STOCK)) {
     			Stock stk = (Stock) variable;
     			stk.getInitialValue();
     		}
     		
-    		System.out.println("Units: "+variable.getUnits());
-    		System.out.println("LHS: "+variable.getLhs());
-    		System.out.println("Equation: "+variable.getEquation());
-    		System.out.println("Subscripts: "+variable.getSubscripts());
-    		for (String s : variable.getSubscripts()) {
-    			System.out.println("<"+s+">");
-    		}
-    		System.out.println("Comment: "+variable.getComment());
-    		System.out.println("Uuid: "+variable.getUuid());
-    		System.out.println("#####\n");
+//    		System.out.println("Units: "+variable.getUnits());
+//    		System.out.println("LHS: "+variable.getLhs());
+//    		System.out.println("Equation: "+variable.getEquation());
+//    		System.out.println("Subscripts: "+variable.getSubscripts());
+//    		for (String s : variable.getSubscripts()) {
+//    			System.out.println("<"+s+">");
+//    		}
+//    		System.out.println("Comment: "+variable.getComment());
+//    		System.out.println("Uuid: "+variable.getUuid());
+//    		System.out.println("#####\n");
     		
     		uuidToName.put(variable.getUuid(), variable.getName());
     		nameToUuid.put(variable.getName(), variable.getUuid());
@@ -475,19 +473,28 @@ public class TranslatorRepastSimphony extends Translator {
 //    			mdlContents.add(lhs+" =");
     			
     			if (variable.getType().equals(VariableType.STOCK)) {
-        			Stock stk = (Stock) variable;
-        			
-        			mdlContents.add(variable.getLhs()+ "= INTEG(");
-    				mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
-//    				mdlContents.add(variable.getEquation()+")");
-    				
-    				
-    				
-        		} else if (variable.getType().equals(VariableType.RATE) || 
+    				Stock stk = (Stock) variable;
+
+    				// are there multiple equations? if so, must play some games
+    				String equation = variable.getEquation();
+    				if (!equation.contains("~~|")) {
+    					mdlContents.add(variable.getLhs()+ "= INTEG(");
+    					mdlContents.add(variable.getEquation()+","+stk.getInitialValue()+")");
+    				} else {
+    					// must place initial value in the correct place
+    					mdlContents.add(variable.getLhs()+ "= INTEG(");
+    					String[] parts = equation.split("~~\\|");
+    					String cmdHead = parts[0] + ","+stk.getInitialValue()+")";
+    					for (int i = 1; i < parts.length; i++) {
+    						cmdHead += "~~|" + parts[i];
+    					}
+    					mdlContents.add(cmdHead);
+    				}    				
+    			} else if (variable.getType().equals(VariableType.RATE) || 
         				variable.getType().equals(VariableType.CONSTANT )|| 
         				variable.getType().equals(VariableType.AUXILIARY )) {
     				mdlContents.add(variable.getLhs()+ "=");
-    				mdlContents.add(variable.getEquation());
+    				mdlContents.addAll(processMultiples(variable.getEquation()));
     			} else if (variable.getType().equals(VariableType.LOOKUP)){
 //    				mdlContents.add(variable.getLhs()+ "(");
 //    				mdlContents.add(variable.getEquation()+")");
@@ -533,6 +540,29 @@ public class TranslatorRepastSimphony extends Translator {
     	return mdlContents;
     }
     
+    private List<String> processMultiples(String anEquation) {
+
+    	List<String> al = new ArrayList<String>();
+    	// if no MULTIPLE_SEPARATOR -> single equation, just return
+    	if (!anEquation.contains(MULTIPLE_SEPARATOR)) {
+    		al.add(anEquation);
+    		return al;
+    	} else {
+    		// have multiple equations
+    		String[] eqns = anEquation.split(MULTIPLE_SEPARATOR_REGEX);
+    		int numEqn = eqns.length;
+    		int proc = 0;
+    		for (String eqn : eqns) {
+    			if (proc++ == numEqn - 1)
+    				al.add((eqn).replace("\n", ""));
+    			else
+    				al.add((eqn + MULTIPLE_SEPARATOR).replace("\n", ""));
+    		}
+    		return al;
+    	}
+
+    }
+    
     @Override
     protected void process(Map<String, Equation> equations) {
     	CodeGenerator cg = null;
@@ -558,8 +588,18 @@ public class TranslatorRepastSimphony extends Translator {
     			cg.setInitializeScenarioDirectory(isInitializeScenarioDirectory());
     			cg.generateCode();
     			
+    			// we currently do not support arrays in ODE compatible mode. Simply do not generate
+    			
+    			if (InformationManagers.getInstance().getArrayManager().areArraysUsed())
+    				return;
+    			
+    			
     			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName, objectName+"_ODESolverCompatible");
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName+"ODE", objectName+"_ODESolverCompatible");
+    			
+    			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
+    			new File(dir).mkdirs();
+    			
     			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
     			odecg.generateDerivativeClass(bw);
     			try {

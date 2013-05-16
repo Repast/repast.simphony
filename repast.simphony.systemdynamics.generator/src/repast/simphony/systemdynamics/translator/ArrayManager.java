@@ -89,7 +89,7 @@ public class ArrayManager {
 		OperationResult or = new OperationResult();
 		List<String> tokens = equation.getTokens();
 		String token = tokens.get(pos.value());
-		System.out.println(" ***** valAR: "+token);
+//		System.out.println(" ***** valAR: "+token);
 		// if this is a lhs arrayReference, we need to assume it is correct as this defines how it will be used
 		if (lhs.value())
 			return or;
@@ -97,7 +97,7 @@ public class ArrayManager {
 		NativeArray na = null;
 		ArrayReference ar = null;
 		if (ArrayReference.isArrayReference(token)) {
-			System.out.println(" ***** valAR: "+token+" isArrayReference");
+//			System.out.println(" ***** valAR: "+token+" isArrayReference");
 			ar = new ArrayReference(token);
 				// correct Number of dimensions?
 			int numDimensions = 0;
@@ -123,15 +123,15 @@ public class ArrayManager {
 			// could be scalar lookup table
 				// we do need to remove the lookup. tag
 		} else {
-			System.out.println(" ***** valAR: "+token+" NOT isArrayReference");
+//			System.out.println(" ***** valAR: "+token+" NOT isArrayReference");
 			
-				System.out.println("isReferencesLookup() = "+equation.isReferencesLookup());
+//				System.out.println("isReferencesLookup() = "+equation.isReferencesLookup());
 			
 			if (isUsedAsLookup(token.replace("lookup.", ""))) {
-				System.out.println(" ***** valAR: "+token+" isUsedAsLookup - OK");
+//				System.out.println(" ***** valAR: "+token+" isUsedAsLookup - OK");
 				return or;
 			}
-			System.out.println(" ***** valAR: "+token+" isUsedAsLookup - NOT!");
+//			System.out.println(" ***** valAR: "+token+" isUsedAsLookup - NOT!");
 		}
 		or.setErrorMessage(equation.getTokensOneLine());
 		or.setErrorMessage("Invalid array reference "+token);
@@ -187,12 +187,12 @@ public class ArrayManager {
 	}
 
 	public  boolean isUsedAsLookup(String arrayName) {
-		System.out.println("Lookup? "+arrayName);
+//		System.out.println("Lookup? "+arrayName);
 		Iterator<String> iter = arraysUsedAsLookup.iterator();
-		while (iter.hasNext()) {
-			System.out.println(iter.next());
-			
-		}
+//		while (iter.hasNext()) {
+//			System.out.println(iter.next());
+//			
+//		}
 		return arraysUsedAsLookup.contains(arrayName);
 	}
 
@@ -746,6 +746,10 @@ public class ArrayManager {
 		}
 
 		return al;
+	}
+	
+	public boolean areArraysUsed() {
+		return arrays.size() > 0;
 	}
 
 }

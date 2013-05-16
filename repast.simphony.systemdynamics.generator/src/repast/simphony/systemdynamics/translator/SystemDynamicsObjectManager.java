@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import repast.simphony.systemdynamics.sdmodel.InfluenceLink;
+import repast.simphony.systemdynamics.sdmodel.SystemModel;
+import repast.simphony.systemdynamics.sdmodel.Variable;
+
 public class SystemDynamicsObjectManager {
 
 	private Map<String, SystemDynamicsObject> objectsMap;
@@ -19,13 +23,37 @@ public class SystemDynamicsObjectManager {
 	public void processRSD() {
 
 	}
+	
+	public void clear() {
+		objectsMap.clear();
+	}
+	
+	public void populate(SystemModel model) {
+		// given an RSD formatted, populate the SDOM
+		clear();
+		
+		// Variables
+		
+		for (Variable variable : model.getVariables()) {
+			String screenName = variable.getName();
+			addSystemDynamicsObject(screenName);
+//			addEquation(screenName, variable.getEquation());
+			
+		}
+		// links
+		
+		for (InfluenceLink link : model.getLinks()) {
+			
+		}
+		
+	}
 
 	public List<EquationGraphicValidation> validate(Map<String, Equation> equations) {
 		// need to check consistency between equations and graphics objects and arrows
 		// the equations are always truth -- augment graphics as required
 		
 		
-		System.out.println("######################" + "VALIDATE" + "######################");
+//		System.out.println("######################" + "VALIDATE" + "######################");
 
 		List<EquationGraphicValidation> validations = new ArrayList<EquationGraphicValidation>();
 
@@ -35,7 +63,7 @@ public class SystemDynamicsObjectManager {
 			if (!egv.isValid())
 				validations.add(egv);
 		}
-		System.out.println("######################" + "VALIDATE" + "######################");
+//		System.out.println("######################" + "VALIDATE" + "######################");
 		return validations;
 	}
 
@@ -45,12 +73,12 @@ public class SystemDynamicsObjectManager {
 		// we need to create an associated SystemDynamicsObject and populate with
 		// equations and arrows. Graphic Objects will need to be create else where???
 		
-		System.out.println("######################" + "createSystemDynamicsObjectForNonGraphic" + "######################");
+//		System.out.println("######################" + "createSystemDynamicsObjectForNonGraphic" + "######################");
 
 		for (EquationGraphicValidation egv : validations) {
 			egv.apply();
 		}
-		System.out.println("######################" + "createSystemDynamicsObjectForNonGraphic" + "######################");
+//		System.out.println("######################" + "createSystemDynamicsObjectForNonGraphic" + "######################");
 
 	}
 
@@ -123,14 +151,14 @@ public class SystemDynamicsObjectManager {
 		String screenName = getScreenName(screenNameE);
 		
 		if (!objectsMap.containsKey(screenName)) {
-			System.out.println("SDOM: Add "+screenName);
+//			System.out.println("SDOM: Add "+screenName);
 			objectsMap.put(screenName, new SystemDynamicsObject(screenName));
 		}
 	}
 
 	private void addSystemDynamicsObjectPlaceHolder(String screenNameE) {
 		String screenName = getScreenName(screenNameE);
-		System.out.println("SDOM: Adding placeholder for: "+screenName);
+//		System.out.println("SDOM: Adding placeholder for: "+screenName);
 		objectsMap.put(screenName, new SystemDynamicsObject(screenName));
 	}
 
@@ -138,13 +166,13 @@ public class SystemDynamicsObjectManager {
 		String screenName = getScreenName(screenNameE);
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
-
+//System.out.println("add GO: "+screenName);
 		objectsMap.get(screenName).addGraphicObject(graphicObject);
 	}
 
 	public void addEquation(String screenNameE, Equation equation) {
 		String screenName = getScreenName(screenNameE);
-		System.out.println("addEquation: "+screenName+" "+equation.getEquation());
+//		System.out.println("addEquation: "+screenName+" "+equation.getEquation());
 		if (!objectsMap.containsKey(screenName))
 			addSystemDynamicsObjectPlaceHolder(screenName);
 		objectsMap.get(screenName).addEquation(equation);

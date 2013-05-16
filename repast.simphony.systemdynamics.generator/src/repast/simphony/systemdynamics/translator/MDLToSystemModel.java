@@ -65,6 +65,8 @@ public class MDLToSystemModel {
         mdlContents);
     initModel(model, equations);
     
+    sdObjectManager.print();
+    
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
     for (String names : sdObjectManager.screenNames()) {
@@ -218,7 +220,7 @@ public class MDLToSystemModel {
         var.setName(name);
         String comment = eq.getComment() == null ? "" : eq.getComment();
         var.setComment(comment);
-        parseEquation(var, eq);
+        parseEquation(var, eqs);
         var.setUnits(eq.getUnits());
         var.setUuid(EcoreUtil.generateUUID());
         model.getVariables().add(var);
@@ -228,7 +230,6 @@ public class MDLToSystemModel {
       var = SDModelFactory.eINSTANCE.createCloud();
       var.setName(name);
       var.setUuid(EcoreUtil.generateUUID());
-//      var.setType(VariableType.AUXILIARY);  // orginally STOCK
       model.getVariables().add(var);
     } else {
     	System.out.println("^^^^^^^^^^^^ No Equation, not cloud: "+name);
@@ -237,53 +238,63 @@ public class MDLToSystemModel {
     return var;
   }
 
-  private void parseEquation(Variable var, Equation eq) {
-    String equation = eq.getEquation().trim();
-    System.out.println("parseEquation: "+eq.getEquation());
-    String[] sides = equation.split("=", 2);
-    if (sides.length == 2) {
-      String lhs = sides[0].trim();
-      String rhs = sides[1].trim();
-      if (var.getType() == VariableType.STOCK && rhs.startsWith("INTEG")) {
-    	  System.out.println("parseEquation: found STOCK & INTEG");
-    	  
-    	  // this must be done via the parse tree rather than on simple expression matching
-    	  Node root = eq.getTreeRoot();
-    	  Node lhsNode = root.getChild();
-    	  Node rhsNode = lhsNode.getNext();  // this is pointing to "INTEG"
-    	  Node arg1 = rhsNode.getChild();  // firsth arg -> the varname
-    	  Node arg5 = arg1.getNext().getNext().getNext().getNext();  // this is the "equation"
-    	  eq.printTree(arg5);
-    	  Node arg6 = arg5.getNext(); // this is the 
-    	  Stock svar = (Stock) var;
-    	  
-    	  String arg6Expression = arg6.generateExpression();
-    	  String arg5Expression = arg5.generateExpression();
-    	  
-    	  svar.setInitialValue(arg6Expression);
-    	  var.setEquation(arg5Expression);  // just rhs
-    	  
-    	  System.out.println("$$$$$$$5 "+arg5Expression);
-    	  System.out.println("$$$$$$$6 "+arg6Expression);
-    	 
-//        int index = rhs.indexOf("(");
-//        if (index != -1) {
-//          rhs = rhs.substring(index + 1);
-//          if (rhs.endsWith(")"))
-//            rhs = rhs.substring(0, rhs.length() - 1);
-//          Stock svar = (Stock) var;
-//    	  svar.setInitialValue(rhs.split(",")[1].trim());
-//        }
-        
+  private void parseEquation(Variable var, List<Equation> eqns) {
+	 
+	  for (int eqnNum = 0; eqnNum < eqns.size(); eqnNum++) {
+		  Equation eqn = eqns.get(eqnNum);
+		  String equation = eqn.getEquation().trim();
+		  System.out.println("parseEquation: "+equation);
+		  String[] sides = equation.split("=", 2);
+		  if (sides.length == 2) {
+			  String lhs = sides[0].trim();
+			  String rhs = sides[1].trim();
+			  if (var.getType() == VariableType.STOCK && rhs.startsWith("INTEG")) {
+				  System.out.println("parseEquation: found STOCK & INTEG");
 
-//        var.setEquation(rhs.split(",")[0].trim());  // just rhs
-      } else {
-        var.setEquation(rhs.trim());
-      }
-      var.setLhs(lhs.trim());
-    } else {
-      var.setEquation(equation.trim());
-    }
+				  // this must be done via the parse tree rather than on simple expression matching
+				  Node root = eqn.getTreeRoot();
+				  Node lhsNode = root.getChild();
+				  Node rhsNode = lhsNode.getNext();  // this is pointing to "INTEG"
+				  Node arg1 = rhsNode.getChild();  // firsth arg -> the varname
+				  Node arg5 = arg1.getNext().getNext().getNext().getNext();  // this is the "equation"
+				  eqn.printTree(arg5);
+				  Node arg6 = arg5.getNext(); // this is the 
+				  Stock svar = (Stock) var;
+
+				  String arg6Expression = arg6.generateExpression();
+				  String arg5Expression = arg5.generateExpression();
+
+				  if (eqnNum == 0) {
+					  svar.setInitialValue(arg6Expression);
+					  var.setEquation(arg5Expression);  // just rhs
+				  } else {
+					  String multiEqn = "~~|" + lhs.trim() + "=INTEG("+arg5Expression+","+arg6Expression+")";
+					  var.setEquation(var.getEquation() + multiEqn);
+				  }
+
+				  System.out.println("$$$$$$$5 "+arg5Expression);
+				  System.out.println("$$$$$$$6 "+arg6Expression);
+
+			  } else {
+				  // var
+				  if (eqnNum == 0) {
+					  var.setEquation(rhs.trim());
+				  } else {
+					  String multiEqn = "~~|" + lhs.trim() + "="+rhs.trim();
+					  var.setEquation(var.getEquation() + multiEqn);
+				  }
+			  }
+			  if (eqnNum == 0)
+				  var.setLhs(lhs.trim());
+		  } else {
+			  if (eqnNum == 0) {
+				  var.setEquation(equation.trim());
+			  } else {
+				  System.out.println("NOT EXPECTING THIS! MDLToSystem");
+				  var.setEquation(equation.trim());
+			  }
+		  }
+	  }
   }
 
   private String getRHS(String equation) {

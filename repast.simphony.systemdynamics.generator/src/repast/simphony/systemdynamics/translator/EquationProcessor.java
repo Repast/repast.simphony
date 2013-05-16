@@ -242,7 +242,7 @@ public class EquationProcessor {
     		// this is the beginning of the graphics, return as we do not do anything with the graphics
     		if (aLine.contains("---///")) {
     			markGenerated(equations);
-    			printVariableTypes(equations);
+//    			printVariableTypes(equations);
     			return equations;
     		}
 
@@ -357,7 +357,7 @@ public class EquationProcessor {
     					if (aVensimEquation.contains("WITH LOOKUP") /* || isLookup */) {
     						processWithLookup(aVensimEquation, equations);
     					} else {
-    						System.out.println(aVensimEquation);
+//    						System.out.println(aVensimEquation);
     						
     						Equation equation = new Equation(aVensimEquation);
     						
@@ -397,7 +397,11 @@ public class EquationProcessor {
     }
     
     private void printVariableTypes(HashMap<String, Equation> equations) {
+    	System.out.println("###printVariableTypes###");
     	for (String key : equations.keySet()) {
+    		// subscript definitions have no type in this context
+    		if (equations.get(key).isDefinesSubscript())
+    			continue;
     		System.out.println(equations.get(key).getVensimEquationOnly());
     		System.out.println(equations.get(key).getVariableType());
     	}
@@ -424,8 +428,10 @@ public class EquationProcessor {
 
     private List<String> splitMultipleEquations(String vensimEquation) {
 	List<String> eqn = new ArrayList<String>();
-
+//	System.out.println("CHECKING FOR MULTIPLE EQUATION");
 	if (vensimEquation.contains("~~|")) {
+		
+//		System.out.println("FOUND MULTIPLE EQUATION");
 
 	    // split multi-equation definition into multiple single equation definitions
 

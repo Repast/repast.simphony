@@ -28,7 +28,7 @@ public class ObjectHeader {
 	public static void generate(ODECodeGenerator odeCG, BufferedWriter code, ODEAnalyzer analyzer, String packageName, String className) {
 		try {
 			code.append("package "+packageName+";\n\n");
-			code.append("import org.apache.commons.math3.ode.FirstOrderIntegrator;\n\n");
+//			code.append("import org.apache.commons.math3.ode.FirstOrderIntegrator;\n\n");
 			code.append("import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;\n\n");
 			
 			code.append("public class "+className+" implements FirstOrderDifferentialEquations {\n\n");

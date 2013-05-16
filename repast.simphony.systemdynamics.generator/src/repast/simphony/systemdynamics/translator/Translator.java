@@ -271,11 +271,11 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 		
-		System.out.println("############################");
-		System.out.println("############################");
-		System.out.println("############################");
-		System.out.println("############################");
-		sdObjectManager.print();
+//		System.out.println("############################");
+//		System.out.println("############################");
+//		System.out.println("############################");
+//		System.out.println("############################");
+//		sdObjectManager.print();
 //		printGraphics(graphics);
 
 //		sdObjectManager.print();
@@ -345,7 +345,7 @@ public class Translator {
 		
 		InformationManagers.getInstance().getUnitsManager().performUnitsConsistencyCheck(equations, unitsConsistencyCheckResultsFile);
 
-		//	sdObjectManager.print();
+//			sdObjectManager.print();
 		
 		
 
@@ -415,9 +415,9 @@ public class Translator {
 	protected void generateTrees(Map<String, Equation> equations) {
 		for (String lhs : equations.keySet()) {
 			Equation eqn = equations.get(lhs);	
-			System.out.println("IV: "+eqn.getVensimEquationOnly());
+//			System.out.println("IV: "+eqn.getVensimEquationOnly());
 			eqn.generateTree();
-			System.out.println("IV: "+eqn.getVensimEquationOnly()+" <<"+eqn.getIntialValue()+">>");
+//			System.out.println("IV: "+eqn.getVensimEquationOnly()+" <<"+eqn.getIntialValue()+">>");
 		}
 	}
 
@@ -463,6 +463,76 @@ public class Translator {
 		}
 
 	}
+	
+	protected void analyzeDependencies(HashMap<String, HashSet<String>> requires, HashMap<String, HashSet<String>> requiresExpanded, 
+			HashMap<String, HashSet<String>> lhsExpandedNotInitialized) {
+		
+		// make sure that every thing on the RHS of these maps have a corresponding LHS (i.e. key)
+		
+		System.out.println("analyzeDependencies requires");
+		
+		// thse are scalars as key and anything on RHS
+		
+		for (String lhs : requires.keySet()) {
+			HashSet<String> hs = requires.get(lhs);
+			if (hs == null)
+				continue;
+			Iterator<String> iter = hs.iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				if (requires.containsKey(key) ||
+						requiresExpanded.containsKey(key) ||
+						lhsExpandedNotInitialized.containsKey(key)) {
+					
+				} else {
+					System.out.println("No LHS for "+key+" used by "+lhs);
+				}
+			}
+		}
+		
+		System.out.println("analyzeDependencies requiresExpanded");
+		
+		// thse are scalars as key and anything on RHS
+		
+		for (String lhs : requiresExpanded.keySet()) {
+			HashSet<String> hs = requiresExpanded.get(lhs);
+			if (hs == null)
+				continue;
+			Iterator<String> iter = hs.iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				if (requires.containsKey(key) ||
+						requiresExpanded.containsKey(key) ||
+						lhsExpandedNotInitialized.containsKey(key)) {
+					
+				} else {
+					System.out.println("No LHS for "+key+" used by "+lhs);
+				}
+			}
+		}
+		
+		System.out.println("analyzeDependencies lhsExpandedNotInitialized");
+		
+		// thse are scalars as key and anything on RHS
+		
+		for (String lhs : lhsExpandedNotInitialized.keySet()) {
+			HashSet<String> hs = lhsExpandedNotInitialized.get(lhs);
+			Iterator<String> iter = hs.iterator();
+			if (hs == null)
+				continue;
+			while (iter.hasNext()) {
+				String key = iter.next();
+				if (requires.containsKey(key) ||
+						requiresExpanded.containsKey(key) ||
+						lhsExpandedNotInitialized.containsKey(key)) {
+					
+				} else {
+					System.out.println("No LHS for "+key+" used by "+lhs);
+				}
+			}
+		}
+		
+	}
 
 	protected ArrayList<String> determineEvaluationOrder(Map<String, Equation> equations) {
 
@@ -504,8 +574,21 @@ public class Translator {
 
 			// reference to the equations currently being processed
 			Equation currentEquation = equations.get(realLHS);
-
-			allRealLHS.add(realLHS);		
+			allRealLHS.add(realLHS);
+			
+			
+			// if a variable is initialized via external data, it has no dependencies
+//			if (currentEquation.isGetExternalData()) {
+//				if (!ArrayReference.isArrayReference(realLHS)) {
+//					requires.put(realLHS, null);
+//				} else {
+//					requiresExpanded.put(realLHS, null);
+//					lhsExpandedMap.put(realLHS, new HashSet<String>());
+//					lhsExpandedNotInitialized.put(realLHS, new HashSet<String>());
+//				}
+//				continue;
+//			}
+			
 			if (ArrayReference.isArrayReference(realLHS)) {
 
 				// initial structures that will hold LHS -> Expanded LHS mapping
@@ -551,13 +634,16 @@ public class Translator {
 					expandedLhsMap.put(expandedLHS, realLHS);
 
 					lhsExpandedMap.get(realLHS).add(expandedLHS);
+					
+					
+					
 					if (!realLHS.equals(expandedLHS))
 						lhsExpandedNotInitialized.get(realLHS).add(expandedLHS);
 
 					// get the set of all rhsVariable reference
 					// these are the tokens stored during parsing. Note that we have the ! still there
 					for (String rhsVar : equations.get(realLHS).getRHSVariables()) {
-						if (equations.get(realLHS).getsExternalData())
+						if (equations.get(realLHS).isGetExternalData())
 							continue;
 
 						// if this is not an array reference, simply put the variable into the requiresExpanded set
@@ -633,7 +719,7 @@ public class Translator {
 
 				if (equations.get(realLHS).isRepeated()) {
 					requires.put(realLHS, equations.get(realLHS).getRHSVariablesExpanded());
-					requiresExpanded.put(realLHS, equations.get(realLHS).getRHSVariablesExpanded()); // added 4/5/13
+//					requiresExpanded.put(realLHS, equations.get(realLHS).getRHSVariablesExpanded()); // added 4/5/13
 				}
 				else {
 					requires.put(realLHS, null);
@@ -648,59 +734,13 @@ public class Translator {
 		dumpRequiresExpanded("initialRequiresExpanded.txt", requiresExpanded, startChain); // HerelhsExpandedNotInitialized
 		dumpRequiresExpanded("initiallhsExpandedNotInitialized.txt", lhsExpandedNotInitialized, startChain);
 		
-//		// determine if any equations are not referenced in the model
-//		// Note that we will disregard any autogenerated equations since there is no requirement that they be referenced
-//
-//		List<String> notReferenced = new ArrayList<String>();
-////		for (String s : equations.keySet()) {
-////			if (!equations.get(s).isAutoGenerated() && !notReferenced.contains(s))
-////				notReferenced.add(s);
-////		}
-//		
-//		for (String s : requiresExpanded.keySet()) {
-//			if (/* !equations.get(s).isAutoGenerated() && */ !notReferenced.contains(s))
-//				notReferenced.add(s);
-//		}
-//		
-////		// there should not be auto generated arrays
-////		for (String s : lhsExpandedNotInitialized.keySet()) {
-////			if (/* !equations.get(s).isAutoGenerated() && */ !notReferenced.contains(s))
-////				notReferenced.add(s);
-////		}
-//		
-//		int initialCount = notReferenced.size();
-//		
-//		
-//		for (HashSet<String> hs : requiresExpanded.values()) {
-//			if (hs == null)
-//				continue;
-//			Iterator<String> iter = hs.iterator();
-//			while(iter.hasNext()) {
-//				String rhs = iter.next();
-//				if (notReferenced.contains(rhs))
-//					notReferenced.remove(rhs);
-//			}
-//		}
-//		
-//		if (notReferenced.size() > 0) {
-//			MessageManager mm = InformationManagers.getInstance().getMessageManager();
-//			mm.addWarningMessage("+++ Unused Equations +++\n");
-//			mm.addWarningMessage(" Total Recognized: "+equations.keySet().size()+" Initial "+initialCount+" Not Referenced: "+notReferenced.size());
-//			for (String lhs : notReferenced) {
-//				if (equations.get(lhs) != null) {
-//					mm.addWarningMessage(equations.get(lhs).getVensimEquationOnly()+"\n");
-//				} else {
-//					mm.addWarningMessage("No eqn "+lhs);
-//				}
-//			}
-//			
-//		}
-
+		analyzeDependencies(requires, requiresExpanded, lhsExpandedNotInitialized);
 
 		// this is the order in which we will evaluate the equations
 		ArrayList<String> evaluationOrder = new ArrayList<String>();
 
 		int lastCount = 0;
+		int terminationLoopCount = 0;
 
 		// allLHS needs to be reset
 		allRealLHS.clear();
@@ -798,10 +838,12 @@ public class Translator {
 
 			System.out.println("To Remove Count = "+toRemoveFromRequires.size());
 			if (toRemoveFromRequires.size() > 0) {
+				terminationLoopCount = 0;
 				if (lastCount == toRemoveFromRequires.size()) {
 					loopCount++;
 					System.out.println("LoopCount: "+loopCount);
-					if (loopCount > 3) {
+					if (loopCount > 5) {
+						System.out.println("Break on loop count "+loopCount);
 						break;
 					}
 				} else {
@@ -810,35 +852,40 @@ public class Translator {
 
 				lastCount = toRemoveFromRequires.size();
 				removeRequirement(toRemoveFromRequires, requires, requiresExpanded, lhsExpandedNotInitialized, expandedLhsMap, evaluationOrder);
-				System.out.println("Remaining Equations: "+(requires.size()+lhsExpandedNotInitialized.size()));
+				System.out.println("Remaining Equations: scalar "+requires.size()+" arrays "+lhsExpandedNotInitialized.size());
 				// allLHS needs to be reset
 				allRealLHS.clear();
 				allRealLHS.addAll(requires.keySet());
 				allRealLHS.addAll(lhsExpandedNotInitialized.keySet());
+				
 			} else {
-				if (requires.size() == 0 && lhsExpandedNotInitialized.size() == 0) {
-					System.out.println("Successfully ordered all equations");
-					done  = true;
-					// allLHS needs to be reset from requires and lhsExpandedMap
-				} else {
-					System.out.println("Cannot order these equations:");
-					for (String lhs : requires.keySet()) {
-						System.out.println("   >>> lhs "+lhs+"  "+requires.get(lhs).size());
-						System.out.println(equations.get(lhs).getEquation());
-						System.out.println(equations.get(lhs).getCleanEquation());
-						printRequires(requires.get(lhs));
-						done = true;
-					}
+				terminationLoopCount++;
+				if (terminationLoopCount > 1) {
+					if (requires.size() == 0 && lhsExpandedNotInitialized.size() == 0) {
+						System.out.println("Successfully ordered all equations");
+						done  = true;
+						// allLHS needs to be reset from requires and lhsExpandedMap
+					} else {
+						System.out.println("Cannot order these equations:");
+						for (String lhs : requires.keySet()) {
+							System.out.println("   >>> lhs "+lhs+"  "+requires.get(lhs).size());
+							System.out.println(equations.get(lhs).getEquation());
+							System.out.println(equations.get(lhs).getCleanEquation());
+							printRequires(requires.get(lhs));
+							done = true;
+						}
 
-					for (String lhs : lhsExpandedNotInitialized.keySet()) {
-						//			String lhs = expandedLhsMap.get(lhse);
-						System.out.println("   >>> lhs <"+lhs+"> "+lhsExpandedNotInitialized.get(lhs).size());
-						System.out.println(equations.get(lhs).getEquation());
-						System.out.println(equations.get(lhs).getCleanEquation());
-						printRequires(lhsExpandedNotInitialized.get(lhs));
-						done = true;
-					}
+						for (String lhs : lhsExpandedNotInitialized.keySet()) {
+							
+							System.out.println("   >>> lhs <"+lhs+"> "+lhsExpandedNotInitialized.get(lhs).size());
+							System.out.println(equations.get(lhs).getEquation());
+							System.out.println(equations.get(lhs).getCleanEquation());
+							printRequires(lhsExpandedNotInitialized.get(lhs));
 
+							done = true;
+						}
+
+					}
 				}
 			}
 		}
@@ -850,7 +897,24 @@ public class Translator {
 		int requiresSize = requires.keySet().size();
 		int notInitSize = lhsExpandedNotInitialized.keySet().size();
 
-		System.out.println("%%%%%%%%%% "+requiresSize+" "+notInitSize);
+//		System.out.println("%%%%%%%%%% "+requiresSize+" "+notInitSize);
+		
+		System.out.println("Requires data structure contains "+requiresSize+" records");
+		for (String req : requires.keySet()) {
+			if (requires.get(req) == null)
+				System.out.println("     "+req+" is null");
+			else
+				System.out.println("     "+req+" "+requires.get(req).size());
+		}
+		
+		System.out.println("Not initialized structure contains "+notInitSize+" records");
+		for (String req : lhsExpandedNotInitialized.keySet()) {
+			if (lhsExpandedNotInitialized.get(req) == null)
+			System.out.println("     "+req+" is null");
+			else
+			System.out.println("     "+req+" "+lhsExpandedNotInitialized.get(req).size());
+		}
+		
 		evaluationOrder.addAll(requires.keySet());
 		evaluationOrder.addAll(lhsExpandedNotInitialized.keySet());
 
@@ -987,6 +1051,7 @@ public class Translator {
 					initialized = false;
 				} else {
 					System.out.println("Not in requires: "+v);
+					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
 				}
 			}
 		}
@@ -1021,6 +1086,7 @@ public class Translator {
 		System.out.println("removeRequirement # "+toRemoveFromRequires.size());
 
 		for (String toRemove : toRemoveFromRequires) {
+//			System.out.println("toRemove "+toRemove);
 
 			if (ArrayReference.isArrayReference(toRemove)) {
 
@@ -1029,14 +1095,18 @@ public class Translator {
 				// this does not added to evaluation order until we know that all other references to this array have been processed
 
 				if (requiresExpanded.remove(toRemove) == null) { // "LHS" of equation
-					System.out.println("Bad Remove from requiresExpanded: "+toRemove);
-
+//					System.out.println("Bad Remove from requiresExpanded: "+toRemove);
+				} else {
+//					System.out.println("Successful Remove from requiresExpanded: "+toRemove);
 				}
 
 				if (lhsExpandedNotInitialized.remove(toRemove) == null) { // "LHS" of equation
-					//			System.out.println("Bad Remove from lhsExpandedNotInitialized: "+toRemove);
+//					System.out.println("Bad Remove from lhsExpandedNotInitialized: "+toRemove);
 
+				} else {
+//					System.out.println("Successful Remove from lhsExpandedNotInitialized: "+toRemove);
 				}
+				
 				removeFromRHS(toRemove, requires, requiresExpanded); // "RHS" of equation
 
 				// at this point, we need to see if all array subscripts have been achieved. Then we can add to evaluationOrder
@@ -1082,6 +1152,7 @@ public class Translator {
 
 			HashSet<String> hs = requires.get(req);
 			if (hs != null && hs.contains(lhs)) {
+//				System.out.println(tag+ " RemoveRHS "+req+" from LHS "+lhs);
 				hs.remove(lhs);
 
 			}
@@ -1285,7 +1356,7 @@ public class Translator {
 					}
 				}
 				if (problem) {
-					bw.append("######### P R O B L E M #########\n");
+					bw.append("######### P R O B L E M ######### \n");
 					orderProblem = true;
 				}
 

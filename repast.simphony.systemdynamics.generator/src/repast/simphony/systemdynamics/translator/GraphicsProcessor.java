@@ -36,7 +36,7 @@ public class GraphicsProcessor {
 //	System.out.println("GP: graphrecord = "+graphRecord+" mdl size = "+mdlContents.size());
 
 	while(true) {
-		System.out.println("GP: <"+aLine+">");
+//		System.out.println("GP: <"+aLine+">");
 		// if there are no graphics, we are pointing to EOF marker checkfor it
 		String next = mdlContents.get(graphRecord);
 	    if (aLine.endsWith("---\\\\\\") || next.endsWith("---\\\\\\") || graphRecord >= mdlContents.size())
