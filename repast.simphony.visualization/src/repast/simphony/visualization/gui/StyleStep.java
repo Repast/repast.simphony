@@ -260,7 +260,9 @@ public class StyleStep extends PanelWizardStep {
 		if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
 			defaultStyle = descriptor.getDefaultStyles3D()[0].getName();
 			setBackgroundColor(Color.BLACK);
-		} else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
+		}
+		 // TODO WWJ - handle multiple styles
+		else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
 			defaultStyle = descriptor.getDefaultStylesGIS3D()[0].getName();
 
 		else {

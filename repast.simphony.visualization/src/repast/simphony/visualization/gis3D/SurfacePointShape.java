@@ -1,4 +1,4 @@
-package repast.simphony.visualization.gisnew;
+package repast.simphony.visualization.gis3D;
 
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.Renderable;

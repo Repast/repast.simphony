@@ -10,8 +10,8 @@ import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.NullLayout;
 import repast.simphony.visualization.engine.StyleRegistrar.Registrar;
-import repast.simphony.visualization.gisnew.NewDisplayGIS;
-import repast.simphony.visualization.gisnew.StyleGIS;
+import repast.simphony.visualization.gis3D.DisplayGIS3D;
+import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 /**
  * Creates 3D GIS displays.
@@ -36,7 +36,7 @@ public class DisplayCreator3DGIS extends AbstractDisplayCreator {
     DefaultDisplayData<?> data = createDisplayData();
     Layout<?, ?> layout = new NullLayout();
 
-    final NewDisplayGIS display = new NewDisplayGIS(data, layout);
+    final DisplayGIS3D display = new DisplayGIS3D(data, layout);
 
  // register styles
     StyleRegistrarGIS3D styleReg = new StyleRegistrarGIS3D();

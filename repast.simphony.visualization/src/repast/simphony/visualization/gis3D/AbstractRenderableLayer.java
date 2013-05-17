@@ -1,7 +1,6 @@
-package repast.simphony.visualization.gisnew;
+package repast.simphony.visualization.gis3D;
 
 import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 
@@ -20,9 +19,9 @@ import repast.simphony.visualization.LayoutUpdater;
  * @author Eric Tatara
  * 
  */
-public abstract class AbstractSurfaceLayer<S> extends RenderableLayer implements IDisplayLayer<GeoShape>{
+public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer implements IDisplayLayer<Object>{
 
-  protected Map<Object, GeoShape> visualItemMap;
+  protected Map<Object, T> visualItemMap;
   protected Map<Renderable, Object> renderableToObjectMap;
 
   protected S style;
@@ -33,13 +32,13 @@ public abstract class AbstractSurfaceLayer<S> extends RenderableLayer implements
 
   protected abstract void applyUpdatesToShape(Object o);
 
-  public AbstractSurfaceLayer(String name, S style){
+  public AbstractRenderableLayer(String name, S style){
   	setName(name);
   	this.style = style;
   	
   	addedObjects = new FastSet<Object>();
   	removeObjects = new FastSet<Object>();
-  	visualItemMap = new HashMap<Object, GeoShape>();
+  	visualItemMap = new HashMap<Object, T>();
   	renderableToObjectMap = new HashMap<Renderable, Object>();
 
   	this.setPickEnabled(true);
@@ -104,7 +103,7 @@ public abstract class AbstractSurfaceLayer<S> extends RenderableLayer implements
    * 
    * @return the visual item that represents the specified object in the display.
    */
-  public GeoShape getVisualItem(Object o) {
+  public T getVisualItem(Object o) {
     return visualItemMap.get(o);
   }
   

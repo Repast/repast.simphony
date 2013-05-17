@@ -212,11 +212,12 @@ public class EdgeStyleStep extends PanelWizardStep {
     if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
       defaultStyle = descriptor.getDefaultNetStyles3D()[0].getName();
 
-    else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
+    else //if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
       defaultStyle = descriptor.getDefaultNetStyles2D()[0].getName();
 
-    else
-      defaultStyle = descriptor.getDefaultNetStylesGIS3D()[0].getName();
+    // TODO WWJ - networks
+//    else
+//      defaultStyle = descriptor.getDefaultNetStylesGIS3D()[0].getName();
 
     List<String> style2DCache = null;
     List<String> style3DCache = null;
@@ -228,17 +229,20 @@ public class EdgeStyleStep extends PanelWizardStep {
         style3DCache = StyleClassFinder.getAvailable3DEdgeStyles(model.getContext());
 
       vals = style3DCache;
-    } else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D) {
+    } 
+    else {//if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D) {
       if (style2DCache == null)
         style2DCache = StyleClassFinder.getAvailable2DEdgeStyles(model.getContext());
 
       vals = style2DCache;
-    } else {
-      if (style3DGISCache == null)
-        style3DGISCache = StyleClassFinder.getAvailable3DGISEdgeStyles(model.getContext());
-
-      vals = style3DGISCache;
-    }
+    } 
+    // TODO WWJ - network
+//    else {
+//      if (style3DGISCache == null)
+//        style3DGISCache = StyleClassFinder.getAvailable3DGISEdgeStyles(model.getContext());
+//
+//      vals = style3DGISCache;
+//    }
 
     vals.add(defaultStyle);
     Collections.sort(vals);
