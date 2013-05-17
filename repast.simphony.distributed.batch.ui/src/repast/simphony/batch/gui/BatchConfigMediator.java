@@ -343,9 +343,18 @@ public class BatchConfigMediator {
     @SuppressWarnings("restriction")
     URL url = groovy.lang.GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
     project.setProperty("groovy.home", URLDecoder.decode(url.getFile(), "UTF-8"));
+   
     url = BatchConstants.class.getResource("/scripts/build.xml");
-    project.setUserProperty("ant.file",
-        new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath());
+    String antFile = new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath();
+    int index = antFile.indexOf("repast.simphony.distributed.batch_");
+    if (index > -1) {
+      int start = index + "repast.simphony.distributed.batch_".length();
+      int end = antFile.indexOf("/", start);
+      String version = antFile.substring(start, end);
+      project.setProperty("plugins.version", version);
+    }
+    
+    project.setUserProperty("ant.file", antFile);
     project.setProperty("model.dir", new File(model.getModelDirectory()).getCanonicalPath());
     project.setProperty("model.scenario.dir",
         new File(model.getScenarioDirectory()).getCanonicalPath());
