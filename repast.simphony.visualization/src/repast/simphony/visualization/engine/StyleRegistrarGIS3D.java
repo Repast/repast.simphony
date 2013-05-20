@@ -3,7 +3,7 @@
  */
 package repast.simphony.visualization.engine;
 
-import repast.simphony.visualization.gisnew.StyleGIS;
+import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 /**
  * Style registrar for 3D GIS displays.

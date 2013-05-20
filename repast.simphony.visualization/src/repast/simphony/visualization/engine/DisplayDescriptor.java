@@ -34,7 +34,8 @@ public interface DisplayDescriptor extends Descriptor {
 
   Class<?>[] getDefaultNetStyles2D();
 
-  Class<?>[] getDefaultNetStylesGIS3D();
+  // TODO WWJ - networks
+//  Class<?>[] getDefaultNetStylesGIS3D();
 
   /**
    * Removes any added projection descriptors.
