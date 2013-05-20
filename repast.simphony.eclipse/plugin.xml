@@ -267,6 +267,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="repast.simphony.eclipse.PerspectiveFactory"
+            icon="icons/rspersp2.gif"
             id="repast.simphony.eclipse.perspective"
             name="Repast Simphony">
       </perspective>
