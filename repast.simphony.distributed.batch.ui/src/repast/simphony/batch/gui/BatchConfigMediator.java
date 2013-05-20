@@ -344,14 +344,18 @@ public class BatchConfigMediator {
     URL url = groovy.lang.GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
     project.setProperty("groovy.home", URLDecoder.decode(url.getFile(), "UTF-8"));
    
-    url = BatchConstants.class.getResource("/scripts/build.xml");
+    url = SessionsDriver.class.getResource("/scripts/build.xml");
     String antFile = new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath();
     int index = antFile.indexOf("repast.simphony.distributed.batch_");
-    if (index > -1) {
+    if (index != -1) {
       int start = index + "repast.simphony.distributed.batch_".length();
       int end = antFile.indexOf("/", start);
       String version = antFile.substring(start, end);
       project.setProperty("plugins.version", version);
+      project.setUserProperty("plugins.version", version);
+    } else {
+      project.setProperty("plugins.version", "");
+      project.setUserProperty("plugins.version", "");
     }
     
     project.setUserProperty("ant.file", antFile);
@@ -388,6 +392,8 @@ public class BatchConfigMediator {
     consoleLogger.setOutputPrintStream(new PrintStream(console.getStdOutputStream(), true));
     consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
     project.addBuildListener(consoleLogger);
+    
+    System.out.println("plugins version: " + project.getProperty("plugins.version"));
 
     return project;
   }
