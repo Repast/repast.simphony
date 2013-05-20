@@ -54,10 +54,19 @@ public class NativeDataTypeManager {
 		OperationResult or = new OperationResult();
 		String token = equation.getTokens().get(pos.value());
 		String original = getOriginalName(token);
+		
+		if (scalars.contains(original))
+			return or;
+		
+		if (arrays.containsKey(original)) {
+			or.setErrorMessage("Array referenced as Scalar - "+token+" - original name "+original);
+			return or;
+		}
+		
 		if (equations.containsKey(original))
 			return or;
 		
-		or.setErrorMessage("Scalar not found - "+token);
+		or.setErrorMessage("Scalar not found - "+token+" - original name "+original);
 		return or;
 		
 	}
@@ -778,6 +787,14 @@ public class NativeDataTypeManager {
 	} else {
 	    return "memory." + name;
 	}
+    }
+    
+    public boolean isScalar(String variable) {
+    	return scalars.contains(variable);
+    }
+    
+    public boolean isArray(String variable) {
+    	return arrays.containsKey(variable);
     }
 
 }

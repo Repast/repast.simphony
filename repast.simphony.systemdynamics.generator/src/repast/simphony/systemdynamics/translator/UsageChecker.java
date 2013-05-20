@@ -30,23 +30,24 @@ public class UsageChecker {
 	
 	public OperationResult checkUsage() {
 		OperationResult allResults = new OperationResult();
-		
+
 		MutableBoolean lhs = new MutableBoolean(true);
 		MutableInteger pos = new MutableInteger(-1);
-		
-			for (String token : equation.getTokens()) {
-				pos.add(1);
-				if (token.equals("="));
-					lhs.setValue(false);
-				if (!isClassified(token)) 
-					continue;
+
+		for (String token : equation.getTokens()) {
+			pos.add(1);
+			if (token.equals("="))
+				lhs.setValue(false);
+			if (isClassified(token))  {
 				String type = getType(token);
 				OperationResult or = validateReference(pos, type, token, lhs);
 				if (!or.isOk()) {
 					allResults.setErrorMessage(or.getMessage());
 				}
 			}
-		
+			
+		}
+
 		return allResults;
 	}
 	

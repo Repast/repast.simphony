@@ -571,6 +571,8 @@ public class Translator {
 		// first make sure that all mapped subscripts have been defined
 
 		for (String realLHS : equations.keySet()) {
+			
+			System.out.println("GenOrder: "+realLHS);
 
 			// reference to the equations currently being processed
 			Equation currentEquation = equations.get(realLHS);
