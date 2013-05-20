@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 public class StateChartBuilder<T> {
   private double priority = 0;
-  private TransitionResolutionStrategy trs = TransitionResolutionStrategy.RANDOM;
+  private TransitionResolutionStrategy trs = TransitionResolutionStrategy.PRIORITY;
 
   private List<BranchState<T>> branches = new ArrayList<BranchState<T>>();
   private AbstractState<T> entryState;

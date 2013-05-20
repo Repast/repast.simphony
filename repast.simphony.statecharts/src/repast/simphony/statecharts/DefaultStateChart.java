@@ -34,7 +34,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
     this.agent = agent;
   }
 
-  private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.RANDOM;
+  private TransitionResolutionStrategy transitionResolutionStrategy = TransitionResolutionStrategy.PRIORITY;
 
   protected TransitionResolutionStrategy getTransitionResolutionStrategy() {
     return transitionResolutionStrategy;

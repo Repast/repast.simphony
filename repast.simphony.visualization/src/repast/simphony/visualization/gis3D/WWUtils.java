@@ -28,8 +28,8 @@ public class WWUtils {
 		
 		// TODO HACK
 		// prevent conversion error for cases where lon might be slightly larger than 180.
-		if (coord.x > 180)
-			coord.x = 180;
+//		if (coord.x > 180)
+//			coord.x = 180;
 		
 		return LatLon.fromDegrees(coord.y,coord.x);
 	}

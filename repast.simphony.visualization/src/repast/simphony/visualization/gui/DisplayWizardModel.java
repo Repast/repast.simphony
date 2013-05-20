@@ -55,6 +55,7 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
     if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
       return descriptor.getDefaultStyles3D()[0].getName();
     
+    // TODO WWJ - handle multiple styles
     if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
       return descriptor.getDefaultStylesGIS3D()[0].getName();
     

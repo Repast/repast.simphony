@@ -198,8 +198,6 @@ public class ScheduleGroup implements IAction {
     boolean interrupted = false;
     for (Iterator<ISchedulableAction> iter = list.iterator(); iter.hasNext();) {
       if (actionsAddedDuringExec) {
-        addExecAddedActions();
-        actionsAddedDuringExec = false;
         interrupted = true;
         break;
       } else {
@@ -210,6 +208,12 @@ public class ScheduleGroup implements IAction {
       }
     }
     list.delete(i);
+    
+    if (actionsAddedDuringExec) {
+      addExecAddedActions();
+      actionsAddedDuringExec = false;
+    }
+    
     return interrupted;
   }
 
