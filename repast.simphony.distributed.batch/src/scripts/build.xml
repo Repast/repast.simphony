@@ -19,7 +19,12 @@
 	<echo message="plugins.prefix=${plugins.prefix}" />
 
 	<condition property="plugins.suffix" value="_${plugins.version}" else="">
-		<isset property="plugins.version" />
+		<and>
+			<isset property="plugins.version" />
+			<not>
+				<equals arg1="${plugins.version}" arg2="" />
+			</not>
+		</and>
 	</condition>
 	<echo message="plugins.suffix=${plugins.suffix}" />
 
@@ -136,7 +141,7 @@
 
 			<fileset dir="${libs.ext}/lib">
 				<include name="vecmath.jar" />
-				<include name="jai_*.jar"/>
+				<include name="jai_*.jar" />
 			</fileset>
 
 			<fileset dir="${core}/lib">
