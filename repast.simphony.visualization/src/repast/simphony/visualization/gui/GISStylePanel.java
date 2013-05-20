@@ -530,6 +530,7 @@ public class GISStylePanel extends JPanel {
         descriptor.addLayerOrder(filePath, i);
       }
     }
+    System.out.println(descriptor.toString());
   }
 
   private void initComponents() {
