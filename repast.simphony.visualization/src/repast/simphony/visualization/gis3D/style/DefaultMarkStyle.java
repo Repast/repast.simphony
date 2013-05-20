@@ -1,5 +1,6 @@
 package repast.simphony.visualization.gis3D.style;
 
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.render.BasicWWTexture;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PatternFactory;
@@ -46,9 +47,12 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 	public PlaceMark getPlaceMark(T object, PlaceMark mark) {
 		
 		if (mark == null)
-			return new PlaceMark();
+			mark = new PlaceMark();
 		
-		return null;
+		mark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+		mark.setLineEnabled(false);
+		
+		return mark;
 	}
 
 	@Override

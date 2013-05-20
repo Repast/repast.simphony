@@ -14,7 +14,7 @@ import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
 
 /**
- * Abstract base class for WorldWind GIS display layers.
+ * Abstract base class for WorldWind GIS display Renderable layers.
  * 
  * @author Eric Tatara
  * 

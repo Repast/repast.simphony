@@ -20,9 +20,9 @@ import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
  * @author Eric Tatara
  *
  */
-public class StyledSurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle,SurfaceShape> {
+public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle,SurfaceShape> {
 
-  public StyledSurfaceShapeLayer(String name, SurfaceShapeStyle<?> style) {
+  public SurfaceShapeLayer(String name, SurfaceShapeStyle<?> style) {
     super(name, style);
   }
 
@@ -39,12 +39,19 @@ public class StyledSurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShap
     if (shape instanceof SurfacePolygon){
     	SurfacePolygon polygon = (SurfacePolygon)shape;
     	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
-    	polygon.setLocations(pts);
+    	
+    	if (!polygon.getLocations().equals(pts)){
+    	  polygon.setLocations(pts);
+    	  System.out.println("points dont match.");
+    	}
     }
     else if (shape instanceof SurfacePolyline){
     	SurfacePolyline line = (SurfacePolyline)shape;
     	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
-    	line.setLocations(pts);
+    	
+    	if (!line.getLocations().equals(pts)){
+    	  line.setLocations(pts);
+    	}
     }
     else {  // TODO WWJ - How to handle other types?
     	
@@ -55,17 +62,14 @@ public class StyledSurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShap
     if (attrs == null)
       attrs = new BasicShapeAttributes();
     
-    attrs.setInteriorMaterial(new Material(style.getFillColor(obj)));
+    if (style.getFillColor(obj) != null)
+      attrs.setInteriorMaterial(new Material(style.getFillColor(obj)));
     attrs.setInteriorOpacity(style.getFillOpacity(obj));
     attrs.setOutlineMaterial(new Material(style.getLineColor(obj)));
     attrs.setOutlineOpacity(style.getLineOpacity(obj));
     attrs.setOutlineWidth(style.getLineWidth(obj));
     
     // TODO WWJ Labels - use a WWJ PointPlacemark to hold the label?
-    
-    // TODO WWJ Rotation
-    
-    // TODO WWJ Scale
     
     shape.setAttributes(attrs);
   }
@@ -92,18 +96,15 @@ public class StyledSurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShap
     if (attrs == null)
       attrs = new BasicShapeAttributes();
 
-    attrs.setInteriorMaterial(new Material(style.getFillColor(o)));
+    if (style.getFillColor(o) != null)
+      attrs.setInteriorMaterial(new Material(style.getFillColor(o)));
     attrs.setInteriorOpacity(style.getFillOpacity(o));
     attrs.setOutlineMaterial(new Material(style.getLineColor(o)));
     attrs.setOutlineOpacity(style.getLineOpacity(o));
     attrs.setOutlineWidth(style.getLineWidth(o));
 
     shape.setAttributes(attrs);
-    // TODO WWJ - all of this
-    // shape.setGeometry(geography.getGeometry(o));
-    // shape.setIsScaled(style.isScaled(o));
-    // renderable.setScale(style.getScale(o));
-
+   
     visualItemMap.put(o, shape);
 
     return shape;

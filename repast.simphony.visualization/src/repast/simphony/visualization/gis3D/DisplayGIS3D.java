@@ -208,7 +208,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 			  layer = new PlaceMarkLayer(clazz.getSimpleName(), (MarkStyle)style);
 			}
 			else if (style instanceof SurfaceShapeStyle){
-			  layer = new StyledSurfaceShapeLayer(clazz.getSimpleName(), (SurfaceShapeStyle)style);
+			  layer = new SurfaceShapeLayer(clazz.getSimpleName(), (SurfaceShapeStyle)style);
 			}
 			
 			if (layer != null)

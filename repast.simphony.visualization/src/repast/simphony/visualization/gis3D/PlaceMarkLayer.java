@@ -7,7 +7,6 @@ import gov.nasa.worldwind.render.BasicWWTexture;
 import gov.nasa.worldwind.render.Material;
 
 import java.awt.Color;
-import java.awt.Font;
 
 import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
@@ -41,8 +40,6 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
     
       mark.setPosition(new Position(pt,0));
     }
-
-    // TODO WWJ - 
     
     // Note that there is no performance gain here by checking if attributes have
     //  changed before setting, since the mark attributes just hold the values,
@@ -65,22 +62,12 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
   
   protected PlaceMark createVisualItem(Object o) {
   	LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
-  	PlaceMark mark = style.getPlaceMark(o, null);
+  	PlaceMark mark = style.getPlaceMark(o, null);  	 
   	
-  	// TODO WWJ - make sure set in style
-//  	mark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-//  	mark.setLineEnabled(false);
-//  	 mark.getAttributes().setScale(10d);
-
-  	
-  	//  	 mark.setLabelText("Hi!");
-  	 
-  	 visualItemMap.put(o, mark);
-
-     return mark;
+  	visualItemMap.put(o, mark);
+    
+  	return mark;
   }
-  
- 
   
   protected void updateExistingObjects(LayoutUpdater updater){
   	for (Object o : visualItemMap.keySet()){
