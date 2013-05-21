@@ -85,7 +85,7 @@ public class SystemDynamicsBuilder extends IncrementalProjectBuilder {
       IPath path = resource.getRawLocation();
       if (path != null && path.getFileExtension() != null && path.getFileExtension().equals(SYSTEM_DYNAMICS_EXTENSION)) {
         //generator.run(project, path, monitor);
-        System.out.println("build source");
+//        System.out.println("build source");
       }
       return true;
     }
@@ -110,7 +110,7 @@ public class SystemDynamicsBuilder extends IncrementalProjectBuilder {
           && path.getFileExtension() != null
           && path.getFileExtension().equals(SYSTEM_DYNAMICS_EXTENSION)) {
         //new CodeGenerator().run(project, path, monitor);
-        System.out.println("build source");
+//        System.out.println("build source");
       }
       return true;
     }

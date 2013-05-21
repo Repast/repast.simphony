@@ -353,7 +353,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
-		sdObjectManager.print();
+//		sdObjectManager.print();
 
 		
 		
@@ -1054,8 +1054,8 @@ public class Translator {
 				else if (requires.containsKey(v)) {
 					initialized = false;
 				} else {
-					System.out.println("Not in requires: "+v);
-					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
+//					System.out.println("Not in requires: "+v);
+//					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
 				}
 			}
 		}

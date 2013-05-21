@@ -42,7 +42,7 @@ public class ODEAnalyzer {
 		analyzeStocks();
 		analyzeAuxiliaries();
 
-		print();
+//		print();
 
 		// experimentWithStocks();
 	}
@@ -89,8 +89,8 @@ public class ODEAnalyzer {
 	private void analyzeAuxiliaries() {
 		for (Equation eqn : equations.values()) {
 
-			System.out.println("EQN: " + eqn.getLhs() + " type: "
-					+ eqn.getVariableType().toString());
+//			System.out.println("EQN: " + eqn.getLhs() + " type: "
+//					+ eqn.getVariableType().toString());
 			if (!eqn.getVariableType().equals(VariableType.AUXILIARY)
 					&& !eqn.getVariableType().equals(VariableType.CONSTANT)
 					&& !eqn.getVariableType().equals(VariableType.RATE))

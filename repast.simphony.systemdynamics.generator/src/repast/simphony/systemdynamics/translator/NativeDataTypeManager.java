@@ -141,7 +141,7 @@ public class NativeDataTypeManager {
 	
 	public static String getAsJavaLocalVariable(String var) {
 		
-		System.out.println("getAsJavaLocalVariable "+var);
+//		System.out.println("getAsJavaLocalVariable "+var);
 		
 		// remove annotations that may have been added (e.g. memory. lookup. etc)
 		
@@ -168,7 +168,7 @@ public class NativeDataTypeManager {
 		
 		// allow the operators to pass through
 		if (Parser.isOperator(vensimVariable)) {
-			System.out.println("========== quoted in/out (operator) ///"+vensimVariable+"/// "+vensimVariable);
+//			System.out.println("========== quoted in/out (operator) ///"+vensimVariable+"/// "+vensimVariable);
 			return vensimVariable;
 		}
 		
@@ -186,10 +186,10 @@ public class NativeDataTypeManager {
 			if (quoted.contains("[")) {
 				quoted = quoted.replace("]\"", "]").replace("[", "\"[");
 			}
-			System.out.println("========== quoted in/out ///"+vensimVariable+"/// "+quoted);
+//			System.out.println("========== quoted in/out ///"+vensimVariable+"/// "+quoted);
 			return quoted;
 		} else {
-			System.out.println("========== quoted in/out (no change)///"+vensimVariable+"/// "+vensimVariable);
+//			System.out.println("========== quoted in/out (no change)///"+vensimVariable+"/// "+vensimVariable);
 			return vensimVariable;
 		}
 		

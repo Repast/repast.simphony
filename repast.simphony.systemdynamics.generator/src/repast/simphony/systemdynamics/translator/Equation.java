@@ -212,7 +212,7 @@ public class Equation {
 					getSystemDynamicsObjectManager().getGraphicObjects(lhs);
 			// this should never occur
 			if (go == null || go.size() == 0) {
-				System.out.println("WTF getVariableType "+vensimEquation);
+//				System.out.println("WTF getVariableType "+vensimEquation);
 				return VariableType.AUXILIARY;
 			} 
 			
