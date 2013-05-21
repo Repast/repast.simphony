@@ -61,6 +61,7 @@ public class Engine {
 		this.progressMonitor = progressMonitor;
 		translator = new TranslatorRepastSimphony(project, progressMonitor, this);
 		translator.setInitializeScenarioDirectory(reinitialize);
+		InformationManagers.clear();
 		InformationManagers.getInstance().setSystemModel(systemModel);
 		
 	}

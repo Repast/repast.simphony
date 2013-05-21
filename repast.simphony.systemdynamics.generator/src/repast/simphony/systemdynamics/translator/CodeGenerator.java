@@ -333,155 +333,154 @@ public class CodeGenerator {
 	String indent = "    ";
 	String statement = null;
 	try {
-	    if (!Translator.target.equals(ReaderConstants.C)) 
-		bw.append("protected ");
-	    bw.append("void oneTime0() {\n\n");
+		if (!Translator.target.equals(ReaderConstants.C)) 
+			bw.append("protected ");
+		bw.append("void oneTime0() {\n\n");
 
-	    bw.append("double time = 0.0;\n");
-	    bw.append("double timeStep = getTIMESTEP();\n");
-	    
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
+		bw.append("double time = 0.0;\n");
+		bw.append("double timeStep = getTIMESTEP();\n");
+
+		if (!Translator.target.equals(ReaderConstants.C))
+			bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
 
 
-	    // NOTE: only "2" and "3" seem to be used, Need to figure out this "GAME" thing
-	    for (String lhs : evaluationOrder) {
-		
-		Equation eqn = equations.get(lhs);
+		// NOTE: only "2" and "3" seem to be used, Need to figure out this "GAME" thing
+		for (String lhs : evaluationOrder) {
 
-		// skip function calls for which there is no lhs
-		if (equations.get(lhs).getCleanEquation().contains("GAME???")) {
-		    String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
-		    statement = indent + "setValue(\""+bothSides[0]+"\","+bothSides[1]+"); // 1\n";
-		    bw.append(eqn.getUnitsAndComment());
-		    bw.append("{\n");
-		    bw.append(scrub(statement));
-		    bw.append("}\n");
-		} else	if (equations.get(lhs).isOneTime()) { 
-		    currentEquationNumber++;
-		    if (currentEquationNumber > EQUATION_LIMIT) {
-			currentEquationNumber = 0;
-			currentMethodNumber++;
-			resetLimits();
-			bw.append("}\n\n");
-			if (!Translator.target.equals(ReaderConstants.C))
-			    bw.append("protected ");
-			bw.append("void oneTime"+currentMethodNumber+"() {\n\n");
-			 bw.append("double time = 0.0;\n");
-			 bw.append("double timeStep = getTIMESTEP();\n");
-			 if (!Translator.target.equals(ReaderConstants.C))
-			     bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
-		    }
-		    if (equations.get(lhs).getCleanEquation().contains("=")) {
+			Equation eqn = equations.get(lhs);
+			System.out.println("CG: "+eqn.getVensimEquation());
+			System.out.println("isOneTime? "+eqn.isOneTime());
 
-			// Need to deal with arrays
-			if (equations.get(lhs).isHasLHSArrayReference()) {
-			    // TODO: test that this is indeed a initializer 
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization()));
-			    bw.append("}\n");
-			} else {
-			    bw.append(eqn.getUnitsAndComment());
-			    String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
-			    if (InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).contains(step))
-				tStep = forceDouble(bothSides[1]);
-			 
-				//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
-				if (Translator.target.equals(ReaderConstants.C)) {
-				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-				    "/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
-				} else {
-//				    bw.append("/* oneTime */\n");
-				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
-				    	" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
-				    	"\"); // 2;\n" +
-				    	"/* log3 */logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
-				    	InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
-
-				    // none Repast Execution
-				    //				statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-				    //				"log(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+");\n"; // 2\n";
+			// skip function calls for which there is no lhs
+			if (equations.get(lhs).getCleanEquation().contains("GAME???")) {
+				String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
+				statement = indent + "setValue(\""+bothSides[0]+"\","+bothSides[1]+"); // 1\n";
+				bw.append(eqn.getUnitsAndComment());
+				bw.append("{\n");
+				bw.append(scrub(statement));
+				bw.append("}\n");
+			} else	if (equations.get(lhs).isOneTime()) { 
+				currentEquationNumber++;
+				if (currentEquationNumber > EQUATION_LIMIT) {
+					currentEquationNumber = 0;
+					currentMethodNumber++;
+					resetLimits();
+					bw.append("}\n\n");
+					if (!Translator.target.equals(ReaderConstants.C))
+						bw.append("protected ");
+					bw.append("void oneTime"+currentMethodNumber+"() {\n\n");
+					bw.append("double time = 0.0;\n");
+					bw.append("double timeStep = getTIMESTEP();\n");
+					if (!Translator.target.equals(ReaderConstants.C))
+						bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
 				}
+				
+				// if this is an assignment statement
+				if (equations.get(lhs).getCleanEquation().contains("=")) {
 
-				initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
-			  
-			    //						if (eqn.isVdmLookup())
-			    //						    bw.append("/*\n"); // leave code in, but commented out
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			    //						if (eqn.isVdmLookup())
-			    //						    bw.append("*/\n"); // leave code in, but commented out
+					// Need to deal with arrays
+					if (equations.get(lhs).isHasLHSArrayReference()) {
+						// add the units and comments as the java comment for the equation 
+						bw.append(eqn.getUnitsAndComment());
+						bw.append("{\n");
+						// generate tje code to initialize the array
+						bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization()));
+						bw.append("}\n");
+					} else {
+						// this is a scalar value
+						bw.append(eqn.getUnitsAndComment());
+						String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
+						if (InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).contains(step))
+							tStep = forceDouble(bothSides[1]);
+
+						//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
+						if (Translator.target.equals(ReaderConstants.C)) {
+							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
+									"/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
+						} else {
+							// scalars will come from parameters rather than hardcoded (it is initialized to hardcoded value in parameters.xml
+							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
+									" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
+									"\"); // 2;\n" +
+									"logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
+									InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
+						}
+
+						initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
+
+						bw.append("{\n");
+						bw.append(scrub(statement));
+						bw.append("}\n");
+						
+					}
+				} else if (eqn.isDefinesLookup()){
+
+					String lhSide = eqn.getLhs();
+					if (ArrayReference.isArrayReference(lhSide)) {
+						// need to get the assigned index for this
+						ArrayReference ar = new ArrayReference(lhSide);
+						//				getTerminalValue(String arrayName, String subscriptName, int dimension)
+						statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + 
+								"["+InformationManagers.getInstance().getArrayManager().getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
+								+ " = " + eqn.getCleanEquation()+"; // 3\n";
+					} else {
+						statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
+					}
+					bw.append(eqn.getUnitsAndComment());
+					bw.append("{\n");
+					bw.append(scrub(statement));
+					bw.append("}\n");
+
+				} else {
+					if (!eqn.isDefinesSubscript()) {
+						statement = indent + equations.get(lhs).getCleanEquation()+"; // 3\n";
+						bw.append(eqn.getUnitsAndComment());
+						bw.append("{\n");
+						bw.append(scrub(statement));
+						bw.append("}\n");
+					}
+				}
+			} else if (equations.get(lhs).isHasInitialValue() && 
+					initialValueInitialized(lhs)) {
+				if (equations.get(lhs).isHasLHSArrayReference()) {
+
+				} else {
+
+					//Need to deal wirh arrays
+
+					statement = indent + "setValue(\""+lhs+"\","+getIntialValueVariable(lhs)+"); // 4\n";
+					bw.append(eqn.getUnitsAndComment());
+					bw.append("{\n");
+					bw.append(scrub(statement));
+					bw.append("}\n");
+				}
 			}
-		    } else if (eqn.isDefinesLookup()){
-			
-			    String lhSide = eqn.getLhs();
-			    if (ArrayReference.isArrayReference(lhSide)) {
-				// need to get the assigned index for this
-				ArrayReference ar = new ArrayReference(lhSide);
-//				getTerminalValue(String arrayName, String subscriptName, int dimension)
-				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + 
-				"["+InformationManagers.getInstance().getArrayManager().getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
-				+ " = " + eqn.getCleanEquation()+"; // 3\n";
-			    } else {
-				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
-			    }
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			
-		    } else {
-			if (!eqn.isDefinesSubscript()) {
-			    statement = indent + equations.get(lhs).getCleanEquation()+"; // 3\n";
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			}
-		    }
-		} else if (equations.get(lhs).isHasInitialValue() && 
-			initialValueInitialized(lhs)) {
-		    if (equations.get(lhs).isHasLHSArrayReference()) {
 
-		    } else {
-
-			//Need to deal wirh arrays
-
-			statement = indent + "setValue(\""+lhs+"\","+getIntialValueVariable(lhs)+"); // 4\n";
-			bw.append(eqn.getUnitsAndComment());
-			bw.append("{\n");
-			bw.append(scrub(statement));
-			bw.append("}\n");
-		    }
 		}
-		
-	    }
 
-	    bw.append("}\n\n");
-	    bw.flush();
-	    
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("protected ");
-	    bw.append("void oneTime() {\n\n");
-//	    bw.append(scrub("memory."+TIME_STEP+" = "+tStep+";\n\n"));   MJB 1Apr2013
+		bw.append("}\n\n");
+		bw.flush();
 
-	    for (int i = 0; i <= currentMethodNumber; i++) {
-		
-		bw.append("   oneTime"+i+"();\n");
-	    }
+		if (!Translator.target.equals(ReaderConstants.C))
+			bw.append("protected ");
+		bw.append("void oneTime() {\n\n");
+		//	    bw.append(scrub("memory."+TIME_STEP+" = "+tStep+";\n\n"));   MJB 1Apr2013
+
+		for (int i = 0; i <= currentMethodNumber; i++) {
+
+			bw.append("   oneTime"+i+"();\n");
+		}
 
 
-	    bw.append("}\n\n");
-	    bw.flush();
-	    
-	   
+		bw.append("}\n\n");
+		bw.flush();
+
+
 		String ScenarioDirectory = translator.getScenarioDirectory();
-//		if (isInitializeScenarioDirectory())
-			RepastSimphonyEnvironment.generateParametersXml(
-					Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
-	   
+		//		if (isInitializeScenarioDirectory())
+		RepastSimphonyEnvironment.generateParametersXml(
+				Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
+
 
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
