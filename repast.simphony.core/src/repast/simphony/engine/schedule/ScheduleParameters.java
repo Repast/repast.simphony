@@ -438,6 +438,17 @@ public class ScheduleParameters {
    * @return the priority type of this ScheduleParameter.
    */
   public PriorityType getPriorityType() {
+    if (pType == null) {
+      if (Double.isNaN(priority))
+        this.pType = PriorityType.RANDOM;
+      else if (priority == FIRST_PRIORITY)
+        this.pType = PriorityType.FIRST;
+      else if (priority == LAST_PRIORITY)
+        this.pType = PriorityType.LAST;
+      else 
+        this.pType = PriorityType.OTHER;
+    }
+    
     return pType;
   }
 
