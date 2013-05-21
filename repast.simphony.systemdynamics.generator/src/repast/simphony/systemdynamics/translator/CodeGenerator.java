@@ -348,8 +348,8 @@ public class CodeGenerator {
 		for (String lhs : evaluationOrder) {
 
 			Equation eqn = equations.get(lhs);
-			System.out.println("CG: "+eqn.getVensimEquation());
-			System.out.println("isOneTime? "+eqn.isOneTime());
+//			System.out.println("CG: "+eqn.getVensimEquation());
+//			System.out.println("isOneTime? "+eqn.isOneTime());
 
 			// skip function calls for which there is no lhs
 			if (equations.get(lhs).getCleanEquation().contains("GAME???")) {

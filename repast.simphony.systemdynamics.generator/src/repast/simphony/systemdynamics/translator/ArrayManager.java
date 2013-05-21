@@ -89,7 +89,7 @@ public class ArrayManager {
 		OperationResult or = new OperationResult();
 		List<String> tokens = equation.getTokens();
 		String token = tokens.get(pos.value());
-		System.out.println(" ***** valAR: "+token+" lhs? "+lhs.value());
+//		System.out.println(" ***** valAR: "+token+" lhs? "+lhs.value());
 		// if this is a lhs arrayReference, we need to assume it is correct as this defines how it will be used
 		if (lhs.value())
 			return or;
@@ -132,12 +132,12 @@ public class ArrayManager {
 			// could be scalar lookup table
 				// we do need to remove the lookup. tag
 		} else {
-			System.out.println(" ***** valAR: "+token+" NOT isArrayReference");
+//			System.out.println(" ***** valAR: "+token+" NOT isArrayReference");
 			
 //				System.out.println("isReferencesLookup() = "+equation.isReferencesLookup());
 			
 			if (isUsedAsLookup(token.replace("lookup.", ""))) {
-				System.out.println(" ***** valAR: "+token+" isUsedAsLookup - OK");
+//				System.out.println(" ***** valAR: "+token+" isUsedAsLookup - OK");
 				return or;
 			}
 //			System.out.println(" ***** valAR: "+token+" isUsedAsLookup - NOT!");

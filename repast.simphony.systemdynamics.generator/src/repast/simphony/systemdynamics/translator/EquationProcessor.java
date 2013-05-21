@@ -355,8 +355,8 @@ public class EquationProcessor {
     				eqnToProcess = splitMultipleEquations(vensimEquation);
     				for (String aVensimEquation : eqnToProcess) {
     					
-    					if (eqnToProcess.size() > 1)
-    						System.out.println("Multiple equations to work with "+aVensimEquation);
+//    					if (eqnToProcess.size() > 1)
+//    						System.out.println("Multiple equations to work with "+aVensimEquation);
     					
     					if (aVensimEquation.contains("WITH LOOKUP") /* || isLookup */) {
     						processWithLookup(aVensimEquation, equations);
@@ -365,7 +365,7 @@ public class EquationProcessor {
     						
     						Equation equation = new Equation(aVensimEquation);
     						
-    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
+//    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
     						
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set
@@ -440,7 +440,7 @@ public class EquationProcessor {
 //	System.out.println("CHECKING FOR MULTIPLE EQUATION");
 	if (vensimEquation.contains("~~|")) {
 		
-		System.out.println("FOUND MULTIPLE EQUATION");
+//		System.out.println("FOUND MULTIPLE EQUATION");
 
 	    // split multi-equation definition into multiple single equation definitions
 

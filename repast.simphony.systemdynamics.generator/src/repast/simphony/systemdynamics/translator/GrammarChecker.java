@@ -621,7 +621,7 @@ public class GrammarChecker {
 					// even must be number, odd must be comma or semicolon
 					if (i % 2 == 0) {
 						if (!Parser.isNumber(tokens.get(i))) {
-							System.out.println("Looking for ");
+//							System.out.println("Looking for ");
 							break;
 						}
 					} else {
