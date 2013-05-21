@@ -1,8 +1,8 @@
 package repast.simphony.eclipse;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -34,8 +34,9 @@ public class StandAloneBatchCPInit extends ClasspathVariableInitializer {
     if (bundle != null) {
       URL url = FileLocator.find(bundle, new Path("bin-standalone"), null);
       try {
-        URI uri = FileLocator.resolve(url).toURI();
-        JavaCore.setClasspathVariable(var, new Path(new File(uri).getAbsolutePath()), null);
+        url = FileLocator.resolve(url);
+        File f = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+        JavaCore.setClasspathVariable(var, new Path(f.getAbsolutePath()), null);
       } catch (Exception ex) {
         RepastSimphonyPlugin.getInstance().log(ex);
       }

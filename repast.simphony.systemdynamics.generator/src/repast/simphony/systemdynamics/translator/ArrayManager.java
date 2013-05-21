@@ -89,7 +89,7 @@ public class ArrayManager {
 		OperationResult or = new OperationResult();
 		List<String> tokens = equation.getTokens();
 		String token = tokens.get(pos.value());
-//		System.out.println(" ***** valAR: "+token);
+//		System.out.println(" ***** valAR: "+token+" lhs? "+lhs.value());
 		// if this is a lhs arrayReference, we need to assume it is correct as this defines how it will be used
 		if (lhs.value())
 			return or;
@@ -97,8 +97,17 @@ public class ArrayManager {
 		NativeArray na = null;
 		ArrayReference ar = null;
 		if (ArrayReference.isArrayReference(token)) {
-//			System.out.println(" ***** valAR: "+token+" isArrayReference");
 			ar = new ArrayReference(token);
+			NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+			if (ndtm.isScalar(ar.getArrayName())) {
+				or.setErrorMessage("Referencing Scalar as an Array - "+token+" original name - "+ar.getArrayName());
+				return or;
+			} else {
+
+			}
+		
+			
+			
 				// correct Number of dimensions?
 			int numDimensions = 0;
 			if (isUsedAsLookup(ar.getArrayName())) {

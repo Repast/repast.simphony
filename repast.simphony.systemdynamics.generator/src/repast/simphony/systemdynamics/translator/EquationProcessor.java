@@ -354,6 +354,10 @@ public class EquationProcessor {
     				//				    eqnToProcess.add(vensimEquation);
     				eqnToProcess = splitMultipleEquations(vensimEquation);
     				for (String aVensimEquation : eqnToProcess) {
+    					
+//    					if (eqnToProcess.size() > 1)
+//    						System.out.println("Multiple equations to work with "+aVensimEquation);
+    					
     					if (aVensimEquation.contains("WITH LOOKUP") /* || isLookup */) {
     						processWithLookup(aVensimEquation, equations);
     					} else {
@@ -361,12 +365,15 @@ public class EquationProcessor {
     						
     						Equation equation = new Equation(aVensimEquation);
     						
-    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
+//    						System.out.println("EP: lhs, eq "+equation.getLhs()+" "+equation.getVensimEquationOnly());
     						
     						if (!equation.isSyntacticallyCorrect()) {
     							// even if it is not correct put into equation set
-    							if (!isDuplicate(equation.getLhs(), equations))
+    							if (!isDuplicate(equation.getLhs(), equations)) {
     								equations.put(equation.getLhs(), equation);
+    							} else {
+    								System.out.println("Not saved due to duplicate (1) "+equation.getLhs());
+    							}
     						} else {
 
     							if (equation.getLhs() == null) {
@@ -375,11 +382,13 @@ public class EquationProcessor {
     									equations.put(equation.getLhs(), equation);
     							} else {
     								if (!isDuplicate(equation.getLhs(), equations)) {
-    								equations.put(equation.getLhs(), equation);
+    									equations.put(equation.getLhs(), equation);
 
-    								String screenName = SystemDynamicsObjectManager.getScreenName(equation.getLhs());
-    								if (equation.isAssignment() || equation.isDefinesLookup() || equation.isDefinesSubscript())
-    									sdObjectManager.addEquation(screenName, equation);
+    									String screenName = SystemDynamicsObjectManager.getScreenName(equation.getLhs());
+    									if (equation.isAssignment() || equation.isDefinesLookup() || equation.isDefinesSubscript())
+    										sdObjectManager.addEquation(screenName, equation);
+    								} else {
+    									System.out.println("Not saved due to duplicate (2) "+equation.getLhs());
     								}
     							}
     						}

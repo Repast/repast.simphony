@@ -240,7 +240,7 @@ public class ODECodeGenerator {
 		Node rateNode = TreeTraversal.getFunctionArgument(functionNode, 1); 	// this is the rate. Assume that it is not an expression
 
 		String origRateName = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(rateNode.getToken());
-		System.out.println("I think rate variable is: "+origRateName);
+//		System.out.println("I think rate variable is: "+origRateName);
 
 		// now just change some links to get rid of function call and args
 

@@ -214,7 +214,7 @@ public class GraphicObject {
 	additionalText = new String(view.getNextRawObject());
 	GraphicObject go = new GraphicObject(sdObjectManager, view, additionalText);
 	if (go.getType().equals(VARIABLE)) {
-		System.out.println("ASSOCIATED Variable "+go.name);
+//		System.out.println("ASSOCIATED Variable "+go.name);
 	    associatedVariable = go;
 	    go.setType(GraphicObject.RATE);
 	    go.setAssociatedVariable(this);
