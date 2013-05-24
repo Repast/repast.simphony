@@ -1,6 +1,7 @@
 package repast.simphony.systemdynamics.translator;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +32,10 @@ public class FunctionManager {
 	
 	 public void load(String file) {
 		    try {
+		    	
+		    	System.out.println("OPENING "+file);
+		    	System.out.println("LOCATION: "+new File(file).getAbsolutePath());
+		    	
 		      load(new FileInputStream(file));
 		    } catch (IOException ex) {
 		      ex.printStackTrace();

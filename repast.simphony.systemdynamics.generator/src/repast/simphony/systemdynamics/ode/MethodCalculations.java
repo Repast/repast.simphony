@@ -3,6 +3,7 @@ package repast.simphony.systemdynamics.ode;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import repast.simphony.systemdynamics.translator.Equation;
 import repast.simphony.systemdynamics.translator.InformationManagers;
@@ -33,7 +34,7 @@ public class MethodCalculations {
 //	}
 	
 	public static void generate(ODECodeGenerator odeCG, BufferedWriter code, ODEAnalyzer analyzer) {
-		Iterator<Equation> equations;
+		List<Equation> equations;
 		
 		// first generate any auxiliary variable assignments (not constants)
 		
@@ -44,8 +45,7 @@ public class MethodCalculations {
 			
 			code.append("\n\t// auxiliary assignments\n\n");
 			
-			while (equations.hasNext()) {
-				Equation eqn = equations.next();
+			for (Equation eqn : equations) {
 				if (eqn.isStock())
 					continue;
 				if (eqn.isOneTime())
@@ -57,10 +57,9 @@ public class MethodCalculations {
 				code.append("\t"+odeCG.generateExpression(root)+";\n\n");
 			}
 			
-			equations = analyzer.getEquationIterator();
+//			equations = analyzer.getEquationIterator();
 			code.append("\n\t// \"stock\" delta assignments\n\n");
-			while (equations.hasNext()) {
-				Equation eqn = equations.next();
+			for (Equation eqn : equations) {
 				if (!eqn.isStock())
 					continue;
 				

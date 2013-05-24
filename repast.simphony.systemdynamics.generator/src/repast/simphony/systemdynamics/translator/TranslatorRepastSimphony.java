@@ -595,7 +595,7 @@ public class TranslatorRepastSimphony extends Translator {
     			
     			
     			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName+"ODE", objectName+"_ODESolverCompatible");
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, evaluationOrder, packageName+"ODE", objectName+"_ODESolverCompatible");
     			
     			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
     			new File(dir).mkdirs();
