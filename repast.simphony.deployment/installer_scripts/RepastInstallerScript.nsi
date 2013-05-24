@@ -7,7 +7,7 @@
 ; user the modern UI
 !include "MUI.nsh"
 
-!define VERSION "2.0"
+!define VERSION "2.1-beta"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -20,8 +20,9 @@ OutFile "Repast-Simphony-${VERSION}-win.exe"
 ; changed to avoid user permissions problems with $PROGRAMFILES
 InstallDir C:\RepastSimphony-${VERSION}
 
-; Request application privileges for Windows Vista
-RequestExecutionLevel user
+
+; Request Administrator level application privileges when copying files
+RequestExecutionLevel admin
 
 ;--------------------------------
 
@@ -55,7 +56,7 @@ Section "Repast Simphony"
   
   ; Store the files.
   File /r "*.*"
-
+  
   ; Write the installation path into the registry
   WriteRegStr HKLM Software\RepastSimphony-${VERSION} "Install_Dir" "$INSTDIR"
   
@@ -70,7 +71,10 @@ SectionEnd
 
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
-
+ 
+  ; Install for all users
+  SetShellVarContext all
+  
   CreateDirectory "$SMPROGRAMS\RepastSimphony-${VERSION}"
   
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0  
@@ -79,10 +83,10 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Flowchart Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Java API.lnk" "$INSTDIR\docs\RepastJavaAPI\index.html" "" "$INSTDIR\docs\RepastJavaAPI\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastJavaAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastJavaAPI\ReLogoPrimitives.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo API.lnk" "$INSTDIR\docs\ReLogoDocs\index.html" "" "$INSTDIR\docs\ReLogoDocs\index.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" "" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast FAQ.lnk" "$INSTDIR\docs\RepastFAQ.pdf" "" "$INSTDIR\docs\RepastFAQ.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Parameter Sweeps Getting Started.lnk" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" "" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
   
 SectionEnd
@@ -92,23 +96,23 @@ SectionEnd
 ; Uninstaller
 
 Section "Uninstall"
+  ; Install for all users
+  SetShellVarContext all
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}"
   DeleteRegKey HKLM SOFTWARE\RepastSimphony-${VERSION}
 
-  ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\RepastSimphony-${VERSION}\*.*"
-
   ; Remove program group dir
   RMDir /r "$SMPROGRAMS\RepastSimphony-${VERSION}"
   
-  ; Only remove files in the install dir and the docs and eclipse sub-dirs so user 
+  ; Remove the install dir and the docs and eclipse sub-dirs so user 
   ; won't accidentally delete workspace files
   DELETE $INSTDIR\*.*
   RMDir /r $INSTDIR\docs
   RMDir /r $INSTDIR\eclipse
   RMDir /r $INSTDIR\models
+  RMDir /r $INSTDIR
 
 SectionEnd
 
