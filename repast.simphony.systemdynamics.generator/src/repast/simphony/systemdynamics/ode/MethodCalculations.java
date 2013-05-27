@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import repast.simphony.systemdynamics.translator.Equation;
 import repast.simphony.systemdynamics.translator.InformationManagers;
 import repast.simphony.systemdynamics.translator.NativeDataTypeManager;
@@ -46,14 +48,18 @@ public class MethodCalculations {
 			code.append("\n\t// auxiliary assignments\n\n");
 			
 			for (Equation eqn : equations) {
+				
 				if (eqn.isStock())
 					continue;
 				if (eqn.isOneTime())
 					continue;
+				eqn.printTree();
 				Node root = eqn.getTreeRoot();
 				odeCG.makeLocal(root);
 				odeCG.makeODESolverCompatible(root);
-				code.append("\t// "+eqn.getVensimEquationOnly()+"\n");
+				code.append("/*\n");
+				code.append("\t"+StringEscapeUtils.escapeHtml(eqn.getVensimEquationOnly())+"\n");
+				code.append("*/\n");
 				code.append("\t"+odeCG.generateExpression(root)+";\n\n");
 			}
 			
@@ -64,11 +70,13 @@ public class MethodCalculations {
 					continue;
 				
 				
-				
+				eqn.printTree();
 				Node root = odeCG.alterEquationTreeForStock(eqn);
 				odeCG.makeLocal(root);
 				odeCG.makeODESolverCompatible(root);
-				code.append("\t// "+eqn.getVensimEquationOnly()+"\n");
+				code.append("/*\n");
+				code.append("\t"+StringEscapeUtils.escapeHtml(eqn.getVensimEquationOnly())+"\n");
+				code.append("*/\n");
 				code.append("\t"+odeCG.generateExpression(root)+";\n\n");
 			}
 		} catch (IOException e) {

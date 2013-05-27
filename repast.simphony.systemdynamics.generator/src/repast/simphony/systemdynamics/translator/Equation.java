@@ -2969,7 +2969,7 @@ public class Equation {
 	}
 	
 	public String getVensimEquationOnly() {
-		return vensimEquation.split("~")[0];
+		return vensimEquation.split("~")[0].replaceAll("\n", " ");
 	}
 
 	public void setVensimEquation(String vensimEquation) {

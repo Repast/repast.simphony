@@ -175,8 +175,9 @@ public class ODECodeGenerator {
 			// if an operator:
 			// left child
 			// operator
-			// right child
-			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
+			// right child  
+			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())
+					|| Parser.isRelationalOperator(node.getToken())) {
 				if (!Parser.isUnaryOperator(node.getToken())) {
 					sb.append(generateExpression(TreeTraversal.getLhs(node))); // node.getChild()
 					sb.append(node.getToken());
