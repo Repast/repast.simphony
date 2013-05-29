@@ -339,8 +339,8 @@ public class CodeGenerator {
 			bw.append("protected ");
 		bw.append("void oneTime0() {\n\n");
 
-//		bw.append("double time = 0.0;\n");
-//		bw.append("double timeStep = getTIMESTEP();\n");
+		bw.append("double time = 0.0;\n");
+		bw.append("double timeStep = getTIMESTEP();\n");
 
 		if (!Translator.target.equals(ReaderConstants.C))
 			bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
@@ -472,6 +472,37 @@ public class CodeGenerator {
 				}
 			}
 
+		}
+		
+		// need to initialize stock variables that that dataset contains initial value at time 0
+		for (String lhs : evaluationOrder) {
+			Equation equation = equations.get(lhs);
+			if (!equation.isStock())
+				continue;
+			
+			generateCodeForStockInitialization(equation);
+			equation.setTreeCodeGenerated(true);
+			
+			// alter the tree for lhs = initialization
+			
+//			equation.printTreeCode();
+//			System.out.println("############################");
+			
+			Node rootNode = equation.getTreeRoot();
+			Node rhsNode = TreeTraversal.getRhs(rootNode);
+			Node lhsNode = TreeTraversal.getLhs(rootNode);
+			
+			// the new rhs is just 2nd arg to Integ function
+			Node newRhsNode = TreeTraversal.getFunctionArgument(rhsNode, 2);
+//			lhsNode.setNext(newRhsNode);
+			
+//			equation.printTreeCode();
+			
+			bw.append("{\n");
+			writeGeneratedCode(rootNode, bw, equation.getUnitsAndComment());
+			bw.append("}\n");
+			// restore tree
+//			lhsNode.setNext(rhsNode);
 		}
 
 		bw.append("}\n\n");
@@ -1142,8 +1173,8 @@ public class CodeGenerator {
 
 	return sb.toString();
     }
-
-    private void generateCode(Equation equation, BufferedWriter bw) {
+    
+    private void generateCodeForStockInitialization(Equation equation) {
 
 
 	resetCounters();
@@ -1175,6 +1206,52 @@ public class CodeGenerator {
 	    flattenTree(root);
 	
 	generateTemps(root);
+
+	// There are a couple of instances in which we actually need to rewrite
+	// some of the code that we have already written
+	if (equation.requiresPostGenerationProcessing()) {
+	    postGenerationProcessing(equation);
+	}
+
+
+    }
+
+    private void generateCode(Equation equation, BufferedWriter bw) {
+
+
+	resetCounters();
+
+	currentGenerate = equation;
+	// This is intended only for "repeated" statements
+	
+	if (!equation.isTreeCodeGenerated()) {
+
+		EquationArrayReferenceStructure ears = null;
+		if((equation.isHasLHSArrayReference() || equation.isHasRHSArrayReference())) {
+			ears = equation.getEars();
+		}
+
+
+		//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
+		//	equation.printTokensOneLine();
+
+		generateLHScode(equation, ears);
+		generateRHScode(equation, ears);
+
+
+		Node root = equation.getTreeRoot();
+
+
+
+		//	    writeGeneratedCode(equation, bw);
+		//		    printTree(root);
+
+		if (flatten)
+			flattenTree(root);
+	
+	
+	generateTemps(equation.getTreeRoot());
+	}
 
 	// There are a couple of instances in which we actually need to rewrite
 	// some of the code that we have already written
@@ -1526,30 +1603,42 @@ public class CodeGenerator {
 	    e.printStackTrace();
 	}
     }
+    
+    private void writeGeneratedCode(Node root, BufferedWriter bw, String unitsAndComment) {
+    	// traverse the tree and write the code to file
+
+    	try {
+    	    Node lhs = root.getChild();
+    	    Node rhs = lhs.getNext();
+    	    bw.append(unitsAndComment);
+    	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
+    	    boolean traverseChildSiblings = true;
+    	    printNode(rhs, traverseChildSiblings);  // print the right hand side
+    	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
+    	} catch (IOException e) {
+    	    // TODO Auto-generated catch block
+    	    e.printStackTrace();
+    	}
+        }
 
     private void writeGeneratedCode(Equation equation, BufferedWriter bw) {
 	// traverse the tree and write the code to file
+    	writeGeneratedCode(equation.getTreeRoot(), bw, equation.getUnitsAndComment());
 
-	try {
-	    Node root = equation.getTreeRoot();
-
-//	    		System.out.println("T R E E *********************************************************************");
-//	    		    equation.printTree();
-//	    		    System.out.println("T R E E   C O D E ===========================================================");
-//	    		    equation.printTreeCode();
-
-
-	    Node lhs = root.getChild();
-	    Node rhs = lhs.getNext();
-	    bw.append(equation.getUnitsAndComment());
-	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
-	    boolean traverseChildSiblings = true;
-	    printNode(rhs, traverseChildSiblings);  // print the right hand side
-	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+//	try {
+//	    Node root = equation.getTreeRoot();
+//
+//	    Node lhs = root.getChild();
+//	    Node rhs = lhs.getNext();
+//	    bw.append(equation.getUnitsAndComment());
+//	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
+//	    boolean traverseChildSiblings = true;
+//	    printNode(rhs, traverseChildSiblings);  // print the right hand side
+//	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
+//	} catch (IOException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
     }
 
 

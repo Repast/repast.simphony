@@ -53,7 +53,7 @@ public class MethodCalculations {
 					continue;
 				if (eqn.isOneTime())
 					continue;
-				eqn.printTree();
+//				eqn.printTree();
 				Node root = eqn.getTreeRoot();
 				odeCG.makeLocal(root);
 				odeCG.makeODESolverCompatible(root);
@@ -70,7 +70,7 @@ public class MethodCalculations {
 					continue;
 				
 				
-				eqn.printTree();
+//				eqn.printTree();
 				Node root = odeCG.alterEquationTreeForStock(eqn);
 				odeCG.makeLocal(root);
 				odeCG.makeODESolverCompatible(root);
