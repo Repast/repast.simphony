@@ -183,10 +183,12 @@ public class CodeGenerator {
 	    // imports
 	    bw.append("// imports\n\n");
 
-	    bw.append("import "+ReaderConstants.SUPPORT+".MappedSubscriptManager"+";\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".SubscriptCombination"+";\n\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesData"+";\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesInstance"+";\n");
+//	    bw.append("import "+ReaderConstants.SUPPORT+".MappedSubscriptManager"+";\n");
+//	    bw.append("import "+ReaderConstants.SUPPORT+".SubscriptCombination"+";\n\n");
+	    if (requiresTimeSeries()) {
+	    	bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesData"+";\n");
+	    	bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesInstance"+";\n");
+	    }
 
 	    // to facilitate switching between JavaScript and Java implementations, we have
 	    // refactored the code to contain language specific classes
@@ -239,9 +241,9 @@ public class CodeGenerator {
 		    bw.append("timeSeriesData.setNativeDataTypes(true);\n");
 
 	    } else {
-		bw.append("sdFunctions = new SDFunctions(this);\n");
-		bw.append("message = new MessageJS();\n");
-		bw.append("results = new ResultsReporterJS();\n");
+	    	bw.append("sdFunctions = new SDFunctions(this);\n");
+	    	bw.append("message = new MessageJS();\n");
+	    	bw.append("results = new ResultsReporterJS();\n");
 	    }
 
 	    bw.append("}\n\n");
@@ -251,26 +253,26 @@ public class CodeGenerator {
 		bw.append("return memory;\n");
 		bw.append("}\n\n");
 
-	    if (target.equals(ReaderConstants.JAVA)) {
-		bw.append("@Override\n");
-		bw.append("public double getINITIALTIME() {\n");
-		
-		    bw.append("return memory.getINITIALTIME();\n");
-		
-		bw.append("}\n");
-		bw.append("@Override\n");
-		bw.append("public double getFINALTIME() {\n");
-		
-		    bw.append("return memory.getFINALTIME();\n");
-		
-		bw.append("}\n");
-		bw.append("@Override\n");
-		bw.append("public double getTIMESTEP() {\n");
-		
-		    bw.append("return memory.getTIMESTEP();\n");
-		
-		bw.append("}\n");
-	    }
+		if (target.equals(ReaderConstants.JAVA)) {
+			bw.append("@Override\n");
+			bw.append("public double getINITIALTIME() {\n");
+
+			bw.append("return memory.getINITIALTIME();\n");
+
+			bw.append("}\n");
+			bw.append("@Override\n");
+			bw.append("public double getFINALTIME() {\n");
+
+			bw.append("return memory.getFINALTIME();\n");
+
+			bw.append("}\n");
+			bw.append("@Override\n");
+			bw.append("public double getTIMESTEP() {\n");
+
+			bw.append("return memory.getTIMESTEP();\n");
+
+			bw.append("}\n");
+		}
 
 	    bw.flush();
 	} catch (IOException e) {
@@ -337,8 +339,8 @@ public class CodeGenerator {
 			bw.append("protected ");
 		bw.append("void oneTime0() {\n\n");
 
-		bw.append("double time = 0.0;\n");
-		bw.append("double timeStep = getTIMESTEP();\n");
+//		bw.append("double time = 0.0;\n");
+//		bw.append("double timeStep = getTIMESTEP();\n");
 
 		if (!Translator.target.equals(ReaderConstants.C))
 			bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
@@ -527,11 +529,24 @@ public class CodeGenerator {
 	    }
 	    bw.append(scrub("double timeStep = memory.getTIMESTEP();\n"));
 
-	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
+//	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
+//	    bw.append(scrub("memory.Time = time;\n"));
+//	    if (!Translator.target.equals(ReaderConstants.C))
+//		bw.append(scrub("currentTime = time;\n"));
+//	    bw.append(scrub("repeated(time, timeStep);\n"));
+//	    bw.append("}\n\n");
+	    
+	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0);\n"));
+	    
+	    bw.append(scrub("double nextTime = time + 1.0;\n"));
+	    		bw.append(scrub("while (time < nextTime) {\n"));
+			
 	    bw.append(scrub("memory.Time = time;\n"));
 	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append(scrub("currentTime = time;\n"));
+	    	bw.append(scrub("currentTime = time;\n"));
 	    bw.append(scrub("repeated(time, timeStep);\n"));
+	    bw.append(scrub("time += timeStep;\n"));
+	    bw.append("}\n");
 	    bw.append("}\n\n");
 
 	    if (!Translator.target.equals(ReaderConstants.C))
@@ -2628,6 +2643,14 @@ public class CodeGenerator {
 
 	public void setInitializeScenarioDirectory(boolean inializeScenarioDirectory) {
 		this.initializeScenarioDirectory = inializeScenarioDirectory;
+	}
+	
+	private boolean requiresTimeSeries() {
+		for (Equation eqn : equations.values()) {
+			if (eqn.isUsesTimeSeries())
+				return true;
+		}
+		return false;
 	}
 
 
