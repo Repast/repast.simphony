@@ -65,13 +65,13 @@ public class MDLToSystemModel {
         mdlContents);
     initModel(model, equations);
     
-    sdObjectManager.print();
+//    sdObjectManager.print();
     
     Map<String, Variable> varMap = new HashMap<String, Variable>();
     List<Rate> rates = new ArrayList<Rate>();
     for (String names : sdObjectManager.screenNames()) {
     	String name = SystemDynamicsObjectManager.getScreenName(names);
-    	System.out.println("MDL2RSD screenName: "+name);
+//    	System.out.println("MDL2RSD screenName: "+name);
     	if (!MODEL_VARS.contains(name)) {
     		List<Equation> eqs = sdObjectManager.getEquations(name);
     		if (eqs.size() > 0) {
@@ -81,7 +81,7 @@ public class MDLToSystemModel {
     			} else {
     				Variable var = processEquations(name, eqs, model);
     				if (var != null) {
-    					System.out.println("MDL2RSD var type: "+var.getType().toString());
+//    					System.out.println("MDL2RSD var type: "+var.getType().toString());
     					if (var.getType().equals(VariableType.RATE)) {
     						rates.add((Rate)var);
     					}
@@ -120,8 +120,8 @@ public class MDLToSystemModel {
   private void createSubscripts(SystemModel model, Map<String, Equation> equations) {
 	  for (Equation eqn : equations.values()) {
 		  if (eqn.isDefinesSubscript()) {
-			  System.out.println("%%%%%%%%%%%% subscripts");
-			  eqn.printTokensOneLine();
+//			  System.out.println("%%%%%%%%%%%% subscripts");
+//			  eqn.printTokensOneLine();
 			  Subscript sub = SDModelFactory.eINSTANCE.createSubscript();
 			  sub.setName(eqn.getTokens().get(0));
 			  
@@ -164,8 +164,8 @@ public class MDLToSystemModel {
 		  for (Arrow arrow : objMan.getIncomingArrows(rate.getName())) {
 			  if (arrow.getType().equals(Arrow.FLOW)) {
 				  if (arrow.getOtherEnd().startsWith("CLOUD")) {
-					  System.out.println("CLOUD: "+arrow.getOtherEnd());
-					  System.out.println("Incoming from cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
+//					  System.out.println("CLOUD: "+arrow.getOtherEnd());
+//					  System.out.println("Incoming from cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
 				  }
 				  from = (Stock)varMap.get(arrow.getOtherEnd());
 
@@ -176,8 +176,8 @@ public class MDLToSystemModel {
 		  for (Arrow arrow : objMan.getOutgoingArrows(rate.getName())) {
 			  if (arrow.getType().equals(Arrow.FLOW)) {
 				  if (arrow.getOtherEnd().startsWith("CLOUD")) {
-					  System.out.println("CLOUD: "+arrow.getOtherEnd());
-					  System.out.println("Outgoing to cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
+//					  System.out.println("CLOUD: "+arrow.getOtherEnd());
+//					  System.out.println("Outgoing to cloud in varMap = "+varMap.containsKey(arrow.getOtherEnd()));
 				  }
 				  to = (Stock)varMap.get(arrow.getOtherEnd());
 
@@ -185,7 +185,7 @@ public class MDLToSystemModel {
 			  }
 		  }
 
-		  System.out.println("Rate: from,to "+(from == null ? "NULL" : from.getName())+" "+(to == null ? "NULL" : to.getName()));
+//		  System.out.println("Rate: from,to "+(from == null ? "NULL" : from.getName())+" "+(to == null ? "NULL" : to.getName()));
 
 		  rate.setFrom(from);
 		  rate.setTo(to);
@@ -194,11 +194,11 @@ public class MDLToSystemModel {
 
   private Variable processEquations(String name, List<Equation> eqs, SystemModel model) {
     Variable var = null;
-    System.out.println("Variable Name: " + name);
+//    System.out.println("Variable Name: " + name);
     if (eqs.size() > 0) {
       Equation eq = eqs.get(0);
       VariableType type = eq.getVariableType();
-      System.out.println("Variable Type: "+type.toString());
+//      System.out.println("Variable Type: "+type.toString());
       if (type == VariableType.RATE) {
         var = SDModelFactory.eINSTANCE.createRate();
         var.setType(VariableType.RATE);
@@ -243,13 +243,13 @@ public class MDLToSystemModel {
 	  for (int eqnNum = 0; eqnNum < eqns.size(); eqnNum++) {
 		  Equation eqn = eqns.get(eqnNum);
 		  String equation = eqn.getEquation().trim();
-		  System.out.println("parseEquation: "+equation);
+//		  System.out.println("parseEquation: "+equation);
 		  String[] sides = equation.split("=", 2);
 		  if (sides.length == 2) {
 			  String lhs = sides[0].trim();
 			  String rhs = sides[1].trim();
 			  if (var.getType() == VariableType.STOCK && rhs.startsWith("INTEG")) {
-				  System.out.println("parseEquation: found STOCK & INTEG");
+//				  System.out.println("parseEquation: found STOCK & INTEG");
 
 				  // this must be done via the parse tree rather than on simple expression matching
 				  Node root = eqn.getTreeRoot();
@@ -257,7 +257,7 @@ public class MDLToSystemModel {
 				  Node rhsNode = lhsNode.getNext();  // this is pointing to "INTEG"
 				  Node arg1 = rhsNode.getChild();  // firsth arg -> the varname
 				  Node arg5 = arg1.getNext().getNext().getNext().getNext();  // this is the "equation"
-				  eqn.printTree(arg5);
+//				  eqn.printTree(arg5);
 				  Node arg6 = arg5.getNext(); // this is the 
 				  Stock svar = (Stock) var;
 
@@ -272,8 +272,8 @@ public class MDLToSystemModel {
 					  var.setEquation(var.getEquation() + multiEqn);
 				  }
 
-				  System.out.println("$$$$$$$5 "+arg5Expression);
-				  System.out.println("$$$$$$$6 "+arg6Expression);
+//				  System.out.println("$$$$$$$5 "+arg5Expression);
+//				  System.out.println("$$$$$$$6 "+arg6Expression);
 
 			  } else {
 				  // var
@@ -290,7 +290,7 @@ public class MDLToSystemModel {
 			  if (eqnNum == 0) {
 				  var.setEquation(equation.trim());
 			  } else {
-				  System.out.println("NOT EXPECTING THIS! MDLToSystem");
+//				  System.out.println("NOT EXPECTING THIS! MDLToSystem");
 				  var.setEquation(equation.trim());
 			  }
 		  }

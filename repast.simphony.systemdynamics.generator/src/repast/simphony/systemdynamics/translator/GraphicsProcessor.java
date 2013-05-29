@@ -59,7 +59,7 @@ public class GraphicsProcessor {
 		}
 	    }
 	    
-	    System.out.println("### VIEW ### "+viewName);
+//	    System.out.println("### VIEW ### "+viewName);
 	    aView.setRawObjects(objects);
 	    aView.parse(sdObjectManager);
 	    

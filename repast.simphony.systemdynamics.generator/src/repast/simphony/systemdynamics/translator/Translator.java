@@ -353,7 +353,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
-		sdObjectManager.print();
+//		sdObjectManager.print();
 
 		
 		
@@ -469,7 +469,7 @@ public class Translator {
 		
 		// make sure that every thing on the RHS of these maps have a corresponding LHS (i.e. key)
 		
-		System.out.println("analyzeDependencies requires");
+//		System.out.println("analyzeDependencies requires");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -490,7 +490,7 @@ public class Translator {
 			}
 		}
 		
-		System.out.println("analyzeDependencies requiresExpanded");
+//		System.out.println("analyzeDependencies requiresExpanded");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -511,7 +511,7 @@ public class Translator {
 			}
 		}
 		
-		System.out.println("analyzeDependencies lhsExpandedNotInitialized");
+//		System.out.println("analyzeDependencies lhsExpandedNotInitialized");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -572,7 +572,7 @@ public class Translator {
 
 		for (String realLHS : equations.keySet()) {
 			
-			System.out.println("GenOrder: "+realLHS);
+//			System.out.println("GenOrder: "+realLHS);
 
 			// reference to the equations currently being processed
 			Equation currentEquation = equations.get(realLHS);
@@ -632,7 +632,7 @@ public class Translator {
 
 					// allocate data structures for holding rhs references and mapping from expandedLHS -> realLHS
 					requiresExpanded.put(expandedLHS, new HashSet<String>());
-					//		    System.out.println("expandedLhsMap: <"+expandedLHS+"> <"+realLHS+">");
+//							    System.out.println("expandedLhsMap: <"+expandedLHS+"> <"+realLHS+">");
 					expandedLhsMap.put(expandedLHS, realLHS);
 
 					lhsExpandedMap.get(realLHS).add(expandedLHS);
@@ -760,6 +760,8 @@ public class Translator {
 			// this will contain LHS's that have been assigned a value
 			ArrayList<String> toRemoveFromRequires = new ArrayList<String>();
 			for (String realLHS : allRealLHS) { // requires.keySet()
+				
+//				System.out.println("Order "+realLHS);
 
 				// If LHS not in lhsExpandedMap (which is static) keyset, then we know that this is
 				// a non-array LHS
@@ -838,12 +840,12 @@ public class Translator {
 
 			pass1 = false;
 
-			System.out.println("To Remove Count = "+toRemoveFromRequires.size());
+//			System.out.println("To Remove Count = "+toRemoveFromRequires.size());
 			if (toRemoveFromRequires.size() > 0) {
 				terminationLoopCount = 0;
 				if (lastCount == toRemoveFromRequires.size()) {
 					loopCount++;
-					System.out.println("LoopCount: "+loopCount);
+//					System.out.println("LoopCount: "+loopCount);
 					if (loopCount > 5) {
 						System.out.println("Break on loop count "+loopCount);
 						break;
@@ -1052,8 +1054,8 @@ public class Translator {
 				else if (requires.containsKey(v)) {
 					initialized = false;
 				} else {
-					System.out.println("Not in requires: "+v);
-					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
+//					System.out.println("Not in requires: "+v);
+//					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
 				}
 			}
 		}
@@ -1085,7 +1087,7 @@ public class Translator {
 
 
 
-		System.out.println("removeRequirement # "+toRemoveFromRequires.size());
+//		System.out.println("removeRequirement # "+toRemoveFromRequires.size());
 
 		for (String toRemove : toRemoveFromRequires) {
 //			System.out.println("toRemove "+toRemove);
@@ -1118,16 +1120,26 @@ public class Translator {
 				if (ehs != null && ehs.contains(toRemove)) {
 					ehs.remove(toRemove);
 
-					if (ehs.size() == 0) {
+					if (ehs.size() == 0 || (ehs.size() == 1) && ehs.contains(toRemove)) {  // try this for multi def
+//						System.out.println("add to EO: "+toRemove);
 						evaluationOrder.add(realLHS);
 						lhsExpandedNotInitialized.remove(realLHS);
 						removeFromRHS(realLHS, requires, requiresExpanded);
 
 					} else {
-
+//						System.out.println(" stillExpLHSMap "+toRemove);
+//						System.out.println(" stillExpLHSMap size "+ehs.size());
 					}
 				} else {
-
+//					System.out.println("EHS IS "+(ehs==null ? "NULL" : "NOT NULL"));
+					if (ehs!=null) {
+//						System.out.println("EHS does not contain "+toRemove+" for "+realLHS);
+					} else {
+//						System.out.println("add to EO: "+toRemove);
+						evaluationOrder.add(realLHS);
+						lhsExpandedNotInitialized.remove(realLHS);
+						removeFromRHS(realLHS, requires, requiresExpanded);
+					}
 				}
 
 
@@ -1136,6 +1148,7 @@ public class Translator {
 				// this will always be a non array LHS
 				requires.remove(toRemove);
 				evaluationOrder.add(toRemove);
+//				System.out.println("add to EO: "+toRemove);
 				removeFromRHS(toRemove, requires, requiresExpanded);
 			}
 		}
@@ -1377,7 +1390,7 @@ public class Translator {
 
 
 			if (orderProblem) {
-				System.out.println("!!!Evaluation Order PROBLEMS!!!");
+				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
 			} else {
 				System.out.println("Clean Evaluation Order");
 			}

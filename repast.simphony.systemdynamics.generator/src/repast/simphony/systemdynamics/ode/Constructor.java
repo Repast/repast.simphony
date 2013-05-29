@@ -42,6 +42,8 @@ public class Constructor {
 				}
 			}
 			
+			code.append("\tprivate ODEFunctionSupport sdFunctions = new ODEFunctionSupport();\n\n");
+			
 			// generate empty constructor
 			code.append("\n\tpublic "+className+"() {\n\t}");
 

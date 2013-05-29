@@ -44,7 +44,7 @@ public class View {
     		// need to add to graphic objects as this was processed together
     		// with valve
     		if (go.isValve() && go.getAssociatedVariable() != null) {
-    			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+go.getName());
+//    			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+go.getName());
     			
     			graphicObjects.add(go.getAssociatedVariable());
     		}
@@ -103,10 +103,10 @@ public class View {
     }
 
     public void print() {
-	System.out.println("##########################");
-	System.out.println("View Name: "+name);
-	System.out.println("View Version: "+versionCode);
-	System.out.println("View Default Font: "+viewDefaultFont);
+//	System.out.println("##########################");
+//	System.out.println("View Name: "+name);
+//	System.out.println("View Version: "+versionCode);
+//	System.out.println("View Default Font: "+viewDefaultFont);
 //	System.out.println("Graphic Objects:");
 //	for (GraphicObject go : graphicObjects)
 //	    go.print();
