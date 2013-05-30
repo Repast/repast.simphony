@@ -1442,7 +1442,7 @@ public class Translator {
 
 
 			if (orderProblem) {
-				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
+//				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
 			} else {
 				System.out.println("Clean Evaluation Order");
 			}
