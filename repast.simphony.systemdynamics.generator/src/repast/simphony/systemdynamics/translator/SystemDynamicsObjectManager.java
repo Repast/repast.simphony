@@ -276,7 +276,7 @@ public class SystemDynamicsObjectManager {
 			
 			// Note that Vensim stores valve arrow information  
 			
-			go.print();
+//			go.print();
 			
 			boolean swap = false;
 			
@@ -310,7 +310,7 @@ public class SystemDynamicsObjectManager {
 				EffectiveFromGO = EffectiveFromGO.getAssociatedVariable();
 			}
 			
-			System.out.println("swap "+swap);
+//			System.out.println("swap "+swap);
 
 			// get the name at the head of the arrow
 			String fromName = idToName.get(EffectiveFromGO.getId());
@@ -334,7 +334,7 @@ public class SystemDynamicsObjectManager {
 			if (!found) {
 				Arrow inArrow = new Arrow(fromName, Arrow.IN, arrowType);
 				in.add(inArrow);
-				System.out.println(inArrow);
+//				System.out.println(inArrow);
 			}
 
 			List<Arrow> out = outArrows.get(fromName);
@@ -342,7 +342,7 @@ public class SystemDynamicsObjectManager {
 			if (!found) {
 				Arrow outArrow = new Arrow(toName, Arrow.OUT, arrowType);
 				out.add(outArrow);
-				System.out.println(outArrow);
+//				System.out.println(outArrow);
 			}
 		}
 
@@ -356,7 +356,7 @@ public class SystemDynamicsObjectManager {
 			// arrows are processed separately
 			if (go.isArrow())
 				continue;
-System.out.println("Extract Structure add");
+//System.out.println("Extract Structure add");
 			addSystemDynamicsObject(name);
 			addGraphicObject(name, go);
 			//	    if (go.getAssociatedVariable() != null) {

@@ -183,10 +183,12 @@ public class CodeGenerator {
 	    // imports
 	    bw.append("// imports\n\n");
 
-	    bw.append("import "+ReaderConstants.SUPPORT+".MappedSubscriptManager"+";\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".SubscriptCombination"+";\n\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesData"+";\n");
-	    bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesInstance"+";\n");
+//	    bw.append("import "+ReaderConstants.SUPPORT+".MappedSubscriptManager"+";\n");
+//	    bw.append("import "+ReaderConstants.SUPPORT+".SubscriptCombination"+";\n\n");
+	    if (requiresTimeSeries()) {
+	    	bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesData"+";\n");
+	    	bw.append("import "+ReaderConstants.SUPPORT+".TimeSeriesInstance"+";\n");
+	    }
 
 	    // to facilitate switching between JavaScript and Java implementations, we have
 	    // refactored the code to contain language specific classes
@@ -239,9 +241,9 @@ public class CodeGenerator {
 		    bw.append("timeSeriesData.setNativeDataTypes(true);\n");
 
 	    } else {
-		bw.append("sdFunctions = new SDFunctions(this);\n");
-		bw.append("message = new MessageJS();\n");
-		bw.append("results = new ResultsReporterJS();\n");
+	    	bw.append("sdFunctions = new SDFunctions(this);\n");
+	    	bw.append("message = new MessageJS();\n");
+	    	bw.append("results = new ResultsReporterJS();\n");
 	    }
 
 	    bw.append("}\n\n");
@@ -251,26 +253,26 @@ public class CodeGenerator {
 		bw.append("return memory;\n");
 		bw.append("}\n\n");
 
-	    if (target.equals(ReaderConstants.JAVA)) {
-		bw.append("@Override\n");
-		bw.append("public double getINITIALTIME() {\n");
-		
-		    bw.append("return memory.getINITIALTIME();\n");
-		
-		bw.append("}\n");
-		bw.append("@Override\n");
-		bw.append("public double getFINALTIME() {\n");
-		
-		    bw.append("return memory.getFINALTIME();\n");
-		
-		bw.append("}\n");
-		bw.append("@Override\n");
-		bw.append("public double getTIMESTEP() {\n");
-		
-		    bw.append("return memory.getTIMESTEP();\n");
-		
-		bw.append("}\n");
-	    }
+		if (target.equals(ReaderConstants.JAVA)) {
+			bw.append("@Override\n");
+			bw.append("public double getINITIALTIME() {\n");
+
+			bw.append("return memory.getINITIALTIME();\n");
+
+			bw.append("}\n");
+			bw.append("@Override\n");
+			bw.append("public double getFINALTIME() {\n");
+
+			bw.append("return memory.getFINALTIME();\n");
+
+			bw.append("}\n");
+			bw.append("@Override\n");
+			bw.append("public double getTIMESTEP() {\n");
+
+			bw.append("return memory.getTIMESTEP();\n");
+
+			bw.append("}\n");
+		}
 
 	    bw.flush();
 	} catch (IOException e) {
@@ -333,155 +335,199 @@ public class CodeGenerator {
 	String indent = "    ";
 	String statement = null;
 	try {
-	    if (!Translator.target.equals(ReaderConstants.C)) 
-		bw.append("protected ");
-	    bw.append("void oneTime0() {\n\n");
+		if (!Translator.target.equals(ReaderConstants.C)) 
+			bw.append("protected ");
+		bw.append("void oneTime0() {\n\n");
 
-	    bw.append("double time = 0.0;\n");
-	    bw.append("double timeStep = getTIMESTEP();\n");
-	    
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
+		bw.append("double time = 0.0;\n");
+		bw.append("double timeStep = getTIMESTEP();\n");
+
+		if (!Translator.target.equals(ReaderConstants.C))
+			bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
 
 
-	    // NOTE: only "2" and "3" seem to be used, Need to figure out this "GAME" thing
-	    for (String lhs : evaluationOrder) {
-		
-		Equation eqn = equations.get(lhs);
+		// NOTE: only "2" and "3" seem to be used, Need to figure out this "GAME" thing
+		for (String lhs : evaluationOrder) {
 
-		// skip function calls for which there is no lhs
-		if (equations.get(lhs).getCleanEquation().contains("GAME???")) {
-		    String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
-		    statement = indent + "setValue(\""+bothSides[0]+"\","+bothSides[1]+"); // 1\n";
-		    bw.append(eqn.getUnitsAndComment());
-		    bw.append("{\n");
-		    bw.append(scrub(statement));
-		    bw.append("}\n");
-		} else	if (equations.get(lhs).isOneTime()) { 
-		    currentEquationNumber++;
-		    if (currentEquationNumber > EQUATION_LIMIT) {
-			currentEquationNumber = 0;
-			currentMethodNumber++;
-			resetLimits();
-			bw.append("}\n\n");
-			if (!Translator.target.equals(ReaderConstants.C))
-			    bw.append("protected ");
-			bw.append("void oneTime"+currentMethodNumber+"() {\n\n");
-			 bw.append("double time = 0.0;\n");
-			 bw.append("double timeStep = getTIMESTEP();\n");
-			 if (!Translator.target.equals(ReaderConstants.C))
-			     bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
-		    }
-		    if (equations.get(lhs).getCleanEquation().contains("=")) {
+			Equation eqn = equations.get(lhs);
+//			System.out.println("CG: "+eqn.getVensimEquation());
+//			System.out.println("isOneTime? "+eqn.isOneTime());
 
-			// Need to deal with arrays
-			if (equations.get(lhs).isHasLHSArrayReference()) {
-			    // TODO: test that this is indeed a initializer 
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization()));
-			    bw.append("}\n");
-			} else {
-			    bw.append(eqn.getUnitsAndComment());
-			    String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
-			    if (InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).contains(step))
-				tStep = forceDouble(bothSides[1]);
-			 
-				//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
-				if (Translator.target.equals(ReaderConstants.C)) {
-				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-				    "/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
-				} else {
-//				    bw.append("/* oneTime */\n");
-				    statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
-				    	" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
-				    	"\"); // 2;\n" +
-				    	"/* log3 */logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
-				    	InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
-
-				    // none Repast Execution
-				    //				statement = indent+NativeDataTypeManager.getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-				    //				"log(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+");\n"; // 2\n";
+			// skip function calls for which there is no lhs
+			if (equations.get(lhs).getCleanEquation().contains("GAME???")) {
+				String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
+				statement = indent + "setValue(\""+bothSides[0]+"\","+bothSides[1]+"); // 1\n";
+				bw.append(eqn.getUnitsAndComment());
+				bw.append("{\n");
+				bw.append(scrub(statement));
+				bw.append("}\n");
+			} else	if (equations.get(lhs).isOneTime()) { 
+				currentEquationNumber++;
+				if (currentEquationNumber > EQUATION_LIMIT) {
+					currentEquationNumber = 0;
+					currentMethodNumber++;
+					resetLimits();
+					bw.append("}\n\n");
+					if (!Translator.target.equals(ReaderConstants.C))
+						bw.append("protected ");
+					bw.append("void oneTime"+currentMethodNumber+"() {\n\n");
+					bw.append("double time = 0.0;\n");
+					bw.append("double timeStep = getTIMESTEP();\n");
+					if (!Translator.target.equals(ReaderConstants.C))
+						bw.append("Parameters params = RunEnvironment.getInstance().getParameters();\n");
 				}
+				
+				// if this is an assignment statement
+				if (equations.get(lhs).getCleanEquation().contains("=")) {
 
-				initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
-			  
-			    //						if (eqn.isVdmLookup())
-			    //						    bw.append("/*\n"); // leave code in, but commented out
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			    //						if (eqn.isVdmLookup())
-			    //						    bw.append("*/\n"); // leave code in, but commented out
+					// Need to deal with arrays
+					if (equations.get(lhs).isHasLHSArrayReference()) {
+						// add the units and comments as the java comment for the equation 
+						bw.append(eqn.getUnitsAndComment());
+						bw.append("{\n");
+						// generate tje code to initialize the array
+						bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization()));
+						bw.append("}\n");
+					} else {
+						// this is a scalar value
+						bw.append(eqn.getUnitsAndComment());
+						String[] bothSides = equations.get(lhs).getCleanEquation().split("=", 2);
+						if (InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).contains(step))
+							tStep = forceDouble(bothSides[1]);
+
+						//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
+						if (Translator.target.equals(ReaderConstants.C)) {
+							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
+									"/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
+						} else {
+							
+							// we do not want to have NAREPLACEMENT and our time value appears as parameters
+							
+							 String legalVar = InformationManagers.getInstance().getNativeDataTypeManager().makeLegal(bothSides[0].replace("memory.", ""));
+						     
+						     // skip some autogenerated values we don't want to change
+						     
+						     if (legalVar.equals("Time") || legalVar.equals("NAREPLACEMENT")) {
+						    	 statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
+											" = "+bothSides[1]+";\n" +
+											"logit(\""+bothSides[0]+"\", getINITIALTIME(), "+bothSides[1]+",memory.get_SAVEPER());\n";
+						     } else {
+						    	 
+							// scalars will come from parameters rather than hardcoded (it is initialized to hardcoded value in parameters.xml
+							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
+									" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
+									"\"); // 2;\n" +
+									"logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
+									InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
+						}
+						}
+
+						initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
+
+						bw.append("{\n");
+						bw.append(scrub(statement));
+						bw.append("}\n");
+						
+					}
+				} else if (eqn.isDefinesLookup()){
+
+					String lhSide = eqn.getLhs();
+					if (ArrayReference.isArrayReference(lhSide)) {
+						// need to get the assigned index for this
+						ArrayReference ar = new ArrayReference(lhSide);
+						//				getTerminalValue(String arrayName, String subscriptName, int dimension)
+						statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + 
+								"["+InformationManagers.getInstance().getArrayManager().getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
+								+ " = " + eqn.getCleanEquation()+"; // 3\n";
+					} else {
+						statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
+					}
+					bw.append(eqn.getUnitsAndComment());
+					bw.append("{\n");
+					bw.append(scrub(statement));
+					bw.append("}\n");
+
+				} else {
+					if (!eqn.isDefinesSubscript()) {
+						statement = indent + equations.get(lhs).getCleanEquation()+"; // 3\n";
+						bw.append(eqn.getUnitsAndComment());
+						bw.append("{\n");
+						bw.append(scrub(statement));
+						bw.append("}\n");
+					}
+				}
+			} else if (equations.get(lhs).isHasInitialValue() && 
+					initialValueInitialized(lhs)) {
+				if (equations.get(lhs).isHasLHSArrayReference()) {
+
+				} else {
+
+					//Need to deal wirh arrays
+
+					statement = indent + "setValue(\""+lhs+"\","+getIntialValueVariable(lhs)+"); // 4\n";
+					bw.append(eqn.getUnitsAndComment());
+					bw.append("{\n");
+					bw.append(scrub(statement));
+					bw.append("}\n");
+				}
 			}
-		    } else if (eqn.isDefinesLookup()){
-			
-			    String lhSide = eqn.getLhs();
-			    if (ArrayReference.isArrayReference(lhSide)) {
-				// need to get the assigned index for this
-				ArrayReference ar = new ArrayReference(lhSide);
-//				getTerminalValue(String arrayName, String subscriptName, int dimension)
-				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + 
-				"["+InformationManagers.getInstance().getArrayManager().getTerminalValue(ar.getArrayName(), ar.getSubscripts().get(0), 0)+ "]" 
-				+ " = " + eqn.getCleanEquation()+"; // 3\n";
-			    } else {
-				statement = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhSide) + " = " + eqn.getCleanEquation()+"; // 3\n";
-			    }
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			
-		    } else {
-			if (!eqn.isDefinesSubscript()) {
-			    statement = indent + equations.get(lhs).getCleanEquation()+"; // 3\n";
-			    bw.append(eqn.getUnitsAndComment());
-			    bw.append("{\n");
-			    bw.append(scrub(statement));
-			    bw.append("}\n");
-			}
-		    }
-		} else if (equations.get(lhs).isHasInitialValue() && 
-			initialValueInitialized(lhs)) {
-		    if (equations.get(lhs).isHasLHSArrayReference()) {
 
-		    } else {
-
-			//Need to deal wirh arrays
-
-			statement = indent + "setValue(\""+lhs+"\","+getIntialValueVariable(lhs)+"); // 4\n";
-			bw.append(eqn.getUnitsAndComment());
-			bw.append("{\n");
-			bw.append(scrub(statement));
-			bw.append("}\n");
-		    }
 		}
 		
-	    }
+		// need to initialize stock variables that that dataset contains initial value at time 0
+		for (String lhs : evaluationOrder) {
+			Equation equation = equations.get(lhs);
+			if (!equation.isStock())
+				continue;
+			
+			generateCodeForStockInitialization(equation);
+			equation.setTreeCodeGenerated(true);
+			
+			// alter the tree for lhs = initialization
+			
+//			equation.printTreeCode();
+//			System.out.println("############################");
+			
+			Node rootNode = equation.getTreeRoot();
+			Node rhsNode = TreeTraversal.getRhs(rootNode);
+			Node lhsNode = TreeTraversal.getLhs(rootNode);
+			
+			// the new rhs is just 2nd arg to Integ function
+			Node newRhsNode = TreeTraversal.getFunctionArgument(rhsNode, 2);
+//			lhsNode.setNext(newRhsNode);
+			
+//			equation.printTreeCode();
+			
+			bw.append("{\n");
+			writeGeneratedCode(rootNode, bw, equation.getUnitsAndComment());
+			bw.append("}\n");
+			// restore tree
+//			lhsNode.setNext(rhsNode);
+		}
 
-	    bw.append("}\n\n");
-	    bw.flush();
-	    
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("protected ");
-	    bw.append("void oneTime() {\n\n");
-//	    bw.append(scrub("memory."+TIME_STEP+" = "+tStep+";\n\n"));   MJB 1Apr2013
+		bw.append("}\n\n");
+		bw.flush();
 
-	    for (int i = 0; i <= currentMethodNumber; i++) {
-		
-		bw.append("   oneTime"+i+"();\n");
-	    }
+		if (!Translator.target.equals(ReaderConstants.C))
+			bw.append("protected ");
+		bw.append("void oneTime() {\n\n");
+		//	    bw.append(scrub("memory."+TIME_STEP+" = "+tStep+";\n\n"));   MJB 1Apr2013
+
+		for (int i = 0; i <= currentMethodNumber; i++) {
+
+			bw.append("   oneTime"+i+"();\n");
+		}
 
 
-	    bw.append("}\n\n");
-	    bw.flush();
-	    
-	   
+		bw.append("}\n\n");
+		bw.flush();
+
+
 		String ScenarioDirectory = translator.getScenarioDirectory();
-//		if (isInitializeScenarioDirectory())
-			RepastSimphonyEnvironment.generateParametersXml(
-					Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
-	   
+		//		if (isInitializeScenarioDirectory())
+		RepastSimphonyEnvironment.generateParametersXml(
+				Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
+
 
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
@@ -514,11 +560,24 @@ public class CodeGenerator {
 	    }
 	    bw.append(scrub("double timeStep = memory.getTIMESTEP();\n"));
 
-	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
+//	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
+//	    bw.append(scrub("memory.Time = time;\n"));
+//	    if (!Translator.target.equals(ReaderConstants.C))
+//		bw.append(scrub("currentTime = time;\n"));
+//	    bw.append(scrub("repeated(time, timeStep);\n"));
+//	    bw.append("}\n\n");
+	    
+	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0);\n"));
+	    
+	    bw.append(scrub("double nextTime = time + 1.0;\n"));
+	    		bw.append(scrub("while (time < nextTime) {\n"));
+			
 	    bw.append(scrub("memory.Time = time;\n"));
 	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append(scrub("currentTime = time;\n"));
+	    	bw.append(scrub("currentTime = time;\n"));
 	    bw.append(scrub("repeated(time, timeStep);\n"));
+	    bw.append(scrub("time += timeStep;\n"));
+	    bw.append("}\n");
 	    bw.append("}\n\n");
 
 	    if (!Translator.target.equals(ReaderConstants.C))
@@ -1114,8 +1173,8 @@ public class CodeGenerator {
 
 	return sb.toString();
     }
-
-    private void generateCode(Equation equation, BufferedWriter bw) {
+    
+    private void generateCodeForStockInitialization(Equation equation) {
 
 
 	resetCounters();
@@ -1147,6 +1206,52 @@ public class CodeGenerator {
 	    flattenTree(root);
 	
 	generateTemps(root);
+
+	// There are a couple of instances in which we actually need to rewrite
+	// some of the code that we have already written
+	if (equation.requiresPostGenerationProcessing()) {
+	    postGenerationProcessing(equation);
+	}
+
+
+    }
+
+    private void generateCode(Equation equation, BufferedWriter bw) {
+
+
+	resetCounters();
+
+	currentGenerate = equation;
+	// This is intended only for "repeated" statements
+	
+	if (!equation.isTreeCodeGenerated()) {
+
+		EquationArrayReferenceStructure ears = null;
+		if((equation.isHasLHSArrayReference() || equation.isHasRHSArrayReference())) {
+			ears = equation.getEars();
+		}
+
+
+		//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
+		//	equation.printTokensOneLine();
+
+		generateLHScode(equation, ears);
+		generateRHScode(equation, ears);
+
+
+		Node root = equation.getTreeRoot();
+
+
+
+		//	    writeGeneratedCode(equation, bw);
+		//		    printTree(root);
+
+		if (flatten)
+			flattenTree(root);
+	
+	
+	generateTemps(equation.getTreeRoot());
+	}
 
 	// There are a couple of instances in which we actually need to rewrite
 	// some of the code that we have already written
@@ -1498,30 +1603,42 @@ public class CodeGenerator {
 	    e.printStackTrace();
 	}
     }
+    
+    private void writeGeneratedCode(Node root, BufferedWriter bw, String unitsAndComment) {
+    	// traverse the tree and write the code to file
+
+    	try {
+    	    Node lhs = root.getChild();
+    	    Node rhs = lhs.getNext();
+    	    bw.append(unitsAndComment);
+    	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
+    	    boolean traverseChildSiblings = true;
+    	    printNode(rhs, traverseChildSiblings);  // print the right hand side
+    	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
+    	} catch (IOException e) {
+    	    // TODO Auto-generated catch block
+    	    e.printStackTrace();
+    	}
+        }
 
     private void writeGeneratedCode(Equation equation, BufferedWriter bw) {
 	// traverse the tree and write the code to file
+    	writeGeneratedCode(equation.getTreeRoot(), bw, equation.getUnitsAndComment());
 
-	try {
-	    Node root = equation.getTreeRoot();
-
-//	    		System.out.println("T R E E *********************************************************************");
-//	    		    equation.printTree();
-//	    		    System.out.println("T R E E   C O D E ===========================================================");
-//	    		    equation.printTreeCode();
-
-
-	    Node lhs = root.getChild();
-	    Node rhs = lhs.getNext();
-	    bw.append(equation.getUnitsAndComment());
-	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
-	    boolean traverseChildSiblings = true;
-	    printNode(rhs, traverseChildSiblings);  // print the right hand side
-	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+//	try {
+//	    Node root = equation.getTreeRoot();
+//
+//	    Node lhs = root.getChild();
+//	    Node rhs = lhs.getNext();
+//	    bw.append(equation.getUnitsAndComment());
+//	    bw.append(scrub(lhs.getGeneratedCodeHead().toString()));
+//	    boolean traverseChildSiblings = true;
+//	    printNode(rhs, traverseChildSiblings);  // print the right hand side
+//	    bw.append(scrub(lhs.getGeneratedCodeTail().toString()));
+//	} catch (IOException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
     }
 
 
@@ -2615,6 +2732,14 @@ public class CodeGenerator {
 
 	public void setInitializeScenarioDirectory(boolean inializeScenarioDirectory) {
 		this.initializeScenarioDirectory = inializeScenarioDirectory;
+	}
+	
+	private boolean requiresTimeSeries() {
+		for (Equation eqn : equations.values()) {
+			if (eqn.isUsesTimeSeries())
+				return true;
+		}
+		return false;
 	}
 
 

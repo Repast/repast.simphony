@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import repast.simphony.systemdynamics.support.ArrayReference;
@@ -25,10 +26,10 @@ public class ODECodeGenerator {
 	private String runnerName;
 	private String contextName;
 
-	public ODECodeGenerator(Map<String, Equation> equations, String packageName, String className) {
+	public ODECodeGenerator(Map<String, Equation> equations, List<String> orderedEquations, String packageName, String className) {
 		this.packageName = packageName;
 		this.className = className;
-		analyzer = new ODEAnalyzer(equations);
+		analyzer = new ODEAnalyzer(equations, orderedEquations);
 		analyzer.analyze();
 	}
 
@@ -174,8 +175,9 @@ public class ODECodeGenerator {
 			// if an operator:
 			// left child
 			// operator
-			// right child
-			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())) {
+			// right child  
+			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())
+					|| Parser.isRelationalOperator(node.getToken())) {
 				if (!Parser.isUnaryOperator(node.getToken())) {
 					sb.append(generateExpression(TreeTraversal.getLhs(node))); // node.getChild()
 					sb.append(node.getToken());
@@ -186,11 +188,39 @@ public class ODECodeGenerator {
 				}
 				return sb.toString();
 
+			} else if (Parser.isFunctionInvocation(node.getToken())) {
+//				sb.append(node.getToken());
+				sb.append(generateFunctionCall(node));
 			} else {
 				sb.append(node.getToken());
 			}
 
 		}
+		return sb.toString();
+	}
+	
+	public String generateFunctionCall(Node node) {
+		StringBuffer sb = new StringBuffer();
+		
+		if (node != null) {
+			// create the entire invocation
+			// node is the function name
+			sb.append(node.getToken());
+			sb.append("(");
+			int i = 0;
+			
+			Node arg = TreeTraversal.getFunctionArgument(node, 1);
+			while (arg != null) {
+				if (i++ > 0)
+					sb.append(",");
+				sb.append(generateExpression(arg));
+				arg = arg.getNext();
+			}
+			
+			sb.append(")");
+			
+		}
+		
 		return sb.toString();
 	}
 
@@ -240,7 +270,7 @@ public class ODECodeGenerator {
 		Node rateNode = TreeTraversal.getFunctionArgument(functionNode, 1); 	// this is the rate. Assume that it is not an expression
 
 		String origRateName = InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(rateNode.getToken());
-		System.out.println("I think rate variable is: "+origRateName);
+//		System.out.println("I think rate variable is: "+origRateName);
 
 		// now just change some links to get rid of function call and args
 
@@ -342,9 +372,7 @@ public class ODECodeGenerator {
 		 
 		 Map<String, String> initialValues = new HashMap<String, String>();
 		 
-		 Iterator<Equation> iter = analyzer.getEquationIterator();
-		 while (iter.hasNext()) {
-			 Equation eqn = iter.next();
+		for (Equation eqn : analyzer.getEquationIterator()) {
 			 if (eqn.isAssignment() && eqn.isOneTime()) {
 				 String[] bothSides = eqn.getEquation().split("=", 2);
 				 initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0].replace("\"", "").trim()), 

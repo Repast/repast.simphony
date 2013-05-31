@@ -74,7 +74,10 @@ public class TranslatorRepastSimphony extends Translator {
     	this.loadProperties();
     	this.loadUnitsProperties();
     	
-    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	// getClass().getResourceAsStream("/implementedFunctions.csv")
+    	InformationManagers.getInstance().getFunctionManager().load(getClass().
+    			getResourceAsStream("/implementedFunctions.csv"));
+//    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	loadUnitsEquivalences();
     	
     	Translator.target = ReaderConstants.JAVA;
@@ -208,8 +211,9 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	this.loadProperties();
     	this.loadUnitsProperties();
-    	
-    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	InformationManagers.getInstance().getFunctionManager().load(getClass().
+    			getResourceAsStream("/implementedFunctions.csv"));
+//    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	loadUnitsEquivalences();
     	
     	Translator.target = ReaderConstants.JAVA;
@@ -272,8 +276,9 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	this.loadProperties();
     	this.loadUnitsProperties();
-    	
-    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	InformationManagers.getInstance().getFunctionManager().load(getClass().
+    			getResourceAsStream("/implementedFunctions.csv"));
+//    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	loadUnitsEquivalences();
     	
     	Translator.target = ReaderConstants.JAVA;
@@ -339,8 +344,9 @@ public class TranslatorRepastSimphony extends Translator {
     	this.generateJava = true;
     	
     	this.loadProperties();
-    	
-    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
+    	InformationManagers.getInstance().getFunctionManager().load(getClass().
+    			getResourceAsStream("/implementedFunctions.csv"));
+//    	InformationManagers.getInstance().getFunctionManager().load(PROPERTIES.getProperty("functionFile"));
     	
     	Translator.target = ReaderConstants.JAVA;
     	
@@ -365,7 +371,7 @@ public class TranslatorRepastSimphony extends Translator {
     
     private List<String> convertToMDL(SystemModel systemModel) {
     	
-    	System.out.println("convert to MDL");
+//    	System.out.println("convert to MDL");
     	
     	List<String> mdlContents = new ArrayList<String>();
     	
@@ -533,8 +539,8 @@ public class TranslatorRepastSimphony extends Translator {
     	mdlContents.add(EQUATIONS_TERMINATOR);
     	mdlContents.add(GRAPHICS_TERMINATOR);
     	
-    	for (String s : mdlContents)
-    		System.out.println("<"+s+">");
+//    	for (String s : mdlContents)
+//    		System.out.println("<"+s+">");
     	
     	
     	return mdlContents;
@@ -595,7 +601,7 @@ public class TranslatorRepastSimphony extends Translator {
     			
     			
     			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, packageName+"ODE", objectName+"_ODESolverCompatible");
+    			ODECodeGenerator odecg = new ODECodeGenerator(equations, evaluationOrder, packageName+"ODE", objectName+"_ODESolverCompatible");
     			
     			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
     			new File(dir).mkdirs();

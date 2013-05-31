@@ -3,13 +3,16 @@ package repast.simphony.systemdynamics.translator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -161,9 +164,38 @@ public class Translator {
 		System.out.println("********");
 
 	}
+	
+//	try {
+//	    FileInputStream fstream = new FileInputStream(filename);
+//	    DataInputStream in = new DataInputStream(fstream);
+//	    try {
+//		fileReader = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+//	    } catch (UnsupportedEncodingException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	    }
+//	   
+//	} catch (FileNotFoundException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
 
 	protected void loadUnitsEquivalences() {
-		BufferedReader unitsReader = openForRead(UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+
+		BufferedReader unitsReader = null;
+		FileInputStream fstream = null;
+		
+//			fstream = new FileInputStream("/" + UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+			fstream = (FileInputStream) getClass().getResourceAsStream("/" + 
+						UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+			DataInputStream in = new DataInputStream(fstream);
+			try {
+				unitsReader = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 
 
 		String aLine = null;
@@ -175,11 +207,31 @@ public class Translator {
 				aLine = unitsReader.readLine();
 			}
 			unitsReader.close();
+			fstream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	}
+	
+//	protected void loadUnitsEquivalences() {
+//		BufferedReader unitsReader = openForRead(UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+//
+//
+//		String aLine = null;
+//		try {
+//			aLine = unitsReader.readLine();
+//			while (aLine != null) {
+//				String[] equiv = aLine.split("=");
+//				InformationManagers.getInstance().getUnitsManager().addEquivalence(equiv[0], equiv[1]);
+//				aLine = unitsReader.readLine();
+//			}
+//			unitsReader.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
+//	}
 
 	public void startProcess() {
 		List<String> mdlContents = reader.readMDLFile();
@@ -353,7 +405,7 @@ public class Translator {
 		
 		sdObjectManager.createSystemDynamicsObjectForNonGraphic(addedScreenNames, equations);
 
-		sdObjectManager.print();
+//		sdObjectManager.print();
 
 		
 		
@@ -469,7 +521,7 @@ public class Translator {
 		
 		// make sure that every thing on the RHS of these maps have a corresponding LHS (i.e. key)
 		
-		System.out.println("analyzeDependencies requires");
+//		System.out.println("analyzeDependencies requires");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -490,7 +542,7 @@ public class Translator {
 			}
 		}
 		
-		System.out.println("analyzeDependencies requiresExpanded");
+//		System.out.println("analyzeDependencies requiresExpanded");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -511,7 +563,7 @@ public class Translator {
 			}
 		}
 		
-		System.out.println("analyzeDependencies lhsExpandedNotInitialized");
+//		System.out.println("analyzeDependencies lhsExpandedNotInitialized");
 		
 		// thse are scalars as key and anything on RHS
 		
@@ -571,6 +623,8 @@ public class Translator {
 		// first make sure that all mapped subscripts have been defined
 
 		for (String realLHS : equations.keySet()) {
+			
+//			System.out.println("GenOrder: "+realLHS);
 
 			// reference to the equations currently being processed
 			Equation currentEquation = equations.get(realLHS);
@@ -630,7 +684,7 @@ public class Translator {
 
 					// allocate data structures for holding rhs references and mapping from expandedLHS -> realLHS
 					requiresExpanded.put(expandedLHS, new HashSet<String>());
-					//		    System.out.println("expandedLhsMap: <"+expandedLHS+"> <"+realLHS+">");
+//							    System.out.println("expandedLhsMap: <"+expandedLHS+"> <"+realLHS+">");
 					expandedLhsMap.put(expandedLHS, realLHS);
 
 					lhsExpandedMap.get(realLHS).add(expandedLHS);
@@ -758,6 +812,8 @@ public class Translator {
 			// this will contain LHS's that have been assigned a value
 			ArrayList<String> toRemoveFromRequires = new ArrayList<String>();
 			for (String realLHS : allRealLHS) { // requires.keySet()
+				
+//				System.out.println("Order "+realLHS);
 
 				// If LHS not in lhsExpandedMap (which is static) keyset, then we know that this is
 				// a non-array LHS
@@ -836,12 +892,12 @@ public class Translator {
 
 			pass1 = false;
 
-			System.out.println("To Remove Count = "+toRemoveFromRequires.size());
+//			System.out.println("To Remove Count = "+toRemoveFromRequires.size());
 			if (toRemoveFromRequires.size() > 0) {
 				terminationLoopCount = 0;
 				if (lastCount == toRemoveFromRequires.size()) {
 					loopCount++;
-					System.out.println("LoopCount: "+loopCount);
+//					System.out.println("LoopCount: "+loopCount);
 					if (loopCount > 5) {
 						System.out.println("Break on loop count "+loopCount);
 						break;
@@ -1050,8 +1106,8 @@ public class Translator {
 				else if (requires.containsKey(v)) {
 					initialized = false;
 				} else {
-					System.out.println("Not in requires: "+v);
-					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
+//					System.out.println("Not in requires: "+v);
+//					System.out.println("Not in requires: "+eqn.getVensimEquationOnly());
 				}
 			}
 		}
@@ -1083,7 +1139,7 @@ public class Translator {
 
 
 
-		System.out.println("removeRequirement # "+toRemoveFromRequires.size());
+//		System.out.println("removeRequirement # "+toRemoveFromRequires.size());
 
 		for (String toRemove : toRemoveFromRequires) {
 //			System.out.println("toRemove "+toRemove);
@@ -1116,16 +1172,26 @@ public class Translator {
 				if (ehs != null && ehs.contains(toRemove)) {
 					ehs.remove(toRemove);
 
-					if (ehs.size() == 0) {
+					if (ehs.size() == 0 || (ehs.size() == 1) && ehs.contains(toRemove)) {  // try this for multi def
+//						System.out.println("add to EO: "+toRemove);
 						evaluationOrder.add(realLHS);
 						lhsExpandedNotInitialized.remove(realLHS);
 						removeFromRHS(realLHS, requires, requiresExpanded);
 
 					} else {
-
+//						System.out.println(" stillExpLHSMap "+toRemove);
+//						System.out.println(" stillExpLHSMap size "+ehs.size());
 					}
 				} else {
-
+//					System.out.println("EHS IS "+(ehs==null ? "NULL" : "NOT NULL"));
+					if (ehs!=null) {
+//						System.out.println("EHS does not contain "+toRemove+" for "+realLHS);
+					} else {
+//						System.out.println("add to EO: "+toRemove);
+						evaluationOrder.add(realLHS);
+						lhsExpandedNotInitialized.remove(realLHS);
+						removeFromRHS(realLHS, requires, requiresExpanded);
+					}
 				}
 
 
@@ -1134,6 +1200,7 @@ public class Translator {
 				// this will always be a non array LHS
 				requires.remove(toRemove);
 				evaluationOrder.add(toRemove);
+//				System.out.println("add to EO: "+toRemove);
 				removeFromRHS(toRemove, requires, requiresExpanded);
 			}
 		}
@@ -1375,7 +1442,7 @@ public class Translator {
 
 
 			if (orderProblem) {
-				System.out.println("!!!Evaluation Order PROBLEMS!!!");
+//				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
 			} else {
 				System.out.println("Clean Evaluation Order");
 			}
@@ -1410,7 +1477,7 @@ public class Translator {
 
 		return report;
 	}
-
+	
 	public static BufferedReader openForRead(String filename) {
 
 		BufferedReader fileReader = null;
@@ -1428,11 +1495,29 @@ public class Translator {
 		return fileReader;
 	}
 
+//	public static BufferedReader openForRead(String filename) {
+//
+//		BufferedReader fileReader = null;
+//		
+//		System.out.println("Open for Read: "+filename);
+//
+//		// open the file for reading
+//		try {
+//			fileReader = new BufferedReader (new FileReader(new File(filename)));
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		return fileReader;
+//	}
+	
+	// getClass().getResourceAsStream("/"+file)
+	
 	public boolean loadProperties(String file) {
-		File props = new File(file);
-		if (props.exists()) {
+		
 			try {
-				PROPERTIES.load(new FileInputStream(props));
+				PROPERTIES.load(getClass().getResourceAsStream("/"+file));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1441,20 +1526,35 @@ public class Translator {
 				e.printStackTrace();
 			}
 			return true;
-		} else {
-			return false;
-		}
+		
 	}
+
+//	public boolean loadProperties(String file) {
+//		File props = new File(file);
+//		if (props.exists()) {
+//			try {
+//				PROPERTIES.load(new FileInputStream(props));
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	public boolean loadProperties() {
 		return loadProperties(DEFAULT_PROPERTIES_FILE);
 	}
-
+	
 	public boolean loadUnitsProperties(String file) {
-		File props = new File(file);
-		if (props.exists()) {
+	
 			try {
-				UNITS_PROPERTIES.load(new FileInputStream(props));
+				UNITS_PROPERTIES.load(getClass().getResourceAsStream("/"+file));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1463,10 +1563,26 @@ public class Translator {
 				e.printStackTrace();
 			}
 			return true;
-		} else {
-			return false;
-		}
 	}
+
+//	public boolean loadUnitsProperties(String file) {
+//		File props = new File(file);
+//		if (props.exists()) {
+//			try {
+//				getClass().getResourceAsStream("/"+props));
+//				UNITS_PROPERTIES.load(new FileInputStream(props));
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	public boolean loadUnitsProperties() {
 		return loadUnitsProperties(UNITS_PROPERTIES_FILE);

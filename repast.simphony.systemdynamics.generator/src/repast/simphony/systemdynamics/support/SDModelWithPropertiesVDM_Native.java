@@ -28,6 +28,7 @@ import java.util.Properties;
     	DATA_DIRECTORY = PROPERTIES.getProperty("dataDirectory");
     	
     	logger.setLogFile(name+"Log.csv");
+    	logger.log("Variable,Time,Value,Saveper");
     	
         }
 
@@ -67,7 +68,7 @@ import java.util.Properties;
         	int t = (int) (time/savper);
         	double remainder = (time - ((double) t * savper));
 //        	if ((time - ((double) t * savper)) == 0.0)
-        		logger.log(var+","+time+","+value+","+remainder);
+        		logger.log(var.replace("memory.", "")+","+time+","+value+","+remainder);
         }
         
         protected void logitVector(String var, double time, int length, double[] value) {

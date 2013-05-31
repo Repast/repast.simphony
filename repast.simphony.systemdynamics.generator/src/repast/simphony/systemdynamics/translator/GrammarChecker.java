@@ -7,11 +7,13 @@ import repast.simphony.systemdynamics.support.MutableInteger;
 
 public class GrammarChecker {
 
+	public static final String ARRAY_INITIALIZATION = "ArrayInitialization";
 	public static final String ASSIGNMENT = "Assignment";
 	public static final String LOOKUP_DEFINITION = "LookupDefinition";
 	public static final String SUBSCRIPT_DEFINITION = "SubscriptDefinition";
 
 	public static final String COMMA = ",";
+	public static final String SEMICOLON = ";";
 	public static final String LEFT_PAREN = "(";
 	public static final String RIGHT_PAREN = ")";
 	public static final String VARIABLE_REFERENCE = "VariableReference";
@@ -52,6 +54,9 @@ public class GrammarChecker {
 		String type = determineEquationType(or);
 		if (!or.isOk())
 			return or;
+		if (type.equals(ARRAY_INITIALIZATION)) {
+			return checkArrayInitializationGrammar();
+		}
 		if (type.equals(ASSIGNMENT)) {
 			return checkAssignmentGrammar();
 		}
@@ -63,6 +68,14 @@ public class GrammarChecker {
 		}
 
 		or.setErrorMessage("Cannot determine equation type for grammar check");
+		return or;
+	}
+	
+	private OperationResult checkArrayInitializationGrammar() {
+		OperationResult or = new OperationResult();
+		
+		// for now assume OK, see if this works
+		
 		return or;
 	}
 
@@ -131,12 +144,12 @@ public class GrammarChecker {
 		if (token.startsWith(ARRAY)) {
 //			System.out.println("Array " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[1] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[2] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -147,12 +160,12 @@ public class GrammarChecker {
 		} else if (token.startsWith(LOOKUP)) {
 //			System.out.println("Lookup " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[3] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[4] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -168,12 +181,12 @@ public class GrammarChecker {
 		} else if (token.startsWith(FUNCTION)) {
 //			System.out.println("Function " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[5] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[6] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -189,12 +202,12 @@ public class GrammarChecker {
 		} else if (token.startsWith(SCALAR)) {
 //			System.out.println("Scalar " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[7] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[8] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -206,12 +219,12 @@ public class GrammarChecker {
 		} else if (token.equals(LEFT_PAREN)) {
 //			System.out.println("LeftParen " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[9] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[10] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -226,13 +239,13 @@ public class GrammarChecker {
 				// If this paren matches an open paren, we are OK
 
 				if (openParens.value() <= 0) {
-					or.setErrorMessage("Looking for operator found " + token
+					or.setErrorMessage("[11] Looking for operator found " + token
 							+ " in pos " + pos.value());
 					return;
 				}
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[12] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -242,7 +255,7 @@ public class GrammarChecker {
 		} else if (token.equals(COMMA)) {
 //			System.out.println("Comma " + token);
 			if (lookingForBinaryOperator.value() && !processingFunctionInvocation.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[13] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
@@ -251,7 +264,7 @@ public class GrammarChecker {
 			if (!lookingForBinaryOperator.value()) {
 
 				if (Parser.isBinaryOperator(token)) {
-					or.setErrorMessage("not expecting binary operator but found "
+					or.setErrorMessage("[14] not expecting binary operator but found "
 							+ token + " in pos " + pos.value());
 					return;
 				} else if (Parser.isUnaryOperator(token)) {
@@ -272,12 +285,12 @@ public class GrammarChecker {
 		} else if (Parser.isNumber(token)) {
 //			System.out.println("Number " + token);
 			if (lookingForBinaryOperator.value()) {
-				or.setErrorMessage("Looking for operator found " + token
+				or.setErrorMessage("[15] Looking for operator found " + token
 						+ " in pos " + pos.value());
 				return;
 			}
 			if (lookingForArgumentSeparator.value()) {
-				or.setErrorMessage("Looking for argument separator found "
+				or.setErrorMessage("[16] Looking for argument separator found "
 						+ token + " in pos " + pos.value());
 				return;
 			}
@@ -319,7 +332,7 @@ public class GrammarChecker {
 		pos.add(1);
 		String token = tokens.get(pos.value());
 		if (!token.equals(LEFT_PAREN)) {
-			or.setErrorMessage("expecting open paren for function found "
+			or.setErrorMessage("[17] expecting open paren for function found "
 					+ token + " in pos " + pos.value());
 			return;
 		}
@@ -342,7 +355,7 @@ public class GrammarChecker {
 			if (!or.isOk())
 				return;
 			if (pos.value() >= tokens.size() && openParens.value() > 0) {
-				or.setErrorMessage("Cannot locate end of function invocation");
+				or.setErrorMessage("[18] Cannot locate end of function invocation");
 				return;
 			}
 			// we may be done at this point
@@ -350,7 +363,7 @@ public class GrammarChecker {
 				return;
 			if (tokens.get(pos.value()).equals(RIGHT_PAREN)) {
 				if (!lookingForBinaryOperator.value()) {
-					or.setErrorMessage("Found ) while expecting a variable/function call");
+					or.setErrorMessage("[19] Found ) while expecting a variable/function call");
 				}
 				openParens.add(-1);
 				localOpenParen--;
@@ -600,6 +613,26 @@ public class GrammarChecker {
 	private String determineEquationType(OperationResult or) {
 		String type = "UNKNOWN";
 		or.clear();
+		
+		// Need to worry about array initialization first
+		if (tokens.get(0).startsWith(ARRAY)) {
+			if (tokens.get(1).equals("=")) {
+				for (int i = 2; i < tokens.size(); i++) {
+					// even must be number, odd must be comma or semicolon
+					if (i % 2 == 0) {
+						if (!Parser.isNumber(tokens.get(i))) {
+//							System.out.println("Looking for ");
+							break;
+						}
+					} else {
+						if (!(tokens.get(i).equals(COMMA) || tokens.get(i).equals(SEMICOLON)))
+							break;
+					}
+				}
+				return ARRAY_INITIALIZATION;
+			}
+			
+		}
 
 		for (String token : tokens) {
 			if (token.equals(":")) {

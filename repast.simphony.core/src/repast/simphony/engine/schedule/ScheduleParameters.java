@@ -212,7 +212,7 @@ public class ScheduleParameters {
    * @return a schedule parameters object based on mean(x) and std(x)
    *         probabilities .
    */
-  public static ScheduleParameters createNormalProbabilityrRepeating(double meanStart,
+  public static ScheduleParameters createNormalProbabilityRepeating(double meanStart,
       double sdStart, double meanInterval, double sdInterval, double priority) {
     Normal n = RandomHelper.createNormal(meanStart, sdStart);
     Normal interval = RandomHelper.createNormal(meanInterval, sdInterval);
@@ -438,6 +438,17 @@ public class ScheduleParameters {
    * @return the priority type of this ScheduleParameter.
    */
   public PriorityType getPriorityType() {
+    if (pType == null) {
+      if (Double.isNaN(priority))
+        this.pType = PriorityType.RANDOM;
+      else if (priority == FIRST_PRIORITY)
+        this.pType = PriorityType.FIRST;
+      else if (priority == LAST_PRIORITY)
+        this.pType = PriorityType.LAST;
+      else 
+        this.pType = PriorityType.OTHER;
+    }
+    
     return pType;
   }
 

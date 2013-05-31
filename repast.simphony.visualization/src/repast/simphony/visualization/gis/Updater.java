@@ -52,9 +52,9 @@ public class Updater {
   private Map<Object, FeatureAgent> agentMap = new HashMap<Object, FeatureAgent>();
   
   // The FeatureAgent objects to be added/removed to/from the FeatureCollection
-  private Set<FeatureAgent> featureAgentsToAdd = new HashSet<FeatureAgent>();
-  private Set<FeatureAgent> featureAgentsToRemove = new HashSet<FeatureAgent>();
-  
+  private Map<Class, Set<FeatureAgent>> featuresToAddMap = new HashMap<Class, Set<FeatureAgent>>();
+  private Map<Class, Set<FeatureAgent>> featuresToRemoveMap = new HashMap<Class, Set<FeatureAgent>>();
+ 
   // The actual agents to be added / removed
   private Set<Object> agentsToAdd = new HashSet<Object>();
   private Set<Object> agentsToRemove = new HashSet<Object>();
@@ -122,6 +122,19 @@ public class Updater {
       renderMap.put(clazz, fac);
       FeatureAgent fa = fac.getFeature(obj, geog);
       agentMap.put(obj, fa);
+      
+      Set<FeatureAgent> featureAgentsToAdd = featuresToAddMap.get(clazz);
+      Set<FeatureAgent> featureAgentsToRemove = featuresToAddMap.get(clazz);
+      
+      if (featureAgentsToAdd == null){
+      	featureAgentsToAdd = new HashSet<FeatureAgent>();
+      	featuresToAddMap.put(clazz, featureAgentsToAdd);
+      	
+      	// add an entry for the to-remove set since it will be needed later anyway.
+      	featureAgentsToRemove = new HashSet<FeatureAgent>();
+      	featuresToRemoveMap.put(clazz, featureAgentsToRemove);
+      }
+      
       featureAgentsToAdd.add(fa);
 //      if (fa.getDefaultGeometry() == null)
 //      origGeomMap.put(obj, fa.getDefaultGeometry());
@@ -136,6 +149,8 @@ public class Updater {
                 
         // FeatureCollection of FeatureAgents for this agent class
         DefaultFeatureCollection agentCollection = featureMap.get(clazz);
+        Set<FeatureAgent> featureAgentsToAdd = featuresToAddMap.get(clazz);
+        Set<FeatureAgent> featureAgentsToRemove = featuresToRemoveMap.get(clazz);
         
         // If there is a new agent type, then create a new layer for the type
         if (agentCollection == null) {  
@@ -158,10 +173,11 @@ public class Updater {
           agentCollection.removeAll(featureAgentsToRemove);
           updateLock.unlock();
         }  
+       
+        featureAgentsToAdd.clear();
+        featureAgentsToRemove.clear();
       }
 
-      featureAgentsToAdd.clear();
-      featureAgentsToRemove.clear();
       renderMap.clear();
       addRender = false;
     }
@@ -206,6 +222,13 @@ public class Updater {
       for (Object obj : agentsToRemove) {
 //        origGeomMap.remove(obj);
         FeatureAgent fa = agentMap.remove(obj);
+       
+        Set<FeatureAgent> featureAgentsToRemove = featuresToRemoveMap.get(obj.getClass());
+        
+        if (featureAgentsToRemove == null){
+        	featureAgentsToRemove = new HashSet<FeatureAgent>();
+        	featuresToAddMap.put(obj.getClass(), featureAgentsToRemove);
+        }
         
         featureAgentsToRemove.add(fa);
       }

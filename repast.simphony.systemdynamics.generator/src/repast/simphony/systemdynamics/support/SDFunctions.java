@@ -98,7 +98,7 @@ public class SDFunctions {
     }
 
     public double INTEG(String varName, double currentValue, double time, double timeStep, double val, double initial) {
-	if (model.getCurrentTime() == model.getINITIALTIME())
+	if (model.getCurrentTime() <= model.getINITIALTIME())
 	    return initial;
 
 	else

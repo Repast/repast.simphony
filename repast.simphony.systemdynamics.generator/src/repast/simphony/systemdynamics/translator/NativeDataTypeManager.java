@@ -54,10 +54,19 @@ public class NativeDataTypeManager {
 		OperationResult or = new OperationResult();
 		String token = equation.getTokens().get(pos.value());
 		String original = getOriginalName(token);
+		
+		if (scalars.contains(original))
+			return or;
+		
+		if (arrays.containsKey(original)) {
+			or.setErrorMessage("Array referenced as Scalar - "+token+" - original name "+original);
+			return or;
+		}
+		
 		if (equations.containsKey(original))
 			return or;
 		
-		or.setErrorMessage("Scalar not found - "+token);
+		or.setErrorMessage("Scalar not found - "+token+" - original name "+original);
 		return or;
 		
 	}
@@ -132,7 +141,7 @@ public class NativeDataTypeManager {
 	
 	public static String getAsJavaLocalVariable(String var) {
 		
-		System.out.println("getAsJavaLocalVariable "+var);
+//		System.out.println("getAsJavaLocalVariable "+var);
 		
 		// remove annotations that may have been added (e.g. memory. lookup. etc)
 		
@@ -159,7 +168,7 @@ public class NativeDataTypeManager {
 		
 		// allow the operators to pass through
 		if (Parser.isOperator(vensimVariable)) {
-			System.out.println("========== quoted in/out (operator) ///"+vensimVariable+"/// "+vensimVariable);
+//			System.out.println("========== quoted in/out (operator) ///"+vensimVariable+"/// "+vensimVariable);
 			return vensimVariable;
 		}
 		
@@ -177,10 +186,10 @@ public class NativeDataTypeManager {
 			if (quoted.contains("[")) {
 				quoted = quoted.replace("]\"", "]").replace("[", "\"[");
 			}
-			System.out.println("========== quoted in/out ///"+vensimVariable+"/// "+quoted);
+//			System.out.println("========== quoted in/out ///"+vensimVariable+"/// "+quoted);
 			return quoted;
 		} else {
-			System.out.println("========== quoted in/out (no change)///"+vensimVariable+"/// "+vensimVariable);
+//			System.out.println("========== quoted in/out (no change)///"+vensimVariable+"/// "+vensimVariable);
 			return vensimVariable;
 		}
 		
@@ -619,6 +628,8 @@ public class NativeDataTypeManager {
 					String getter = "get_"+legal.get(array)+makeLegal(methodName.get(i).toString().trim());
 					String original = array;
 					String vensim = asVensim(original+makeLegal(methodName.get(i).toString().trim()));
+					
+					
 
 					dsd.addMethodDataSource(vensim, translator.getPackageName()+".Memory"+objectName, getter);
 					dsd.setSourceType(translator.getPackageName()+".Memory"+objectName);
@@ -658,6 +669,9 @@ public class NativeDataTypeManager {
 		}
 
 		String ScenarioDirectory = translator.getScenarioDirectory();
+		
+		dsd.setScheduleParameters(repast.simphony.engine.schedule.ScheduleParameters.createRepeating(1, 1, 
+				repast.simphony.engine.schedule.PriorityType.LAST ));
 
 		serialize(dsd, ScenarioDirectory+"repast.simphony.action.data_set_0.xml");
 	}
@@ -778,6 +792,14 @@ public class NativeDataTypeManager {
 	} else {
 	    return "memory." + name;
 	}
+    }
+    
+    public boolean isScalar(String variable) {
+    	return scalars.contains(variable);
+    }
+    
+    public boolean isArray(String variable) {
+    	return arrays.containsKey(variable);
     }
 
 }

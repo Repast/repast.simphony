@@ -138,9 +138,11 @@ public class LocalDriver {
         runInstance(vmArgs, inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
 
+      int counter = 0;
       for (Future<Void> future : futures) {
         try {
           future.get();
+          msg.info("Got future #" + ++counter);
         } catch (ExecutionException ex) {
           ex.getCause().printStackTrace();
           msg.error("", ex);

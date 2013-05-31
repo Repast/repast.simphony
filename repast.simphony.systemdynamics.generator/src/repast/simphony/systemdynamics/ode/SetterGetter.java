@@ -19,7 +19,7 @@ public class SetterGetter {
 		
 		NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
 		for (Equation eqn : analyzer.getAuxiliariesForConstructor()) {
-			System.out.println("SetterGetter "+eqn.getLhs()+" "+eqn.isOneTime()+" "+eqn.getVariableType().toString());
+//			System.out.println("SetterGetter "+eqn.getLhs()+" "+eqn.isOneTime()+" "+eqn.getVariableType().toString());
 //			if (!eqn.isOneTime())
 //				continue;
 //			// only Auxiliary variables will have getters and setters
