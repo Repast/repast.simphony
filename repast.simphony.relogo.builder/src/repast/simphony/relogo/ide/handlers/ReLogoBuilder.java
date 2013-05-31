@@ -210,7 +210,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	 * @param packageName
 	 * @return
 	 */
-	static protected String getInstrumentingPackageName(String packageName) {
+	static public String getInstrumentingPackageName(String packageName) {
 		if (packageName != null) {
 			String[] segments = packageName.split("\\.");
 			boolean isFirst = true;
