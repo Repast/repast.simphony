@@ -3,13 +3,16 @@ package repast.simphony.systemdynamics.translator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -161,9 +164,38 @@ public class Translator {
 		System.out.println("********");
 
 	}
+	
+//	try {
+//	    FileInputStream fstream = new FileInputStream(filename);
+//	    DataInputStream in = new DataInputStream(fstream);
+//	    try {
+//		fileReader = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+//	    } catch (UnsupportedEncodingException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	    }
+//	   
+//	} catch (FileNotFoundException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
 
 	protected void loadUnitsEquivalences() {
-		BufferedReader unitsReader = openForRead(UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+
+		BufferedReader unitsReader = null;
+		FileInputStream fstream = null;
+		
+//			fstream = new FileInputStream("/" + UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+			fstream = (FileInputStream) getClass().getResourceAsStream("/" + 
+						UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+			DataInputStream in = new DataInputStream(fstream);
+			try {
+				unitsReader = new BufferedReader(new InputStreamReader(in,"UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 
 
 		String aLine = null;
@@ -175,11 +207,31 @@ public class Translator {
 				aLine = unitsReader.readLine();
 			}
 			unitsReader.close();
+			fstream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	}
+	
+//	protected void loadUnitsEquivalences() {
+//		BufferedReader unitsReader = openForRead(UNITS_PROPERTIES.getProperty("unitsEquivalenceFile"));
+//
+//
+//		String aLine = null;
+//		try {
+//			aLine = unitsReader.readLine();
+//			while (aLine != null) {
+//				String[] equiv = aLine.split("=");
+//				InformationManagers.getInstance().getUnitsManager().addEquivalence(equiv[0], equiv[1]);
+//				aLine = unitsReader.readLine();
+//			}
+//			unitsReader.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
+//	}
 
 	public void startProcess() {
 		List<String> mdlContents = reader.readMDLFile();
@@ -1390,7 +1442,7 @@ public class Translator {
 
 
 			if (orderProblem) {
-				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
+//				System.out.println("!!!Evaluation Order PROBLEMS!!! -- see evaluationOrder.txt");
 			} else {
 				System.out.println("Clean Evaluation Order");
 			}
@@ -1425,7 +1477,7 @@ public class Translator {
 
 		return report;
 	}
-
+	
 	public static BufferedReader openForRead(String filename) {
 
 		BufferedReader fileReader = null;
@@ -1443,11 +1495,29 @@ public class Translator {
 		return fileReader;
 	}
 
+//	public static BufferedReader openForRead(String filename) {
+//
+//		BufferedReader fileReader = null;
+//		
+//		System.out.println("Open for Read: "+filename);
+//
+//		// open the file for reading
+//		try {
+//			fileReader = new BufferedReader (new FileReader(new File(filename)));
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		return fileReader;
+//	}
+	
+	// getClass().getResourceAsStream("/"+file)
+	
 	public boolean loadProperties(String file) {
-		File props = new File(file);
-		if (props.exists()) {
+		
 			try {
-				PROPERTIES.load(new FileInputStream(props));
+				PROPERTIES.load(getClass().getResourceAsStream("/"+file));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1456,20 +1526,35 @@ public class Translator {
 				e.printStackTrace();
 			}
 			return true;
-		} else {
-			return false;
-		}
+		
 	}
+
+//	public boolean loadProperties(String file) {
+//		File props = new File(file);
+//		if (props.exists()) {
+//			try {
+//				PROPERTIES.load(new FileInputStream(props));
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	public boolean loadProperties() {
 		return loadProperties(DEFAULT_PROPERTIES_FILE);
 	}
-
+	
 	public boolean loadUnitsProperties(String file) {
-		File props = new File(file);
-		if (props.exists()) {
+	
 			try {
-				UNITS_PROPERTIES.load(new FileInputStream(props));
+				UNITS_PROPERTIES.load(getClass().getResourceAsStream("/"+file));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1478,10 +1563,26 @@ public class Translator {
 				e.printStackTrace();
 			}
 			return true;
-		} else {
-			return false;
-		}
 	}
+
+//	public boolean loadUnitsProperties(String file) {
+//		File props = new File(file);
+//		if (props.exists()) {
+//			try {
+//				getClass().getResourceAsStream("/"+props));
+//				UNITS_PROPERTIES.load(new FileInputStream(props));
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 
 	public boolean loadUnitsProperties() {
 		return loadUnitsProperties(UNITS_PROPERTIES_FILE);

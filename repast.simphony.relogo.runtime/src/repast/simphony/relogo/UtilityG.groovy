@@ -743,7 +743,7 @@ public class UtilityG{
 			def rv = delegate
 			rv.setResolveStrategy(Closure.DELEGATE_FIRST)
 			// check if it's not a list, then do below
-			if (!(value instanceof List)){
+			if (!(value instanceof Collection)){
 				rv.setDelegate(value)
 				rv.call(value)
 			}
