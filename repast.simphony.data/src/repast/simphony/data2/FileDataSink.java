@@ -20,6 +20,7 @@ public class FileDataSink implements DataSink {
   private File file;
   private BufferedWriter writer;
   private String name;
+  private boolean closed = false;
 
   public FileDataSink(String name, File file, Formatter formatter) {
     this.formatter = formatter;
@@ -152,15 +153,19 @@ public class FileDataSink implements DataSink {
    */
   @Override
   public void close() {
-    try {
-      writer.flush();
-    } catch (IOException ex) {
-      throw new DataException("Error closing FileDataSink.", ex);
-    } finally {
+    if (!closed) {
       try {
-        writer.close();
+        writer.flush();
       } catch (IOException ex) {
+        throw new DataException("Error closing FileDataSink.", ex);
+      } finally {
+        try {
+          closed = true;
+          writer.close();
+        } catch (IOException ex) {
+        }
       }
+
     }
   }
 }
