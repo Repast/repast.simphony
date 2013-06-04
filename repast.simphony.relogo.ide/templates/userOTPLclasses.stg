@@ -8,6 +8,8 @@ import static repast.simphony.relogo.UtilityG.*;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
 import <packageName>.ReLogoObserver;
 
 class UserObserver extends ReLogoObserver{
@@ -49,6 +51,8 @@ import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
 import <packageName>.ReLogoTurtle;
 
 class UserTurtle extends ReLogoTurtle{
@@ -67,6 +71,9 @@ import repast.simphony.relogo.Plural;
 import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
+
 
 <pluralAnnotation>
 class <turtleClassName> extends UserTurtle{
@@ -84,6 +91,8 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
 import repast.simphony.relogo.ast.Diffusible;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
 import <packageName>.ReLogoPatch;
 
 class UserPatch extends ReLogoPatch{
@@ -104,6 +113,8 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Undirected;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
 import <packageName>.ReLogoLink;
 
 class UserLink extends ReLogoLink	{
@@ -124,6 +135,8 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Undirected;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
+import repast.simphony.relogo.schedule.Go;
+import repast.simphony.relogo.schedule.Setup;
 import <packageName>.ReLogoLink;
 
 <directedAnnotation>
