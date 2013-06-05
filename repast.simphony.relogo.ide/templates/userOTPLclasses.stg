@@ -17,6 +17,7 @@ class UserObserver extends ReLogoObserver{
 	/**
 	 * Add observer methods here. For example:
 
+		@Setup
 		def setup(){
 			clearAll()
 			createTurtles(10){
@@ -28,6 +29,7 @@ class UserObserver extends ReLogoObserver{
 	 * or
 	 * 	
 	
+		@Go
 		def go(){
 			ask(turtles()){
 				left(random(90))
