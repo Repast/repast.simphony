@@ -25,12 +25,6 @@ public class UserGlobalsAndPanelFactory extends AbstractReLogoGlobalsAndPanelFac
 	        // State change button with label (method name in observer, label)
 	        addStateChangeButtonWL("changeSomething","Change Something")
 	        
-	        Lesser used options:
-	        addButtonWL("setup","Setup") 	// Button with label ( method name, button label )
-	        addButton("action1")			// Button without label ( method name )
-	        addToggleButtonWL("go","Go")	// Toggle Button with label ( method name, button label )
-	        addToggleButton("action2")		// Toggle Button without label  ( method name )
-	        addReLogoTickCountDisplay()
 		 */
 
 		<globals>
