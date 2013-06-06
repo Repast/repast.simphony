@@ -343,7 +343,7 @@ public interface Observer extends ProjectionListener {
 	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, Class type);
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset
