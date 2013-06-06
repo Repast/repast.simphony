@@ -9,10 +9,12 @@ import org.codehaus.groovy.ast.GenericsType
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.Parameter
 import org.codehaus.groovy.ast.expr.ArgumentListExpression
+import org.codehaus.groovy.ast.expr.ClassExpression;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
 import org.codehaus.groovy.ast.expr.VariableExpression
 import org.codehaus.groovy.ast.tools.GenericsUtils;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
@@ -28,13 +30,20 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 	public static final ClassNode patchInterface =  ClassHelper.make('repast.simphony.relogo.Patch')
 	public static final ClassNode abstractLink =  ClassHelper.make('repast.simphony.relogo.Link')
 	public static final ClassNode observerInterface =  ClassHelper.make('repast.simphony.relogo.Observer')
-	public static final List<String> zerothParameterArgumentBasedMethods = ['ask','minOneOf','maxOneOf']
-	public static final List<String> firstParameterArgumentBasedMethods = ['minNOf','maxNOf']
+	public static final ClassNode UTILITY =  ClassHelper.make('repast.simphony.relogo.Utility')
+	public static final ClassNode UTILITYG =  ClassHelper.make('repast.simphony.relogo.UtilityG')
+	public static final List<ClassNode> UTILITIES = [UTILITY, UTILITYG]
+	public static final List<String> zerothParameterArgumentBasedMethods = [
+		'ask',
+		'minOneOf',
+		'maxOneOf'
+	]
+	public static final List<String> firstParameterArgumentBasedMethods = ['minNOf', 'maxNOf']
 
 	ClosureExpression myClosure;
 	ClassNode currentType;
 	public List<ClassNode> context = [];
-//	public StringBuilder sb = new StringBuilder()
+	public StringBuilder sb = new StringBuilder()
 
 	public MyCodeVisitor2(ClosureExpression myClosure, ClassNode enclosingClass){
 		this.myClosure = myClosure
@@ -59,7 +68,7 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 		}
 		return false
 	}
-	
+
 	public static boolean isMethodArgumentBasedTargetFirstPosition(MethodCallExpression mce){
 		if (mce){
 			String methodName = mce.getMethodAsString()
@@ -152,10 +161,10 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 		null
 	}
 
-	// For "ask"
-	ClassNode getTargetTypeArgumentBased(List<ClassNode> context, MethodCallExpression askMce, int position){
+
+
+	ClassNode getTargetTypeArgumentBasedInternal(List<ClassNode> context, Expression argumentsExpression, int position){
 		ClassNode targetType = null
-		Expression argumentsExpression = askMce.getArguments()
 		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
 			List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
 			Object arg = arguments.get(position)
@@ -166,10 +175,23 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 					targetType = ((VariableExpression)arg).getType()
 				} else if (arg instanceof MethodCallExpression){
 					targetType = resolveMCEReturnType(context,(MethodCallExpression)arg)
+				} else if (arg instanceof StaticMethodCallExpression){
+					targetType = resolveSMCEReturnType(context,(StaticMethodCallExpression)arg)
 				}
 			}
 		}
 		return targetType
+	}
+
+	// For e.g., "ask" or "Utility.oneOf"
+	ClassNode getTargetTypeArgumentBased(List<ClassNode> context, MethodCallExpression mce, int position){
+		Expression argumentsExpression = mce.getArguments()
+		return getTargetTypeArgumentBasedInternal(context,argumentsExpression,position)
+	}
+	// For e.g., statically imported oneOf, nOf
+	ClassNode getTargetTypeArgumentBased(List<ClassNode> context, StaticMethodCallExpression smce, int position){
+		Expression argumentsExpression = smce.getArguments()
+		return getTargetTypeArgumentBasedInternal(context,argumentsExpression,position)
 	}
 
 	// For "hatch", "sprout", "create"
@@ -200,14 +222,14 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 
 		// Get the appropriate target type if targetType is a collection or array
 		if (targetType){
-			//			sb.append("-----> the targetType is: ${targetType}\n")
+			sb.append("-----> the targetType is: ${targetType}\n")
 			if(targetType.isArray()){
 				return targetType.getComponentType()
 			}
 			if (targetType.isUsingGenerics()){
 				//				sb.append("-----> the targetType uses generics\n")
 				String name = targetType.getName()
-				if(isCollectionType(targetType)){
+				if(isCollectionType(targetType) || isObjectType(targetType)){
 					//					sb.append("-----> the targetType isCollectionType\n")
 					return extractGeneric(targetType)
 				}
@@ -238,6 +260,17 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 			//			sb.append("---> next node is: ${node}\n")
 		}
 		return false
+	}
+
+	/**
+	 * Checks to see if the classnode is of type 'java.lang.Object'. The
+	 * implication is that this is called after the fact that the ClassNode
+	 * uses generics.
+	 * @param cn
+	 * @return
+	 */
+	boolean isObjectType(ClassNode cn){
+		return cn.getName().startsWith("java.lang.Object")
 	}
 
 	// Resolve method call via DefaultGroovyMethods contributions
@@ -307,10 +340,26 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 	 * @return
 	 */
 	ClassNode resolveViaMethods(ClassNode candidate,MethodCallExpression mce){
-
 		String methodName = mce.getMethodAsString()
-//		sb.append("Trying to resolve via methods:\n candidate: ${candidate} \n methodName: ${methodName}\n")
+		sb.append("Trying to resolve via methods:\n candidate: ${candidate} \n methodName: ${methodName}\n")
 		Expression argumentsExpression = mce.getArguments()
+		return resolveViaMethodsInternal(candidate, methodName, argumentsExpression)
+	}
+
+	/**
+	 * Simple resolve which matches a method name regardless of arguments.
+	 * @param candidate
+	 * @param mce
+	 * @return
+	 */
+	ClassNode resolveViaMethods(ClassNode candidate,StaticMethodCallExpression smce){
+		String methodName = smce.getMethod()
+		sb.append("Trying to resolve via static methods:\n candidate: ${candidate} \n methodName: ${methodName}\n")
+		Expression argumentsExpression = smce.getArguments()
+		return resolveViaMethodsInternal(candidate, methodName, argumentsExpression)
+	}
+
+	ClassNode resolveViaMethodsInternal(ClassNode candidate,String methodName, Expression argumentsExpression){
 		int numParams = 0
 		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
 			List<Expression> arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
@@ -329,7 +378,7 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 					if (numCandidateParams == numParams){
 						ClassNode returnType = method.getReturnType()
 						if (returnType){
-//							sb.append("succeeded with returnType: ${returnType}\n")
+							sb.append("succeeded with returnType: ${returnType}\n")
 							return returnType
 						}
 					}
@@ -339,11 +388,139 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 		return null
 	}
 
+	/**
+	 * Originally for static utility method resolution.
+	 * TODO: change name to more appropriate one 
+	 * @param candidate
+	 * @param mce (MethodCallExpression or StaticMethodCallExpression)
+	 * @return
+	 */
+	ClassNode resolveViaUtilities(ClassNode candidate, Expression mce){
+		if (mce instanceof MethodCallExpression || mce instanceof StaticMethodCallExpression){
+			sb.append("In resolve via utilities for candidate ${candidate} and mce ${mce}.\n");
+			ClassNode returnType = null
+			returnType = resolveViaMethods(candidate, mce)
+			if (returnType) {
+				sb.append("Return type is ${returnType}.\n");
+				if (returnType.isUsingGenerics()){
+					sb.append("Return type using generics.\n");
+					//				sb.append("the returnType is using generics\n")
+					GenericsType[] gt = returnType.genericsTypes
+					if (gt?.length == 1){
+						GenericsType g = gt[0]
+						sb.append("g is ${g}.\n");
+						//					sb.append("there is one generic argument: ${g}\n")
+						if (g.isPlaceholder()){
+							sb.append("g is placeholder.\n");
+							//						sb.append("it is a placeholder\n")
+							// get mce arguments
+							Expression argumentsExpression = mce.getArguments()
+							if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+								sb.append("argumentsExpression is instanceof ArgumentListExpression.\n");
+								List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+								if (arguments){
+									int numArgs = arguments.size()
+									sb.append("numArgs is ${numArgs}.\n");
+									// for each argument
+									for (int i = 0; i < numArgs; i++){
+										ClassNode temp = getTargetTypeArgumentBased(context, mce, i)
+										sb.append("temp is ${temp}.\n");
+										if (temp && temp.isUsingGenerics()){
+											sb.append("temp is using generics.\n");
+											GenericsType[] gt2 = temp.genericsTypes
+											if (gt2?.length == 1){
+												GenericsType g2 = gt2[0]
+												sb.append("g2 is ${g2}.\n");
+												if (!g2.isPlaceholder()){
+													sb.append("g2 is not a placeholder.\n");
+													ClassNode temp2 = returnType.getPlainNodeReference()
+													temp2.setGenericsTypes(gt2)
+													sb.append("the temp2 classnode is: ${temp2}\n")
+													return temp2
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				sb.append("Found return type via methods and didn't use generics type: ${returnType}\n");
+				return returnType
+			}
+		}
+		return null
+	}
+
+	/**
+	 * Originally for static utility method resolution.
+	 * TODO: change name to more appropriate one
+	 * @param candidate
+	 * @param mce
+	 * @return
+	 */
+	//	ClassNode resolveViaUtilities(ClassNode candidate, StaticMethodCallExpression mce){
+	//		sb.append("In resolve via utilities for candidate ${candidate} and mce ${mce}.\n");
+	//		ClassNode returnType = null
+	//		returnType = resolveViaMethods(candidate, mce)
+	//		if (returnType) {
+	//			sb.append("Return type is ${returnType}.\n");
+	//			if (returnType.isUsingGenerics()){
+	//				sb.append("Return type using generics.\n");
+	//				//				sb.append("the returnType is using generics\n")
+	//				GenericsType[] gt = returnType.genericsTypes
+	//				if (gt?.length == 1){
+	//					GenericsType g = gt[0]
+	//					sb.append("g is ${g}.\n");
+	//					//					sb.append("there is one generic argument: ${g}\n")
+	//					if (g.isPlaceholder()){
+	//						sb.append("g is placeholder.\n");
+	//						//						sb.append("it is a placeholder\n")
+	//						// get mce arguments
+	//						Expression argumentsExpression = mce.getArguments()
+	//						if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+	//							sb.append("argumentsExpression is instanceof ArgumentListExpression.\n");
+	//							List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+	//							if (arguments){
+	//								int numArgs = arguments.size()
+	//								sb.append("numArgs is ${numArgs}.\n");
+	//								// for each argument
+	//								for (int i = 0; i < numArgs; i++){
+	//									ClassNode temp = getTargetTypeArgumentBased(context, mce, i)
+	//									sb.append("temp is ${temp}.\n");
+	//									if (temp && temp.isUsingGenerics()){
+	//										sb.append("temp is using generics.\n");
+	//										GenericsType[] gt2 = temp.genericsTypes
+	//										if (gt2?.length == 1){
+	//											GenericsType g2 = gt2[0]
+	//											sb.append("g2 is ${g2}.\n");
+	//											if (!g2.isPlaceholder()){
+	//												sb.append("g2 is not a placeholder.\n");
+	//												ClassNode temp2 = returnType.getPlainNodeReference()
+	//												temp2.setGenericsTypes(gt2)
+	//												sb.append("the temp2 classnode is: ${temp2}\n")
+	//												return temp2
+	//											}
+	//										}
+	//									}
+	//								}
+	//							}
+	//						}
+	//					}
+	//				}
+	//			}
+	//			sb.append("Found return type via methods and didn't use generics type: ${returnType}\n");
+	//			return returnType
+	//		}
+	//	}
+
 	ClassNode resolveMCEReturnType(List<ClassNode> context, MethodCallExpression mce){
-//		sb.append("Entering resolveMCEReturnType with:\n ${context}\n and ${mce}\n")
+		//		sb.append("Entering resolveMCEReturnType with:\n ${context}\n and ${mce}\n")
 		//		log "mce2's method is: ${mce.getMethod()}"
 		if(context){
 			if (mce.isImplicitThis()){
+				sb.append("Mce is implicit.\n");
 				ClassNode returnType = null
 				for (ClassNode candidate : context.reverse()){
 
@@ -353,6 +530,16 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 						return returnType;
 					}
 				}
+
+				//				sb.append("Not a context based returnType.\n");
+				//				for (ClassNode candidate : UTILITIES){
+				//					sb.append("Candidate is ${candidate}.\n");
+				//					returnType = resolveViaUtilities(candidate,mce)
+				//					if (returnType){
+				//						return returnType;
+				//					}
+				//				}
+
 				for (ClassNode candidate : context.reverse()){
 
 					returnType = resolveViaDGM(candidate,mce)
@@ -380,7 +567,7 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 
 					returnType = resolveViaMethods(candidate, mce)
 					if (returnType) {
-
+						sb.append("Found return type via methods ${returnType}\n");
 						return returnType
 					}
 
@@ -390,60 +577,82 @@ class MyCodeVisitor2 extends CodeVisitorSupport {
 						return returnType
 					}
 				}
+				else {
+					if (objectExpression instanceof ClassExpression){
+						candidate = ((ClassExpression)objectExpression).getType()
+						sb.append("Found candidate for ClassExpression: ${candidate}\n");
+						if (candidate){
+							return resolveViaUtilities(candidate, mce)
+						}
+					}
+				}
 			}
 		}
 		return null
 	}
 
+	ClassNode resolveSMCEReturnType(List<ClassNode> context, StaticMethodCallExpression smce){
+		sb.append("Entering resolveSMCEReturnType with:\n ${context}\n and ${smce}\n")
+		//		log "mce2's method is: ${mce.getMethod()}"
+		if(context){
+			ClassNode candidate = smce.getOwnerType()
+			sb.append("In SMCE.\n")
+			sb.append("candidate is ${candidate}.\n")
+			if (candidate){
+				return resolveViaUtilities(candidate,smce)
+			}
+		}
+		return null
+	}
 }
 
 List<ClassNode> lookAtMce2(MethodCallExpression mce, ClosureExpression ce, ClassNode enclosingClass){
-//	log "looking"
+	//	log "looking"
 	MyCodeVisitor2 mcv = new MyCodeVisitor2(ce,enclosingClass)
 	mce.visit(mcv)
-//	log "targets found = ${mcv.getTargetsFound()}"
-//	log "\n############### StringBuilder contents are:\n${mcv.sb.toString()}"
-//	log mcv.sb.toString()
+	//	log "targets found = ${mcv.getTargetsFound()}"
+	log "\n############### StringBuilder contents are:\n${mcv.sb.toString()}"
+	//	log mcv.sb.toString()
 	return mcv.context
 }
 
 
 contribute(bind(enclosingClassSet: enclosingClass(subType(MyCodeVisitor2.observerInterface) | subType(MyCodeVisitor2.turtleInterface) | subType(MyCodeVisitor2.patchInterface) | subType(MyCodeVisitor2.abstractLink))) /*& bind(set1 : enclosingCallDeclaringType(isThisType()))*/ & bind(mces : enclosingCall()) & bind(enclosingClosureSet: enclosingClosure())){
-//	def list1 = set1.toList()
-//	log "list1 is \n${list1}"
-//	log "list1.size() is ${list1.size()}"
+	//	def list1 = set1.toList()
+	//	log "list1 is \n${list1}"
+	//	log "list1.size() is ${list1.size()}"
 
 	def list2 = mces?.iterator()?.toList()
-//	log "list2 is \n${list2}"
-//	log "list2.size() is ${list2.size()}"
+	//	log "list2 is \n${list2}"
+	//	log "list2.size() is ${list2.size()}"
 
 	if (list2){
-//		log "list2 isn't empty"
+		//		log "list2 isn't empty"
 		// Assumes that mces are ordered from lexically closest to farthest
 		def candidateOutermostMCE = list2[-1]
 		if (enclosingClosureSet && enclosingClassSet){
-//			log "both enclosingClosureSet and enclosingClassSet are non null and non empty"
+			//			log "both enclosingClosureSet and enclosingClassSet are non null and non empty"
 			ClosureExpression enclosingClosure = enclosingClosureSet.iterator().next()
 			ClassNode enclosingClass = enclosingClassSet.iterator().next()
 			if (candidateOutermostMCE instanceof MethodCallExpression){
-//				log "candidateOutermostMCE instanceof MethodCallExpression"
+				//				log "candidateOutermostMCE instanceof MethodCallExpression"
 				MethodCallExpression mce = (MethodCallExpression)candidateOutermostMCE
 
 
 				if (MyCodeVisitor2.isTargetMethodCallExpression(mce)){
-//					log("\n####### the found mce is: ${mce}")
+					//					log("\n####### the found mce is: ${mce}")
 					List<ClassNode> context = lookAtMce2(mce,enclosingClosure,enclosingClass)
 					// remove first element
 					// contribute the rest
 					if (context){
-//						log "original context is: "
-//						for (def contrib : context){
-//							log contrib
-//						}
+						//						log "original context is: "
+						//						for (def contrib : context){
+						//							log contrib
+						//						}
 						context = context.drop(1).reverse()
 						context.unique(true)
 						for (ClassNode contrib : context){
-//							log "########## contributing: ${contrib}"
+							//							log "########## contributing: ${contrib}"
 							delegatesTo type:contrib, except:[
 								"methodMissing",
 								"propertyMissing",
@@ -465,7 +674,7 @@ contribute(bind(enclosingClassSet: enclosingClass(subType(MyCodeVisitor2.observe
 						if (context){
 							// set delegate to the innermost delegatesTo
 							ClassNode contrib = context[0]
-//							log "########## contributing setDelegateType: ${contrib}"
+							//							log "########## contributing setDelegateType: ${contrib}"
 							setDelegateType(contrib.getName())
 						}
 					}
