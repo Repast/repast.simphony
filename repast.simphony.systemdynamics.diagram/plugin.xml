@@ -638,6 +638,14 @@
          </description>
       </wizard>
    </extension>
+   <extension
+      id="systemdynamics_perspective_config"
+      name="Repast Simphony System Dynamics Perspective Configurator"
+      point="repast.simphony.perspective.config">
+   <configurator
+         class="repast.simphony.systemdynamics.handlers.SystemDynamicsPerspectiveConfigurator">
+   </configurator>
+</extension>
 
    <!-- optionally, specify keybindings -->
 </plugin>

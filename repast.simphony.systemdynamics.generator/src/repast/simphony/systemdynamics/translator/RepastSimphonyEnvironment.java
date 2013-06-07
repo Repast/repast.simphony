@@ -29,7 +29,8 @@ public class RepastSimphonyEnvironment {
 	    source.append("context.add(on);\n");
 	    source.append("context.add(on.getMemory());\n");
 	    
-	    source.append("RunEnvironment.getInstance().endAt((on.getMemory().getFINALTIME()- on.getMemory().getINITIALTIME()) / on.getMemory().getTIMESTEP());\n");
+//	    source.append("RunEnvironment.getInstance().endAt((on.getMemory().getFINALTIME()- on.getMemory().getINITIALTIME()) / on.getMemory().getTIMESTEP());\n");
+	    source.append("RunEnvironment.getInstance().endAt(on.getMemory().getFINALTIME()- on.getMemory().getINITIALTIME());\n");
 	    
 	    source.append("return context;\n}\n}\n");
 	    source.close();

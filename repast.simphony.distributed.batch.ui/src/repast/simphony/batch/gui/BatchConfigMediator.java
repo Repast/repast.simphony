@@ -349,7 +349,7 @@ public class BatchConfigMediator {
     int index = antFile.indexOf("repast.simphony.distributed.batch_");
     if (index != -1) {
       int start = index + "repast.simphony.distributed.batch_".length();
-      int end = antFile.indexOf("/", start);
+      int end = antFile.indexOf(File.separator, start);
       String version = antFile.substring(start, end);
       project.setProperty("plugins.version", version);
       project.setUserProperty("plugins.version", version);

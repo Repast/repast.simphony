@@ -281,7 +281,7 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	public Patch patchAtHeadingAndDistance(Number heading, Number distance);
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset

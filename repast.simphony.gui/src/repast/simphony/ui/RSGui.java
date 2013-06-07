@@ -522,12 +522,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     customPanelContent = panel;
     customPanel.add(panel);
     hasCustomUserPanelDefined = true;
-    // DockableFrame view = dockingManager.createDockable("__custom.user__",
-    // panel, MinimizeLocation.BOTTOM,
-    // DockingManager.FLOAT | DockingManager.MINIMIZE |
-    // DockingManager.MAXIMIZE);
-    // view.setTitle(name);
-    // dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
+    customPanel.revalidate();
+    customPanel.repaint();
   }
 
   public boolean hasCustomUserPanelDefined() {

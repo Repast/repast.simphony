@@ -628,6 +628,8 @@ public class NativeDataTypeManager {
 					String getter = "get_"+legal.get(array)+makeLegal(methodName.get(i).toString().trim());
 					String original = array;
 					String vensim = asVensim(original+makeLegal(methodName.get(i).toString().trim()));
+					
+					
 
 					dsd.addMethodDataSource(vensim, translator.getPackageName()+".Memory"+objectName, getter);
 					dsd.setSourceType(translator.getPackageName()+".Memory"+objectName);
@@ -667,6 +669,9 @@ public class NativeDataTypeManager {
 		}
 
 		String ScenarioDirectory = translator.getScenarioDirectory();
+		
+		dsd.setScheduleParameters(repast.simphony.engine.schedule.ScheduleParameters.createRepeating(1, 1, 
+				repast.simphony.engine.schedule.PriorityType.LAST ));
 
 		serialize(dsd, ScenarioDirectory+"repast.simphony.action.data_set_0.xml");
 	}

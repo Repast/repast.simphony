@@ -29,12 +29,14 @@ public class ODEAnalyzer {
 	private List<Equation> auxiliaries;
 
 	private Map<String, Equation> equations;
+	List<String> orderedEquations;
 
-	public ODEAnalyzer(Map<String, Equation> equations) {
+	public ODEAnalyzer(Map<String, Equation> equations, List<String> orderedEquations) {
 		this.equations = equations;
 		stockToIndex = new HashMap<String, String>();
 		indexToStock = new HashMap<String, String>();
 		auxiliaries = new ArrayList<Equation>();
+		this.orderedEquations = orderedEquations;
 	}
 
 	public void analyze() {
@@ -47,8 +49,12 @@ public class ODEAnalyzer {
 		// experimentWithStocks();
 	}
 
-	public Iterator<Equation> getEquationIterator() {
-		return equations.values().iterator();
+	public List<Equation> getEquationIterator() {
+		List<Equation> eqns = new ArrayList<Equation>();
+		for (String lhs : orderedEquations) {
+			eqns.add(equations.get(lhs));
+		}
+		return eqns;
 	}
 
 	private void print() {
@@ -79,7 +85,9 @@ public class ODEAnalyzer {
 	}
 
 	public String getIndexFor(String stockVar) {
-		return stockToIndex.get(stockVar);
+		NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+		String original = ndtm.getOriginalName(stockVar);
+		return stockToIndex.get(original);
 	}
 
 	public String getStockFor(String index) {
@@ -105,7 +113,9 @@ public class ODEAnalyzer {
 	}
 
 	public boolean isStock(String var) {
-		return stockToIndex.containsKey(var);
+		NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+		String original = ndtm.getOriginalName(var);
+		return stockToIndex.containsKey(original);
 	}
 
 	public boolean isAuxiliary(String var) {

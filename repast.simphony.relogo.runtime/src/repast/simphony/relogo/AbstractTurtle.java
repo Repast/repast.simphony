@@ -277,7 +277,7 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *          an agentset

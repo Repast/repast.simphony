@@ -24,6 +24,10 @@ public abstract class AbstractAgentSet<E extends ReLogoAgent> extends ArrayList<
 		super(c);
 	}
 	
+	/**
+	 * Ask agentset to execute commands in random order.
+	 * @param cl
+	 */
 	public void askAgentSet(Closure cl){
 		cl.setResolveStrategy(Closure.DELEGATE_FIRST);
 		ArrayList<ReLogoAgent> temp = new ArrayList<ReLogoAgent>(this);

@@ -212,7 +212,7 @@ public class ScheduleParameters {
    * @return a schedule parameters object based on mean(x) and std(x)
    *         probabilities .
    */
-  public static ScheduleParameters createNormalProbabilityrRepeating(double meanStart,
+  public static ScheduleParameters createNormalProbabilityRepeating(double meanStart,
       double sdStart, double meanInterval, double sdInterval, double priority) {
     Normal n = RandomHelper.createNormal(meanStart, sdStart);
     Normal interval = RandomHelper.createNormal(meanInterval, sdInterval);
