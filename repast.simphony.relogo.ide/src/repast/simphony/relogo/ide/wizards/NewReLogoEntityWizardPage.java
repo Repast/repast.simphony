@@ -88,12 +88,12 @@ public abstract class NewReLogoEntityWizardPage extends org.eclipse.jdt.ui.wizar
 	@Override
 	protected void createTypeMembers(IType type, ImportsManager imports, IProgressMonitor monitor)
 			throws CoreException {
-		imports.addImport("repast.simphony.relogo.BaseTurtle");
-		imports.addImport("repast.simphony.relogo.BasePatch");
 		imports.addImport("repast.simphony.relogo.Plural");
 		imports.addImport("repast.simphony.relogo.Stop");
 		imports.addImport("repast.simphony.relogo.Utility");
 		imports.addImport("repast.simphony.relogo.UtilityG");
+		imports.addImport("repast.simphony.relogo.schedule.Go");
+		imports.addImport("repast.simphony.relogo.schedule.Setup");
 		imports.addStaticImport("repast.simphony.relogo.Utility", "*", false);
 		imports.addStaticImport("repast.simphony.relogo.UtilityG", "*", false);
 		super.createTypeMembers(type, imports, monitor);

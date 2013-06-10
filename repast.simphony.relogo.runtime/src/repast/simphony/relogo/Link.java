@@ -186,7 +186,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	public abstract void show(Object value);
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset

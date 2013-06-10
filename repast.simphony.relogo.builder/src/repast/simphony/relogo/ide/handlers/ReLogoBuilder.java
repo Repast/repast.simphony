@@ -92,7 +92,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	// private static final String DIRECTED_ANNOTATION =
 	// "repast.simphony.relogo.Directed";
 	private static final String UNDIRECTED_ANNOTATION = "repast.simphony.relogo.Undirected";
-
+	private static final String RELOGO_TURTLE_FILENAME = "ReLogoTurtle.java";
 	private static final String BASE_OBSERVER = "repast.simphony.relogo.BaseObserver";
 	private static final String BASE_TURTLE = "repast.simphony.relogo.BaseTurtle";
 	private static final String BASE_PATCH = "repast.simphony.relogo.BasePatch";
@@ -138,6 +138,11 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor)
 			throws CoreException {
 		try {
+			// Create empty ReLogo classes as necessary.
+			IProject project = getProject();
+			PreliminaryReLogoVisitor prv = new PreliminaryReLogoVisitor(project, monitor);
+			project.accept(prv);
+			
 			if (kind == IncrementalProjectBuilder.FULL_BUILD) {
 				fullBuild(monitor);
 			} else {
@@ -229,6 +234,23 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		}
 		return null;
 	}
+	
+	/**
+	 * Code snippet from Eclipse wiki showing how to create resources for a
+	 * project, a folder, and a file.
+	 */
+	static private IFolder createFolderResource(IFolder parentFolder, String name) {
+		IFolder folder = parentFolder.getFolder(name);
+		// at this point, no resources have been created
+		if (!folder.exists()) {
+			try {
+				folder.create(IResource.NONE, true, null);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return folder;
+	}
 
 	public static class ReLogoResourceResult {
 		public boolean isInReLogoPackage() {
@@ -249,6 +271,116 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 		boolean isInReLogoPackage = false;
 		String instrumentingPackageName = "";
+	}
+	
+	protected static class PreliminaryReLogoVisitor implements IResourceVisitor {
+		IProgressMonitor monitor;
+		IProject project;
+		
+		public PreliminaryReLogoVisitor(IProject project, IProgressMonitor monitor) {
+			this.monitor = monitor;
+			this.project = project;
+		}
+		@Override
+		public boolean visit(IResource resource) throws CoreException {
+
+			Object obj = resource.getAdapter(IJavaElement.class);
+			if (obj != null) {
+				IJavaElement javaElement = (IJavaElement) obj;
+				// If it is a package fragment
+				if (javaElement.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
+					// get package name
+					IPackageFragment ipf = (IPackageFragment) javaElement;
+					String packageName = ipf.getElementName();
+					String instrumentingPackageName = getInstrumentingPackageName(packageName);
+					// if is relogo package
+					if (instrumentingPackageName != null) {
+						// Check that root is src (e.g., not src-gen)
+						IPackageFragmentRoot pfr = (IPackageFragmentRoot) javaElement
+								.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+						if (pfr != null && pfr.getElementName().equals(SRC_ROOT_PACKAGE_FRAGMENT)) {
+							// check to see if ReLogoTurtle class exists in src-gen root
+							StringBuilder sb = new StringBuilder();
+							sb.append(SRCGEN_ROOT_PACKAGE_FRAGMENT);
+							sb.append("/");
+							String packagePath = instrumentingPackageName.replace(".",	"/");
+							sb.append(packagePath);
+							sb.append("/");
+							sb.append(RELOGO_TURTLE_FILENAME);
+							IResource reLogoTurtle = project.findMember(sb.toString());
+							// if the relevant ReLogoTurtle class doesn't exist
+							if (reLogoTurtle == null){
+								try {
+									// create empty relogo classes
+									generateEmptyReLogoFiles(instrumentingPackageName);
+								} catch (UnsupportedEncodingException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}
+		
+		private void generateEmptyReLogoFiles(String instrumentingPackageName)
+				throws UnsupportedEncodingException, CoreException {
+			String[] packageNames = instrumentingPackageName.split("\\.");
+			IFolder srcGenNewFolder = project.getFolder(SRCGEN_ROOT_PACKAGE_FRAGMENT);
+			if(!srcGenNewFolder.exists()){
+				
+				IJavaProject javaProject = JavaCore.create(project);
+				IPath srcPath = javaProject.getPath().append(SRCGEN_ROOT_PACKAGE_FRAGMENT + "/");
+				srcGenNewFolder.create(true, true, monitor);
+	      IClasspathEntry[] entries = javaProject.getRawClasspath();
+	      boolean found = false;
+	      for (IClasspathEntry entry : entries) {
+	        if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getPath().equals(srcPath)) {
+	          found = true;
+	          break;
+	        }
+	      }
+
+	      if (!found) {
+	        IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
+	        System.arraycopy(entries, 0, newEntries, 0, entries.length);
+	        IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath, null);
+	        newEntries[entries.length] = srcEntry;
+	        javaProject.setRawClasspath(newEntries, null);
+	      }
+			}
+			for (String subpackage : packageNames) {
+				srcGenNewFolder = createFolderResource(srcGenNewFolder, subpackage);
+			}
+			if (reLogoOTPLTemplateGroup == null) {
+				reLogoOTPLTemplateGroup = new STGroupFile(RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
+			}
+			for (int i = 0; i < TEMPLATE_INSTANCES.length; i++) {
+				ST st = reLogoOTPLTemplateGroup.getInstanceOf(TEMPLATE_INSTANCES[i]);
+				st.add("packageName", instrumentingPackageName);
+
+				String fileName = DEFAULT_RELOGO_FILENAMES[i];
+				IFile localFile = srcGenNewFolder.getFile(fileName);
+
+				// For creation:
+				if (!localFile.exists()){ 
+					localFile.create(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true, null);
+				}
+				else{// It shouldn't exist, but just in case it does
+					localFile.setContents(new ByteArrayInputStream(st.render().getBytes("UTF-8")), true,true,null);
+				}
+
+				final IFile fileToSave = localFile;
+				final IResource[] resources = { fileToSave };
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						IDE.saveAllEditors(resources, false);
+					}
+				});
+			}
+		}
+		
 	}
 
 	protected static class FullBuildInstrumentationInformationVisitor implements IResourceVisitor {
@@ -350,23 +482,10 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 				});
 			}
 		}
+		
+		
 
-		/**
-		 * Code snippet from Eclipse wiki showing how to create resources for a
-		 * project, a folder, and a file.
-		 */
-		private IFolder createFolderResource(IFolder parentFolder, String name) {
-			IFolder folder = parentFolder.getFolder(name);
-			// at this point, no resources have been created
-			if (!folder.exists()) {
-				try {
-					folder.create(IResource.NONE, true, null);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-			return folder;
-		}
+
 
 		/**
 		 * Create a new file in the specified folder, containing the specified

@@ -2876,4 +2876,19 @@ public class Utility {
 			fds.flush();
 		}
 	}
+	
+	/**
+	 * Stop the simulation.
+	 */
+	public static void stop(){
+		RunEnvironment.getInstance().endRun();
+	}
+	
+	
+	/**
+	 * Pause the simulation.
+	 */
+	public static void pause(){
+		RunEnvironment.getInstance().pauseRun();
+	}
 }
