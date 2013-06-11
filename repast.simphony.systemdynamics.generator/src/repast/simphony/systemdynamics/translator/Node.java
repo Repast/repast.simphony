@@ -86,16 +86,21 @@ public class Node {
     }
 
     public String getInfo() {
-	StringBuffer sb = new StringBuffer();
-	String spacing = "      ";
-	sb.append(spacing+"token: "+token+"\n");
-	sb.append(spacing+"units: "+getUnits()+"\n");
-	sb.append(spacing+"placeHolder: "+(placeHolder ? "True" : "False")+"\n");
-	sb.append(spacing+"results variable: "+resultsVariable+"\n");
-	sb.append(spacing+"head: "+generatedCodeHead+"\n");
-	sb.append(spacing+"else: "+generatedCodeElse+"\n");
-	sb.append(spacing+"tail: "+generatedCodeTail+"\n");
-        return sb.toString(); // replacedToken;
+    	StringBuffer sb = new StringBuffer();
+    	String spacing = "      ";
+    	sb.append(spacing+"token: "+token+"\n");
+    	sb.append(spacing+"units: "+getUnits()+"\n");
+    	sb.append(spacing+"placeHolder: "+(placeHolder ? "True" : "False")+"\n");
+    	sb.append(spacing+"results variable: "+resultsVariable+"\n");
+    	sb.append(spacing+"head: "+generatedCodeHead+"\n");
+    	sb.append(spacing+"else: "+generatedCodeElse+"\n");
+    	sb.append(spacing+"tail: "+generatedCodeTail+"\n");
+    	sb.append(spacing+"parent: "+parent+"\n");
+    	sb.append(spacing+"child: "+child+"\n");
+    	sb.append(spacing+"next: "+next+"\n");
+    	sb.append(spacing+"previous: "+previous+"\n");
+
+    	return sb.toString(); // replacedToken;
     }
     
     public String getInfo(String blanks) {
@@ -179,7 +184,7 @@ public class Node {
     }
     
     public String toString() {
-	return token;
+    	return token;
     }
     
     public static String expand(Node node) {

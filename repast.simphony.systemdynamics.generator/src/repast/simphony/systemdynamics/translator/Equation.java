@@ -30,8 +30,8 @@ public class Equation {
 	private String lhs;
 	private String rhs;
 	private HashSet<String> rhsTokens;
-	private String units;
-	private String comment;
+	private String units = null;
+	private String comment = null;
 	private String other;
 	private HashSet<String> references;
 	private HashSet<String> referencedBy;
@@ -885,6 +885,16 @@ public class Equation {
 		if (this.isAssignment()) {
 //			System.out.println("Adding from Equation "+getLhs());
 			InformationManagers.getInstance().getNativeDataTypeManager().addVariable(this, this.getLhs(), typeString ? "String" : "double");
+		}
+		
+		// a final check -- make sure that there are not 2 consecutive commas -- indicates missing param
+		// probably due to not specifying an equation for the stock
+		
+		for (int i = 1; i < tokens.size(); i++) {
+			if (tokens.get(i-1).equals(",") && tokens.get(i).equals(",")) {
+				syntacticallyCorrect = false;
+				syntaxMessages.add("Parsing Equation: Missing argument to function invocation");
+			}
 		}
 	}
 	
@@ -3292,8 +3302,14 @@ public class Equation {
 
 	    int nPtr = 0;
 	    
-	    if (rpn.size() == 0)
+	    if (rpn.size() == 0) {
 	    	this.generateRpn();
+		    
+	    }
+	    
+//	    System.out.println("TREE: "+vensimEquation);
+//	    this.printTokens();
+//    	this.printRpn();
 
 	    for (String token : rpn) {
 //		System.out.println("Token: "+token);
@@ -3316,32 +3332,33 @@ public class Equation {
 		    
 		 // if binary take 2
 		   
-			if (Parser.isBinaryOperator(token)) {
+		    if (Parser.isBinaryOperator(token)) {
 
-			p1 = end;
-			p2 = end.getPrevious();
-			if (p2 == null) {
-			    System.out.println("HERE!");
-			}
-			p3 = end.getPrevious().getPrevious();
-			
-			// make required changes to structure
-			aNode.setChild(p2);
-			aNode.setPrevious(p3);
-			if (p2 != null) {
-			    p2.setPrevious(null);
-			    p2.setParent(aNode);
-			    p2.setNext(p1);
-			}
-			p1.setParent(aNode);
-			end = aNode;
+		    	p1 = end;
+		    	p2 = end.getPrevious();
+		    	if (p2 == null) {
+		    		System.out.println("Expecting a previous pointer for p1");
+		    		System.out.println(p1.getInfo());
+		    	}
+		    	p3 = end.getPrevious().getPrevious();
 
-			if (p3 != null) {
-			    p3.setNext(aNode);
-			    aNode.setPrevious(p3);
-			} else {
-			    start = aNode;
-			}
+		    	// make required changes to structure
+		    	aNode.setChild(p2);
+		    	aNode.setPrevious(p3);
+		    	if (p2 != null) {
+		    		p2.setPrevious(null);
+		    		p2.setParent(aNode);
+		    		p2.setNext(p1);
+		    	}
+		    	p1.setParent(aNode);
+		    	end = aNode;
+
+		    	if (p3 != null) {
+		    		p3.setNext(aNode);
+		    		aNode.setPrevious(p3);
+		    	} else {
+		    		start = aNode;
+		    	}
 		    } else {
 			// unary operator
 			p1 = end;
@@ -3981,8 +3998,10 @@ public class Equation {
 		List<String> bw = new ArrayList<String>();
 		//	bw.add("Equation:\n");
 		//		bw.add("\t"+StringEscapeUtils.escapeHtml(unitExpression.getVensimEquation().split("~")[0]));
-
-		if (unitExpression != null) {
+		
+		if (units == null) {
+			bw.add("LHS Units: None Specified");
+		} else if (unitExpression != null) {
 
 			bw.add("LHS Units: ");  // "\n"
 			bw.add("\t"+unitExpression.getLhsUnitsString());
