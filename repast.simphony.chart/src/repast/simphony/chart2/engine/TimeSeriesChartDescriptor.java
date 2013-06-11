@@ -106,7 +106,8 @@ public class TimeSeriesChartDescriptor extends ChartDescriptor {
    * as a series. 
    */
   public void addDataValueId(String dataValueId) {
-    dataValueIds.add(dataValueId);
+    if (!dataValueIds.contains(dataValueId))
+      dataValueIds.add(dataValueId);
   }
   
   /**
