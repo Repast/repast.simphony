@@ -176,7 +176,10 @@ public class SinkDataStep<D extends AbstractTextSinkDescriptor, T extends DataSe
     D descriptor = (D)model.getDescriptor();
     descriptor.setName(nameFld.getText().trim());
     descriptor.setDataSet(((DataSetDescriptor)dataSetBox.getSelectedItem()).getName());
-    descriptor.clearSourceIds();
+    DefaultListModel unselectedModel = dsList.getSourceListModel();
+    for (int i = 0; i < unselectedModel.getSize(); ++i) {
+      descriptor.removeSourceId(unselectedModel.getElementAt(i).toString());
+    }
     for (String id : dsList.getSelectedItems()) {
       descriptor.addSourceId(id);
     }

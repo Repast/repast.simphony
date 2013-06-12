@@ -10,6 +10,7 @@ import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.DescriptorActionLoader;
+import repast.simphony.scenario.Scenario;
 
 /**
  * @author Nick Collier
@@ -31,7 +32,8 @@ public class ConsoleSinkControllerActionIO extends
      * )
      */
     @Override
-    protected ControllerAction createAction(ConsoleSinkDescriptor data) {
+    protected ControllerAction createAction(ConsoleSinkDescriptor data, Scenario scenario) {
+      data.addScenarioChangedListener(scenario);
       return new ConsoleSinkComponentControllerAction(data);
     }
 

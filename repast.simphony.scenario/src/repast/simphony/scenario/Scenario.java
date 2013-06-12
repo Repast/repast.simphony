@@ -21,7 +21,7 @@ import repast.simphony.scenario.data.UserPathData;
  *
  * @author Nick Collier
  */
-public class Scenario {
+public class Scenario implements ScenarioChangedListener {
   public static final ControllerAction DEFAULT_MASTER_PARENT = new DefaultControllerAction() {
     @Override
     public String toString() {
@@ -40,6 +40,7 @@ public class Scenario {
   protected ControllerRegistry registry;
   protected String modelInitName;
   protected File modelPluginPath;
+  protected boolean dirty = false;
 
   public Scenario(File file, ContextData context, UserPathData modelData) {
     this.context = context;
@@ -161,5 +162,31 @@ public class Scenario {
 
   public void setModelPluginPath(File modelPluginPath) {
     this.modelPluginPath = modelPluginPath;
+  }
+  
+  /**
+   * Gets whether or not this scenario is dirty, i.e. its current state is
+   *  not saved.
+   *  
+   * @return true if this scenario is dirty, otherwise false.
+   */
+  public boolean isDirty() {
+    return dirty;
+  }
+  
+  /**
+   * Set the dirty flag on this scenario.
+   */
+  public void setDirty(boolean dirty) {
+    this.dirty = dirty;
+  }
+ 
+  /* (non-Javadoc)
+   * @see repast.simphony.scenario.ScenarioChangedListener#scenarioChanged(repast.simphony.scenario.ScenarioChangedEvent)
+   */
+  @Override
+  public void scenarioChanged(ScenarioChangedEvent evt) {
+    System.out.println("Dirty: " + evt.getProperty());
+    dirty = true;
   }
 }

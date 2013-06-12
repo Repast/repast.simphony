@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -596,7 +597,14 @@ public class RSApplication implements TickListener, RunListener {
   public boolean close() {
     stop();
     storeSettings();
-    return true;
+    int result = JOptionPane.YES_OPTION;
+    if (scenario.isDirty()) {
+      result =  JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to save the changes you made to the scenario?");
+      if (result == JOptionPane.YES_OPTION) {
+        save();
+      }
+    }
+    return result != JOptionPane.CANCEL_OPTION;
   }
 
   /**

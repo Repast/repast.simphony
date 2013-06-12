@@ -27,7 +27,7 @@ public class AggMethodTableModel extends AbstractTableModel {
   
   public AggMethodTableModel(DataSetDescriptor descriptor) {
     for (MethodDataSourceDefinition def : descriptor.methodDataSources()) {
-      items.add(def);
+      items.add(new MethodDataSourceDefinition(def));
     }
     
     for (CountSourceDefinition def : descriptor.countDataSources()) {
@@ -107,8 +107,32 @@ public class AggMethodTableModel extends AbstractTableModel {
   }
 
   public void apply(DataSetDescriptor descriptor) {
-    descriptor.clearMethodDataSources();
-    descriptor.clearCountDataSources();
+    
+    List<String> mRemove = new ArrayList<>();
+    for (MethodDataSourceDefinition def : descriptor.methodDataSources()) {
+       if (!items.remove(def)) {
+         mRemove.add(def.getId());
+       }
+    }
+    
+    List<String> cRemove = new ArrayList<>();
+    for (CountSourceDefinition def : descriptor.countDataSources()) {
+      MethodDataSourceDefinition mds = new MethodDataSourceDefinition(def.getId(), def.getTypeName(), NO_METHOD_VAL);
+      mds.setAggregateOp(AggregateOp.COUNT);
+      if (!items.remove(mds)) {
+        cRemove.add(def.getId());
+      }
+   }
+    
+    for (String id : mRemove) {
+      descriptor.removeMethodDataSource(id);
+    }
+
+    for (String id : cRemove) {
+      descriptor.removeCountDataSource(id);
+    }
+    
+    
     for (MethodDataSourceDefinition def : items) {
       if (def.getId().trim().length() == 0) throw new IllegalArgumentException("Missing data source name. Each data source must be named.");
       if (def.getAggregateOp() == AggregateOp.COUNT) {

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import repast.simphony.data2.engine.DataSetDescriptor;
-import repast.simphony.data2.engine.DataSetDescriptor.DataSetType;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MutableBoolean;
@@ -525,7 +524,7 @@ public class NativeDataTypeManager {
 
 		// Create a DataSetDescriptor
 
-		DataSetDescriptor dsd = new DataSetDescriptor("DS1", DataSetType.NON_AGGREGATE);
+		DataSetDescriptor dsd = new DataSetDescriptor("DS1", DataSetDescriptor.DataSetType.NON_AGGREGATE);
 		dsd.setIncludeRandomSeed(true);
 		dsd.setIncludeTick(true);
 		dsd.setScheduleParameters(ScheduleParameters.createRepeating(1, 1));

@@ -10,6 +10,7 @@ import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.DescriptorActionLoader;
+import repast.simphony.scenario.Scenario;
 
 /**
  * @author Nick Collier
@@ -31,7 +32,8 @@ public class HistogramControllerActionIO extends
      * )
      */
     @Override
-    protected ControllerAction createAction(HistogramChartDescriptor data) {
+    protected ControllerAction createAction(HistogramChartDescriptor data, Scenario scenario) {
+      data.addScenarioChangedListener(scenario);
       return new HistogramComponentControllerAction(data);
     }
 

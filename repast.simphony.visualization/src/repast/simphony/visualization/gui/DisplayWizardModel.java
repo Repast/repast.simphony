@@ -129,7 +129,7 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   }
 
   public boolean containsValueLayer() {
-    return descriptor.getValueLayerNames().size() > 0;
+    return descriptor.getValueLayerCount() > 0;
   }
 
   /**

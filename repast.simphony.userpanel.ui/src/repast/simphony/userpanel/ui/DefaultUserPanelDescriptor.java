@@ -1,26 +1,27 @@
 package repast.simphony.userpanel.ui;
 
-import repast.simphony.engine.schedule.DefaultDescriptor;
+import repast.simphony.scenario.AbstractDescriptor;
 
-public class DefaultUserPanelDescriptor extends DefaultDescriptor implements UserPanelDescriptor{
-	
-	private Class userPanelCreator;
-	
-	public DefaultUserPanelDescriptor() {
-		this(null);
-	}
+public class DefaultUserPanelDescriptor extends AbstractDescriptor implements UserPanelDescriptor {
 
-	public DefaultUserPanelDescriptor(String name) {
-		super(name);
-	}
+  private Class userPanelCreator;
 
-	@Override
-	public Class<?> getUserPanelCreatorClass() {
-		return this.userPanelCreator;
-	}
+  public DefaultUserPanelDescriptor() {
+    this("");
+  }
 
-	@Override
-	public void setUserPanelCreatorClass(Class<?> clazz) {
-		this.userPanelCreator = clazz;
-	}
+  public DefaultUserPanelDescriptor(String name) {
+    super(name);
+  }
+
+  @Override
+  public Class<?> getUserPanelCreatorClass() {
+    return this.userPanelCreator;
+  }
+
+  @Override
+  public void setUserPanelCreatorClass(Class<?> clazz) {
+    if (this.userPanelCreator == null || !userPanelCreator.equals(clazz))
+      this.userPanelCreator = clazz;
+  }
 }

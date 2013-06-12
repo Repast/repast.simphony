@@ -98,11 +98,26 @@ public class AgentSelectionStep extends PanelWizardStep {
     DisplayDescriptor descriptor = model.getDescriptor();
 
     ListModel listModel = panel.target.getModel();
+    boolean reset = false;
+    Map<String, Integer> layerOrders = descriptor.getLayerOrders();
+    if (layerOrders.size() == listModel.getSize()) {
+      for (int i = 0, n = listModel.getSize(); i < n; i++) {
+        AgentData agent = (AgentData) listModel.getElementAt(i);
+        Integer val = layerOrders.get(agent.getClassName());
+        if (val == null || val != n - i - 1) {
+          reset = true;
+        }
+      }
+    } else {
+      reset = true;
+    }
 
-    descriptor.getLayerOrders().clear();
-    for (int i = 0, n = listModel.getSize(); i < n; i++) {
-      AgentData agent = (AgentData) listModel.getElementAt(i);
-      descriptor.addLayerOrder(agent.getClassName(), n - i - 1);
+    if (reset) {
+      layerOrders.clear();
+      for (int i = 0, n = listModel.getSize(); i < n; i++) {
+        AgentData agent = (AgentData) listModel.getElementAt(i);
+        descriptor.addLayerOrder(agent.getClassName(), n - i - 1);
+      }
     }
 
     Map<String, String> styles = new HashMap<String, String>(descriptor.getStyles());
@@ -156,7 +171,7 @@ public class AgentSelectionStep extends PanelWizardStep {
           unorderedTarget.add(new AgentData(className));
       }
     }
-    
+
     Collections.sort(orders);
     for (int i : orders)
       target.add(i, orderedMap.get(i));

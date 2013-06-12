@@ -23,345 +23,347 @@ import java.util.*;
  */
 public class ScenarioTree extends JTree {
 
-	private static ScenarioTreeCellRenderer SCENARIO_TREE_CELL_RENDERER;
+  private static ScenarioTreeCellRenderer SCENARIO_TREE_CELL_RENDERER;
 
-	static {
-		SCENARIO_TREE_CELL_RENDERER = new ScenarioTreeCellRenderer();
-	}
+  static {
+    SCENARIO_TREE_CELL_RENDERER = new ScenarioTreeCellRenderer();
+  }
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
+  private ControllerRegistry registry;
+  private Scenario scenario;
+  private UIActionExtensions exts;
+  private Map<Object, Pair<Object, ScenarioNode>> nodeMap = new HashMap<Object, Pair<Object, ScenarioNode>>();
 
-	private ControllerRegistry registry;
-	private Scenario scenario;
-	private UIActionExtensions exts;
-	private Map<Object, Pair<Object, ScenarioNode>> nodeMap = new HashMap<Object, Pair<Object, ScenarioNode>>();
+  public ScenarioTree(UIActionExtensions exts) {
+    super(new DefaultTreeModel(new ScenarioNode(new DefaultActionUI("Empty Tree"), "")));
+    this.exts = exts;
+    this.setCellRenderer(SCENARIO_TREE_CELL_RENDERER);
 
-	public ScenarioTree(UIActionExtensions exts) {
-		super(new DefaultTreeModel(new ScenarioNode(new DefaultActionUI("Empty Tree"), "")));
-		this.exts = exts;
-		this.setCellRenderer(SCENARIO_TREE_CELL_RENDERER);
+    addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+          showDialog(e.getPoint());
+        }
 
-		addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					showDialog(e.getPoint());
-				}
+        // todo is this true?
+        // linux I think does the trigger in clicked
+        else if (e.isPopupTrigger()) {
+          ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
+          showPopupMenu(e);
+        }
+      }
 
-				// todo is this true?
-				// linux I think does the trigger in clicked
-				else if (e.isPopupTrigger()) {
-					ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
-					showPopupMenu(e);
-				}
-			}
+      // for OS X
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
+          showPopupMenu(e);
+        }
+      }
 
-			// for OS X
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
-					showPopupMenu(e);
-				}
-			}
+      public void mouseReleased(MouseEvent e) {
+        // windows, I think, does the trigger in released
+        if (e.isPopupTrigger()) {
+          ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
+          showPopupMenu(e);
+        }
+      }
+    });
 
-			public void mouseReleased(MouseEvent e) {
-				// windows, I think, does the trigger in released
-				if (e.isPopupTrigger()) {
-					ScenarioTree.this.setSelectionPath(getPathForLocation(e.getX(), e.getY()));
-					showPopupMenu(e);
-				}
-			}
-		});
+    addKeyListener(new KeyAdapter() {
+      public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+          deleteNodes();
+        }
+      }
+    });
+  }
 
-		addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-					deleteNodes();
-				}
-			}
-		});
-	}
+  private void deleteNodes() {
+    ScenarioNode[] nodes = getSelectedNodes();
+    if (nodes == null) {
+      return;
+    }
 
-	private void deleteNodes(){
-		ScenarioNode[] nodes = getSelectedNodes();
-		if (nodes == null) {
-			return;
-		}
+    Object root = getModel().getRoot();
 
-		Object root = getModel().getRoot();
+    // build the string representation of these nodes
+    StringBuilder builder = new StringBuilder();
+    boolean foundAtLeastOne = true;
+    for (int i = 0; i < nodes.length; i++) {
+      // for now just disallow deleting top level context and root
+      if (nodes[i].equals(root) || nodes[i].getParent().equals(root)) {
+        continue;
+      }
+      foundAtLeastOne = true;
+      if (i != 0) {
+        builder.append(", ");
+      }
+      builder.append(nodes[i].getUIRepresentation().getLabel());
+    }
 
-		// build the string representation of these nodes
-		StringBuilder builder = new StringBuilder();
-		boolean foundAtLeastOne = true;
-		for (int i = 0; i < nodes.length; i++) {
-			// for now just disallow deleting top level context and root
-			if (nodes[i].equals(root) || nodes[i].getParent().equals(root)) {
-				continue;
-			}
-			foundAtLeastOne = true;
-			if (i != 0) {
-				builder.append(", ");
-			}
-			builder.append(nodes[i].getUIRepresentation().getLabel());
-		}
+    if (foundAtLeastOne) {
+      int res = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(ScenarioTree.this),
+          "Delete '" + builder.toString() + "'?", "Delete Action Tree Item",
+          JOptionPane.YES_NO_OPTION);
+      if (res == JOptionPane.YES_OPTION) {
+        // for now just disallow deleting top level context and root
+        for (ScenarioNode node : nodes) {
+          if (!node.equals(root) && !node.getParent().equals(root)) {
+            removeNode(findActionForNode(node));
+          }
+        }
+      }
+    }
+  }
 
-		if (foundAtLeastOne) {
-			int res = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(ScenarioTree.this),
-					"Delete '" + builder.toString() + "'?", "Delete Action Tree Item",
-					JOptionPane.YES_NO_OPTION);
-			if (res == JOptionPane.YES_OPTION) {
-				// for now just disallow deleting top level context and root
-				for (ScenarioNode node : nodes) {
-					if (!node.equals(root) && !node.getParent().equals(root)) {
-						removeNode(findActionForNode(node));									
-					}
-				}
-			}
-		}
-	}
+  private ControllerAction findActionForNode(ScenarioNode node) {
+    for (Map.Entry<Object, Pair<Object, ScenarioNode>> entry : nodeMap.entrySet()) {
+      if (entry.getValue().getSecond().equals(node))
+        return (ControllerAction) entry.getKey();
+    }
+    return null;
+  }
 
-	private ControllerAction findActionForNode(ScenarioNode node) {
-		for (Map.Entry<Object, Pair<Object, ScenarioNode>> entry : nodeMap.entrySet()) {
-			if (entry.getValue().getSecond().equals(node)) return (ControllerAction)entry.getKey();
-		}
-		return null;
-	}
+  private ScenarioNode getSelectedNode() {
+    TreePath path = getSelectionPath();
+    if (path != null) {
+      return (ScenarioNode) path.getLastPathComponent();
+    }
+    return null;
+  }
 
-	private ScenarioNode getSelectedNode() {
-		TreePath path = getSelectionPath();
-		if (path != null) {
-			return (ScenarioNode) path.getLastPathComponent();
-		}
-		return null;
-	}
+  private ScenarioNode[] getSelectedNodes() {
+    TreePath[] paths = getSelectionPaths();
+    if (paths == null) {
+      return null;
+    }
+    ScenarioNode[] nodes = new ScenarioNode[paths.length];
+    for (int i = 0; i < paths.length; i++) {
+      nodes[i] = (ScenarioNode) paths[i].getLastPathComponent();
+    }
+    return nodes;
+  }
 
-	private ScenarioNode[] getSelectedNodes() {
-		TreePath[] paths = getSelectionPaths();
-		if (paths == null) {
-			return null;
-		}
-		ScenarioNode[] nodes = new ScenarioNode[paths.length];
-		for (int i = 0; i < paths.length; i++) {
-			nodes[i] = (ScenarioNode) paths[i].getLastPathComponent();
-		}
-		return nodes;
-	}
+  private void showPopupMenu(MouseEvent evt) {
+    TreePath path = getPathForLocation(evt.getX(), evt.getY());
+    if (path != null) {
+      int row = getRowForPath(path);
+      ScenarioNode node = (ScenarioNode) path.getLastPathComponent();
+      ActionUI rep = node.getUIRepresentation();
+      Object root = getModel().getRoot();
+      JPopupMenu menu = rep.getPopupMenu(new ScenarioTreeEvent(node.getContextID(), scenario,
+          registry, this, row));
+      if (menu != null) {
+        menu.show(this, evt.getX(), evt.getY());
+      } else if (!node.equals(root) && !node.getParent().equals(root) && node.isLeaf()) {
+        menu = createDelPopupMenu();
+        menu.show(this, evt.getX(), evt.getY());
+      }
 
-	private void showPopupMenu(MouseEvent evt) {
-		TreePath path = getPathForLocation(evt.getX(), evt.getY());
-		if (path != null) {
-			int row = getRowForPath(path);
-			ScenarioNode node = (ScenarioNode) path.getLastPathComponent();
-			ActionUI rep = node.getUIRepresentation();
-			Object root = getModel().getRoot();
-			JPopupMenu menu = rep.getPopupMenu(new ScenarioTreeEvent(node.getContextID(), scenario, registry, this, row));
-			if (menu != null) {
-				menu.show(this, evt.getX(), evt.getY());
-			}
-			else if (!node.equals(root) && !node.getParent().equals(root) && node.isLeaf()){
-				menu = createDelPopupMenu();
-				menu.show(this, evt.getX(), evt.getY());
-			}
+      /*
+       * else { ScenarioTreeEvent scenarioEvt = new
+       * ScenarioTreeEvent(node.getContextID(), scenario, registry, this,
+       * this.getRowForPath(path)); Editor editor = rep.getEditor(scenarioEvt);
+       * if (editor != null) { menu = new PropertiesMenu(editor);
+       * menu.show(this, evt.getX(), evt.getY()); } }
+       */
+    }
+  }
 
-			/* else {
-				ScenarioTreeEvent scenarioEvt = new ScenarioTreeEvent(node.getContextID(), scenario, registry, this,
-						this.getRowForPath(path));
-				Editor editor = rep.getEditor(scenarioEvt);
-				if (editor != null) {
-					 menu = new PropertiesMenu(editor);
-					 menu.show(this, evt.getX(), evt.getY());
-				}
-			}*/
-		}
-	}
+  /**
+   * A simple popup menu for node deletion
+   * 
+   * @return
+   */
+  private JPopupMenu createDelPopupMenu() {
 
-	/**
-	 * A simple popup menu for node deletion
-	 * @return
-	 */
-	private JPopupMenu createDelPopupMenu(){
+    JPopupMenu menu = new JPopupMenu();
+    menu.add((Action) new deleteAction());
 
-		JPopupMenu menu = new JPopupMenu();
-		menu.add((Action) new deleteAction());
+    return menu;
+  }
 
-		return menu;
-	}
-	
-	/**
-	 * Action for node deletion menu item
-	 * @author tatara
-	 *
-	 */
-	private class deleteAction extends AbstractAction {
-    
-		public deleteAction(){
-		  super("Delete");
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			deleteNodes();
-		}
-	}
+  /**
+   * Action for node deletion menu item
+   * 
+   * @author tatara
+   * 
+   */
+  private class deleteAction extends AbstractAction {
 
-	@SuppressWarnings("serial")
-	protected class PropertiesMenu extends JPopupMenu {
-		public PropertiesMenu(final Editor editor) {
-			JMenuItem item = new JMenuItem("Properties");
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editor.display((JFrame) SwingUtilities.getWindowAncestor(ScenarioTree.this));
-				}
-			});
-			add(item);
-		}
-	}
+    public deleteAction() {
+      super("Delete");
+    }
 
-	private void showDialog(Point pt) {
-		TreePath path = getPathForLocation(pt.x, pt.y);
-		if (path != null) {
-			ScenarioNode node = (ScenarioNode) path.getLastPathComponent();
-			ActionUI rep = node.getUIRepresentation();
-			ScenarioTreeEvent evt = new ScenarioTreeEvent(node.getContextID(), scenario, registry, this,
-					this.getRowForPath(path));
-			Editor editor = rep.getEditor(evt);
-			if (editor != null) {
-				editor.display((JFrame) SwingUtilities.getWindowAncestor(this));
-				if (!editor.wasCanceled()) {
-					((DefaultTreeModel) getModel()).nodeChanged(node);
-				}
-			}
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+      deleteNodes();
+    }
+  }
 
-	public void setControllerRegistry(Scenario scenario, ControllerRegistry registry) {
-		this.registry = registry;
-		this.scenario = scenario;
-		DefaultTreeModel model = (DefaultTreeModel) getModel();
-		ScenarioNode root = (ScenarioNode) model.getRoot();
-		root.removeAllChildren();
-		root = new ScenarioNode(new DefaultActionUI(registry.getName()), "");
-		model.setRoot(root);
-		nodeMap.clear();
-		fillTree(root, registry);
-		model.nodeStructureChanged(root);
-		expandAll();
-	}
+  @SuppressWarnings("serial")
+  protected class PropertiesMenu extends JPopupMenu {
+    public PropertiesMenu(final Editor editor) {
+      JMenuItem item = new JMenuItem("Properties");
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          editor.display((JFrame) SwingUtilities.getWindowAncestor(ScenarioTree.this));
+        }
+      });
+      add(item);
+    }
+  }
 
-	public void removeNode(ControllerAction action) {
-		Pair<Object, ScenarioNode> pair = nodeMap.remove(action);
-		ScenarioNode node = pair.getSecond();
-		ScenarioNode parent = (ScenarioNode) node.getParent();
-		parent.remove(node);
-		registry.removeAction(pair.getFirst(), action);
-		DefaultTreeModel model = (DefaultTreeModel) getModel();
-		model.nodeStructureChanged(parent);
-	}
+  private void showDialog(Point pt) {
+    TreePath path = getPathForLocation(pt.x, pt.y);
+    if (path != null) {
+      ScenarioNode node = (ScenarioNode) path.getLastPathComponent();
+      ActionUI rep = node.getUIRepresentation();
+      ScenarioTreeEvent evt = new ScenarioTreeEvent(node.getContextID(), scenario, registry, this,
+          this.getRowForPath(path));
+      Editor editor = rep.getEditor(evt);
+      if (editor != null) {
+        editor.display((JFrame) SwingUtilities.getWindowAncestor(this));
+        if (!editor.wasCanceled()) {
+          ((DefaultTreeModel) getModel()).nodeChanged(node);
+        }
+      }
+    }
+  }
 
-	private void fillTree(ScenarioNode root, ControllerRegistry registry) {
-		Tree<Object> contextGraph = registry.getContextIdTree();
-		Object contextRoot = contextGraph.getRoot();
-		addNode(root, contextRoot, contextGraph);
-	}
+  public void setControllerRegistry(Scenario scenario, ControllerRegistry registry) {
+    this.registry = registry;
+    this.scenario = scenario;
+    DefaultTreeModel model = (DefaultTreeModel) getModel();
+    ScenarioNode root = (ScenarioNode) model.getRoot();
+    root.removeAllChildren();
+    root = new ScenarioNode(new DefaultActionUI(registry.getName()), "");
+    model.setRoot(root);
+    nodeMap.clear();
+    fillTree(root, registry);
+    model.nodeStructureChanged(root);
+    expandAll();
+  }
 
+  public void removeNode(ControllerAction action) {
+    Pair<Object, ScenarioNode> pair = nodeMap.remove(action);
+    ScenarioNode node = pair.getSecond();
+    ScenarioNode parent = (ScenarioNode) node.getParent();
+    parent.remove(node);
+    registry.removeAction(pair.getFirst(), action);
+    DefaultTreeModel model = (DefaultTreeModel) getModel();
+    model.nodeStructureChanged(parent);
+    scenario.setDirty(true);
+  }
 
-	private void addNode(ScenarioNode parent, Object contextID, Tree<Object> graph) {
-		ScenarioNode contextNode = new ScenarioNode(new DefaultActionUI(contextID.toString()), contextID);
-		parent.add(contextNode);
+  private void fillTree(ScenarioNode root, ControllerRegistry registry) {
+    Tree<Object> contextGraph = registry.getContextIdTree();
+    Object contextRoot = contextGraph.getRoot();
+    addNode(root, contextRoot, contextGraph);
+  }
 
-		Tree<ControllerAction> actionGraph = registry.getActionTree(contextID);
-		ControllerAction action = actionGraph.getRoot();
-		fillActions(contextNode, action, null, actionGraph, contextID);
+  private void addNode(ScenarioNode parent, Object contextID, Tree<Object> graph) {
+    ScenarioNode contextNode = new ScenarioNode(new DefaultActionUI(contextID.toString()),
+        contextID);
+    parent.add(contextNode);
 
-		for (Object obj : graph.getChildren(contextID)) {
-			addNode(contextNode, obj, graph);
-		}
-	}
+    Tree<ControllerAction> actionGraph = registry.getActionTree(contextID);
+    ControllerAction action = actionGraph.getRoot();
+    fillActions(contextNode, action, null, actionGraph, contextID);
 
-	private void fillActions(ScenarioNode parent, ControllerAction action, ActionUI uiRep, Tree<ControllerAction> actionGraph,
-			Object contextID) {
+    for (Object obj : graph.getChildren(contextID)) {
+      addNode(contextNode, obj, graph);
+    }
+  }
 
-		// don't want to show the root action
-		if (!action.equals(actionGraph.getRoot())) {
-			if (uiRep == null) {
-				uiRep = createUIRepresentation(action);				
-			}
-			ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
-			nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
-			parent.add(actionNode);
-			parent = actionNode;
-		}
+  private void fillActions(ScenarioNode parent, ControllerAction action, ActionUI uiRep,
+      Tree<ControllerAction> actionGraph, Object contextID) {
 
-		// first build the action ui's so we can sort by them
-		HashMap<ActionUI, ControllerAction> actionMap = new HashMap<ActionUI, ControllerAction>();
+    // don't want to show the root action
+    if (!action.equals(actionGraph.getRoot())) {
+      if (uiRep == null) {
+        uiRep = createUIRepresentation(action);
+      }
+      ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
+      nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
+      parent.add(actionNode);
+      parent = actionNode;
+    }
 
-		ArrayList<ActionUI> childUIActions = new ArrayList<ActionUI>();
-		for (ControllerAction child : actionGraph.getChildren(action)) {
-			ActionUI ui = createUIRepresentation(child);
-			actionMap.put(ui, child);
-			childUIActions.add(ui);
-		}
+    // first build the action ui's so we can sort by them
+    HashMap<ActionUI, ControllerAction> actionMap = new HashMap<ActionUI, ControllerAction>();
 
-		// now sort them so they show up in the GUI in a reasonable order
-		Collections.sort(childUIActions, new LabelComparator()); 
+    ArrayList<ActionUI> childUIActions = new ArrayList<ActionUI>();
+    for (ControllerAction child : actionGraph.getChildren(action)) {
+      ActionUI ui = createUIRepresentation(child);
+      actionMap.put(ui, child);
+      childUIActions.add(ui);
+    }
 
-		for (ActionUI childUI : childUIActions) {
-			fillActions(parent, actionMap.get(childUI), childUI, actionGraph, contextID);
-		}
-	}
+    // now sort them so they show up in the GUI in a reasonable order
+    Collections.sort(childUIActions, new LabelComparator());
 
-	public static class LabelComparator implements Comparator<ActionUI> {
-		public int compare(ActionUI o1, ActionUI o2) {
-			return o1.getLabel().compareTo(o2.getLabel());
-		}
-	}
+    for (ActionUI childUI : childUIActions) {
+      fillActions(parent, actionMap.get(childUI), childUI, actionGraph, contextID);
+    }
+  }
 
-	private ActionUI createUIRepresentation(ControllerAction action) {
-		ActionUI uiRep = exts.getEditor(action);
+  public static class LabelComparator implements Comparator<ActionUI> {
+    public int compare(ActionUI o1, ActionUI o2) {
+      return o1.getLabel().compareTo(o2.getLabel());
+    }
+  }
 
-		if (uiRep == null) {
-			uiRep = new DefaultActionUI(action.toString());
-		}
-		return uiRep;
-	}
+  private ActionUI createUIRepresentation(ControllerAction action) {
+    ActionUI uiRep = exts.getEditor(action);
 
-	public void expandAll() {
-		TreeNode root = (TreeNode) getModel().getRoot();
+    if (uiRep == null) {
+      uiRep = new DefaultActionUI(action.toString());
+    }
+    return uiRep;
+  }
 
-		// Traverse tree from root
-		expandAll(new TreePath(root), true);
-	}
+  public void expandAll() {
+    TreeNode root = (TreeNode) getModel().getRoot();
 
-	private void expandAll(TreePath parent, boolean expand) {
-		// Traverse children
-		TreeNode node = (TreeNode) parent.getLastPathComponent();
-		if (node.getChildCount() >= 0) {
-			for (Enumeration e = node.children(); e.hasMoreElements();) {
-				TreeNode n = (TreeNode) e.nextElement();
-				TreePath path = parent.pathByAddingChild(n);
-				expandAll(path, expand);
-			}
-		}
+    // Traverse tree from root
+    expandAll(new TreePath(root), true);
+  }
 
-		// Expansion or collapse must be done bottom-up
-		if (expand) {
-			expandPath(parent);
-		} else {
-			collapsePath(parent);
-		}
-	}
+  private void expandAll(TreePath parent, boolean expand) {
+    // Traverse children
+    TreeNode node = (TreeNode) parent.getLastPathComponent();
+    if (node.getChildCount() >= 0) {
+      for (Enumeration e = node.children(); e.hasMoreElements();) {
+        TreeNode n = (TreeNode) e.nextElement();
+        TreePath path = parent.pathByAddingChild(n);
+        expandAll(path, expand);
+      }
+    }
 
-	public void addControllerAction(int row, ControllerAction action) {
-		TreePath path = getPathForRow(row);
-		if (path == null) throw new IllegalArgumentException("Invalid tree row");
-		ScenarioNode parent = (ScenarioNode) path.getLastPathComponent();
-		ActionUI uiRep = createUIRepresentation(action);
-		Object contextID = parent.getContextID();
-		ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
-		nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
-		parent.add(actionNode);
-		if (!isExpanded(path)) {
-			expandPath(path);
-		}
-		((DefaultTreeModel) getModel()).nodeStructureChanged(parent);
-	}
+    // Expansion or collapse must be done bottom-up
+    if (expand) {
+      expandPath(parent);
+    } else {
+      collapsePath(parent);
+    }
+  }
+
+  public void addControllerAction(int row, ControllerAction action) {
+    TreePath path = getPathForRow(row);
+    if (path == null)
+      throw new IllegalArgumentException("Invalid tree row");
+    ScenarioNode parent = (ScenarioNode) path.getLastPathComponent();
+    ActionUI uiRep = createUIRepresentation(action);
+    Object contextID = parent.getContextID();
+    ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
+    nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
+    parent.add(actionNode);
+    if (!isExpanded(path)) {
+      expandPath(path);
+    }
+    ((DefaultTreeModel) getModel()).nodeStructureChanged(parent);
+  }
 }

@@ -14,6 +14,7 @@ import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.ActionSaver;
 import repast.simphony.scenario.DescriptorActionLoader;
+import repast.simphony.scenario.Scenario;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
@@ -39,7 +40,8 @@ public class TimeSeriesControllerActionIO extends
      * )
      */
     @Override
-    protected ControllerAction createAction(TimeSeriesChartDescriptor data) {
+    protected ControllerAction createAction(TimeSeriesChartDescriptor data, Scenario scenario) {
+      data.addScenarioChangedListener(scenario);
       return new TimeSeriesComponentControllerAction(data);
     }
 
