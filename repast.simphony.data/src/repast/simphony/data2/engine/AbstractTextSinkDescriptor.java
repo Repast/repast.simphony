@@ -40,7 +40,10 @@ public abstract class AbstractTextSinkDescriptor extends AbstractDescriptor {
    *          the dataSet to set
    */
   public void setDataSet(String dataSet) {
-    this.dataSet = dataSet;
+    if (this.dataSet == null || !this.dataSet.equals(dataSet)) {
+      this.dataSet = dataSet;
+      scs.fireScenarioChanged(this, "dataSet");
+    }
   }
 
   /**
@@ -73,12 +76,12 @@ public abstract class AbstractTextSinkDescriptor extends AbstractDescriptor {
    *          the format to set
    */
   public void setFormat(FormatType format) {
-    if (format != this.format) {
+    if (this.format == null || format != this.format) {
       this.format = format;
       scs.fireScenarioChanged(this, "format");
     }
   }
-  
+
   public void removeSourceId(String sourceId) {
     if (sourceIds.contains(sourceId)) {
       sourceIds.remove(sourceId);
