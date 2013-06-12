@@ -85,13 +85,13 @@ public class ScenarioSaver {
     this.rootContext = rootContext;
   }
 
-  public void save(ActionExtensions ext, Scenario scenario, boolean saveModelSpec) throws Exception, ParseErrorException {
+  public void save(ActionExtensions ext, Scenario scenario) throws Exception, ParseErrorException {
     ioExts = ext.getIoExts();
     Tree<Object> contextGraph = registry.getContextIdTree();
     Object contextRoot = contextGraph.getRoot();
     saveContext(contextRoot, contextGraph);
 
-    saveScenario(scenario.getModelInitName(), scenario.getModelPluginPath(), saveModelSpec);
+    saveScenario(scenario.getModelInitName(), scenario.getModelPluginPath());
   }
 
   private void saveContext(Object contextID, Tree<Object> graph) {
@@ -125,7 +125,7 @@ public class ScenarioSaver {
     return new File(scenarioDir, b.toString());
   }
 
-  private void saveScenario(String modelInitName, File modelPluginPath, boolean saveModelSpec) throws Exception, ParseErrorException {
+  private void saveScenario(String modelInitName, File modelPluginPath) throws Exception, ParseErrorException {
     VelocityContext context = new VelocityContext();
     String template = getClass().getPackage().getName();
     template = template.replace('.', '/');
@@ -154,12 +154,6 @@ public class ScenarioSaver {
       } catch (Throwable ex) {
         LOG.warn("Error saving entry '" + entry + "'. Continuing saving.", ex);
       }
-    }
-
-    if (saveModelSpec) {
-      File ctxFile = new File(scenarioDir, ScenarioConstants.LEGACY_SCORE_FILE_NAME);
-      ContextFileWriter writer = new ContextFileWriter();
-      writer.write(ctxFile, rootContext);
     }
 
     Writer writer = new FileWriter(new File(scenarioDir, Scenario.SCENARIO_FILE_NAME));
