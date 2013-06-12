@@ -56,8 +56,12 @@ public class UnitsManager {
 //    		System.out.println("===================================");
 
     		List<String> units = eqn.getEquationUnits();
-
-    		if (!eqn.isArrayInitialization() && !isConsistent(eqn, units)) {
+    		
+    		if (eqn.getUnits() == null) {
+    			System.out.println("UNITS Not Specified: "+eqn.getCleanEquation());
+    			errors.put(eqn.getLhs(), eqn);
+    			consistent = false;
+    		} else if (!eqn.isArrayInitialization() && !isConsistent(eqn, units)) {
     			System.out.println("INCONSISTENT UNITS: "+eqn.getCleanEquation());
     			errors.put(eqn.getLhs(), eqn);
     			consistent = false;
