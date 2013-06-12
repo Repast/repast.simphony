@@ -565,6 +565,7 @@ public class RSApplication implements TickListener, RunListener {
           // delete
           // the backup
           FileUtils.delete(backup);
+          scenario.setDirty(false);
         }
 
       } catch (IOException e) {
