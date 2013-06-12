@@ -527,6 +527,7 @@ public class RSApplication implements TickListener, RunListener {
 
           for (File file : scenarioDir.listFiles(filter)) {
             FileUtils.copyFile(file, new File(backupDir, file.getName()));
+
             if (file.getName().startsWith("repast.simphony")
                 || file.getName().startsWith("scenario"))
               file.delete();
