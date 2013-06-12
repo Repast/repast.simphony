@@ -186,7 +186,7 @@ public class Scenario implements ScenarioChangedListener {
    */
   @Override
   public void scenarioChanged(ScenarioChangedEvent evt) {
-    System.out.println("Dirty: " + evt.getProperty());
+    //System.out.println("Dirty: " + evt.getProperty());
     dirty = true;
   }
 }
