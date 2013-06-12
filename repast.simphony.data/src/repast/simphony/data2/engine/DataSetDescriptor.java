@@ -194,7 +194,7 @@ public class DataSetDescriptor extends AbstractDescriptor {
 
   // ONLY FOR NON AGGREGATE COLLECTION
   public void setSourceType(String sourceType) {
-    if (!this.sourceType.equals(sourceType)) {
+    if (this.sourceType == null || !this.sourceType.equals(sourceType)) {
       this.sourceType = sourceType;
       scs.fireScenarioChanged(this, "sourceType");
     }
