@@ -565,7 +565,7 @@ public class RSApplication implements TickListener, RunListener {
     stop();
     storeSettings();
     int result = JOptionPane.YES_OPTION;
-    if (scenario.isDirty()) {
+    if (scenario != null && scenario.isDirty()) {
       result = JOptionPane.showConfirmDialog(gui.getFrame(),
           "Do you want to save the changes you made to the scenario?");
       if (result == JOptionPane.YES_OPTION) {
