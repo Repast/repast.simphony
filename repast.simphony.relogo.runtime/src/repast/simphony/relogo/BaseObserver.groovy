@@ -15,6 +15,12 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
 import org.apache.commons.lang3.math.NumberUtils
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import repast.simphony.relogo.factories.*
 import repast.simphony.ui.probe.ProbeID
@@ -60,20 +66,17 @@ public class BaseObserver extends AbstractObserver{
 
 	/**
 	 * Creates turtles of specific type from a CSV file.
+	 * Optionally provide an initialization closure.
 	 * 
 	 * @author Michael J. North
 	 * @author jozik
 	 * 
 	 * @param fileName the path to the CSV file
 	 * @param turtleType the class of turtle to create
-	 * @param defaultShape the turtle shape (default defaultShape is "default")
-	 * @param defaultSize the turtle size (default defaultSize is 1)
-	 * @param defaultHeading the heading of the turtle (default defaultHeading is 0)
-	 * @param defaultColor the turtle color (default defaultColor is white())
+	 * @param initClosure the initialization routine
 	 * 
 	 */
-	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType,
-			String defaultShape = "default", double defaultSize = 1, double defaultHeading = 0, double defaultColor = white()) {
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
 		AgentSet<E> result = new AgentSet<>();
 		// Read the data file.
 		List<String[]> rows = new CSVReader(
@@ -101,17 +104,6 @@ public class BaseObserver extends AbstractObserver{
 
 				// Create the next agent.
 				AgentSet turtleAgentSet = createTurtles(1, {
-					// Set the shape.
-					setShape(defaultShape)
-
-					// Set the size.
-					setSize(defaultSize)
-
-					// Set the default heading.
-					setHeading(defaultHeading)
-
-					// Set the default color.
-					setColor(defaultColor)
 
 					// Assign properties from the file.
 					for (field in matchedFieldList) {
@@ -130,9 +122,174 @@ public class BaseObserver extends AbstractObserver{
 				}
 			}
 		}
+		if (initClosure){
+			ask(result, initClosure)
+		}
 		return result
 	}
 
+
+	/**
+	 * Creates turtles of specific type from an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @author Michael J. North
+	 * @author Jonathan Ozik
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+
+		List<String> fields = getPublicFieldsAndProperties(turtleType)
+		AgentSet<E> newTurtles = new AgentSet<>();
+		Workbook wb;
+		Sheet sheet;
+		try {
+			wb = WorkbookFactory.create(new FileInputStream(fileName))
+			// Use the first sheet
+			sheet = wb.getSheetAt(0)
+			int firstRow = sheet.getFirstRowNum()
+			List<String> headerFields = []
+			// obtain the header fields
+			for (Cell cell in sheet.getRow(firstRow)) {
+				headerFields.add(cell.getStringCellValue())
+			}
+			List<String> fieldsToUse = fields.intersect(headerFields)
+			
+			for (Row row : sheet) {
+				if (row.getRowNum() != firstRow) {
+					createTurtles(1,{t ->
+						populateFieldValues(t,row,headerFields,fieldsToUse)
+						newTurtles.add(t)
+					},turtleType.getSimpleName())
+				}
+			}
+			if (initClosure){
+				ask(newTurtles, initClosure)
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newTurtles
+	}
+
+	/**
+	 * Creates ordered turtles of specific type from an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @author Michael J. North
+	 * @author Jonathan Ozik
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+
+		List<String> fields = getPublicFieldsAndProperties(turtleType)
+
+		Workbook wb;
+		Sheet sheet;
+		try {
+			wb = WorkbookFactory.create(new FileInputStream(fileName))
+			// Use the first sheet
+			sheet = wb.getSheetAt(0)
+			int firstRow = sheet.getFirstRowNum()
+			List<String> headerFields = []
+			// obtain the header fields
+			for (Cell cell in sheet.getRow(firstRow)) {
+				headerFields.add(cell.getStringCellValue())
+			}
+			List<String> fieldsToUse = fields.intersect(headerFields)
+			int turtleCounter = 0
+			for (Row row : sheet) {
+				if (row.getRowNum() != firstRow && row.getFirstCellNum() != -1) {
+					turtleCounter++
+				}
+			}
+			if (turtleCounter > 0){
+				AgentSet<E> newTurtles = createOrderedTurtles(turtleCounter, null, turtleType.getSimpleName())
+				Iterator turtleIterator = newTurtles.iterator()
+				def t
+				for (Row row : sheet) {
+					if (row.getRowNum() != firstRow) {
+						if (turtleIterator.hasNext()){
+							t = turtleIterator.next()
+							populateFieldValues(t,row,headerFields,fieldsToUse)
+						}
+					}
+				}
+				if (initClosure){
+					ask(newTurtles, initClosure)
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void populateFieldValues(def t, Row row, List<String> headerFields, List<String> fieldsToUse){
+		for (Cell cell : row) {
+			String fieldName = headerFields.get(cell.getColumnIndex())
+			if (fieldsToUse.contains(fieldName)){
+				Object o = getCellContent(cell)
+				if (o){
+					if (t."$fieldName" instanceof Integer) {
+						if (o instanceof Number){
+							t."$fieldName" = (Integer)o;
+						}
+					} else if (t."$fieldName" instanceof Double) {
+						if (o instanceof Number){
+							t."$fieldName" = (Double)o;
+						}
+					} else {
+						t."$fieldName" = o;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get Excel cell content according to type.
+	 * @param cell
+	 * @return
+	 */
+	protected Object getCellContent(Cell cell){
+		Object o = null;
+		switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_STRING:
+				o = cell.getRichStringCellValue().getString();
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					o = cell.getDateCellValue();
+				} else {
+					o = cell.getNumericCellValue();
+				}
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				o = cell.getBooleanCellValue();
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				o = cell.getCellFormula();
+				break;
+			default:
+				break;
+		}
+		return o;
+	}
+
+	/**
+	 * Utility method to gather all the names of the public fields and properties of a class.
+	 * @param clazz class
+	 * @return names of the public fields and properties of clazz
+	 */
 	protected List<String> getPublicFieldsAndProperties(Class clazz){
 		List<String> fields = []
 		Class curClass = clazz
