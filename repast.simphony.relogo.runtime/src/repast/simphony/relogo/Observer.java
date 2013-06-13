@@ -716,4 +716,77 @@ public interface Observer extends ProjectionListener {
 	 * @param closure the closure to execute (the closure input parameter is a java.beans.PropertyChangeEvent)
 	 */
 	public void registerModelParameterListener(String varName, final Closure closure);
+	
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * 
+	 * @author Michael J. North
+	 * @author jozik
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param defaultShape the turtle shape (default defaultShape is "default")
+	 * @param defaultSize the turtle size (default defaultSize is 1)
+	 * @param defaultHeading the heading of the turtle (default defaultHeading is 0)
+	 * @param defaultColor the turtle color (default defaultColor is white())
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType,
+			String defaultShape , double defaultSize , double defaultHeading, double defaultColor);
+	
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * 
+	 * @author Michael J. North
+	 * @author jozik
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param defaultShape the turtle shape (default defaultShape is "default")
+	 * @param defaultSize the turtle size (default defaultSize is 1)
+	 * @param defaultHeading the heading of the turtle (default defaultHeading is 0)
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType,
+			String defaultShape , double defaultSize , double defaultHeading);
+
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * 
+	 * @author Michael J. North
+	 * @author jozik
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param defaultShape the turtle shape (default defaultShape is "default")
+	 * @param defaultSize the turtle size (default defaultSize is 1)
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType,
+			String defaultShape , double defaultSize );
+
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * 
+	 * @author Michael J. North
+	 * @author jozik
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param defaultShape the turtle shape (default defaultShape is "default")
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType,
+			String defaultShape );
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * 
+	 * @author Michael J. North
+	 * @author jozik
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType);
 }

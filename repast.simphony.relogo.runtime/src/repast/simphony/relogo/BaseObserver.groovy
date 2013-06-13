@@ -59,12 +59,12 @@ public class BaseObserver extends AbstractObserver{
 
 
 	/**
-	 * This routine is a file reader that creates turtles from CSV files.
+	 * Creates turtles of specific type from a CSV file.
 	 * 
 	 * @author Michael J. North
 	 * @author jozik
 	 * 
-	 * @param fileName the path from the default system directory
+	 * @param fileName the path to the CSV file
 	 * @param turtleType the class of turtle to create
 	 * @param defaultShape the turtle shape (default defaultShape is "default")
 	 * @param defaultSize the turtle size (default defaultSize is 1)
