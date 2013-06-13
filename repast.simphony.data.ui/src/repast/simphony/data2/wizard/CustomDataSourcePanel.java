@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -89,22 +91,22 @@ public class CustomDataSourcePanel extends JPanel {
           return null;
         }
       }
-      
-      DataSource ds = (DataSource)clazz.newInstance();
+
+      DataSource ds = (DataSource) clazz.newInstance();
       return ds.getId();
-      
+
     } catch (ClassNotFoundException ex) {
       JOptionPane.showMessageDialog(this, "Custom data source class not found.",
           "Data Source Error", JOptionPane.ERROR_MESSAGE);
       return null;
     } catch (IllegalAccessException ex) {
-      JOptionPane.showMessageDialog(this, "Error instantiating data source.",
-          "Data Source Error", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(this, "Error instantiating data source.", "Data Source Error",
+          JOptionPane.ERROR_MESSAGE);
       ex.printStackTrace();
       return null;
     } catch (InstantiationException ex) {
-      JOptionPane.showMessageDialog(this, "Error instantiating data source.",
-          "Data Source Error", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(this, "Error instantiating data source.", "Data Source Error",
+          JOptionPane.ERROR_MESSAGE);
       ex.printStackTrace();
       return null;
     }
@@ -162,27 +164,43 @@ public class CustomDataSourcePanel extends JPanel {
     dsType = descriptor.getType();
     if (dsType == DataSetType.NON_AGGREGATE) {
       for (CustomDataSourceDefinition val : descriptor.customNonAggDataSources()) {
-        model.addElement(val);
+        model.addElement(new CustomDataSourceDefinition(val));
       }
     } else {
       for (CustomDataSourceDefinition val : descriptor.customAggDataSources()) {
-        model.addElement(val);
+        model.addElement(new CustomDataSourceDefinition(val));
       }
     }
     step.complete(this, model.size() > 0);
   }
 
   public void apply(DataSetDescriptor descriptor) {
-    descriptor.clearCustomDataSources();
+    List<CustomDataSourceDefinition> toAdd = new ArrayList<>();
     DefaultListModel model = (DefaultListModel) list.getModel();
+    for (int i = 0; i < model.size(); i++) {
+      toAdd.add((CustomDataSourceDefinition) model.getElementAt(i));
+    }
+
+    Iterable<CustomDataSourceDefinition> iter = dsType == DataSetType.AGGREGATE ? descriptor
+        .customAggDataSources() : descriptor.customNonAggDataSources();
+
+    List<String> toRemove = new ArrayList<>();
+    for (CustomDataSourceDefinition def : iter) {
+      if (!toAdd.remove(def)) {
+        toRemove.add(def.getId());
+      }
+    }
+    
+    for (String id : toRemove) {
+      descriptor.removeCustomDataSource(id);
+    }
+
     if (dsType == DataSetType.AGGREGATE) {
-      for (int i = 0; i < model.size(); i++) {
-        CustomDataSourceDefinition def = (CustomDataSourceDefinition) model.getElementAt(i);
+      for (CustomDataSourceDefinition def : toAdd) {
         descriptor.addAggregateDataSource(def.getId(), def.getDataSourceClassName());
       }
     } else {
-      for (int i = 0; i < model.size(); i++) {
-        CustomDataSourceDefinition def = (CustomDataSourceDefinition) model.getElementAt(i);
+      for (CustomDataSourceDefinition def : toAdd) {
         descriptor.addNonAggregateDataSource(def.getId(), def.getDataSourceClassName());
       }
     }
@@ -195,9 +213,10 @@ class CustomDSRenderer extends DefaultListCellRenderer {
   public Component getListCellRendererComponent(JList arg0, Object arg1, int arg2, boolean arg3,
       boolean arg4) {
     if (arg1 != null) {
-      arg1 = ((CustomDataSourceDefinition)arg1).getId() + " - " + ((CustomDataSourceDefinition)arg1).getDataSourceClassName();
+      arg1 = ((CustomDataSourceDefinition) arg1).getId() + " - "
+          + ((CustomDataSourceDefinition) arg1).getDataSourceClassName();
     }
     return super.getListCellRendererComponent(arg0, arg1, arg2, arg3, arg4);
   }
-  
+
 }

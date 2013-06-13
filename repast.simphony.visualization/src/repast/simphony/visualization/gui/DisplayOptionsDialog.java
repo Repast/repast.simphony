@@ -32,8 +32,7 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
     super();
     // create the model and the steps.
     this.action = action;
-    DisplayDescriptor descriptor = new DefaultDisplayDescriptor();
-    descriptor.set(action.getDescriptor());
+    DisplayDescriptor descriptor = new DefaultDisplayDescriptor(action.getDescriptor());
 
     NameOnlyGeneralStep gStep = new NameOnlyGeneralStep();
     SimplePath path = new SimplePath();
@@ -53,14 +52,12 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
 	  wizard);
     }
   }
-
-  /**
-   * calls super.ok() and then applies the descriptor to the action.
-   */
+  
   @Override
   protected void ok() {
     super.ok();
     DisplayDescriptor descriptor = model.getDescriptor();
+    ((DefaultDisplayDescriptor)action.getDescriptor()).set(descriptor);
     action.setDescriptor(descriptor);
   }
 

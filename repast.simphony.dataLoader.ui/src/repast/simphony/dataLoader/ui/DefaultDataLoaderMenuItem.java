@@ -38,6 +38,7 @@ public class DefaultDataLoaderMenuItem extends AbstractEditorMenuItem {
 			}
 			registry.addAction(contextID, parent, action);
 			evt.addActionToTree(action);
+			evt.getScenario().setDirty(true);
 		}
 	}
 	

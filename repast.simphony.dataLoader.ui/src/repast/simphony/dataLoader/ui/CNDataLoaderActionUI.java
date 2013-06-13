@@ -23,7 +23,7 @@ public class CNDataLoaderActionUI implements ActionUI {
   }
 
   public Editor getEditor(ScenarioTreeEvent evt) {
-    CNDataLoaderActionPanel panel = new CNDataLoaderActionPanel(action, evt.getScenario().getContext().getClasspath());
+    CNDataLoaderActionPanel panel = new CNDataLoaderActionPanel(action, evt.getScenario(), evt.getScenario().getContext().getClasspath());
     return new DefaultEditorDialog(panel);
   }
 

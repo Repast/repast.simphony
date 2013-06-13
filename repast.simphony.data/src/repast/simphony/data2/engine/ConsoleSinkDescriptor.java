@@ -13,10 +13,10 @@ import repast.simphony.data2.ConsoleDataSink.OutputStream;
  * @author Nick Collier
  */
 public class ConsoleSinkDescriptor extends AbstractTextSinkDescriptor {
-  
+
   private boolean enabled = true;
   private ConsoleDataSink.OutputStream outputStream = OutputStream.OUT;
-  
+
   /**
    * Creates a ConsoleSinkDescriptor.
    * 
@@ -35,10 +35,14 @@ public class ConsoleSinkDescriptor extends AbstractTextSinkDescriptor {
   }
 
   /**
-   * @param enabled the enabled to set
+   * @param enabled
+   *          the enabled to set
    */
   public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+    if (this.enabled != enabled) {
+      this.enabled = enabled;
+      scs.fireScenarioChanged(this, "enabled");
+    }
   }
 
   /**
@@ -49,10 +53,14 @@ public class ConsoleSinkDescriptor extends AbstractTextSinkDescriptor {
   }
 
   /**
-   * @param outputStream the outputStream to set
+   * @param outputStream
+   *          the outputStream to set
    */
   public void setOutputStream(ConsoleDataSink.OutputStream outputStream) {
-    this.outputStream = outputStream;
+    if (this.outputStream != outputStream) {
+      this.outputStream = outputStream;
+      scs.fireScenarioChanged(this, "outputStream");
+    }
   }
-  
+
 }

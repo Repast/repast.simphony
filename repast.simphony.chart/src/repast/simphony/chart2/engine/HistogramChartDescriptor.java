@@ -52,7 +52,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the barColor to set
    */
   public void setBarColor(Color barColor) {
-    this.barColor = barColor;
+    if (!this.barColor.equals(barColor)) {
+      this.barColor = barColor;
+      scs.fireScenarioChanged(this, "barColor");
+    }
   }
 
   /**
@@ -67,7 +70,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the histType to set
    */
   public void setHistType(HistogramType histType) {
-    this.histType = histType;
+    if (!this.histType.equals(histType)) {
+      this.histType = histType;
+      scs.fireScenarioChanged(this, "histType");
+    }
   }
 
   /**
@@ -82,7 +88,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the binCount to set
    */
   public void setBinCount(int binCount) {
-    this.binCount = binCount;
+    if (this.binCount != binCount) {
+      this.binCount = binCount;
+      scs.fireScenarioChanged(this, "binCount");
+    }
   }
 
   /**
@@ -97,7 +106,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the sourceId to set
    */
   public void setSourceId(String sourceId) {
-    this.sourceId = sourceId;
+    if (this.sourceId == null || !this.sourceId.equals(sourceId)) {
+      this.sourceId = sourceId;
+      scs.fireScenarioChanged(this, "sourceId");
+    }
   }
 
   /**
@@ -112,7 +124,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the outOfRange to set
    */
   public void setOutOfRangeHandling(OutOfRangeHandling outOfRange) {
-    this.outOfRange = outOfRange;
+    if (this.outOfRange != outOfRange) {
+      this.outOfRange = outOfRange;
+      scs.fireScenarioChanged(this, "outOfRange");
+    }
   }
 
   /**
@@ -127,7 +142,10 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the min to set
    */
   public void setMin(double min) {
-    this.min = min;
+    if (this.min != min) {
+      this.min = min;
+      scs.fireScenarioChanged(this, "min");
+    }
   }
 
   /**
@@ -142,6 +160,9 @@ public class HistogramChartDescriptor extends ChartDescriptor {
    *          the max to set
    */
   public void setMax(double max) {
-    this.max = max;
+    if (this.max != max) {
+      this.max = max;
+      scs.fireScenarioChanged(this, "max");
+    }
   }
 }

@@ -18,7 +18,7 @@ public class SimpleMethodTableModel extends AbstractTableModel {
   
   public SimpleMethodTableModel(Iterable<MethodDataSourceDefinition> defs) {
     for (MethodDataSourceDefinition def : defs) {
-      items.add(def);
+      items.add(new MethodDataSourceDefinition(def));
     }
   }
   
@@ -77,7 +77,17 @@ public class SimpleMethodTableModel extends AbstractTableModel {
   }
 
   public void apply(DataSetDescriptor descriptor) {
-    descriptor.clearMethodDataSources();
+    List<MethodDataSourceDefinition> toRemove = new ArrayList<>();
+    for (MethodDataSourceDefinition def : descriptor.methodDataSources()) {
+       if (!items.remove(def)) {
+         toRemove.add(def);
+       }
+    }
+    
+    for (MethodDataSourceDefinition def : toRemove) {
+      descriptor.removeMethodDataSource(def.getId());
+    }
+    
     for (MethodDataSourceDefinition def : items) {
       descriptor.addMethodDataSource(def.getId(), def.getObjTargetClass(), def.getMethodName());
     }

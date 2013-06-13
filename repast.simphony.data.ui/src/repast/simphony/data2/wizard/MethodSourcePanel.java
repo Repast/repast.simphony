@@ -58,7 +58,15 @@ public class MethodSourcePanel extends JPanel {
     }
 
     public String toString() {
-      return clazz.getSimpleName();
+      String str = clazz.getSimpleName();
+      if (str.length() == 0) {
+        str = clazz.getName();
+        int index = str.lastIndexOf(".");
+        if (index != -1) {
+          str = str.substring(index + 1, str.length());
+        }
+      }
+      return str;
     }
   }
 

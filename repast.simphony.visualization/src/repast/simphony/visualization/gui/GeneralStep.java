@@ -246,8 +246,8 @@ public class GeneralStep extends PanelWizardStep {
     if (curType != newType) {
       descriptor.setDisplayType(newType, true);
     }
-    descriptor.getProjections().clear();
-    descriptor.getValueLayerNames().clear();
+    descriptor.clearProjections();
+    descriptor.clearValueLayerNames();
     descriptor.clearProjectionDescriptors();
 
     for (DisplayItem item : selector.getSelectedItems()) {
