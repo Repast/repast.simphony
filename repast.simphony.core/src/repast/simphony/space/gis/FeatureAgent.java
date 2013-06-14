@@ -405,52 +405,52 @@ public class FeatureAgent<T> implements SimpleFeature {
 	//**************************************************************************
 
 	public Collection<Property> getProperties() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public Collection<Property> getProperties(Name arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public Collection<Property> getProperties(String arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public Property getProperty(Name arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public Property getProperty(String arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public Collection<? extends Property> getValue() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	public void setValue(Collection<Property> arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public void validate() throws IllegalAttributeException {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public void setValue(Object arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public void setAttributes(List<Object> arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public void setAttributes(Object[] arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 }

@@ -11,6 +11,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import repast.simphony.query.Query;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.GeometryUtils;
 import repast.simphony.space.gis.UTMFinder;
 import simphony.util.messages.MessageCenter;
 
@@ -69,52 +70,29 @@ public class GeographyWithin<T> implements Query<T> {
    * @param geography the containing geography
    * @param distance the distance in the specified units
    * @param units the distance units. These must be convertable to meters.
-   * @param location the source location whose surrounding neighbors we want
+   * @param geom the source geom whose surrounding neighbors we want
    */
-  public GeographyWithin(Geography geography, double distance, Unit units, Geometry location) {
-    init(geography, units.getConverterTo(SI.METER).convert(distance), location);
+  public GeographyWithin(Geography geography, double distance, Unit units, Geometry geom) {
+    init(geography, units.getConverterTo(SI.METER).convert(distance), geom);
   }
 
 
   /**
    * Creates GeographyWithinQuery that returns items in a specified geography
-   * that are within the specified distance from the centroid of the specified location.
+   * that are within the specified distance from the centroid of the specified geom.
    *
    * @param geography the containing geography
    * @param distance the distance in METERS
-   * @param location the source location whose surrounding neighbors we want
+   * @param geom the source geom whose surrounding neighbors we want
    */
-  public GeographyWithin(Geography geography, double distance, Geometry location) {
-    init(geography, distance, location);
+  public GeographyWithin(Geography geography, double distance, Geometry geom) {
+    init(geography, distance, geom);
   }
 
   private void init(Geography geography, double distance, Geometry geom) {
-    // don't convert if we are already in a meter based crs
-    boolean convert = !geography.getUnits(0).equals(SI.METER);
-
-    CoordinateReferenceSystem utm = null;
-    Geometry buffer = null;
-    CoordinateReferenceSystem crs = geography.getCRS();
-    Geometry tempGeom = geom;
-
-    try {
-      // convert p to UTM
-      if (convert) {
-        utm = UTMFinder.getUTMFor(geom, crs);
-        tempGeom = JTS.transform(geom, cFactory.createOperation(crs, utm).getMathTransform());
-      }
-
-      buffer = tempGeom.buffer(distance);
-
-      // convert buffer back to geography's crs.
-      if (convert) {
-        buffer = JTS.transform(buffer, cFactory.createOperation(utm, crs).getMathTransform());
-      }
-    } catch (FactoryException e) {
-      center.error("Error during crs transform", e);
-    } catch (TransformException e) {
-      center.error("Error during crs transform", e);
-    }
+   
+  	Geometry buffer = GeometryUtils.generateBuffer(geography, geom, distance);
+  	 
     query = new IntersectsQuery(geography, buffer);
     query.sourceObject = sourceObject;
     query.predicate = query.createPredicate();

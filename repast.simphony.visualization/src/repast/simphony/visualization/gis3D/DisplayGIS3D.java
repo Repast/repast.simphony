@@ -7,16 +7,20 @@ import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.SceneController;
 import gov.nasa.worldwind.StereoOptionSceneController;
 import gov.nasa.worldwind.StereoSceneController;
-import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
-import gov.nasa.worldwind.cache.BasicMemoryCache;
-import gov.nasa.worldwind.cache.MemoryCache;
 import gov.nasa.worldwind.event.NoOpInputHandler;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Extent;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
@@ -68,10 +72,6 @@ import simphony.util.ThreadUtilities;
 import com.jogamp.common.os.Platform;
 
 public class DisplayGIS3D extends AbstractDisplay {
-
-	public static final String BUFFERED_IMAGE_CACHE_SIZE = "gov.nasa.worldwind.avkey.BufferedImageCacheSize";
-	public static final String BUFFERED_IMAGE_CACHE_NAME = java.awt.image.BufferedImage.class.getName();
-	protected static final long DEFAULT_BUFFERED_IMAGE_CACHE_SIZE = 1000000;
 
 	static {
 		// this seems to fix jogl canvas flicker issues on windows
@@ -332,9 +332,44 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// TODO WWJ also loop through network and raster styles TBD
 
 		update();
+		
+		// Calculate the current view based on the bounding sector around all 
+		//  geometries in the georaphy.
+		//  TODO Geotools - set via option in DisplayDescriptor
+		ArrayList<LatLon> points = new ArrayList<LatLon>(); 
+		for (Object o : geog.getAllObjects()){
+			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));
+		}
+		Sector boundingSector = Sector.boundingSector(points);
+		double zoom = computeZoomForExtent(boundingSector);
+		
+		worldWindow.getView().setEyePosition(new Position(boundingSector.getCentroid(), zoom));
+	
 		render();
 	}
+	
+	/**
+	 * Calculates the zoom distance to fit the provided sector in view.
+	 * 
+	 * @param sector a sector for which a zoom distance will be calculated
+	 * @return the zoom distance the fits the provided sector in view
+	 */
+	public double computeZoomForExtent(Sector sector){
+		
+		Globe globe = worldWindow.getModel().getGlobe();
+		double ve = worldWindow.getSceneController().getVerticalExaggeration();
 
+		double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
+		double minElevation = minAndMaxElevations[0];
+		double maxElevation = minAndMaxElevations[1];
+
+		Extent extent = Sector.computeBoundingCylinder(globe, ve, sector, minElevation, maxElevation);
+
+		Angle fov = worldWindow.getView().getFieldOfView();
+
+		return extent.getRadius() / (fov.tanHalfAngle() * fov.cosHalfAngle());
+	}
+	
 	public void destroy() {
 		super.destroy();
 		for (Projection proj : initData.getProjections()) {
@@ -506,7 +541,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	public void resetHomeView() {
-
+    // TODO Geotools - modify from initial view set
 		// BasicOrbitView homeView = (BasicOrbitView)
 		// WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME);
 		//
