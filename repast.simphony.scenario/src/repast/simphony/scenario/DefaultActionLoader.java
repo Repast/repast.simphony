@@ -23,7 +23,7 @@ public class DefaultActionLoader<T extends ControllerAction> extends ObjectActio
 	}
 	
 	@Override
-	protected ControllerAction createAction(T data) {
+	protected ControllerAction createAction(T data, Scenario scenario) {
 		return data;
 	}
 	

@@ -4,9 +4,11 @@ package repast.simphony.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -437,7 +439,7 @@ public class RSApplication implements TickListener, RunListener {
     if (!loader.isTickFormatterLoaded()) {
       gui.setTickCountFormatter(new DefaultTickCountFormatter());
     }
-    
+
     // load any new probe extension from the model jpf file.
     new ProbeExtensionLoader(this, modelPluginLoader.getManager()).loadExtensions();
   }
@@ -467,7 +469,7 @@ public class RSApplication implements TickListener, RunListener {
       dir = scenario.getScenarioDirectory().getAbsolutePath();
     File f = FileChooserUtilities.getSaveDirectory(new File(dir));
     if (f != null) {
-      doSave(f, false, true);
+      doSave(f);
     }
   }
 
@@ -501,82 +503,48 @@ public class RSApplication implements TickListener, RunListener {
     if (scenario == null)
       saveAs();
     else
-      doSave(scenario.getScenarioDirectory(), true, false);
+      doSave(scenario.getScenarioDirectory());
   }
 
   // actually performs the scenario save
-  private void doSave(File scenarioDir, boolean saveParams, boolean saveModelSpec) {
+  private void doSave(File scenarioDir) {
     if (scenarioDir != null) {
-      File backup = null;
+      File backupDir = null;
       try {
         if (!scenarioDir.getAbsolutePath().endsWith(".rs")) {
           scenarioDir = new File(scenarioDir + ".rs");
         }
 
         if (scenarioDir.exists()) {
-          // make backup of copy of existing scenario dir
-          backup = FileUtils.backupDir(scenarioDir);
-          // delete the current scenarioDir
-          if (saveModelSpec) {
-            FileUtils.deleteIgnoreVC(scenarioDir);
-          } else {
-            FileUtils.deleteIgnoreVC(scenarioDir, ScenarioConstants.LEGACY_SCORE_FILE_NAME,
-                ScenarioConstants.CONTEXT_FILE_NAME, ScenarioConstants.USER_PATH_FILE_NAME,
-                ScenarioConstants.DEFAULT_FRAME_LAYOUT);
+          backupDir = new File(scenarioDir.getCanonicalPath() + "_backup");
+          backupDir.mkdirs();
+          FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+              return name.endsWith("xml");
+            }
+          };
+
+          for (File file : scenarioDir.listFiles(filter)) {
+            FileUtils.copyFile(file, new File(backupDir, file.getName()));
+
+            if (file.getName().startsWith("repast.simphony")
+                || file.getName().startsWith("scenario"))
+              file.delete();
           }
-          // recreate it as a clean empty dir
-          scenarioDir.mkdir();
-        } else {
-          scenarioDir.mkdirs();
+
+          ScenarioSaver scenarioSaver = new ScenarioSaver(controller.getControllerRegistry(),
+              scenarioDir, scenario.getContext());
+          scenarioSaver.save(actionExts, scenario);
+          scenario.setScenarioDirectory(scenarioDir);
+
+          FileUtils.delete(backupDir);
+          scenario.setDirty(false);
         }
 
-        ScenarioSaver scenarioSaver = new ScenarioSaver(controller.getControllerRegistry(),
-            scenarioDir, scenario.getContext());
-        scenarioSaver.save(actionExts, scenario, saveModelSpec);
-        scenario.setScenarioDirectory(scenarioDir);
-
-        // save the parameters to the parameters.xml file
-        File paramFile = new File(scenarioDir, "parameters.xml");
-        ParametersWriter pw = new ParametersWriter();
-        pw.writeSpecificationToFile(paramsManager.getParameters(), paramFile);
-
-        if (backup != null) {
-          // MLK - no longer need the extended_params.xml (now all
-          // params are
-          // written to the parameters.xml file
-          // if (saveParams) {
-          // // copy saved extended params file from the backup
-          // File source = new File(backup, "extended_params.xml");
-          // if (source.exists()) FileUtils.copyFile(source, new
-          // File(scenarioDir, "extended_params.xml"));
-          // }
-
-          File source = new File(backup, "plugin_jpf.xml");
-          if (source.exists())
-            FileUtils.copyFile(source, new File(scenarioDir, "plugin_jpf.xml"));
-
-          // restore the styles directory
-          source = new File(backup, "styles");
-          if (source.exists())
-            FileUtils.copyDirs(source, new File(scenarioDir, "styles"));
-
-          // assume if we got this far then everything ok and we can
-          // delete
-          // the backup
-          FileUtils.delete(backup);
-        }
-
-      } catch (IOException e) {
-        if (backup != null)
-          restoreScenario(backup, scenarioDir);
-        msgCenter.error("Error while saving scenario", e);
-      } catch (ParseErrorException e) {
-        if (backup != null)
-          restoreScenario(backup, scenarioDir);
-        msgCenter.error("Error while saving scenario", e);
       } catch (Exception e) {
-        if (backup != null)
-          restoreScenario(backup, scenarioDir);
+        if (backupDir != null)
+          restoreScenario(backupDir, scenarioDir);
         msgCenter.error("Error while saving scenario", e);
       }
     }
@@ -596,7 +564,15 @@ public class RSApplication implements TickListener, RunListener {
   public boolean close() {
     stop();
     storeSettings();
-    return true;
+    int result = JOptionPane.YES_OPTION;
+    if (scenario.isDirty()) {
+      result = JOptionPane.showConfirmDialog(gui.getFrame(),
+          "Do you want to save the changes you made to the scenario?");
+      if (result == JOptionPane.YES_OPTION) {
+        save();
+      }
+    }
+    return result != JOptionPane.CANCEL_OPTION;
   }
 
   /**
@@ -677,7 +653,7 @@ public class RSApplication implements TickListener, RunListener {
     gui.addPlaceHolderUserPanel();
     gui.addRunOptionsView(runOptions);
   }
-  
+
   // RunListener implementation
 
   /**

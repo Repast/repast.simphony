@@ -55,7 +55,7 @@ public class DisplayConfigurationWizard {
     model.add(new AgentSelectionStep(), new Condition() {
       public boolean evaluate(WizardModel wizardModel) {
         DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-        return model.getDescriptor().getProjections().size() > 0
+        return model.getDescriptor().getProjectionCount() > 0
             && !model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
       }
     });
@@ -63,7 +63,7 @@ public class DisplayConfigurationWizard {
     model.add(new StyleStep(), new Condition() {
       public boolean evaluate(WizardModel wizardModel) {
 	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.getDescriptor().getProjections().size() > 0
+	return model.getDescriptor().getProjectionCount() > 0
 	    && !model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
       }
     });

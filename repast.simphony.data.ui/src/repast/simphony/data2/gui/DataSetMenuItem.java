@@ -49,6 +49,8 @@ public class DataSetMenuItem extends AbstractEditorMenuItem {
       ControllerAction parent = registry.findAction(contextID, ControllerActionConstants.DATA_SET_ROOT);
       registry.addAction(contextID, parent, action);
       evt.addActionToTree(action);
+      action.getDescriptor().addScenarioChangedListener(evt.getScenario());
+      evt.getScenario().setDirty(true);
     }
   }
 }

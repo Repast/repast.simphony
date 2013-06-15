@@ -432,8 +432,8 @@ public class TranslatorRepastSimphony extends Translator {
     		// clouds are just graphic objects, but treated as Variable within the SystemModel
     		// we can safely ignore then...
     		
-    		if (variable.getType().equals(VariableType.CONSTANT) &&
-    				variable.getName().startsWith(CLOUD_IDENTIFIER))
+    		if (variable.getType().equals(VariableType.CONSTANT) && (
+    				variable.getName() == null || variable.getName().startsWith(CLOUD_IDENTIFIER)))
     			continue;
     		
 //    		System.out.println("Name: "+variable.getName());

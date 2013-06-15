@@ -170,6 +170,7 @@ public class ODECodeGenerator {
 		StringBuffer sb = new StringBuffer();
 
 		if (node != null) {
+			
 
 			// node is the root node of an expression
 			// if an operator:
@@ -178,6 +179,8 @@ public class ODECodeGenerator {
 			// right child  
 			if (Parser.isArithmeticOperator(node.getToken()) || Parser.isEqualSign(node.getToken())
 					|| Parser.isRelationalOperator(node.getToken())) {
+				if (!Parser.isEqualSign(node.getToken()))
+						sb.append("(");
 				if (!Parser.isUnaryOperator(node.getToken())) {
 					sb.append(generateExpression(TreeTraversal.getLhs(node))); // node.getChild()
 					sb.append(node.getToken());
@@ -186,6 +189,8 @@ public class ODECodeGenerator {
 					sb.append(Parser.translateUnaryOperator(node.getToken()));
 					sb.append(generateExpression(node.getChild())); // this is really a LHS location, but RHS of unary
 				}
+				if (!Parser.isEqualSign(node.getToken()))
+						sb.append(")");
 				return sb.toString();
 
 			} else if (Parser.isFunctionInvocation(node.getToken())) {
@@ -196,6 +201,7 @@ public class ODECodeGenerator {
 			}
 
 		}
+		
 		return sb.toString();
 	}
 	
