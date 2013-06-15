@@ -30,7 +30,7 @@ import au.com.bytecode.opencsv.CSVReader
 
 /**
  * @author jozik
- *
+ * @author Michael J. North
  */
 public class BaseObserver extends AbstractObserver{
 
@@ -63,13 +63,42 @@ public class BaseObserver extends AbstractObserver{
 	public void watch(Object watched){
 	}
 
+	/**
+	 * Creates default turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromCSV(String fileName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createTurtlesFromCSV(fileName,turtleType,initClosure)
+	}
 
 	/**
 	 * Creates turtles of specific type from a CSV file.
 	 * Optionally provide an initialization closure.
-	 * 
-	 * @author Michael J. North
-	 * @author jozik
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 * 
 	 * @param fileName the path to the CSV file
 	 * @param turtleType the class of turtle to create
@@ -127,14 +156,172 @@ public class BaseObserver extends AbstractObserver{
 		}
 		return result
 	}
-
+	
+	/**
+	 * Creates default ordered turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromCSV(String fileName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createOrderedTurtlesFromCSV(fileName, turtleType, initClosure)
+	}
 
 	/**
-	 * Creates turtles of specific type from an Excel file.
+	 * Creates ordered turtles of specific type from a CSV file.
 	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 *
-	 * @author Michael J. North
-	 * @author Jonathan Ozik
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
+		
+		// Read the data file.
+		List<String[]> rows = new CSVReader(
+				new InputStreamReader(new FileInputStream(fileName)))
+				.readAll()
+
+		// Define the fields lists.
+		List fullFieldList
+		List matchedFieldList
+
+		// Gather field information and count agents to make
+		int turtleCounter = 0
+		for (row in rows) {
+
+			// Check the fields list.
+			if (fullFieldList == null) {
+
+				// Fill in the field lists.
+				fullFieldList = (List) row
+				List<String> fields = getPublicFieldsAndProperties(turtleType)
+				matchedFieldList = fields.intersect((List) row)
+			} else {
+				turtleCounter++
+			}
+		}
+
+		if (turtleCounter > 0){
+			// Define an index tracker.
+			int index
+
+			// Create all the ordered turtles
+			AgentSet turtleAgentSet = createOrderedTurtles(turtleCounter, null, turtleType.getSimpleName())
+			Iterator turtleIterator = turtleAgentSet.iterator()
+			def t
+			boolean firstItem = true
+			for (row in rows){
+				if (firstItem){
+					firstItem = false
+				}
+				else {
+					t = turtleIterator.next()
+					for (field in matchedFieldList) {
+						index = fullFieldList.indexOf(field)
+						if (t."$field" instanceof Integer) {
+							t."$field" = NumberUtils.toInt(row[index])
+						} else if (t."$field" instanceof Double) {
+							t."$field" = NumberUtils.toDouble(row[index])
+						} else {
+							t."$field" = row[index]
+						}
+					}
+				}
+			}
+			
+			if (initClosure){
+				ask(turtleAgentSet, initClosure)
+			}
+			return turtleAgentSet
+		}
+		return new AgentSet<>();
+	}
+
+	/**
+	 * Creates default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcel(String fileName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createTurtlesFromExcel(fileName, turtleType,initClosure)
+	}
+
+	/**
+	 * Creates default turtles from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createTurtlesFromExcelWithSheet(fileName,sheetName,turtleType,initClosure)
+	}
+
+	/**
+	 * Creates turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 *
 	 * @param fileName the path from the default system directory
 	 * @param turtleType the class of turtle to create
@@ -142,6 +329,30 @@ public class BaseObserver extends AbstractObserver{
 	 *
 	 */
 	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+		return createTurtlesFromExcelWithSheet(fileName, null, turtleType, initClosure)
+	}
+
+	/**
+	 * Creates turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
 
 		List<String> fields = getPublicFieldsAndProperties(turtleType)
 		AgentSet<E> newTurtles = new AgentSet<>();
@@ -149,28 +360,41 @@ public class BaseObserver extends AbstractObserver{
 		Sheet sheet;
 		try {
 			wb = WorkbookFactory.create(new FileInputStream(fileName))
-			// Use the first sheet
-			sheet = wb.getSheetAt(0)
-			int firstRow = sheet.getFirstRowNum()
-			List<String> headerFields = []
-			// obtain the header fields
-			for (Cell cell in sheet.getRow(firstRow)) {
-				headerFields.add(cell.getStringCellValue())
-			}
-			List<String> fieldsToUse = fields.intersect(headerFields)
-			
-			for (Row row : sheet) {
-				if (row.getRowNum() != firstRow) {
-					createTurtles(1,{t ->
-						populateFieldValues(t,row,headerFields,fieldsToUse)
-						newTurtles.add(t)
-					},turtleType.getSimpleName())
+			if (wb){
+				if (sheetName){
+					sheet = wb.getSheet(sheetName)
+				}
+				else {
+					// Use the first sheet
+					sheet = wb.getSheetAt(0)
+				}
+				if (sheet){
+					int firstRow = sheet.getFirstRowNum()
+					List<String> headerFields = []
+					// obtain the header fields
+					for (Cell cell in sheet.getRow(firstRow)) {
+						headerFields.add(cell.getStringCellValue())
+					}
+					List<String> fieldsToUse = fields.intersect(headerFields)
+
+					for (Row row : sheet) {
+						if (row.getRowNum() != firstRow) {
+							createTurtles(1,{t ->
+								populateFieldValues(t,row,headerFields,fieldsToUse)
+								newTurtles.add(t)
+							},turtleType.getSimpleName())
+						}
+					}
+					if (initClosure){
+						ask(newTurtles, initClosure)
+					}
+				}
+				else{
+					if (sheetName != null){
+						throw new IOException("Sheet ${sheetName} was not found in workbook ${fileName}.");
+					}
 				}
 			}
-			if (initClosure){
-				ask(newTurtles, initClosure)
-			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -178,11 +402,55 @@ public class BaseObserver extends AbstractObserver{
 	}
 
 	/**
-	 * Creates ordered turtles of specific type from an Excel file.
+	 * Creates ordered default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcel(String fileName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createOrderedTurtlesFromExcel(fileName,turtleType,initClosure)
+	}
+
+	/**
+	 * Creates ordered default turtles from a specific sheet in an Excel file.
 	 * Optionally provide an initialization closure.
 	 *
-	 * @author Michael J. North
-	 * @author Jonathan Ozik
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure = null) {
+		Class<? extends Turtle> turtleType = getTurtleFactory().getTurtleTypeClass("default");
+		return createOrderedTurtlesFromExcelWithSheet(fileName,sheetName,turtleType,initClosure)
+	}
+
+	/**
+	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 *
 	 * @param fileName the path from the default system directory
 	 * @param turtleType the class of turtle to create
@@ -190,49 +458,77 @@ public class BaseObserver extends AbstractObserver{
 	 *
 	 */
 	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+		return createOrderedTurtlesFromExcelWithSheet(fileName, null,turtleType,initClosure)
+	}
 
+	/**
+	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
+		
 		List<String> fields = getPublicFieldsAndProperties(turtleType)
 
 		Workbook wb;
 		Sheet sheet;
 		try {
 			wb = WorkbookFactory.create(new FileInputStream(fileName))
-			// Use the first sheet
-			sheet = wb.getSheetAt(0)
-			int firstRow = sheet.getFirstRowNum()
-			List<String> headerFields = []
-			// obtain the header fields
-			for (Cell cell in sheet.getRow(firstRow)) {
-				headerFields.add(cell.getStringCellValue())
-			}
-			List<String> fieldsToUse = fields.intersect(headerFields)
-			int turtleCounter = 0
-			for (Row row : sheet) {
-				if (row.getRowNum() != firstRow && row.getFirstCellNum() != -1) {
-					turtleCounter++
+			if (wb){
+				if (sheetName){
+					sheet = wb.getSheet(sheetName)
 				}
-			}
-			if (turtleCounter > 0){
-				AgentSet<E> newTurtles = createOrderedTurtles(turtleCounter, null, turtleType.getSimpleName())
-				Iterator turtleIterator = newTurtles.iterator()
-				def t
-				for (Row row : sheet) {
-					if (row.getRowNum() != firstRow) {
-						if (turtleIterator.hasNext()){
-							t = turtleIterator.next()
-							populateFieldValues(t,row,headerFields,fieldsToUse)
+				else {
+					// Use the first sheet
+					sheet = wb.getSheetAt(0)
+				}
+				if (sheet){
+					int firstRow = sheet.getFirstRowNum()
+					List<String> headerFields = []
+					// obtain the header fields
+					for (Cell cell in sheet.getRow(firstRow)) {
+						headerFields.add(cell.getStringCellValue())
+					}
+					List<String> fieldsToUse = fields.intersect(headerFields)
+					int turtleCounter = 0
+					for (Row row : sheet) {
+						if (row.getRowNum() != firstRow && row.getFirstCellNum() != -1) {
+							turtleCounter++
+						}
+					}
+					if (turtleCounter > 0){
+						AgentSet<E> newTurtles = createOrderedTurtles(turtleCounter, null, turtleType.getSimpleName())
+						Iterator turtleIterator = newTurtles.iterator()
+						def t
+						for (Row row : sheet) {
+							if (row.getRowNum() != firstRow) {
+								if (turtleIterator.hasNext()){
+									t = turtleIterator.next()
+									populateFieldValues(t,row,headerFields,fieldsToUse)
+								}
+							}
+						}
+						if (initClosure){
+							ask(newTurtles, initClosure)
 						}
 					}
 				}
-				if (initClosure){
-					ask(newTurtles, initClosure)
+				else {
+					if (sheetName != null){
+						throw new IOException("Sheet ${sheetName} was not found in workbook ${fileName}.");
+					}
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void populateFieldValues(def t, Row row, List<String> headerFields, List<String> fieldsToUse){
 		for (Cell cell : row) {
 			String fieldName = headerFields.get(cell.getColumnIndex())

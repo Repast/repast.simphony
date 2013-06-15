@@ -718,14 +718,440 @@ public interface Observer extends ProjectionListener {
 	public void registerModelParameterListener(String varName, final Closure closure);
 	
 	/**
+	 * Creates default turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromCSV(String fileName, Closure initClosure);
+	
+	/**
+	 * Creates default turtles from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromCSV(String fileName);
+	
+	/**
 	 * Creates turtles of specific type from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 * 
-	 * @author Michael J. North
-	 * @author jozik
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 * 
+	 */
+	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+	
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
 	 * 
 	 * @param fileName the path to the CSV file
 	 * @param turtleType the class of turtle to create
 	 * 
 	 */
 	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates default ordered turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromCSV(String fileName, Closure initClosure);
+
+	/**
+	 * Creates default ordered turtles from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromCSV(String fileName);
+	
+	/**
+	 * Creates ordered turtles of specific type from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates ordered turtles of specific type from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcel(String fileName, Closure initClosure);
+
+	/**
+	 * Creates default turtles from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcel(String fileName);
+	
+	/**
+	 * Creates default turtles from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure);
+
+	/**
+	 * Creates default turtles from a specific sheet in an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcelWithSheet(String fileName, String sheetName);
+	
+	/**
+	 * Creates turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates turtles of specific type from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates turtles of specific type from a specific sheet in an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
+
+	
+	/**
+	 * Creates ordered default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcel(String fileName, Closure initClosure);
+
+	/**
+	 * Creates ordered default turtles from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcel(String fileName);
+	
+	/**
+	 * Creates ordered default turtles from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure);
+
+	/**
+	 * Creates ordered default turtles from a specific sheet in an Excel file.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName);
+	
+	/**
+	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType);
+
+	
+	/**
+	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+	
+	/**
+	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
 }
