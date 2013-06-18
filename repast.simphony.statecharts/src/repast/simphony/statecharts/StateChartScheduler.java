@@ -189,7 +189,27 @@ public enum StateChartScheduler {
     }
     ramv.registerListener(sc);
   }
+  
+  /**
+   * Convenience method to schedule a statechart for immediate
+   * activation.
+   * @param sc statechart to be activated
+   */
+  public static void beginNow(final DefaultStateChart<?> sc){
+  	INSTANCE.scheduleBeginTime(0, sc);
+  }
 
+  /**
+   * Convenience method to schedule a statechart for 
+   * activation at a later time.
+   * @param later ticks from current time when statechart should be activated
+   * @param sc statechart to be activated
+   */
+  public static void beginLater(double later, final DefaultStateChart<?> sc){
+  	INSTANCE.scheduleBeginTime(later, sc);
+  }
+
+  
   /**
    * Called by generated statechart code to schedule the begin time for a
    * statechart.
