@@ -116,6 +116,7 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.dataLoader.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.distributed.batch_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.distributed.batch.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
             <!-- Need ?? -->
             <file src="$EclipsePluginsDirectory/repast.simphony.eclipse_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
@@ -138,8 +139,6 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.R_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.relogo.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
-            <!-- Need ?? -->
-            <file src="$EclipsePluginsDirectory/repast.simphony.relogo.ide_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
             <file src="$EclipsePluginsDirectory/repast.simphony.runtime_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.scenario_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
@@ -152,8 +151,7 @@
             
             <file src="$EclipsePluginsDirectory/repast.simphony.terracotta_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
-            <!-- NOTE because it's a packed jar in the feature -->
-            <file src="$EclipsePluginsDirectory/repast.simphony.userpanel.ui_$REPAST_VERSION.jar" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.userpanel.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
             <file src="$EclipsePluginsDirectory/repast.simphony.visad_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
