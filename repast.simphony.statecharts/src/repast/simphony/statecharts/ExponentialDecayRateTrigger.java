@@ -1,5 +1,6 @@
 package repast.simphony.statecharts;
 
+import cern.jet.random.Exponential;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.parameter.Parameters;
@@ -53,10 +54,13 @@ public class ExponentialDecayRateTrigger<T> extends AbstractTrigger<T> {
 	public void initialize() {
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
-		double rand = RandomHelper.nextDouble();
+		Exponential exp = RandomHelper.getExponential();
+		if (exp == null){
+			exp = RandomHelper.createExponential(1);
+		}
 		try {
-			currentInterval = Math.log(1 - rand)
-					/ (-tdf.value(getAgent(), transition, getParams()));
+			double lambda = tdf.value(getAgent(), transition, getParams());
+			currentInterval = exp.nextDouble(lambda);
 		} catch (Exception e) {
 			MessageCenter.getMessageCenter(getClass()).error(
 					"Error encountered when evaluating double function: " + tdf
