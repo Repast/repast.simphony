@@ -40,7 +40,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   private static final String[] MESSAGE_TYPES = { "When Message Meets a Condition",
       "When Message Equals ...", "When Message is of the Specified Class", "Always" };
 
-  private static final String[] CLASS_TYPES = { "String", "int", "long", "float", "double",
+  private static final String[] CLASS_TYPES = {"Object", "String", "int", "long", "float", "double",
       "boolean" };
 
   private static final int CONDITION_INDEX = 3;
@@ -105,6 +105,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
     cmbTriggerType.select(0);
     cmbMessageType.select(3);
+    cmbMessageClass.setText(CLASS_TYPES[0]);
+    
     triggerLayout.topControl = triggerComps[0];
     addListeners();
   }
@@ -314,7 +316,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     GridData gd_cmbMessageClass = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
     gd_cmbMessageClass.widthHint = 200;
     cmbMessageClass.setItems(CLASS_TYPES);
-    cmbMessageClass.select(0);
     cmbMessageClass.setLayoutData(gd_cmbMessageClass);
     toolkit.adapt(cmbMessageClass);
     toolkit.paintBordersFor(cmbMessageClass);
@@ -618,6 +619,10 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     triggerLayout.topControl = triggerComps[index];
     triggerComps[index].getParent().layout();
     triggerComps[index].getParent().getParent().layout();
+    
+    if (cmbMessageClass.getSelectionIndex() == -1) {
+      cmbMessageClass.select(0);
+    }
   }
 
   private void updateBinding(TriggerTypes ttype) {
