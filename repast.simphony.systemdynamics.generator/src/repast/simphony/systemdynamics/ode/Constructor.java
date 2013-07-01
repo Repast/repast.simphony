@@ -48,18 +48,22 @@ public class Constructor {
 			code.append("\n\tpublic "+className+"() {\n\t}");
 
 			// generate constructor 
-			code.append("\n\tpublic "+className+"(");
-			int i = 0;
-			for (Equation eqn : analyzer.getAuxiliariesForConstructor()) {
-				if (i++ > 0)
-					code.append(", ");
-				code.append("double "+ndtm.makeLegal(eqn.getLhs()));
+			
+			if (analyzer.getAuxiliariesForConstructor().size() > 0) {
+
+				code.append("\n\tpublic "+className+"(");
+				int i = 0;
+				for (Equation eqn : analyzer.getAuxiliariesForConstructor()) {
+					if (i++ > 0)
+						code.append(", ");
+					code.append("double "+ndtm.makeLegal(eqn.getLhs()));
+				}
+				code.append(") {\n\n");
+				for (Equation eqn : analyzer.getAuxiliariesForConstructor()) {
+					code.append("\tthis."+ndtm.makeLegal(eqn.getLhs())+" = "+ndtm.makeLegal(eqn.getLhs())+";\n");
+				}
+				code.append("\t}\n\n");
 			}
-			code.append(") {\n\n");
-			for (Equation eqn : analyzer.getAuxiliariesForConstructor()) {
-				code.append("\tthis."+ndtm.makeLegal(eqn.getLhs())+" = "+ndtm.makeLegal(eqn.getLhs())+";\n");
-			}
-			code.append("\t}\n\n");
 
 			code.append("\t public int getDimension() {\n\t\treturn "+analyzer.getNumberODE()+";\n\t}\n\n");
 

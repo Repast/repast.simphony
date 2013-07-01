@@ -55,9 +55,9 @@ public class ReLogoInitializer implements ModelInitializer {
 }
 	public void initialize(Scenario scen, RunEnvironmentBuilder builder) {
 		builder.getScheduleRunner().addRunListener(ReLogoModel.getInstance());
-		ReLogoModel.getInstance().checkEMCEnabledGlobally();
+//		ReLogoModel.getInstance().checkEMCEnabledGlobally();
 		// adding the "of" method to the Closure class
-		UtilityG.dressClosure();
+//		UtilityG.dressClosure();
 		
 		ControllerRegistry registry = scen.getControllerRegistry();
 		ControllerAction parent = registry.findAction(DEFAULT_RELOGO_CONTEXT_NAME, ControllerActionConstants.VIZ_ROOT);

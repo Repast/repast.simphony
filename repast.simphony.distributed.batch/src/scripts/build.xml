@@ -45,7 +45,6 @@
 	<property name="groovy" location="${plugins.prefix}/repast.simphony.groovy${plugins.suffix}" />
 	<property name="integration" location="${plugins.prefix}/repast.simphony.integration${plugins.suffix}" />
 	<property name="relogo.runtime" location="${plugins.prefix}/repast.simphony.relogo.runtime${plugins.suffix}" />
-	<property name="relogo.ide" location="${plugins.prefix}/repast.simphony.relogo.ide${plugins.suffix}" />
 	<property name="visualization" location="${plugins.prefix}/repast.simphony.visualization${plugins.suffix}" />
 	<property name="statecharts" location="${plugins.prefix}/repast.simphony.statecharts${plugins.suffix}" />
 
@@ -129,7 +128,6 @@
 		<jar destfile="${working.lib}/repast.simphony.groovy.jar" basedir="${groovy}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.integration.jar" basedir="${integration}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.relogo.runtime.jar" basedir="${relogo.runtime}/bin" />
-		<jar destfile="${working.lib}/repast.simphony.relogo.ide.jar" basedir="${relogo.ide}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.visualization.jar" basedir="${visualization}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.statecharts.jar" basedir="${statecharts}/bin" />
 

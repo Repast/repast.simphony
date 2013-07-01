@@ -142,7 +142,6 @@ public class LocalDriver {
       for (Future<Void> future : futures) {
         try {
           future.get();
-          msg.info("Got future #" + ++counter);
         } catch (ExecutionException ex) {
           ex.getCause().printStackTrace();
           msg.error("", ex);

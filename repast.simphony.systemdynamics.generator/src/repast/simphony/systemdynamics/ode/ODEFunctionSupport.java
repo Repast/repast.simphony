@@ -33,4 +33,8 @@ public class ODEFunctionSupport {
     public double MODULO(double arg1, double arg2) {
 	return arg1 % arg2;
     }
+    
+    public double EXP(double arg1) {
+    	return Math.exp(arg1);
+        }
 }
