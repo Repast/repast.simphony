@@ -559,6 +559,10 @@ public class DefaultStateChart<T> implements StateChart<T> {
   public List<AbstractState<T>> getCurrentStates() {
     List<AbstractState<T>> states = new ArrayList<AbstractState<T>>();
     AbstractState<T> s = getCurrentSimpleState();
+    if (s instanceof FinalState){
+    	states.add(s);
+    	return states;
+    }
     while (s != null) {
       states.add(s);
       s = s.getParent();
