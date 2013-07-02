@@ -304,6 +304,123 @@ public class StateChartTest {
     assertEquals(7, schedule.getTickCount(), 0.0001);
     assertEquals("three", a.st.getCurrentSimpleState().getId());
   }
+  
+  /**
+   * For testing message based transitions that are unaffected by other transitions.
+   * 
+   * @author jozik
+   * 
+   */
+  private static class MyStateChart2b extends DefaultStateChart<MyAgent2b> {
+
+    public MyStateChart2b(MyAgent2b agent) {
+      super(agent);
+
+      SimpleState<MyAgent2b> one = new SimpleStateBuilder<MyAgent2b>("one").build();
+      this.registerEntryState(one);
+      SimpleState<MyAgent2b> two = new SimpleStateBuilder<MyAgent2b>("two").build();
+      SimpleState<MyAgent2b> three = new SimpleStateBuilder<MyAgent2b>("three").build();
+      SimpleState<MyAgent2b> four = new SimpleStateBuilder<MyAgent2b>("four").build();
+      SimpleState<MyAgent2b> five = new SimpleStateBuilder<MyAgent2b>("five").build();
+      Trigger tr1 = new MessageTrigger<MyAgent2b>(getQueue(),
+          new MessageEqualsMessageChecker<MyAgent2b, String>("a", String.class));
+      TransitionBuilder<MyAgent2b> tb = new TransitionBuilder<MyAgent2b>(one, two);
+      tb.addTrigger(tr1);
+      Transition<MyAgent2b> t1 = tb.build();
+      this.addRegularTransition(t1);
+      tb = new TransitionBuilder<MyAgent2b>(two, three);
+      Trigger tr2 = new MessageTrigger<MyAgent2b>(getQueue(),
+          new MessageEqualsMessageChecker<MyAgent2b, String>("b", String.class));
+      tb.addTrigger(tr2);
+      Transition<MyAgent2b> t2 = tb.build();
+      this.addRegularTransition(t2);
+      // Adding a condition trigger that will be polled at t = 0.5 intervals.
+      Trigger tr3 = new ConditionTrigger<MyAgent2b>(new ConditionTriggerCondition<MyAgent2b>() {
+				@Override
+				public boolean condition(MyAgent2b agent, Transition<MyAgent2b> transition,
+						Parameters params) throws Exception {
+					return agent.condition;
+				}
+			}, 0.5);
+      tb = new TransitionBuilder<MyAgent2b>(one, four);
+      tb.addTrigger(tr3);
+      this.addRegularTransition(tb.build());
+      Trigger tr4 = new ConditionTrigger<MyAgent2b>(new ConditionTriggerCondition<MyAgent2b>() {
+				@Override
+				public boolean condition(MyAgent2b agent, Transition<MyAgent2b> transition,
+						Parameters params) throws Exception {
+					return false;
+				}
+			}, 0.5);
+      tb = new TransitionBuilder<MyAgent2b>(four, five);
+      tb.addTrigger(tr4);
+      this.addRegularTransition(tb.build());
+    }
+  }
+
+  private static class MyAgent2b {
+
+    public StateChart<MyAgent2b> st;
+    public boolean condition = false;
+
+    @SuppressWarnings("unused")
+    public void setup() {
+      st = new MyStateChart2b(this);
+      st.begin(new Integrator());
+    }    
+    
+  }
+
+  @Test
+  public void myStateChart2bScenario1() {
+    MyAgent2b a = new MyAgent2b();
+    ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+    schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+    schedule.execute();
+    assertEquals(1, schedule.getTickCount(), 0.0001);
+    StateChart<MyAgent2b> st = a.st;
+    st.receiveMessage("a");
+    st.receiveMessage("b");
+    schedule.execute();
+    assertEquals(1.5, schedule.getTickCount(), 0.0001);
+    assertEquals("one", a.st.getCurrentSimpleState().getId());
+    // both messages should still be there
+    assertEquals(2, ((DefaultStateChart<?>) a.st).getQueue().size()); 
+    schedule.execute();
+    assertEquals("three", a.st.getCurrentSimpleState().getId());
+    assertEquals(2, schedule.getTickCount(), 0.0001);
+  }
+  
+  @Test
+  public void myStateChart2bScenario2() {
+    MyAgent2b a = new MyAgent2b();
+    a.condition = true;
+    ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+    schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+    schedule.execute();
+    assertEquals(1, schedule.getTickCount(), 0.0001);
+    StateChart<MyAgent2b> st = a.st;
+    st.receiveMessage("a");
+    st.receiveMessage("b");
+    schedule.execute();
+    assertEquals(1.5, schedule.getTickCount(), 0.0001);
+    assertEquals("four", a.st.getCurrentSimpleState().getId());
+    // both messages will have been cleared by the zero time transition
+    // clearing the queue
+    assertEquals(true, ((DefaultStateChart<?>) a.st).getQueue().isEmpty());
+    st.receiveMessage("a");
+    st.receiveMessage("b");
+    schedule.execute();
+    assertEquals("four", a.st.getCurrentSimpleState().getId());
+    // both messages are cleared since the condition got polled and there are no
+    // active queue consuming transitions
+    assertEquals(true, ((DefaultStateChart<?>) a.st).getQueue().isEmpty());
+    assertEquals(2, schedule.getTickCount(), 0.0001);
+  }
+  
+  
+  
+  
 
   /**
    * For testing transition resolution when multiple transitions are triggered.
