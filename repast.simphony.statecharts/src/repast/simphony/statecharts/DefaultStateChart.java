@@ -402,6 +402,15 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils.union(
 				queueConsumingActiveSelfTransitions, queueConsumingActiveRegularTransitions);
+		
+		// This is for the corner case when there is a self transition
+		// and a regular transition that both are valid based on the same
+		// message, but another regular transition is chosen over the
+		// message based regular transition. This makes sure that the
+		// message in the queue is consumed since the self transition
+		// "used" it, even if the regular transition didn't.
+		boolean queueConsumingSelfTransitionFollowed = false;
+		
 		// Are there no active self or regular queue consuming transitions?
 		if (allQueueConsumingActiveTransitions.isEmpty()) {
 			queue.clear();
@@ -415,9 +424,11 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			}
 			if (foundIsResolveNow) {
 				while (true) {
+					queueConsumingSelfTransitionFollowed = false;
 					// Execute all queue consuming active self transitions
 					for (Transition<T> t : getTriggeredTransitions(queueConsumingActiveSelfTransitions)) {
 						t.onTransition();
+						queueConsumingSelfTransitionFollowed = true;
 					}
 
 					// Look for queue consuming regular candidates for current queue
@@ -443,7 +454,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// If a zero time transition was found, make that transition
 		if (t != null) {
 			// if chosen one is queue consuming
-			if (t.isTriggerQueueConsuming()) {
+			if (t.isTriggerQueueConsuming() || queueConsumingSelfTransitionFollowed) {
 				queue.poll();
 			}
 			makeRegularTransition(t);
