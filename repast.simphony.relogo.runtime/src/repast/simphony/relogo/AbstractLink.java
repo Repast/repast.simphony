@@ -739,8 +739,10 @@ public abstract class AbstractLink<T> extends Link<T> {
 
 	/**
 	 * Stops a link executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop() {
+	@Deprecated
+	public Stop oldStop() {
 		return Stop.TRUE;
 	}
 

@@ -2048,7 +2048,7 @@ public class SymbolTable {
         declarePrimitive(new Profile("stop", "[agt]void=void/void"){
         	public String encodeInstance(ProcedureInvocation pi, int indent){
         		StringBuffer buf = new StringBuffer();
-        		buf.append("return stop()");
+        		buf.append("return oldStop()");
         		return buf.toString();
         	}
         });  // equiv to return?
