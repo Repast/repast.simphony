@@ -220,7 +220,7 @@ public class SVGGenerator {
 						processBaseSimpleState(oldLength, nl, editPart);
 						break;
 					case FinalStateEditPart.VISUAL_ID:
-						processBaseFinalState(oldLength, nl);
+						processBaseFinalState(oldLength, nl, editPart);
 						break;
 					default:
 						// Nothing to do otherwise
@@ -250,10 +250,13 @@ public class SVGGenerator {
 	 * @param oldLength
 	 * @param nl
 	 */
-	private void processBaseFinalState(int oldLength, NodeList nl) {
+	private void processBaseFinalState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Node g = nl.item(oldLength);
-		((Element) g.getFirstChild()).setAttribute("fill", "black");
-
+		Element firstElement =(Element) g.getFirstChild(); 
+		firstElement.setAttribute("fill", "black");
+		String uuid = findUUID(editPart);
+		firstElement.setAttribute("uuid", uuid);
 	}
 
 	/**
@@ -351,7 +354,7 @@ public class SVGGenerator {
 					nextElement = processSubBranchingState(nextElement);
 					break;
 				case FinalState2EditPart.VISUAL_ID: // Sub Final State
-					nextElement = processSubFinalState(nextElement);
+					nextElement = processSubFinalState(nextElement,childGraphicalEditPart);
 					break;
 				case HistoryEditPart.VISUAL_ID: // Shallow History State
 					nextElement = processShallowHistoryState(nextElement);
@@ -550,12 +553,15 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processSubFinalState(Element nextElement) {
+	private Element processSubFinalState(Element nextElement,
+			IGraphicalEditPart editPart) {
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
 					"The first svg element of a final state should be 'circle'.");
 		}
 		nextElement.setAttribute("fill", "black");
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
