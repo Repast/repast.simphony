@@ -4,7 +4,7 @@ package repast.simphony.space.grid;
 import java.util.Arrays;
 
 /**
- * Represents an n-dimensional point in a space.
+ * Represents an n-dimensional discrete point in a grid.
  *
  * @author Nick Collier
  */
@@ -14,7 +14,7 @@ public class GridPoint {
   protected int[] point;
 
   /**
-   * Creates a NdPoint from the passed in array of points.
+   * Creates a GridPoint from the passed in array of points.
    *
    * @param point
    */
