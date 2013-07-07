@@ -80,7 +80,7 @@
       <filter
             class="repast.simphony.relogo.ide.ReLogoFilter"
             description="Filters out non-core ReLogo resources from Package Explorer."
-            enabled="false"
+            enabled="true"
             id="repast.simphony.relogo.ide.relogoResourceFilter"
             name="ReLogo Resource Filter"
             targetId="org.eclipse.jdt.ui.PackageExplorer">

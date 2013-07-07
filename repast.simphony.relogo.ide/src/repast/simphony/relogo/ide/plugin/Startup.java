@@ -75,29 +75,6 @@ public class Startup implements IStartup {
 						}
 					}
 
-					// Check for ReLogo Resource Filter and enable if not
-					IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					if (workbenchWindow != null) {
-						IViewPart view = workbenchWindow.getActivePage().findView(JavaUI.ID_PACKAGES);
-						if (view != null && view instanceof IPackagesViewPart) {
-							IPackagesViewPart pv = (IPackagesViewPart) view;
-							TreeViewer tv = pv.getTreeViewer();
-							System.out.println("tv class is: " + tv.getClass());
-							if (tv != null) {
-								ViewerFilter[] filters = tv.getFilters();
-								boolean filtered = false;
-								for (ViewerFilter vf : filters) {
-									if (vf instanceof ReLogoFilter) {
-										filtered = true;
-									}
-								}
-								if (!filtered) {
-									tv.addFilter(new ReLogoFilter());
-									System.out.println("here");
-								}
-							}
-						}
-					}
 				}
 			});
 		}
