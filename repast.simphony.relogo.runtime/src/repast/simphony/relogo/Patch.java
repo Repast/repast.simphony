@@ -409,8 +409,10 @@ public interface Patch extends Comparable<Patch>, ReLogoAgent {
 	
 	/**
 	 * Stops a patch executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop();
+	@Deprecated
+	public Stop oldStop();
 	
 
 	public List getRowCol();

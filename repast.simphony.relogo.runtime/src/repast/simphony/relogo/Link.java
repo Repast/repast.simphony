@@ -272,8 +272,10 @@ public abstract class Link<T> extends RepastEdge<T> implements
 
 	/**
 	 * Stops a link executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public abstract Stop stop();
+	@Deprecated
+	public abstract Stop oldStop();
 
 	public abstract String getLinkType();
 

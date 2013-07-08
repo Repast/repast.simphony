@@ -1154,8 +1154,10 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 
 	/**
 	 * Stops a turtle executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop();
+	@Deprecated
+	public Stop oldStop();
 
 	public boolean fixedLeavesContains(Turtle t);
 
