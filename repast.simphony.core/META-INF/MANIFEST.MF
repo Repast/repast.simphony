@@ -639,7 +639,7 @@ Export-Package: .,
  repast.simphony.xml,
  watcherOOP.test
 Require-Bundle: repast.simphony.runtime,
- org.junit4,
+ org.junit,
  libs.ext
 Bundle-Vendor: %providerName
 Eclipse-LazyStart: false
