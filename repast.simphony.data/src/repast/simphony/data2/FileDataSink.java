@@ -90,15 +90,16 @@ public class FileDataSink implements DataSink {
    * @see repast.simphony.data2.DataSink#flush()
    */
   @Override
-  public void flush() {
-    try {
-      if (writer != null) {
-        writer.flush();
+  public synchronized void flush() {
+    if (!closed) {
+      try {
+        if (writer != null) {
+          writer.flush();
+        }
+      } catch (IOException ex) {
+        throw new DataException("Error while flushing FileDataSink.", ex);
       }
-    } catch (IOException ex) {
-      throw new DataException("Error while flushing FileDataSink.", ex);
     }
-
   }
 
   /*
@@ -152,7 +153,7 @@ public class FileDataSink implements DataSink {
    * @see repast.simphony.data2.DataSink#close()
    */
   @Override
-  public void close() {
+  public synchronized void close() {
     if (!closed) {
       try {
         writer.flush();
