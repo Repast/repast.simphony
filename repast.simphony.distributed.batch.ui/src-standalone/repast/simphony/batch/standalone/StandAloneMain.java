@@ -11,6 +11,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 /**
  * @author Nick Collier
  */
@@ -144,6 +147,10 @@ public class StandAloneMain {
         StandAloneMain.usage();
         return;
       }
+      
+      try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      } catch (UnsupportedLookAndFeelException ex) {}
       
       String bundleDir = vals[0];
       String modelDir = vals[1];
