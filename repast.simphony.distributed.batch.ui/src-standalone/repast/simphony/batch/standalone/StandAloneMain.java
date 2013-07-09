@@ -56,6 +56,18 @@ public class StandAloneMain {
     		"where X is the location of the eclipse plugin directory and Y is the model project directory. Both arguments are optional");
     
   }
+  
+  private File findGroovyJar(String bundleDir) {
+    File dir = new File(bundleDir);
+    for (File file : dir.listFiles()) {
+      if (file.isDirectory() && file.getName().startsWith("org.codehaus.groovy")) {
+        File gJar = new File(new File(file, "lib"), "groovy-all-2.0.7.jar");
+        if (gJar.exists()) return gJar;
+      }
+    }
+    
+    return null;
+  }
 
   public void run(String bundleDir, String modelDir) throws IOException, ClassNotFoundException,
       IllegalArgumentException, SecurityException, IllegalAccessException,
@@ -74,6 +86,16 @@ public class StandAloneMain {
 
     String propsFile = null;
     List<URL> urls = new ArrayList<URL>();
+    
+    // add groovy to the classpath if its not already there
+    try {
+      Class<?> clazz = groovy.lang.GroovyObject.class;
+    } catch (NoClassDefFoundError ex) {
+      File f = findGroovyJar(bundleDir);
+      if (f != null) {
+        urls.add(f.toURI().toURL());
+      }
+    }
     
     urls.add(new File(bd.getLocation(), "bin").toURI().toURL());
     for (String path : bd.classPathEntries()) {
