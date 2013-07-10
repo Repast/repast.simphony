@@ -47,6 +47,7 @@ public class CompositeStateCompositeStateCompartmentEditPart extends ShapeCompar
   public IFigure createFigure() {
     ResizableCompartmentFigure result = (ResizableCompartmentFigure) super.createFigure();
     result.setTitleVisibility(false);
+    result.setToolTip((String)null);
     AnimatableScrollPane pane = (AnimatableScrollPane) result.getChildren().get(1);
     pane.setScrollBarVisibility(ScrollPane.NEVER);
     return result;

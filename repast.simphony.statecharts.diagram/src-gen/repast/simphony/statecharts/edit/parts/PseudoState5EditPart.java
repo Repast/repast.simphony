@@ -21,13 +21,12 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
-import org.eclipse.gmf.runtime.lite.svg.SVGFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import repast.simphony.statecharts.edit.policies.PseudoState5ItemSemanticEditPolicy;
+import repast.simphony.statecharts.figures.EntryStateFigure;
 import repast.simphony.statecharts.providers.StatechartElementTypes;
 
 /**
@@ -311,20 +310,18 @@ public class PseudoState5EditPart extends ShapeNodeEditPart {
   }
 
   /**
-   * @generated
+   * @generated NOT
    */
-  public class FirstStateFigure extends SVGFigure {
+  public class FirstStateFigure extends EntryStateFigure {
 
     /**
-     * @generated
+     * @generated NOT
      */
     public FirstStateFigure() {
-      this.setURI("platform:/plugin/repast.simphony.statecharts.diagram/icons/svg/first_state.svg");
-      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(17), getMapMode().DPtoLP(17)));
-      this.setMaximumSize(new Dimension(getMapMode().DPtoLP(17), getMapMode().DPtoLP(17)));
-      this.setMinimumSize(new Dimension(getMapMode().DPtoLP(17), getMapMode().DPtoLP(17)));
+      this.setPreferredSize(new Dimension(getMapMode().DPtoLP(20), getMapMode().DPtoLP(20)));
+      this.setMaximumSize(new Dimension(getMapMode().DPtoLP(20), getMapMode().DPtoLP(20)));
+      this.setMinimumSize(new Dimension(getMapMode().DPtoLP(20), getMapMode().DPtoLP(20)));
     }
-
   }
 
 }

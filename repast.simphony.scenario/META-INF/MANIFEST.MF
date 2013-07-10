@@ -6,7 +6,7 @@ Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.core,
- org.junit4,
+ org.junit,
  org.eclipse.wst.xml.core,
  repast.simphony.eclipse,
  org.eclipse.ui
