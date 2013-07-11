@@ -35,7 +35,30 @@ public class Startup implements IStartup {
 		// System.out.println("The groovy version is: " +
 		// groovy.lang.GroovySystem.getVersion());
 		//
+		final Runnable packageViewerRefresh = new Runnable() {
 
+			@Override
+			public void run() {
+				IWorkbench wb = PlatformUI.getWorkbench();
+				if (wb != null) {
+					IWorkbenchWindow ww = wb.getActiveWorkbenchWindow();
+					if (ww != null) {
+						IWorkbenchPage wp = ww.getActivePage();
+						if (wp != null) {
+							IViewPart vp = wp.findView(JavaUI.ID_PACKAGES);
+							if (vp != null && vp instanceof IPackagesViewPart) {
+								IPackagesViewPart pvp = (IPackagesViewPart) vp;
+								TreeViewer tv = pvp.getTreeViewer();
+								if (tv != null) {
+									tv.refresh();
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		// register the ReLogoResourceChangeListener
 		workspace.addResourceChangeListener(new ReLogoResourceChangeListener());
@@ -43,29 +66,7 @@ public class Startup implements IStartup {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				
-				final Runnable packageViewerRefresh = new Runnable() {
-
-					@Override
-					public void run() {
-						IWorkbench wb = PlatformUI.getWorkbench();
-						if (wb != null) {
-							IWorkbenchWindow ww = wb.getActiveWorkbenchWindow();
-							if (ww != null) {
-								IWorkbenchPage wp = ww.getActivePage();
-								if (wp != null) {
-									IViewPart vp = wp.findView(JavaUI.ID_PACKAGES);
-									if (vp != null && vp instanceof IPackagesViewPart) {
-										IPackagesViewPart pvp = (IPackagesViewPart) vp;
-										TreeViewer tv = pvp.getTreeViewer();
-										if (tv != null) {
-											tv.refresh();
-										}
-									}
-								}
-							}
-						}
-					}
-				};
+				
 				
 				final IPerspectiveListener reLogoFilterToggle = new PerspectiveAdapter() {
 
@@ -81,6 +82,8 @@ public class Startup implements IStartup {
 						}
 					}
 				};
+				
+				
 				
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.addPerspectiveListener(reLogoFilterToggle);
@@ -146,6 +149,21 @@ public class Startup implements IStartup {
 				}
 			});
 		}
+		
+		// Needed for restart case, since the perspective is activated before the earlyStartup code.
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				IPerspectiveDescriptor perspective = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getPerspective();
+				if (perspective != null){
+					if (perspective.getId().equals(RELOGO_PERSPECTIVE_ID)){
+						ReLogoFilter.isInReLogoPerspective = true;
+						Display.getDefault().asyncExec(packageViewerRefresh);
+					}
+				}
+			}
+		});
 
 	}
 }
