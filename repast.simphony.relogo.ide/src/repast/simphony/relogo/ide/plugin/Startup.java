@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
@@ -39,6 +40,68 @@ public class Startup implements IStartup {
 		// register the ReLogoResourceChangeListener
 		workspace.addResourceChangeListener(new ReLogoResourceChangeListener());
 
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				
+				final Runnable packageViewerRefresh = new Runnable() {
+
+					@Override
+					public void run() {
+						IWorkbench wb = PlatformUI.getWorkbench();
+						if (wb != null) {
+							IWorkbenchWindow ww = wb.getActiveWorkbenchWindow();
+							if (ww != null) {
+								IWorkbenchPage wp = ww.getActivePage();
+								if (wp != null) {
+									IViewPart vp = wp.findView(JavaUI.ID_PACKAGES);
+									if (vp != null && vp instanceof IPackagesViewPart) {
+										IPackagesViewPart pvp = (IPackagesViewPart) vp;
+										TreeViewer tv = pvp.getTreeViewer();
+										if (tv != null) {
+											tv.refresh();
+										}
+									}
+								}
+							}
+						}
+					}
+				};
+				
+				final IPerspectiveListener reLogoFilterToggle = new PerspectiveAdapter() {
+
+					@Override
+					public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+
+						if (perspective.getId().equals(RELOGO_PERSPECTIVE_ID)) {
+							ReLogoFilter.isInReLogoPerspective = true;
+							Display.getDefault().asyncExec(packageViewerRefresh);
+						} else {
+							ReLogoFilter.isInReLogoPerspective = false;
+							Display.getDefault().asyncExec(packageViewerRefresh);
+						}
+					}
+				};
+				
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.addPerspectiveListener(reLogoFilterToggle);
+
+				PlatformUI.getWorkbench().addWorkbenchListener(new IWorkbenchListener() {
+
+					@Override
+					public boolean preShutdown(IWorkbench workbench, boolean forced) {
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.removePerspectiveListener(reLogoFilterToggle);
+						return true;
+					}
+
+					@Override
+					public void postShutdown(IWorkbench workbench) {
+
+					}
+				});
+			}
+		});
+		
 		// We use the perspective bar extras to check for whether
 		// the earlyStartup was run in this workspace before
 		String extras = PlatformUI.getPreferenceStore().getString(
@@ -83,72 +146,6 @@ public class Startup implements IStartup {
 				}
 			});
 		}
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				
-				final Runnable packageViewerRefresh = new Runnable() {
-
-					@Override
-					public void run() {
-						IWorkbench wb = PlatformUI.getWorkbench();
-						if (wb != null) {
-							IWorkbenchWindow ww = wb.getActiveWorkbenchWindow();
-							if (ww != null) {
-								IWorkbenchPage wp = ww.getActivePage();
-								if (wp != null) {
-									IViewPart vp = wp.findView(JavaUI.ID_PACKAGES);
-									if (vp != null && vp instanceof IPackagesViewPart) {
-										IPackagesViewPart pvp = (IPackagesViewPart) vp;
-										TreeViewer tv = pvp.getTreeViewer();
-										if (tv != null) {
-											tv.refresh();
-										}
-									}
-								}
-							}
-						}
-					}
-				};
-				
-				final IPerspectiveListener reLogoFilterToggle = new IPerspectiveListener() {
-
-					@Override
-					public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
-							String changeId) {
-
-					}
-
-					@Override
-					public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-						if (perspective.getId().equals(RELOGO_PERSPECTIVE_ID)) {
-							ReLogoFilter.isInReLogoPerspective = true;
-							Display.getDefault().asyncExec(packageViewerRefresh);
-						} else {
-							ReLogoFilter.isInReLogoPerspective = false;
-							Display.getDefault().asyncExec(packageViewerRefresh);
-						}
-					}
-				};
-				
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.addPerspectiveListener(reLogoFilterToggle);
-
-				PlatformUI.getWorkbench().addWorkbenchListener(new IWorkbenchListener() {
-
-					@Override
-					public boolean preShutdown(IWorkbench workbench, boolean forced) {
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.removePerspectiveListener(reLogoFilterToggle);
-						return true;
-					}
-
-					@Override
-					public void postShutdown(IWorkbench workbench) {
-
-					}
-				});
-			}
-		});
 
 	}
 }
