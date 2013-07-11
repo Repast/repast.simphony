@@ -79,7 +79,7 @@
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
             class="repast.simphony.relogo.ide.ReLogoFilter"
-            description="Filters out non-core ReLogo resources from Package Explorer."
+            description="Filters out non-core ReLogo resources from Package Explorer when in the ReLogo perspective."
             enabled="true"
             id="repast.simphony.relogo.ide.relogoResourceFilter"
             name="ReLogo Resource Filter"

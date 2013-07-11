@@ -35,7 +35,8 @@ public class ReLogoImplementingClassesFinder {
 		List<Class<? extends E>> clazzes = new ArrayList();
 		try {
 			if (modelFile.exists()) {
-				UserPathData data = new UserPathFileReader().read(modelFile);
+				File absoluteModelFile = modelFile.getAbsoluteFile();
+				UserPathData data = new UserPathFileReader().read(absoluteModelFile);
 				// If local caching is needed
 				/*
 				 * UserPathData data = upd; if (data == null){ data = new
