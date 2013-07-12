@@ -479,7 +479,7 @@ private static class «generatorClassName()» {
 «DEFINE imports(String agentType, String code) FOR LanguageTypes»
 import repast.simphony.statecharts.*;
 import repast.simphony.parameter.Parameters;
-import repast.simphony.random.RandomHelper.*;
+import static repast.simphony.random.RandomHelper.*;
 import repast.simphony.statecharts.generator.GeneratedFor;
 
 «IF this == LanguageTypes::groovy || this == LanguageTypes::relogo-»
@@ -492,7 +492,7 @@ import repast.simphony.relogo.Stop;
 import repast.simphony.relogo.Utility; 
 import repast.simphony.relogo.UtilityG;
 «ENDIF-» 
-import repast.simphony.essentials.RepastEssentials;
+import static repast.simphony.essentials.RepastEssentials.*;
 
 «parseCodeForImports(code)»
         
