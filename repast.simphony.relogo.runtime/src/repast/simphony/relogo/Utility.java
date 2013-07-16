@@ -303,7 +303,7 @@ public class Utility {
 		return a;
 	}
 
-	public static <E> AgentSet<E> agentSetFromIterator(Iterator<E> i) {
+	public static <E extends ReLogoAgent> AgentSet<E> agentSetFromIterator(Iterator<E> i) {
 		AgentSet<E> a = new AgentSet<>();
 		while (i.hasNext()) {
 			a.add(i.next());
@@ -1908,7 +1908,7 @@ public class Utility {
 	 *            an agentset
 	 * @return random subset of agentset a of size number
 	 */
-	public static <E> AgentSet<E> nOf(int number, AgentSet<E> a) {
+	public static <E extends ReLogoAgent> AgentSet<E> nOf(int number, AgentSet<E> a) {
 		int size = a.size();
 		if (size <= number) {
 			return a;

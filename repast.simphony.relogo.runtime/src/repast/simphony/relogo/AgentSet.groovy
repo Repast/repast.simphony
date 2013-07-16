@@ -9,7 +9,7 @@ package repast.simphony.relogo
  * @author jozik
  *
  */
-public class AgentSet<E> extends AbstractAgentSet<E>{
+public class AgentSet<E extends ReLogoAgent> extends AbstractAgentSet<E>{
 		
 	public AgentSet(){
 		super()

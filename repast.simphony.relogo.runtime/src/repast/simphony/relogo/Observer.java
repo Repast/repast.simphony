@@ -776,7 +776,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 * 
 	 */
-	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
 	
 	/**
 	 * Creates turtles of specific type from a CSV file.
@@ -795,7 +795,7 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 * 
 	 */
-	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType);
 	
 	/**
 	 * Creates default ordered turtles from a CSV file.
@@ -854,7 +854,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
 
 	/**
 	 * Creates ordered turtles of specific type from a CSV file.
@@ -873,7 +873,7 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType);
 	
 	/**
 	 * Creates default turtles from the first sheet of an Excel file.
@@ -972,7 +972,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
 
 	/**
 	 * Creates turtles of specific type from the first sheet of an Excel file.
@@ -991,7 +991,7 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType);
 	
 	/**
 	 * Creates turtles of specific type from a specific sheet in an Excel file.
@@ -1013,7 +1013,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
 
 	/**
 	 * Creates turtles of specific type from a specific sheet in an Excel file.
@@ -1033,7 +1033,7 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
 
 	
 	/**
@@ -1113,7 +1113,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
 
 	/**
 	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
@@ -1132,7 +1132,7 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType);
 
 	
 	/**
@@ -1145,7 +1145,7 @@ public interface Observer extends ProjectionListener {
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
 	
 	/**
 	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
@@ -1155,5 +1155,5 @@ public interface Observer extends ProjectionListener {
 	 * @param turtleType the class of turtle to create
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
 }

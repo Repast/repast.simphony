@@ -105,7 +105,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 * 
 	 */
-	public <E> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
 		AgentSet<E> result = new AgentSet<>();
 		// Read the data file.
 		List<String[]> rows = new CSVReader(
@@ -199,7 +199,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure = null) {
 		
 		// Read the data file.
 		List<String[]> rows = new CSVReader(
@@ -328,7 +328,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
 		return createTurtlesFromExcelWithSheet(fileName, null, turtleType, initClosure)
 	}
 
@@ -352,7 +352,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
 
 		List<String> fields = getPublicFieldsAndProperties(turtleType)
 		AgentSet<E> newTurtles = new AgentSet<>();
@@ -457,7 +457,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure = null) {
 		return createOrderedTurtlesFromExcelWithSheet(fileName, null,turtleType,initClosure)
 	}
 
@@ -471,7 +471,7 @@ public class BaseObserver extends AbstractObserver{
 	 * @param initClosure the initialization routine
 	 *
 	 */
-	public <E> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure = null) {
 		
 		List<String> fields = getPublicFieldsAndProperties(turtleType)
 
