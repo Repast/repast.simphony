@@ -757,8 +757,8 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
 
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.minOneOfU(this, a, reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.minOneOfU(this, a, closure);
 	}
 
 	/**
@@ -775,8 +775,8 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 *         operated on by closure
 	 */
 	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.minNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.minNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -789,8 +789,8 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.maxOneOfU(this, a, reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.maxOneOfU(this, a, closure);
 	}
 
 	/**
@@ -807,8 +807,8 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 *         operated on by closure
 	 */
 	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.maxNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.maxNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -816,13 +816,13 @@ public abstract class AbstractLink<T> extends Link<T> {
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter) {
-		return Utility.allQU(this, a, reporter);
+	public boolean allQ(Collection a, Closure closure) {
+		return Utility.allQU(this, a, closure);
 	}
 
 	/**

@@ -55,8 +55,8 @@ public class UtilityG{
 	 * @param a a collection
 	 * @return the filtered collection consisting of items satisfying the closure
 	 */
-	public static <E> Collection<E> filter(Closure reporter, Collection<E> a){
-		return a.findAll(reporter)
+	public static <E> Collection<E> filter(Closure closure, Collection<E> a){
+		return a.findAll(closure)
 	}
 	
 	/**
@@ -178,13 +178,13 @@ public class UtilityG{
 	 * 
 	 * both yield ["a","ab","abc"]
 	 * 
-	 * @param reporter closure taking one or two arguments
+	 * @param closure closure taking one or two arguments
 	 * @param c a collection
 	 * @return list sorted by the closure
 	 */
-	public static <E> List<E> sortBy(Closure reporter, Collection<E> c){
+	public static <E> List<E> sortBy(Closure closure, Collection<E> c){
 		List<E> temp = new ArrayList<>(c)
-		temp.sort(reporter)
+		temp.sort(closure)
 		return temp
 	}
 	

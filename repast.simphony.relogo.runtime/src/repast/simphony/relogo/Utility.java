@@ -710,26 +710,26 @@ public class Utility {
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public static boolean allQU(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return allQU(null, a, reporter);
+	public static boolean allQU(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return allQU(null, a, closure);
 	}
 
 	public static boolean allQU(Object caller, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
+			Closure closure) {
 		if (caller != null) {
 			for (ReLogoAgent o : a) {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		for (ReLogoAgent agent : a) {
-			reporter.setDelegate(agent);
-			if (!(Boolean) reporter.call(agent)) {
+			closure.setDelegate(agent);
+			if (!(Boolean) closure.call(agent)) {
 				return false;
 			}
 		}
@@ -1498,12 +1498,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static ReLogoAgent minOneOfU(Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return minOneOfU(null, a, reporter);
+			Closure closure) {
+		return minOneOfU(null, a, closure);
 	}
 
 	public static ReLogoAgent minOneOfU(Object caller,
-			Collection<? extends ReLogoAgent> a, Closure reporter) {
+			Collection<? extends ReLogoAgent> a, Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		if (b.size() == 0){
 			return null;
@@ -1518,12 +1518,12 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		double currentMin = Double.POSITIVE_INFINITY;
 		ReLogoAgent currentMinAgent = null;
 		for (ReLogoAgent o : b) {
-			reporter.setDelegate(o);
-			Number result = (Number) reporter.call(o);
+			closure.setDelegate(o);
+			Number result = (Number) closure.call(o);
 			if (result.doubleValue() < currentMin) {
 				currentMin = result.doubleValue();
 				currentMinAgent = o;
@@ -1547,12 +1547,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static AgentSet minNOfU(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return minNOfU(null, number, a, reporter);
+			Closure closure) {
+		return minNOfU(null, number, a, closure);
 	}
 
 	public static AgentSet minNOfU(Object caller, int number,
-			Collection<? extends ReLogoAgent> a, final Closure reporter) {
+			Collection<? extends ReLogoAgent> a, final Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		int l = b.size();
 		if (l == 0){
@@ -1568,13 +1568,13 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		Collections.sort(b, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				reporter.setDelegate(o1);
-				Number n1 = (Number) reporter.call(o1);
-				reporter.setDelegate(o2);
-				Number n2 = (Number) reporter.call(o2);
+				closure.setDelegate(o1);
+				Number n1 = (Number) closure.call(o1);
+				closure.setDelegate(o2);
+				Number n2 = (Number) closure.call(o2);
 				return (n1.doubleValue() < n2.doubleValue() ? -1 : (n1
 						.doubleValue() == n2.doubleValue() ? 0 : 1));
 			}
@@ -1598,12 +1598,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static ReLogoAgent maxOneOfU(Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return maxOneOfU(null, a, reporter);
+			Closure closure) {
+		return maxOneOfU(null, a, closure);
 	}
 
 	public static ReLogoAgent maxOneOfU(Object caller,
-			Collection<? extends ReLogoAgent> a, Closure reporter) {
+			Collection<? extends ReLogoAgent> a, Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		if (b.size() == 0){
 			return null;
@@ -1618,12 +1618,12 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		double currentMax = Double.NEGATIVE_INFINITY;
 		ReLogoAgent currentMaxAgent = null;
 		for (ReLogoAgent o : b) {
-			reporter.setDelegate(o);
-			Number result = (Number) reporter.call(o);
+			closure.setDelegate(o);
+			Number result = (Number) closure.call(o);
 			if (result.doubleValue() > currentMax) {
 				currentMax = result.doubleValue();
 				currentMaxAgent = o;
@@ -1647,12 +1647,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static AgentSet maxNOfU(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return maxNOfU(null, number, a, reporter);
+			Closure closure) {
+		return maxNOfU(null, number, a, closure);
 	}
 
 	public static AgentSet maxNOfU(Object caller, int number,
-			Collection<? extends ReLogoAgent> c, final Closure reporter) {
+			Collection<? extends ReLogoAgent> c, final Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(c);
 		int l = b.size();
 		if (l == 0){
@@ -1668,13 +1668,13 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		Collections.sort(b, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				reporter.setDelegate(o1);
-				Number n1 = (Number) reporter.call(o1);
-				reporter.setDelegate(o2);
-				Number n2 = (Number) reporter.call(o2);
+				closure.setDelegate(o1);
+				Number n1 = (Number) closure.call(o1);
+				closure.setDelegate(o2);
+				Number n2 = (Number) closure.call(o2);
 				return (n1.doubleValue() < n2.doubleValue() ? 1 : (n1
 						.doubleValue() == n2.doubleValue() ? 0 : -1));
 			}
