@@ -2,9 +2,12 @@
 package repast.simphony.batch;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 
-import repast.simphony.batch.BatchScenarioLoader;
-import repast.simphony.batch.BatchScheduleRunner;
 import repast.simphony.engine.controller.DefaultController;
 import repast.simphony.engine.environment.AbstractRunner;
 import repast.simphony.engine.environment.ControllerRegistry;
@@ -17,6 +20,7 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersCreator;
 import repast.simphony.parameter.SweeperProducer;
 import repast.simphony.scenario.ScenarioLoadException;
+import repast.simphony.scenario.ScenarioLoader;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -45,22 +49,50 @@ public class OneRunBatchRunner implements RunListener {
 
   private void init(File scenarioDir) throws ScenarioLoadException {
     if (scenarioDir.exists()) {
-      BatchScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
+      ScenarioLoader loader = createScenarioLoader(scenarioDir);
       ControllerRegistry registry = loader.load(runEnvironmentBuilder);
       controller.setControllerRegistry(registry);
     } else {
-      msgCenter.error("Scenario not found", new IllegalArgumentException("Invalid scenario " + scenarioDir.getAbsolutePath()));
+      msgCenter.error("Scenario not found", new IllegalArgumentException("Invalid scenario "
+          + scenarioDir.getAbsolutePath()));
     }
   }
-  
+
+  private ScenarioLoader createScenarioLoader(File scenarioDir) {
+    InputStream in = getClass().getResourceAsStream("batch.properties");
+    Properties props = new Properties();
+    try {
+      props.load(in);
+      in.close();
+      String className = props.getProperty("batch.scenario.loader", "repast.simphony.batch.BatchScenarioLoader");
+      Class<?> clazz = Class.forName(className, true, getClass().getClassLoader());
+      Constructor<?> constructor = clazz.getConstructor(File.class);
+      return (ScenarioLoader)constructor.newInstance(scenarioDir);
+      
+    } catch (IOException | ClassNotFoundException | NoSuchMethodException | 
+        SecurityException | InstantiationException | IllegalAccessException | 
+        IllegalArgumentException | InvocationTargetException | ClassCastException ex) {
+      msgCenter.warn("Unable to find batch loader class in batch.properties file. Using default loader.", ex);
+      
+    } finally {
+      if (in != null)
+        try {
+          in.close();
+        } catch (IOException ex) {}
+    }
+    
+    return new BatchScenarioLoader(scenarioDir);
+
+  }
+
   public void batchInit() {
     controller.batchInitialize();
   }
-  
+
   public void batchCleanup() {
     controller.batchCleanup();
   }
-  
+
   public void run(int runNum, Parameters params) {
     pause = true;
     params = setupSweep(params);
@@ -95,7 +127,7 @@ public class OneRunBatchRunner implements RunListener {
   }
 
   protected void waitForRun() {
-    //msgCenter.info("Waiting");
+    // msgCenter.info("Waiting");
     synchronized (monitor) {
       while (pause) {
         try {
@@ -106,7 +138,7 @@ public class OneRunBatchRunner implements RunListener {
         }
       }
     }
-    //msgCenter.info("Done Waiting");
+    // msgCenter.info("Done Waiting");
   }
 
   protected void notifyMonitor() {
@@ -140,11 +172,11 @@ public class OneRunBatchRunner implements RunListener {
   public void stopped() {
     pause = false;
     notifyMonitor();
-    //msgCenter.info("Stopped Called");
+    // msgCenter.info("Stopped Called");
   }
-  
+
   private static class ORBController extends DefaultController {
-    
+
     private int runNumber;
 
     /**
@@ -153,12 +185,14 @@ public class OneRunBatchRunner implements RunListener {
     public ORBController(RunEnvironmentBuilder runEnvironmentBuilder) {
       super(runEnvironmentBuilder);
     }
-    
+
     public void setRunNumber(int runNumber) {
       this.runNumber = runNumber;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see repast.simphony.engine.controller.DefaultController#prepare()
      */
     @Override
@@ -168,8 +202,11 @@ public class OneRunBatchRunner implements RunListener {
       return retVal;
     }
 
-    /* (non-Javadoc)
-     * @see repast.simphony.engine.controller.DefaultController#prepareForNextRun()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * repast.simphony.engine.controller.DefaultController#prepareForNextRun()
      */
     @Override
     protected void prepareForNextRun() {
