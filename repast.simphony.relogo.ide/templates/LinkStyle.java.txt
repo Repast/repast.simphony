@@ -23,9 +23,8 @@ public class LinkStyle implements EdgeStyleOGL2D {
 	 * repast.simphony.visualizationOGL2D.EdgeStyleOGL2D#getColor(repast.simphony
 	 * .space.graph.RepastEdge)
 	 */
-	@SuppressWarnings("unchecked")
 	public Color getColor(RepastEdge<?> edge) {
-		BaseLink link = (BaseLink) edge;
+		BaseLink<?> link = (BaseLink<?>) edge;
 		return ReLogoSupport.lookupColor(link.getColor());
 	}
 

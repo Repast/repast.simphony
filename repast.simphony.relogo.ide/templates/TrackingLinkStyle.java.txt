@@ -26,9 +26,8 @@ public class TrackingLinkStyle implements EdgeStyleOGL2D {
 	 * repast.simphony.visualizationOGL2D.EdgeStyleOGL2D#getColor(repast.simphony
 	 * .space.graph.RepastEdge)
 	 */
-	@SuppressWarnings("unchecked")
 	public Color getColor(RepastEdge<?> edge) {
-		return ReLogoSupport.lookupColor(((TrackingEdge)edge).getColor());
+		return ReLogoSupport.lookupColor(((TrackingEdge<?>)edge).getColor());
 	}
 
 	/*
@@ -38,9 +37,8 @@ public class TrackingLinkStyle implements EdgeStyleOGL2D {
 	 * repast.simphony.visualizationOGL2D.EdgeStyleOGL2D#getLineWidth(repast
 	 * .simphony.space.graph.RepastEdge)
 	 */
-	@SuppressWarnings("unchecked")
 	public int getLineWidth(RepastEdge<?> edge) {
-		return ((TrackingEdge)edge).getSize();
+		return ((TrackingEdge<?>)edge).getSize();
 	}
 
 }
