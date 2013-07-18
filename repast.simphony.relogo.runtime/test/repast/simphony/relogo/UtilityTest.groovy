@@ -1109,15 +1109,6 @@ public class UtilityTest extends GroovyTestCase{
 		
 		def b = [1,2,3,4] as Set
 		assertTrue(Utility.minOneOfU(5,b,{it}) == null)
-		// test using expandos
-//		def agentOne = new Expando(toString: {"a1"}, setMyself:{}) 
-//		def agentTwo = new Expando(toString: {"a2"}, setMyself:{}) 
-//		def methodString = 'getVar1'
-//		agentOne.getVar1 = { 1 }
-//		agentTwo.getVar1 = { 2 }
-//		def reporter = { "$methodString"() }
-//		AgentSet b = new AgentSet([agentOne,agentTwo])
-//		assertTrue(Utility.minOneOf(b,reporter) == agentOne)
 	}
 	
 	public void testMaxOneOf(){
@@ -1131,16 +1122,6 @@ public class UtilityTest extends GroovyTestCase{
 		
 		def b = [1,2,3,4] as Set
 		assertTrue(Utility.maxOneOfU(5,b,{it}) == null)
-		
-		// test using expandos
-//		def agentOne = new Expando(toString: {"a1"})
-//		def agentTwo = new Expando(toString: {"a2"})
-//		def methodString = 'getVar1'
-//		agentOne.getVar1 = { 1 }
-//		agentTwo.getVar1 = { 2 }
-//		def reporter = { "$methodString"() }
-//		AgentSet b = new AgentSet([agentOne,agentTwo])
-//		assertTrue(Utility.maxOneOf(b,reporter) == agentTwo)
 	}
 	
 	public void testMinNOf(){
@@ -1155,18 +1136,6 @@ public class UtilityTest extends GroovyTestCase{
 		def b = [1,2,3,4] as Set
 		assertTrue(Utility.minNOfU(5,b,{it}).isEmpty())
 		
-		// test using expandos
-//		def agentOne = new Expando(toString: {"a1"}, getVar1: {1})
-//		def agentTwo = new Expando(toString: {"a2"}, getVar1: {2})
-//		def agentThree = new Expando(toString: {"a3"}, getVar1: {3})
-//		def agentFour = new Expando(toString: {"a4"}, getVar1: {4})
-//		def methodString = 'getVar1'
-//		def reporter = { "$methodString"() }
-//		AgentSet b = new AgentSet([agentOne,agentTwo,agentThree,agentFour])
-//		assertArrayEquals(Utility.minNOf(0,b,reporter) as Object[],[] as Object[])
-//		assertArrayEquals(Utility.minNOf(1,b,reporter) as Object[],[agentOne] as Object[])
-//		assertArrayEquals(Utility.minNOf(2,b,reporter) as Object[],[agentOne,agentTwo] as Object[])
-//		assertArrayEquals(Utility.minNOf(5,b,reporter) as Object[],[agentOne,agentTwo,agentThree,agentFour] as Object[])
 	}
 	
 	public void testMaxNOf(){
@@ -1181,19 +1150,6 @@ public class UtilityTest extends GroovyTestCase{
 		
 		def b = [1,2,3,4] as Set
 		assertTrue(Utility.maxNOfU(5,b,{it}).isEmpty())
-		
-		// test using expandos
-//		def agentOne = new Expando(toString: {"a1"}, getVar1: {1})
-//		def agentTwo = new Expando(toString: {"a2"}, getVar1: {2})
-//		def agentThree = new Expando(toString: {"a3"}, getVar1: {3})
-//		def agentFour = new Expando(toString: {"a4"}, getVar1: {4})
-//		def methodString = 'getVar1'
-//		def reporter = { "$methodString"() }
-//		AgentSet b = new AgentSet([agentOne,agentTwo,agentThree,agentFour])
-//		assertArrayEquals(Utility.maxNOf(0,b,reporter) as Object[],[] as Object[])
-//		assertArrayEquals(Utility.maxNOf(1,b,reporter) as Object[],[agentFour] as Object[])
-//		assertArrayEquals(Utility.maxNOf(2,b,reporter) as Object[],[agentFour,agentThree] as Object[])
-//		assertArrayEquals(Utility.maxNOf(5,b,reporter) as Object[],[agentFour,agentThree,agentTwo,agentOne] as Object[])
 	}
 	
 	public void testAllQ(){

@@ -313,12 +313,12 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public abstract boolean allQ(Collection a, Closure reporter);
+	public abstract boolean allQ(Collection a, Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the smallest value when operated on by a set of
@@ -330,7 +330,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 *            a set of commands
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
-	public abstract ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter);
+	public abstract ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -346,7 +346,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 *         operated on by closure
 	 */
 	public abstract AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the largest value when operated on by a set of
@@ -358,7 +358,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public abstract ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a,Closure reporter);
+	public abstract ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -374,7 +374,7 @@ public abstract class Link<T> extends RepastEdge<T> implements
 	 *         operated on by closure
 	 */
 	public abstract AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 
 	/**
