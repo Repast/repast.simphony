@@ -73,6 +73,9 @@ public class FileDataSink implements DataSink {
   @Override
   public void open(List<String> sourceIds) {
     try {
+      File parentFile = file.getCanonicalFile().getParentFile();
+      if (parentFile != null && !parentFile.exists()) parentFile.mkdirs();
+      
       writer = new BufferedWriter(new FileWriter(file));
       String header = formatter.getHeader();
       if (header.length() > 0) {
