@@ -73,7 +73,7 @@ import repast.simphony.agents.model.codegen.JavaSrcModelDigester;
 @SuppressWarnings("unchecked")
 public class AgentBuilderBuilder extends IncrementalProjectBuilder {
 
-	public static final String newFont = "<FONT FACE=Arial, Verdana, Sans>";
+	public static final String newFont = "<FONT FACE=Verdana, Arial, Sans>";
 	
 	/**
 	 * Creates a new AgentBuilderBuilder instance.
