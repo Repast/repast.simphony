@@ -502,7 +502,7 @@ public class NativeDataTypeManager {
 						alreadyDefined = currentR;
 					}
 					bw.append("for (r"+currentR+" = 0; r"+currentR+" < "+ad.getDimensionSize()[dim-1]+"; r"+currentR+"++) {\n"); // was dim
-					bw.append(ad.getName()+"[r"+currentR+"] = ("+ad.getType()+"*) malloc("+ad.getNumDimensions()+" * sizeof("+ad.getType()+"));\n");
+					bw.append(ad.getName()+"[r"+currentR+"] = ("+ad.getType()+"*) malloc("+ad.getDimensionSize()[dim]+" * sizeof("+ad.getType()+"));\n");
 					currentR++;
 
 				}
