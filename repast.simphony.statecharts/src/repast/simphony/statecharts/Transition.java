@@ -178,5 +178,23 @@ public class Transition<T> {
 			initialize(stateChart);
 		}
 	}
+	
+	/**
+	 * Sets the next polling time for this transition.
+	 * This affects Always, Condition, Probability and Message triggers.
+	 * @param pollingTime
+	 */
+	public void setNextPollingTime(double pollingTime){
+		trigger.setInterval(pollingTime);
+	}
+	
+	/**
+	 * Get the polling time or interval for this transition.
+	 * Polling time for: Always, Condition, Probability and Message triggers.
+	 * Interval for: Timed and Exponential triggers.
+	 */
+	public double getPollingTime(){
+		return trigger.getInterval();
+	}
 
 }

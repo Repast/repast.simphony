@@ -46,7 +46,13 @@ public class TimedTrigger<T> extends AbstractTrigger<T> {
 
 	@Override
 	public double getInterval() {
-		return 0;
+		try {
+			return tdf.value(getAgent(), transition, getParams());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	@Override
@@ -87,6 +93,15 @@ public class TimedTrigger<T> extends AbstractTrigger<T> {
 	@Override
 	public boolean canTransitionZeroTime() {
 		return false;
+	}
+	
+	/**
+	 * This does nothing as there is no polling time
+	 * associated with this trigger type.
+	 */
+	@Override
+	public void setInterval(double interval) {
+		// do nothing
 	}
 
 }

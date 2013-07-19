@@ -35,7 +35,7 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 	}
 
 
-	private final double pollingTime;
+	private double pollingTime, nextPollingTime;
 	private double initializedTickCount;
 	private MessageChecker messageChecker;
 		
@@ -43,6 +43,7 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 		this.queue = queue;
 		this.messageChecker = messageChecker;
 		this.pollingTime = pollingTime;
+		nextPollingTime = pollingTime;
 		
 	}
 	
@@ -76,7 +77,13 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 		return pollingTime;
 	}
 	
+	@Override
+	public void setInterval(double interval) {
+		nextPollingTime = interval;
+	}
+	
 	public void initialize(){
+		pollingTime = nextPollingTime;
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
 	}
@@ -111,6 +118,10 @@ public class MessageTrigger<T> extends AbstractTrigger<T>{
 	public boolean isQueueConsuming() {
 		return true;
 	}
+
+
+
+	
 
 
 	

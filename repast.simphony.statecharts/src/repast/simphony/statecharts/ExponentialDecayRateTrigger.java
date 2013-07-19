@@ -93,4 +93,13 @@ public class ExponentialDecayRateTrigger<T> extends AbstractTrigger<T> {
 		return false;
 	}
 
+	/**
+	 * This does nothing as there is no polling time
+	 * associated with this trigger type.
+	 */
+	@Override
+	public void setInterval(double interval) {
+		// do nothing
+	}
+
 }

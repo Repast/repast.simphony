@@ -7,7 +7,7 @@ import simphony.util.messages.MessageCenter;
 
 public class ConditionTrigger<T> extends AbstractTrigger<T> {
 
-	private final double pollingTime;
+	private double pollingTime, nextPollingTime;
 	private double initializedTickCount;
 	private ConditionTriggerCondition<T> condition;
 	private Parameters params;
@@ -25,6 +25,7 @@ public class ConditionTrigger<T> extends AbstractTrigger<T> {
 	public ConditionTrigger(ConditionTriggerCondition<T> condition,
 			double pollingTime) {
 		this.pollingTime = pollingTime;
+		nextPollingTime = pollingTime;
 		this.condition = condition;
 	}
 
@@ -40,8 +41,13 @@ public class ConditionTrigger<T> extends AbstractTrigger<T> {
 	public double getInterval() {
 		return pollingTime;
 	}
+	
+	public void setInterval(double interval){
+		nextPollingTime = interval;
+	}
 
 	public void initialize() {
+		pollingTime = nextPollingTime;
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
 	}

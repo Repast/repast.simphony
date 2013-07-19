@@ -5,7 +5,7 @@ import repast.simphony.engine.schedule.ISchedule;
 
 public class AlwaysTrigger extends AbstractTrigger<Object> {
 
-	private final double pollingTime;
+	private double pollingTime, nextPollingTime;
 	
 	public AlwaysTrigger(){
 		this(1);
@@ -13,12 +13,14 @@ public class AlwaysTrigger extends AbstractTrigger<Object> {
 	
 	public AlwaysTrigger(double pollingTime){
 		this.pollingTime = pollingTime;
+		nextPollingTime = pollingTime;
 	}
 	
 	private double initializedTickCount;
 
 	@Override
 	public void initialize() {
+		pollingTime = nextPollingTime;
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
 	}
@@ -51,6 +53,11 @@ public class AlwaysTrigger extends AbstractTrigger<Object> {
 	@Override
 	public boolean canTransitionZeroTime() {
 		return true;
+	}
+
+	@Override
+	public void setInterval(double interval) {
+		nextPollingTime = interval;
 	}
 
 

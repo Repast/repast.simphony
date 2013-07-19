@@ -9,7 +9,7 @@ import simphony.util.messages.MessageCenter;
 public class ProbabilityTrigger<T> extends AbstractTrigger<T> {
 
 	private TriggerDoubleFunction<T> tdf;
-	private final double pollingTime;
+	private double pollingTime, nextPollingTime;
 	private double initializedTickCount;
 	private double probability;
 	private Parameters params;
@@ -49,6 +49,7 @@ public class ProbabilityTrigger<T> extends AbstractTrigger<T> {
 	public ProbabilityTrigger(TriggerDoubleFunction<T> tdf, double pollingTime) {
 		this.tdf = tdf;
 		this.pollingTime = pollingTime;
+		nextPollingTime = pollingTime;
 	}
 
 	@Override
@@ -59,8 +60,15 @@ public class ProbabilityTrigger<T> extends AbstractTrigger<T> {
 	public double getInterval() {
 		return pollingTime;
 	}
+	
+	@Override
+	public void setInterval(double interval) {
+		nextPollingTime = interval;
+	}
+
 
 	public void initialize() {
+		pollingTime = nextPollingTime;
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
 		initializedTickCount = schedule.getTickCount();
 	}
@@ -99,4 +107,5 @@ public class ProbabilityTrigger<T> extends AbstractTrigger<T> {
 		return false;
 	}
 
+	
 }

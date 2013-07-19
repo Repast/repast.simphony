@@ -6,6 +6,7 @@ public interface Trigger {
 	public boolean isTriggerConditionTrue();
 	public boolean isRecurring();
 	public double getInterval();
+	public void setInterval(double interval);
 	public double getNextTime();
 	public boolean canTransitionZeroTime();
 	public boolean isQueueConsuming();
