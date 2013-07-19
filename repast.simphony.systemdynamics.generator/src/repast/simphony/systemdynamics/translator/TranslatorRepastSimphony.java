@@ -45,7 +45,7 @@ public class TranslatorRepastSimphony extends Translator {
 	public final static String CLOUD_IDENTIFIER = "CLOUD_";
 	
 	private static final String SRC_GEN = "src-gen";
-	private static final String OUTPUT = "output";
+	private static  String OUTPUT = "";
 
 	
 	private IProject project;
@@ -194,7 +194,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	try {
 			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
-			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+			this.miscDirectory = addPath(project, progressMonitor, getMiscDirectory()); // OUTPUT
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -260,7 +260,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	try {
 			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
-			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+			this.miscDirectory = addPath(project, progressMonitor, getMiscDirectory());  // OUTPUT
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -329,7 +329,7 @@ public class TranslatorRepastSimphony extends Translator {
     	
     	try {
 			this.destinationDirectory = addSrcPath(project, progressMonitor, SRC_GEN);
-			this.miscDirectory = addPath(project, progressMonitor, OUTPUT);
+			this.miscDirectory = addPath(project, progressMonitor, getMiscDirectory()); // OUTPUT
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

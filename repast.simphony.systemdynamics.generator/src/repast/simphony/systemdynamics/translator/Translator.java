@@ -1621,6 +1621,9 @@ public class Translator {
 	}
 
 	public String getMiscDirectory() {
+		if (miscDirectory == null) {
+			miscDirectory = "miscOutput";
+		}
 		return miscDirectory;
 	}
 
