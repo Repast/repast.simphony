@@ -60,6 +60,7 @@ import repast.simphony.statecharts.edit.parts.History2EditPart;
 import repast.simphony.statecharts.edit.parts.HistoryEditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState3EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
+import repast.simphony.statecharts.edit.parts.PseudoState5EditPart;
 import repast.simphony.statecharts.edit.parts.State2EditPart;
 import repast.simphony.statecharts.edit.parts.StateEditPart;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
@@ -207,7 +208,7 @@ public class SVGGenerator {
 
 				// if the new nodelist contains more children, process them
 				if (newLength > oldLength) {
-					if (newLength - oldLength == 3) { // defs1 is included so skip first
+					if (newLength - oldLength > 1) { // defs1 is included so skip first
 						oldLength++;
 					}
 					switch (StatechartVisualIDRegistry.getVisualID(editPart
@@ -218,6 +219,9 @@ public class SVGGenerator {
 						break;
 					case StateEditPart.VISUAL_ID:
 						processBaseSimpleState(oldLength, nl, editPart);
+						break;
+					case PseudoState5EditPart.VISUAL_ID: // Entry state
+						processBaseEntryState(oldLength, nl, editPart);
 						break;
 					case FinalStateEditPart.VISUAL_ID:
 						processBaseFinalState(oldLength, nl, editPart);
@@ -245,10 +249,27 @@ public class SVGGenerator {
 	}
 
 	/**
+	 * Fixes the entry state appearance by adding a fill="black" attribute.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 * @param editPart
+	 */
+	private void processBaseEntryState(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+		Node g = nl.item(oldLength);
+		Element firstElement =(Element) g.getFirstChild();
+		firstElement.setAttribute("fill", "black");
+		
+		Element nextElement = (Element) firstElement.getNextSibling();
+		nextElement.setAttribute("fill", "black");
+	}
+
+	/**
 	 * Fixes the final state appearance by adding a fill="black" attribute.
 	 * 
 	 * @param oldLength
 	 * @param nl
+	 * @param editPart
 	 */
 	private void processBaseFinalState(int oldLength, NodeList nl,
 			IGraphicalEditPart editPart) {
