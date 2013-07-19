@@ -114,45 +114,54 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		}
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
-		} else if (currentSimpleState instanceof BranchState) {
-			List<Transition<T>> branchCandidateTransitions = new ArrayList<Transition<T>>();
-			for (Transition<T> t : regularTransitions) {
-				if (currentSimpleState == t.getSource()) {
-					branchCandidateTransitions.add(t);
-				}
-			}
-
-			Transition<T> defaultTransition = null;
-			List<Transition<T>> trueBranchTransitions = new ArrayList<Transition<T>>();
-			for (Transition<T> t : branchCandidateTransitions) {
-				if (t.getTrigger() instanceof AlwaysTrigger) {
-					defaultTransition = t;
-				} else {
-					if (t.isTransitionConditionTrue()) {
-						trueBranchTransitions.add(t);
+		} else {
+			// List of zero time transitions
+			List<Transition<T>> zeroTimeTransitions = new ArrayList<Transition<T>>();
+			// This will hold any branch state outgoing transitions for 
+			// special treatment
+			List<Transition<T>> transitionsToIgnore = new ArrayList<Transition<T>>();
+			
+			if (currentSimpleState instanceof BranchState) {
+				List<Transition<T>> branchCandidateTransitions = new ArrayList<Transition<T>>();
+				for (Transition<T> t : regularTransitions) {
+					if (currentSimpleState == t.getSource()) {
+						branchCandidateTransitions.add(t);
 					}
 				}
-			}
-			if (defaultTransition == null) {
-				throw new IllegalStateException(
-						"All branch states must define at least one default transition");
-			}
-			Transition<T> t = chooseOneTransition(trueBranchTransitions);
-			if (t == null)
-				makeRegularTransition(defaultTransition);
-			else
-				makeRegularTransition(t);
+				transitionsToIgnore.addAll(branchCandidateTransitions);
 
-		} else {
+				Transition<T> defaultTransition = null;
+				List<Transition<T>> trueBranchTransitions = new ArrayList<Transition<T>>();
+				for (Transition<T> t : branchCandidateTransitions) {
+					if (t.getTrigger() instanceof AlwaysTrigger) {
+						defaultTransition = t;
+					} else {
+						if (t.isTransitionConditionTrue()) {
+							trueBranchTransitions.add(t);
+						}
+					}
+				}
+				if (defaultTransition == null) {
+					throw new IllegalStateException(
+							"All branch states must define at least one default transition");
+				}
+				Transition<T> t = chooseOneTransition(trueBranchTransitions);
+				if (t == null)
+					zeroTimeTransitions.add(defaultTransition);
+				// makeRegularTransition(defaultTransition);
+				else
+					zeroTimeTransitions.add(t);
+				// makeRegularTransition(t);
+
+			}
+			// Get all new candidate transitions
 			List<Transition<T>> newCandidateTransitions = new ArrayList<Transition<T>>();
 			for (Transition<T> t : regularTransitions) {
-				if (statesToEnter.contains(t.getSource())) {
+				if (!transitionsToIgnore.contains(t) && statesToEnter.contains(t.getSource())) {
 					newCandidateTransitions.add(t);
 				}
 			}
 
-			// Get zero time transitions
-			List<Transition<T>> zeroTimeTransitions = new ArrayList<Transition<T>>();
 			// for new candidate transitions find all zeroTimeTransitions
 			for (Transition<T> tt : newCandidateTransitions) {
 				if (tt.canTransitionZeroTime())
@@ -163,6 +172,12 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			for (Transition<T> tt : activeRegularTransitions) {
 				if (tt.canTransitionZeroTime() && tt.isTransitionTriggered())
 					zeroTimeTransitions.add(tt);
+			}
+			
+		// collect all relevant regular transitions and initialize
+			activeRegularTransitions.addAll(newCandidateTransitions);
+			for (Transition<T> ct : newCandidateTransitions) {
+				ct.initialize(this);
 			}
 
 			// Partition zero time transitions into queue consuming and non
@@ -207,7 +222,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				}
 				makeRegularTransition(t);
 			}
-			// Otherwise set up the self and regular transitions and initialize
+			// Otherwise set up the self transitions and initialize
 			// them
 			else {
 				// collect all relevant self transitions and initialize
@@ -217,13 +232,10 @@ public class DefaultStateChart<T> implements StateChart<T> {
 						st.initialize(this);
 					}
 				}
-				// collect all relevant regular transitions and initialize
-				activeRegularTransitions.addAll(newCandidateTransitions);
-				for (Transition<T> ct : newCandidateTransitions) {
-					ct.initialize(this);
-				}
+				
 
 			}
+
 		}
 	}
 
@@ -402,7 +414,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils.union(
 				queueConsumingActiveSelfTransitions, queueConsumingActiveRegularTransitions);
-		
+
 		// This is for the corner case when there is a self transition
 		// and a regular transition that both are valid based on the same
 		// message, but another regular transition is chosen over the
@@ -410,7 +422,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// message in the queue is consumed since the self transition
 		// "used" it, even if the regular transition didn't.
 		boolean queueConsumingSelfTransitionFollowed = false;
-		
+
 		// Are there no active self or regular queue consuming transitions?
 		if (allQueueConsumingActiveTransitions.isEmpty()) {
 			queue.clear();
