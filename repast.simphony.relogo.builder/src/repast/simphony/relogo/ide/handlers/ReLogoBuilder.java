@@ -640,7 +640,7 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 
 											String methodString = mce.getMethodAsString();
 											// List<String> methodsList = new ArrayList<String>();
-											if (METHODS_LIST.contains(methodString)) {
+											if (METHODS_LIST.contains(methodString) || METHODS_LIST2.contains(methodString)) {
 												Expression argumentsExpression = mce.getArguments();
 												if (argumentsExpression != null
 														&& argumentsExpression instanceof ArgumentListExpression) {
@@ -657,29 +657,29 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 											}
 										}
 
-										@Override
-										public void visitBinaryExpression(BinaryExpression be) {
-											Expression re = be.getRightExpression();
-											if (re != null && re instanceof MethodCallExpression) {
-												MethodCallExpression mce = (MethodCallExpression) re;
-												String methodString = mce.getMethodAsString();
-												if (METHODS_LIST2.contains(methodString)) {
-													Expression argumentsExpression = mce.getArguments();
-													if (argumentsExpression != null
-															&& argumentsExpression instanceof ArgumentListExpression) {
-														List arguments = ((ArgumentListExpression) argumentsExpression)
-																.getExpressions();
-														if (arguments.get(0) instanceof ConstantExpression) {
-															ConstantExpression ce = (ConstantExpression) arguments.get(0);
-															Object val = ce.getValue();
-															if (val instanceof String) {
-																globalFields.add((String) val);
-															}
-														}
-													}
-												}
-											}
-										}
+//										@Override
+//										public void visitBinaryExpression(BinaryExpression be) {
+//											Expression re = be.getRightExpression();
+//											if (re != null && re instanceof MethodCallExpression) {
+//												MethodCallExpression mce = (MethodCallExpression) re;
+//												String methodString = mce.getMethodAsString();
+//												if (METHODS_LIST2.contains(methodString)) {
+//													Expression argumentsExpression = mce.getArguments();
+//													if (argumentsExpression != null
+//															&& argumentsExpression instanceof ArgumentListExpression) {
+//														List arguments = ((ArgumentListExpression) argumentsExpression)
+//																.getExpressions();
+//														if (arguments.get(0) instanceof ConstantExpression) {
+//															ConstantExpression ce = (ConstantExpression) arguments.get(0);
+//															Object val = ce.getValue();
+//															if (val instanceof String) {
+//																globalFields.add((String) val);
+//															}
+//														}
+//													}
+//												}
+//											}
+//										}
 									}); // end of CodeVisitorSupport
 								}
 							}
