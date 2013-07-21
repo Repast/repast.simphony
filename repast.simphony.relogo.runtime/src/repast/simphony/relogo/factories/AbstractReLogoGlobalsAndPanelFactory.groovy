@@ -11,6 +11,8 @@ import javax.swing.Box
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import repast.simphony.engine.environment.RunEnvironment;
+
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractReLogoGlobalsAndPanelFactory {
@@ -36,6 +38,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	}
 	
 	public void addPanel(Closure cl){
+		if (RunEnvironment.instance.isBatch()) return;
 		def swing = new SwingBuilder()
 		addToParent(swing.panel(alignmentX:Component.LEFT_ALIGNMENT,cl))
 //		panel.add(swing.edt(cl))
