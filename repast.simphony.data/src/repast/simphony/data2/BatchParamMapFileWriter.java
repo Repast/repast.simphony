@@ -45,6 +45,8 @@ public class BatchParamMapFileWriter implements DataSink {
   private List<AggregateDataSource> sources;
   private Updater updater = new Updater();
 
+  private boolean closed = false;
+
   public BatchParamMapFileWriter(BatchRunDataSource source, FileNameFormatter fnFormatter,
       String delimiter, FormatType formatType) {
     this.fnFormatter = fnFormatter;
@@ -69,7 +71,8 @@ public class BatchParamMapFileWriter implements DataSink {
     for (String pName : params.getSchema().parameterNames()) {
       // this keeps the synthetic parameter used by the distributed batch code
       // to track the run number out of the actual output.
-      // we can't use a constant here because that would create bad dependencies.
+      // we can't use a constant here because that would create bad
+      // dependencies.
       if (!pName.equals("repast.simphony.batch.BatchConstantsbatch.name")) {
         ParameterDataSource ds = new ParameterDataSource(pName);
         sources.add(ds);
@@ -102,13 +105,15 @@ public class BatchParamMapFileWriter implements DataSink {
    * @see repast.simphony.data2.DataSink#flush()
    */
   @Override
-  public void flush() {
-    try {
-      if (writer != null) {
-        writer.flush();
+  public synchronized void flush() {
+    if (!closed) {
+      try {
+        if (writer != null) {
+          writer.flush();
+        }
+      } catch (IOException ex) {
+        throw new DataException("Error while flushing BatchParamMapFileWriter.", ex);
       }
-    } catch (IOException ex) {
-      throw new DataException("Error while flushing FileDataSink.", ex);
     }
   }
 
@@ -179,15 +184,18 @@ public class BatchParamMapFileWriter implements DataSink {
    * @see repast.simphony.data2.DataSink#close()
    */
   @Override
-  public void close() {
-    try {
-      writer.flush();
-    } catch (IOException ex) {
-      throw new DataException("Error closing FileDataSink.", ex);
-    } finally {
+  public synchronized void close() {
+    if (!closed) {
       try {
-        writer.close();
+        writer.flush();
       } catch (IOException ex) {
+        throw new DataException("Error closing BatchParamMapFileWriter.", ex);
+      } finally {
+        try {
+          closed = true;
+          writer.close();
+        } catch (IOException ex) {
+        }
       }
     }
   }
