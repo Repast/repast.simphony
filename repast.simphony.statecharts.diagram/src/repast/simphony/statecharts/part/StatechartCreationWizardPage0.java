@@ -140,11 +140,11 @@ public class StatechartCreationWizardPage0 extends WizardPage {
     btnRelogo = new Button(grpDefaultLanguage, SWT.RADIO);
     btnRelogo.setText("ReLogo");
     agentClassText.addModifyListener(validator);
-    
+
     generateDefaultNames();
     setPageComplete(validatePage());
   }
-  
+
   private void generateDefaultNames() {
     nameTxt.setText("Statechart");
     classNameTxt.setText("Statechart");
@@ -188,10 +188,11 @@ public class StatechartCreationWizardPage0 extends WizardPage {
   protected String getFile() {
     return fileTxt.getText().trim();
   }
-  
+
   public URI getURI() {
     String file = getFile();
-    if (!file.startsWith("/")) file = "/" + file;
+    if (!file.startsWith("/"))
+      file = "/" + file;
     return URI.createPlatformResourceURI(file, false);
   }
 
@@ -230,8 +231,7 @@ public class StatechartCreationWizardPage0 extends WizardPage {
         return false;
       }
     }
-    
-    
+
     String val = getStatechartName();
     if (val.length() == 0) {
       setErrorMessage("Statechart name is blank.");
@@ -242,15 +242,18 @@ public class StatechartCreationWizardPage0 extends WizardPage {
     if (project != null)
       javaProject = JavaCore.create(project);
 
+    String warning = null;
     val = getClassName();
     if (val.length() == 0) {
       setErrorMessage("Class name is blank.");
       return false;
     } else {
       IStatus status = validateJavaTypeName(val, javaProject);
-      if (!status.isOK()) {
-        setErrorMessage("Class name is not valid. '" + val + "' is not a class identifier.");
+      if (status.matches(IStatus.ERROR)) {
+        setErrorMessage("Class Name is not valid. '" + val + "' is not a valid identifier.");
         return false;
+      } else if (status.matches(IStatus.WARNING)) {
+        warning = "By Convention Class Name should start with an upper case letter.";
       }
     }
 
@@ -260,9 +263,11 @@ public class StatechartCreationWizardPage0 extends WizardPage {
       return false;
     } else {
       IStatus status = validatePackageName(val, javaProject);
-      if (!status.isOK()) {
+      if (status.matches(IStatus.ERROR)) {
         setErrorMessage("Package is not valid. '" + val + "' is not a valid package identifier.");
         return false;
+      } else if (status.matches(IStatus.WARNING)) {
+        warning = "By Convention package names should start with a lower case letter.";
       }
     }
 
@@ -271,21 +276,32 @@ public class StatechartCreationWizardPage0 extends WizardPage {
       setErrorMessage("Agent class is blank.");
       return false;
     } else {
-      IStatus status = validatePackageName(val, javaProject);
-      if (!status.isOK()) {
+   
+      IStatus status = validateJavaTypeName(val, javaProject);
+      if (status.matches(IStatus.ERROR)) {
         setErrorMessage("Agent class is not valid. '" + val + "' is not a valid identifier.");
+        return false;
+      } else if (status.matches(IStatus.WARNING) || !val.contains(".")) {
+        warning = "Agent class should be the fully qualified name of the Agent class: package name "
+            + "followed by a capitalized class name (e.g. my.package.Agent).";
+      }
+    }
+
+    String fqn = getPackage() + "." + getClassName();
+    if (javaProject != null) {
+      IFile file = javaProject.getProject().getFile("src-gen/" + fqn.replace(".", "/") + ".java");
+      if (file.exists()) {
+        setErrorMessage("Chart class already exists in the specified package. Change the chart name or the package.");
         return false;
       }
     }
-    
-    String fqn = getPackage() + "." + getClassName();
-    IFile file = javaProject.getProject().getFile("src-gen/" + fqn.replace(".", "/") + ".java");
-    if (file.exists()) {
-      setErrorMessage("Chart class already exists in the specified package. Change the chart name or the package.");
-      return false;
-    }
-    
+
     setErrorMessage(null);
+    if (warning != null) {
+      setMessage(warning, WARNING);
+    } else {
+      setMessage(getDescription(), NONE);
+    }
     return true;
   }
 
