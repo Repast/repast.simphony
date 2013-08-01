@@ -304,7 +304,7 @@ public class Utility {
 	}
 
 	public static <E extends ReLogoAgent> AgentSet<E> agentSetFromIterator(Iterator<E> i) {
-		AgentSet<E> a = new AgentSet<>();
+		AgentSet<E> a = new AgentSet<E>();
 		while (i.hasNext()) {
 			a.add(i.next());
 		}
@@ -924,7 +924,7 @@ public class Utility {
 	 * @return list randomly reordered
 	 */
 	public static <E> ArrayList<E> shuffle(List<E> a) {
-		ArrayList<E> result = new ArrayList<>(a);
+		ArrayList<E> result = new ArrayList<E>(a);
 		SimUtilities.shuffle(result, RandomHelper.getUniform());
 		return result;
 	}
@@ -1814,7 +1814,7 @@ public class Utility {
 	public static <E> List<E> butFirst(List<E> a) {
 
 		if (a.size() > 1) {
-			ArrayList<E> result = new ArrayList<>(a);
+			ArrayList<E> result = new ArrayList<E>(a);
 			result.subList(0, 1).clear();
 			return result;
 		} else {
@@ -1848,7 +1848,7 @@ public class Utility {
 	public static <E> List<E> butLast(List<E> a) {
 		int size = a.size();
 		if (size > 1) {
-			ArrayList<E> result = new ArrayList<>(a);
+			ArrayList<E> result = new ArrayList<E>(a);
 			result.subList(size - 1, size).clear();
 			return result;
 		} else {
@@ -1913,7 +1913,7 @@ public class Utility {
 		if (size <= number) {
 			return a;
 		}
-		AgentSet<E> b = new AgentSet<>(a);
+		AgentSet<E> b = new AgentSet<E>(a);
 		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		b.subList(number, size).clear();
 		return b;
@@ -1929,19 +1929,19 @@ public class Utility {
 	 * @return random subset of collection c of size number
 	 */
 	public static <E> List<E> nOf(int number, Collection<E> c) {
-		List<E> a = new ArrayList<>(c);
+		List<E> a = new ArrayList<E>(c);
 		int size = a.size();
 		if (size <= number) {
 			return a;
 		}
-		ArrayList<Integer> indices = new ArrayList<>();
+		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < number; i++) {
 			indices.add(i);
 		}
 		SimUtilities.shuffle(indices, RandomHelper.getUniform());
 		indices.subList(number, size).clear();
 		Collections.sort(indices);
-		ArrayList<E> result = new ArrayList<>();
+		ArrayList<E> result = new ArrayList<E>();
 		for (Integer o : indices) {
 			result.add(a.get(o));
 		}
@@ -2047,7 +2047,7 @@ public class Utility {
 	 * @return list minus duplicated items
 	 */
 	public static <E> List<E> removeDuplicates(List<E> list) {
-		Set<E> set = new HashSet<>();
+		Set<E> set = new HashSet<E>();
 		ArrayList<E> newList = new ArrayList<E>();
 		for (E o : list) {
 			if (set.add(o)) {
@@ -2067,7 +2067,7 @@ public class Utility {
 	 * @return list minus the index item
 	 */
 	public static <E> List<E> removeItem(int index, List<E> list) {
-		ArrayList<E> temp = new ArrayList<>(list);
+		ArrayList<E> temp = new ArrayList<E>(list);
 		temp.remove(index);
 		return temp;
 	}
@@ -2146,7 +2146,7 @@ public class Utility {
 	 * @return list in reversed order
 	 */
 	public static <E> List<E> reverse(List<E> list) {
-		ArrayList<E> result = new ArrayList<>(list);
+		ArrayList<E> result = new ArrayList<E>(list);
 		Collections.reverse(result);
 		return result;
 	}

@@ -10,28 +10,6 @@ import static repast.simphony.relogo.Utility.*import repast.simphony.space.grap
  *
  */
 public class LinkTest extends GroovyTestCase{
-	
-	public void testBothEnds(){		
-		def source = "source"
-		def target = "target"
-		def link = new BaseLink(source,target,true)
-		assert(link.bothEnds().getClass() == AgentSet)
-		assert(link.bothEnds().size() == 2)
-		assertTrue(link.bothEnds().any {it == "source"})
-		assertTrue(link.bothEnds().any {it == "target"})
-	}
-	
-	public void testLinkCasting(){
-		BaseLink l = new BaseLink(new Integer(1), new Integer(2), true);
-		l.setLinkVar1(67);
-		assert(l.getLinkVar1() == 67)
-		RepastEdge re = (RepastEdge) l;
-		re.setWeight(1.45);
-		Link rle2 = (Link) re;
-		assert(rle2.getLinkVar1() == 67)
-		rle2.setLinkVar1("45");
-		assert(rle2.getLinkVar1() == '45')
-	}
 		
 	public void testJungNetworks(){
 		UndirectedJungNetwork network1 = new UndirectedJungNetwork("undirected")
