@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+<?xml version="1.0" encoding="UTF-8"?><repast.simphony.visualization.engine.DefaultDisplayDescriptor>
   <name>ReLogo Default Display</name>
   <type>TWO_D</type>
   <styles>
