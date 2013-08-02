@@ -190,7 +190,7 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+","+
 		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    CodeGenerator.defineIndex(packed);
 		}
@@ -621,7 +621,7 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+","+
 		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    localIndexArrays.add(pack(unpacked[0],unpacked[1],unpacked[2]));
 		    
@@ -719,7 +719,7 @@ public class EquationArrayReferenceStructure {
 		    else
 			code.append("int *");
 		    code.append("indexArray_"+CodeGenerator.getLegalName(unpacked[0]+"_"+unpacked[1]+"_"+unpacked[2])+"_ = newIntArray("+
-		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]))+","+
+		    		InformationManagers.getInstance().getArrayManager().getNumIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+","+
 		    		InformationManagers.getInstance().getArrayManager().getIndicies(unpacked[0], Integer.parseInt(unpacked[2]), unpacked[1])+");\n");
 		    
 		    localIndexArrays.add(pack(unpacked[0],unpacked[1],unpacked[2]));

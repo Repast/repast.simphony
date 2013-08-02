@@ -226,6 +226,30 @@ public class ArrayManager {
 		return allocatedIndicies.get(array).size();
 	}
 
+	public  int getNumIndicies(String array, int dimension, String subscript) {
+		if (allocatedIndicies.get(array) == null) {
+			//	    printSubscriptSpace();
+			//	    System.out.println("No index info for array: "+array);
+			return 0;
+		}
+		if (allocatedIndicies.get(array).get(dimension) == null) {
+			//	    printSubscriptSpace();
+			//	    System.out.println("No index info for array/dimension:"+array+"/"+dimension);
+			return 0;
+		}
+		Map<String, Integer> indicies = allocatedIndicies.get(array).get(dimension);
+//		Set<Integer> indSet = new HashSet<Integer>();
+//		for (String key : indicies.keySet()) {
+//			indSet.add(indicies.get(key));
+//		}
+//
+//		return indSet.size();
+		
+		
+		return InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subscript).size();
+			
+	}
+	
 	public  int getNumIndicies(String array, int dimension) {
 		if (allocatedIndicies.get(array) == null) {
 			//	    printSubscriptSpace();
@@ -244,7 +268,9 @@ public class ArrayManager {
 		}
 
 		return indSet.size();
+			
 	}
+	
 
 	public  String getIndicies(String arrayIn, int dimension, String subscript) {
 //		System.out.println("AM:getIndicies: array "+arrayIn+" dim "+dimension+" subscript "+subscript);
