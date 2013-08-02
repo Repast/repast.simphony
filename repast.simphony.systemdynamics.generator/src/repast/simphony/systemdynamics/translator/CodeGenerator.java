@@ -499,7 +499,9 @@ public class CodeGenerator {
 //			equation.printTreeCode();
 			
 			bw.append("{\n");
+			
 			writeGeneratedCode(rootNode, bw, equation.getUnitsAndComment());
+			
 			bw.append("}\n");
 			// restore tree
 //			lhsNode.setNext(rhsNode);
@@ -1219,50 +1221,57 @@ public class CodeGenerator {
     private void generateCode(Equation equation, BufferedWriter bw) {
 
 
-	resetCounters();
+    	resetCounters();
 
-	currentGenerate = equation;
-	// This is intended only for "repeated" statements
-	
-	if (!equation.isTreeCodeGenerated()) {
-
-		EquationArrayReferenceStructure ears = null;
-		if((equation.isHasLHSArrayReference() || equation.isHasRHSArrayReference())) {
-			ears = equation.getEars();
+    	currentGenerate = equation;
+    	// This is intended only for "repeated" statements
+    	
+    	try {
+			bw.append("// equation.isTreeCodeGenerated() = "+equation.isTreeCodeGenerated()+" \n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
+    	if (!equation.isTreeCodeGenerated()) {
 
-		//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
-		//	equation.printTokensOneLine();
-
-		generateLHScode(equation, ears);
-		generateRHScode(equation, ears);
-
-
-		Node root = equation.getTreeRoot();
+    		EquationArrayReferenceStructure ears = null;
+    		if((equation.isHasLHSArrayReference() || equation.isHasRHSArrayReference())) {
+    			ears = equation.getEars();
+    		}
 
 
+    		//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
+    		//	equation.printTokensOneLine();
 
-		//	    writeGeneratedCode(equation, bw);
-		//		    printTree(root);
-
-		if (flatten)
-			flattenTree(root);
-	
-	
-	generateTemps(equation.getTreeRoot());
-	}
-
-	// There are a couple of instances in which we actually need to rewrite
-	// some of the code that we have already written
-	if (equation.requiresPostGenerationProcessing()) {
-	    postGenerationProcessing(equation);
-	}
+    		generateLHScode(equation, ears);
+    		generateRHScode(equation, ears);
 
 
-	//		    printTree(root);
-	
-	writeGeneratedCode(equation, bw);
+    		Node root = equation.getTreeRoot();
+
+
+
+    		//	    writeGeneratedCode(equation, bw);
+    		//		    printTree(root);
+
+    		if (flatten)
+    			flattenTree(root);
+
+
+    		generateTemps(equation.getTreeRoot());
+    	}
+
+    	// There are a couple of instances in which we actually need to rewrite
+    	// some of the code that we have already written
+    	if (equation.requiresPostGenerationProcessing()) {
+    		postGenerationProcessing(equation);
+    	}
+
+
+    	//		    printTree(root);
+
+    	writeGeneratedCode(equation, bw);
     }
     
     private void postGenerationProcessing(Equation equation) {

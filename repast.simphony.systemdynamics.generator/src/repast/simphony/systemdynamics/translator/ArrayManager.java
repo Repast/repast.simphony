@@ -443,6 +443,8 @@ public class ArrayManager {
 					allTerminals.add(t);
 			}
 		}
+		
+		Collections.sort(allTerminals);
 
 		Iterator<String> iter = allTerminals.iterator();
 		int index = 0;
