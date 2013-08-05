@@ -1225,13 +1225,6 @@ public class CodeGenerator {
 
     	currentGenerate = equation;
     	// This is intended only for "repeated" statements
-    	
-    	try {
-			bw.append("// equation.isTreeCodeGenerated() = "+equation.isTreeCodeGenerated()+" \n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
     	if (!equation.isTreeCodeGenerated()) {
 
