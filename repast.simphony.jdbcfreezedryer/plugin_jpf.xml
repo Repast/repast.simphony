@@ -19,7 +19,6 @@
 	    </library>
 		<library id="commons-dbcp" path="lib/commons-dbcp-1.4.jar" type="code"/>
 		<library id="commons-pool" path="lib/commons-pool-1.6.jar" type="code"/>
-		<library id="mysql-connector" path="lib/mysql-connector-java-5.1.24-bin.jar" type="code"/>
 	</runtime>
 
 	<extension id="repast.simphony.jdbcfreezedryer.jdbcLoadOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">
