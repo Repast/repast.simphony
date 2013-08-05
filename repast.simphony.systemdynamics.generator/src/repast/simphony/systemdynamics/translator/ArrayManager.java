@@ -228,24 +228,11 @@ public class ArrayManager {
 
 	public  int getNumIndicies(String array, int dimension, String subscript) {
 		if (allocatedIndicies.get(array) == null) {
-			//	    printSubscriptSpace();
-			//	    System.out.println("No index info for array: "+array);
 			return 0;
 		}
 		if (allocatedIndicies.get(array).get(dimension) == null) {
-			//	    printSubscriptSpace();
-			//	    System.out.println("No index info for array/dimension:"+array+"/"+dimension);
 			return 0;
-		}
-		Map<String, Integer> indicies = allocatedIndicies.get(array).get(dimension);
-//		Set<Integer> indSet = new HashSet<Integer>();
-//		for (String key : indicies.keySet()) {
-//			indSet.add(indicies.get(key));
-//		}
-//
-//		return indSet.size();
-		
-		
+		}		
 		return InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subscript).size();
 			
 	}
@@ -423,6 +410,7 @@ public class ArrayManager {
 				}
 
 				Map<String, Integer> allocatedIndiciesForArrayDimension = allocatedIndicies.get(array).get(dim);
+				System.out.println("ARRAY:,"+array+",DIM:,"+dim);
 				allocateIndicies(subscripts, allocatedIndiciesForArrayDimension);
 			}
 		}
@@ -443,16 +431,24 @@ public class ArrayManager {
 		Collections.sort(subscriptsSortedByNumChildren, new Comparator<Subscript>() {
 			@Override
 			public int compare(Subscript o1, Subscript o2) {
+				
+				
+				
+				int returnValue = 0;
 
-				if (o1.getChildren() == null && o2.getChildren() == null)
-					return 0;
-				if (o1.getChildren() != null && o2.getChildren() == null)
-					return -1;
-				if (o1.getChildren() == null && o2.getChildren() != null)
-					return 1;
+				if (o1.getChildren() == null && o2.getChildren() == null) {
+					returnValue = o1.getValue().compareTo(o2.getValue());  // was 0, but caused non-deterministic results
+				} else if (o1.getChildren() != null && o2.getChildren() == null) {
+					returnValue = -1;
+				} else if (o1.getChildren() == null && o2.getChildren() != null) {
+					returnValue = 1;
+				} else {
 
-				return o1.getChildren().size() < o2.getChildren().size() ? 
-						1 : o1.getChildren().size() > o2.getChildren().size() ? -1 : 0;
+				returnValue = o1.getChildren().size() < o2.getChildren().size() ? 
+						1 : o1.getChildren().size() > o2.getChildren().size() ? -1 : 
+							o1.getChildren().get(0).getValue().compareTo(o2.getChildren().get(0).getValue());
+				}
+						return returnValue;
 			}
 		});
 
@@ -460,6 +456,9 @@ public class ArrayManager {
 		List<String> allTerminals = new ArrayList<String>();
 		// create The set of all terminals
 		for (Subscript s : subscriptsSortedByNumChildren) {
+			
+//			System.out.println("SUBSCRIPT: "+s.toString());
+			s.printDetail();
 
 			//	    s.printDetail();
 
@@ -470,12 +469,14 @@ public class ArrayManager {
 			}
 		}
 		
-		Collections.sort(allTerminals);
+		// Collections.sort(allTerminals);
 
 		Iterator<String> iter = allTerminals.iterator();
 		int index = 0;
 		while (iter.hasNext()) {
-			allocatedIndiciesForArrayDimension.put(iter.next(), index++);
+			String next = iter.next();
+			 System.out.println("ORDERED SUB:,"+next+",INDEX:,"+index);
+			allocatedIndiciesForArrayDimension.put(next, index++);
 		}
 
 	}
