@@ -168,6 +168,13 @@ public class Equation {
 		terminatorsInitialized = true;
 	}
 	
+	public static void initializeCounts() {
+		nextArray = 0;
+		nextInt = 0;
+		nextInteger = 0;
+		nextTimeSeries = 0;
+	}
+	
 	public Equation(String vensimEquation) {
 		this();
 
@@ -187,18 +194,12 @@ public class Equation {
 		// if we were able to cleanly tokenize the equation, let's check for other syntax errors
 		if (syntacticallyCorrect) {
 			GrammarChecker checker = new GrammarChecker(tokens);
-//			System.out.print("Grammar Check ");
-//			this.printTokensOneLine();
 			OperationResult or = checker.checkGrammar();
 			if (!or.isOk()) {
 				syntacticallyCorrect = false;
 				syntaxMessages.add(or.getMessage());
 			}
 		}
-		
-//		System.out.println("PostTok: "+vensimEquation);
-//		printTokensOneLine();
-		
 	}
 	
 	public VariableType getVariableType() {

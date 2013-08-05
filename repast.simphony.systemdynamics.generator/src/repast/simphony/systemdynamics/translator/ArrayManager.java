@@ -410,7 +410,6 @@ public class ArrayManager {
 				}
 
 				Map<String, Integer> allocatedIndiciesForArrayDimension = allocatedIndicies.get(array).get(dim);
-				System.out.println("ARRAY:,"+array+",DIM:,"+dim);
 				allocateIndicies(subscripts, allocatedIndiciesForArrayDimension);
 			}
 		}
