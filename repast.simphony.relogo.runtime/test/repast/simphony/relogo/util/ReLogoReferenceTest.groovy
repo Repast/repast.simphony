@@ -11,6 +11,11 @@ import org.codehaus.groovy.ast.builder.*
 import repast.simphony.relogo.Turtle
 import repast.simphony.relogo.Utility;
 
+/**
+ * For these test, follow step 1 in the docs/Readme.txt file to generate the GroovyDocs.
+ * @author jozik
+ *
+ */
 class ReLogoReferenceTest extends GroovyTestCase {
 	
 	ReLogoReferenceCreator rrc

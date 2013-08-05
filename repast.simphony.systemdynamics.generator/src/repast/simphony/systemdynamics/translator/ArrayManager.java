@@ -226,6 +226,17 @@ public class ArrayManager {
 		return allocatedIndicies.get(array).size();
 	}
 
+	public  int getNumIndicies(String array, int dimension, String subscript) {
+		if (allocatedIndicies.get(array) == null) {
+			return 0;
+		}
+		if (allocatedIndicies.get(array).get(dimension) == null) {
+			return 0;
+		}		
+		return InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(subscript).size();
+			
+	}
+	
 	public  int getNumIndicies(String array, int dimension) {
 		if (allocatedIndicies.get(array) == null) {
 			//	    printSubscriptSpace();
@@ -244,7 +255,9 @@ public class ArrayManager {
 		}
 
 		return indSet.size();
+			
 	}
+	
 
 	public  String getIndicies(String arrayIn, int dimension, String subscript) {
 //		System.out.println("AM:getIndicies: array "+arrayIn+" dim "+dimension+" subscript "+subscript);
@@ -417,16 +430,24 @@ public class ArrayManager {
 		Collections.sort(subscriptsSortedByNumChildren, new Comparator<Subscript>() {
 			@Override
 			public int compare(Subscript o1, Subscript o2) {
+				
+				
+				
+				int returnValue = 0;
 
-				if (o1.getChildren() == null && o2.getChildren() == null)
-					return 0;
-				if (o1.getChildren() != null && o2.getChildren() == null)
-					return -1;
-				if (o1.getChildren() == null && o2.getChildren() != null)
-					return 1;
+				if (o1.getChildren() == null && o2.getChildren() == null) {
+					returnValue = o1.getValue().compareTo(o2.getValue());  // was 0, but caused non-deterministic results
+				} else if (o1.getChildren() != null && o2.getChildren() == null) {
+					returnValue = -1;
+				} else if (o1.getChildren() == null && o2.getChildren() != null) {
+					returnValue = 1;
+				} else {
 
-				return o1.getChildren().size() < o2.getChildren().size() ? 
-						1 : o1.getChildren().size() > o2.getChildren().size() ? -1 : 0;
+				returnValue = o1.getChildren().size() < o2.getChildren().size() ? 
+						1 : o1.getChildren().size() > o2.getChildren().size() ? -1 : 
+							o1.getChildren().get(0).getValue().compareTo(o2.getChildren().get(0).getValue());
+				}
+						return returnValue;
 			}
 		});
 
@@ -434,20 +455,21 @@ public class ArrayManager {
 		List<String> allTerminals = new ArrayList<String>();
 		// create The set of all terminals
 		for (Subscript s : subscriptsSortedByNumChildren) {
-
-			//	    s.printDetail();
-
+			
 			List<String> allTerm = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(s.getValue());
 			for (String t : allTerm) {
 				if (!allTerminals.contains(t))
 					allTerminals.add(t);
 			}
 		}
+		
+		// Collections.sort(allTerminals);
 
 		Iterator<String> iter = allTerminals.iterator();
 		int index = 0;
 		while (iter.hasNext()) {
-			allocatedIndiciesForArrayDimension.put(iter.next(), index++);
+			String next = iter.next();
+			allocatedIndiciesForArrayDimension.put(next, index++);
 		}
 
 	}

@@ -17,6 +17,7 @@ import org.eclipse.gmf.runtime.notation.NotationFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelFactory;
 import repast.simphony.systemdynamics.sdmodel.SDModelPackage;
 import repast.simphony.systemdynamics.sdmodel.SystemModel;
+import repast.simphony.systemdynamics.translator.Equation;
 import repast.simphony.systemdynamics.translator.InformationManagers;
 import repast.simphony.systemdynamics.translator.MDLToSystemModel;
 import repast.simphony.systemdynamics.translator.SystemDynamicsObjectManager;
@@ -63,6 +64,7 @@ public class Engine {
 		translator.setInitializeScenarioDirectory(reinitialize);
 		InformationManagers.clear();
 		InformationManagers.getInstance().setSystemModel(systemModel);
+		Equation.initializeCounts();
 		
 	}
 	

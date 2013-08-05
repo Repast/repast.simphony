@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -454,6 +455,23 @@ public class NativeDataTypeManager {
 			bw.append("void declareArrays() {\n");
 
 			Iterator<ArrayDeclaration> iter = arrayDeclarations.iterator();
+			
+			// Generate in alphabetic order
+			
+			List<ArrayDeclaration> sortedAD = new ArrayList<ArrayDeclaration>();
+			while (iter.hasNext())
+				sortedAD.add(iter.next());
+			
+			Collections.sort(sortedAD, new Comparator<ArrayDeclaration>() {
+				@Override
+				public int compare(ArrayDeclaration o1, ArrayDeclaration o2) {
+					
+					return o1.getName().compareTo(o2.getName());
+
+				}
+			});
+			
+			iter = sortedAD.iterator();
 			int alreadyDefined = 0;
 			while (iter.hasNext()) {
 				ArrayDeclaration ad = iter.next();
