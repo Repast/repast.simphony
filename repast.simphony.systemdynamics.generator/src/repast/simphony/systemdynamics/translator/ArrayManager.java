@@ -457,11 +457,6 @@ public class ArrayManager {
 		// create The set of all terminals
 		for (Subscript s : subscriptsSortedByNumChildren) {
 			
-//			System.out.println("SUBSCRIPT: "+s.toString());
-			s.printDetail();
-
-			//	    s.printDetail();
-
 			List<String> allTerm = InformationManagers.getInstance().getNamedSubscriptManager().getValuesFor(s.getValue());
 			for (String t : allTerm) {
 				if (!allTerminals.contains(t))
@@ -475,7 +470,6 @@ public class ArrayManager {
 		int index = 0;
 		while (iter.hasNext()) {
 			String next = iter.next();
-			 System.out.println("ORDERED SUB:,"+next+",INDEX:,"+index);
 			allocatedIndiciesForArrayDimension.put(next, index++);
 		}
 
