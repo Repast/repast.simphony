@@ -4,19 +4,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.media.protocol.FileTypeDescriptor;
-import javax.swing.SwingUtilities;
 
 import repast.simphony.engine.schedule.IAction;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.NonModelAction;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.ui.Imageable;
+import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
 
 /**
  * Configuration info for making a movie.
- *
+ * 
  * @author Nick Collier
  */
 public class MovieMakerConfig {
@@ -29,16 +30,22 @@ public class MovieMakerConfig {
   @NonModelAction
   private static class MovieAction implements IAction {
 
+    public static long FRAME_UPDATE_INTERVAL = 34;
+
     private MovieMaker maker;
     private Imageable imageable;
     private boolean atEnd = false;
 
+    private long lastTS = 0;
+
     private Runnable runner = new Runnable() {
+      
       public void run() {
         try {
           BufferedImage img = imageable.getImage();
           maker.addImageAsFrame(img);
-          if (atEnd) maker.cleanUp();
+          if (atEnd)
+            maker.cleanUp();
         } catch (IOException e) {
           msg.error("Error while capturing movie frame", e);
         }
@@ -51,16 +58,22 @@ public class MovieMakerConfig {
     }
 
     public void execute() {
-      SwingUtilities.invokeLater(runner);
+      long ts = System.currentTimeMillis();
+
+      if (ts - lastTS > FRAME_UPDATE_INTERVAL) {
+        ThreadUtilities.runInEventThread(runner);
+        lastTS = ts;
+      }
     }
   }
 
-
   /**
    * Creates a MovieMakerConfig.
-   *
-   * @param tickInterval the tick interval for the frame capture
-   * @param file         the file to write the movie to
+   * 
+   * @param tickInterval
+   *          the tick interval for the frame capture
+   * @param file
+   *          the file to write the movie to
    */
   public MovieMakerConfig(double startingTick, double tickInterval, File file) {
     this.tickInterval = tickInterval;
@@ -69,17 +82,20 @@ public class MovieMakerConfig {
   }
 
   /**
-   * Schedules the frame capture and movie creation from the specified
-   * imageable on the specified schedule.
-   *
-   * @param schedule  the schedule to use
-   * @param imageable the imageable that is the source of the movie frames
+   * Schedules the frame capture and movie creation from the specified imageable
+   * on the specified schedule.
+   * 
+   * @param schedule
+   *          the schedule to use
+   * @param imageable
+   *          the imageable that is the source of the movie frames
    */
   public void schedule(ISchedule schedule, Imageable imageable) {
     MovieMaker maker = new MovieMaker(20, file, FileTypeDescriptor.QUICKTIME);
     MovieAction action = new MovieAction(maker, imageable);
-    schedule.schedule(ScheduleParameters.createRepeating(startingTick, tickInterval, ScheduleParameters.END),
-            action);
+    schedule.schedule(
+        ScheduleParameters.createRepeating(startingTick, tickInterval, ScheduleParameters.END),
+        action);
     action = new MovieAction(maker, imageable);
     action.atEnd = true;
     schedule.schedule(ScheduleParameters.createAtEnd(ScheduleParameters.END), action);
