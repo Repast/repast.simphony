@@ -3,6 +3,7 @@ package repast.simphony.visualizationOGL2D;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -21,6 +22,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3f;
+
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -610,7 +613,20 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     }
 
     public BufferedImage getImage() {
-      return canvas.createImage();
+      try {
+        getRenderLock().lock();
+        if (SystemUtils.IS_OS_WINDOWS) {
+          return canvas.createImage();
+        } else {
+          BufferedImage bi = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+          Graphics2D g = bi.createGraphics();
+          paint(g);
+          g.dispose();
+          return bi;
+        }
+      } finally {
+        getRenderLock().unlock();
+      }
     }
   }
 
