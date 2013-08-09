@@ -18,7 +18,10 @@
 		</library>
 	</runtime>
 
-	<extension id="ora.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+<!-- The ORA plugin button is removed from the runtime, however the API calls
+     are still available. 
+-->	
+<!-- 	<extension id="ora.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="repast.simphony.ora.runORA"/>
 			<parameter id="label" value="Run *ORA"/>
@@ -29,5 +32,5 @@
 			<parameter id="tooltip" value="Run *ORA"/>
 		</parameter>
 	</extension>
-
+-->
 </plugin>
