@@ -217,7 +217,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 */
 	public AgentSet<Turtle> hatch(Number number, Closure closure) {
 
-		AgentSet<Turtle> newTurtles = new AgentSet<>();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyTurtleFactory().createIdenticalTurtle(this));
 		}
@@ -246,7 +246,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 */
 	public AgentSet<Turtle> hatch(Number number, Closure closure, String childType) {
 
-		AgentSet<Turtle> newTurtles = new AgentSet<>();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyTurtleFactory().createIdenticalTurtle(this, childType));
 		}

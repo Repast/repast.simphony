@@ -545,7 +545,7 @@ public abstract class AbstractObserver implements Observer {
 	 * @return created turtles
 	 */
 	public AgentSet<Turtle> cro(int number, Closure closure, String type) {
-		AgentSet<Turtle> newTurtles = new AgentSet<>();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		double headingIncrement = 360.0 / ((double) number);
 
 		for (int i = 0; i < number; i++) {

@@ -803,7 +803,7 @@ public abstract class AbstractPatch implements Patch {
 	 */
 	public AgentSet<Turtle> sprout(Number number, Closure closure, String turtleType) {
 
-		AgentSet<Turtle> newTurtles = new AgentSet<>();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyObserver().getTurtleFactory().createTurtle(
