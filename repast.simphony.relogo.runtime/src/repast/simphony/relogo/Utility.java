@@ -1067,9 +1067,9 @@ public class Utility {
 	}
 
 	/**
-	 * Returns the number for pi (�).
+	 * Returns the number for pi.
 	 * 
-	 * @returns number for pi (�).
+	 * @returns number for pi.
 	 */
 	public static double pi() {
 		return Math.PI;
