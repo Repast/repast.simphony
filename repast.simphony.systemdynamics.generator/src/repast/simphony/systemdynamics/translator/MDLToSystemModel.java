@@ -6,10 +6,12 @@ package repast.simphony.systemdynamics.translator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.notation.Diagram;
 
@@ -29,6 +31,13 @@ import repast.simphony.systemdynamics.sdmodel.VariableType;
  * @author Nick Collier
  */
 public class MDLToSystemModel {
+	
+	private boolean fatal = false;
+	private boolean warnings = false;
+	
+	String fatalMessages = "";
+	List<String> warningMessages = new ArrayList<String>();
+	
 
   private final static Set<String> MODEL_VARS = new HashSet<String>();
   static {
@@ -63,6 +72,30 @@ public class MDLToSystemModel {
     EquationProcessor eqProcessor = new EquationProcessor();
     Map<String, Equation> equations = eqProcessor.processRawEquations(sdObjectManager,
         mdlContents);
+    
+    Map<String, Equation> fatalErrors = eqProcessor.getFatalErrors(equations);
+	boolean errors = fatalErrors.size() > 0;
+	if (errors) {
+		fatal = true;
+		Iterator<String> iter = fatalErrors.keySet().iterator();
+		fatalMessages += "+++ "+"Fatal Errors Detected"+" +++";
+		while (iter.hasNext()) {
+			String lhs = iter.next();
+
+			Equation eqn = fatalErrors.get(lhs);
+
+			fatalMessages += ("\nEquation:"); // "\n"
+			fatalMessages += "\n\t"+eqn.getVensimEquation().split("~")[0];
+
+			for (String msg : eqn.getFatalMessages()) {
+				fatalMessages += "\n"+msg;
+			}
+			
+			fatalMessages += "\n----------";
+		}
+		
+	}
+	
     initModel(model, equations);
     
 //    sdObjectManager.print();
@@ -106,6 +139,8 @@ public class MDLToSystemModel {
     		}
     	}
     }
+    
+    
     
     // need to create subscripts
     createSubscripts(model, equations);
@@ -332,4 +367,36 @@ public class MDLToSystemModel {
 
     model.setUnits(equations.get(TranslatorConstants.TIME_STEP).getUnits().trim());
   }
+
+public boolean isFatal() {
+	return fatal;
+}
+
+public void setFatal(boolean fatal) {
+	this.fatal = fatal;
+}
+
+public boolean isWarnings() {
+	return warnings;
+}
+
+public void setWarnings(boolean warnings) {
+	this.warnings = warnings;
+}
+
+public String getFatalMessages() {
+	return fatalMessages;
+}
+
+public void setFatalMessages(String fatalMessages) {
+	this.fatalMessages = fatalMessages;
+}
+
+public List<String> getWarningMessages() {
+	return warningMessages;
+}
+
+public void setWarningMessages(List<String> warningMessages) {
+	this.warningMessages = warningMessages;
+}
 }

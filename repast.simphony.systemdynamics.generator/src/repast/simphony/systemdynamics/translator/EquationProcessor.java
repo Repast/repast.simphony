@@ -36,6 +36,19 @@ public class EquationProcessor {
     		eqn.checkUsage(equations);
     }
     
+    public Map<String, Equation> getFatalErrors(Map<String, Equation> equations) {
+   	 Map<String, Equation> fatalErrors = new HashMap<String, Equation>();
+   	 Iterator<String> iter = equations.keySet().iterator();
+   	 while (iter.hasNext()) {
+   		 String lhs = iter.next();
+   		 Equation eqn = equations.get(lhs);
+   		 if (eqn.isFatal())
+   			 fatalErrors.put(lhs, eqn);
+   	 }
+   	 return fatalErrors;
+   	
+   }
+    
     public Map<String, Equation> getSyntaxErrors(Map<String, Equation> equations) {
     	 Map<String, Equation> syntaxErrors = new HashMap<String, Equation>();
     	 Iterator<String> iter = equations.keySet().iterator();
