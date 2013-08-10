@@ -117,7 +117,8 @@ public class FunctionManager {
 		// if this equation contains one of them, we'll just skip it.
 		for (String functionName : allFunctions.keySet()) {
 			FunctionDescription fd = allFunctions.get(functionName);
-			if (fd.getReturnUnits().equals("NA") && eqn.contains(functionName))
+			if ((fd.getReturnUnits().equals("NA") && eqn.contains(functionName)) ||
+					(functionName.equalsIgnoreCase("LOOKUP") && eqn.contains(functionName)))
 				return false;
 		}
 
