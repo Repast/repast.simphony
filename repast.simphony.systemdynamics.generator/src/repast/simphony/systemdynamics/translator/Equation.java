@@ -188,6 +188,11 @@ public class Equation {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
 		}
 		
+		// if any subscript ranges have blanks before the "!", get rid of them
+		if (this.vensimEquation.contains("!")) {
+			this.vensimEquation = vensimEquation.replaceAll(" *!", "!");
+		}
+		
 		// tokenize will detect certain types of syntax errors
 		tokenize();
 		
