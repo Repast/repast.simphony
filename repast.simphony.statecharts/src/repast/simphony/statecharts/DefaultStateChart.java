@@ -77,12 +77,14 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	public void begin(StateChartSimIntegrator integrator) {
 		if (entryState == null) {
 			// illegal state
-			throw new IllegalStateException("An entry state was not registered in the StateChart.");
+			throw new IllegalStateException(
+					"An entry state was not registered in the StateChart.");
 		}
 
 		if (integrator.integrate(this)) {
 			clearTransitions(null);
-			List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
+			List<AbstractState<T>> statesToEnter = getStatesToEnter(null,
+					entryState);
 			stateInit(statesToEnter);
 		}
 	}
@@ -95,7 +97,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	private void partitionQueueConsuming(List<Transition<T>> transitions,
-			List<Transition<T>> queueConsuming, List<Transition<T>> nonQueueConsuming) {
+			List<Transition<T>> queueConsuming,
+			List<Transition<T>> nonQueueConsuming) {
 		for (Transition<T> t : transitions) {
 			if (t.isTriggerQueueConsuming())
 				queueConsuming.add(t);
@@ -106,7 +109,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private void stateInit(List<AbstractState<T>> statesToEnter) {
 
-		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter.size() - 1);
+		currentSimpleState = (SimpleState<T>) statesToEnter.get(statesToEnter
+				.size() - 1);
 		notifyChangeListeners();
 		// Entering states from the top down
 		for (AbstractState<T> as : statesToEnter) {
@@ -115,12 +119,12 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
 		} else {
-			// List of zero time transitions
-			List<Transition<T>> zeroTimeTransitions = new ArrayList<Transition<T>>();
-			// This will hold any branch state outgoing transitions for 
+
+			Transition<T> validBranchTransition = null;
+			// This will hold any branch state outgoing transitions for
 			// special treatment
 			List<Transition<T>> transitionsToIgnore = new ArrayList<Transition<T>>();
-			
+
 			if (currentSimpleState instanceof BranchState) {
 				List<Transition<T>> branchCandidateTransitions = new ArrayList<Transition<T>>();
 				for (Transition<T> t : regularTransitions) {
@@ -136,6 +140,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 					if (t.getTrigger() instanceof AlwaysTrigger) {
 						defaultTransition = t;
 					} else {
+						// Check of transition condition
+						// (should not be checked again below)
 						if (t.isTransitionConditionTrue()) {
 							trueBranchTransitions.add(t);
 						}
@@ -147,73 +153,132 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				}
 				Transition<T> t = chooseOneTransition(trueBranchTransitions);
 				if (t == null)
-					zeroTimeTransitions.add(defaultTransition);
+					validBranchTransition = defaultTransition;
 				// makeRegularTransition(defaultTransition);
 				else
-					zeroTimeTransitions.add(t);
+					validBranchTransition = t;
 				// makeRegularTransition(t);
 
 			}
 			// Get all new candidate transitions
-			List<Transition<T>> newCandidateTransitions = new ArrayList<Transition<T>>();
+			List<Transition<T>> newTransitionsToActivate = new ArrayList<Transition<T>>();
 			for (Transition<T> t : regularTransitions) {
-				if (!transitionsToIgnore.contains(t) && statesToEnter.contains(t.getSource())) {
-					newCandidateTransitions.add(t);
+				if (!transitionsToIgnore.contains(t)
+						&& statesToEnter.contains(t.getSource())) {
+					newTransitionsToActivate.add(t);
 				}
 			}
 
+			// List of zero time new candidate transitions
+			List<Transition<T>> newTransitionsToActivateZeroTime = new ArrayList<Transition<T>>();
 			// for new candidate transitions find all zeroTimeTransitions
-			for (Transition<T> tt : newCandidateTransitions) {
+			for (Transition<T> tt : newTransitionsToActivate) {
 				if (tt.canTransitionZeroTime())
-					zeroTimeTransitions.add(tt);
+					newTransitionsToActivateZeroTime.add(tt);
 			}
-			// for existing active regular transitions, only those that are
-			// triggered
-			for (Transition<T> tt : activeRegularTransitions) {
-				if (tt.canTransitionZeroTime() && tt.isTransitionTriggered())
-					zeroTimeTransitions.add(tt);
+
+			// Partition new candidate zero time transitions into queue
+			// consuming and non queue consuming
+			List<Transition<T>> newTransitionsToActivateZeroTimeQueueConsuming = new ArrayList<Transition<T>>();
+			List<Transition<T>> newTransitionsToActivateZeroTimeNonQueueConsuming = new ArrayList<Transition<T>>();
+			partitionQueueConsuming(newTransitionsToActivateZeroTime,
+					newTransitionsToActivateZeroTimeQueueConsuming,
+					newTransitionsToActivateZeroTimeNonQueueConsuming);
+
+			// Partition active regular transitions into queue
+			// consuming and non queue consuming
+			List<Transition<T>> activeRegularQueueConsuming = new ArrayList<Transition<T>>();
+			List<Transition<T>> activeRegularNonQueueConsuming = new ArrayList<Transition<T>>();
+			partitionQueueConsuming(activeRegularTransitions,
+					activeRegularQueueConsuming, activeRegularNonQueueConsuming);
+
+			// The triggered non queue consuming transitions
+			// Include:
+			// valid branch transition,
+			// triggered non queue consuming active transitions,
+			// true non queue consuming new transitions
+			List<Transition<T>> nonQueueConsumingValid = new ArrayList<Transition<T>>();
+			// Add the branch transition if found above
+			if (validBranchTransition != null) {
+				nonQueueConsumingValid.add(validBranchTransition);
 			}
-			
-		// collect all relevant regular transitions and initialize
-			activeRegularTransitions.addAll(newCandidateTransitions);
-			for (Transition<T> ct : newCandidateTransitions) {
+			// Add triggered non queue consuming active transitions
+			for (Transition<T> t : activeRegularNonQueueConsuming) {
+				if (t.isTransitionTriggered()) {
+					nonQueueConsumingValid.add(t);
+				}
+			}
+			// Add true non queue consuming new transitions
+			for (Transition<T> t : newTransitionsToActivateZeroTimeNonQueueConsuming) {
+				if (t.isTransitionConditionTrue()) {
+					nonQueueConsumingValid.add(t);
+				}
+			}
+
+			// collect all relevant regular transitions and initialize
+			activeRegularTransitions.addAll(newTransitionsToActivate);
+			for (Transition<T> ct : newTransitionsToActivate) {
 				ct.initialize(this);
 			}
 
-			// Partition zero time transitions into queue consuming and non
-			// queue
-			// consuming
-			List<Transition<T>> queueConsuming = new ArrayList<Transition<T>>();
-			List<Transition<T>> nonQueueConsuming = new ArrayList<Transition<T>>();
-			partitionQueueConsuming(zeroTimeTransitions, queueConsuming, nonQueueConsuming);
+			// Combine all queueConsuming candidates
+			List<Transition<T>> allQueueConsuming = ListUtils.union(
+					newTransitionsToActivateZeroTimeQueueConsuming,
+					activeRegularQueueConsuming);
 
-			// Find non queue consuming candidate transitions
-			List<Transition<T>> nonQueueConsumingCandidates = new ArrayList<Transition<T>>();
-			for (Transition<T> tt : nonQueueConsuming) {
-				if (tt.isTransitionConditionTrue())
-					nonQueueConsumingCandidates.add(tt);
-			}
+			// Valid queue consuming transitions
+			List<Transition<T>> queueConsumingValid = new ArrayList<Transition<T>>();
 
-			List<Transition<T>> queueConsumingCandidates = new ArrayList<Transition<T>>();
-			// Find queue consuming candidate transitions
-			while (true) {
-				for (Transition<T> tt : queueConsuming) {
-					if (tt.isTransitionConditionTrue())
-						queueConsumingCandidates.add(tt);
-				}
-				if (queueConsumingCandidates.isEmpty()) {
-					queue.poll();
-					if (queue.isEmpty())
+			// if there are no queue consuming
+			if (allQueueConsuming.isEmpty()) {
+				// clear queue
+				queue.clear();
+			} else {
+				boolean foundIsResolveNow = false;
+				// Look for active regular queue consuming that
+				// should resolve now
+				for (Transition<T> t : activeRegularQueueConsuming) {
+					if (t.isResolveNow()) {
+						foundIsResolveNow = true;
 						break;
-				} else {
-					break;
+					}
+				}
+				// If found "resolve now" active regular queue consuming
+				// or if there are queue consuming new transitions then
+				// consume queue
+				if (foundIsResolveNow
+						|| !newTransitionsToActivateZeroTimeQueueConsuming
+								.isEmpty()) {
+
+					// Find queue consuming candidate transitions
+					while (true) {
+						// For the newly activated, check that the condition is
+						// true
+						for (Transition<T> tt : newTransitionsToActivateZeroTimeQueueConsuming) {
+							if (tt.isTransitionConditionTrue())
+								queueConsumingValid.add(tt);
+						}
+						// For the previously active transitions, check that
+						// they are triggered
+						for (Transition<T> tt : activeRegularQueueConsuming) {
+							if (tt.isTransitionTriggered())
+								queueConsumingValid.add(tt);
+						}
+						if (queueConsumingValid.isEmpty()) {
+							queue.poll();
+							if (queue.isEmpty())
+								break;
+						} else {
+							break;
+						}
+					}
 				}
 			}
 
 			// Concatenate queue and non queue consuming candidates and choose
 			// one
-			Transition<T> t = chooseOneTransition(ListUtils.union(nonQueueConsumingCandidates,
-					queueConsumingCandidates));
+			Transition<T> t = chooseOneTransition(ListUtils.union(
+					nonQueueConsumingValid, queueConsumingValid));
 			// If a zero time transition was found, make that transition
 			if (t != null) {
 				// if chosen one is queue consuming
@@ -232,7 +297,6 @@ public class DefaultStateChart<T> implements StateChart<T> {
 						st.initialize(this);
 					}
 				}
-				
 
 			}
 
@@ -245,7 +309,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		deactivateTransitions(as, activeRegularTransitions);
 	}
 
-	private void deactivateTransitions(AbstractState<T> as, List<Transition<T>> transitions) {
+	private void deactivateTransitions(AbstractState<T> as,
+			List<Transition<T>> transitions) {
 		List<Transition<T>> candidateTransitions = new ArrayList<Transition<T>>();
 		if (as == null) {
 			candidateTransitions = transitions;
@@ -256,7 +321,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				}
 			}
 		}
-		double now = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double now = RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount();
 		for (Transition<T> t : candidateTransitions) {
 			// if trigger's next time is after now,
 			Trigger tr = t.getTrigger();
@@ -293,7 +359,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	/**
-	 * Returns a list of states to exit, in the order that they should be exited.
+	 * Returns a list of states to exit, in the order that they should be
+	 * exited.
 	 * 
 	 * @param lca
 	 * @return
@@ -328,7 +395,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	 * @param target
 	 * @return
 	 */
-	private List<AbstractState<T>> getStatesToEnter(AbstractState<T> lca, AbstractState<T> target) {
+	private List<AbstractState<T>> getStatesToEnter(AbstractState<T> lca,
+			AbstractState<T> target) {
 		LinkedList<AbstractState<T>> statesToEnter = new LinkedList<AbstractState<T>>();
 		Map<CompositeState<T>, HistoryState<T>> compositeHistoryMap = new HashMap<CompositeState<T>, HistoryState<T>>();
 		AbstractState<T> t = target;
@@ -378,7 +446,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	// private List<Transition>
 
-	private List<Transition<T>> getTriggeredTransitions(List<Transition<T>> transitions) {
+	private List<Transition<T>> getTriggeredTransitions(
+			List<Transition<T>> transitions) {
 		List<Transition<T>> triggeredTransitions = new ArrayList<Transition<T>>();
 		for (Transition<T> t : transitions) {
 			if (t.isTransitionTriggered())
@@ -392,7 +461,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// consuming
 		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
 		List<Transition<T>> nonQueueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
-		partitionQueueConsuming(activeSelfTransitions, queueConsumingActiveSelfTransitions,
+		partitionQueueConsuming(activeSelfTransitions,
+				queueConsumingActiveSelfTransitions,
 				nonQueueConsumingActiveSelfTransitions);
 
 		// Execute all non queue consuming active self transitions
@@ -404,7 +474,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// queue consuming
 		List<Transition<T>> queueConsumingActiveRegularTransitions = new ArrayList<Transition<T>>();
 		List<Transition<T>> nonQueueConsumingActiveRegularTransitions = new ArrayList<Transition<T>>();
-		partitionQueueConsuming(activeRegularTransitions, queueConsumingActiveRegularTransitions,
+		partitionQueueConsuming(activeRegularTransitions,
+				queueConsumingActiveRegularTransitions,
 				nonQueueConsumingActiveRegularTransitions);
 
 		// Find non queue consuming candidate regular transitions
@@ -412,8 +483,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 		List<Transition<T>> queueConsumingRegularCandidates = new ArrayList<Transition<T>>();
 
-		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils.union(
-				queueConsumingActiveSelfTransitions, queueConsumingActiveRegularTransitions);
+		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils
+				.union(queueConsumingActiveSelfTransitions,
+						queueConsumingActiveRegularTransitions);
 
 		// This is for the corner case when there is a self transition
 		// and a regular transition that both are valid based on the same
@@ -443,7 +515,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 						queueConsumingSelfTransitionFollowed = true;
 					}
 
-					// Look for queue consuming regular candidates for current queue
+					// Look for queue consuming regular candidates for current
+					// queue
 					// state
 					queueConsumingRegularCandidates = getTriggeredTransitions(queueConsumingActiveRegularTransitions);
 					if (queueConsumingRegularCandidates.isEmpty()) {
@@ -457,7 +530,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			}
 		}
 		// Concatenate queue and non queue consuming candidates and choose one
-		Transition<T> t = chooseOneTransition(ListUtils.union(nonQueueConsumingRegularCandidates,
+		Transition<T> t = chooseOneTransition(ListUtils.union(
+				nonQueueConsumingRegularCandidates,
 				queueConsumingRegularCandidates));
 
 		// reschedule selfTransitions
@@ -466,7 +540,8 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// If a zero time transition was found, make that transition
 		if (t != null) {
 			// if chosen one is queue consuming
-			if (t.isTriggerQueueConsuming() || queueConsumingSelfTransitionFollowed) {
+			if (t.isTriggerQueueConsuming()
+					|| queueConsumingSelfTransitionFollowed) {
 				queue.poll();
 			}
 			makeRegularTransition(t);
@@ -505,9 +580,11 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		}
 	}
 
-	private void rescheduleTransitions(List<Transition<T>> activeTransitions, boolean regular) {
+	private void rescheduleTransitions(List<Transition<T>> activeTransitions,
+			boolean regular) {
 		// get current time
-		double currentTime = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double currentTime = RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount();
 		// for each active transition
 		if (regular) {
 			for (Transition<T> t : activeTransitions) {

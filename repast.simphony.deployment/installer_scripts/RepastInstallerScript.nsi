@@ -7,7 +7,7 @@
 ; user the modern UI
 !include "MUI.nsh"
 
-!define VERSION "2.1-beta"
+!define VERSION "2.1-beta-2"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -76,17 +76,23 @@ Section "Start Menu Shortcuts"
   SetShellVarContext all
   
   CreateDirectory "$SMPROGRAMS\RepastSimphony-${VERSION}"
+  CreateDirectory "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation"
+
   
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0  
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Flowchart Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Java API.lnk" "$INSTDIR\docs\RepastJavaAPI\index.html" "" "$INSTDIR\docs\RepastJavaAPI\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo API.lnk" "$INSTDIR\docs\ReLogoDocs\index.html" "" "$INSTDIR\docs\ReLogoDocs\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" "" "$INSTDIR\docs\ReLogoDocs\ReLogoPrimitives.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast FAQ.lnk" "$INSTDIR\docs\RepastFAQ.pdf" "" "$INSTDIR\docs\RepastFAQ.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Parameter Sweeps Getting Started.lnk" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" "" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Batch Runner.lnk" "$INSTDIR\batch_runner.jar" "" "$INSTDIR\batch_runner.jar"
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Flowchart Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Java API.lnk" "$INSTDIR\docs\RepastJavaAPI\index.html" "" "$INSTDIR\docs\RepastJavaAPI\index.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast System Dynamics Getting Started.lnk" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" "" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Data Collection for Repast and Relogo.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Batch Runs Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Parameter Sweeps Getting Started.lnk" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" "" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
   
 SectionEnd

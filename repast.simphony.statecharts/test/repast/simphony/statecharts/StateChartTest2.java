@@ -348,7 +348,9 @@ public class StateChartTest2 {
     schedule.execute();
     assertEquals(2, schedule.getTickCount(), 0.0001);
     assertEquals("two", a.st.getCurrentSimpleState().getId());
-
+    schedule.execute();
+    assertEquals(3, schedule.getTickCount(), 0.0001);
+    assertEquals("three", a.st.getCurrentSimpleState().getId());
   }
 
   /**
