@@ -335,7 +335,7 @@ public class UnitExpression {
 					boolean somethingWrong = funcReturnIndex == -2;
 
 					if (somethingWrong) {
-						System.out.println("!!! ERROR !!! Implemented Functions Data");
+						System.out.println("!!! ERROR !!! Implemented Functions Data "+funcName);
 					}
 
 					// there is a complication if a constant is used as a parameter then
