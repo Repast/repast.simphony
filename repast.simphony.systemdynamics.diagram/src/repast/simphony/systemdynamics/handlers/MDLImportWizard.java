@@ -103,12 +103,7 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
         MDLToSystemModel trans = new MDLToSystemModel();
         trans.run(model, diagram, mdlFile);
         GenerateCodeDialog dialog = null;
-        if (trans.isFatal()) {
-            dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), false, "MDL Import:   ", trans.getFatalMessages());
-        } else {
-        	dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), true, "MDL Import:   ", "Import Successful");
-        }
-        	  dialog.open();
+        
 
         diagramResource.getContents().add(model);
         diagramResource.getContents().add(diagram);
@@ -130,7 +125,12 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
               "Unable to store import model and diagram resources", e); //$NON-NLS-1$
         }
         
-       
+        if (trans.isFatal()) {
+            dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), false, "MDL Import:   ", trans.getFatalMessages());
+        } else {
+        	dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), true, "MDL Import:   ", "Import Successful");
+        }
+        	  dialog.open();
     	  
         return CommandResult.newOKCommandResult();
       }
