@@ -179,8 +179,6 @@ public class Equation {
 	
 	public Equation(String vensimEquation) {
 		this();
-		
-		// System.out.println("Equation: "+vensimEquation);
 
 		// need to check if this equation contains a macro invocation
 		// if so, we need to redefine the equation
@@ -843,8 +841,10 @@ public class Equation {
 		// replace := with = not that options such as :INTERPOLATE: can occur on the LHS
 		equation = eqn[0];
 		
-		if (equation.contains("="))
+		if (equation.contains("=")) {
+			
 			rhs = equation.split("=", 2)[1];
+		}
 		
 		if (canRemoveColonEqual())
 			equation = eqn[0].replace(":=", "=").trim();
@@ -916,6 +916,7 @@ public class Equation {
 		// not be used for any other purpose!
 
 		boolean hasEqualSign = equation.contains("=");
+		
 
 		String token = "";
 		skipWhiteSpace(position);
@@ -998,6 +999,8 @@ public class Equation {
 			lookupTables.add(token); // used to be clean(token)
 			EquationProcessor.lookups.add(token); // used to be clean(token)
 		} else if (inRange(position) && characterAt(position).equals("[") && !hasEqualSign && equation.contains("(")) {
+			
+//			System.out.println("Think this is a subscripted lookup definition");
 			// as of 8 Dec 2011, I believe that only a subscripted lookup definition can have this pattern
 
 			// need to gobble up the square brackets and subscript name and make then part of the first
@@ -1196,7 +1199,7 @@ public class Equation {
 					ignore = true;
 				}
 			} else {
-				System.out.println("ERROR: Bad Array Reference (B)! character found is <"+characterAt(position)+"> position "+position);
+				System.out.println("ERROR: Bad Array Reference (B)! character found is <"+characterAt(position)+"> position "+position + " ###"+equation+"###");
 				ignore = true;
 			}
 			// Left Bracket Processing Ends
