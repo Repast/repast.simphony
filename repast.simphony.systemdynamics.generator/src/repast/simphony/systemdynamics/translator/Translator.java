@@ -282,6 +282,14 @@ public class Translator {
 		processSubscriptDefinition(equations);
 		processExponentiaion(equations);
 		
+		Map<String, Equation> fatalErrors = equationProcessor.getFatalErrors(equations);
+		errors = fatalErrors.size() > 0;
+		if (errors) {
+			printErrors(fatalErrors);
+			generateErrorReport("Fatal Errors", fatalErrors, messages);
+			return false;
+		}
+		
 		Map<String, Equation> syntaxErrors = equationProcessor.getSyntaxErrors(equations);
 		errors = syntaxErrors.size() > 0;
 		if (errors) {
