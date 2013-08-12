@@ -314,7 +314,7 @@ public class Translator {
 		if (errors) {
 			printErrors(unitsErrors);
 			generateErrorReport("Units Errors", unitsErrors, messages);
-			return false;
+			// return false;
 		}
 
 		//	sdObjectManager.print();
@@ -537,7 +537,7 @@ public class Translator {
 						lhsExpandedNotInitialized.containsKey(key)) {
 					
 				} else {
-					System.out.println("No LHS for "+key+" used by "+lhs);
+					System.out.println("No LHS for <"+key+"> used by "+lhs);
 				}
 			}
 		}
@@ -558,7 +558,7 @@ public class Translator {
 						lhsExpandedNotInitialized.containsKey(key)) {
 					
 				} else {
-					System.out.println("No LHS for "+key+" used by "+lhs);
+					System.out.println("No LHS for <"+key+"> used by "+lhs);
 				}
 			}
 		}
@@ -579,7 +579,7 @@ public class Translator {
 						lhsExpandedNotInitialized.containsKey(key)) {
 					
 				} else {
-					System.out.println("No LHS for "+key+" used by "+lhs);
+					System.out.println("No LHS for <"+key+"> used by "+lhs);
 				}
 			}
 		}

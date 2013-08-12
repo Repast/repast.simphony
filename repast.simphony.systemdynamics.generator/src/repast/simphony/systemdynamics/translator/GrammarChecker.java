@@ -2,6 +2,7 @@ package repast.simphony.systemdynamics.translator;
 
 import java.util.List;
 
+import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
 
@@ -417,7 +418,7 @@ public class GrammarChecker {
 		String[] pattern = { "(", "#", ",", "#", ")" };
 
 		String token = tokens.get(pos.value());
-		if (!Parser.isWord(token)) {
+		if (!Parser.isWord(token) && !ArrayReference.isArrayReference(token)) {
 
 			or.setErrorMessage("Invalid Lookup Name \"" + token
 					+ "\" in position " + pos.value());

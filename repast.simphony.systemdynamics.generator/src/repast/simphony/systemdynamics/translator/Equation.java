@@ -39,10 +39,12 @@ public class Equation {
 	
 	private boolean syntacticallyCorrect = true;
 	private boolean usageCorrect = true;
+	private boolean fatal = false;
 	
 	private List<String> syntaxMessages = new ArrayList<String>();
 	private List<String> usageMessages = new ArrayList<String>();
 	private List<String> unitsMessages = new ArrayList<String>();
+	private List<String> fatalMessages = new ArrayList<String>();
 	
 	private OperationResult opRes = new OperationResult();  // reusable
 	
@@ -177,6 +179,8 @@ public class Equation {
 	
 	public Equation(String vensimEquation) {
 		this();
+		
+		// System.out.println("Equation: "+vensimEquation);
 
 		// need to check if this equation contains a macro invocation
 		// if so, we need to redefine the equation
@@ -186,6 +190,11 @@ public class Equation {
 			hasMacroInvocation = true;
 		} else {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
+		}
+		
+		// if any subscript ranges have blanks before the "!", get rid of them
+		if (this.vensimEquation.contains("!")) {
+			this.vensimEquation = vensimEquation.replaceAll(" *!", "!");
 		}
 		
 		// tokenize will detect certain types of syntax errors
@@ -1105,6 +1114,8 @@ public class Equation {
 
 			String rhsSubscript = equation.split("<->")[1].trim();
 			InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameFullSubrangeMapping(lhs, rhsSubscript);
+			this.fatal = true;
+			fatalMessages.add("Mapped Subscripts are not supported in this version of Repast Simphony System Dynamics");
 
 		} else if (inRange(position) && characterAt(position).equals("[")) {
 			leftBracketCount++;
@@ -1197,6 +1208,8 @@ public class Equation {
 		}
 		if (ignore) {
 			System.out.println("IGNORING <"+equation+">");
+			syntacticallyCorrect = false;
+			syntaxMessages.add("Ignoring: "+equation);
 			return false;
 		}
 		cleanEquation = "";
@@ -1802,6 +1815,9 @@ public class Equation {
 	}
 	
 	private void processSubscriptMapping(String rhsSubscriptName, List<String> rhsSubscriptValues, MutableInteger position) {
+		
+		this.fatal = true;
+		fatalMessages.add("Mapped Subscripts are not supported in this version of Repast Simphony System Dynamics");
 	    
 	    // position points to "-" of "->"
 	    
@@ -1813,6 +1829,8 @@ public class Equation {
 
 	    // position points to the "->"
 	    String mappedTo = equation.split("->")[1].trim();
+	    
+	    System.out.println("processSubscriptMapping: rhsSubscriptName "+rhsSubscriptName);
 
 	    // format (1)
 	    if (!mappedTo.contains("(")) {
@@ -4089,6 +4107,18 @@ public class Equation {
 
 	public void setTreeCodeGenerated(boolean treeCodeGenerated) {
 		this.treeCodeGenerated = treeCodeGenerated;
+	}
+
+	public boolean isFatal() {
+		return fatal;
+	}
+
+	public void setFatal(boolean fatal) {
+		this.fatal = fatal;
+	}
+
+	public List<String> getFatalMessages() {
+		return fatalMessages;
 	}
 
 }
