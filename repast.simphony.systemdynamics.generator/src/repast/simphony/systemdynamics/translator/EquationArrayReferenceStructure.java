@@ -256,7 +256,7 @@ public class EquationArrayReferenceStructure {
 	}
 	
 	    String index = "indexMapArray_"+CodeGenerator.getLegalName(eqRHSarray+"_"+eqRHSsubscript+"_"+eqRHSdimension) +
-	    		"_[outer"+eqLHSdimension+"]";
+	    		"_[touter"+eqLHSdimension+"]";
 	    sb.append(index);
 	   
 	
