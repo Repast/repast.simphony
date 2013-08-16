@@ -3,14 +3,8 @@
  */
 package repast.simphony.statecharts.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
@@ -25,11 +19,8 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.CommandNotMappedException;
-import org.eclipse.ui.actions.ContributedAction;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
-import org.eclipse.ui.texteditor.ConfigurationElementSorter;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -43,6 +34,9 @@ public class CodePropertyEditor implements ITextEditor {
   
   private IEditorInput input;
   private IDocumentProvider provider = new TextFileDocumentProvider();
+  private JavaSourceViewer viewer;
+  private ViewerSupport support;
+  
 
   /* (non-Javadoc)
    * @see org.eclipse.ui.IEditorPart#getEditorInput()
@@ -63,105 +57,75 @@ public class CodePropertyEditor implements ITextEditor {
     }
   }
   
+//  protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+//    return new JavaSourceViewer(parent, ruler, styles);
+//  }
+  
   public void createPartControl(Composite parent) {
     // TODO partitioner can be reused
-    JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
-    IDocumentPartitioner partitioner = textTools.createDocumentPartitioner();
-    
-    IDocument doc = provider.getDocument(input);
-    doc.setDocumentPartitioner(partitioner);
-    partitioner.connect(doc);
-    
-    JavaSourceViewer viewer = new JavaSourceViewer(parent);
+    viewer = new JavaSourceViewer(parent);
     viewer.configure(this);
-    viewer.setDocument(doc);
+    
+    
+    // set up actions etc.
   }
   
-  /*
-   * @see ITextEditor#getAction(String)
-   */
-  public IAction getAction(String actionID) {
-          Assert.isNotNull(actionID);
-          IAction action= (IAction) fActions.get(actionID);
-
-          if (action == null) {
-                  action= findContributedAction(actionID);
-                  if (action != null)
-                          setAction(actionID, action);
-          }
-
-          return action;
-  }
-
-  /**
-   * Returns the action with the given action id that has been contributed via XML to this editor.
-   * The lookup honors the dependencies of plug-ins.
-   *
-   * @param actionID the action id to look up
-   * @return the action that has been contributed
-   * @since 2.0
-   */
-  private IAction findContributedAction(String actionID) {
-          List actions= new ArrayList();
-          IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
-          for (int i= 0; i < elements.length; i++) {
-                  IConfigurationElement element= elements[i];
-                  if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
-                          if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
-                                  continue;
-
-                          IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
-                          for (int j= 0; j < children.length; j++) {
-                                  IConfigurationElement child= children[j];
-                                  if (actionID.equals(child.getAttribute("actionID"))) //$NON-NLS-1$
-                                          actions.add(child);
-                          }
-                  }
-          }
-          int actionSize= actions.size();
-          if (actionSize > 0) {
-                  IConfigurationElement element;
-                  if (actionSize > 1) {
-                          IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
-                          ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
-                                  /*
-                                   * @see org.eclipse.ui.texteditor.ConfigurationElementSorter#getConfigurationElement(java.lang.Object)
-                                   */
-                                  public IConfigurationElement getConfigurationElement(Object object) {
-                                          return (IConfigurationElement)object;
-                                  }
-                          };
-                          sorter.sort(actionArray);
-                          element= actionArray[0];
-                  } else
-                          element= (IConfigurationElement)actions.get(0);
-
-                  try {
-                          return new ContributedAction(getSite(), element);
-                  } catch (CommandNotMappedException e) {
-                          // out of luck, no command action mapping
-                  }
-          }
-
-          return null;
-  }
-
+ 
   /* (non-Javadoc)
    * @see org.eclipse.ui.IEditorPart#getEditorSite()
    */
   @Override
   public IEditorSite getEditorSite() {
-    // TODO Auto-generated method stub
+    // no editor site so return null
     return null;
   }
-
+  
   /* (non-Javadoc)
    * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
    */
   @Override
   public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-    // TODO Auto-generated method stub
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+   */
+  
+  public void init(IWorkbenchPartSite site, IEditorInput input) {
+    setEditorInput(input);
+    JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
+    IDocumentPartitioner partitioner = textTools.createDocumentPartitioner();
+    IDocument doc = provider.getDocument(input);
+    doc.setDocumentPartitioner(partitioner);
+    partitioner.connect(doc);
+    viewer.setDocument(doc);
     
+    if (support == null) support = new ViewerSupport(viewer, (IHandlerService)site.getService(IHandlerService.class));
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.IWorkbenchPart#dispose()
+   */
+  @Override
+  public void dispose() {
+    // TODO FILL IN
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.IWorkbenchPart#getSite()
+   */
+  @Override
+  public IWorkbenchPartSite getSite() {
+    return null;
+  }
+
+  
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
+   */
+  @Override
+  public IDocumentProvider getDocumentProvider() {
+    return provider;
   }
 
   /* (non-Javadoc)
@@ -171,24 +135,6 @@ public class CodePropertyEditor implements ITextEditor {
   public void addPropertyListener(IPropertyListener listener) {
     // TODO Auto-generated method stub
     
-  }
-
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.IWorkbenchPart#dispose()
-   */
-  @Override
-  public void dispose() {
-    // TODO FILL IN
-    
-  }
-
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.IWorkbenchPart#getSite()
-   */
-  @Override
-  public IWorkbenchPartSite getSite() {
-    // TODO Auto-generated method stub
-    return null;
   }
 
   /* (non-Javadoc)
@@ -237,6 +183,15 @@ public class CodePropertyEditor implements ITextEditor {
   }
 
   /* (non-Javadoc)
+   * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+   */
+  @Override
+  public Object getAdapter(Class adapter) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
    * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
    */
   @Override
@@ -282,24 +237,6 @@ public class CodePropertyEditor implements ITextEditor {
   }
 
   /* (non-Javadoc)
-   * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-   */
-  @SuppressWarnings("rawtypes")
-  @Override
-  public Object getAdapter(Class adapter) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /* (non-Javadoc)
-   * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
-   */
-  @Override
-  public IDocumentProvider getDocumentProvider() {
-    return provider;
-  }
-
-  /* (non-Javadoc)
    * @see org.eclipse.ui.texteditor.ITextEditor#close(boolean)
    */
   @Override
@@ -313,8 +250,7 @@ public class CodePropertyEditor implements ITextEditor {
    */
   @Override
   public boolean isEditable() {
-    // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   /* (non-Javadoc)
@@ -333,6 +269,15 @@ public class CodePropertyEditor implements ITextEditor {
   public void setAction(String actionID, IAction action) {
     // TODO Auto-generated method stub
     
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditor#getAction(java.lang.String)
+   */
+  @Override
+  public IAction getAction(String actionId) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   /* (non-Javadoc)
@@ -414,30 +359,5 @@ public class CodePropertyEditor implements ITextEditor {
   @Override
   public void selectAndReveal(int offset, int length) {
     // TODO Auto-generated method stub
-    
   }
-  
-  
-  
-  /*
-  protected void doSetInput(IEditorInput input) throws CoreException {
-    IEditorInput oldInput= getEditorInput();
-    if (oldInput != null)
-            getDocumentProvider().disconnect(oldInput);
-
-    super.setInput(input);
-    
-
-    IDocumentProvider provider= getDocumentProvider();
-    if (provider == null) {
-            IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.Editor_error_no_provider, null);
-            throw new CoreException(s);
-    }
-
-    provider.connect(input);
-
-  }
-  */
-  
-
 }
