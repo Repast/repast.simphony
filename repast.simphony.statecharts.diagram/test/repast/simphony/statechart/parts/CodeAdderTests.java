@@ -133,9 +133,16 @@ public class CodeAdderTests {
   private void checkIfAdded(IFile file) throws IOException {
     assertTrue(contains(file, "import " + PACKAGE_NAME + "." + CLASS_NAME));
     String expected = CLASS_NAME + " " + CLASS_NAME.substring(0, 1).toLowerCase()
-        + CLASS_NAME.substring(1) + " = " + CLASS_NAME + ".createStateChart(this, 1);";
+        + CLASS_NAME.substring(1) + " = " + CLASS_NAME + ".createStateChart(this, 0);";
     assertTrue(contains(file, expected));
-    expected = "@ProbedProperty(usageName=\"statechart\", displayName=\"statechart\")";
+    expected = "@ProbedProperty(displayName=\"statechart\")";
+    assertTrue(contains(file, expected));
+    expected = "public String get" + CLASS_NAME + "State(){";
+    assertTrue(contains(file, expected));
+    expected = "String result = " + CLASS_NAME.substring(0, 1).toLowerCase()
+            + CLASS_NAME.substring(1) + ".getCurrentSimpleState();";
+    assertTrue(contains(file, expected));
+    expected = "return result == null ? \"\" : result;";
     assertTrue(contains(file, expected));
   }
 
@@ -145,6 +152,7 @@ public class CodeAdderTests {
       reader = new BufferedReader(new FileReader(new File(file.getLocation().toOSString())));
       String line = null;
       while ((line = reader.readLine()) != null) {
+    	  System.out.println("Line is: " + line);
         if (line.contains(match))
           return true;
       }

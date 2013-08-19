@@ -46,6 +46,7 @@ public class StatechartCodeAdderFactory {
       if (agentType.equals(fqAgentName)) {
         createImport(packageName + "." + className);
         createImport("repast.simphony.ui.probe.ProbedProperty");
+        String fieldName = className.substring(0, 1).toLowerCase() + className.subSequence(1, className.length());
         StringBuilder buf = new StringBuilder("\t");
         buf.append("@ProbedProperty(displayName=\"");
         buf.append(statechartName);
@@ -54,11 +55,25 @@ public class StatechartCodeAdderFactory {
         buf.append("\t");
         buf.append(className);
         buf.append(" ");
-        buf.append(className.substring(0, 1).toLowerCase());
-        buf.append(className.subSequence(1, className.length()));
+        buf.append(fieldName);
         buf.append(" = ");
         buf.append(className);
         buf.append(".createStateChart(this, 0);");
+        buf.append(System.getProperty("line.separator"));
+        buf.append(System.getProperty("line.separator"));
+        buf.append("public String get");
+        buf.append(className);
+        buf.append("State(){");
+        buf.append(System.getProperty("line.separator"));
+        buf.append("\t\t");
+        buf.append("String result = ");
+        buf.append(fieldName);
+        buf.append(".getCurrentSimpleState();");
+        buf.append(System.getProperty("line.separator"));
+        buf.append("\t\t");
+        buf.append("return result == null ? \"\" : result;");
+        buf.append(System.getProperty("line.separator"));
+        buf.append("}");
         aType.createField(buf.toString(), null, true, monitor);
         unit.save(monitor, true);
       }
