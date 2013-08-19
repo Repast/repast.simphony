@@ -5,6 +5,8 @@ package repast.simphony.statecharts.editor;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
+import org.eclipse.jdt.internal.ui.text.JavaCompositeReconcilingStrategy;
+import org.eclipse.jdt.internal.ui.text.JavaReconciler;
 import org.eclipse.jdt.internal.ui.text.java.ContentAssistProcessor;
 import org.eclipse.jdt.internal.ui.text.javadoc.JavadocCompletionProcessor;
 import org.eclipse.jdt.ui.text.IColorManager;
@@ -22,6 +24,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Nick Collier
@@ -42,17 +45,17 @@ public class JSourceViewerConfiguration extends JavaSourceViewerConfiguration {
    */
   @Override
   public IReconciler getReconciler(ISourceViewer sourceViewer) {
-//    final ITextEditor editor = getEditor();
-//    if (editor != null && editor.isEditable()) {
-//
-//      JavaCompositeReconcilingStrategy strategy = new JavaCompositeReconcilingStrategy(
-//          sourceViewer, editor, getConfiguredDocumentPartitioning(sourceViewer));
-//      JavaReconciler reconciler = new JavaReconciler(editor, strategy, false);
-//      reconciler.setIsAllowedToModifyDocument(false);
-//      reconciler.setDelay(500);
-//
-//      return reconciler;
-//    }
+    final ITextEditor editor = getEditor();
+    if (editor != null && editor.isEditable()) {
+
+      JavaCompositeReconcilingStrategy strategy = new JavaCompositeReconcilingStrategy(
+          sourceViewer, editor, getConfiguredDocumentPartitioning(sourceViewer));
+      JavaReconciler reconciler = new JavaReconciler(editor, strategy, false);
+      reconciler.setIsAllowedToModifyDocument(false);
+      reconciler.setDelay(500);
+
+      return reconciler;
+    }
     return null;
   }
 

@@ -22,7 +22,11 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
- * @author Nick Collier
+ * Activates the handlers for the cut, paste, code completion
+ * actions. 
+ * 
+ * @author Nick Collier from blog post by David Green:
+ * http://greensopinion.blogspot.com/2009/10/key-bindings-in-eclipse-editors.html
  */
 public class ViewerSupport implements FocusListener, DisposeListener {
   

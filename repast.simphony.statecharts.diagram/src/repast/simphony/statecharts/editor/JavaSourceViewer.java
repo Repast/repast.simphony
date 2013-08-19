@@ -11,6 +11,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -37,14 +38,10 @@ public class JavaSourceViewer extends SourceViewer {
 
   private final BracketInserter bracketInserter;
 
-  public JavaSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-    super(parent, ruler, styles);
-    bracketInserter = new BracketInserter(this);
-  }
-
-  public JavaSourceViewer(Composite parent) {
-    this(parent, new VerticalRuler(12), SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER
+  public JavaSourceViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler oRuler) {
+    super(parent, ruler, oRuler, true, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER
         | SWT.FULL_SELECTION);
+    bracketInserter = new BracketInserter(this);
   }
 
   private void initFont(Font font) {
@@ -82,9 +79,8 @@ public class JavaSourceViewer extends SourceViewer {
   /**
    * Configures this viewer with a default JavaSourceViewerConfiguration.
    */
-  public void configure(CodePropertyEditor editor) {
+  public void configure(IPreferenceStore prefStore, CodePropertyEditor editor) {
     JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
-    IPreferenceStore prefStore = JavaPlugin.getDefault().getCombinedPreferenceStore();
     JSourceViewerConfiguration config = new JSourceViewerConfiguration(textTools.getColorManager(),
         prefStore, editor);
     super.configure(config);
