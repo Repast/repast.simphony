@@ -3,7 +3,7 @@
 <plugin class="repast.simphony.ui.RSUIPlugin" id="repast.simphony.gui" version="">
 
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 	
   <requires>
@@ -12,7 +12,6 @@
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.essentials" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.groovy" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
-    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.distributedBatch" reverse-lookup="false"/>
     <import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
   </requires>
 
@@ -26,11 +25,15 @@
     <!--
       <library type="resources" path="help/" id="help"/>
       -->
-    <library id="binding-1.1.1" path="lib/binding-1.1.1.jar" type="code">
+    <library id="jgoodies-binding" path="lib/jgoodies-binding-2.9.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <library id="jgoodies-common" path="lib/jgoodies-common-1.6.0.jar" type="code">
       <export prefix="*"/>
     </library>
 
-    <library id="jide-oss" path="lib/jide-oss-2.7.0.jar" type="code">
+    <library id="jide-oss" path="lib/jide-oss-3.4.9.jar" type="code">
       <export prefix="*"/>
     </library>
     
@@ -59,6 +62,12 @@
    -->
   <extension-point extension-multiplicity="any" id="composite.action" parent-plugin-id="repast.simphony.core" parent-point-id="composite.action">
     <parameter-def id="label" multiplicity="one" type="string"/>
+  </extension-point>
+  
+  <!-- Extension point for adding buttons etc. to the probe panel for a FieldPropertyDescriptor -->
+  <extension-point extension-multiplicity="any" id="field.probe">
+    <parameter-def id="probedObjectClass" multiplicity="one" type="string"/>
+    <parameter-def id="creatorClass" multiplicity="one" type="string"/>
   </extension-point>
 
   <!-- Extension point for child / component actions. Parameters:
@@ -368,5 +377,4 @@
     <parameter id="creatorClass" value="repast.simphony.plugin.MiscCompositeActionCreator"/>
     <parameter id="label" value="Miscellaneous Actions"/>
   </extension>
-
 </plugin>

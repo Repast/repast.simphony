@@ -20,6 +20,7 @@ public class FileDataSink implements DataSink {
   private File file;
   private BufferedWriter writer;
   private String name;
+  private boolean closed = false;
 
   public FileDataSink(String name, File file, Formatter formatter) {
     this.formatter = formatter;
@@ -72,6 +73,9 @@ public class FileDataSink implements DataSink {
   @Override
   public void open(List<String> sourceIds) {
     try {
+      File parentFile = file.getCanonicalFile().getParentFile();
+      if (parentFile != null && !parentFile.exists()) parentFile.mkdirs();
+      
       writer = new BufferedWriter(new FileWriter(file));
       String header = formatter.getHeader();
       if (header.length() > 0) {
@@ -89,15 +93,16 @@ public class FileDataSink implements DataSink {
    * @see repast.simphony.data2.DataSink#flush()
    */
   @Override
-  public void flush() {
-    try {
-      if (writer != null) {
-        writer.flush();
+  public synchronized void flush() {
+    if (!closed) {
+      try {
+        if (writer != null) {
+          writer.flush();
+        }
+      } catch (IOException ex) {
+        throw new DataException("Error while flushing FileDataSink.", ex);
       }
-    } catch (IOException ex) {
-      throw new DataException("Error while flushing FileDataSink.", ex);
     }
-
   }
 
   /*
@@ -151,16 +156,20 @@ public class FileDataSink implements DataSink {
    * @see repast.simphony.data2.DataSink#close()
    */
   @Override
-  public void close() {
-    try {
-      writer.flush();
-    } catch (IOException ex) {
-      throw new DataException("Error closing FileDataSink.", ex);
-    } finally {
+  public synchronized void close() {
+    if (!closed) {
       try {
-        writer.close();
+        writer.flush();
       } catch (IOException ex) {
+        throw new DataException("Error closing FileDataSink.", ex);
+      } finally {
+        try {
+          closed = true;
+          writer.close();
+        } catch (IOException ex) {
+        }
       }
+
     }
   }
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ui
 Bundle-SymbolicName: saf.core.ui
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Export-Package: 
  bibliothek.extension.gui.dock,
@@ -55,12 +55,14 @@ Export-Package:
  saf.v3d.render,
  saf.v3d.scene,
  saf.v3d.util
-Bundle-ClassPath: lib/dockingFrames-1.0.8p3a-saf.jar,
- lib/forms-1.0.5.jar,
+Bundle-ClassPath: saf.core.ui.jar,
+ saf.core.v3d.jar,
+ lib/dockingFrames-1.0.8p3a-saf.jar,
+ lib/jgoodies-forms-1.7.1.jar,
  lib/jh.jar,
  lib/l2fprod-common-all.jar,
  lib/osx.jar,
  lib/TableLayout.jar,
- lib/wizard-0.1.12.jar,
- saf.core.ui.jar,
- saf.core.v3d.jar
+ lib/wizard-0.1.12.jar
+Require-Bundle: libs.ext
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.statecharts.visualization" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.1.0"/>
+     </attributes>
+
+	<requires>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
+  </requires>
+
+	<runtime>
+		<library id="statecharts.visualization" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="batik-gvt" path="lib/batik-gvt.jar" type="code"/>
+		<library id="batik-swing" path="lib/batik-swing.jar" type="code"/>
+		<library id="batik-bridge" path="lib/batik-bridge.jar" type="code"/>
+		<library id="batik-css" path="lib/batik-css.jar" type="code"/>
+		<library id="batik-dom" path="lib/batik-dom.jar" type="code"/>
+		<library id="batik-ext" path="lib/batik-ext.jar" type="code"/>
+		<library id="batik-parser" path="lib/batik-parser.jar" type="code"/>
+		<library id="batik-svggen" path="lib/batik-svggen.jar" type="code"/>
+		<library id="batik-util" path="lib/batik-util.jar" type="code"/>
+		<library id="batik-xml" path="lib/batik-xml.jar" type="code"/>
+		<library id="batik-svg-dom" path="lib/batik-svg-dom.jar" type="code"/>
+		<library id="batik-awt-util" path="lib/batik-awt-util.jar" type="code"/>
+		<library id="batik-codec" path="lib/batik-codec.jar" type="code"/>
+		<library id="js" path="lib/js.jar" type="code"/>
+	</runtime>
+
+	<extension id="statechart.probe" plugin-id="repast.simphony.gui" point-id="field.probe">
+        <parameter id="probedObjectClass" value="repast.simphony.statecharts.DefaultStateChart"/>
+        <parameter id="creatorClass" value="repast.simphony.statecharts.runtime.UICreatorFactory"/>
+    </extension>
+
+</plugin>

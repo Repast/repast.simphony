@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -58,21 +59,18 @@ import org.eclipse.jdt.internal.ui.util.CoreUtility;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.internal.ui.wizards.ClassPathDetector;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
-import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
-import repast.simphony.agents.designer.core.AgentBuilderPlugin;
+import repast.simphony.eclipse.RSProjectConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
+import repast.simphony.eclipse.util.Utilities;
+import repast.simphony.relogo.ide.handlers.ReLogoNature;
 
 
 
@@ -208,13 +206,11 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 	}
 
 	private final IStatus updateProject(IProgressMonitor monitor) throws CoreException, InterruptedException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 8);
+		subMonitor.subTask(NewWizardMessages.NewJavaProjectWizardPageTwo_operation_initialize);
 		IStatus result= StatusInfo.OK_STATUS;
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		try {
-			monitor.beginTask(NewWizardMessages.NewJavaProjectWizardPageTwo_operation_initialize, 7); 
-			if (monitor.isCanceled()) {
+		try { 
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 
@@ -226,7 +222,7 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 			URI realLocation= getRealLocation(projectName, fCurrProjectLocation);
 			fKeepContent= hasExistingContent(realLocation);
 
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 
@@ -235,12 +231,12 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 				rememberExisitingFolders(realLocation);
 			}
 
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 
 			try {
-				createProject(fCurrProject, fCurrProjectLocation, new SubProgressMonitor(monitor, 2));
+				createProject(fCurrProject, fCurrProjectLocation, subMonitor.newChild(2));
 			} catch (CoreException e) {
 				if (e.getStatus().getCode() == IResourceStatus.FAILED_READ_METADATA) {					
 					result= new StatusInfo(IStatus.INFO, Messages.format(NewWizardMessages.NewJavaProjectWizardPageTwo_DeleteCorruptProjectFile_message, e.getLocalizedMessage()));
@@ -255,32 +251,25 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 				}	
 			}
 
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 			
 			
-			initializeBuildPath(JavaCore.create(fCurrProject), new SubProgressMonitor(monitor, 2));
-			configureJavaProject(new SubProgressMonitor(monitor, 3)); // create the Java project to allow the use of the new source folder page
-			GroovyRuntime.addGroovyRuntime(fCurrProject);
+			
+			initializeBuildPath(JavaCore.create(fCurrProject), subMonitor.newChild(2));
+			configureJavaProject(subMonitor.newChild(2)); // create the Java project to allow the use of the new source folder page
+			RSProjectConfigurator configurator = new RSProjectConfigurator();
+			IJavaProject javaProject = JavaCore.create(fCurrProject);
+			configurator.configureNewProject(javaProject, subMonitor.newChild(1));
+			// The new project configurator adds the regular repast natures (statechart and flowchart)
+			// So the ReLogo nature is added here to keep it within the ReLogo ide project
+			Utilities.addNature(javaProject.getProject(), ReLogoNature.RELOGO_NATURE_ID);
+		  javaProject.save(subMonitor.newChild(1), true);
 						
-			Display.getDefault().syncExec(new Runnable() {
-			      public void run() {
-			    	  try {
-						AgentBuilderPlugin.addRepastSimphonyNature(fCurrProject, null, false, false);
-					} catch (CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			      }
-			});
-			
-			
-
-
 			
 		} finally {
-			monitor.done();
+			subMonitor.setWorkRemaining(0);
 		}
 		return result;
 	}
@@ -295,10 +284,8 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 	 * @throws CoreException thrown when initializing the build path failed
 	 */
 	protected void initializeBuildPath(IJavaProject javaProject, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		monitor.beginTask(NewWizardMessages.NewJavaProjectWizardPageTwo_monitor_init_build_path, 2);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
+		subMonitor.subTask(NewWizardMessages.NewJavaProjectWizardPageTwo_monitor_init_build_path);
 
 		try {
 			IClasspathEntry[] entries= null;
@@ -307,13 +294,13 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 
 			if (fKeepContent) {
 				if (!project.getFile(FILENAME_CLASSPATH).exists()) { 
-					final ClassPathDetector detector= new ClassPathDetector(fCurrProject, new SubProgressMonitor(monitor, 2));
+					final ClassPathDetector detector= new ClassPathDetector(fCurrProject, subMonitor.newChild(2));
 					entries= detector.getClasspath();
 					outputLocation= detector.getOutputLocation();
 					if (entries.length == 0)
 						entries= null;
 				} else {
-					monitor.worked(2);
+					subMonitor.setWorkRemaining(2);
 				}
 			} else {
 				List cpEntries= new ArrayList();
@@ -324,7 +311,7 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 					IPath path= sourceClasspathEntries[i].getPath();
 					if (path.segmentCount() > 1) {
 						IFolder folder= root.getFolder(path);
-						CoreUtility.createFolder(folder, true, true, new SubProgressMonitor(monitor, 1));
+						CoreUtility.createFolder(folder, true, true, subMonitor.newChild(1));
 					}
 					cpEntries.add(sourceClasspathEntries[i]);
 				}
@@ -346,16 +333,16 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 				outputLocation= fFirstPage.getOutputLocation();
 				if (outputLocation.segmentCount() > 1) {
 					IFolder folder= root.getFolder(outputLocation);
-					CoreUtility.createDerivedFolder(folder, true, true, new SubProgressMonitor(monitor, 1));
+					CoreUtility.createDerivedFolder(folder, true, true,subMonitor.newChild(1));
 				}
 			}
-			if (monitor.isCanceled()) {
+			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
 
 			init(javaProject, outputLocation, entries, false);
 		} finally {
-			monitor.done();
+			subMonitor.setWorkRemaining(0);
 		}
 	}
 
@@ -499,10 +486,12 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 	 * @throws InterruptedException thrown when the user cancelled the project creation
 	 */
 	public void performFinish(IProgressMonitor monitor) throws CoreException, InterruptedException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
+		subMonitor.subTask(NewWizardMessages.NewJavaProjectWizardPageTwo_operation_create);
 		try {
-			monitor.beginTask(NewWizardMessages.NewJavaProjectWizardPageTwo_operation_create, 3); 
+			
 			if (fCurrProject == null) {
-				updateProject(new SubProgressMonitor(monitor, 1));
+				updateProject(subMonitor.newChild(1));
 			}
 
 			if (!fKeepContent) {
@@ -517,7 +506,7 @@ public class NetlogoWizardPageTwo extends JavaCapabilityConfigurationPage {
 			} else {
 			}
 		} finally {
-			monitor.done();
+			subMonitor.worked(2);
 			fCurrProject= null;
 			if (fIsAutobuild != null) {
 //				CoreUtility.enableAutoBuild(fIsAutobuild.booleanValue());

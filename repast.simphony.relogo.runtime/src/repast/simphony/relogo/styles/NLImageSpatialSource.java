@@ -5,8 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
-import repast.simphony.relogo.ide.image.NLImage;
-import repast.simphony.relogo.ide.image.NLImagePrimitive;
+import repast.simphony.relogo.image.NLImage;
+import repast.simphony.relogo.image.NLImagePrimitive;
 import saf.v3d.NamedShapeCreator;
 import saf.v3d.ShapeFactory2D;
 

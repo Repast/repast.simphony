@@ -30,11 +30,10 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
-import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.environment.RunState;
+import repast.simphony.gis.styleEditor.SimpleMarkFactory;
 import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
@@ -45,10 +44,10 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
 import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.thoughtworks.xstream.XStream;
@@ -59,6 +58,9 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * @author Eric Tatara
  */
 public class EditedStyleDialog extends JDialog {
+  
+  private static final String ICON_SIZE = "Icon Size";
+  
   private boolean save = false;
   private EditedStyleData userStyleData;
   private static final Set<Class> pTypes = new HashSet<Class>();
@@ -151,12 +153,8 @@ public class EditedStyleDialog extends JDialog {
       if (userStyleData == null)
         userStyleData = new DefaultEditedStyleData2D();
 
-      shapeModel = new DefaultComboBoxModel(new String[]{
-              "circle",
-              "square",
-              "triangle",
-              "cross",
-              "star"});
+      // TODO Eliminate GIS plugin depedency.
+      shapeModel = new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List());
 
       shapeModel.setSelectedItem(userStyleData.getShapeWkt());
     } else {
@@ -191,6 +189,8 @@ public class EditedStyleDialog extends JDialog {
     variableIconRedColorScaleModel = new DefaultComboBoxModel();
     variableIconGreenColorScaleModel = new DefaultComboBoxModel();
     variableIconBlueColorScaleModel = new DefaultComboBoxModel();
+    
+    sizeModel.addElement(ICON_SIZE);
 
     // Add available methods to appropriate combo box models
     for (String method : methodList) {
@@ -212,6 +212,8 @@ public class EditedStyleDialog extends JDialog {
 //			variableIconGreenColorScaleModel.addElement(method);
 //			variableIconBlueColorScaleModel.addElement(method);
     }
+    
+    
 
     for (String method : labelMethodList)
       labelModel.addElement(method);
@@ -219,8 +221,12 @@ public class EditedStyleDialog extends JDialog {
     if (userStyleData.getSizeMethodName() != null)
       sizeModel.setSelectedItem(userStyleData.getSizeMethodName());
     else {
-      sizeModel.addElement(userStyleData.getSize());
-      sizeModel.setSelectedItem(userStyleData.getSize());
+      if (userStyleData.getSize() == -1) {
+        sizeModel.setSelectedItem(ICON_SIZE);
+      } else {
+        sizeModel.addElement(userStyleData.getSize());
+        sizeModel.setSelectedItem(userStyleData.getSize());
+      }
     }
     if (userStyleData.getSizeMinMethodName() != null)
       sizeMinModel.setSelectedItem(userStyleData.getSizeMinMethodName());
@@ -475,6 +481,10 @@ public class EditedStyleDialog extends JDialog {
     } else if (isUserTypedNumber(selection)) {
       userStyleData.setSize(new Float((String) selection));
       preview.setMarkSize(new Float((String) selection));
+      userStyleData.setSizeMethodName(null);
+    } else if (selection.equals(ICON_SIZE)) {
+      userStyleData.setSize(-1f);
+      preview.setMarkSize(-1f);
       userStyleData.setSizeMethodName(null);
     } else
       userStyleData.setSizeMethodName((String) selection);
@@ -925,18 +935,18 @@ public class EditedStyleDialog extends JDialog {
 
     //======== dialogPane ========
     {
-      dialogPane.setBorder(Borders.DIALOG_BORDER);
+      dialogPane.setBorder(Borders.DIALOG);
       dialogPane.setLayout(new BorderLayout());
 
       //======== buttonBar ========
       {
-        buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+        buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
         buttonBar.setLayout(new FormLayout(
                 new ColumnSpec[]{
-                        FormFactory.GLUE_COLSPEC,
-                        FormFactory.BUTTON_COLSPEC,
-                        FormFactory.RELATED_GAP_COLSPEC,
-                        FormFactory.BUTTON_COLSPEC
+                        FormSpecs.GLUE_COLSPEC,
+                        FormSpecs.BUTTON_COLSPEC,
+                        FormSpecs.RELATED_GAP_COLSPEC,
+                        FormSpecs.BUTTON_COLSPEC
                 },
                 RowSpec.decodeSpecs("pref")));
 
@@ -964,26 +974,26 @@ public class EditedStyleDialog extends JDialog {
       {
         panel1.setLayout(new FormLayout(
                 new ColumnSpec[]{
-                        new ColumnSpec("left:max(default;166dlu):grow"),
-                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                        FormFactory.DEFAULT_COLSPEC,
-                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                        ColumnSpec.decode("left:max(default;166dlu):grow"),
+                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                        FormSpecs.DEFAULT_COLSPEC,
+                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                         new ColumnSpec(Sizes.dluX(133)),
-                        FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                        FormFactory.DEFAULT_COLSPEC
+                        FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                        FormSpecs.DEFAULT_COLSPEC
                 },
                 new RowSpec[]{
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC,
-                        FormFactory.LINE_GAP_ROWSPEC,
-                        FormFactory.DEFAULT_ROWSPEC
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC,
+                        FormSpecs.LINE_GAP_ROWSPEC,
+                        FormSpecs.DEFAULT_ROWSPEC
                 }));
 
         //======== shapePanel ========
@@ -992,18 +1002,18 @@ public class EditedStyleDialog extends JDialog {
           shapePanel.setLayout(new FormLayout(
                   new ColumnSpec[]{
                           new ColumnSpec(Sizes.dluX(79)),
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC
                   },
                   new RowSpec[]{
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
                           new RowSpec(Sizes.dluY(17))
                   }));
 
@@ -1075,24 +1085,24 @@ public class EditedStyleDialog extends JDialog {
           panel3.setBorder(new TitledBorder("Icon Size"));
           panel3.setLayout(new FormLayout(
                   new ColumnSpec[]{
-                          new ColumnSpec("max(pref;66dlu)"),
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC
+                          ColumnSpec.decode("max(pref;66dlu)"),
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC
                   },
                   new RowSpec[]{
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC
                   }));
 
           //---- label1 ----
@@ -1154,28 +1164,28 @@ public class EditedStyleDialog extends JDialog {
           panel4.setBorder(new TitledBorder("Icon Label"));
           panel4.setLayout(new FormLayout(
                   new ColumnSpec[]{
-                          new ColumnSpec("max(pref;67dlu)"),
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+                          ColumnSpec.decode("max(pref;67dlu)"),
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
                           new ColumnSpec(Sizes.dluX(33)),
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC
                   },
                   new RowSpec[]{
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC
                   }));
 
           //---- label5 ----
@@ -1257,26 +1267,26 @@ public class EditedStyleDialog extends JDialog {
           panel2.setBorder(new TitledBorder("Icon Label Font"));
           panel2.setLayout(new FormLayout(
                   new ColumnSpec[]{
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC
                   },
                   new RowSpec[]{
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC
                   }));
 
           //---- label8 ----
@@ -1357,30 +1367,30 @@ public class EditedStyleDialog extends JDialog {
           panel6.setBorder(new TitledBorder("Variable Icon Color"));
           panel6.setLayout(new FormLayout(
                   new ColumnSpec[]{
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC,
-                          FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-                          FormFactory.DEFAULT_COLSPEC
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC,
+                          FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+                          FormSpecs.DEFAULT_COLSPEC
                   },
                   new RowSpec[]{
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC,
-                          FormFactory.LINE_GAP_ROWSPEC,
-                          FormFactory.DEFAULT_ROWSPEC
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC,
+                          FormSpecs.LINE_GAP_ROWSPEC,
+                          FormSpecs.DEFAULT_ROWSPEC
                   }));
 
           //---- label15 ----

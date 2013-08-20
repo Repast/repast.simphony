@@ -25,6 +25,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.statecharts.StateChartScheduler;
 import repast.simphony.ui.probe.ProbeID;
 import cern.colt.function.DoubleFunction;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
@@ -46,7 +47,7 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	RLWorldDimensions rLWorldDimensions;
-	AgentSet cachedPatches;
+	AgentSet<Patch> cachedPatches;
 	String observerID;
 
 	public String getObserverID() {
@@ -119,7 +120,7 @@ public abstract class AbstractObserver implements Observer {
 	}
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset
@@ -228,6 +229,7 @@ public abstract class AbstractObserver implements Observer {
 		ct();
 		cp();
 		clearTrackingNetwork();
+		StateChartScheduler.INSTANCE.initialize();
 	}
 
 	/**
@@ -262,7 +264,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @return agentset of all turtles
 	 */
-	public AgentSet turtles() {
+	public AgentSet<Turtle> turtles() {
 		return Utility.turtlesU(this);
 	}
 
@@ -335,14 +337,14 @@ public abstract class AbstractObserver implements Observer {
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet links() {
+	public AgentSet<Link> links() {
 		return Utility.linksU(this);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet allLinks() {
+	public AgentSet<Link> allLinks() {
 		return Utility.allLinksU(this);
 	}
 
@@ -383,7 +385,7 @@ public abstract class AbstractObserver implements Observer {
 	 * @return created turtles
 	 * @see #createTurtles()
 	 */
-	public AgentSet crt(int number) {
+	public AgentSet<Turtle> crt(int number) {
 		return crt(number, null);
 	}
 
@@ -399,7 +401,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @see #createTurtles(int, Closure)
 	 */
-	public AgentSet crt(int number, Closure closure) {
+	public AgentSet<Turtle> crt(int number, Closure closure) {
 		return crt(number, closure, "default");
 	}
 
@@ -417,7 +419,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @see #createTurtles(int, Closure, String)
 	 */
-	public AgentSet crt(int number, Closure closure, String type) {
+	public AgentSet<Turtle> crt(int number, Closure closure, String type) {
 		AgentSet newTurtles = new AgentSet();
 		for (int i = 0; i < number; i++) {
 			newTurtles.add(tf.createTurtle(type));
@@ -442,7 +444,7 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @see #createTurtles(int, Closure, Class)
 	 */
-	public AgentSet crt(int number, Closure closure, Class type) {
+	public AgentSet<Turtle> crt(int number, Closure closure, Class type) {
 		return crt(number, closure, type.getSimpleName());
 	}
 
@@ -458,7 +460,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, String type) {
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, String type) {
 		return crt(number, closure, type);
 	}
 
@@ -474,7 +476,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, Class type) {
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, Class type) {
 		return crt(number, closure, type.getSimpleName());
 	}
 
@@ -485,7 +487,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number) {
+	public AgentSet<Turtle> createTurtles(int number) {
 		return crt(number, null);
 	}
 
@@ -499,7 +501,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure) {
+	public AgentSet<Turtle> createTurtles(int number, Closure closure) {
 		return crt(number, closure);
 	}
 
@@ -511,7 +513,7 @@ public abstract class AbstractObserver implements Observer {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int)
 	 */
-	public AgentSet cro(int number) {
+	public AgentSet<Turtle> cro(int number) {
 		return cro(number, null);
 	}
 
@@ -526,7 +528,7 @@ public abstract class AbstractObserver implements Observer {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int, Closure)
 	 */
-	public AgentSet cro(int number, Closure closure) {
+	public AgentSet<Turtle> cro(int number, Closure closure) {
 		return cro(number, closure, "default");
 	}
 
@@ -542,8 +544,8 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, String type) {
-		AgentSet newTurtles = new AgentSet();
+	public AgentSet<Turtle> cro(int number, Closure closure, String type) {
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		double headingIncrement = 360.0 / ((double) number);
 
 		for (int i = 0; i < number; i++) {
@@ -567,7 +569,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, String type) {
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, String type) {
 		return cro(number, closure, type);
 	}
 
@@ -583,7 +585,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, Class type) {
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, Class type) {
 		return cro(number, closure, type);
 	}
 
@@ -599,7 +601,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, Class type) {
+	public AgentSet<Turtle> cro(int number, Closure closure, Class type) {
 		return cro(number, closure, type.getSimpleName());
 	}
 
@@ -610,7 +612,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number) {
+	public AgentSet<Turtle> createOrderedTurtles(int number) {
 		return cro(number, null);
 	}
 
@@ -624,7 +626,7 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure) {
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure) {
 		return cro(number, closure);
 	}
 
@@ -957,8 +959,10 @@ public abstract class AbstractObserver implements Observer {
 
 	/**
 	 * Stops an observer executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop() {
+	@Deprecated
+	public Stop oldStop() {
 		return Stop.TRUE;
 	}
 
@@ -973,8 +977,8 @@ public abstract class AbstractObserver implements Observer {
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
 
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.minOneOfU(this, a, reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.minOneOfU(this, a, closure);
 	}
 
 	/**
@@ -991,8 +995,8 @@ public abstract class AbstractObserver implements Observer {
 	 *         operated on by closure
 	 */
 	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.minNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.minNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -1005,8 +1009,8 @@ public abstract class AbstractObserver implements Observer {
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.maxOneOfU(this, a, reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.maxOneOfU(this, a, closure);
 	}
 
 	/**
@@ -1023,8 +1027,8 @@ public abstract class AbstractObserver implements Observer {
 	 *         operated on by closure
 	 */
 	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.maxNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.maxNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -1032,13 +1036,13 @@ public abstract class AbstractObserver implements Observer {
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter) {
-		return Utility.allQU(this, a, reporter);
+	public boolean allQ(Collection a, Closure closure) {
+		return Utility.allQU(this, a, closure);
 	}
 
 	/**

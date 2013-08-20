@@ -109,8 +109,6 @@ public class VisadWizard extends AnalysisPluginWizard {
 		 * 
 		 * java -cp C:/Program Files/visad/visad.jar visad.ss.SpreadSheet -file datafile.txt;
 		 */
-
-		System.getProperty("java.Home");
 		
 	  List<String> commands = new ArrayList<String>();
     commands.add("java");
@@ -148,9 +146,10 @@ public class VisadWizard extends AnalysisPluginWizard {
 	}
 
 	private String getExecutableLoc() {
-    String home = getInstallHome();
-    if (!home.endsWith(File.separator)) home += File.separator;
-    return home + "visad.jar";
+//    String home = getInstallHome();
+//    if (!home.endsWith(File.separator)) home += File.separator;
+//    return home + "visad.jar";
+		return getInstallHome();
 	}
 
 	public static String trimQuotes(String value){
@@ -163,4 +162,10 @@ public class VisadWizard extends AnalysisPluginWizard {
    
     return value;
   }
+
+	@Override
+	public String getCannotRunMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

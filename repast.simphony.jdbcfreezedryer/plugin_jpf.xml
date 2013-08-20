@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.jdbcfreezedryer" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 
 	<requires>
@@ -17,9 +17,8 @@
 		<library id="data.bin" path="bin/" type="code">
 			<export prefix="*"/>
 	    </library>
-		<library id="commons-dbcp-1.2.1" path="lib/commons-dbcp-1.2.1.jar" type="code"/>
-		<library id="commons-pool-1.3" path="lib/commons-pool-1.3.jar" type="code"/>
-		<library id="mysql-connector-1.3" path="lib/mysql-connector-java-3.1.12-bin.jar" type="code"/>
+		<library id="commons-dbcp" path="lib/commons-dbcp-1.4.jar" type="code"/>
+		<library id="commons-pool" path="lib/commons-pool-1.6.jar" type="code"/>
 	</runtime>
 
 	<extension id="repast.simphony.jdbcfreezedryer.jdbcLoadOption" plugin-id="repast.simphony.dataloader.ui" point-id="wizard.options">

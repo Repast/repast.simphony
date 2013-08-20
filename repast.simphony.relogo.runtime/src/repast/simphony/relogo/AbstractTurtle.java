@@ -32,7 +32,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the agent that initiated the asking to the value o.
 	 * 
 	 * @param o
-	 *            an object
+	 *          an object
 	 * @exclude
 	 */
 	public void setMyself(Object o) {
@@ -40,8 +40,7 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	Map props;
-	Set<Turtle> fixedLeaves = Collections
-			.synchronizedSet(new HashSet<Turtle>());
+	Set<Turtle> fixedLeaves = Collections.synchronizedSet(new HashSet<Turtle>());
 	Set<Turtle> freeLeaves = Collections.synchronizedSet(new HashSet<Turtle>());
 	boolean moved = false;
 	boolean shapeChanged = false;
@@ -163,9 +162,8 @@ public abstract class AbstractTurtle implements Turtle {
 		this.myTurtleFactory = myTurtleFactory;
 	}
 
-	public void setBaseTurtleProperties(Observer observer,
-			TurtleFactory turtleFactory, String turtleShape, double heading,
-			double color, NdPoint loc) {
+	public void setBaseTurtleProperties(Observer observer, TurtleFactory turtleFactory,
+			String turtleShape, double heading, double color, NdPoint loc) {
 		setMyObserver(observer);
 		setMyTurtleFactory(turtleFactory);
 		this.shape = turtleShape;
@@ -200,10 +198,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes a number of new turtles.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number) {
+	public AgentSet<Turtle> hatch(Number number) {
 		return hatch(number, null);
 	}
 
@@ -212,14 +210,14 @@ public abstract class AbstractTurtle implements Turtle {
 	 * created turtles.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number, Closure closure) {
+	public AgentSet<Turtle> hatch(Number number, Closure closure) {
 
-		AgentSet newTurtles = new AgentSet();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyTurtleFactory().createIdenticalTurtle(this));
 		}
@@ -230,15 +228,15 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Makes a number of new turtles of a specific type and then executes a set
-	 * of commands on the created turtles.
+	 * Makes a number of new turtles of a specific type and then executes a set of
+	 * commands on the created turtles.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @param childType
-	 *            a string
+	 *          a string
 	 * 
 	 * @param number
 	 * @param closure
@@ -246,12 +244,11 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @return created turtles
 	 * 
 	 */
-	public AgentSet hatch(Number number, Closure closure, String childType) {
+	public AgentSet<Turtle> hatch(Number number, Closure closure, String childType) {
 
-		AgentSet newTurtles = new AgentSet();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 		for (int i = 0; i < number.intValue(); i++) {
-			newTurtles.add(getMyTurtleFactory().createIdenticalTurtle(this,
-					childType));
+			newTurtles.add(getMyTurtleFactory().createIdenticalTurtle(this, childType));
 		}
 		if (closure != null) {
 			ask(newTurtles, closure);
@@ -260,32 +257,32 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Makes a number of new turtles of a specific type and then executes a set
-	 * of commands on the created turtles.
+	 * Makes a number of new turtles of a specific type and then executes a set of
+	 * commands on the created turtles.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @param childType
-	 *            a turtle class
+	 *          a turtle class
 	 * 
 	 * @param number
 	 * @param closure
 	 * @param childType
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number, Closure closure, Class childType) {
+	public AgentSet<Turtle> hatch(Number number, Closure closure, Class childType) {
 		return hatch(number, closure, childType.getSimpleName());
 	}
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
-	 *            an agentset
+	 *          an agentset
 	 * @param askBlock
-	 *            a set of commands
+	 *          a set of commands
 	 */
 	public void ask(AgentSet<? extends ReLogoAgent> a, Closure askBlock) {
 		try {
@@ -299,8 +296,7 @@ public abstract class AbstractTurtle implements Turtle {
 			}
 		} catch (Exception e) {
 			System.err.println("ask(" + a + ") failed.");
-			System.err
-					.println("ask(AgentSet) requires all members of AgentSet to extend ReLogoAgent.");
+			System.err.println("ask(AgentSet) requires all members of AgentSet to extend ReLogoAgent.");
 		}
 	}
 
@@ -308,9 +304,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Executes a set of commands for a collection of agents.
 	 * 
 	 * @param c
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @param askBlock
-	 *            a set of commands
+	 *          a set of commands
 	 */
 	public void ask(Collection<? extends ReLogoAgent> c, Closure askBlock) {
 		try {
@@ -324,8 +320,7 @@ public abstract class AbstractTurtle implements Turtle {
 			}
 		} catch (Exception e) {
 			System.err.println("ask(" + c + ") failed.");
-			System.err
-					.println("ask(List) requires all members of List to extend ReLogoAgent.");
+			System.err.println("ask(List) requires all members of List to extend ReLogoAgent.");
 		}
 	}
 
@@ -341,9 +336,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Executes a set of commands for a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @param askBlock
-	 *            a set of commands
+	 *          a set of commands
 	 */
 	public void ask(Turtle t, Closure askBlock) {
 		t.setMyself(this);
@@ -355,9 +350,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Executes a set of commands for a patch.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 * @param askBlock
-	 *            a set of commands
+	 *          a set of commands
 	 */
 	public void ask(Patch p, Closure askBlock) {
 		p.setMyself(this);
@@ -369,9 +364,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Executes a set of commands for a link.
 	 * 
 	 * @param l
-	 *            a link
+	 *          a link
 	 * @param askBlock
-	 *            a set of commands
+	 *          a set of commands
 	 */
 	public void ask(Link l, Closure askBlock) {
 		l.setMyself(this);
@@ -392,7 +387,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Interprets a string as commands then runs the commands.
 	 * 
 	 * @param string
-	 *            a string
+	 *          a string
 	 */
 	public void run(String string) {
 		UtilityG.runU(string, this);
@@ -402,7 +397,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Interprets a string as a command then returns the result.
 	 * 
 	 * @param string
-	 *            a string
+	 *          a string
 	 * @return result of interpreting string
 	 */
 	public Object runresult(String string) {
@@ -435,8 +430,7 @@ public abstract class AbstractTurtle implements Turtle {
 				&& thisHierarchy.get(i) == parentHierarchy.get(i)) {
 			for (Field field : (thisHierarchy.get(i).getDeclaredFields())) {
 				int modifier = field.getModifiers();
-				if (!(Modifier.isStatic(modifier) || Modifier
-						.isTransient(modifier))) {
+				if (!(Modifier.isStatic(modifier) || Modifier.isTransient(modifier))) {
 					field.setAccessible(true);
 					try {
 						field.set(this, field.get(parent));
@@ -464,7 +458,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the x coordinate of a turtle to number.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 */
 	public void setXcor(Number number) {
 		this.setxy(number, getTurtleLocation().getY());
@@ -483,7 +477,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the y coordinate of a turtle to number.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 */
 	public void setYcor(Number number) {
 		this.setxy(getTurtleLocation().getX(), number);
@@ -506,7 +500,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the color of patch here to pcolor.
 	 * 
 	 * @param pcolor
-	 *            a number in range [0,140)
+	 *          a number in range [0,140)
 	 */
 	public void setPcolor(Number color) {
 		patchHere().setPcolor(color.doubleValue());
@@ -534,7 +528,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the color of a turtle to the value color.
 	 * 
 	 * @param color
-	 *            a number
+	 *          a number
 	 */
 	public void setColor(Number color) {
 		this.color = Utility.wrapColor(color.doubleValue());
@@ -557,7 +551,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the heading of the turtle to nNum.
 	 * 
 	 * @param nNum
-	 *            a number in degrees
+	 *          a number in degrees
 	 */
 	public void setHeading(Number nNum) {
 		double num = nNum.doubleValue();
@@ -567,8 +561,7 @@ public abstract class AbstractTurtle implements Turtle {
 			double tempHeading = num % 360;
 			this.heading = (tempHeading < 0) ? tempHeading + 360 : tempHeading;
 			if (!fixedLeaves.isEmpty() || !freeLeaves.isEmpty()) {
-				double angleTurned = Utility.subtractHeadings(
-						this.getHeading(), priorHeading);
+				double angleTurned = Utility.subtractHeadings(this.getHeading(), priorHeading);
 				Context context = getMyObserver().getContext();
 				Set<Turtle> temporarySet = new HashSet<Turtle>(fixedLeaves);
 				temporarySet.addAll(freeLeaves);
@@ -578,13 +571,10 @@ public abstract class AbstractTurtle implements Turtle {
 					double distanceToLeaf = this.distance(t);
 					// with A and B get the displacement from t1 that t2 should
 					// be moved to = C
-					double[] displacementToLeaf = Utility
-							.getDisplacementFromHeadingAndDistance(
-									Utility.getNLAngle(initialLinkAngle
-											+ angleTurned), distanceToLeaf);
+					double[] displacementToLeaf = Utility.getDisplacementFromHeadingAndDistance(
+							Utility.getNLAngle(initialLinkAngle + angleTurned), distanceToLeaf);
 					// move t2 to C plus the location of t1
-					double[] leafLocation = {
-							displacementToLeaf[0] + this.getXcor(),
+					double[] leafLocation = { displacementToLeaf[0] + this.getXcor(),
 							displacementToLeaf[1] + this.getYcor() };
 					t.setxy(leafLocation[0], leafLocation[1]);
 				}
@@ -626,7 +616,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets turtle visibility.
 	 * 
 	 * @param hidden
-	 *            boolean visibility
+	 *          boolean visibility
 	 */
 	public void setHiddenQ(boolean hidden) {
 		if (this.hiddenQ != hidden) {
@@ -648,7 +638,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the label.
 	 * 
 	 * @param label
-	 *            a label
+	 *          a label
 	 */
 	public void setLabel(Object label) {
 		this.label = label;
@@ -667,7 +657,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the label color for a turtle to labelColor.
 	 * 
 	 * @param labelColor
-	 *            a number in range [0, 140)
+	 *          a number in range [0, 140)
 	 */
 	public void setLabelColor(Number labelColor) {
 		this.labelColor = Utility.wrapColor(labelColor.doubleValue());
@@ -686,21 +676,21 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the pen setting of a turtle to penMode.
 	 * 
 	 * @param penMode
-	 *            a pen mode, PEN_UP or PEN_DOWN
+	 *          a pen mode, PEN_UP or PEN_DOWN
 	 */
 	public void setPenMode(Number penMode) {
 		this.penMode = penMode.intValue();
 	}
 
 	/**
-	 * Sets the turtle’s pen to stop drawing lines.
+	 * Sets the turtle's pen to stop drawing lines.
 	 */
 	public void pu() {
 		penUp();
 	}
 
 	/**
-	 * Sets the turtle’s pen to stop drawing lines.
+	 * Sets the turtle's pen to stop drawing lines.
 	 */
 	public void penUp() {
 		setPenMode(Utility.PEN_UP);
@@ -708,14 +698,14 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Sets the turtle’s pen to draw lines.
+	 * Sets the turtle's pen to draw lines.
 	 */
 	public void pd() {
 		penDown();
 	}
 
 	/**
-	 * Sets the turtle’s pen to draw lines.
+	 * Sets the turtle's pen to draw lines.
 	 */
 	public void penDown() {
 		setPenMode(Utility.PEN_DOWN);
@@ -748,7 +738,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the pen width of a turtle to penSize.
 	 * 
 	 * @param penSize
-	 *            a number
+	 *          a number
 	 */
 	public void setPenSize(Number penSize) {
 		this.penSize = penSize.intValue();
@@ -767,7 +757,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the shape of a turtle to shape.
 	 * 
 	 * @param shape
-	 *            a string
+	 *          a string
 	 */
 	public void setShape(String shape) {
 		this.shape = shape;
@@ -787,7 +777,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the size of a turtle to size.
 	 * 
 	 * @param size
-	 *            a number
+	 *          a number
 	 */
 	public void setSize(Number size) {
 		this.size = size.doubleValue();
@@ -806,7 +796,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Rotates the turtle to the right num degrees.
 	 * 
 	 * @param num
-	 *            an angle in degrees in the range [0, 360]
+	 *          an angle in degrees in the range [0, 360]
 	 */
 	public void rt(Number num) {
 		this.setHeading(heading + num.doubleValue());
@@ -816,7 +806,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Rotates the turtle to the right num degrees.
 	 * 
 	 * @param num
-	 *            an angle in degrees in the range [0, 360]
+	 *          an angle in degrees in the range [0, 360]
 	 */
 	public void right(Number num) {
 		rt(num);
@@ -826,7 +816,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Rotates the turtle to the left num degrees.
 	 * 
 	 * @param num
-	 *            an angle in degrees in the range [0, 360]
+	 *          an angle in degrees in the range [0, 360]
 	 */
 	public void lt(Number num) {
 		this.setHeading(heading - num.doubleValue());
@@ -836,7 +826,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Rotates the turtle to the left num degrees.
 	 * 
 	 * @param num
-	 *            an angle in degrees in the range [0, 360]
+	 *          an angle in degrees in the range [0, 360]
 	 */
 	public void left(Number num) {
 		lt(num);
@@ -846,7 +836,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Steps turtle forward by a distance.
 	 * 
 	 * @param num
-	 *            a distance
+	 *          a distance
 	 */
 	public void fd(Number num) {
 		mv(num);
@@ -856,7 +846,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Steps turtle forward by a distance.
 	 * 
 	 * @param num
-	 *            a distance
+	 *          a distance
 	 */
 	public void forward(Number num) {
 		fd(num);
@@ -866,7 +856,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Steps turtle backwards by a distance.
 	 * 
 	 * @param num
-	 *            a distance
+	 *          a distance
 	 */
 	public void bk(Number num) {
 		mv(-num.doubleValue());
@@ -876,7 +866,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Steps turtle backwards by a distance.
 	 * 
 	 * @param num
-	 *            a distance
+	 *          a distance
 	 */
 	public void back(Number num) {
 		bk(num);
@@ -886,7 +876,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Moves turtle forward num units.
 	 * 
 	 * @param num
-	 *            a number
+	 *          a number
 	 */
 	public void jump(Number num) {
 		if (this.canMoveQ(num)) {
@@ -908,56 +898,49 @@ public abstract class AbstractTurtle implements Turtle {
 				if (lastWayPoint == null) {
 					lastWayPoint = new WayPoint();
 					getMyObserver().getContext().add(lastWayPoint);
-					space.moveTo(lastWayPoint, space.getLocation(this)
-							.toDoubleArray(null));
+					space.moveTo(lastWayPoint, space.getLocation(this).toDoubleArray(null));
 				}
 			}
 
 			// Note that Theta_R = Pi/2 - Theta_N_in_Rads
-			double[] anglesForMoveByVector = {
-					(Math.PI / 2) - getHeadingInRads(), 0.0 };
-			NdPoint oldLocation = new NdPoint(getTurtleLocation()
-					.toDoubleArray(null));
+			double[] anglesForMoveByVector = { (Math.PI / 2) - getHeadingInRads(), 0.0 };
+			NdPoint oldLocation = new NdPoint(getTurtleLocation().toDoubleArray(null));
 
 			this.loc = space.moveByVector(this, number, anglesForMoveByVector); // move
-																				// in
-																				// space
-			getMyObserver().getGrid().moveTo(this,
-					Utility.ndPointToIntArray(getTurtleLocation())); // move in
-																		// grid
+			// in
+			// space
+			getMyObserver().getGrid().moveTo(this, Utility.ndPointToIntArray(getTurtleLocation())); // move
+																																															// in
+			// grid
 			// setxy(xcor+(number * Math.sin(heading * Math.PI / 180)),
 			// ycor+(number * Math.cos(heading * Math.PI / 180)) )
 
 			if (!fixedLeaves.isEmpty() || !freeLeaves.isEmpty()) {
-				double[] displacement = space.getDisplacement(oldLocation,
-						getTurtleLocation());
+				double[] displacement = space.getDisplacement(oldLocation, getTurtleLocation());
 				// for all leaves, displace by same amount
 				Set<Turtle> temporarySet = new HashSet<Turtle>(fixedLeaves);
 				temporarySet.addAll(freeLeaves);
 				for (Turtle t : temporarySet) {
-					setxy(t.getXcor() + displacement[0], t.getYcor()
-							+ displacement[1]);
+					setxy(t.getXcor() + displacement[0], t.getYcor() + displacement[1]);
 				}
 			}
 
 			if (penMode == Utility.PEN_DOWN) {
 				boolean newLocationWrapped = false;
 				if (space.isPeriodic()) {
-					newLocationWrapped = ((WrapAroundBorders) space
-							.getPointTranslator()).isNewLocationWrapped();
+					newLocationWrapped = ((WrapAroundBorders) space.getPointTranslator())
+							.isNewLocationWrapped();
 				}
 
 				WayPoint newWayPoint = new WayPoint();
 				getMyObserver().getContext().add(newWayPoint);
-				space.moveTo(newWayPoint, space.getLocation(this)
-						.toDoubleArray(null));
+				space.moveTo(newWayPoint, space.getLocation(this).toDoubleArray(null));
 
 				if (!newLocationWrapped) {
 
-					Network<WayPoint> net = (Network<WayPoint>) getMyObserver()
-							.getContext().getProjection("Tracking Network");
-					TrackingEdge trackingEdge = (TrackingEdge) net.addEdge(
-							lastWayPoint, newWayPoint);
+					Network<WayPoint> net = (Network<WayPoint>) getMyObserver().getContext().getProjection(
+							"Tracking Network");
+					TrackingEdge trackingEdge = (TrackingEdge) net.addEdge(lastWayPoint, newWayPoint);
 					trackingEdge.setColor(this.getColor());
 					trackingEdge.setSize(this.getPenSize());
 				}
@@ -972,9 +955,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Sets the x-y coordinates of a turtle to (nX, nY).
 	 * 
 	 * @param nX
-	 *            a number
+	 *          a number
 	 * @param nY
-	 *            a number
+	 *          a number
 	 */
 	public void setxy(Number nX, Number nY) {
 		double x = nX.doubleValue();
@@ -987,27 +970,22 @@ public abstract class AbstractTurtle implements Turtle {
 				if (lastWayPoint == null) {
 					lastWayPoint = new WayPoint();
 					getMyObserver().getContext().add(lastWayPoint);
-					space.moveTo(lastWayPoint, space.getLocation(this)
-							.toDoubleArray(null));
+					space.moveTo(lastWayPoint, space.getLocation(this).toDoubleArray(null));
 				}
 			}
 			double[] point = { x, y };
-			NdPoint oldLocation = new NdPoint(getTurtleLocation()
-					.toDoubleArray(null));
+			NdPoint oldLocation = new NdPoint(getTurtleLocation().toDoubleArray(null));
 
 			getMyObserver().getSpace().moveTo(this, point);
 			this.loc = new NdPoint(point);
-			getMyObserver().getGrid().moveTo(this,
-					Utility.ndPointToIntArray(getTurtleLocation()));
+			getMyObserver().getGrid().moveTo(this, Utility.ndPointToIntArray(getTurtleLocation()));
 
 			if (!fixedLeaves.isEmpty() || !freeLeaves.isEmpty()) {
-				double[] displacement = space.getDisplacement(oldLocation,
-						getTurtleLocation());
+				double[] displacement = space.getDisplacement(oldLocation, getTurtleLocation());
 				Set<Turtle> temporarySet = new HashSet<Turtle>(fixedLeaves);
 				temporarySet.addAll(freeLeaves);
 				for (Turtle t : temporarySet) {
-					setxy(t.getXcor() + displacement[0], t.getYcor()
-							+ displacement[1]);
+					setxy(t.getXcor() + displacement[0], t.getYcor() + displacement[1]);
 				}
 			}
 
@@ -1015,13 +993,10 @@ public abstract class AbstractTurtle implements Turtle {
 				WayPoint newWayPoint = new WayPoint();
 				getMyObserver().getContext().add(newWayPoint);
 
-				space.moveTo(newWayPoint, space.getLocation(this)
-						.toDoubleArray(null));
+				space.moveTo(newWayPoint, space.getLocation(this).toDoubleArray(null));
 
-				Network net = (Network) getMyObserver().getContext()
-						.getProjection("Tracking Network");
-				TrackingEdge trackingEdge = (TrackingEdge) net.addEdge(
-						lastWayPoint, newWayPoint);
+				Network net = (Network) getMyObserver().getContext().getProjection("Tracking Network");
+				TrackingEdge trackingEdge = (TrackingEdge) net.addEdge(lastWayPoint, newWayPoint);
 				trackingEdge.setColor(this.getColor());
 				trackingEdge.setSize(this.getPenSize());
 
@@ -1075,18 +1050,18 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the turtle’s x increment for one step.
+	 * Returns the turtle's x increment for one step.
 	 * 
-	 * @returns turtle’s x increment for one step
+	 * @returns turtle's x increment for one step
 	 */
 	public double dx() {
 		return Math.sin(heading * Math.PI / 180);
 	}
 
 	/**
-	 * Returns the turtle’s y increment for one step.
+	 * Returns the turtle's y increment for one step.
 	 * 
-	 * @returns turtle’s y increment for one step
+	 * @returns turtle's y increment for one step
 	 */
 	public double dy() {
 		return Math.cos(heading * Math.PI / 180);
@@ -1096,52 +1071,50 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the distance from the caller to a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @returns distance from turtle t to the caller
 	 */
 	public double distance(Turtle t) {
-		return getMyObserver().getSpace().getDistance(getTurtleLocation(),
-				t.getTurtleLocation());
+		return getMyObserver().getSpace().getDistance(getTurtleLocation(), t.getTurtleLocation());
 	}
 
 	/**
 	 * Returns the distance from the caller to a patch.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 * @returns distance from patch p to the caller
 	 */
 	public double distance(Patch p) {
-		return getMyObserver().getSpace().getDistance(getTurtleLocation(),
-				p.getGridLocationAsNdPoint());
+		return getMyObserver().getSpace()
+				.getDistance(getTurtleLocation(), p.getGridLocationAsNdPoint());
 	}
 
 	/**
 	 * Returns the distance from the caller to a point.
 	 * 
 	 * @param nx
-	 *            a number
+	 *          a number
 	 * @param ny
-	 *            a number
+	 *          a number
 	 * @returns distance from the caller to the point (nx,ny)
 	 */
 	public double distancexy(Number nX, Number nY) {
 		double x = nX.doubleValue();
 		double y = nY.doubleValue();
-		return getMyObserver().getSpace().getDistance(getTurtleLocation(),
-				new NdPoint(x, y));
+		return getMyObserver().getSpace().getDistance(getTurtleLocation(), new NdPoint(x, y));
 	}
 
 	/**
 	 * Returns the direction to turtle t.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return direction from this turtle to turtle t
 	 */
 	public double towards(Turtle t) {
-		double[] displacement = getMyObserver().getSpace().getDisplacement(
-				getTurtleLocation(), t.getTurtleLocation());
+		double[] displacement = getMyObserver().getSpace().getDisplacement(getTurtleLocation(),
+				t.getTurtleLocation());
 		return Utility.angleFromDisplacement(displacement[0], displacement[1]);
 	}
 
@@ -1149,12 +1122,12 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the direction to patch p.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 * @return direction from this patch to patch p
 	 */
 	public double towards(Patch p) {
-		double[] displacement = getMyObserver().getSpace().getDisplacement(
-				getTurtleLocation(), p.getGridLocationAsNdPoint());
+		double[] displacement = getMyObserver().getSpace().getDisplacement(getTurtleLocation(),
+				p.getGridLocationAsNdPoint());
 		return Utility.angleFromDisplacement(displacement[0], displacement[1]);
 	}
 
@@ -1162,16 +1135,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the direction from a turtle or patch to a point.
 	 * 
 	 * @param nX
-	 *            a number
+	 *          a number
 	 * @param nY
-	 *            a number
+	 *          a number
 	 * @return direction from a turtle or patch to the point (nX, nY)
 	 */
 	public double towardsxy(Number nX, Number nY) {
 		double x = nX.doubleValue();
 		double y = nY.doubleValue();
-		double[] displacement = getMyObserver().getSpace().getDisplacement(
-				getTurtleLocation(), new NdPoint(x, y));
+		double[] displacement = getMyObserver().getSpace().getDisplacement(getTurtleLocation(),
+				new NdPoint(x, y));
 		return Utility.angleFromDisplacement(displacement[0], displacement[1]);
 	}
 
@@ -1179,7 +1152,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Faces the caller towards a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 */
 	public void face(Turtle t) {
 		if (!t.getTurtleLocation().equals(getTurtleLocation())) {
@@ -1191,7 +1164,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Faces the caller towards a patch.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 */
 	public void face(Patch p) {
 		if (!p.getGridLocationAsNdPoint().equals(getTurtleLocation())) {
@@ -1203,9 +1176,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Faces the caller towards a point.
 	 * 
 	 * @param nX
-	 *            x coordinate
+	 *          x coordinate
 	 * @param nY
-	 *            y coordinate
+	 *          y coordinate
 	 */
 	public void facexy(Number nX, Number nY) {
 		double x = nX.doubleValue();
@@ -1219,7 +1192,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Queries if turtle can move a distance.
 	 * 
 	 * @param nDist
-	 *            a distance
+	 *          a distance
 	 * @return true or false based on whether turtle can move distance
 	 */
 	public boolean canMoveQ(Number nDist) {
@@ -1240,7 +1213,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Moves a turtle to the same location as turtle t.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 */
 	public void moveTo(Turtle t) {
 		this.setxy(t.getTurtleLocation().getX(), t.getTurtleLocation().getY());
@@ -1250,11 +1223,10 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Moves a turtle to the same location as patch p.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 */
 	public void moveTo(Patch p) {
-		this.setxy(p.getGridLocationAsNdPoint().getX(), p
-				.getGridLocationAsNdPoint().getY());
+		this.setxy(p.getGridLocationAsNdPoint().getX(), p.getGridLocationAsNdPoint().getY());
 	}
 
 	/**
@@ -1262,18 +1234,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 * caller.
 	 * 
 	 * @param nX
-	 *            a number
+	 *          a number
 	 * @param nY
-	 *            a number
+	 *          a number
 	 * @returns agentset at the direction (nX, nY) from the caller
 	 */
-	public AgentSet turtlesAt(Number nX, Number nY) {
+	public AgentSet<Turtle> turtlesAt(Number nX, Number nY) {
 		double dx = nX.doubleValue();
 		double dy = nY.doubleValue();
 		double[] displacement = { dx, dy };
 		try {
-			GridPoint gridPoint = Utility.getGridPointAtDisplacement(
-					getTurtleLocation(), displacement, getMyObserver());
+			GridPoint gridPoint = Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement,
+					getMyObserver());
 			return Utility.getTurtlesOnGridPoint(gridPoint, getMyObserver());
 		} catch (SpatialException e) {
 			return null;
@@ -1283,9 +1255,9 @@ public abstract class AbstractTurtle implements Turtle {
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the caller’s patch
+	 * @return agentset of turtles from the caller's patch
 	 */
-	public AgentSet turtlesHere() {
+	public AgentSet<Turtle> turtlesHere() {
 		// get grid and space
 		Grid grid = getMyObserver().getGrid();
 		// get the turtle's grid location
@@ -1298,35 +1270,33 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns an agentset of turtles on a given patch.
 	 * 
 	 * @param p
-	 *            a patch
+	 *          a patch
 	 * @return agentset of turtles on patch p
 	 */
 	public AgentSet<Turtle> turtlesOn(Patch p) {
-		return Utility.getTurtlesOnGridPoint(p.getGridLocation(),
-				getMyObserver());
+		return Utility.getTurtlesOnGridPoint(p.getGridLocation(), getMyObserver());
 	}
 
 	/**
 	 * Returns an agentset of turtles on the same patch as a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
-	 * @return agentset of turtles on the same patch at turtle t
+	 *          a turtle
+	 * @return agentset of turtles on the same patch as turtle t
 	 */
 	public AgentSet<Turtle> turtlesOn(Turtle t) {
-		return Utility.getTurtlesOnGridPoint(
-				Utility.ndPointToGridPoint(t.getTurtleLocation()),
+		return Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),
 				getMyObserver());
 	}
 
 	/**
-	 * Returns an agentset of turtles on the patches in a collection or on the patches
-	 * that a collection of turtles are.
+	 * Returns an agentset of turtles on the patches in a collection or on the
+	 * patches that a collection of turtles are.
 	 * 
 	 * @param a
-	 *            a collection
-	 * @return agentset of turtles on the patches in collection a or on the patches
-	 *         that collection a turtles are
+	 *          a collection
+	 * @return agentset of turtles on the patches in collection a or on the
+	 *         patches that collection a turtles are
 	 */
 	public AgentSet<Turtle> turtlesOn(Collection a) {
 
@@ -1338,15 +1308,14 @@ public abstract class AbstractTurtle implements Turtle {
 		if (a.iterator().next() instanceof Turtle) {
 			for (Object t : a) {
 				NdPoint location = ((Turtle) t).getTurtleLocation();
-				AgentSet temp = Utility.getTurtlesOnGridPoint(
-						Utility.ndPointToGridPoint(location), getMyObserver());
+				AgentSet temp = Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(location),
+						getMyObserver());
 				total.addAll(temp);
 			}
 		} else {
 			for (Object p : a) {
 				GridPoint location = ((Patch) p).getGridLocation();
-				AgentSet temp = Utility.getTurtlesOnGridPoint(location,
-						getMyObserver());
+				AgentSet temp = Utility.getTurtlesOnGridPoint(location, getMyObserver());
 				total.addAll(temp);
 			}
 		}
@@ -1359,8 +1328,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * @return patch where the turtle is located
 	 */
 	public Patch patchHere() {
-		return Utility.getPatchAtLocation(
-				Utility.ndPointToGridPoint(this.getTurtleLocation()),
+		return Utility.getPatchAtLocation(Utility.ndPointToGridPoint(this.getTurtleLocation()),
 				getMyObserver());
 	}
 
@@ -1368,16 +1336,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the patch that is at a distance ahead of a turtle.
 	 * 
 	 * @param distance
-	 *            a number
+	 *          a number
 	 * @return patch that is at distance from the calling turtle
 	 */
 	public Patch patchAhead(Number distance) {
-		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(
-				this.heading, distance.doubleValue());
+		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(this.heading,
+				distance.doubleValue());
 		try {
-			return Utility.getPatchAtLocation(Utility
-					.getGridPointAtDisplacement(getTurtleLocation(),
-							displacement, getMyObserver()), getMyObserver());
+			return Utility.getPatchAtLocation(
+					Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement, getMyObserver()),
+					getMyObserver());
 		} catch (SpatialException e) {
 			return null;
 		}
@@ -1387,9 +1355,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the patch at a direction (nX, nY) from the caller.
 	 * 
 	 * @param nX
-	 *            a number
+	 *          a number
 	 * @param nY
-	 *            a number
+	 *          a number
 	 * @return patch at a direction (nX, nY) from the caller
 	 */
 	public Patch patchAt(Number nX, Number nY) {
@@ -1397,9 +1365,9 @@ public abstract class AbstractTurtle implements Turtle {
 		double dy = nY.doubleValue();
 		double[] displacement = { dx, dy };
 		try {
-			return Utility.getPatchAtLocation(Utility
-					.getGridPointAtDisplacement(getTurtleLocation(),
-							displacement, getMyObserver()), getMyObserver());
+			return Utility.getPatchAtLocation(
+					Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement, getMyObserver()),
+					getMyObserver());
 		} catch (SpatialException e) {
 			return null;
 		}
@@ -1409,18 +1377,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the patch that is at a direction and distance from the caller.
 	 * 
 	 * @param nHeading
-	 *            a number
+	 *          a number
 	 * @param nDistance
-	 *            a number
+	 *          a number
 	 * @return patch that is at nHeading and nDistance from the caller
 	 */
 	public Patch patchAtHeadingAndDistance(Number nHeading, Number nDistance) {
-		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(
-				nHeading.doubleValue(), nDistance.doubleValue());
+		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(nHeading.doubleValue(),
+				nDistance.doubleValue());
 		try {
-			return Utility.getPatchAtLocation(Utility
-					.getGridPointAtDisplacement(getTurtleLocation(),
-							displacement, getMyObserver()), getMyObserver());
+			return Utility.getPatchAtLocation(
+					Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement, getMyObserver()),
+					getMyObserver());
 		} catch (SpatialException e) {
 			return null;
 		}
@@ -1430,46 +1398,43 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the patch that is at a distance and degrees left from the caller.
 	 * 
 	 * @param nAngle
-	 *            an angle in degrees
+	 *          an angle in degrees
 	 * @param nDistance
-	 *            a number
+	 *          a number
 	 * @return patch that is at nDistance and nAngle left from the caller
 	 */
 	public Patch patchLeftAndAhead(Number nAngle, Number nDistance) {
 		double angle = nAngle.doubleValue();
 		double distance = nDistance.doubleValue();
 		double heading = Utility.getNLAngle(this.heading - angle);
-		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(
-				heading, distance);
+		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(heading, distance);
 		try {
-			return Utility.getPatchAtLocation(Utility
-					.getGridPointAtDisplacement(getTurtleLocation(),
-							displacement, getMyObserver()), getMyObserver());
+			return Utility.getPatchAtLocation(
+					Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement, getMyObserver()),
+					getMyObserver());
 		} catch (SpatialException e) {
 			return null;
 		}
 	}
 
 	/**
-	 * Returns the patch that is at a distance and degrees right from the
-	 * caller.
+	 * Returns the patch that is at a distance and degrees right from the caller.
 	 * 
 	 * @param nAngle
-	 *            an angle in degrees
+	 *          an angle in degrees
 	 * @param nDistance
-	 *            a number
+	 *          a number
 	 * @return patch that is at nDistance and nAngle right from the caller
 	 */
 	public Patch patchRightAndAhead(Number nAngle, Number nDistance) {
 		double angle = nAngle.doubleValue();
 		double distance = nDistance.doubleValue();
 		double heading = Utility.getNLAngle(this.heading + angle);
-		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(
-				heading, distance);
+		double[] displacement = Utility.getDisplacementFromHeadingAndDistance(heading, distance);
 		try {
-			return Utility.getPatchAtLocation(Utility
-					.getGridPointAtDisplacement(getTurtleLocation(),
-							displacement, getMyObserver()), getMyObserver());
+			return Utility.getPatchAtLocation(
+					Utility.getGridPointAtDisplacement(getTurtleLocation(), displacement, getMyObserver()),
+					getMyObserver());
 		} catch (SpatialException e) {
 			return null;
 		}
@@ -1478,41 +1443,42 @@ public abstract class AbstractTurtle implements Turtle {
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet neighbors() {
+	public AgentSet<Patch> neighbors() {
 		return patchHere().neighbors();
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet<Patch> neighbors(int extent){
-		return patchHere().neighbors(extent,extent);
+	public AgentSet<Patch> neighbors(int extent) {
+		return patchHere().neighbors(extent, extent);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet<Patch> neighbors(int extentX, int extentY){
+	public AgentSet<Patch> neighbors(int extentX, int extentY) {
 		return patchHere().neighbors(extentX, extentY);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet neighbors4() {
+	public AgentSet<Patch> neighbors4() {
 		return patchHere().neighbors4();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet<Patch> neighbors4(int extent){
-		return patchHere().neighbors4(extent,extent);
+	public AgentSet<Patch> neighbors4(int extent) {
+		return patchHere().neighbors4(extent, extent);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet<Patch> neighbors4(int extentX, int extentY){
+	public AgentSet<Patch> neighbors4(int extentX, int extentY) {
 		return patchHere().neighbors4(extentX, extentY);
 	}
 
@@ -1520,9 +1486,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns an agentset within a distance of the caller.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @param num
-	 *            a distance
+	 *          a distance
 	 * @return agentset subset of collection a within a distance num of the caller
 	 */
 	public AgentSet inRadius(Collection a, Number num) {
@@ -1537,55 +1503,55 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Returns an agentset within a distance and heading cone of the caller.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @param num
-	 *            a distance
-	 *           
+	 *          a distance
+	 * 
 	 * @param anlge
-	 *            the cone angle centered on caller's heading
-	 *            
-	 * @return agentset
-	 * 			subset of collection a within a distance num and within cone angle of the caller
+	 *          the cone angle centered on caller's heading
+	 * 
+	 * @return agentset subset of collection a within a distance num and within
+	 *         cone angle of the caller
 	 */
 	public AgentSet inCone(Collection a, Number num, Number angle) {
-		if (angle.doubleValue() >= 360){
-			return inRadius(a,num);
+		if (angle.doubleValue() >= 360) {
+			return inRadius(a, num);
 		}
 		ContinuousSpace space = getMyObserver().getSpace();
 		double distSq = num.doubleValue() * num.doubleValue();
 		AgentSet list = new AgentSet();
 		for (Object o : a) {
 			if (space.getDistanceSq(getTurtleLocation(), space.getLocation(o)) <= distSq) {
-				if (o instanceof Turtle){
-					double candidateHeading = towards((Turtle)o);
-					if (Math.abs(Utility.subtractHeadings(getHeading(), candidateHeading)) < angle.doubleValue() / 2){
+				if (o instanceof Turtle) {
+					double candidateHeading = towards((Turtle) o);
+					if (Math.abs(Utility.subtractHeadings(getHeading(), candidateHeading)) < angle
+							.doubleValue() / 2) {
 						list.add(o);
 					}
 				}
-				if (o instanceof Patch){
-					double candidateHeading = towards((Patch)o);
-					if (Math.abs(Utility.subtractHeadings(getHeading(), candidateHeading)) < angle.doubleValue() / 2){
+				if (o instanceof Patch) {
+					double candidateHeading = towards((Patch) o);
+					if (Math.abs(Utility.subtractHeadings(getHeading(), candidateHeading)) < angle
+							.doubleValue() / 2) {
 						list.add(o);
 					}
 				}
-				
+
 			}
 		}
 		return list;
 	}
-	
-	
 
 	/**
 	 * Returns an agentset minus the caller.
 	 * 
 	 * @param a
-	 *            an agentset
+	 *          an agentset
 	 * @return agentset a minus the caller
 	 */
 	public AgentSet other(Collection a) {
@@ -1604,7 +1570,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Prints value with agent identifier to current file with a newline.
 	 * 
 	 * @param value
-	 *            any object
+	 *          any object
 	 */
 	public void fileShow(Object value) {
 		UtilityG.fileShowU(toString(), value);
@@ -1614,17 +1580,18 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Prints value with agent identifier to the console.
 	 * 
 	 * @param value
-	 *            any object
+	 *          any object
 	 */
 	public void show(Object value) {
 		UtilityG.showU(toString(), value);
 	}
-	
+
 	/**
-	 *
+	 * 
 	 * This method provides a human-readable name for the agent.
+	 * 
 	 * @method toString
-	 *
+	 * 
 	 */
 	public String toString() {
 		return getTurtleType() + " " + getWho();
@@ -1636,7 +1603,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes a directed link from a turtle to the caller.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return created link
 	 */
 	public Link createLinkFrom(Turtle t) {
@@ -1648,9 +1615,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * commands on the created link.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created link
 	 */
 	public Link createLinkFrom(Turtle t, Closure closure) {
@@ -1667,7 +1634,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes a directed link from the caller to a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return created link
 	 */
 	public Link createLinkTo(Turtle t) {
@@ -1679,9 +1646,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * commands on the created link.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created link
 	 */
 	public Link createLinkTo(Turtle t, Closure closure) {
@@ -1699,7 +1666,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes a undirected link between the caller and a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return created link
 	 */
 	public Link createLinkWith(Turtle t) {
@@ -1711,9 +1678,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * set of commands on the created link.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created link
 	 */
 	public Link createLinkWith(Turtle t, Closure closure) {
@@ -1730,50 +1697,28 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes directed links from a collection of agents to the caller.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksFrom(Collection<? extends Turtle> a) {
+	public AgentSet<Link> createLinksFrom(Collection<? extends Turtle> a) {
 		return createLinksFrom(a, null);
 	}
 
 	/**
-	 * Makes directed links from an agentset to the caller then executes a set
-	 * of commands on the created links.
+	 * Makes directed links from a collection of turtles to the caller then
+	 * executes a set of commands on the created links.
 	 * 
 	 * @param a
-	 *            an agentset
+	 *          a collection of agents
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksFrom(AgentSet<? extends Turtle> a, Closure closure) {
+	public AgentSet<Link> createLinksFrom(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
-			links.add(network.addEdge(t, this));
-		}
-		if (closure != null) {
-			ask(links, closure);
-		}
-		return links;
-	}
-
-	/**
-	 * Makes directed links from a collection of agents to the caller then executes a
-	 * set of commands on the created links.
-	 * 
-	 * @param a
-	 *            a collection of agents
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksFrom(Collection<? extends Turtle> a, Closure closure) {
-		Network network = getMyObserver().getNetwork("DirectedLinks");
-		AgentSet links = new AgentSet();
-		for (Turtle t : a) {
-			links.add(network.addEdge(t, this));
+			links.add(network.addEdge((Turtle) t, this));
 		}
 		if (closure != null) {
 			ask(links, closure);
@@ -1785,46 +1730,25 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes directed links from the caller to a collection of agents.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksTo(Collection<? extends Turtle> a) {
+	public AgentSet<Link> createLinksTo(Collection<? extends Turtle> a) {
 		return createLinksTo(a, null);
 	}
 
-	/**
-	 * Makes directed links from the caller to an agentset then executes a set
-	 * of commands on the created links.
-	 * 
-	 * @param a
-	 *            an agentset
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksTo(AgentSet<? extends Turtle> a, Closure closure) {
-		Network network = getMyObserver().getNetwork("DirectedLinks");
-		AgentSet links = new AgentSet();
-		for (Turtle t : a) {
-			links.add(network.addEdge(this, t));
-		}
-		if (closure != null) {
-			ask(links, closure);
-		}
-		return links;
-	}
 
 	/**
-	 * Makes directed links from the caller to a collection of agents then executes a
-	 * set of commands on the created links.
+	 * Makes directed links from the caller to a collection of agents then
+	 * executes a set of commands on the created links.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksTo(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet<Link> createLinksTo(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
@@ -1840,33 +1764,11 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Makes undirected links between the caller and a collection of agents.
 	 * 
 	 * @param a
-	 *            an collection of agents
+	 *          an collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksWith(Collection<? extends Turtle> a) {
+	public AgentSet<Link> createLinksWith(Collection<? extends Turtle> a) {
 		return createLinksWith(a, null);
-	}
-
-	/**
-	 * Makes undirected links between the caller and an agentset then executes a
-	 * set of commands on the created links.
-	 * 
-	 * @param a
-	 *            an agentset
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksWith(AgentSet<? extends Turtle> a, Closure closure) {
-		Network network = getMyObserver().getNetwork("UndirectedLinks");
-		AgentSet links = new AgentSet();
-		for (Turtle t : a) {
-			links.add(network.addEdge(this, t));
-		}
-		if (closure != null) {
-			ask(links, closure);
-		}
-		return links;
 	}
 
 	/**
@@ -1874,12 +1776,12 @@ public abstract class AbstractTurtle implements Turtle {
 	 * executes a set of commands on the created links.
 	 * 
 	 * @param a
-	 *            a collection of agents
+	 *          a collection of agents
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksWith(Collection<? extends Turtle> a, Closure closure) {
+	public AgentSet<Link> createLinksWith(Collection<? extends Turtle> a, Closure closure) {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
 		AgentSet links = new AgentSet();
 		for (Turtle t : a) {
@@ -1895,9 +1797,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Queries if there is a directed link from a turtle to the caller.
 	 * 
 	 * @param t
-	 *            a turtle
-	 * @return true or false based on whether there is a directed link from
-	 *         turtle t to the caller
+	 *          a turtle
+	 * @return true or false based on whether there is a directed link from turtle
+	 *         t to the caller
 	 */
 	public boolean inLinkNeighborQ(Turtle t) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
@@ -1908,7 +1810,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Queries if there is a directed link from the caller to the turtle.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return true or false based on whether there is a directed link from the
 	 *         caller to the turtle.
 	 */
@@ -1930,17 +1832,17 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @return agentset with directed links to the caller
 	 */
-	public AgentSet inLinkNeighbors() {
+	public AgentSet<Turtle> inLinkNeighbors() {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		return Utility.agentSetFromIterable(network.getPredecessors(this));
 	}
 
 	/**
-	 * Returns the agentset of the caller’s out link neighbor turtles.
+	 * Returns the agentset of the caller's out link neighbor turtles.
 	 * 
-	 * @return agentset of the caller’s out link neighbor turtles
+	 * @return agentset of the caller's out link neighbor turtles
 	 */
-	public AgentSet outLinkNeighbors() {
+	public AgentSet<Turtle> outLinkNeighbors() {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
 		return Utility.agentSetFromIterable(network.getSuccessors(this));
 	}
@@ -1949,7 +1851,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Reports the agentset of all turtles found at the other end of undirected
 	 * links connected to the calling turtle.
 	 */
-	public AgentSet linkNeighbors() {
+	public AgentSet<Turtle> linkNeighbors() {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
 		return Utility.agentSetFromIterable(network.getAdjacent(this));
 	}
@@ -1958,7 +1860,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the directed link from a turtle to the caller.
 	 * 
 	 * @param t
-	 *            a turtle
+	 *          a turtle
 	 * @return directed link from turtle t to the caller
 	 */
 	public Link inLinkFrom(Turtle t) {
@@ -1967,11 +1869,11 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Returns the caller’s directed link to a turtle.
+	 * Returns the caller's directed link to a turtle.
 	 * 
 	 * @param t
-	 *            a turtle
-	 * @return the caller’s directed link to turtle t
+	 *          a turtle
+	 * @return the caller's directed link to turtle t
 	 */
 	public Link outLinkTo(Turtle t) {
 		Network network = getMyObserver().getNetwork("DirectedLinks");
@@ -1979,8 +1881,8 @@ public abstract class AbstractTurtle implements Turtle {
 	}
 
 	/**
-	 * Report the link between t and the caller. If no link exists then it
-	 * reports null.
+	 * Report the link between t and the caller. If no link exists then it reports
+	 * null.
 	 */
 	public Link linkWith(Turtle t) {
 		Network network = getMyObserver().getNetwork("UndirectedLinks");
@@ -1990,7 +1892,7 @@ public abstract class AbstractTurtle implements Turtle {
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet allMyInLinks() {
+	public AgentSet<Link> allMyInLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getDirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -2000,19 +1902,19 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return new AgentSet(list);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet myInLinks() {
-		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks").getInEdges(this));
+	public AgentSet<Link> myInLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks")
+				.getInEdges(this));
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet allMyOutLinks() {
+	public AgentSet<Link> allMyOutLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getDirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -2022,19 +1924,19 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return new AgentSet(list);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet myOutLinks() {
-		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks").getOutEdges(this));
+	public AgentSet<Link> myOutLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("DirectedLinks").getOutEdges(
+				this));
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet allMyLinks() {
+	public AgentSet<Link> allMyLinks() {
 		List list = new ArrayList();
 		List directedNetworks = Utility.getUndirectedNetworks(getMyObserver());
 		for (Object n : directedNetworks) {
@@ -2044,12 +1946,13 @@ public abstract class AbstractTurtle implements Turtle {
 		}
 		return new AgentSet(list);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public AgentSet myLinks() {
-		return Utility.agentSetFromIterable(getMyObserver().getNetwork("UndirectedLinks").getEdges(this));
+	public AgentSet<Link> myLinks() {
+		return Utility.agentSetFromIterable(getMyObserver().getNetwork("UndirectedLinks")
+				.getEdges(this));
 	}
 
 	/**
@@ -2065,7 +1968,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the turtle of the given number.
 	 * 
 	 * @param number
-	 *            a number
+	 *          a number
 	 * @return turtle number
 	 */
 	public Turtle turtle(Number number) {
@@ -2077,7 +1980,7 @@ public abstract class AbstractTurtle implements Turtle {
 	 * 
 	 * @return agentset of all turtles
 	 */
-	public AgentSet turtles() {
+	public AgentSet<Turtle> turtles() {
 		return Utility.turtlesU(getMyObserver());
 	}
 
@@ -2157,9 +2060,9 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the patch containing a point.
 	 * 
 	 * @param nX
-	 *            x coordinate
+	 *          x coordinate
 	 * @param nY
-	 *            y coordinate
+	 *          y coordinate
 	 * @return patch that contains the point (nX, nY)
 	 */
 	public Patch patch(Number nX, Number nY) {
@@ -2181,23 +2084,22 @@ public abstract class AbstractTurtle implements Turtle {
 	 * Returns the link between two turtles.
 	 * 
 	 * @param oneEnd
-	 *            an integer
+	 *          an integer
 	 * @param otherEnd
-	 *            an integer
+	 *          an integer
 	 * @return link between two turtles
 	 */
 	public Link link(Number oneEnd, Number otherEnd) {
-		return Utility.linkU(oneEnd.intValue(), otherEnd.intValue(),
-				getMyObserver());
+		return Utility.linkU(oneEnd.intValue(), otherEnd.intValue(), getMyObserver());
 	}
 
 	/**
 	 * Returns the link between two turtles.
 	 * 
 	 * @param oneEnd
-	 *            a turtle
+	 *          a turtle
 	 * @param otherEnd
-	 *            a turtle
+	 *          a turtle
 	 * @return link between two turtles
 	 */
 	public Link link(Turtle oneEnd, Turtle otherEnd) {
@@ -2210,7 +2112,7 @@ public abstract class AbstractTurtle implements Turtle {
 	public AgentSet<Link> allLinks() {
 		return Utility.allLinksU(getMyObserver());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -2245,31 +2147,32 @@ public abstract class AbstractTurtle implements Turtle {
 
 	public int compareTo(Turtle t) {
 
-		return (this.who == ((Turtle) t).getWho() ? 0 : this.who < ((Turtle) t)
-				.getWho() ? -1 : 1);
+		return (this.who == ((Turtle) t).getWho() ? 0 : this.who < ((Turtle) t).getWho() ? -1 : 1);
 
 	}
 
 	/**
 	 * Stops a turtle executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop() {
+	@Deprecated
+	public Stop oldStop() {
 		return Stop.TRUE;
 	}
 
 	/**
-	 * Returns the ReLogoAgent with the smallest value when operated on by a set of
-	 * commands.
+	 * Returns the ReLogoAgent with the smallest value when operated on by a set
+	 * of commands.
 	 * 
 	 * @param a
-	 *            a collection
+	 *          a collection
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
 
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.minOneOfU(this, a, reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.minOneOfU(this, a, closure);
 	}
 
 	/**
@@ -2277,17 +2180,16 @@ public abstract class AbstractTurtle implements Turtle {
 	 * the lowest value when operated on by a set of commands.
 	 * 
 	 * @param number
-	 *            an integer
+	 *          an integer
 	 * @param a
-	 *            a collection
+	 *          a collection
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return agentset containing number agents with smallest values when
 	 *         operated on by closure
 	 */
-	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.minNOfU(this, number, a, reporter);
+	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.minNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -2295,13 +2197,13 @@ public abstract class AbstractTurtle implements Turtle {
 	 * commands.
 	 * 
 	 * @param a
-	 *            a collection
+	 *          a collection
 	 * @param closure
-	 *            a set of commands
+	 *          a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.maxOneOfU(this, a, reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.maxOneOfU(this, a, closure);
 	}
 
 	/**
@@ -2309,31 +2211,30 @@ public abstract class AbstractTurtle implements Turtle {
 	 * the greatest value when operated on by a set of commands.
 	 * 
 	 * @param number
-	 *            an integer
+	 *          an integer
 	 * @param a
-	 *            a collection
+	 *          a collection
 	 * @param closure
-	 *            a set of commands
-	 * @return agentset containing number agents with largest values when
-	 *         operated on by closure
+	 *          a set of commands
+	 * @return agentset containing number agents with largest values when operated
+	 *         on by closure
 	 */
-	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.maxNOfU(this, number, a, reporter);
+	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.maxNOfU(this, number, a, closure);
 	}
 
 	/**
 	 * Queries if all agents in a collection are true for a boolean closure.
 	 * 
 	 * @param a
-	 *            a collection of ReLogoAgents
-	 * @param reporter
-	 *            a boolean closure
+	 *          a collection of ReLogoAgents
+	 * @param closure
+	 *          a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter) {
-		return Utility.allQU(this, a, reporter);
+	public boolean allQ(Collection a, Closure closure) {
+		return Utility.allQU(this, a, closure);
 	}
 
 }

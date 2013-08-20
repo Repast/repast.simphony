@@ -70,7 +70,7 @@ public class DataSetComponentControllerAction extends DefaultControllerAction im
           builder.addDataSource(manager.getBatchRunDataSource());
         if (descriptor.includeRandomSeed())
           builder.addDataSource(manager.getRandomSeedDataSource());
-        builder.defineScheduleParameters(descriptor.getScheduleParameters());
+        builder.defineScheduleParameters(descriptor.getScheduleParameters(), descriptor.isScheduleAtEnd());
       } else {
         AggregateDataSetBuilder builder = createAggregateBuilder();
         manager.addDataSetBuilder(builder);
@@ -80,7 +80,7 @@ public class DataSetComponentControllerAction extends DefaultControllerAction im
           builder.addDataSource(manager.getBatchRunDataSource());
         if (descriptor.includeRandomSeed())
           builder.addDataSource(manager.getRandomSeedDataSource());
-        builder.defineScheduleParameters(descriptor.getScheduleParameters());
+        builder.defineScheduleParameters(descriptor.getScheduleParameters(), descriptor.isScheduleAtEnd());
       }
 
     } catch (ClassNotFoundException ex) {

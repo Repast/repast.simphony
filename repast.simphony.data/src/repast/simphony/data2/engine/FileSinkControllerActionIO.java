@@ -10,18 +10,22 @@ import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.DescriptorActionLoader;
+import repast.simphony.scenario.Scenario;
 
 /**
  * @author Nick Collier
  */
 public class FileSinkControllerActionIO extends
     AbstractDescriptorControllerActionIO<FileSinkComponentControllerAction, FileSinkDescriptor> {
+  
+  public static final String SERIALIZATION_ID = "repast.simphony.action.file_sink";
 
   public static class FileSinkActionLoader extends DescriptorActionLoader<FileSinkDescriptor> {
 
     public FileSinkActionLoader(File file, Object contextID) {
       super(file, contextID, FileSinkDescriptor.class, ControllerActionConstants.OUTPUTTER_ROOT);
     }
+    
 
     /*
      * (non-Javadoc)
@@ -31,7 +35,8 @@ public class FileSinkControllerActionIO extends
      * )
      */
     @Override
-    protected ControllerAction createAction(FileSinkDescriptor data) {
+    protected ControllerAction createAction(FileSinkDescriptor data, Scenario scenario) {
+      data.addScenarioChangedListener(scenario);
       return new FileSinkComponentControllerAction(data);
     }
 
@@ -51,7 +56,7 @@ public class FileSinkControllerActionIO extends
   }
 
   public String getSerializationID() {
-    return "repast.simphony.action.file_sink";
+    return SERIALIZATION_ID;
   }
 
   public ActionLoader getActionLoader(File actionFile, Object contextID) {

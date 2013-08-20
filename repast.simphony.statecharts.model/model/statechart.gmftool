@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmftool:ToolRegistry
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:gmftool="http://www.eclipse.org/gmf/2005/ToolDefinition">
+  <palette
+      title="statechartPalette">
+    <tools
+        xsi:type="gmftool:ToolGroup"
+        title="statechart">
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Transition"
+          description="Create new Transition">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/transition-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/transition-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Entry State Marker"
+          description="Create new Entry State Marker">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/First-State-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/First-State-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="State"
+          description="Create new State">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/State-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/State-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Composite State"
+          description="Create new CompositeState">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Composite-State-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Composite-State-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Initial State Marker"
+          description="Create new Initial State Marker">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Initial-State-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Initial-State-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Shallow History"
+          description="Create new Shallow History">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Shallow-History-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Shallow-History-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Deep History"
+          description="Create new Deep History">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Deep-History-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Deep-History-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Final State"
+          description="Create new Final State">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Final-State-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Final-State-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+      <tools
+          xsi:type="gmftool:CreationTool"
+          title="Choice"
+          description="Create new Choice">
+        <smallIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj16/Choice-16.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+        <largeIcon
+            xsi:type="gmftool:BundleImage"
+            path="/icons/obj32/Choice-32.png"
+            bundle="repast.simphony.statecharts.diagram"/>
+      </tools>
+    </tools>
+  </palette>
+</gmftool:ToolRegistry>

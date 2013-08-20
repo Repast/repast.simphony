@@ -8,48 +8,51 @@ import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.DescriptorActionLoader;
 import repast.simphony.scenario.FastMethodConvertor;
+import repast.simphony.scenario.Scenario;
 
 import com.thoughtworks.xstream.XStream;
 
 /**
- * ControllerActionIO for responsible for saving and loading component display actions.
+ * ControllerActionIO for responsible for saving and loading component display
+ * actions.
  * 
  * @author Nick Collier
  */
 public class DisplayControllerActionIO extends
-        AbstractDescriptorControllerActionIO<DisplayComponentControllerAction, DisplayDescriptor> {
+    AbstractDescriptorControllerActionIO<DisplayComponentControllerAction, DisplayDescriptor> {
 
-	public static class DisplayActionLoader extends DescriptorActionLoader<DisplayDescriptor> {
+  public static class DisplayActionLoader extends DescriptorActionLoader<DisplayDescriptor> {
 
-		public DisplayActionLoader(File file, Object contextID) {
-			super(file, contextID, DisplayDescriptor.class, ControllerActionConstants.VIZ_ROOT);
-		}
+    public DisplayActionLoader(File file, Object contextID) {
+      super(file, contextID, DisplayDescriptor.class, ControllerActionConstants.VIZ_ROOT);
+    }
 
-		@Override
-		protected void prepare(XStream xstream) {
-			xstream.registerConverter(new FastMethodConvertor(xstream));
-		}
+    @Override
+    protected void prepare(XStream xstream) {
+      xstream.registerConverter(new FastMethodConvertor(xstream));
+    }
 
-		@Override
-		protected ControllerAction createAction(DisplayDescriptor descriptor) {
-			return new DisplayComponentControllerAction(descriptor);
-		}
+    @Override
+    protected ControllerAction createAction(DisplayDescriptor descriptor, Scenario scenario) {
+      descriptor.addScenarioChangedListener(scenario);
+      return new DisplayComponentControllerAction(descriptor);
+    }
 
-		@Override
-		protected ClassLoader getClassLoader() {
-			return getClass().getClassLoader();
-		}
-	}
-	
-	public DisplayControllerActionIO() {
-		super(DisplayComponentControllerAction.class, DisplayDescriptor.class);
-	}
-	
-	public String getSerializationID() {
-		return "repast.simphony.action.display";
-	}
+    @Override
+    protected ClassLoader getClassLoader() {
+      return getClass().getClassLoader();
+    }
+  }
 
-	public ActionLoader getActionLoader(File actionFile, Object contextID) {
-		return new DisplayActionLoader(actionFile, contextID);
-	}
+  public DisplayControllerActionIO() {
+    super(DisplayComponentControllerAction.class, DisplayDescriptor.class);
+  }
+
+  public String getSerializationID() {
+    return "repast.simphony.action.display";
+  }
+
+  public ActionLoader getActionLoader(File actionFile, Object contextID) {
+    return new DisplayActionLoader(actionFile, contextID);
+  }
 }

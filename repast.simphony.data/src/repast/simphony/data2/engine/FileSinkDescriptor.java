@@ -3,19 +3,18 @@
  */
 package repast.simphony.data2.engine;
 
-
 /**
  * Descriptor for File type sinks.
  * 
  * @author Nick Collier
  */
-public class FileSinkDescriptor extends AbstractTextSinkDescriptor { 
-  
+public class FileSinkDescriptor extends AbstractTextSinkDescriptor {
+
   private String fileName = "ModelOutput.txt";
   private boolean addTimeStamp = true;
-  
+
   /**
-   * Creates a {@link FileSinkDescriptor} 
+   * Creates a {@link FileSinkDescriptor}
    * 
    * @param name
    */
@@ -29,12 +28,16 @@ public class FileSinkDescriptor extends AbstractTextSinkDescriptor {
   public String getFileName() {
     return fileName;
   }
-  
+
   /**
-   * @param fileName the fileName to set
+   * @param fileName
+   *          the fileName to set
    */
   public void setFileName(String fileName) {
-    this.fileName = fileName;
+    if (!this.fileName.equals(fileName)) {
+      this.fileName = fileName;
+      scs.fireScenarioChanged(this, "filename");
+    }
   }
 
   /**
@@ -45,10 +48,13 @@ public class FileSinkDescriptor extends AbstractTextSinkDescriptor {
   }
 
   /**
-   * @param addTimeStamp the addTimeStamp to set
+   * @param addTimeStamp
+   *          the addTimeStamp to set
    */
   public void setAddTimeStamp(boolean addTimeStamp) {
-    this.addTimeStamp = addTimeStamp;
+    if (addTimeStamp != this.addTimeStamp) {
+      this.addTimeStamp = addTimeStamp;
+      scs.fireScenarioChanged(this, "timestamp");
+    }
   }
-
 }

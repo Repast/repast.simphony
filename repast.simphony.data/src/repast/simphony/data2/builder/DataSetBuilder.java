@@ -54,7 +54,7 @@ public interface DataSetBuilder<T extends DataSource> {
    * 
    * @param params
    */
-  void defineScheduleParameters(ScheduleParameters params);
+  void defineScheduleParameters(ScheduleParameters params, boolean atEnd);
   
   /**
    * Gets the schedule parameters that determine with the data set will 
@@ -63,7 +63,14 @@ public interface DataSetBuilder<T extends DataSource> {
    * @return the schedule parameters that determine with the data set will 
    * record its data.
    */
-  public ScheduleParameters getScheduleParameters(); 
+  ScheduleParameters getScheduleParameters(); 
+  
+  /**
+   * Gets whether or not the  data should be recorded at the end of the sim.
+   * 
+   * @return true if the data should be recorded at the end of the sim, otherwise false.
+   */
+  boolean isScheduleAtEnd();
   
   /**
    * Adds a FileDataSink for this DataSet. The data retrieved from the

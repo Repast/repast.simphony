@@ -1,22 +1,37 @@
 package repast.simphony.ui.probe;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 
 
 /**
- * ProbeableBean that for an objects location in a grid.
+ * Probe of an objects location in a grid.
  *
  * @author Nick Collier
  */
-public class GridLocationProbe extends ProbeableBean {
+public class GridLocationProbe {
 
+  private Grid<?> grid;
   private Object obj;
-  private Grid grid;
 
-  public GridLocationProbe(Object obj, Grid grid) {
+  public GridLocationProbe(Object obj, Grid<?> grid) {
     this.obj = obj;
     this.grid = grid;
+  }
+  
+  /**
+   * Gets the property descriptor for the location property of this probe.
+   * 
+   * @return
+   * @throws IntrospectionException
+   */
+  public PropertyDescriptor getLocationDescriptor() throws IntrospectionException {
+    PropertyDescriptor pd = new PropertyDescriptor("location", this.getClass(), "getLocation", null);
+    pd.setDisplayName(grid.getName() + " Location");
+    return pd;
   }
 
   /**

@@ -3,6 +3,7 @@ package repast.simphony.visualizationOGL2D;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.LayoutManager;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -18,10 +19,11 @@ import java.util.concurrent.locks.Lock;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3f;
+
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -53,13 +55,14 @@ import simphony.util.messages.MessageCenter;
  * 
  * @author Nick Collier
  */
-public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, PickListener, ChangeListener {
+public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, PickListener,
+    ChangeListener {
 
   static {
     // this seems to fix jogl canvas flicker issues on windows
     System.setProperty("sun.awt.noerasebackground", "true");
   }
-  
+
   private Runnable updater = new Runnable() {
     public void run() {
       canvas.update();
@@ -78,12 +81,12 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   private boolean doRender = false, glInitialized = false, iconified = false;
   private JTabbedPane tabParent = null;
   private Component tabChild = null;
-  
+
   private VLayer decoratorLayer = new VLayer();
 
   public DisplayOGL2D(DisplayData<?> data, Layout<?, ?> layout) {
     this.layout = layout;
-    
+
     try {
       canvas = new Canvas2D();
     } catch (Exception ex) {
@@ -92,12 +95,12 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
           "Error initializing OGL 2D display. "
               + "JOGL must be installed and computer must support open gl rendering", ex);
     }
-    
+
     Box box = layout.getBoundingBox();
     if (box.getWidth() > 0) {
       canvas.setDefaultExtent(box.getWidth(), box.getHeight());
     }
-    
+
     canvas.addCanvasListener(this);
     canvas.addPickListener(this);
     canvas.getRoot().addChild(decoratorLayer);
@@ -130,8 +133,9 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
         decoAdded = true;
       }
     }
-    if (!decoAdded) canvas.getRoot().removeChild(decoratorLayer);
-    
+    if (!decoAdded)
+      canvas.getRoot().removeChild(decoratorLayer);
+
     for (Object obj : displayData.objects()) {
       addObject(obj);
     }
@@ -281,13 +285,13 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
       public void componentResized(ComponentEvent e) {
         if (glInitialized) {
           if (isVisible()) {
-            //canvas.centerSceneKeepScale();
+            // canvas.centerSceneKeepScale();
             canvas.update();
           }
         }
       }
     });
-    
+
     panel.addPropertyChangeListener("ancestor", new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
@@ -295,17 +299,19 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
         Component parent = child.getParent();
         while (parent != null) {
           if (parent instanceof JTabbedPane) {
-            //if (tabParent != null) tabParent.removeChangeListener(DisplayOGL2D.this);
-            tabParent = (JTabbedPane)parent;
-            //tabParent.addChangeListener(DisplayOGL2D.this);
+            // if (tabParent != null)
+            // tabParent.removeChangeListener(DisplayOGL2D.this);
+            tabParent = (JTabbedPane) parent;
+            // tabParent.addChangeListener(DisplayOGL2D.this);
             tabChild = child;
             return;
           }
           child = parent;
           parent = parent.getParent();
         }
-        
-        //if (tabParent != null) tabParent.removeChangeListener(DisplayOGL2D.this);
+
+        // if (tabParent != null)
+        // tabParent.removeChangeListener(DisplayOGL2D.this);
         tabParent = null;
         tabChild = null;
       }
@@ -313,24 +319,23 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
 
     return iPanel;
   }
-  
+
   public void stateChanged(ChangeEvent evt) {
-    //System.out.println("tab state changed");
+    // System.out.println("tab state changed");
     // this moved to top tab
     if (tabParent.getSelectedComponent().equals(tabChild)) {
-      //System.out.println("updating scene");
+      // System.out.println("updating scene");
       canvas.centerScene();
       canvas.update();
     }
   }
-  
-  
 
   private boolean isVisible() {
-    if (iconified) return false;
+    if (iconified)
+      return false;
     if (tabParent != null)
-        return tabParent.getSelectedComponent().equals(tabChild);
-      
+      return tabParent.getSelectedComponent().equals(tabChild);
+
     return true;
   }
 
@@ -388,22 +393,24 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   public void update() {
     if (glInitialized && !iconified) {
       layoutUpdater.update();
-      canvas.getRenderLock().lock();
+      try {
+        canvas.getRenderLock().lock();
 
-      for (ValueLayerDisplayLayer layer : valueLayerStyleMap.values()) {
-        layer.update();
-      }
+        for (ValueLayerDisplayLayer layer : valueLayerStyleMap.values()) {
+          layer.update();
+        }
 
-      for (StyledDisplayLayerOGL2D layer : classStyleMap.values()) {
-        layer.update(layoutUpdater);
-      }
+        for (StyledDisplayLayerOGL2D layer : classStyleMap.values()) {
+          layer.update(layoutUpdater);
+        }
 
-      for (NetworkLayerOGL2D layer : networkStyleMap.values()) {
-        layer.update(layoutUpdater);
+        for (NetworkLayerOGL2D layer : networkStyleMap.values()) {
+          layer.update(layoutUpdater);
+        }
+        doRender = true;
+      } finally {
+        canvas.getRenderLock().unlock();
       }
-      doRender = true;
-      canvas.getRenderLock().unlock();
-      
     }
   }
 
@@ -606,7 +613,20 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     }
 
     public BufferedImage getImage() {
-      return canvas.createImage();
+      try {
+        getRenderLock().lock();
+        if (SystemUtils.IS_OS_WINDOWS) {
+          return canvas.createImage();
+        } else {
+          BufferedImage bi = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+          Graphics2D g = bi.createGraphics();
+          paint(g);
+          g.dispose();
+          return bi;
+        }
+      } finally {
+        getRenderLock().unlock();
+      }
     }
   }
 

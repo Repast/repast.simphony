@@ -1,0 +1,184 @@
+<!--  ant build file for creating self contained model zip -->
+<project name="build_batch_run" default="make_zip">
+
+	<!-- User doesn't edit these -->
+	<!-- model.dir is passed in -->
+	<property name="working.lib" location="${working.dir}/lib" />
+	<property name="working.data" location="${working.dir}/data" />
+	<property name="model.dir.bin" location="${model.dir}/bin" />
+	<property name="model.dir.lib" location="${model.dir}/lib" />
+	<property name="model.data" location="${model.dir}/data" />
+	<property name="message.center.props" location="${model.dir}/MessageCenter.log4j.properties" />
+
+
+	<!-- the plugins locations to their eclipse plugin values if the eclipse home and plugins 
+	version number has been set -->
+	<condition property="plugins.prefix" value="${eclipse.home}/plugins/" else="../../../">
+		<isset property="eclipse.home" />
+	</condition>
+	<echo message="plugins.prefix=${plugins.prefix}" />
+
+	<condition property="plugins.suffix" value="_${plugins.version}" else="">
+		<and>
+			<isset property="plugins.version" />
+			<not>
+				<equals arg1="${plugins.version}" arg2="" />
+			</not>
+		</and>
+	</condition>
+	<echo message="plugins.suffix=${plugins.suffix}" />
+
+	<property name="default.batch.param.file.name" value="batch_params.xml" />
+
+
+	<property name="libs.bsf" location="${plugins.prefix}/libs.bsf${plugins.suffix}" />
+	<property name="libs.ext" location="${plugins.prefix}/libs.ext${plugins.suffix}" />
+	<property name="batch" location="${plugins.prefix}/repast.simphony.batch${plugins.suffix}" />
+	<property name="distributed.batch" location="${plugins.prefix}/repast.simphony.distributed.batch${plugins.suffix}" />
+	<echo message="${distributed.batch}" />
+	<property name="core" location="${plugins.prefix}/repast.simphony.core${plugins.suffix}" />
+	<property name="runtime" location="${plugins.prefix}/repast.simphony.runtime${plugins.suffix}" />
+	<property name="data" location="${plugins.prefix}/repast.simphony.data${plugins.suffix}" />
+	<property name="data.loader" location="${plugins.prefix}/repast.simphony.dataLoader${plugins.suffix}" />
+	<property name="scenario" location="${plugins.prefix}/repast.simphony.scenario${plugins.suffix}" />
+	<property name="essentials" location="${plugins.prefix}/repast.simphony.essentials${plugins.suffix}" />
+	<property name="groovy" location="${plugins.prefix}/repast.simphony.groovy${plugins.suffix}" />
+	<property name="integration" location="${plugins.prefix}/repast.simphony.integration${plugins.suffix}" />
+	<property name="relogo.runtime" location="${plugins.prefix}/repast.simphony.relogo.runtime${plugins.suffix}" />
+	<property name="visualization" location="${plugins.prefix}/repast.simphony.visualization${plugins.suffix}" />
+	<property name="statecharts" location="${plugins.prefix}/repast.simphony.statecharts${plugins.suffix}" />
+	<property name="systemdynamics" location="${plugins.prefix}/repast.simphony.systemdynamics.generator${plugins.suffix}" />
+
+	<property name="saf.v3d" location="${plugins.prefix}/saf.core.ui${plugins.suffix}/saf.core.v3d.jar" />
+
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
+
+	<target name="make_zip">
+		<delete dir="${working.dir}" failonerror="false" />
+		<mkdir dir="${working.dir}" />
+		<mkdir dir="${working.dir}/bin" />
+		<mkdir dir="${working.dir}/scenario.rs" />
+		<copy todir="${working.dir}">
+			<resources>
+				<javaresource name="repast.pbs" />
+				<javaresource name="repastwrapper.sh" />
+				<javaresource name="outputcombiner.sh" />
+			</resources>
+			<fileset file="${message.center.props}" />
+			<fileset file="${unrolled.param.file}" />
+		</copy>
+
+		<copy todir="${working.dir}/bin">
+			<resources>
+				<javaresource name="fake_jar_to_avoid_watcher_init_warnings.jar" />
+			</resources>
+		</copy>
+
+		<antcall target="make_pre_reqs" />
+		<copy todir="${working.dir}/scenario.rs">
+			<fileset dir="${model.scenario.dir}" excludes="styles/" />
+			<fileset file="${batch.param.file}" />
+		</copy>
+
+		<!-- rename whatever the user's batch parmaeter file is called to the default name expected
+		by the system -->
+		<basename file="${batch.param.file}" property="batch.param.file.name" />
+		<move file="${working.dir}/scenario.rs/${batch.param.file.name}" tofile="${working.dir}/scenario.rs/${default.batch.param.file.name}" />
+
+		<!-- replace <agents path="../bin" in the user_path.xml with "../lib/model.jar" -->
+		<xmltask todir="${working.dir}/scenario.rs" preserveType="true" report="true">
+			<fileset dir="${working.dir}/scenario.rs">
+				<include name="user_path.xml" />
+			</fileset>
+
+			<attr path="model/classpath/agents[@path='../bin']" attr="path" value="../lib/model.jar" />
+		</xmltask>
+
+		<!-- zip the whole thing up 
+		<zip destfile="${zip.file}" basedir="${working.dir}" />
+		-->
+		<jar destfile="${jar.file}">
+			<fileset dir="${working.dir}" />
+			<fileset dir="${distributed.batch}/bin" includes="**/Unzipper*.class" />
+			<manifest>
+				<attribute name="Main-Class" value="repast.simphony.util.Unzipper" />
+			</manifest>
+		</jar>
+		<echo message="Completed building model archive." />
+	</target>
+
+	<!-- Make jars and copy them to bin/lib. The contents of that directory become part of
+		the mappers classpath -->
+	<target name="make_pre_reqs">
+		<mkdir dir="${working.data}" />
+		<copy todir="${working.data}">
+			<fileset dir="${model.data}" erroronmissingdir="false" />
+		</copy>
+
+		<mkdir dir="${working.lib}" />
+
+		<!--  jar up the bin directories for the required projects -->
+		<jar destfile="${working.lib}/repast.simphony.batch.jar" basedir="${batch}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.distributed.batch.jar" basedir="${distributed.batch}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.core.jar" basedir="${core}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.runtime.jar" basedir="${runtime}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.data.jar" basedir="${data}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.dataLoader.jar" basedir="${data.loader}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.scenario.jar" basedir="${scenario}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.essentials.jar" basedir="${essentials}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.groovy.jar" basedir="${groovy}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.integration.jar" basedir="${integration}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.relogo.runtime.jar" basedir="${relogo.runtime}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.visualization.jar" basedir="${visualization}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.statecharts.jar" basedir="${statecharts}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.systemdynamics.jar" basedir="${systemdynamics}/bin" />
+
+		<!-- copy project's 3rd party libs to the  lib directory -->
+		<copy todir="${working.lib}">
+			<fileset dir="${libs.bsf}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${libs.ext}/lib">
+				<include name="vecmath.jar" />
+				<include name="jai_*.jar" />
+			</fileset>
+
+			<fileset dir="${core}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+
+
+			<fileset dir="${runtime}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${visualization}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${integration}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${systemdynamics}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${relogo.runtime}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${model.dir.lib}">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset file="${groovy.home}" />
+			<fileset file="${saf.v3d}" />
+		</copy>
+
+		<jar destfile="${working.lib}/model.jar" basedir="${model.dir.bin}" />
+	</target>
+
+</project>

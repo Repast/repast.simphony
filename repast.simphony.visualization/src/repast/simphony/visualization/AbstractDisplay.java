@@ -16,8 +16,8 @@ import repast.simphony.space.projection.ProjectionListener;
 public abstract class AbstractDisplay implements IDisplay, ProjectionListener {
   
   // approx one sixitieth of a second in milliseconds
-  // 60 frames a second
-  public static long FRAME_UPDATE_INTERVAL = 17;
+  // ~30 frames a second
+  public static long FRAME_UPDATE_INTERVAL = 34;
   
   private static final String INFO_POINTER_ICON = "info_viz_pointer.png";
 

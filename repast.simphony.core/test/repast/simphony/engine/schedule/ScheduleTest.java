@@ -21,7 +21,7 @@ import repast.simphony.random.RandomHelper;
  * @author Nick Collier
  */
 public class ScheduleTest extends TestCase {
-  
+
   static {
     BasicConfigurator.configure();
   }
@@ -93,11 +93,11 @@ public class ScheduleTest extends TestCase {
     }
   }
 
-  @SuppressWarnings({"unchecked" })
+  @SuppressWarnings({ "unchecked" })
   class TestAction implements IAction, Serializable {
 
     private static final long serialVersionUID = 2468314384341110786L;
-    
+
     ISchedule schedule;
     double executedAt;
 
@@ -140,12 +140,12 @@ public class ScheduleTest extends TestCase {
       return executedAt;
     }
   }
-  
+
   public static class ReproduceCheckAction implements IAction {
-    
+
     int id;
     List<Integer> ids;
-    
+
     public ReproduceCheckAction(int id, List<Integer> ids) {
       this.id = id;
       this.ids = ids;
@@ -165,33 +165,95 @@ public class ScheduleTest extends TestCase {
   public static junit.framework.Test suite() {
     return new TestSuite(repast.simphony.engine.schedule.ScheduleTest.class);
   }
-  
+
   public void testRandomActionReproducible() {
     RandomHelper.setSeed(1);
-    
+
     List<Integer> expected = new ArrayList<Integer>();
-    
-    for(int i = 0; i < 30; i++) {
-      schedule.schedule(ScheduleParameters.createRepeating(1, 1), new ReproduceCheckAction(i, expected));
+
+    for (int i = 0; i < 30; i++) {
+      schedule.schedule(ScheduleParameters.createRepeating(1, 1), new ReproduceCheckAction(i,
+          expected));
     }
     schedule.execute();
     schedule.execute();
-    
+
     RandomHelper.setSeed(1);
     List<Integer> actual = new ArrayList<Integer>();
     schedule = new Schedule();
-    
-    for(int i = 0; i < 30; i++) {
-      schedule.schedule(ScheduleParameters.createRepeating(1, 1), new ReproduceCheckAction(i, actual));
+
+    for (int i = 0; i < 30; i++) {
+      schedule.schedule(ScheduleParameters.createRepeating(1, 1), new ReproduceCheckAction(i,
+          actual));
     }
     schedule.execute();
     schedule.execute();
-    
+
     assertEquals(expected.size(), actual.size());
     for (int i = 0; i < expected.size(); i++) {
       assertEquals(expected.get(i), actual.get(i));
     }
-    
+  }
+
+  public void testFirstOfLast() {
+    List<Integer> list = new ArrayList<Integer>();
+    EndAction a1 = new EndAction(list, 1);
+    EndAction a2 = new EndAction(list, 2);
+    EndAction a3 = new EndAction(list, 2);
+    EndAction a4 = new EndAction(list, 3);
+    EndAction a5 = new EndAction(list, 2);
+    EndAction a6 = new EndAction(list, 4);
+    EndAction a7 = new EndAction(list, 4);
+
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.FIRST), a1);
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.RANDOM), a2);
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.RANDOM), a3);
+    schedule.schedule(ScheduleParameters.createOneTime(1, -1), a5);
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.FIRST_OF_LAST), a4);
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.LAST), a6);
+    schedule.schedule(ScheduleParameters.createOneTime(1, PriorityType.LAST), a7);
+
+    schedule.execute();
+    assertEquals(7, list.size());
+    assertEquals(new Integer(1), list.get(0));
+    assertEquals(new Integer(2), list.get(1));
+    assertEquals(new Integer(2), list.get(2));
+    assertEquals(new Integer(2), list.get(3));
+    assertEquals(new Integer(3), list.get(4));
+    assertEquals(new Integer(4), list.get(5));
+    assertEquals(new Integer(4), list.get(6));
+  }
+
+  public void testFirstOfLastRepeating() {
+    List<Integer> list = new ArrayList<Integer>();
+    EndAction a1 = new EndAction(list, 1);
+    EndAction a2 = new EndAction(list, 2);
+    EndAction a3 = new EndAction(list, 2);
+    EndAction a4 = new EndAction(list, 3);
+    EndAction a5 = new EndAction(list, 2);
+    EndAction a6 = new EndAction(list, 4);
+    EndAction a7 = new EndAction(list, 4);
+
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.FIRST), a1);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.RANDOM), a2);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.RANDOM), a3);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, -1), a5);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.FIRST_OF_LAST), a4);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.LAST), a6);
+    schedule.schedule(ScheduleParameters.createRepeating(1, 1, PriorityType.LAST), a7);
+
+    for (int i = 0; i < 2000; i++) {
+      list.clear();
+      schedule.execute();
+      assertEquals(7, list.size());
+      assertEquals(new Integer(1), list.get(0));
+      assertEquals(new Integer(2), list.get(1));
+      assertEquals(new Integer(2), list.get(2));
+      assertEquals(new Integer(2), list.get(3));
+      assertEquals(new Integer(3), list.get(4));
+      assertEquals(new Integer(4), list.get(5));
+      assertEquals(new Integer(4), list.get(6));
+    }
   }
 
   public void testRemove() {
@@ -657,87 +719,87 @@ public class ScheduleTest extends TestCase {
   public void testScheduledMethodII() {
     ScheduledObject obj = new ScheduledObject(schedule);
     ScheduleParameters sp = ScheduleParameters.createOneTime(2);
-    schedule.schedule(sp, obj, ScheduledObject.MethodName.START_PARAMS, "3.14");
+    schedule.schedule(sp, obj, MethodName.START_PARAMS, "3.14");
     schedule.execute();
     assertEquals(3.14, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(0).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(0).methodName);
   }
 
   public void testScheduledMethod() {
     ScheduledObject obj = new ScheduledObject(schedule);
     schedule.schedule(obj);
-    schedule.schedule(obj, ScheduledObject.MethodName.START_PARAMS);
+    schedule.schedule(obj, MethodName.START_PARAMS);
     // obj has a startOnly method scheduled to start at 3.0
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
 
     // method executes at 3.5 and an inserts the parameter above into
     // results
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
 
     schedule.execute();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(4, obj.results.size());
 
     schedule.execute();
     // obj has a priority method scheduled to start at 8.0 with priority of -INF
     // and interval of 2.0
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(8.0, obj.results.get(4).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(4).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(4).methodName);
     assertEquals(8.0, obj.results.get(5).tick);
     // comes last because priority was -INF
-    assertEquals(ScheduledObject.MethodName.PRIORITY, obj.results.get(5).methodName);
+    assertEquals(MethodName.PRIORITY, obj.results.get(5).methodName);
 
     assertEquals(6, obj.results.size());
 
     schedule.executeEndActions();
     assertEquals(3.0, obj.results.get(0).tick);
-    assertEquals(ScheduledObject.MethodName.START, obj.results.get(0).methodName);
+    assertEquals(MethodName.START, obj.results.get(0).methodName);
     assertEquals(3.5, obj.results.get(1).tick);
-    assertEquals(ScheduledObject.MethodName.START_PARAMS, obj.results.get(1).methodName);
+    assertEquals(MethodName.START_PARAMS, obj.results.get(1).methodName);
 
     assertEquals(4.0, obj.results.get(2).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(2).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(2).methodName);
     assertEquals(6.0, obj.results.get(3).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(3).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(3).methodName);
     assertEquals(8.0, obj.results.get(4).tick);
-    assertEquals(ScheduledObject.MethodName.INTERVAL, obj.results.get(4).methodName);
+    assertEquals(MethodName.INTERVAL, obj.results.get(4).methodName);
     assertEquals(8.0, obj.results.get(5).tick);
     // comes last because priority was -INF
-    assertEquals(ScheduledObject.MethodName.PRIORITY, obj.results.get(5).methodName);
+    assertEquals(MethodName.PRIORITY, obj.results.get(5).methodName);
 
-    assertEquals(ScheduledObject.MethodName.END, obj.results.get(6).methodName);
+    assertEquals(MethodName.END, obj.results.get(6).methodName);
     assertEquals(Double.POSITIVE_INFINITY, obj.results.get(6).tick);
 
     assertEquals(7, obj.results.size());
@@ -1154,7 +1216,7 @@ public class ScheduleTest extends TestCase {
     RemoveTestObject obj = new RemoveTestObject(schedule);
     schedule.schedule(ScheduleParameters.createOneTime(0, 1), obj, "test");
     schedule.schedule(ScheduleParameters.createOneTime(100, 0), obj, "remove");
-    
+
     while (!obj.stop && schedule.getModelActionCount() > 0) {
       schedule.execute();
     }
@@ -1175,17 +1237,17 @@ public class ScheduleTest extends TestCase {
     public void test() {
       nexttest = schedule.schedule(
           ScheduleParameters.createOneTime(schedule.getTickCount() + Math.random(), 1
-              /*Math.random()*/), this, "test");
+          /* Math.random() */), this, "test");
       // System.out.println("TEST");
     }
 
     public void remove() {
-      //System.out.println("REMOVE");
-      //System.out.println(schedule.getTickCount());
-      //System.out.println(nexttest.getNextTime());
-      //System.out.println("pre-remove: " + schedule.getModelActionCount());
+      // System.out.println("REMOVE");
+      // System.out.println(schedule.getTickCount());
+      // System.out.println(nexttest.getNextTime());
+      // System.out.println("pre-remove: " + schedule.getModelActionCount());
       schedule.removeAction(nexttest);
-     
+
       if (schedule.getTickCount() < 1000) {
         schedule.schedule(ScheduleParameters.createOneTime(schedule.getTickCount() + 100, 0), this,
             "remove");
@@ -1193,11 +1255,12 @@ public class ScheduleTest extends TestCase {
       } else {
         stop = true;
       }
-      
-      //System.out.println("post-remove: " + schedule.getModelActionCount()); // should print 2 if
-                                                          // TickCount < 1000, 0
-                                                          // otherwise
-                                                          // (incorrect)
+
+      // System.out.println("post-remove: " + schedule.getModelActionCount());
+      // // should print 2 if
+      // TickCount < 1000, 0
+      // otherwise
+      // (incorrect)
     }
 
   }

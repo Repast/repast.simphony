@@ -49,6 +49,8 @@ public class UserPanelMenuItem extends AbstractEditorMenuItem {
 			}
 	      registry.addAction(contextID, parent, action);
 	      evt.addActionToTree(action);
+	      evt.getScenario().setDirty(true);
+	      action.getDescriptor().addScenarioChangedListener(evt.getScenario());
 	    }
 
 	}

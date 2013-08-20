@@ -37,7 +37,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a number
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number);
+	public AgentSet<Turtle> hatch(Number number);
 
 	/**
 	 * Makes a number of new turtles and then executes a set of commands on the
@@ -49,7 +49,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number, Closure closure);
+	public AgentSet<Turtle> hatch(Number number, Closure closure);
 
 	/**
 	 * Makes a number of new turtles of a specific type and then executes a set
@@ -68,7 +68,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @return created turtles
 	 * 
 	 */
-	public AgentSet hatch(Number number, Closure closure, String childType);
+	public AgentSet<Turtle> hatch(Number number, Closure closure, String childType);
 
 	/**
 	 * Makes a number of new turtles of a specific type and then executes a set
@@ -86,7 +86,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * @param childType
 	 * @return created turtles
 	 */
-	public AgentSet hatch(Number number, Closure closure, Class childType);
+	public AgentSet<Turtle> hatch(Number number, Closure closure, Class childType);
 
 	/**
 	 * Moves the turtle to the lowest value of a patch variable of eight
@@ -125,7 +125,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	public void uphill4(String patchVariable);
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset
@@ -680,14 +680,14 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a number
 	 * @returns agentset at the direction (ndx, ndy) from the caller
 	 */
-	public AgentSet turtlesAt(Number ndx, Number ndy);
+	public AgentSet<Turtle> turtlesAt(Number ndx, Number ndy);
 
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
 	 * @return agentset of turtles from the caller's patch
 	 */
-	public AgentSet turtlesHere();
+	public AgentSet<Turtle> turtlesHere();
 
 	/**
 	 * Returns an agentset of turtles on a given patch.
@@ -803,7 +803,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return agentset of the eight neighboring patches
 	 */
-	public AgentSet neighbors();
+	public AgentSet<Patch> neighbors();
 	
 	/**
 	 * Returns the agentset of patches making up the Moore
@@ -814,7 +814,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return Moore agentset of patches with extent
 	 */
-	public AgentSet neighbors(int extent);
+	public AgentSet<Patch> neighbors(int extent);
 	
 	/**
 	 * Returns the agentset of patches making up the Moore
@@ -827,7 +827,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return Moore agentset of patches with extents
 	 */
-	public AgentSet neighbors(int extentX, int extentY);
+	public AgentSet<Patch> neighbors(int extentX, int extentY);
 
 	/**
 	 * Returns the agentset of the four neighboring patches (von Neumann
@@ -835,7 +835,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return agentset of the four neighboring patches
 	 */
-	public AgentSet neighbors4();
+	public AgentSet<Patch> neighbors4();
 	
 	/**
 	 * Returns the agentset of patches making up the von Neumann
@@ -846,7 +846,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return von Neumann agentset of patches with extent
 	 */
-	public AgentSet neighbors4(int extent);
+	public AgentSet<Patch> neighbors4(int extent);
 	
 	/**
 	 * Returns the agentset of patches making up the von Neumann
@@ -859,7 +859,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return von Neumann agentset of patches with extents
 	 */
-	public AgentSet neighbors4(int extentX, int extentY);
+	public AgentSet<Patch> neighbors4(int extentX, int extentY);
 
 	/**
 	 * Returns an agentset minus the caller.
@@ -959,19 +959,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksFrom(Collection<? extends Turtle> a);
-
-	/**
-	 * Makes directed links from an agentset to the caller then executes a set
-	 * of commands on the created links.
-	 * 
-	 * @param a
-	 *            an agentset
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksFrom(AgentSet<? extends Turtle> a, Closure closure);
+	public AgentSet<Link> createLinksFrom(Collection<? extends Turtle> a);
 
 	/**
 	 * Makes directed links from a collection of agents to the caller then executes a
@@ -983,7 +971,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksFrom(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet<Link> createLinksFrom(Collection<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes directed links from the caller to a collection of agents.
@@ -992,19 +980,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksTo(Collection<? extends Turtle> a);
-
-	/**
-	 * Makes directed links from the caller to an agentset then executes a set
-	 * of commands on the created links.
-	 * 
-	 * @param a
-	 *            an agentset
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksTo(AgentSet<? extends Turtle> a, Closure closure);
+	public AgentSet<Link> createLinksTo(Collection<? extends Turtle> a);
 
 	/**
 	 * Makes directed links from the caller to a collection of agents then executes a
@@ -1016,19 +992,8 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksTo(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet<Link> createLinksTo(Collection<? extends Turtle> a, Closure closure);
 
-	/**
-	 * Makes undirected links between the caller and an agentset then executes a
-	 * set of commands on the created links.
-	 * 
-	 * @param a
-	 *            an agentset
-	 * @param closure
-	 *            a set of commands
-	 * @return created links
-	 */
-	public AgentSet createLinksWith(AgentSet<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes undirected links between the caller and a collection of agents then
@@ -1040,7 +1005,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return created links
 	 */
-	public AgentSet createLinksWith(Collection<? extends Turtle> a, Closure closure);
+	public AgentSet<Link> createLinksWith(Collection<? extends Turtle> a, Closure closure);
 
 	/**
 	 * Makes undirected links between the caller and a collection of agents.
@@ -1049,7 +1014,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            an collection of agents
 	 * @return created links
 	 */
-	public AgentSet createLinksWith(Collection<? extends Turtle> a);
+	public AgentSet<Link> createLinksWith(Collection<? extends Turtle> a);
 
 	/**
 	 * Queries if there is a directed link from a turtle to the caller.
@@ -1095,20 +1060,20 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return agentset with directed links to the caller
 	 */
-	public AgentSet inLinkNeighbors();
+	public AgentSet<Turtle> inLinkNeighbors();
 
 	/**
 	 * Returns the agentset of the caller's out link neighbor turtles.
 	 * 
 	 * @return agentset of the caller's out link neighbor turtles
 	 */
-	public AgentSet outLinkNeighbors();
+	public AgentSet<Turtle> outLinkNeighbors();
 
 	/**
 	 * Reports the agentset of all turtles found at the other end of undirected
 	 * links connected to the calling turtle.
 	 */
-	public AgentSet linkNeighbors();
+	public AgentSet<Turtle> linkNeighbors();
 
 	/**
 	 * Returns the directed link from a turtle to the caller.
@@ -1139,42 +1104,42 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @return agentset of directed links from other turtles to the caller
 	 */
-	public AgentSet myInLinks();
+	public AgentSet<Link> myInLinks();
 	
 	/**
 	 * Returns an agentset of all directed links from other turtles to the caller.
 	 * 
 	 * @return agentset of directed links from other turtles to the caller
 	 */
-	public AgentSet allMyInLinks();
+	public AgentSet<Link> allMyInLinks();
 
 	/**
 	 * Returns an agentset of generic directed links from the caller to other turtles.
 	 * 
 	 * @return agentset of directed links from the caller to other turtles
 	 */
-	public AgentSet myOutLinks();
+	public AgentSet<Link> myOutLinks();
 	
 	/**
 	 * Returns an agentset of all directed links from the caller to other turtles.
 	 * 
 	 * @return agentset of directed links from the caller to other turtles
 	 */
-	public AgentSet allMyOutLinks();
+	public AgentSet<Link> allMyOutLinks();
 
 	/**
 	 * Returns an agentset of the caller's generic undirected links.
 	 * 
 	 * @return agentset of the caller's undirected links
 	 */
-	public AgentSet myLinks();
+	public AgentSet<Link> myLinks();
 	
 	/**
 	 * Returns an agentset of all the caller's undirected links.
 	 * 
 	 * @return agentset of the caller's undirected links
 	 */
-	public AgentSet allMyLinks();
+	public AgentSet<Link> allMyLinks();
 
 	/**
 	 * Returns the turtle opposite the asking link.
@@ -1189,8 +1154,10 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 
 	/**
 	 * Stops a turtle executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop();
+	@Deprecated
+	public Stop oldStop();
 
 	public boolean fixedLeavesContains(Turtle t);
 
@@ -1209,12 +1176,12 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter);
+	public boolean allQ(Collection a, Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the smallest value when operated on by a set of
@@ -1226,7 +1193,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -1242,7 +1209,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *         operated on by closure
 	 */
 	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the largest value when operated on by a set of
@@ -1254,7 +1221,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a,Closure reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -1270,7 +1237,7 @@ public interface Turtle extends Comparable<Turtle>, ReLogoAgent,
 	 *         operated on by closure
 	 */
 	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 	/**
 	 * Returns an agentset within a distance of the caller.

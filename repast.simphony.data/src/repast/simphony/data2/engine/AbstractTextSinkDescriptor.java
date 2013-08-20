@@ -9,43 +9,23 @@ import java.util.List;
 import java.util.Set;
 
 import repast.simphony.data2.FormatType;
-import repast.simphony.engine.schedule.Descriptor;
+import repast.simphony.scenario.AbstractDescriptor;
 
 /**
  * Abstract base class for descriptors that define text output sink.
  * 
  * @author Nick Collier
  */
-public abstract class AbstractTextSinkDescriptor implements Descriptor {
+public abstract class AbstractTextSinkDescriptor extends AbstractDescriptor {
 
-  protected String name, dataSet, delimiter;
+  protected String dataSet, delimiter;
   protected FormatType format = FormatType.TABULAR;
   // linked to preserve the order
   protected Set<String> sourceIds = new LinkedHashSet<String>();
 
   public AbstractTextSinkDescriptor(String name) {
-    this.name = name;
+    super(name);
     delimiter = ",";
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see repast.simphony.engine.schedule.Descriptor#getName()
-   */
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see repast.simphony.engine.schedule.Descriptor#setName(java.lang.String)
-   */
-  @Override
-  public void setName(String name) {
-    this.name = name;
   }
 
   /**
@@ -56,10 +36,14 @@ public abstract class AbstractTextSinkDescriptor implements Descriptor {
   }
 
   /**
-   * @param dataSet the dataSet to set
+   * @param dataSet
+   *          the dataSet to set
    */
   public void setDataSet(String dataSet) {
-    this.dataSet = dataSet;
+    if (this.dataSet == null || !this.dataSet.equals(dataSet)) {
+      this.dataSet = dataSet;
+      scs.fireScenarioChanged(this, "dataSet");
+    }
   }
 
   /**
@@ -70,10 +54,14 @@ public abstract class AbstractTextSinkDescriptor implements Descriptor {
   }
 
   /**
-   * @param delimiter the delimiter to set
+   * @param delimiter
+   *          the delimiter to set
    */
   public void setDelimiter(String delimiter) {
-    this.delimiter = delimiter;
+    if (!this.delimiter.equals(delimiter)) {
+      this.delimiter = delimiter;
+      scs.fireScenarioChanged(this, "delimiter");
+    }
   }
 
   /**
@@ -84,20 +72,37 @@ public abstract class AbstractTextSinkDescriptor implements Descriptor {
   }
 
   /**
-   * @param format the format to set
+   * @param format
+   *          the format to set
    */
   public void setFormat(FormatType format) {
-    this.format = format;
+    if (this.format == null || format != this.format) {
+      this.format = format;
+      scs.fireScenarioChanged(this, "format");
+    }
   }
-  
+
+  public void removeSourceId(String sourceId) {
+    if (sourceIds.contains(sourceId)) {
+      sourceIds.remove(sourceId);
+      scs.fireScenarioChanged(this, "sourceIds");
+    }
+  }
+
   public void addSourceId(String sourceId) {
-    sourceIds.add(sourceId);
+    if (!sourceIds.contains(sourceId)) {
+      sourceIds.add(sourceId);
+      scs.fireScenarioChanged(this, "sourceIds");
+    }
   }
-  
+
   public void clearSourceIds() {
-    sourceIds.clear();
+    if (sourceIds.size() > 0) {
+      scs.fireScenarioChanged(this, "sourceIds");
+      sourceIds.clear();
+    }
   }
-  
+
   /**
    * Gets a list of the source ids this sink will record.
    * 

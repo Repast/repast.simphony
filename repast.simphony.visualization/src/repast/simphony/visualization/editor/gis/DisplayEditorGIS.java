@@ -14,7 +14,7 @@ import javax.swing.JSplitPane;
 
 import org.geotools.styling.Style;
 
-import repast.simphony.gis.GeometryUtil;
+import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;

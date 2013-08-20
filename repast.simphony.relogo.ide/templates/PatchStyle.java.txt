@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import repast.simphony.relogo.Patch;
-import repast.simphony.relogo.ide.runtime.ReLogoSupport;
+import repast.simphony.relogo.util.ReLogoSupport;
 import repast.simphony.visualizationOGL2D.StyleOGL2D;
 import saf.v3d.ShapeFactory2D;
 import saf.v3d.scene.Position;

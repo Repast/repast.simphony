@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.statecharts" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.1.0"/>
+     </attributes>
+
+	<requires>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+  </requires>
+
+	<runtime>
+		<library id="statecharts" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+
+	<!--<extension plugin-id="saf.core.ui" point-id="ui.Actions" id="weka.actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.weka.runWeka"/>
+			<parameter id="label" value="Run Weka"/>
+			<parameter id="class" value="repast.simphony.weka.RunWekaModel"/>
+			<parameter id="icon" value="weka.png" />
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+			<parameter id="groupID" value="runTools" />
+			<parameter id="tooltip" value="Run Weka" />
+		</parameter>
+	</extension>-->
+
+</plugin>

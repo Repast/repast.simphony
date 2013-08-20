@@ -266,6 +266,8 @@ public class Display2D extends AbstractDisplay implements WindowListener {
 		
 		// find all properties for a newly probed object and create the probe.
 		if (obj != null && obj != lastProbedObject){
+		  /*
+		   * commented out because we dont' use this anymore and this is a deprecated class
 			Map<String,Object> valuesMap = new ProbePanelCreator(obj).getProbedProperties();
 			
 			// the left text box contains the probe title and property names.
@@ -302,6 +304,7 @@ public class Display2D extends AbstractDisplay implements WindowListener {
 		  // offset the tooltip node next to the mouse
 			hoverProbe.setOffset(p.getX() + horzProbeOffset, p.getY() + vertProbeOffset);
 			lastProbedObject = obj;
+			*/
 		}
 		// if the mouse just moved over the same object, then just repositions the probe.
 		else if (obj == lastProbedObject){

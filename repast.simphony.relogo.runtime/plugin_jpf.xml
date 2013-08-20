@@ -3,13 +3,13 @@
 <plugin id="repast.simphony.relogo.runtime" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 
 	<requires>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
-			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.relogo.ide" reverse-lookup="true"/>
 			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="true"/>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true"/>
   </requires>
 
 	<runtime>

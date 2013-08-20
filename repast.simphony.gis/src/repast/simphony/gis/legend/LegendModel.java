@@ -1,17 +1,25 @@
 package repast.simphony.gis.legend;
 
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultTreeModel;
+
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
-import repast.simphony.gis.display.LegendIconMaker;
-import simphony.util.messages.MessageCenter;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.*;
+import repast.simphony.gis.styleEditor.StylePreviewFactory;
+import simphony.util.messages.MessageCenter;
 
 /**
  * This is the data model for a legend representing a gis map. It consists of
@@ -36,7 +44,7 @@ public class LegendModel extends DefaultTreeModel {
 
   protected Object rootObject;
 
-  protected Map<MapLayer, LegendLayerEntry> nodeMap = new HashMap<MapLayer, LegendLayerEntry>();
+  protected Map<Layer, LegendLayerEntry> nodeMap = new HashMap<Layer, LegendLayerEntry>();
 
   //protected Map<MapLayer, MapLayerListener> wrapperListeners = new HashMap<MapLayer, MapLayerListener>();
 
@@ -55,19 +63,19 @@ public class LegendModel extends DefaultTreeModel {
     root = (LegendEntry) getRoot();
   }
 
-  public void initMapContext(MapContext context) {
+  public void initMapContext(MapContent context) {
     root.removeAllChildren();
-    List<MapLayer> layers = new ArrayList<MapLayer>();
-    for (MapLayer layer : context.getLayers()) {
+    List<Layer> layers = new ArrayList<Layer>();
+    for (Layer layer : context.layers()) {
       layers.add(layer);
     }
-    Collections.sort(layers, new Comparator<MapLayer>() {
-      public int compare(MapLayer o1, MapLayer o2) {
+    Collections.sort(layers, new Comparator<Layer>() {
+      public int compare(Layer o1, Layer o2) {
         return o1.getStyle().getTitle().compareTo(o2.getStyle().getTitle());
       }
     });
 
-    for (MapLayer layer : layers) {
+    for (Layer layer : layers) {
       LegendEntry entry = createLayerEntry(layer);
       root.add(entry);
     }
@@ -75,7 +83,9 @@ public class LegendModel extends DefaultTreeModel {
 
   private void addRuleNodes(Style style, LegendLayerEntry layerNode) {
     for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
-      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
+//      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
+   // TODO Geotools [minor] - might ned to modify this to use the size.
+    	Icon icon = StylePreviewFactory.createIcon(rule);  
       LegendRuleEntry ruleNode = new LegendRuleEntry(rule.getTitle(),
               icon, rule);
       insertNodeInto(ruleNode, layerNode, layerNode.getChildCount());
@@ -89,7 +99,7 @@ public class LegendModel extends DefaultTreeModel {
    * @param layer the layer to add
    * @return The node created for the layer.
    */
-  public LegendEntry createLayerEntry(MapLayer layer) {
+  public LegendEntry createLayerEntry(Layer layer) {
     LegendLayerEntry entry = new LegendLayerEntry(layer.getStyle().getTitle(), true, layer);
     nodeMap.put(layer, entry);
     layer.addMapLayerListener(new LayerNodeListener(layer));
@@ -104,7 +114,7 @@ public class LegendModel extends DefaultTreeModel {
    *
    * @param layer the layer to update.
    */
-  public void updateLayer(MapLayer layer) {
+  public void updateLayer(Layer layer) {
     LegendEntry layerEntry = nodeMap.get(layer);
     if (layerEntry != null) {
       while (layerEntry.getChildCount() > 0) {
@@ -119,9 +129,9 @@ public class LegendModel extends DefaultTreeModel {
 
   class LayerNodeListener implements MapLayerListener {
 
-    private MapLayer layer;
+    private Layer layer;
 
-    public LayerNodeListener(MapLayer layer) {
+    public LayerNodeListener(Layer layer) {
       this.layer = layer;
     }
 
@@ -133,5 +143,8 @@ public class LegendModel extends DefaultTreeModel {
 
     public void layerHidden(MapLayerEvent event) {}
     public void layerShown(MapLayerEvent event) {}
+		public void layerDeselected(MapLayerEvent arg0) {}
+		public void layerPreDispose(MapLayerEvent arg0) {}
+		public void layerSelected(MapLayerEvent arg0) {}
 	}
 }

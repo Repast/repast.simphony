@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -30,10 +31,9 @@ import javax.swing.SwingUtilities;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.DefaultMapContext;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.resources.CRSUtilities;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+import org.geotools.referencing.CRS;
 import org.geotools.styling.Style;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -51,11 +51,13 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.DisplayEditorLifecycle;
 import repast.simphony.visualization.DisplayEvent;
 import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.ProbeEvent;
 import repast.simphony.visualization.editor.gis.SelectionDecorator;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
@@ -77,6 +79,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
+	private final static String ICON_FORMAT = ".png";
   public static final String SHP_FILE_STYLE_PROP = DisplayGIS.class + ".SHP_FILE_STYLE_PROP";
   private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS.class);
 
@@ -85,7 +88,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   protected DisplayData<?> initData;
   private boolean iconified = false;
   protected Object lock = new Object();
-  private MapContext mapContext;
+  private MapContent mapContext;
   private Updater updater;
   private Styler styler = new Styler();
   private java.util.List<FeatureSource> featureSources = new ArrayList<FeatureSource>();
@@ -184,23 +187,27 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    *          the layer order
    */
   public void registerFeatureSource(FeatureSource source, Style style, Integer order) {
-    featureSources.add(source);
+  	featureSources.add(source);
     styler.registerStyle(source, style);
     layerOrder.put(order, source);
   }
 
+  @Override
   protected void addObject(Object o) {
     updater.agentAdded(o);
   }
 
+  @Override
   protected void moveObject(Object o) {
     updater.agentMoved(o);
   }
 
+  @Override
   protected void removeObject(Object o) {
     updater.agentRemoved(o);
   }
 
+  @Override
   public void destroy() {
     super.destroy();
     for (Projection proj : initData.getProjections()) {
@@ -229,15 +236,19 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       else if (proj instanceof Network)
         proj.addProjectionListener(this);
     }
-    mapContext = new DefaultMapContext(geog.getCRS());
+    mapContext = new MapContent();
+    mapContext.getViewport().setBounds(new ReferencedEnvelope(
+    		new Envelope(-90, -90, -90, 90), geog.getCRS()));
+    
     geog.addProjectionListener(this);
     decorator = new SelectionDecorator(mapContext);
+    
     for (Class clazz : getRegisteredClasses()) {
       decorator.initClass(clazz);
     }
-
+    
     updater = new Updater(mapContext, geog, styler, featureSources, layerOrder);
-
+    
     myRenderer = new MyRenderer();
     myUpdater = new MyUpdater();
 
@@ -254,7 +265,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
         objs.add(obj);
     }
     if (objs.size() > 0)
-      probeSupport.fireProbeEvent(this, objs);
+      probeSupport.fireProbeEvent(this, objs, ProbeEvent.Type.REGION);
   }
 
   public void setLayout(Layout layout) {
@@ -305,7 +316,13 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     }
   }
 
+  /**
+   * Executes when simulation is paused.
+   */
   public void setPause(boolean pause) {
+  	
+  	panel.getCanvas().setPause(pause);
+  	
   }
 
   // we calculate our own layer bounds
@@ -315,16 +332,15 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     ReferencedEnvelope result = null;
     CoordinateReferenceSystem crs = mapContext.getCoordinateReferenceSystem();
     try {
-      for (MapLayer layer : mapContext.getLayers()) {
+      for (Layer layer : mapContext.layers()) {
 
         FeatureSource fs = layer.getFeatureSource();
         if (!fs.getFeatures().isEmpty()) {
-          CoordinateReferenceSystem sourceCrs = fs.getSchema().getDefaultGeometry()
-              .getCoordinateSystem();
+          CoordinateReferenceSystem sourceCrs = fs.getSchema().getCoordinateReferenceSystem();
           ReferencedEnvelope env = new ReferencedEnvelope(fs.getBounds(), sourceCrs);
 
           if ((sourceCrs != null) && (crs != null)
-              && !CRSUtilities.equalsIgnoreMetadata(sourceCrs, crs)) {
+              && !CRS.equalsIgnoreMetadata(sourceCrs, crs)) {
             env = env.transform(crs, true);
           }
 
@@ -358,12 +374,12 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       if (aoe.getCoordinateReferenceSystem() == null)
         return;
 
-      mapContext.setAreaOfInterest(aoe);
+      mapContext.getViewport().setBounds(aoe);
       PGISCanvas canvas = panel.getCanvas();
       PBounds bounds = canvas.getCamera().getViewBounds();
       Envelope env = new Envelope(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(),
           bounds.getMaxY());
-      mapContext.setAreaOfInterest(env, canvas.getCRS());
+      mapContext.getViewport().setBounds(new ReferencedEnvelope(env, canvas.getCRS()));
     }
   }
 
@@ -544,27 +560,29 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     return decorator;
   }
 
+  public static Icon loadIcon(String name) {
+    try {
+      return new ImageIcon(RSGUIConstants.class.getClassLoader().getResource(name + ICON_FORMAT));
+    } catch (Exception e) {
+      msg.warn("Error loading: " + name + ", it will not be used.");
+      return new ImageIcon(new byte[0]);
+    }
+  }
+  
   public void createPanel() {
     panel = new PiccoloMapPanel(mapContext);
-
-    URL imageFile = null;
-    Image image = null;
 
     // zoomIn
     Map<String, Object> toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PMarqueeZoomIn.class.getResource("viewmag+.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionZoomIn"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Zoom In");
     panel.addTool(new PMarqueeZoomIn(mapContext), toolParams);
 
     // zoomOut
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PMarqueeZoomOut.class.getResource("viewmag-.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionZoomOut"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Zoom Out");
     panel.addTool(new PMarqueeZoomOut(mapContext), toolParams);
 
@@ -573,9 +591,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     toolParams = new HashMap<String, Object>();
     toolParams.put(Action.SHORT_DESCRIPTION, "Pan the map");
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = PGISPanTool.class.getResource("move.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionPan"));
     toolParams.put("DEFAULT", Boolean.TRUE);
     toolParams.put(ToolManager.SELECTED, Boolean.TRUE);
     panel.addTool(new PGISPanTool(mapContext, canvas), toolParams);
@@ -583,9 +599,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     // ruler
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = DistanceTool.class.getResource("ruler-icon.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("ruler"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Calculate Distance between 2 points");
 
     DistanceSetter setter = new DistanceSetter() {
@@ -607,9 +621,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);
-    imageFile = DistanceTool.class.getResource("inform-icon.png");
-    image = Toolkit.getDefaultToolkit().getImage(imageFile);
-    toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
+    toolParams.put(Action.SMALL_ICON, loadIcon("mActionIdentify"));
     toolParams.put(Action.SHORT_DESCRIPTION, "Probe");
     panel.addTool(new GISProbeHandler(this), toolParams);
 

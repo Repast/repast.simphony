@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="libs.ext" version="">
+	<attributes>
+		<attribute id="simphony" value="2.1.0"/>
+	</attributes>
+
+	<runtime>
+		<library id="clibwrapper_jiio" path="./lib/clibwrapper_jiio.jar" type="code"/>
+		<library id="gluegen-rt" path="./lib/gluegen-rt.jar" type="code"/>
+		<library id="j3dcore" path="./lib/j3dcore.jar" type="code"/>
+		<library id="j3dutils" path="./lib/j3dutils.jar" type="code"/>
+		<library id="jai_codec" path="./lib/jai_codec.jar" type="code"/>
+		<library id="jai_core" path="./lib/jai_core.jar" type="code"/>
+		<library id="jai_imageio" path="./lib/jai_imageio.jar" type="code"/>
+		<library id="jogl-all" path="./lib/jogl-all.jar" type="code"/>
+		<library id="mlibwrapper_jai" path="./lib/mlibwrapper_jai.jar" type="code"/>
+		<library id="vecmath" path="./lib/vecmath.jar" type="code"/>
+	</runtime>
+</plugin>

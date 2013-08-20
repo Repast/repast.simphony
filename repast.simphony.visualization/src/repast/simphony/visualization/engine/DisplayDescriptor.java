@@ -1,11 +1,11 @@
 package repast.simphony.visualization.engine;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.Map;
 
 import repast.simphony.engine.schedule.Descriptor;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.scenario.ScenarioChangedListener;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
@@ -22,8 +22,6 @@ public interface DisplayDescriptor extends Descriptor {
 
   int getLayoutInterval();
 
-  void set(DisplayDescriptor descriptor);
-
   Class<?>[] getDefaultStyles3D();
 
   Class<?>[] getDefaultStyles2D();
@@ -34,7 +32,8 @@ public interface DisplayDescriptor extends Descriptor {
 
   Class<?>[] getDefaultNetStyles2D();
 
-  Class<?>[] getDefaultNetStylesGIS3D();
+  // TODO WWJ - networks
+//  Class<?>[] getDefaultNetStylesGIS3D();
 
   /**
    * Removes any added projection descriptors.
@@ -144,7 +143,14 @@ public interface DisplayDescriptor extends Descriptor {
    * @return the data for all the projections for which this is the display
    *         info.
    */
-  List<ProjectionData> getProjections();
+  Iterable<ProjectionData> getProjections();
+  
+  /**
+   * Gets the number of projections in this display descriptor.
+   * 
+   * @return the number of projections in this display descriptor.
+   */
+  int getProjectionCount();
 
   /**
    * Adds the data for a projection for which this is the display info.
@@ -153,6 +159,10 @@ public interface DisplayDescriptor extends Descriptor {
    * @param descriptor
    */
   void addProjection(ProjectionData proj, ProjectionDescriptor descriptor);
+  
+  void clearProjections();
+  
+  void clearValueLayerNames();
 
   Iterable<ProjectionDescriptor> getProjectionDescriptors();
 
@@ -190,7 +200,7 @@ public interface DisplayDescriptor extends Descriptor {
    * 
    * @return a List of all the names of the value layers to display.
    */
-  List<String> getValueLayerNames();
+  Iterable<String> getValueLayerNames();
 
   /**
    * Gets the name of the value layer style. Will return null if no value layer
@@ -287,4 +297,13 @@ public interface DisplayDescriptor extends Descriptor {
   Map<String, Integer> getLayerOrders();
   
   Map<String, String> getEditedStyles();
+  
+  void addScenarioChangedListener(ScenarioChangedListener listener);
+
+  /**
+   * Gets the number of Value Layers in this display descriptor.
+   * 
+   * @return
+   */
+  int getValueLayerCount();
 }

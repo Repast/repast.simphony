@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import repast.simphony.engine.schedule.DefaultDescriptor;
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.scenario.AbstractDescriptor;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
-import repast.simphony.visualization.gis3D.style.DefaultEdgeStyleGIS3D;
-import repast.simphony.visualization.gisnew.DefaultStyleGIS;
+import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
+import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
 import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
 import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
@@ -21,27 +21,31 @@ import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 /**
  * @author Nick Collier
  */
-public class DefaultDisplayDescriptor extends DefaultDescriptor implements DisplayDescriptor {
+public class DefaultDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
 
   // default styles.
   private static Class<?>[] styles3D = new Class<?>[] { DefaultStyle3D.class };
 
   private static Class<?>[] styles2D = new Class<?>[] { DefaultStyleOGL2D.class };
 
-  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultStyleGIS.class };
+  // TODO WWJ - handle multiple styles
+  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
+      DefaultSurfaceShapeStyle.class };
 
   // //TODO ###################################################################
   // private static Class<?>[] editedStyles3D = new Class<?>[] { null };
   //
   // private static Class<?>[] editedStyles2D = new Class<?>[] { null };
-  //	
+  //
   // // ###################################################################
 
   private static Class<?>[] netStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
 
   private static Class<?>[] netStyles2D = new Class<?>[] { DefaultEdgeStyleOGL2D.class };
 
-  private static Class<?>[] netStylesGIS3D = new Class<?>[] { DefaultEdgeStyleGIS3D.class };
+  // TODO WWJ network
+  // private static Class<?>[] netStylesGIS3D = new Class<?>[] {
+  // DefaultEdgeStyleGIS3D.class };
 
   private DisplayType type = DisplayType.TWO_D;
 
@@ -84,7 +88,9 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   private Color backgroundColor = null;
 
-  public DefaultDisplayDescriptor() {
+  public DefaultDisplayDescriptor(DisplayDescriptor descriptor) {
+    super(descriptor.getName());
+    set(descriptor);
   }
 
   public DefaultDisplayDescriptor(String name) {
@@ -97,11 +103,19 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    * @return the data for all the projections for which this is the display
    *         info.
    */
-  public List<ProjectionData> getProjections() {
+  public Iterable<ProjectionData> getProjections() {
     return projections;
-    // TODO: for now this is left modifiable, some of the wizards require that
-    // this be modifiable
-    // return Collections.unmodifiableList(projections);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * repast.simphony.visualization.engine.DisplayDescriptor#getProjectionCount()
+   */
+  @Override
+  public int getProjectionCount() {
+    return projections.size();
   }
 
   /**
@@ -113,6 +127,46 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
   public void addProjection(ProjectionData data, ProjectionDescriptor descriptor) {
     this.projections.add(data);
     this.projectionDescriptors.put(descriptor.getProjectionName(), descriptor);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * repast.simphony.visualization.engine.DisplayDescriptor#clearProjections()
+   */
+  @Override
+  public void clearProjections() {
+    if (projections.size() > 0) {
+      this.projections.clear();
+      scs.fireScenarioChanged(this, "projections");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * repast.simphony.visualization.engine.DisplayDescriptor#clearValueLayerNames
+   * ()
+   */
+  @Override
+  public void clearValueLayerNames() {
+    if (valueLayers.size() > 0) {
+      this.valueLayers.clear();
+      scs.fireScenarioChanged(this, "valueLayers");
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * repast.simphony.visualization.engine.DisplayDescriptor#getValueLayerCount()
+   */
+  @Override
+  public int getValueLayerCount() {
+    return valueLayers.size();
   }
 
   /**
@@ -158,20 +212,20 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
     // check for backwards compatibility with older display descriptors
     if (descriptor.agentClassEditedStyleNames() != null)
       for (String name : descriptor.agentClassEditedStyleNames())
-	addEditedStyle(name, descriptor.getEditedStyleName(name));
+        addEditedStyle(name, descriptor.getEditedStyleName(name));
 
     editedNetStyles.clear();
     // check for backwards compatibility with older display descriptors
     if (descriptor.networkEditedStyleIDs() != null)
       for (Object name : descriptor.networkEditedStyleIDs())
-	addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
+        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
 
     if (type == DisplayType.TWO_D) {
       layerOrder.clear();
       if (descriptor.agentClassLayerOrders() != null) {
-	for (String name : descriptor.agentClassLayerOrders()) {
-	  addLayerOrder(name, descriptor.getLayerOrder(name));
-	}
+        for (String name : descriptor.agentClassLayerOrders()) {
+          addLayerOrder(name, descriptor.getLayerOrder(name));
+        }
       }
     }
     for (ProjectionData proj : descriptor.getProjections()) {
@@ -200,7 +254,10 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
   }
 
   public void setDisplayType(DisplayType type) {
-    this.type = type;
+    if (this.type != type) {
+      this.type = type;
+      scs.fireScenarioChanged(this, "displayType");
+    }
   }
 
   public void setDisplayType(DisplayType type, boolean reset) {
@@ -212,23 +269,43 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
       editedNetStyles.clear();
       layerOrder.clear();
       layoutClassName = null;
+      scs.fireScenarioChanged(this, "displayTypeReset");
     }
   }
 
   public void addStyle(String objClassName, String styleClassName) {
-    styles.put(objClassName, styleClassName);
+    if (!mapContains(styles, objClassName, styleClassName)) {
+      styles.put(objClassName, styleClassName);
+      scs.fireScenarioChanged(this, "style");
+    }
   }
 
   public void addEditedStyle(String objClassName, String userStyleName) {
-    editedStyles.put(objClassName, userStyleName);
+    if (!mapContains(editedStyles, objClassName, userStyleName)) {
+      editedStyles.put(objClassName, userStyleName);
+      scs.fireScenarioChanged(this, "editedStyle");
+    }
+  }
+
+  private boolean mapContains(Map<String, String> map, String key, String value) {
+    String val = map.get(key);
+    return val != null && val.equals(value);
   }
 
   public void addNetworkStyle(Object networkID, String networkClassName) {
-    netStyles.put(networkID, networkClassName);
+    String val = netStyles.get(networkID);
+    if (val == null || !val.equals(networkClassName)) {
+      netStyles.put(networkID, networkClassName);
+      scs.fireScenarioChanged(this, "netStyle");
+    }
   }
 
   public void addNetworkEditedStyle(Object networkID, String networkClassName) {
-    editedNetStyles.put(networkID, networkClassName);
+    String val = editedNetStyles.get(networkID);
+    if (val == null || !val.equals(networkClassName)) {
+      editedNetStyles.put(networkID, networkClassName);
+      scs.fireScenarioChanged(this, "editedNetStyle");
+    }
   }
 
   public String getStyleClassName(String objClassName) {
@@ -237,7 +314,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public String getEditedStyleName(String objClassName) {
     if (editedStyles == null) // for backwards compatibility with older display
-			      // descriptors
+      // descriptors
       return null;
     return editedStyles.get(objClassName);
   }
@@ -248,7 +325,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public String getNetworkEditedStyleName(Object networkID) {
     if (editedNetStyles == null) // for backwards compatibility with older
-				 // display descriptors
+      // display descriptors
       return null;
     return editedNetStyles.get(networkID);
   }
@@ -259,7 +336,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public Iterable<String> agentClassEditedStyleNames() {
     if (editedStyles == null) // for backwards compatibility with older display
-			      // descriptors
+      // descriptors
       return null;
     return editedStyles.keySet();
   }
@@ -270,7 +347,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public Iterable<Object> networkEditedStyleIDs() {
     if (editedNetStyles == null) // for backwards compatibility with older
-				 // display descriptors
+      // display descriptors
       return null;
     return editedNetStyles.keySet();
   }
@@ -280,7 +357,10 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
   }
 
   public void setLayoutFrequency(IDisplay.LayoutFrequency frequency) {
-    this.frequency = frequency;
+    if (this.frequency != frequency) {
+      this.frequency = frequency;
+      scs.fireScenarioChanged(this, "layoutFrequency");
+    }
   }
 
   public ScheduleParameters getScheduleParameters() {
@@ -288,7 +368,10 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
   }
 
   public void setScheduleParameters(ScheduleParameters scheduleInfo) {
-    this.schedParams = scheduleInfo;
+    if (!this.schedParams.equals(scheduleInfo)) {
+      this.schedParams = scheduleInfo;
+      scs.fireScenarioChanged(this, "scheduleParameters");
+    }
   }
 
   public String getLayoutClassName() {
@@ -297,6 +380,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public void setLayoutClassName(String className) {
     this.layoutClassName = className;
+    scs.fireScenarioChanged(this, "layoutClassName");
   }
 
   public String getLayoutProjection() {
@@ -305,10 +389,12 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public void setLayoutProjection(String layoutProjection) {
     this.layoutProjection = layoutProjection;
+    scs.fireScenarioChanged(this, "layoutProjection");
   }
 
   public void setLayoutInterval(int interval) {
     this.layoutInterval = interval;
+    scs.fireScenarioChanged(this, "layoutInterval");
   }
 
   public int getLayoutInterval() {
@@ -335,9 +421,10 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
     return netStyles2D;
   }
 
-  public Class<?>[] getDefaultNetStylesGIS3D() {
-    return netStylesGIS3D;
-  }
+  // TODO WWJ network
+  // public Class<?>[] getDefaultNetStylesGIS3D() {
+  // return netStylesGIS3D;
+  // }
 
   /**
    * @return hints for displaying a grid.
@@ -351,6 +438,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    */
   public void setLayoutProperties(VisualizationProperties props) {
     visualizationProperties = props;
+    scs.fireScenarioChanged(this, "layoutProperties");
   }
 
   /**
@@ -360,7 +448,10 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    *          the name of the value layer to display.
    */
   public void addValueLayerName(String name) {
-    valueLayers.add(name);
+    if (!valueLayers.contains(name)) {
+      valueLayers.add(name);
+      scs.fireScenarioChanged(this, "valueLayer");
+    }
   }
 
   /**
@@ -368,7 +459,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    * 
    * @return a List of all the names of the value layers to display.
    */
-  public List<String> getValueLayerNames() {
+  public Iterable<String> getValueLayerNames() {
     return valueLayers;
   }
 
@@ -379,6 +470,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    */
   public void setValueLayerStyleName(String name) {
     valueLayerStyleName = name;
+    scs.fireScenarioChanged(this, "valueLayerStyle");
   }
 
   /**
@@ -410,18 +502,19 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    */
   public void setBoundingBox(BoundingBox boundingBox) {
     this.boundingBox = boundingBox;
+    scs.fireScenarioChanged(this, "boundingBox");
   }
 
   public Iterable<String> agentClassLayerOrders() {
     if (layerOrder == null) // for backwards compatibility with older display
-			    // descriptors
+      // descriptors
       return null;
     return layerOrder.keySet();
   }
 
   public Integer getLayerOrder(String objClassName) {
     if (layerOrder == null) // for backwards compatibility with older display
-			    // descriptors
+      // descriptors
       return null;
 
     return layerOrder.get(objClassName);
@@ -429,6 +522,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public void addLayerOrder(String objClassName, int order) {
     layerOrder.put(objClassName, order);
+    scs.fireScenarioChanged(this, "layerOrder");
   }
 
   /**
@@ -452,6 +546,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    */
   public void setProperty(String name, Object value) {
     props.put(name, value);
+    scs.fireScenarioChanged(this, "property");
   }
 
   /**
@@ -485,6 +580,7 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
    */
   public void setValueLayerEditedStyleName(String name) {
     valueLayerEditedStyleName = name;
+    scs.fireScenarioChanged(this, "valueLayerEditedStyle");
   }
 
   public Color getBackgroundColor() {
@@ -493,13 +589,14 @@ public class DefaultDisplayDescriptor extends DefaultDescriptor implements Displ
 
   public void setBackgroundColor(Color color) {
     backgroundColor = color;
+    scs.fireScenarioChanged(this, "backgroundColor");
   }
 
-	public Map<String, Integer> getLayerOrders() {
-		return layerOrder;
-	}
+  public Map<String, Integer> getLayerOrders() {
+    return layerOrder;
+  }
 
-	public Map<String, String> getEditedStyles() {
-		return editedStyles;
-	}
+  public Map<String, String> getEditedStyles() {
+    return editedStyles;
+  }
 }

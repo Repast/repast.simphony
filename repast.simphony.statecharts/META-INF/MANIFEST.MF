@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Statecharts
+Bundle-SymbolicName: repast.simphony.statecharts
+Bundle-Version: 2.1.0
+Export-Package: repast.simphony.statecharts
+Require-Bundle: repast.simphony.core;visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

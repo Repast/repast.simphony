@@ -14,6 +14,25 @@ public class CustomDataSourceDefinition {
     this.id = id;
     this.dsClassName = className;
   }
+  
+  public CustomDataSourceDefinition(CustomDataSourceDefinition val) {
+    this.id = val.id;
+    this.dsClassName = val.dsClassName;
+  }
+
+  public boolean equals(Object obj) {
+    if (obj instanceof CustomDataSourceDefinition) {
+      CustomDataSourceDefinition other = (CustomDataSourceDefinition)obj;
+      return id.equals(other.id) && dsClassName.equals(other.dsClassName);
+    }
+    return false;
+  }
+  
+  public int hashCode() {
+    int hash = 17;
+    hash = 31 * hash + id.hashCode();
+    return hash * 31 + dsClassName.hashCode();
+  }
 
   public String getId() {
     return id;

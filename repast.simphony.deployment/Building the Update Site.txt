@@ -1,7 +1,12 @@
 BUILDING AN UPDATE SITE
 
 1. Make new workspace (not strictly necessary but easier), clean check out
-of the plugins from eclipse. 
+of the plugins from eclipse.
+
+1.5 If you have any new plugins that have not been part of the update site
+before, you will need to set their build properties correctly. At the very
+least, they should include META-INF/, bin/, icons/ (if there are any),
+plugin-jpf.xml and lib (if there are any libraries).
 
 2. If repast.simphony.demos and repast.simphony.demo.predatorprey projects 
 are in the workspace, remove them. They need to be removed from the workspace
@@ -11,10 +16,17 @@ directory entirely so they are not picked up by the deploy.xml.
 in a directory other than the one that contains the various r.s.* projects.
 
 4. In r.s.eclipse, change the REPAST_VERSION to the new version number. If using the
-plugin editor, this is in the plugin.xml tab.
+plugin editor, this is in the plugin.xml tab:
 
-5. In repast.simphony.agents.designer.core.AgentBuilderPlugin.java in r.s.eclipse,
-change the AGENT_BUILDER_PLUGIN_VERSION to the new version number.
+ <extension point="org.eclipse.core.variables.valueVariables">
+      <variable name="REPAST_VERSION" initialValue="2.0.1">
+</variable>
+
+5. In repast.simphony.eclipse.RepastSimphonyPlugin.java in r.s.eclipse
+change the REPAST_SIMPHONY_PLUGIN_VERSION to the new version number.
+
+5.5 Update the version number in repast.simphony.distributed.batch.ui/src-standalone 
+StandAloneMain.
 
 6. Update the plugin_jpf.xmls to the new version number: use the update_jpf_plugins.xml 
 in r.s.deployment. FIRST change the rs.version number in this file. Note that this

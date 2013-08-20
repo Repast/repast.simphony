@@ -15,8 +15,10 @@ import repast.simphony.context.Context;
 import repast.simphony.context.ContextEvent;
 import repast.simphony.context.ContextListener;
 import repast.simphony.data2.builder.DataSetBuilder;
+import repast.simphony.engine.environment.RunListener;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.IAction;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.NonModelAction;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.parameter.ParameterConstants;
@@ -28,7 +30,7 @@ import repast.simphony.parameter.Parameters;
  * 
  * @author Nick Collier
  */
-public abstract class AbstractDataSetManager implements DataSetManager {
+public abstract class AbstractDataSetManager implements DataSetManager, RunListener {
 
   @SuppressWarnings("rawtypes")
   protected static class ObjList implements ContextListener, SizedIterable<Object> {
@@ -93,14 +95,16 @@ public abstract class AbstractDataSetManager implements DataSetManager {
     DataSet dataSet;
     ScheduleParameters scheduleParams;
     Map<Class<?>, SizedIterable<?>> objMap;
+    boolean atEnd;
 
     /**
      * @param set
      * @param scheduleParams
      */
-    ScheduledDataSet(DataSet set, ScheduleParameters scheduleParams) {
+    ScheduledDataSet(DataSet set, ScheduleParameters scheduleParams, boolean atEnd) {
       this.dataSet = set;
       this.scheduleParams = scheduleParams;
+      this.atEnd = atEnd;
     }
 
     void reset(Context<?> context) {
@@ -167,8 +171,8 @@ public abstract class AbstractDataSetManager implements DataSetManager {
    * )
    */
   @Override
-  public void addDataSet(DataSet dataSet, ScheduleParameters scheduleParams) {
-    dataSets.add(new ScheduledDataSet(dataSet, scheduleParams));
+  public void addDataSet(DataSet dataSet, ScheduleParameters scheduleParams, boolean atEnd) {
+    dataSets.add(new ScheduledDataSet(dataSet, scheduleParams, atEnd));
   }
   
   /**
@@ -196,6 +200,7 @@ public abstract class AbstractDataSetManager implements DataSetManager {
    */
   @Override
   public void runStarted(RunState runState, Object contextId, Parameters parameters) {
+    runState.getScheduleRegistry().getScheduleRunner().addRunListener(this);
     
     tickCountDataSource.resetSchedule(runState.getScheduleRegistry().getModelSchedule());
     rndSeedDataSource.resetSeed((Integer) parameters
@@ -221,11 +226,14 @@ public abstract class AbstractDataSetManager implements DataSetManager {
         source.objMap = listMap;
       }
 
-      runState.getScheduleRegistry().getModelSchedule().schedule(source.scheduleParams, source);
+      ISchedule schedule = runState.getScheduleRegistry().getModelSchedule(); 
+      schedule.schedule(source.scheduleParams, source);
+      if (source.atEnd) schedule.schedule(ScheduleParameters.createAtEnd(ScheduleParameters.LAST_PRIORITY), source);
     }
   }
 
   public void runEnded(RunState runState, Object contextId) {
+    runState.getScheduleRegistry().getScheduleRunner().removeRunListener(this);
     for (ScheduledDataSet source : dataSets) {
       source.reset(runState.getMasterContext());
     }
@@ -253,4 +261,33 @@ public abstract class AbstractDataSetManager implements DataSetManager {
   public DataSetBuilder<?> getDataSetBuilder(String id) {
     return builders.get(id);
   }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#stopped()
+   */
+  @Override
+  public void stopped() {
+    flush();
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#paused()
+   */
+  @Override
+  public void paused() {
+    flush();
+  }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#started()
+   */
+  @Override
+  public void started() {}
+
+  /* (non-Javadoc)
+   * @see repast.simphony.engine.environment.RunListener#restarted()
+   */
+  @Override
+  public void restarted() {}
+  
 }

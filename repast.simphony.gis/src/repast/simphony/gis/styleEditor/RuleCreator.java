@@ -1,24 +1,36 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.feature.Feature;
-import org.geotools.filter.*;
-import org.geotools.styling.*;
-import org.geotools.styling.Stroke;
-import static repast.simphony.gis.GeometryUtil.GeometryType;
-import static repast.simphony.gis.GeometryUtil.GeometryType.LINE;
-import static repast.simphony.gis.GeometryUtil.GeometryType.POINT;
+import java.awt.Color;
 
-import java.awt.*;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.geotools.styling.FeatureTypeStyle;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
+import org.geotools.styling.Symbolizer;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 /**
+ * Utility class for creating Styles from rules and rule editing.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.3 $ $Date: 2007/04/26 18:32:33 $
+ * @author Eric Tatara
+ * 
  */
 public class RuleCreator {
 
-	private StyleFactory fac = StyleFactoryFinder.createStyleFactory();
+	private StyleFactory fac = CommonFactoryFinder.getStyleFactory();
 	private StyleBuilder builder = new StyleBuilder();
-	private FilterFactory filterFactory = FilterFactoryFinder.createFilterFactory();
+	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory();
 
 	/**
 	 * Creates a Style from the specified list of Rules.
@@ -27,43 +39,14 @@ public class RuleCreator {
 	 * @return the created style
 	 */
 	public Style createStyle(String attributeName, java.util.List<Rule> rules) {
-		Rule[] ruleArray = new Rule[rules.size()];
-		rules.toArray(ruleArray);
 		FeatureTypeStyle fts = fac.createFeatureTypeStyle();
-		fts.setRules(ruleArray);
-		Style style = builder.createStyle();
-		style.setFeatureTypeStyles(new FeatureTypeStyle[]{fts});
+		fts.rules().clear();
+		fts.rules().addAll(rules);
+		Style style = builder.createStyle();		
+		style.featureTypeStyles().clear();
+		style.featureTypeStyles().add(fts);
+
 		return style;
-	}
-
-	/**
-	 * Creates a default else rule with a square mark of the specified
-	 * color and a black border
-	 *
-	 * @param color the color of the mark
-	 * @return the created default else rule.
-	 */
-	public Rule createDefaultRule(Color color, GeometryType type) {
-		Rule rule = fac.createRule();
-		rule.setIsElseFilter(true);
-		rule.setTitle("Default");
-
-		Symbolizer[] syms = new Symbolizer[1];
-		if (type == LINE) {
-			LineSymbolizer sym = createLineSymbolizer(2, color);
-			syms[0] = sym;
-		} else if (type == POINT) {
-			PointSymbolizer sym = builder.createPointSymbolizer(builder.createGraphic(null,
-							builder.createMark("square", color, Color.BLACK, 1), null));
-			sym.getGraphic().setSize(builder.literalExpression(6));
-			syms[0] = sym;
-		} else {
-			// assume polygon then
-			Symbolizer sym = builder.createPolygonSymbolizer(color, Color.BLACK, 1);
-			syms[0] = sym;
-		}
-		rule.setSymbolizers(syms);
-		return rule;
 	}
 
 	/**
@@ -76,29 +59,23 @@ public class RuleCreator {
 	 * @param factory       the factory to create the symbolizer with
 	 * @return the created rule.
 	 */
-	public Rule createValueRule(Feature feature, String attributeName, SymbolizerFactory factory) {
-		Object att = feature.getAttribute(attributeName);
+	public Rule createValueRule(SimpleFeature feature, String attributeName, SymbolizerFactory factory) {
+		Object att = null; 
+		
+		if (feature != null)
+		  att = feature.getAttribute(attributeName);
+		
 		Rule rule = fac.createRule();
-		rule.setTitle(att.toString());
+		rule.setTitle(attributeName);
 
 		Expression attExp = builder.attributeExpression(attributeName);
-		Expression lit = filterFactory.createLiteralExpression(att);
-		CompareFilter filter = filterFactory.createCompareFilter(FilterType.COMPARE_EQUALS);
-		filter.addLeftValue(lit);
-		filter.addRightValue(attExp);
+		Expression lit = filterFactory.literal(att);
+		BinaryComparisonOperator filter = filterFactory.equals(lit, attExp);
 		rule.setFilter(filter);
 		Symbolizer sym = factory.createSymbolizer();
-		rule.setSymbolizers(new Symbolizer[]{sym});
+		rule.symbolizers().clear();
+		rule.symbolizers().add(sym);
 		return rule;
-	}
-
-	private LineSymbolizer createLineSymbolizer(int strokeWidth, Color color) {
-		String rgb = Integer.toHexString(color.getRGB());
-		// trim of the alpha portion
-		Expression colorExp = builder.literalExpression("#" + rgb.substring(2, rgb.length()));
-		Expression widthExp = builder.literalExpression(strokeWidth);
-		Stroke newStroke = fac.createStroke(colorExp, widthExp);
-		return fac.createLineSymbolizer(newStroke, null);
 	}
 
 	/**
@@ -109,16 +86,19 @@ public class RuleCreator {
 	 */
 	public static Color getColor(Rule rule) {
 		Symbolizer sym = rule.getSymbolizers()[0];
-		LiteralExpression colorExp = null;
+		Expression colorExp = null;
 		if (sym instanceof PointSymbolizer) {
-			colorExp = (LiteralExpression) ((PointSymbolizer) sym).getGraphic().getMarks()[0].getFill().getColor();
-		} else if (sym instanceof PolygonSymbolizer) {
-			colorExp = (LiteralExpression) ((PolygonSymbolizer) sym).getFill().getColor();
-		} else if (sym instanceof LineSymbolizer) {
-			colorExp = (LiteralExpression) ((LineSymbolizer) sym).getStroke().getColor();
+			Mark mark = (Mark)((PointSymbolizer) sym).getGraphic().graphicalSymbols().get(0);
+			colorExp = mark.getFill().getColor();
+		} 
+		else if (sym instanceof PolygonSymbolizer) {
+			colorExp = ((PolygonSymbolizer) sym).getFill().getColor();
+		} 
+		else if (sym instanceof LineSymbolizer) {
+			colorExp = ((LineSymbolizer) sym).getStroke().getColor();
 		}
 		if (colorExp != null)
-			return Color.decode(colorExp.getLiteral().toString());
+			return Color.decode(colorExp.evaluate(null,String.class));
 
 		return null;
 	}
@@ -130,18 +110,22 @@ public class RuleCreator {
 	 */
 	public static void setColor(Rule rule, Color color) {
 		Symbolizer sym = rule.getSymbolizers()[0];
-		LiteralExpression colorExp = null;
+		Expression colorExp = null;
+		
 		if (sym instanceof PointSymbolizer) {
-			colorExp = (LiteralExpression) ((PointSymbolizer) sym).getGraphic().getMarks()[0].getFill().getColor();
-		} else if (sym instanceof PolygonSymbolizer) {
-			colorExp = (LiteralExpression) ((PolygonSymbolizer) sym).getFill().getColor();
-		} else if (sym instanceof LineSymbolizer) {
-			colorExp = (LiteralExpression) ((LineSymbolizer) sym).getStroke().getColor();
+			Mark mark = (Mark)((PointSymbolizer) sym).getGraphic().graphicalSymbols().get(0);
+			colorExp = mark.getFill().getColor();
+		} 
+		else if (sym instanceof PolygonSymbolizer) {
+			colorExp = ((PolygonSymbolizer) sym).getFill().getColor();
+		} 
+		else if (sym instanceof LineSymbolizer) {
+			colorExp = ((LineSymbolizer) sym).getStroke().getColor();
 		}
 		if (colorExp != null) {
 			String rgb = Integer.toHexString(color.getRGB());
 			// trim of the alpha portion
-			colorExp.setLiteral("#" + rgb.substring(2, rgb.length()));
+			((LiteralExpressionImpl)colorExp).setValue("#" + rgb.substring(2, rgb.length()));
 		}
 	}
 }

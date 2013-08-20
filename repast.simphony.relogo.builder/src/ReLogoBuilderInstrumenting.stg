@@ -1,0 +1,1016 @@
+
+// Turtle Turtle methods
+turtleHatchTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes a number of new <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number, Closure closure) {
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.hatch(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result;
+}
+
+/**
+ * Makes a number of new <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> hatch<capPlural>(int number) {
+	return hatch<capPlural>(number,null);
+}
+>>
+
+turtlePatchTypesHereMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> from the patch of the caller.
+ * 
+ * @return agentset of <lowerPlural> from the caller's patch
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>Here(){
+  Grid grid = getMyObserver().getGrid();
+  GridPoint gridPoint = grid.getLocation(this);
+  AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();
+  for (Turtle t : Utility.getTurtlesOnGridPoint(gridPoint,getMyObserver(),"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+}
+>>
+
+turtleTypesAtMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the agentset of <lowerPlural> on the patch at the direction (ndx, ndy) from the
+ * caller.
+ * 
+ * @param nX
+ *            a number
+ * @param nY
+ *            a number
+ * @returns agentset of <lowerPlural> at the direction (nX, nY) from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>At(Number nX, Number nY){
+	double dx = nX.doubleValue();
+	double dy = nY.doubleValue();
+	double[] displacement = {dx,dy};
+	
+	try{
+	GridPoint gridPoint = Utility.getGridPointAtDisplacement(getTurtleLocation(),displacement,getMyObserver());
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle t : Utility.getTurtlesOnGridPoint(gridPoint,getMyObserver(),"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+	}
+	catch(SpatialException e){
+		return new AgentSet\<<fullyQualifiedName>\>();
+	}
+}
+>>
+
+tplTypesOnPMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> on a given patch.
+ * 
+ * @param p
+ *            a patch
+ * @return agentset of <lowerPlural> on patch p
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Patch p){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),getMyObserver(),"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+}
+>>
+
+tplTypesOnTMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> on the same patch as a turtle.
+ * 
+ * @param t
+ *            a turtle
+ * @return agentset of <lowerPlural> on the same patch as turtle t
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Turtle t){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),getMyObserver(),"<lowerSingular>")){
+		if (tt instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)tt);
+	}
+	return result;
+}
+>>
+
+typesOnCMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> on the patches in a collection or on the patches
+ * that a collection of turtles are.
+ * 
+ * @param a
+ *            a collection
+ * @return agentset of <lowerPlural> on the patches in collection a or on the patches
+ *         that collection a turtles are
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Collection c){
+
+	if (c == null || c.isEmpty()){
+		return new AgentSet\<<fullyQualifiedName>\>();
+	}
+	
+	Set\<<fullyQualifiedName>\> total = new HashSet\<<fullyQualifiedName>\>();
+	if (c.iterator().next() instanceof Turtle){
+		for (Object o : c){
+			if (o instanceof Turtle){
+				Turtle t = (Turtle) o;
+				total.addAll(<lowerPlural>On(t));
+			}
+		}
+	}
+	else {
+		for (Object o : c){
+			if (o instanceof Patch){
+				Patch p = (Patch) o;
+				total.addAll(<lowerPlural>On(p));
+			}
+		}
+	}
+	return new AgentSet\<<fullyQualifiedName>\>(total);
+}
+>>
+
+isTypeQMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Queries if object is a <lowerSingular>.
+ * 
+ * @param o
+ *            an object
+ * @return true or false based on whether the object is a <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public boolean is<capSingular>Q(Object o){
+	return (o instanceof <fullyQualifiedName>);
+}
+>>
+
+tplTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset containing all <lowerPlural>.
+ * 
+ * @return agentset of all <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>(){
+	AgentSet\<<fullyQualifiedName>\> a = new AgentSet\<<fullyQualifiedName>\>();
+	for (Object e : this.getMyObserver().getContext().getObjects(<fullyQualifiedName>.class)) {
+		if (e instanceof <fullyQualifiedName>){
+			a.add((<fullyQualifiedName>)e);
+		}
+	}
+	return a;
+}
+>>
+
+tplTypeMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the <lowerSingular> with the given who number.
+ * 
+ * @param number
+ *            a number
+ * @return turtle number
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Number number){
+	Turtle turtle = Utility.turtleU(number.intValue(), getMyObserver());
+	if (turtle instanceof <fullyQualifiedName>)
+		return (<fullyQualifiedName>) turtle;
+	return null;
+}
+>>
+
+// Turtle Patch methods
+patchGetterField(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+/**
+ * Returns the value of the <fieldName> variable of the underlying patch.
+ * 
+ * @return <fieldName> of type <fieldType>
+ */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public <fieldType> get<capFieldName>(){
+	<patchType> p = (<patchType>)patchHere();
+	return p.<fieldName>;
+}
+
+>>
+
+patchGetterGetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+/**
+ * Returns the value from the <patchGetter>() method of the underlying patch.
+ * 
+ * @return <patchGetter>() of type <fieldType>
+ */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public <fieldType> <patchGetter>(){
+	<patchType> p = (<patchType>)patchHere();
+	return p.<patchGetter>();
+}
+>>
+
+patchSetterField(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+/**
+ * Sets the value of <fieldName> of the underlying patch.
+ * 
+ */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public void set<capFieldName>(<fieldType> value){
+	<patchType> p = (<patchType>)patchHere();
+	p.<fieldName> = value;
+}
+>>
+
+patchSetterSetter(patchType,fieldName,capFieldName,fieldType,patchGetter,patchSetter) ::= <<
+
+/**
+ * Calls the <patchSetter>(<fieldType>) method of the underlying patch.
+ * 
+ */
+@ReLogoBuilderGeneratedFor("<patchType>")
+public void <patchSetter>(<fieldType> value){
+	<patchType> p = (<patchType>)patchHere();
+	p.<patchSetter>(value);
+}
+>>
+
+
+// Turtle Link methods
+turtleCreateTypeFromMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes a directed <lowerSingular> from a turtle to the caller then executes a set of
+ * commands on the created <lowerSingular>.
+ * 
+ * @param t
+ *            a turtle
+ * @param closure
+ *            a set of commands
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>From(Turtle t, Closure closure){
+	<fullyQualifiedName> link = (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(t,this);
+	if (closure != null){
+		this.ask(link,closure);
+	}
+	return link;
+}
+
+/**
+ * Makes a directed <lowerSingular> from a turtle to the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>From(Turtle t){
+		return create<capSingular>From(t,null);
+}
+>>
+
+turtleCreateTypesFromMethodCollection(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes directed <lowerPlural> from a collection to the caller then executes a set
+ * of commands on the created <lowerPlural>.
+ * 
+ * @param a
+ *            a collection
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>From(Collection\<? extends Turtle> a, Closure closure){
+	AgentSet\<<fullyQualifiedName>\> links = new AgentSet\<<fullyQualifiedName>\>();
+	for(Turtle t : a){
+		links.add((<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(t,this));
+	}
+	if (closure != null){
+		this.ask(links,closure);
+	}
+	return links;
+}
+
+/**
+ * Makes directed <lowerPlural> from a collection to the caller.
+ * 
+ * @param a
+ *            a collection
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>From(Collection\<? extends Turtle> a){
+	return create<capPlural>From(a,null);
+}
+>>
+
+turtleCreateTypeToMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes a directed <lowerSingular> to a turtle from the caller then executes a set of
+ * commands on the created <lowerSingular>.
+ * 
+ * @param t
+ *            a turtle
+ * @param closure
+ *            a set of commands
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>To(Turtle t, Closure closure){
+	<fullyQualifiedName> link = (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(this,t);
+	if (closure != null){
+		this.ask(link,closure);
+	}
+	return link;
+}
+
+/**
+ * Makes a directed <lowerSingular> to a turtle from the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>To(Turtle t){
+		return create<capSingular>To(t,null);
+}
+>>
+
+turtleCreateTypesToMethodCollection(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes directed <lowerPlural> to a collection from the caller then executes a set
+ * of commands on the created <lowerPlural>.
+ * 
+ * @param a
+ *            a collection
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>To(Collection\<? extends Turtle> a, Closure closure){
+	AgentSet\<<fullyQualifiedName>\> links = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object t : a){
+		if (t instanceof Turtle){
+			links.add((<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(this,(Turtle)t));
+		}
+	}
+	if (closure != null){
+		this.ask(links,closure);
+	}
+	return links;
+}
+
+/**
+ * Makes directed <lowerPlural> to a collection from the caller.
+ * 
+ * @param a
+ *            a collection
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>To(Collection\<? extends Turtle> a){
+	return create<capPlural>To(a,null);
+}
+>>
+
+turtleInTypeNeighborQMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Queries if there is a directed <lowerSingular> from a turtle to the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return true or false based on whether there is a directed <lowerSingular> from
+ *         turtle t to the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public boolean in<capSingular>NeighborQ(Turtle t){
+	return this.getMyObserver().getNetwork("<capSingular>").isPredecessor(t, this);
+}
+>>
+
+turtleInTypeNeighborsMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the agentset with directed <lowerPlural> to the caller.
+ * 
+ * @return agentset with directed <lowerPlural> to the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet in<capSingular>Neighbors(){
+	AgentSet result = new AgentSet();
+	for(Object o : this.getMyObserver().getNetwork("<capSingular>").getPredecessors(this)){
+		result.add(o);
+	}
+	return result;
+}
+>>
+
+turtleInTypeFromMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the directed <lowerSingular> from a turtle to the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return directed <lowerSingular> from turtle t to the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> in<capSingular>From(Turtle t){
+	return (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").getEdge(t,this);
+}
+>>
+
+turtleMyInTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of directed <lowerPlural> from other turtles to the caller.
+ * 
+ * @return agentset of directed <lowerPlural> from other turtles to the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> myIn<capPlural>(){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object o :  this.getMyObserver().getNetwork("<capSingular>").getInEdges(this)){
+		if (o instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>) o);
+		}
+	}
+	return result;
+}
+>>
+
+turtleMyOutTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of directed <lowerPlural> to other turtles from the caller.
+ * 
+ * @return agentset of directed <lowerPlural> to other turtles from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> myOut<capPlural>(){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object o :  this.getMyObserver().getNetwork("<capSingular>").getOutEdges(this)){
+		if (o instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>) o);
+		}
+	}
+	return result;
+}
+>>
+
+turtleOutTypeNeighborQMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Queries if there is a directed <lowerSingular> to a turtle from the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return true or false based on whether there is a directed <lowerSingular> to
+ *         turtle t from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public boolean out<capSingular>NeighborQ(Turtle t){
+	return this.getMyObserver().getNetwork("<capSingular>").isPredecessor(this, t);
+}
+>>
+
+turtleOutTypeNeighborsMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the agentset with directed <lowerPlural> from the caller.
+ * 
+ * @return agentset with directed <lowerPlural> from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet out<capSingular>Neighbors(){
+	AgentSet result = new AgentSet();
+	for(Object o : this.getMyObserver().getNetwork("<capSingular>").getSuccessors(this)){
+		result.add(o);
+	}
+	return result;
+}
+>>
+
+turtleOutTypeToMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the directed <lowerSingular> to a turtle from the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return directed <lowerSingular> to turtle t from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> out<capSingular>To(Turtle t){
+	return (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").getEdge(this, t);
+}
+>>
+
+turtleTypeNeighborQMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Reports true if there is a <lowerSingular> connecting t and the caller.
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public boolean <lowerSingular>NeighborQ(Turtle t){
+	return this.getMyObserver().getNetwork("<capSingular>").isAdjacent(this, t);
+}
+>>
+
+turtleTypeNeighborsMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the agentset of all turtles found at the other end of
+ * <lowerPlural> connected to the calling turtle.
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet <lowerSingular>Neighbors(){
+	AgentSet result = new AgentSet();
+	for(Object o : this.getMyObserver().getNetwork("<capSingular>").getAdjacent(this)){
+		result.add(o);
+	}
+	return result;
+}
+>>
+
+turtleMyTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of the caller's <lowerPlural>.
+ * 
+ * @return agentset of the caller's <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> my<capPlural>(){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object o : this.getMyObserver().getNetwork("<capSingular>").getEdges(this)){
+		if (o instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)o);
+		}
+	}
+	return result;
+}
+>>
+
+tplLinkTypeMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the <lowerSingular> between two turtles.
+ * 
+ * @param oneEnd
+ *            an integer
+ * @param otherEnd
+ *            an integer
+ * @return <lowerSingular> between two turtles
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Number oneEnd, Number otherEnd) {
+	return (<fullyQualifiedName>)(this.getMyObserver().getNetwork("<capSingular>").getEdge(turtle(oneEnd),turtle(otherEnd)));
+}
+
+/**
+ * Returns the <lowerSingular> between two turtles.
+ * 
+ * @param oneEnd
+ *            a turtle
+ * @param otherEnd
+ *            a turtle
+ * @return <lowerSingular> between two turtles
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Turtle oneEnd, Turtle otherEnd) {
+	return <lowerSingular>(oneEnd.getWho(), otherEnd.getWho());
+}
+>>
+
+turtleCreateTypeWithMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes an undirected <lowerSingular> between the caller and a turtle then executes a
+ * set of commands on the created <lowerSingular>.
+ * 
+ * @param t
+ *            a turtle
+ * @param closure
+ *            a set of commands
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>With(Turtle t, Closure closure){
+	<fullyQualifiedName> link = (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(this,t);
+	if (closure != null){
+		this.ask(link,closure);
+	}
+	return link;
+}
+
+/**
+ * Makes an undirected <lowerSingular> between the caller and a turtle.
+ * 
+ * @param t
+ *            a turtle
+ * @return created <lowerSingular>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> create<capSingular>With(Turtle t){
+		return create<capSingular>With(t,null);
+}
+>>
+
+
+turtleCreateTypesWithMethodCollection(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes undirected <lowerPlural> between the caller and a collection of turtles
+ * then executes a set of commands on the created <lowerPlural>.
+ * 
+ * @param a
+ *            a collection of turtles
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>With(Collection\<? extends Turtle> a, Closure closure){
+	AgentSet\<<fullyQualifiedName>\> links = new AgentSet\<<fullyQualifiedName>\>();
+	for(Object t : a){
+		if (t instanceof Turtle){
+			links.add((<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").addEdge(this,(Turtle)t));
+		}
+	}
+	if (closure != null){
+		this.ask(links,closure);
+	}
+	return links;
+}
+
+/**
+ * Makes undirected <lowerPlural> between the caller and a collection of turtles.
+ * 
+ * @param a
+ *            an agentset
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>With(Collection\<? extends Turtle> a){
+	return create<capPlural>With(a,null);
+}
+>>
+
+turtleTypeWithMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the undirected <lowerSingular> between a turtle and the caller.
+ * 
+ * @param t
+ *            a turtle
+ * @return undirected <lowerSingular> between turtle t and the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>With(Turtle t){
+	return (<fullyQualifiedName>)this.getMyObserver().getNetwork("<capSingular>").getEdge(this,t);
+}
+>>
+
+// Turtle Globals methods
+globalsGetterSetter(name,capName) ::= <<
+
+/**
+ * Returns the value of the global variable <name>.
+ *
+ * @return the value of the global variable <name>
+ */
+@ReLogoBuilderGeneratedFor("global: <name>")
+public Object get<capName>(){
+	return repast.simphony.relogo.ReLogoModel.getInstance().getModelParam("<name>");
+}
+
+/**
+ * Sets the value of the global variable <name>.
+ *
+ * @param value
+ *            a value
+ */
+@ReLogoBuilderGeneratedFor("global: <name>")
+public void set<capName>(Object value){
+	repast.simphony.relogo.ReLogoModel.getInstance().setModelParam("<name>",value);
+}
+>>
+
+// Patch Turtle methods.
+patchSproutTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Sprouts (makes) a number of new <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> sprout<capPlural>(int number, Closure closure) {
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.sprout(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result;
+}
+
+/**
+ * Sprouts (makes) a number of new <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> sprout<capPlural>(int number) {
+	return sprout<capPlural>(number,null);
+}
+>>
+
+patchTypesAtMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the agentset of <lowerPlural> on the patch at the direction (ndx, ndy) from the
+ * caller.
+ * 
+ * @param nX
+ *            a number
+ * @param nY
+ *            a number
+ * @returns agentset of <lowerPlural> at the direction (nX, nY) from the caller
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>At(Number nX, Number nY){
+	double dx = nX.doubleValue();
+	double dy = nY.doubleValue();
+	double[] displacement = {dx,dy};
+	
+	try{
+	GridPoint gridPoint = Utility.getGridPointAtDisplacement(getGridLocationAsNdPoint(),displacement,getMyObserver());
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle t : Utility.getTurtlesOnGridPoint(gridPoint,getMyObserver(),"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+	}
+	catch(SpatialException e){
+		return new AgentSet\<<fullyQualifiedName>\>();
+	}
+}
+>>
+
+// Observer Turtle methods
+
+observerCreateTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes a number of randomly oriented <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>(int number, Closure closure) {
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.crt(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result; 
+}
+
+/**
+ * Makes a number of randomly oriented <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> create<capPlural>(int number) {
+	return create<capPlural>(number,null);
+}
+>>
+
+observerCreateOrderedTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Makes a number of uniformly fanned <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> createOrdered<capPlural>(int number, Closure closure) {
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<>();
+	AgentSet\<Turtle> createResult = this.cro(number,closure,"<capSingular>");
+	for (Turtle t : createResult){
+		if (t instanceof <fullyQualifiedName>){
+			result.add((<fullyQualifiedName>)t);
+		}
+	} 
+	return result; 
+}
+
+/**
+ * Makes a number of uniformly fanned <lowerPlural> and then executes a set of commands on the
+ * created <lowerPlural>.
+ * 
+ * @param number
+ *            a number
+ * @param closure
+ *            a set of commands
+ * @return created <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> createOrdered<capPlural>(int number) {
+	return createOrdered<capPlural>(number,null);
+}
+>>
+
+observerTypesMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset containing all <lowerPlural>.
+ * 
+ * @return agentset of all <lowerPlural>
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>(){
+	AgentSet\<<fullyQualifiedName>\> a = new AgentSet\<<fullyQualifiedName>\>();
+	for (Object e : this.getContext().getObjects(<fullyQualifiedName>.class)) {
+		if (e instanceof <fullyQualifiedName>){
+			a.add((<fullyQualifiedName>)e);
+		}
+	}
+	return a;
+}
+>>
+
+observerTypeMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the <lowerSingular> with the given who number.
+ * 
+ * @param number
+ *            a number
+ * @return turtle number
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Number number){
+	Turtle turtle = Utility.turtleU(number.intValue(), this);
+	if (turtle instanceof <fullyQualifiedName>)
+		return (<fullyQualifiedName>) turtle;
+	return null;
+}
+>>
+
+observerTypesOnPMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> on a given patch.
+ * 
+ * @param p
+ *            a patch
+ * @return agentset of <lowerPlural> on patch p
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Patch p){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle t : Utility.getTurtlesOnGridPoint(p.getGridLocation(),this,"<lowerSingular>")){
+		if (t instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)t);
+	}
+	return result;
+}
+>>
+
+observerTypesOnTMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns an agentset of <lowerPlural> on the same patch as a turtle.
+ * 
+ * @param t
+ *            a turtle
+ * @return agentset of <lowerPlural> on the same patch as turtle t
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public AgentSet\<<fullyQualifiedName>\> <lowerPlural>On(Turtle t){
+	AgentSet\<<fullyQualifiedName>\> result = new AgentSet\<<fullyQualifiedName>\>();						
+	for (Turtle tt : Utility.getTurtlesOnGridPoint(Utility.ndPointToGridPoint(t.getTurtleLocation()),this,"<lowerSingular>")){
+		if (tt instanceof <fullyQualifiedName>)
+		result.add((<fullyQualifiedName>)tt);
+	}
+	return result;
+}
+>>
+
+observerLinkTypeMethod(fullyQualifiedName,lowerSingular,capSingular,lowerPlural,capPlural) ::= <<
+
+/**
+ * Returns the <lowerSingular> between two turtles.
+ * 
+ * @param oneEnd
+ *            an integer
+ * @param otherEnd
+ *            an integer
+ * @return <lowerSingular> between two turtles
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Number oneEnd, Number otherEnd) {
+	return (<fullyQualifiedName>)(this.getNetwork("<capSingular>").getEdge(turtle(oneEnd),turtle(otherEnd)));
+}
+
+/**
+ * Returns the <lowerSingular> between two turtles.
+ * 
+ * @param oneEnd
+ *            a turtle
+ * @param otherEnd
+ *            a turtle
+ * @return <lowerSingular> between two turtles
+ */
+@ReLogoBuilderGeneratedFor("<fullyQualifiedName>")
+public <fullyQualifiedName> <lowerSingular>(Turtle oneEnd, Turtle otherEnd) {
+	return <lowerSingular>(oneEnd.getWho(), otherEnd.getWho());
+}
+>>

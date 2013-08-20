@@ -3,7 +3,7 @@
 <plugin class="saf.core.ui.UIPlugin" id="saf.core.ui" version="">
   
   <attributes>
-    <attribute id="simphony" value="2.0.1"/>
+    <attribute id="simphony" value="2.1.0"/>
   </attributes>
 	
   <requires>
@@ -35,7 +35,7 @@
       <export prefix="*"/>
     </library>
 
-    <library id="jgoodies" path="lib/forms-1.0.5.jar" type="code">
+    <library id="jgoodies" path="lib/jgoodies-forms-1.7.1.jar" type="code">
       <export prefix="*"/>
     </library>
 

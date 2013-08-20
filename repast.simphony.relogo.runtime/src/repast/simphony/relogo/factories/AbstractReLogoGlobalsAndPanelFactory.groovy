@@ -11,6 +11,8 @@ import javax.swing.Box
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import repast.simphony.engine.environment.RunEnvironment;
+
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractReLogoGlobalsAndPanelFactory {
@@ -36,6 +38,7 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	}
 	
 	public void addPanel(Closure cl){
+		if (RunEnvironment.instance.isBatch()) return;
 		def swing = new SwingBuilder()
 		addToParent(swing.panel(alignmentX:Component.LEFT_ALIGNMENT,cl))
 //		panel.add(swing.edt(cl))
@@ -52,7 +55,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	 * Adds a button with a label to the user panel.
 	 * @param methodName default observer method name
 	 * @param elementLabel label
+	 * @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	 */
+	@Deprecated
 	public void addButtonWL(String methodName, String elementLabel){
 		addButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel);
 	}
@@ -62,7 +67,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	 * @param observerID the observer name
 	 * @param methodName observer's method name
 	 * @param elementLabel label
+	 * @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	 */
+	@Deprecated
 	public void addButtonWL(String observerID, String methodName, String elementLabel){
 		addToParent(ReLogoGlobalsAndPanelComponentsFactory.createButton(observerID,methodName,elementLabel));
 	}
@@ -92,7 +99,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Creates a button with a label. To be used with the widget method in Swing Builder.
 	* @param methodName default observer method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel buttonWL(String methodName, String elementLabel){
 		return(buttonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel));
 	}
@@ -102,7 +111,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param observerID the observer name
 	* @param methodName observer's method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel buttonWL(String observerID, String methodName, String elementLabel){
 		return(ReLogoGlobalsAndPanelComponentsFactory.createButton(observerID,methodName,elementLabel));
 	}
@@ -130,7 +141,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Adds a button to the user panel, specifying an observer.
 	* @param observerID the observer name
 	* @param methodName observer's method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.  
 	*/
+	@Deprecated
 	public void addButton(String observerID, String methodName){
 		addToParent(ReLogoGlobalsAndPanelComponentsFactory.createButton(observerID,methodName,methodName));
 	}
@@ -138,7 +151,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	/**
 	* Adds a button to the user panel.
 	* @param methodName default observer method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	*/
+	@Deprecated
 	public void addButton(String methodName){
 		addButton(DEFAULT_OBSERVER_NAME,methodName);
 	}
@@ -164,7 +179,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Creates a button, specifying an observer. To be used with the widget method in Swing Builder.
 	* @param observerID the observer name
 	* @param methodName observer's method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel button(String observerID, String methodName){
 		return(ReLogoGlobalsAndPanelComponentsFactory.createButton(observerID,methodName,methodName));
 	}
@@ -172,7 +189,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	/**
 	* Creates a button. To be used with the widget method in Swing Builder.
 	* @param methodName default observer method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Setup} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel button(String methodName){
 		return(button(DEFAULT_OBSERVER_NAME,methodName));
 	}
@@ -198,7 +217,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Adds a toggle button to the user panel, specifying an observer.
 	* @param observerID the observer name
 	* @param methodName observer's method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public void addToggleButton(String observerID, String methodName){
 		addToParent(ReLogoGlobalsAndPanelComponentsFactory.createToggleButton(observerID,methodName,methodName));
 	}
@@ -206,7 +227,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	/**
 	* Adds a toggle button to the user panel.
 	* @param methodName default observer method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public void addToggleButton(String methodName){
 		addToggleButton(DEFAULT_OBSERVER_NAME,methodName);
 	}
@@ -215,7 +238,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Creates a toggle button, specifying an observer. To be used with the widget method in Swing Builder.
 	* @param observerID the observer name
 	* @param methodName observer's method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel toggleButton(String observerID, String methodName){
 		return(ReLogoGlobalsAndPanelComponentsFactory.createToggleButton(observerID,methodName,methodName));
 	}
@@ -223,7 +248,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	/**
 	* Creates a toggle button. To be used with the widget method in Swing Builder.
 	* @param methodName default observer method name
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel toggleButton(String methodName){
 		return(toggleButton(DEFAULT_OBSERVER_NAME,methodName));
 	}
@@ -233,7 +260,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param observerID the observer name
 	* @param methodName observer's method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public void addToggleButtonWL(String observerID, String methodName, String elementLabel){
 		addToParent(ReLogoGlobalsAndPanelComponentsFactory.createToggleButton(observerID,methodName,elementLabel));
 	}
@@ -242,7 +271,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Adds a toggle button with a label to the user panel.
 	* @param methodName default observer method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public void addToggleButtonWL(String methodName, String elementLabel){
 		addToggleButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel);
 	}
@@ -252,7 +283,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* @param observerID the observer name
 	* @param methodName observer's method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel toggleButtonWL(String observerID, String methodName, String elementLabel){
 		return(ReLogoGlobalsAndPanelComponentsFactory.createToggleButton(observerID,methodName,elementLabel));
 	}
@@ -261,7 +294,9 @@ public abstract class AbstractReLogoGlobalsAndPanelFactory {
 	* Creates a toggle button with a label. To be used with the widget method in Swing Builder.
 	* @param methodName default observer method name
 	* @param elementLabel label
+	* @deprecated use the {@link repast.simphony.relogo.schedule.Go} annotation on methods instead.
 	*/
+	@Deprecated
 	public JPanel toggleButtonWL(String methodName, String elementLabel){
 		return(toggleButtonWL(DEFAULT_OBSERVER_NAME,methodName,elementLabel));
 	}

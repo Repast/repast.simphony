@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.R
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
@@ -12,3 +12,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.plugin.util,
  repast.simphony.data.ui
 Bundle-Vendor: %providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

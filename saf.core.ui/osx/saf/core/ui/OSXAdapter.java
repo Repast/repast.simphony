@@ -36,6 +36,14 @@ public class OSXAdapter extends ApplicationAdapter {
     }
     theApplication.addApplicationListener(theAdapter);
   }
+  
+  public static void registerDockImage(Image img) {
+    if (theApplication == null) {
+      theApplication = new com.apple.eawt.Application();
+    }
+
+    if (img != null) theApplication.setDockIconImage(img);
+  }
 
   // Another static entry point for EAWT functionality.  Enables the
   // "Preferences..." menu item in the application menu.

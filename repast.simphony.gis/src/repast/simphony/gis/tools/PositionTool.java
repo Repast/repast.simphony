@@ -35,7 +35,7 @@ public class PositionTool extends PBasicInputEventHandler implements MapTool {
     this.crs = crs;
     try {
       wgs84 = CRS.decode("EPSG:4326");
-      transform = CRS.transform(crs, wgs84, true);
+      transform = CRS.findMathTransform(crs, wgs84, true);
     } catch (NoSuchAuthorityCodeException e) {
       wgs84 = DefaultGeographicCRS.WGS84;
     } catch (FactoryException e) {

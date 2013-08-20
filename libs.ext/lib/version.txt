@@ -1,0 +1,5 @@
+gluegen and jogl from http://jogamp.org/deployment/archive/master/gluegen_666-joal_432-jogl_981-jocl_788-signed/archive/
+gluegen_666
+jogl_981
+
+java3d  1.6.0-pre7-daily-experimental

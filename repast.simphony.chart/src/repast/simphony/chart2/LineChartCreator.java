@@ -73,7 +73,7 @@ public class LineChartCreator extends AbstractChartCreator implements ChartCreat
 
     JFreeChart chart = ChartFactory.createXYLineChart(descriptor.getChartTitle(), 
         descriptor.getXAxisLabel(), descriptor.getYAxisLabel(), xydata,
-        PlotOrientation.VERTICAL, true, true, false);
+        PlotOrientation.VERTICAL, descriptor.doShowLegend(), true, false);
 
     XYPlot plot = (XYPlot) chart.getPlot();
     updatePlot(plot, descriptor);
@@ -81,7 +81,9 @@ public class LineChartCreator extends AbstractChartCreator implements ChartCreat
     XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
     renderer.setBaseShapesVisible(true);
     renderer.setBaseShapesFilled(true);
-    renderer.setLegendItemLabelGenerator(labelGenerator);
+    if (descriptor.doShowLegend()) {
+      renderer.setLegendItemLabelGenerator(labelGenerator);
+    }
     
     for (String id : descriptor.getSeriesIds()) {
       labelGenerator.labelMap.put(id, descriptor.getSeriesLabel(id));

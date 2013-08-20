@@ -41,7 +41,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,11 +57,10 @@ import repast.simphony.ui.plugin.TickCountFormatter;
 import repast.simphony.ui.probe.Probe;
 import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.probe.ProbePanelCreator;
-import repast.simphony.ui.sweep.ParameterSweepDialog;
-import repast.simphony.ui.sweep.ParameterSweepPanel;
 import repast.simphony.ui.tree.ScenarioTree;
 import repast.simphony.ui.widget.ErrorLog;
 import repast.simphony.ui.widget.IconRotator;
+import repast.simphony.ui.widget.IconUtils;
 import repast.simphony.ui.widget.MovieMakerDialog;
 import repast.simphony.ui.widget.SnapshotTaker;
 import repast.simphony.ui.widget.VizHomeAction;
@@ -102,10 +100,6 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   private JPanel customPanelContent;
 
   private boolean running = false;
-
-  // parameter sweep panel (mjb 10/12/10)
-  private JPanel parameterSweepPanel;
-  // (mjb 10/12/10 end)
 
   private Set<DockableFrame> nonTreeViews = new HashSet<DockableFrame>();
   // this needs to be a linked hashmap to work around a java3D bug in OSX
@@ -337,6 +331,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     this.frame = frame;
   }
 
+  @SuppressWarnings("serial")
   private abstract class ProbeAction extends AbstractAction {
     private Probe probe;
 
@@ -354,6 +349,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
   }
 
+  @SuppressWarnings("serial")
   private class LoadParams extends ProbeAction {
 
     private Parameters params;
@@ -474,27 +470,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     return nProbe;
   }
 
-  // parameter sweep (mjb 10/12/10)
-  private class ParameterSweep extends ModifyParameterAction {
-
-    public ParameterSweep(MutableParameters params, Probe probe, RSApplication rsApp) {
-      super("Parameter Sweep", params, probe, rsApp);
-    }
-
-    @Override
-    public boolean showParamModificationDialog(MutableParameters parameters) {
-      ParameterSweepDialog dialog = new ParameterSweepDialog(frame);
-      dialog.init(parameters);
-      dialog.pack();
-      dialog.setVisible(true);
-      // return true;
-      return false;
-    }
-
-  }
-
-  // (mjb 10/12/10 end)
-
+  @SuppressWarnings("serial")
   private class AddParameter extends ModifyParameterAction {
 
     public AddParameter(MutableParameters params, Probe probe, RSApplication rsApp) {
@@ -506,12 +482,14 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       AddParameterDialog dialog = new AddParameterDialog(frame);
       dialog.init(parameters);
       dialog.pack();
+      dialog.setLocationRelativeTo(frame);
       dialog.setVisible(true);
       return dialog.parameterAdded();
     }
 
   }
 
+  @SuppressWarnings("serial")
   private class RemoveParameter extends ModifyParameterAction {
     public RemoveParameter(MutableParameters params, Probe probe, RSApplication rsApp) {
       super("Remove Parameters", params, probe, rsApp);
@@ -538,33 +516,14 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     treeView.toFront();
   }
 
-  // parameter sweep (mjb 10/12/10)
-  public void addParameterSweepPanel(Parameters params) {
-    ProbePanelCreator creator = new ProbePanelCreator(params);
-    parameterSweepPanel = new ParameterSweepPanel(params, null);
-    DockableFrame view = dockingManager.createDockable("__ParameterSweep__", new JScrollPane(
-        parameterSweepPanel), MinimizeLocation.BOTTOM, DockingManager.FLOAT
-        | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
-    view.setTitle("Parameter Sweep");
-    dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
-    dockingManager.dock(view, treeView);
-    treeView.toFront();
-  }
-
-  // (mjb 10/12/10 end)
-
   private boolean hasCustomUserPanelDefined = false;
 
   public void addCustomUserPanel(JPanel panel) {
     customPanelContent = panel;
     customPanel.add(panel);
     hasCustomUserPanelDefined = true;
-    // DockableFrame view = dockingManager.createDockable("__custom.user__",
-    // panel, MinimizeLocation.BOTTOM,
-    // DockingManager.FLOAT | DockingManager.MINIMIZE |
-    // DockingManager.MAXIMIZE);
-    // view.setTitle(name);
-    // dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
+    customPanel.revalidate();
+    customPanel.repaint();
   }
 
   public boolean hasCustomUserPanelDefined() {
@@ -599,44 +558,48 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     ProbePanelCreator creator = new ProbePanelCreator(params);
     Probe probe = creator.getProbe("Simulation Parameters", false);
     JPanel panel = new JPanel(new BorderLayout());
-    panel.add(new JScrollPane(probe.getPanel()), BorderLayout.CENTER);
-    JMenuBar bar = new JMenuBar();
-    panel.add(bar, BorderLayout.NORTH);
-    JMenu tools = new JMenu("Tools");
+    JScrollPane pane = new JScrollPane(probe.getPanel());
+    pane.getViewport().setBackground(panel.getBackground());
+    panel.add(pane, BorderLayout.CENTER);
+   
     LoadParams lp = new LoadParams(params, probe);
-    // tools.add(lp).setMnemonic('l');
-    // tools.add(new SaveParams(params)).setMnemonic('s');
-    tools.add(new DefaultParams(params)).setMnemonic('d');
-    tools.setMnemonic('t');
-    bar.add(tools);
-
+    JToolBar tbar = new JToolBar();
+    panel.add(tbar, BorderLayout.NORTH);
+    tbar.setFloatable(false);
     // going forward all Parameters should be Mutable
     // but we need this check for backward compatibility I think
     if (params instanceof MutableParameters) {
-      JToolBar tbar = new JToolBar();
-      panel.add(tbar, BorderLayout.SOUTH);
-      tbar.setFloatable(false);
+      
+      
       AddParameter add = new AddParameter((MutableParameters) params, probe, rsApp);
       RemoveParameter rem = new RemoveParameter((MutableParameters) params, probe, rsApp);
-
-      // parameter sweep (mjb 10/12/10)
-      ParameterSweep sweep = new ParameterSweep((MutableParameters) params, probe, rsApp);
-      // (mjb 10/12/10 end)
 
       add.setProbeActions(new ProbeAction[] { lp, rem });
       rem.setProbeActions(new ProbeAction[] { lp, add });
 
-      // parameter sweep (mjb 10/12/10)
-      sweep.setProbeActions(new ProbeAction[] { lp, sweep });
-      // (mjb 10/12/10 end)
-
-      tbar.add(add);
-      tbar.add(rem);
-
-      // Parameter sweep (mjb 10/12/10)
-      tbar.add(sweep);
-      // (mjb 10/12/10 end)
+      JButton btn = (new JButton(add));
+      btn.setIcon(IconUtils.loadIcon("add_exc.gif"));
+      btn.setText("");
+      //btn.setBorder(null);
+      btn.setToolTipText("Add Parameter");
+      tbar.add(btn);
+      
+      btn = new JButton(rem);
+      btn.setToolTipText("Remove Parameters");
+      btn.setText("");
+      btn.setIcon(IconUtils.loadIcon("rem_co.gif"));
+      //btn.setBorder(null);
+      tbar.add(btn);
     }
+    
+    if (tbar.getComponentCount() > 0) {
+      tbar.addSeparator();
+    }
+    JButton btn = new JButton(new DefaultParams(params));
+    btn.setText("");
+    btn.setIcon(IconUtils.loadIcon("nav_refresh.gif"));
+    btn.setToolTipText("Set current parameter values as default parameter values");
+    tbar.add(btn);
 
     DockableFrame view = dockingManager.createDockable(id, panel, MinimizeLocation.BOTTOM,
         DockingManager.FLOAT | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
@@ -856,7 +819,11 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   public DockableFrame addProbeView(String id, String title, JPanel panel) {
-    DockableFrame view = dockingManager.createDockable(id, new JScrollPane(panel),
+    // on OSX java 7, the scrollpane has a white background and
+    // this looks odd when any of the widgets have a gray background
+    JScrollPane pane = new JScrollPane(panel);
+    pane.getViewport().setBackground(panel.getBackground());
+    DockableFrame view = dockingManager.createDockable(id, pane,
         MinimizeLocation.BOTTOM);
     view.setTitle(title);
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, PROBE_GROUP, view);

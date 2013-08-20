@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.distributed.batch" version="">
+
+	<attributes>
+		<attribute id="simphony" value="2.1.0"/>
+	</attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.batch" reverse-lookup="true"/>
+	</requires>
+
+	<runtime>
+		<library id="distributed.batch" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="ant-launcher" path="lib/ant-launcher.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="ant" path="lib/ant.jar" type="code">
+            <export prefix="*"/>
+        </library>
+        
+        <library id="jsch-0.1.48" path="lib/jsch-0.1.48.jar" type="code">
+            <export prefix="*"/>
+        </library>
+        
+        <library id="xmltask" path="lib/xmltask.jar" type="code">
+            <export prefix="*"/>
+        </library>
+        
+	</runtime>
+
+
+
+</plugin>

@@ -1,0 +1,585 @@
+package dsld
+
+import java.util.List;
+import org.codehaus.groovy.ast.ClassHelper
+import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.GenericsType
+import org.codehaus.groovy.ast.MethodNode
+import org.codehaus.groovy.ast.Parameter
+import org.codehaus.groovy.ast.expr.ArgumentListExpression
+import org.codehaus.groovy.ast.expr.ClassExpression;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
+import org.codehaus.groovy.ast.expr.ConstantExpression
+import org.codehaus.groovy.ast.expr.Expression
+import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.ast.expr.StaticMethodCallExpression
+import org.codehaus.groovy.ast.expr.VariableExpression
+import org.codehaus.groovy.ast.tools.GenericsUtils;
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+import org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport;
+
+/**
+ * Custom ReLogo DSLD GroovyCodeVisitor
+ * @author jozik
+ *
+ */
+class MyCodeVisitor2 extends CodeVisitorSupport {
+	public static final ClassNode collection = ClassHelper.make("java.util.Collection")
+	public static final ClassNode listClassNode = ClassHelper.make("java.util.List")
+	public static final ClassNode turtleInterface = ClassHelper.make('repast.simphony.relogo.Turtle')
+	public static final ClassNode patchInterface =  ClassHelper.make('repast.simphony.relogo.Patch')
+	public static final ClassNode abstractLink =  ClassHelper.make('repast.simphony.relogo.Link')
+	public static final ClassNode observerInterface =  ClassHelper.make('repast.simphony.relogo.Observer')
+	public static final List<String> zerothParameterArgumentBasedMethods = [
+		'ask',
+		'minOneOf',
+		'maxOneOf'
+	]
+	public static final List<String> firstParameterArgumentBasedMethods = ['minNOf', 'maxNOf']
+
+	ClosureExpression myClosure;
+	ClassNode currentType;
+	public List<ClassNode> context = [];
+//	public StringBuilder sb = new StringBuilder()
+
+	public MyCodeVisitor2(ClosureExpression myClosure, ClassNode enclosingClass){
+		this.myClosure = myClosure
+		context.add(enclosingClass)
+	}
+	
+	
+//	int targetsFound = 0;
+//
+//	public int getTargetsFound() {
+//		return targetsFound;
+//	}
+
+	public static boolean isTargetMethodCallExpression(MethodCallExpression mce){
+		return (isMethodArgumentBasedTargetZerothPosition(mce) || isMethodArgumentBasedTargetFirstPosition(mce) ||  isMethodNameBasedTarget(mce))
+	}
+
+	public static boolean isMethodArgumentBasedTargetZerothPosition(MethodCallExpression mce){
+		if (mce){
+			String methodName = mce.getMethodAsString()
+			if(methodName){
+				return zerothParameterArgumentBasedMethods.contains(methodName)
+			}
+		}
+		return false
+	}
+
+	public static boolean isMethodArgumentBasedTargetFirstPosition(MethodCallExpression mce){
+		if (mce){
+			String methodName = mce.getMethodAsString()
+			if(methodName){
+				return firstParameterArgumentBasedMethods.contains(methodName)
+			}
+		}
+		return false
+	}
+
+
+	public static boolean isMethodNameBasedTarget(MethodCallExpression mce){
+		if (mce){
+			String methodName = mce.getMethodAsString()
+			if(methodName){
+				return (methodName.startsWith('create') || methodName.startsWith('sprout') || methodName.startsWith('hatch'))
+			}
+		}
+		return false
+	}
+
+	boolean targetWasFound = false
+	
+	public void visitMethodCallExpression(MethodCallExpression call)	{
+		if (call!=null && isTargetMethodCallExpression(call)){
+//			targetsFound++;
+		}
+		else {
+			return
+		}
+		ClassNode targetType = getTargetType(context,call)
+		//		sb.append("-----> returned target type is: ${targetType}\n")
+		//		sb.append("-----> isATurtle: ${isATurtle(targetType)}\n")
+		//		sb.append("-----> isATurtle: ${isAPatch(targetType)}\n")
+		//		sb.append("-----> isATurtle: ${isALink(targetType)}\n")
+		List<ClassNode> localContext = new ArrayList<>(context)
+		if (targetType && ( isATurtle(targetType) || isAPatch(targetType) || isALink(targetType))){
+			context.add(targetType)
+		}
+		else {
+			return
+		}
+
+
+		Expression argumentsExpression = call.getArguments()
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List<Expression> arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			//			sb.append("arguments[0].getType() = ${arguments[0].getType()}\n")
+			if (arguments){
+				if (arguments[-1] == myClosure){
+					// stop descending
+					targetWasFound = true
+				}
+				else {
+					argumentsExpression.visit(this);
+					if (!targetWasFound){
+						context = localContext
+					}
+				}
+			}
+		}
+
+	}
+
+	public static boolean isATurtle(ClassNode cn){
+		if(cn){
+			return StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(cn,turtleInterface)
+		}
+		return false
+	}
+
+	public static boolean isAPatch(ClassNode cn){
+		if(cn){
+			return StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(cn,patchInterface)
+		}
+		return false
+	}
+
+	public static boolean isALink(ClassNode cn){
+		if(cn){
+			return StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(cn,abstractLink)
+		}
+		return false
+	}
+
+	/**
+	 * Extract the first generic type from the ClassNode, if it exists
+	 * @param orig
+	 * @return
+	 */
+	ClassNode extractGeneric(ClassNode orig) {
+		GenericsType[] gt = orig.genericsTypes
+		//		sb.append("gt is : ${gt}\n")
+		if (gt?.length == 1) {
+			return gt[0].type
+		}
+		null
+	}
+
+
+
+	ClassNode getTargetTypeArgumentBasedInternal(List<ClassNode> context, Expression argumentsExpression, int position){
+		ClassNode targetType = null
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			Object arg = arguments.get(position)
+			if (arg != null){
+				if( arg instanceof ConstantExpression){
+					targetType = ((ConstantExpression) arg).getType()
+				} else if (arg instanceof VariableExpression){
+					targetType = ((VariableExpression)arg).getType()
+				} else if (arg instanceof MethodCallExpression){
+					targetType = resolveMCEReturnType(context,(MethodCallExpression)arg)
+				} else if (arg instanceof StaticMethodCallExpression){
+					targetType = resolveSMCEReturnType(context,(StaticMethodCallExpression)arg)
+				}
+			}
+		}
+		return targetType
+	}
+
+	// For e.g., "ask" or "Utility.oneOf"
+	ClassNode getTargetTypeArgumentBased(List<ClassNode> context, MethodCallExpression mce, int position){
+		Expression argumentsExpression = mce.getArguments()
+		return getTargetTypeArgumentBasedInternal(context,argumentsExpression,position)
+	}
+	// For e.g., statically imported oneOf, nOf
+	ClassNode getTargetTypeArgumentBased(List<ClassNode> context, StaticMethodCallExpression smce, int position){
+		Expression argumentsExpression = smce.getArguments()
+		return getTargetTypeArgumentBasedInternal(context,argumentsExpression,position)
+	}
+
+	// For "hatch", "sprout", "create"
+	ClassNode getTargetTypeNameBased(List<ClassNode> context, MethodCallExpression nameBaseMce){
+		ClassNode targetType = null
+		for (ClassNode candidate : context.reverse()){
+			targetType = resolveViaMethods(candidate,nameBaseMce)
+			if (targetType){
+				//				sb.append("In getTargetTypeNameBased, found a targetType: ${targetType}\n");
+				return targetType
+			}
+		}
+		return targetType
+	}
+
+	// Gets the target type of a target MethodCallExpression
+	ClassNode getTargetType(List<ClassNode> context, MethodCallExpression targetMce){
+		ClassNode targetType = null
+		if (isMethodArgumentBasedTargetZerothPosition(targetMce)){
+			targetType = getTargetTypeArgumentBased(context,targetMce,0)
+		}
+		else if (isMethodArgumentBasedTargetFirstPosition(targetMce)){
+			targetType = getTargetTypeArgumentBased(context,targetMce,1)
+		}
+		else {
+			targetType = getTargetTypeNameBased(context,targetMce)
+		}
+
+		// Get the appropriate target type if targetType is a collection or array
+		if (targetType){
+			if(targetType.isArray()){
+				return targetType.getComponentType()
+			}
+			if (targetType.isUsingGenerics()){
+
+				String name = targetType.getName()
+				if(isCollectionType(targetType) || isObjectType(targetType)){
+
+					return extractGeneric(targetType)
+				}
+			}
+		}
+		return targetType
+	}
+
+	/**
+	 * Checks to see if the classnode has a 'java.util.Collection' in
+	 * its inheritance hierarchy.
+	 * @param cn
+	 * @return
+	 */
+	boolean isCollectionType(ClassNode cn){
+		ClassNode node = cn;
+		while (node != null) {
+
+			for (ClassNode interf : node.getAllInterfaces()){
+
+				String interfaceName = interf.getName()
+
+				boolean result = interfaceName.startsWith('java.util.Collection')
+
+				if (result) return true
+			}
+			node = node.getSuperClass();
+
+		}
+		return false
+	}
+
+	/**
+	 * Checks to see if the classnode is of type 'java.lang.Object'. The
+	 * implication is that this is called after the fact that the ClassNode
+	 * uses generics.
+	 * @param cn
+	 * @return
+	 */
+	boolean isObjectType(ClassNode cn){
+		return cn.getName().startsWith("java.lang.Object")
+	}
+
+	// Resolve method call via DefaultGroovyMethods contributions
+	ClassNode resolveViaDGM(ClassNode candidate,MethodCallExpression mce){
+		String methodName = mce.getMethodAsString()
+
+		// Get the arguments:
+		Expression argumentsExpression = mce.getArguments()
+		List<ClassNode> list = []
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List<Expression> arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			for(Expression e : arguments){
+				list.add(e.getType())
+			}
+		}
+
+		List<MethodNode> methodNodes = StaticTypeCheckingSupport.findDGMMethodsByNameAndArguments(candidate, methodName, list as ClassNode[])
+
+		if (methodNodes){
+			MethodNode mn = methodNodes.get(0)
+			ClassNode returnType = mn.getReturnType()
+
+			if (returnType?.isUsingGenerics()){
+				GenericsType[] gt = returnType.genericsTypes
+				if (gt?.length == 1){
+					GenericsType g = gt[0]
+					if (g.isPlaceholder()){
+						if (candidate.isUsingGenerics()){
+							GenericsType[] gt2 = candidate.genericsTypes
+							if (gt2?.length == 1){
+								GenericsType g2 = gt2[0]
+								if (!g2.isPlaceholder()){
+									ClassNode temp = returnType.getPlainNodeReference()
+									temp.setGenericsTypes(gt2)
+									return temp
+								}
+							}
+						}
+					}
+				}
+			}
+			return returnType
+
+		}
+		return null
+	}
+
+	/**
+	 * Simple resolve which matches a method name regardless of arguments.
+	 * @param candidate
+	 * @param mce
+	 * @return
+	 */
+	ClassNode resolveViaMethods(ClassNode candidate,MethodCallExpression mce){
+		String methodName = mce.getMethodAsString()
+		Expression argumentsExpression = mce.getArguments()
+		return resolveViaMethodsInternal(candidate, methodName, argumentsExpression)
+	}
+
+	/**
+	 * Simple resolve which matches a method name regardless of arguments.
+	 * @param candidate
+	 * @param mce
+	 * @return
+	 */
+	ClassNode resolveViaMethods(ClassNode candidate,StaticMethodCallExpression smce){
+		String methodName = smce.getMethod()
+		Expression argumentsExpression = smce.getArguments()
+		return resolveViaMethodsInternal(candidate, methodName, argumentsExpression)
+	}
+
+	ClassNode resolveViaMethodsInternal(ClassNode candidate,String methodName, Expression argumentsExpression){
+		int numParams = 0
+		if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+			List<Expression> arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+			for(Expression e : arguments){
+				numParams++
+			}
+		}
+
+		List<MethodNode> methods = candidate.getMethods(methodName)
+		if (methods){
+			for (MethodNode method : methods){
+				Parameter[] params = method.getParameters()
+				if (params != null){
+					int numCandidateParams = params.size()
+					// matching the number of parameters
+					if (numCandidateParams == numParams){
+						ClassNode returnType = method.getReturnType()
+						if (returnType){
+							return returnType
+						}
+					}
+				}
+			}
+		}
+		return null
+	}
+
+	/**
+	 * Originally for static utility method resolution.
+	 * TODO: change name to more appropriate one 
+	 * @param candidate
+	 * @param mce (MethodCallExpression or StaticMethodCallExpression)
+	 * @return
+	 */
+	ClassNode resolveViaUtilities(ClassNode candidate, Expression mce){
+		if (mce instanceof MethodCallExpression || mce instanceof StaticMethodCallExpression){
+			ClassNode returnType = null
+			returnType = resolveViaMethods(candidate, mce)
+			if (returnType) {
+				if (returnType.isUsingGenerics()){
+					GenericsType[] gt = returnType.genericsTypes
+					if (gt?.length == 1){
+						GenericsType g = gt[0]
+						if (g.isPlaceholder()){
+							// get mce arguments
+							Expression argumentsExpression = mce.getArguments()
+							if (argumentsExpression && argumentsExpression instanceof ArgumentListExpression){
+								List arguments = ((ArgumentListExpression)argumentsExpression).getExpressions()
+								if (arguments){
+									int numArgs = arguments.size()
+									// for each argument
+									for (int i = 0; i < numArgs; i++){
+										ClassNode temp = getTargetTypeArgumentBased(context, mce, i)
+
+										if (temp && temp.isUsingGenerics()){
+
+											GenericsType[] gt2 = temp.genericsTypes
+											if (gt2?.length == 1){
+												GenericsType g2 = gt2[0]
+
+												if (!g2.isPlaceholder()){
+
+													ClassNode temp2 = returnType.getPlainNodeReference()
+													temp2.setGenericsTypes(gt2)
+
+													return temp2
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				return returnType
+			}
+		}
+		return null
+	}
+
+	ClassNode resolveMCEReturnType(List<ClassNode> context, MethodCallExpression mce){
+		if(context){
+			if (mce.isImplicitThis()){
+				ClassNode returnType = null
+				for (ClassNode candidate : context.reverse()){
+
+					returnType = resolveViaMethods(candidate,mce)
+					if (returnType){
+
+						return returnType;
+					}
+				}
+
+				for (ClassNode candidate : context.reverse()){
+
+					returnType = resolveViaDGM(candidate,mce)
+					if (returnType){
+						return returnType;
+					}
+				}
+
+				// no candidate declared methods were found in context
+				return null;
+			}
+			// Not implicit case
+			Expression objectExpression = mce.getObjectExpression()
+			ClassNode candidate = null
+			if (objectExpression != null){
+				if( objectExpression instanceof ConstantExpression){
+					candidate = ((ConstantExpression) objectExpression).getType()
+				} else if (objectExpression instanceof VariableExpression){
+					candidate = ((VariableExpression)objectExpression).getType()
+				} else if (objectExpression instanceof MethodCallExpression){
+					candidate = resolveMCEReturnType(context, (MethodCallExpression)objectExpression)
+				}
+				if (candidate){
+					ClassNode returnType = null
+
+					returnType = resolveViaMethods(candidate, mce)
+					if (returnType) {
+						return returnType
+					}
+
+					returnType = resolveViaDGM(candidate, mce)
+					if (returnType){
+
+						return returnType
+					}
+				}
+				else {
+					if (objectExpression instanceof ClassExpression){
+						candidate = ((ClassExpression)objectExpression).getType()
+						if (candidate){
+							return resolveViaUtilities(candidate, mce)
+						}
+					}
+				}
+			}
+		}
+		return null
+	}
+
+	ClassNode resolveSMCEReturnType(List<ClassNode> context, StaticMethodCallExpression smce){
+		//		log "mce2's method is: ${mce.getMethod()}"
+		if(context){
+			ClassNode candidate = smce.getOwnerType()
+			if (candidate){
+				return resolveViaUtilities(candidate,smce)
+			}
+		}
+		return null
+	}
+}
+
+List<ClassNode> lookAtMce2(MethodCallExpression mce, ClosureExpression ce, ClassNode enclosingClass){
+	//	log "looking"
+	MyCodeVisitor2 mcv = new MyCodeVisitor2(ce,enclosingClass)
+	mce.visit(mcv)
+	//	log "targets found = ${mcv.getTargetsFound()}"
+//	log "\n############### StringBuilder contents are:\n${mcv.sb.toString()}"
+	return mcv.context
+}
+
+
+contribute(bind(enclosingClassSet: enclosingClass(subType(MyCodeVisitor2.observerInterface) | subType(MyCodeVisitor2.turtleInterface) | subType(MyCodeVisitor2.patchInterface) | subType(MyCodeVisitor2.abstractLink))) /*& bind(set1 : enclosingCallDeclaringType(isThisType()))*/ & bind(mces : enclosingCall()) & bind(enclosingClosureSet: enclosingClosure())){
+	//	def list1 = set1.toList()
+	//	log "list1 is \n${list1}"
+	//	log "list1.size() is ${list1.size()}"
+
+	def list2 = mces?.iterator()?.toList()
+	//	log "list2 is \n${list2}"
+	//	log "list2.size() is ${list2.size()}"
+
+	if (list2){
+		//		log "list2 isn't empty"
+		// Assumes that mces are ordered from lexically closest to farthest
+		def candidateOutermostMCE = list2[-1]
+		if (enclosingClosureSet && enclosingClassSet){
+			//			log "both enclosingClosureSet and enclosingClassSet are non null and non empty"
+			ClosureExpression enclosingClosure = enclosingClosureSet.iterator().next()
+			ClassNode enclosingClass = enclosingClassSet.iterator().next()
+			if (candidateOutermostMCE instanceof MethodCallExpression){
+				//				log "candidateOutermostMCE instanceof MethodCallExpression"
+				MethodCallExpression mce = (MethodCallExpression)candidateOutermostMCE
+
+
+				if (MyCodeVisitor2.isTargetMethodCallExpression(mce)){
+					//					log("\n####### the found mce is: ${mce}")
+					List<ClassNode> context = lookAtMce2(mce,enclosingClosure,enclosingClass)
+					// remove first element
+					// contribute the rest
+					if (context){
+						//						log "original context is: "
+						//						for (def contrib : context){
+						//							log contrib
+						//						}
+						context = context.drop(1).reverse()
+						context.unique(true)
+						for (ClassNode contrib : context){
+							//							log "########## contributing: ${contrib}"
+							delegatesTo type:contrib, except:[
+								"methodMissing",
+								"propertyMissing",
+								"<clinit>",
+								"getMetaClass",
+								"shapeChanged",
+								"visibilityChanged",
+								"addToFixedLeaves",
+								"addToFreeLeaves",
+								"turtleLocation",
+								"askTurtle",
+								"askPatch",
+								"askLink",
+								"gridLocation",
+								"gridLocationAsNdPoint",
+								"watchMe"
+							]
+						}
+						if (context){
+							// set delegate to the innermost delegatesTo
+							ClassNode contrib = context[0]
+							//							log "########## contributing setDelegateType: ${contrib}"
+							setDelegateType(contrib.getName())
+						}
+					}
+				}
+
+			}
+		}
+	}
+	provider "ReLogo"
+}
+

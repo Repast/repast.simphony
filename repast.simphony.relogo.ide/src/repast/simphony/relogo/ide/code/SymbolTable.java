@@ -26,8 +26,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import repast.simphony.relogo.ide.runtime.ReLogoSupport;
 import repast.simphony.relogo.ide.wizards.WizardUtilities;
+import repast.simphony.relogo.util.ReLogoSupport;
 
 /**
  *
@@ -2048,7 +2048,7 @@ public class SymbolTable {
         declarePrimitive(new Profile("stop", "[agt]void=void/void"){
         	public String encodeInstance(ProcedureInvocation pi, int indent){
         		StringBuffer buf = new StringBuffer();
-        		buf.append("return stop()");
+        		buf.append("return oldStop()");
         		return buf.toString();
         	}
         });  // equiv to return?

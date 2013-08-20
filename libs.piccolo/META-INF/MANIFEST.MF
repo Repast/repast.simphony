@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Piccolo
 Bundle-SymbolicName: libs.piccolo
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: lib/piccolo.jar,
  lib/piccolox.jar
 Export-Package: edu.umd.cs.piccolo,
@@ -18,3 +18,4 @@ Export-Package: edu.umd.cs.piccolo,
  edu.umd.cs.piccolox.swing,
  edu.umd.cs.piccolox.swt,
  edu.umd.cs.piccolox.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.dataLoader.engine.ClassNameContextBuilder;
 import repast.simphony.dataLoader.engine.ClassNameDataLoaderAction;
+import repast.simphony.scenario.Scenario;
 import repast.simphony.scenario.data.Classpath;
 import repast.simphony.ui.plugin.editor.UISaver;
 
@@ -35,9 +36,11 @@ public class CNDataLoaderActionPanel extends UISaver {
   private DefaultComboBoxModel listModel = new DefaultComboBoxModel();
   private ContextBuilder loader;
   private ClassNameDataLoaderAction action;
+  private Scenario scenario;
 
-  public CNDataLoaderActionPanel(ClassNameDataLoaderAction action, Classpath classPath) {
+  public CNDataLoaderActionPanel(ClassNameDataLoaderAction action, Scenario scenario, Classpath classPath) {
     setLayout(new BorderLayout());
+    this.scenario = scenario;
     this.action = action;
     this.loader = action.getBuilder().getDelegateDataLoader();
     name = loader.getClass().getName();
@@ -111,6 +114,7 @@ public class CNDataLoaderActionPanel extends UISaver {
 
   public boolean save() {
     action.setBuilder(new ClassNameContextBuilder(loader));
+    scenario.setDirty(true);
     return true;
   }
 }

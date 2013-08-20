@@ -1,41 +1,46 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.feature.Feature;
-import org.geotools.filter.CompareFilter;
-import org.geotools.filter.Expression;
-import org.geotools.filter.LiteralExpression;
-import org.geotools.styling.Rule;
-import repast.simphony.gis.GeometryUtil;
-import repast.simphony.gis.display.LegendIconMaker;
-
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.table.AbstractTableModel;
+
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.filter.LiteralExpressionImpl;
+import org.geotools.styling.Rule;
+import org.geotools.styling.Style;
+import org.geotools.styling.visitor.DuplicatingStyleVisitor;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
+
 /**
+ * Table for the Value panel that shows how the icon fill appears according to
+ * the value rules.
+ * 
  * @author Nick Collier
- * @version $Revision: 1.3 $ $Date: 2007/06/19 15:38:16 $
+ * @author Eric Tatara
  */
 public class ValueTableModel extends AbstractTableModel {
 
 	private static String[] COL_NAMES = {"Symbol", "Value", "Label"};
 
 	private List<Rule> rules = new ArrayList<Rule>();
-  private Feature sample;
 	private Rule defaultRule;
 	private Map<Class, ObjectConvertor> convertors = new HashMap<Class, ObjectConvertor>();
 	private ObjectConvertor convertor;
 
-	public ValueTableModel(Feature sample) {
-		this.sample = sample;
-		RuleCreator creator = new RuleCreator();
-		defaultRule = creator.createDefaultRule(Color.RED, GeometryUtil.findGeometryType(sample));
+	public ValueTableModel(SimpleFeatureType featureType, Style style) {
+		
+		defaultRule = configureDefaultRule(style);
+		
 		addRule(defaultRule);
-
+		
 		convertors.put(Double.class, new DoubleConvertor());
 		convertors.put(double.class, new DoubleConvertor());
 		convertors.put(int.class, new IntegerConvertor());
@@ -49,6 +54,24 @@ public class ValueTableModel extends AbstractTableModel {
 		convertors.put(String.class, new StringConvertor());
 	}
 
+	/**
+	 * Configures the rule that originates from the RuleEditPanel for use here.
+	 * 
+	 * @param style the style (rule) from the RuleEditPanel
+	 * @return rule for use in the ValueTableModel
+	 */
+	private Rule configureDefaultRule(Style style){
+		DuplicatingStyleVisitor dsv = new DuplicatingStyleVisitor(
+				CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
+		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
+		Rule rule = (Rule) dsv.getCopy();
+		rule.setTitle("<Default>");
+		rule.setName("Default");
+		rule.setIsElseFilter(true);
+		
+		return rule;
+	}
+	
 	public void init(Class attributeType) {
 		clear();
 		convertor = convertors.get(attributeType);
@@ -61,11 +84,6 @@ public class ValueTableModel extends AbstractTableModel {
 		convertor = convertors.get(attributeType);
 	}
 
-	/**
-	 * Gets the default rule.
-	 *
-	 * @return the default rule.
-	 */
 	public Rule getDefaultRule() {
 		return defaultRule;
 	}
@@ -179,7 +197,7 @@ public class ValueTableModel extends AbstractTableModel {
 			case 1:
 				return literalValue(rule);
 			case 2:
-				return rule.getTitle();
+				return rule.getDescription().getTitle().toString();
 			default:
 				return "";
 		}
@@ -211,29 +229,30 @@ public class ValueTableModel extends AbstractTableModel {
 	public List<Rule> getRules(boolean includeDefault) {
 		return includeDefault ? rules : rules.subList(1, rules.size());
 	}
-
+	
 	private Icon getIcon(Rule rule) {
-		return LegendIconMaker.makeLegendIcon(12, rule, sample);
+    return StylePreviewFactory.createSmallIcon(rule);
 	}
-
-	private LiteralExpression findLiteralExpression(Rule rule) {
-		CompareFilter filter = (CompareFilter) rule.getFilter();
-		Expression exp = filter.getRightValue();
-		if (exp instanceof LiteralExpression) return (LiteralExpression) exp;
-		else return (LiteralExpression) filter.getLeftValue();
+	
+	private Literal findLiteralExpression(Rule rule) {
+		BinaryComparisonOperator filter = (BinaryComparisonOperator)rule.getFilter();
+		Expression exp = filter.getExpression2();
+		if (exp instanceof Literal) return (Literal) exp;
+		else return (Literal) filter.getExpression1();
 	}
 
 	private String literalValue(Rule rule) {
-		if (!rule.hasElseFilter()) {
-			LiteralExpression exp = findLiteralExpression(rule);
-			return exp.getLiteral().toString();
+		if (!rule.isElseFilter()) {
+			Expression exp = findLiteralExpression(rule);
+			return exp.evaluate(null,String.class);
 		}
 		return "<Default>";
 	}
 
 	private void updateRuleLiteral(Rule rule, Object obj) {
-		LiteralExpression literal = findLiteralExpression(rule);
-		literal.setLiteral(obj);
+		LiteralExpressionImpl literal = (LiteralExpressionImpl)findLiteralExpression(rule);
+		
+		literal.setValue(obj);
 	}
 
 	/**

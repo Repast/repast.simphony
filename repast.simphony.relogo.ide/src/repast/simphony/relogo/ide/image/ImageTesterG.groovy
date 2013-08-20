@@ -1,22 +1,16 @@
 package repast.simphony.relogo.ide.image;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
+import groovy.swing.SwingBuilder
 
-import com.thoughtworks.xstream.XStream;
-import javax.swing.JPanel;
+import java.awt.Color
+import java.awt.FlowLayout
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.List;
+import javax.swing.DefaultComboBoxModel
+import javax.swing.JFrame
 
-import groovy.swing.SwingBuilder;
+import repast.simphony.relogo.image.NLImage
+
+import com.thoughtworks.xstream.XStream
 
 /**
  * @author jozik

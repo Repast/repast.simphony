@@ -79,8 +79,8 @@
          point="org.eclipse.jdt.ui.javaElementFilters">
       <filter
             class="repast.simphony.relogo.ide.ReLogoFilter"
-            description="Filters out non-core ReLogo resources from Package Explorer."
-            enabled="false"
+            description="Filters out non-core ReLogo resources from Package Explorer when in the ReLogo perspective."
+            enabled="true"
             id="repast.simphony.relogo.ide.relogoResourceFilter"
             name="ReLogo Resource Filter"
             targetId="org.eclipse.jdt.ui.PackageExplorer">
@@ -168,17 +168,6 @@
                id="repast.simphony.relogo.ide.relogoperspective">
          </perspectiveShortcut>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-            delegate="repast.simphony.relogo.ide.ReLogoLaunchConfigurationDelegate"
-            delegateDescription="Cleans the project prior to launching."
-            id="repast.simphony.relogo.ide.relogoLaunchDelegate"
-            modes="run,debug,profile"
-            name="ReLogo Launch Delegate"
-            type="org.eclipse.jdt.launching.localJavaApplication">
-      </launchDelegate>
    </extension>
 
 </plugin>

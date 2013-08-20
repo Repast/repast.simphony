@@ -18,6 +18,8 @@ import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 
+import repast.simphony.relogo.image.NLImagePrimitive;
+
 /**
  *
  * @author CBURKE

@@ -13,18 +13,24 @@ public class AbstractDataSetBuilder {
 
   protected String id;
   private ScheduleParameters scheduleParams;
+  private boolean atEnd;
   protected List<SinkBuilder> sinkBuilders = new ArrayList<SinkBuilder>();
 
   public AbstractDataSetBuilder(String id) {
     this.id = id;
   }
 
-  public void defineScheduleParameters(ScheduleParameters params) {
+  public void defineScheduleParameters(ScheduleParameters params, boolean atEnd) {
     this.scheduleParams = params;
+    this.atEnd = atEnd;
   }
 
   public ScheduleParameters getScheduleParameters() {
     return scheduleParams;
+  }
+  
+  public boolean isScheduleAtEnd() {
+    return atEnd;
   }
 
   public String getId() {

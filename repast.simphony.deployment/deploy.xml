@@ -55,7 +55,7 @@
 		<!-- "${outputDirectory}/plugins" contains the results -->
 	</target>
 
-	
+
 	<target name="DeployToEclipseIDE" depends="Clean,BinAndSrcJAR,CopyFiles,PluginGeneration">
 		<!-- "${outputDirectory}/plugins" contains the results -->
 	</target>
@@ -75,13 +75,13 @@
 
 	<target name="BinAndSrcJAR" depends="">
 
-	<path id="NewProjectDirectoryAsPath">
-      <pathelement location="${projectDirectory}"/>
-    </path>
+		<path id="NewProjectDirectoryAsPath">
+			<pathelement location="${projectDirectory}" />
+		</path>
 		<pathconvert pathsep=" " property="NewProjectDirectory" refid="NewProjectDirectoryAsPath">
 			<map from="${projectPath}" to="" />
 		</pathconvert>
-		
+
 		<echo message="Resolving JAR Classpath..." />
 		<fileset id="RawJARClasspath" dir="..">
 			<include name="**/*.jar" />
@@ -94,35 +94,39 @@
 			<exclude name="**/Repast extras/**" />
 			<exclude name="**/RepastFeature/**" />
 			<exclude name="**/RepastSiteUpdate/**" />
-			<exclude name="**/repast.simphony.distributedBatch/transferFiles/**" />
 			<exclude name="**/watcher_test.jar" />
 			<exclude name="**/groovy-all-*.jar" />
 			<exclude name="**/xmltask.jar" />
+
+			<exclude name="**/repast.simphony.distributed.batch/**" />
+			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
+			<exclude name="**/repast.simphony.statecharts.diagram/**" />
 		</fileset>
-		
+
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
-			<map from="${workspaceDirectory}" to="." />
+		<!-- MJB 5/9/2013 Comment out to prevent duplication of directory name in path (John Murphy) -->
+		<!--	<map from="${workspaceDirectory}" to="." /> -->
 			<map from="${NewProjectDirectory}" to="." />
 		</pathconvert>
 
 		<echo message="Generic JAR Classpath:  ${GenericJARClasspath}" />
-		<tempfile property="tempfile.txt"/>
-		<echo message="${GenericJARClasspath}" file="${tempfile.txt}"/>
+		<tempfile property="tempfile.txt" />
+		<echo message="${GenericJARClasspath}" file="${tempfile.txt}" />
 		<loadfile srcfile="${tempfile.txt}" property="JARClasspath">
- 			<filterchain>
-				  <replaceregex pattern="(\\)" replace="\/" flags="g"/>
-   				<replaceregex pattern="(\./.*?)\/" replace="\1_${releaseVersionNumber}\/" flags="g"/>
+			<filterchain>
+				<replaceregex pattern="(\\)" replace="\/" flags="g" />
+				<replaceregex pattern="(\./.*?)\/" replace="\1_${releaseVersionNumber}\/" flags="g" />
 			</filterchain>
 		</loadfile>
-		<delete file="${tempfile.txt}"/>
+		<delete file="${tempfile.txt}" />
 		<echo message="Resolved JAR Classpath: ${JARClasspath}" />
 
 		<jar destfile="${outputDirectory}/repast.simphony.bin_and_src.jar" compress="true">
 			<manifest id="RepastJARManifest">
 				<attribute name="Class-Path" value="${JARClasspath}" />
 			</manifest>
-			<service type="org.codehaus.groovy.transform.ASTTransformation" 
-				provider="repast.simphony.relogo.ast.ReLogoGlobalASTTransformation"/>
+			<!-- <service type="org.codehaus.groovy.transform.ASTTransformation" 
+				provider="repast.simphony.relogo.ast.ReLogoGlobalASTTransformation"/>-->
 
 			<fileset dir="../repast.simphony.batch/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -135,20 +139,12 @@
 			<fileset dir="../repast.simphony.batch/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
-			<fileset dir="../repast.simphony.distributedBatch/src" casesensitive="no">
-							<include name="**/*.java" />
-							<include name="**/*.groovy" />
-						</fileset>
-						<fileset dir="../repast.simphony.distributedBatch/bin" casesensitive="no">
-							<include name="**/*.class" />
-						</fileset>
 
 			<fileset dir="../repast.simphony.chart/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.chart/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -157,7 +153,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.core/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -166,7 +162,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.data.ui/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -175,7 +171,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.data/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -184,7 +180,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.dataLoader/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -193,7 +189,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.dataLoader.ui/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -202,7 +198,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.essentials/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -211,7 +207,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.freezedry/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -220,7 +216,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.gis/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -229,7 +225,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.groovy/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -238,7 +234,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.gui/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -247,7 +243,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.integration/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -256,7 +252,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.iReport/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -265,7 +261,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.jasperreports/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -274,7 +270,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.jdbcfreezedryer/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -291,11 +287,11 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.matlab/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.ora/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -303,7 +299,7 @@
 			<fileset dir="../repast.simphony.ora/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.pajek/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -316,7 +312,7 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.plugin.util/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -325,52 +321,34 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.R/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.relogo.runtime/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
 			<fileset dir="../repast.simphony.relogo.runtime/bin" casesensitive="no">
 				<include name="**/*.class" />
+				<exclude name="**/dsld/**" />
 			</fileset>
-			
-			<fileset dir="../repast.simphony.relogo.ide/src" casesensitive="no">
-							<include name="**/*.java" />
-							<include name="**/*.groovy" />
-						</fileset>
-						<fileset dir="../repast.simphony.relogo.ide/bin" casesensitive="no">
-							<include name="**/*.class" />
-						</fileset>
 
-			<!--<fileset dir="../repast.simphony.score/src" casesensitive="no">
+			<fileset dir="../repast.simphony.relogo.ide/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
-				<include name="**/*.ecore" />
 			</fileset>
-			<fileset dir="../repast.simphony.score/srcgen" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-				<include name="**/*.ecore" />
-			</fileset>
-			<fileset dir="../repast.simphony.score/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-				<include name="**/*.ecore" />
-			</fileset>
-			<fileset dir="../repast.simphony.score/bin" casesensitive="no">
+			<fileset dir="../repast.simphony.relogo.ide/bin" casesensitive="no">
 				<include name="**/*.class" />
-				<include name="**/*.ecore" />
-			</fileset>-->
+			</fileset>
+
 
 			<fileset dir="../repast.simphony.eclipse/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.eclipse/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -379,40 +357,18 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.runtime/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
 
-			<!--<fileset dir="../repast.simphony.score.edit/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.score.edit/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.score.edit/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
 
-			<fileset dir="../repast.simphony.score.ide/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.score.ide/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.score.ide/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>-->
 
 			<fileset dir="../repast.simphony.scenario/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.scenario/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -421,40 +377,44 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.spreadsheet/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
 
-			<fileset dir="../repast.simphony.systemsdynamics/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-		<!--	<fileset dir="../repast.simphony.systemsdynamics/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>-->
-			<fileset dir="../repast.simphony.systemsdynamics/bin" casesensitive="no">
+			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
-			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
-							<include name="**/*.class" />
-						</fileset>
 			<fileset dir="../repast.simphony.userpanel.ui/src" casesensitive="no">
-										<include name="**/*.java" />
-										<include name="**/*.groovy" />
-									</fileset>
-			
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
+
+			<fileset dir="../repast.simphony.systemdynamics.generator/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
+			<fileset dir="../repast.simphony.systemdynamics.generator/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
+
+
+			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="../repast.simphony.userpanel.ui/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
 
 			<fileset dir="../repast.simphony.visad/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			<!--<fileset dir="../repast.simphony.visad/test" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>-->
+			
 			<fileset dir="../repast.simphony.visad/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
@@ -471,11 +431,11 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.weka/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.terracotta/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -483,6 +443,23 @@
 			<fileset dir="../repast.simphony.terracotta/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+
+			<!-- Statechart projects -->
+			<fileset dir="../repast.simphony.statecharts/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+			<fileset dir="../repast.simphony.statecharts/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="../repast.simphony.statecharts.visualization/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+			<fileset dir="../repast.simphony.statecharts.visualization/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
+
 
 		</jar>
 	</target>
@@ -506,7 +483,7 @@
 				<exclude name="repast.simphony.*/plugin.xml" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${outputDirectory}" overwrite="true">
 			<fileset dir=".." casesensitive="no">
 				<include name="repast.simphony.demos/**" />

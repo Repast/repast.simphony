@@ -2,14 +2,27 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.sql
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
- repast.simphony.data.ui,
- repast.simphony.essentials;bundle-version="1.1.0"
+ repast.simphony.data.ui
 Bundle-Vendor: %providerName
-Export-Package: repast.simphony.sql
+Export-Package: com.gentlyweb.utils,
+ org.josql,
+ org.josql.events,
+ org.josql.expressions,
+ org.josql.filters,
+ org.josql.functions,
+ org.josql.functions.regexp,
+ org.josql.incubator,
+ org.josql.internal,
+ org.josql.parser,
+ org.josql.utils,
+ repast.simphony.sql
+Bundle-ClassPath: lib/JoSQL-2.2.jar,
+ lib/gentlyWEB-utils-1.1.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

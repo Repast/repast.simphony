@@ -18,6 +18,7 @@ import org.antlr.stringtemplate.language.DefaultTemplateLexer;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.codehaus.groovy.eclipse.dsl.RefreshDSLDJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -31,12 +32,16 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
@@ -57,14 +62,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-import repast.simphony.agents.base.Util;
-import repast.simphony.agents.designer.core.AgentBuilderPlugin;
+import repast.simphony.eclipse.RSProjectConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
+import repast.simphony.eclipse.util.Utilities;
 import repast.simphony.relogo.ide.ReLogoFilter;
 import repast.simphony.relogo.ide.code.Attribute;
 import repast.simphony.relogo.ide.code.ProcedureDefinition;
 import repast.simphony.relogo.ide.code.ProcedureInvocation;
 import repast.simphony.relogo.ide.code.RelogoClass;
-import repast.simphony.relogo.ide.image.NLImage;
+import repast.simphony.relogo.ide.handlers.ReLogoBuilder;
+import repast.simphony.relogo.ide.handlers.ReLogoBuilderTests;
 import repast.simphony.relogo.ide.intf.NLChooser;
 import repast.simphony.relogo.ide.intf.NLControl;
 import repast.simphony.relogo.ide.intf.NLGraphicsWindow;
@@ -72,6 +79,7 @@ import repast.simphony.relogo.ide.intf.NLInputBox;
 import repast.simphony.relogo.ide.intf.NLMonitor;
 import repast.simphony.relogo.ide.intf.NLSlider;
 import repast.simphony.relogo.ide.intf.NLSwitch;
+import repast.simphony.relogo.image.NLImage;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -84,17 +92,18 @@ import com.thoughtworks.xstream.XStream;
  * the same extension, it will be able to open it.
  */
 
-public class NetlogoImportWizard extends NewElementWizard implements
-		IImportWizard {
-	
+public class NetlogoImportWizard extends NewElementWizard implements IImportWizard {
+
 	static Logger logger = Logger.getLogger(NetlogoImportWizard.class);
-	   
+
 	private static final String PAGE_NAME = "NewRelogoProjectWizardPage"; //$NON-NLS-1$
+	private static final String SRC_GEN = "src-gen";
+	private static final String SRC = "src";
 
 	protected NetlogoWizardPageOne pageOne;
 	protected NetlogoWizardPageTwo pageTwo;
 	protected IConfigurationElement fConfigElement;
-	
+
 	private IFolder shapesFolder;
 
 	/**
@@ -121,8 +130,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		 * System.out.println("\tLabel:\t"+descriptors[i].getLabel());
 		 * System.out.println("\tID:\t"+descriptors[i].getNatureId());
 		 * System.out.println("\tSet IDs:\t"+descriptors[i].getNatureSetIds());
-		 * System
-		 * .out.println("\tReqd:\t"+descriptors[i].getRequiredNatureIds());
+		 * System .out.println("\tReqd:\t"+descriptors[i].getRequiredNatureIds());
 		 * System.out.println("\tLink?:\t"+descriptors[i].isLinkingAllowed()); }
 		 */
 		pageOne = new NetlogoWizardPageOne(false);
@@ -138,8 +146,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	 * org.eclipse.jdt.internal.ui.wizards.NewElementWizard#finishPage(org.eclipse
 	 * .core.runtime.IProgressMonitor)
 	 */
-	protected void finishPage(IProgressMonitor monitor)
-			throws InterruptedException, CoreException {
+	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
 		pageTwo.performFinish(monitor); // use the full progress monitor
 	}
 
@@ -151,8 +158,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		// final String containerName = page.getContainerName();
 		final String projectName = pageOne.getProjectName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					boolean res = doFinish(projectName, monitor);
 				} catch (CoreException e) {
@@ -168,8 +174,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException
-					.getMessage());
+			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
 		return true;
@@ -197,8 +202,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		// getWorkbench().getActiveWorkbenchWindow());
 	}
 
-	public static IPersistentPreferenceStore preferenceStore(
-			final IProject project) {
+	public static IPersistentPreferenceStore preferenceStore(final IProject project) {
 		return new ScopedPreferenceStore(new ProjectScope(project),
 				"org.codehaus.groovy.eclipse.preferences");
 	}
@@ -209,14 +213,13 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	 * file.
 	 */
 
-	private boolean doFinish(String projectName, IProgressMonitor monitor)
-			throws CoreException {
+	private boolean doFinish(String projectName, IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+		subMonitor.subTask("Creating " + projectName);
 		// create a sample file
-		monitor.beginTask("Creating " + projectName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(projectName));
-		monitor.worked(1);
-		boolean res = superPerformFinish(monitor); // super.performFinish();
+		boolean res = superPerformFinish(subMonitor.newChild(40)); // super.performFinish();
 		if (res) {
 			final IJavaElement newElement = getCreatedElement();
 
@@ -230,12 +233,12 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			// preferenceStore(relogoProject).setValue(
 			// "groovy.compiler.output.path", groovyOutputPath );;
 			try {
-				createStandardRelogoDirectories(relogoProject, monitor);
+				createStandardRelogoDirectories(relogoProject, subMonitor.newChild(50));
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// AgentBuilderPlugin.addRepastSimphonyNature(relogoProject,monitor,
+			// RepastSimphonyPlugin.getInstance().addRepastSimphonyNature(relogoProject,monitor,
 			// false,true);
 			// selectAndReveal(relogoProject);
 
@@ -248,24 +251,23 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					// (new ShowInPackageViewAction(activePart.getSite()))
 					// .run(newElement);
 					// }
-					IWorkbenchWindow workbenchWindow = PlatformUI
-							.getWorkbench().getActiveWorkbenchWindow();
+					IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 					if (workbenchWindow != null) {
-						IViewPart view = workbenchWindow.getActivePage()
-								.findView(JavaUI.ID_PACKAGES);
+						IViewPart view = workbenchWindow.getActivePage().findView(JavaUI.ID_PACKAGES);
 						if (view != null && view instanceof IPackagesViewPart) {
 							IPackagesViewPart pv = (IPackagesViewPart) view;
 							ViewerFilter[] filters = pv.getTreeViewer().getFilters();
 							boolean filtered = false;
-							for (ViewerFilter vf : filters){
-								if (vf instanceof ReLogoFilter){
+							for (ViewerFilter vf : filters) {
+								if (vf instanceof ReLogoFilter) {
 									filtered = true;
 								}
 							}
-							// If ReLogoFilter is active, expand to default level, otherwise leave closed.
-							if (filtered){
+							// If ReLogoFilter is active, expand to default level, otherwise
+							// leave closed.
+							if (filtered) {
 								pv.getTreeViewer().expandToLevel(javaProjectRef, 3);
-								if (shapesFolder != null){
+								if (shapesFolder != null) {
 									pv.getTreeViewer().collapseToLevel(shapesFolder, AbstractTreeViewer.ALL_LEVELS);
 								}
 							}
@@ -273,8 +275,12 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 				}
 			});
+			
+		// Ensure that dslds are all available
+      final RefreshDSLDJob job = new RefreshDSLDJob(relogoProject);
+      job.run(new NullProgressMonitor());
 		}
-		monitor.worked(1);
+		subMonitor.worked(10);
 		return res;
 	}
 
@@ -291,8 +297,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	}
 
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "relogo", IStatus.OK,
-				message, null);
+		IStatus status = new Status(IStatus.ERROR, "relogo", IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
 
@@ -305,11 +310,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	}
 
 	/*
-	 * Stores the configuration element for the wizard. The config element will
-	 * be used in <code>performFinish</code> to set the result perspective.
+	 * Stores the configuration element for the wizard. The config element will be
+	 * used in <code>performFinish</code> to set the result perspective.
 	 */
-	public void setInitializationData(IConfigurationElement cfig,
-			String propertyName, Object data) {
+	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
 		fConfigElement = cfig;
 	}
 
@@ -333,310 +337,283 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		return pageTwo.getJavaProject();
 	}
 
+	private IPath checkAndGetSourcePath(String srcPathName, IProject project,
+			IJavaProject javaProject, IProgressMonitor monitor) throws CoreException {
+		// Create src-gen directory
+		IPath srcPath = javaProject.getPath().append(srcPathName + "/");
+		// project relative
+		IFolder srcGenfolder = project.getFolder(srcPathName);
+
+		if (!srcGenfolder.exists()) {
+			// creates within the project
+			srcGenfolder.create(true, true, monitor);
+			IClasspathEntry[] entries = javaProject.getRawClasspath();
+			boolean found = false;
+			for (IClasspathEntry entry : entries) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getPath().equals(srcPath)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				IClasspathEntry[] newEntries = new IClasspathEntry[entries.length + 1];
+				System.arraycopy(entries, 0, newEntries, 0, entries.length);
+				IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath, null);
+				newEntries[entries.length] = srcEntry;
+				javaProject.setRawClasspath(newEntries, null);
+			}
+
+		}
+
+		return srcPath;
+	}
+
 	/**
 	 * Creates the standard set of Relogo directories with default contents.
-	 * Returns the source folder into which all of the generated model files
-	 * will be written.
+	 * Returns the source folder into which all of the generated model files will
+	 * be written.
 	 * 
 	 * @param project
 	 * @return
 	 * @throws CoreException
 	 * @throws UnsupportedEncodingException
 	 */
-	protected IFolder createStandardRelogoDirectories(IProject project,
-			IProgressMonitor monitor) throws CoreException,
-			UnsupportedEncodingException {
+	protected IFolder createStandardRelogoDirectories(IProject project, IProgressMonitor monitor)
+			throws CoreException, UnsupportedEncodingException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Creating ReLogo Directories",100);
 		// IFolder projectFolder = project.getFolder(".");
 		String projectName = project.getDescription().getName();
 		String packageName = pageOne.getPackageName();
 		IJavaProject javaProject = pageTwo.getJavaProject();
-		IClasspathEntry list[] = javaProject.getRawClasspath();
-		IPath srcPath = null;
-		for (IClasspathEntry entry : list) {
-			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				srcPath = entry.getPath();
-			}
-		}
+
+		IPath srcPath = checkAndGetSourcePath(SRC, project, javaProject, subMonitor.newChild(1));
+
+		IPath srcGenPath = checkAndGetSourcePath(SRC_GEN, project, javaProject, subMonitor.newChild(1));
 
 		if (srcPath != null) {
-			IFolder srcFolder = javaProject.getProject().getFolder(
-					srcPath.removeFirstSegments(1));
+			IFolder srcFolder = project.getFolder(SRC);
 
-			// IFolder srcFolder = javaProject.getProject().getFolder(
-			// srcPath.removeFirstSegments(1));
 			String scenarioDirectory = projectName + ".rs";
-			String mainDataSourcePluginDirectory = AgentBuilderPlugin
+			String mainDataSourcePluginDirectory = RepastSimphonyPlugin.getInstance()
 					.getPluginInstallationDirectory();
 			// Code from
 			// repast.simphony.agents.designer.ui.wizards.NewProjectCreationWizard's
 			// finishPage method
-			String[][] variableMap = {
-					{ "%MODEL_NAME%", projectName },
-					{ "%PROJECT_NAME%", projectName },
-					{ "%SCENARIO_DIRECTORY%", scenarioDirectory },
+			String[][] variableMap = { { "%MODEL_NAME%", projectName },
+					{ "%PROJECT_NAME%", projectName }, { "%SCENARIO_DIRECTORY%", scenarioDirectory },
 					{ "%PACKAGE%", packageName },
-					{ "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%",
-							mainDataSourcePluginDirectory } };
+					{ "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
 			IFolder newFolder = null;
 			newFolder = createFolderResource(project, "batch");
 
-			Util.copyFileFromPluginInstallation("batch/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("batch/batch_params.xml",
-					newFolder, "batch_params.xml", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("batch/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("batch/batch_params.xml", newFolder,
+					"batch_params.xml", variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "docs");
-			Util.copyFileFromPluginInstallation("docs/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("docs/index.html", newFolder,
-					"index.html", variableMap, monitor);
-			
+			Utilities.copyFileFromPluginInstallation("docs/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("docs/index.html", newFolder, "index.html",
+					variableMap, subMonitor.newChild(1));
+
 			// for distributed batch (see SIM-459)
 			newFolder = createFolderResource(project, "transferFiles");
-			
-			// for distributed batch (see SIM-459)			
+
+			// for distributed batch (see SIM-459)
 			newFolder = createFolderResource(project, "output");
 
 			newFolder = createFolderResource(project, "freezedried_data");
-			Util.copyFileFromPluginInstallation("freezedried_data/ReadMe.txt",
-					newFolder, "ReadMe.txt", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("freezedried_data/ReadMe.txt", newFolder,
+					"ReadMe.txt", variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "icons");
 
-			Util.copyFileFromPluginInstallation("icons/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("icons/model.bmp", newFolder,
-					"model.bmp", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("icons/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("icons/model.bmp", newFolder, "model.bmp",
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "integration");
-			Util.copyFileFromPluginInstallation("integration/ReadMe.txt",
-					newFolder, "ReadMe.txt", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("integration/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "launchers");
-			Util.copyFileFromPluginInstallation("launchers/ReadMe.txt",
-					newFolder, "ReadMe.txt", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
 
-			Util.createReLogoLaunchConfigurations(javaProject, newFolder,
+			new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder,
 					scenarioDirectory);
 			// loadStringTemplates();
 			// exportLauncherTemplates(newFolder, projectName);
 
 			newFolder = createFolderResource(project, "lib");
-			Util.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "misc");
-			Util.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder, "ReadMe.txt",
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "installer");
-			Util.copyFileFromPluginInstallation(
-					"installer/installation_components.xml", newFolder,
-					"installation_components.xml", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"installer/shortcuts_Windows.xml", newFolder,
-					"shortcuts_Windows.xml", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"installer/shortcuts_Windows_Registry.xml", newFolder,
-					"shortcuts_Windows_Registry.xml", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml",
-					newFolder, "shortcuts_Xnix.xml", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("installer/splash_screen.png",
-					newFolder, "splash_screen.png", monitor);
-			Util.copyFileFromPluginInstallation("installer/start_model.bat",
-					newFolder, "start_model.bat", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"installer/start_model.command", newFolder,
-					"start_model.command", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"installer/installation_coordinator.xml", newFolder,
-					"installation_coordinator.xml", variableMap, monitor);
-
+			Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
+					"installation_components.xml", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
+					"shortcuts_Windows.xml", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows_Registry.xml",
+					newFolder, "shortcuts_Windows_Registry.xml", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
+					"shortcuts_Xnix.xml", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
+					"splash_screen.png", subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
+					"start_model.bat", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
+					"start_model.command", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
+					"installation_coordinator.xml", variableMap, subMonitor.newChild(1));
+			
 			newFolder = createFolderResource(project, "repast-licenses");
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/apache-license.txt", newFolder,
-					"apache-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/asm-license.txt", newFolder,
-					"asm-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/axion-license.txt", newFolder,
-					"axion-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/binding-license.txt", newFolder,
-					"binding-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/common-public-license.txt", newFolder,
-					"common-public-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/concurrent-license.pdf", newFolder,
-					"concurrent-license.pdf", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("repast-licenses/CPL.txt",
-					newFolder, "CPL.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/forms-license.txt", newFolder,
-					"forms-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/geotools-license.txt", newFolder,
-					"geotools-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/groovy-license.txt", newFolder,
-					"groovy-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/hsqldb-license.txt", newFolder,
-					"hsqldb-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jakarta-commons-collections-license.txt",
-					newFolder, "jakarta-commons-collections-license.txt",
-					variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jaxen-license.txt", newFolder,
-					"jaxen-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jh-license.txt", newFolder,
-					"jh-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jide-oss-license.txt", newFolder,
-					"jide-oss-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jmatlink-license.txt", newFolder,
-					"jmatlink-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jmf-license.txt", newFolder,
-					"jmf-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jmock-license.txt", newFolder,
-					"jmock-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jscience-license.txt", newFolder,
-					"jscience-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jsp-servlet-api-license.txt", newFolder,
-					"jsp-servlet-api-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jts-license.txt", newFolder,
-					"jts-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/jung-license.txt", newFolder,
-					"jung-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation("repast-licenses/lgpl-2.1.txt",
-					newFolder, "lgpl-2.1.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/LICENSE-jgoodies.txt", newFolder,
-					"LICENSE-jgoodies.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/log4j-license.txt", newFolder,
-					"log4j-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
+			Utilities.copyFileFromPluginInstallation("repast-licenses/apache-license.txt", newFolder,
+					"apache-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/asm-license.txt", newFolder,
+					"asm-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/axion-license.txt", newFolder,
+					"axion-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/binding-license.txt", newFolder,
+					"binding-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/common-public-license.txt",
+					newFolder, "common-public-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/concurrent-license.pdf", newFolder,
+					"concurrent-license.pdf", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/CPL.txt", newFolder, "CPL.txt",
+					variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/forms-license.txt", newFolder,
+					"forms-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/geotools-license.txt", newFolder,
+					"geotools-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/groovy-license.txt", newFolder,
+					"groovy-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/hsqldb-license.txt", newFolder,
+					"hsqldb-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation(
+					"repast-licenses/jakarta-commons-collections-license.txt", newFolder,
+					"jakarta-commons-collections-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jaxen-license.txt", newFolder,
+					"jaxen-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jh-license.txt", newFolder,
+					"jh-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jide-oss-license.txt", newFolder,
+					"jide-oss-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jmatlink-license.txt", newFolder,
+					"jmatlink-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jmf-license.txt", newFolder,
+					"jmf-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jmock-license.txt", newFolder,
+					"jmock-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jscience-license.txt", newFolder,
+					"jscience-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jsp-servlet-api-license.txt",
+					newFolder, "jsp-servlet-api-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jts-license.txt", newFolder,
+					"jts-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/jung-license.txt", newFolder,
+					"jung-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/lgpl-2.1.txt", newFolder,
+					"lgpl-2.1.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/LICENSE-jgoodies.txt", newFolder,
+					"LICENSE-jgoodies.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/log4j-license.txt", newFolder,
+					"log4j-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation(
 					"repast-licenses/mitre-relogo-import-wizard-license.txt", newFolder,
-					"mitre-relogo-import-wizard-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/MPL-license.txt", newFolder,
-					"MPL-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/msql-connector-license.txt", newFolder,
-					"msql-connector-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/mx4j-license.txt", newFolder,
-					"mx4j-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/openforecast-license.txt", newFolder,
-					"openforecast-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/piccolo-license.txt", newFolder,
-					"piccolo-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/proactive-license.txt", newFolder,
-					"proactive-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/repast-license.txt", newFolder,
-					"repast-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/saxpath-license.txt", newFolder,
-					"saxpath-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/swingx-license.txt", newFolder,
-					"swingx-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/table-layout-license.txt", newFolder,
-					"table-layout-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/violinstrings-license.txt", newFolder,
-					"violinstrings-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/wizard-license.txt", newFolder,
-					"wizard-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/xpp3-license.txt", newFolder,
-					"xpp3-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/xstream-license.txt", newFolder,
-					"xstream-license.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/license_apache.txt", newFolder,
-					"license_apache.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/license_apache11.txt", newFolder,
-					"license_apache11.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/license_flow4j.txt", newFolder,
-					"license_flow4j.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/license_flow4J-eclipse.txt", newFolder,
-					"license_flow4J-eclipse.txt", variableMap, monitor);
-			Util.copyFileFromPluginInstallation(
-					"repast-licenses/license_xstream.txt", newFolder,
-					"license_xstream.txt", variableMap, monitor);
-
+					"mitre-relogo-import-wizard-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/MPL-license.txt", newFolder,
+					"MPL-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/msql-connector-license.txt",
+					newFolder, "msql-connector-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/mx4j-license.txt", newFolder,
+					"mx4j-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/openforecast-license.txt",
+					newFolder, "openforecast-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/piccolo-license.txt", newFolder,
+					"piccolo-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/proactive-license.txt", newFolder,
+					"proactive-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/repast-license.txt", newFolder,
+					"repast-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/saxpath-license.txt", newFolder,
+					"saxpath-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/swingx-license.txt", newFolder,
+					"swingx-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/table-layout-license.txt",
+					newFolder, "table-layout-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/violinstrings-license.txt",
+					newFolder, "violinstrings-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/wizard-license.txt", newFolder,
+					"wizard-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/xpp3-license.txt", newFolder,
+					"xpp3-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/xstream-license.txt", newFolder,
+					"xstream-license.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache.txt", newFolder,
+					"license_apache.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache11.txt", newFolder,
+					"license_apache11.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4j.txt", newFolder,
+					"license_flow4j.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4J-eclipse.txt",
+					newFolder, "license_flow4J-eclipse.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("repast-licenses/license_xstream.txt", newFolder,
+					"license_xstream.txt", variableMap, subMonitor.newChild(1));
+			
 			newFolder = srcFolder.getFolder("../license.txt");
-			Util.copyFileFromPluginInstallation("license.txt", newFolder, "",
-					variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("license.txt", newFolder, "", variableMap, subMonitor.newChild(1));
 
-			newFolder = srcFolder
-					.getFolder("../MessageCenter.log4j.properties");
-			Util.copyFileFromPluginInstallation(
-					"MessageCenter.log4j.properties", newFolder, "",
-					variableMap, monitor);
+			newFolder = srcFolder.getFolder("../MessageCenter.log4j.properties");
+			Utilities.copyFileFromPluginInstallation("MessageCenter.log4j.properties", newFolder, "",
+					variableMap, subMonitor.newChild(1));
 
 			newFolder = srcFolder.getFolder("../model_description.txt");
-			Util.copyFileFromPluginInstallation("model_description.txt",
-					newFolder, "", variableMap, monitor);
+			Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,
+					subMonitor.newChild(1));
 
-			// Util.copyFileFromPluginInstallation("license.txt", projectFolder,
+			// Utilities.copyFileFromPluginInstallation("license.txt", projectFolder,
 			// "",
 			// variableMap, monitor);
-			//		
-			// Util.copyFileFromPluginInstallation("model_description.txt",
+			//
+			// Utilities.copyFileFromPluginInstallation("model_description.txt",
 			// projectFolder, "", variableMap, monitor);
 
 			// create turtleShapes.xml in project root
 			shapesFolder = createFolderResource(project, "shapes");
-			List<NLImage> imageList = pageOne.getImportShapes();;
-//			imageList = pageOne.getNetlogoSimulation().getNLImages();
-//			imageList = pageOne.getImportShapes();
+			List<NLImage> imageList = pageOne.getImportShapes();
 
-			if (!imageList.isEmpty()){
+			// imageList = pageOne.getNetlogoSimulation().getNLImages();
+			// imageList = pageOne.getImportShapes();
+
+			if (!imageList.isEmpty()) {
 				XStream xstream = new XStream();
 				String xml = xstream.toXML(imageList);
 				createFileResource(shapesFolder, "turtleShapes.xml",
 						new ByteArrayInputStream(xml.getBytes("UTF-8")));
 			}
-			
+
 			// All svg default shapes
-			File templateShapesFolder = new File(AgentBuilderPlugin.getPluginInstallationDirectory() + AgentBuilderPlugin.SCORE_AGENTS_PROJECT + "/setupfiles/shapes/svg");
+			File templateShapesFolder = new File(RepastSimphonyPlugin.getInstance()
+					.getPluginInstallationDirectory()
+					+ RepastSimphonyPlugin.getInstance().getPluginDirectoryName() + "/setupfiles/shapes/svg");
 			List<String> shapeFiles = WizardUtilities.getFileNamesInDirectory(templateShapesFolder);
-			for (String shapeFileName : shapeFiles){
-				Util.copyFileFromPluginInstallation("shapes/svg/" + shapeFileName,
-						shapesFolder,shapeFileName, null);
+			for (String shapeFileName : shapeFiles) {
+				Utilities.copyFileFromPluginInstallation("shapes/svg/" + shapeFileName, shapesFolder,
+						shapeFileName, null);
 			}
-			
-			
+
 			// create XML files defining model and UI
-			IFolder rsFolder = createFolderResource(project, projectName
-					+ ".rs");
-			Util.copyFileFromPluginInstallation(
-					"package.rs/default_frame_layout.xml", rsFolder,
-					"default_frame_layout.xml", variableMap, monitor);
+			IFolder rsFolder = createFolderResource(project, projectName + ".rs");
+			Utilities.copyFileFromPluginInstallation("package.rs/default_frame_layout.xml", rsFolder,
+					"default_frame_layout.xml", variableMap, subMonitor.newChild(1));
 			exportReLogoParameters(rsFolder, projectName);
 			exportReLogoModel(rsFolder, projectName);
 			exportReLogoDataLoader(rsFolder, packageName);
@@ -646,18 +623,21 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			IFolder styleFolder = createFolderResource(rsFolder, "styles");
 			// exportReLogoStyles(styleFolder);
 			// exportRelogoScenario(rsFolder, styleFolder, projectName);
-			newFolder = createFolderResource(project, "src");
+			newFolder = srcFolder;
 			// String lowerCaseProjectName = packageName;//TODO: project name as
 			// package name here
-			// TODO: split package name on '.' and create a folder for each
-			// segment
 			String[] packageNames = packageName.split("\\.");
 			for (String subpackage : packageNames) {
 				newFolder = createFolderResource(newFolder, subpackage);
 			}
+			IFolder srcGenNewFolder = project.getFolder(SRC_GEN);
+			for (String subpackage : packageNames) {
+				srcGenNewFolder = createFolderResource(srcGenNewFolder, subpackage);
+			}
 
 			try {
-				exportRelogoTemplates(newFolder, rsFolder, styleFolder);
+				exportRelogoTemplates(newFolder, srcGenNewFolder, rsFolder, styleFolder);
+				subMonitor.setWorkRemaining(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -747,8 +727,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	 * Create a new file in the specified folder, containing the specified
 	 * contents. Forces a write of the contents to the file system.
 	 */
-	private void createFileResource(IFolder folder, String name,
-			InputStream contents) {
+	private void createFileResource(IFolder folder, String name, InputStream contents) {
 		IFile file = folder.getFile(name);
 		// at this point, no resources have been created
 		if (!file.exists()) {
@@ -762,9 +741,8 @@ public class NetlogoImportWizard extends NewElementWizard implements
 
 	}
 
-	static private String[] RELOGO_STYLE_TEMPLATES = new String[] {
-			"PatchStyle", "TurtleStyle", "LinkStyle", "WayPointStyle",
-			"TrackingLinkStyle" };
+	static private String[] RELOGO_STYLE_TEMPLATES = new String[] { "PatchStyle", "TurtleStyle",
+			"LinkStyle", "WayPointStyle", "TrackingLinkStyle" };
 	static private String STYLE_PACKAGE_NAME = "style";
 	static private String CONTEXT_PACKAGE_NAME = "context";
 	static private String FACTORIES_PACKAGE_NAME = "factories";
@@ -775,13 +753,15 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	static private String RELOGO_CUSTOM_LINK_TEMPLATE = "UserLink";
 	static private String RELOGO_CUSTOM_OBSERVER_TEMPLATE = "UserObserver";
 	static private String RELOGO_CUSTOM_UGPF = "UserGlobalsAndPanelFactory";
-	static public String RELOGO_CUSTOM_UGPF_TEMPLATE_GROUP_FILE = "/templates/"
-			+ RELOGO_CUSTOM_UGPF + ".stg";
+	static public String RELOGO_CUSTOM_UGPF_TEMPLATE_GROUP_FILE = "/templates/" + RELOGO_CUSTOM_UGPF
+			+ ".stg";
 	static public String RELOGO_USER_OTPL_CLASSES_TEMPLATE_GROUP_FILE = "/templates/userOTPLclasses.stg";
+
 	static protected StringTemplateGroup templateGroup;
 	static protected StringTemplateGroup ugpfTemplateGroup;
 	static protected StringTemplateGroup javaTemplateGroup;
 	static protected StringTemplateGroup userOTPLTemplateGroup;
+	static protected StringTemplateGroup reLogoOTPLTemplateGroup;
 
 	private String getTextFromResource(String resourceName) {
 
@@ -795,16 +775,14 @@ public class NetlogoImportWizard extends NewElementWizard implements
 
 	}
 
-	private void exportLauncherTemplates(IFolder launchFolder,
-			String projectName) throws UnsupportedEncodingException {
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("modelLauncher_file");
+	private void exportLauncherTemplates(IFolder launchFolder, String projectName)
+			throws UnsupportedEncodingException {
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("modelLauncher_file");
 		st.setAttribute("Model", projectName);
 		exportLauncherTemplate(launchFolder, st.toString(), projectName);
 	}
 
-	private StringBuffer loadLauncherTemplate(String name, String modelName)
-			throws IOException {
+	private StringBuffer loadLauncherTemplate(String name, String modelName) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		String templateName = "/templates/" + name + ".launch";
 		InputStream stream = getClass().getResourceAsStream(templateName);
@@ -817,8 +795,8 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		return buf;
 	}
 
-	private InputStream loadClassTemplate(String templateName,
-			String packageName, String bodyCode) throws IOException {
+	private InputStream loadClassTemplate(String templateName, String packageName, String bodyCode)
+			throws IOException {
 		// StringTemplate classTemplate = true;
 		StringBuffer buf = new StringBuffer();
 		InputStream stream = getClass().getResourceAsStream(templateName);
@@ -836,15 +814,13 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
 	}
 
-	private InputStream loadUserClassTemplate(String templateName,
-			String packageName, String bodyCode)
+	private InputStream loadUserClassTemplate(String templateName, String packageName, String bodyCode)
 			throws UnsupportedEncodingException {
 		return loadUserClassTemplate(templateName, packageName, bodyCode, "");
 	}
 
-	private InputStream loadUserClassTemplate(String templateName,
-			String packageName, String bodyCode, String breedCode)
-			throws UnsupportedEncodingException {
+	private InputStream loadUserClassTemplate(String templateName, String packageName,
+			String bodyCode, String breedCode) throws UnsupportedEncodingException {
 		// StringTemplate classTemplate = true;
 		StringTemplate st = userOTPLTemplateGroup.getInstanceOf(templateName);
 		st.setAttribute("packageName", packageName);
@@ -861,15 +837,14 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		return new ByteArrayInputStream(st.toString().getBytes("UTF-8"));
 	}
 
-	private void exportLauncherTemplate(IFolder launchFolder, String template,
-			String outputName) throws UnsupportedEncodingException {
+	private void exportLauncherTemplate(IFolder launchFolder, String template, String outputName)
+			throws UnsupportedEncodingException {
 		String instantiationName = outputName + ".launch";
 		createFileResource(launchFolder, instantiationName,
 				new ByteArrayInputStream(template.getBytes("UTF-8")));
 
 	}
 
-	
 	static protected StringTemplateGroup parametersTemplateGroup;
 	static public String RELOGO_PARAMETERS_TEMPLATE_GROUP_FILE = "/templates/parameters.stg";
 	static protected StringTemplateGroup modelTemplateGroup;
@@ -884,71 +859,69 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	protected void loadStringTemplates() {
 
 		if (catchAllTemplateGroup == null) {
-			InputStream catchAllTemplateStream = getClass()
-					.getResourceAsStream(RELOGO_CATCHALL_TEMPLATE_GROUP_FILE);
+			InputStream catchAllTemplateStream = getClass().getResourceAsStream(
+					RELOGO_CATCHALL_TEMPLATE_GROUP_FILE);
 			catchAllTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(catchAllTemplateStream),
-					DefaultTemplateLexer.class);
+					new InputStreamReader(catchAllTemplateStream), DefaultTemplateLexer.class);
 		}
 
 		// DefaultTemplateLexer is needed for $...$ attributes in templates
 		if (displayTemplateGroup == null) {
 			InputStream displayTemplateStream = getClass().getResourceAsStream(
 					RELOGO_DISPLAY_TEMPLATE_GROUP_FILE);
-			displayTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(displayTemplateStream),
+			displayTemplateGroup = new StringTemplateGroup(new InputStreamReader(displayTemplateStream),
 					DefaultTemplateLexer.class);
 		}
 
 		if (contextTemplateGroup == null) {
 			InputStream contextTemplateStream = getClass().getResourceAsStream(
 					RELOGO_CONTEXT_TEMPLATE_GROUP_FILE);
-			contextTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(contextTemplateStream),
+			contextTemplateGroup = new StringTemplateGroup(new InputStreamReader(contextTemplateStream),
 					DefaultTemplateLexer.class);
 		}
 
 		if (modelTemplateGroup == null) {
 			InputStream modelTemplateStream = getClass().getResourceAsStream(
 					RELOGO_MODEL_TEMPLATE_GROUP_FILE);
-			modelTemplateGroup = new StringTemplateGroup(new InputStreamReader(
-					modelTemplateStream), DefaultTemplateLexer.class);
-		}
-
-		if (parametersTemplateGroup == null) {
-			InputStream parametersTemplateStream = getClass()
-					.getResourceAsStream(RELOGO_PARAMETERS_TEMPLATE_GROUP_FILE);
-			parametersTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(parametersTemplateStream),
+			modelTemplateGroup = new StringTemplateGroup(new InputStreamReader(modelTemplateStream),
 					DefaultTemplateLexer.class);
 		}
 
+		if (parametersTemplateGroup == null) {
+			InputStream parametersTemplateStream = getClass().getResourceAsStream(
+					RELOGO_PARAMETERS_TEMPLATE_GROUP_FILE);
+			parametersTemplateGroup = new StringTemplateGroup(new InputStreamReader(
+					parametersTemplateStream), DefaultTemplateLexer.class);
+		}
+
 		if (userOTPLTemplateGroup == null) {
-			InputStream userOTPLTemplateStream = getClass()
-					.getResourceAsStream(
-							RELOGO_USER_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
-			userOTPLTemplateGroup = new StringTemplateGroup(
-					new InputStreamReader(userOTPLTemplateStream));
+			InputStream userOTPLTemplateStream = getClass().getResourceAsStream(
+					RELOGO_USER_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
+			userOTPLTemplateGroup = new StringTemplateGroup(new InputStreamReader(userOTPLTemplateStream));
+		}
+
+		if (reLogoOTPLTemplateGroup == null) {
+			InputStream reLogoOTPLTemplateStream = getClass().getResourceAsStream(
+					ReLogoBuilder.RELOGO_OTPL_CLASSES_TEMPLATE_GROUP_FILE);
+			reLogoOTPLTemplateGroup = new StringTemplateGroup(new InputStreamReader(
+					reLogoOTPLTemplateStream));
 		}
 
 		if (ugpfTemplateGroup == null) {
 			InputStream upccTemplateStream = getClass().getResourceAsStream(
 					RELOGO_CUSTOM_UGPF_TEMPLATE_GROUP_FILE);
-			ugpfTemplateGroup = new StringTemplateGroup(new InputStreamReader(
-					upccTemplateStream));
+			ugpfTemplateGroup = new StringTemplateGroup(new InputStreamReader(upccTemplateStream));
 		}
-		
+
 	}
 
 	private void exportReLogoParameters(IFolder rsFolder, String projectName)
 			throws UnsupportedEncodingException {
 		loadStringTemplates();
-		List<NLControl> nlControls = pageOne.getNetlogoSimulation()
-				.getNLControls();
+		List<NLControl> nlControls = pageOne.getNetlogoSimulation().getNLControls();
 		for (NLControl ctl : nlControls) {
 			if (ctl instanceof NLGraphicsWindow) {
-				StringTemplate parameters_file = parametersTemplateGroup
-						.getInstanceOf("parameters_file");
+				StringTemplate parameters_file = parametersTemplateGroup.getInstanceOf("parameters_file");
 				StringBuffer parameters = new StringBuffer();
 				int minPxcor = ((NLGraphicsWindow) ctl).getMinPxcor();
 				int maxPxcor = ((NLGraphicsWindow) ctl).getMaxPxcor();
@@ -972,12 +945,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				sti.setAttribute("mP", "maxPycor");
 				sti.setAttribute("mPVal", maxPycor);
 				parameters.append(sti.toString());
-				parameters_file.setAttribute("parameters", parameters
-						.toString());
+				parameters_file.setAttribute("parameters", parameters.toString());
 				// System.out.println(parameters_file.toString());
-				createFileResource(rsFolder, "parameters.xml",
-						new ByteArrayInputStream(parameters_file.toString()
-								.getBytes("UTF-8")));
+				createFileResource(rsFolder, "parameters.xml", new ByteArrayInputStream(parameters_file
+						.toString().getBytes("UTF-8")));
 			}
 		}
 	}
@@ -985,48 +956,41 @@ public class NetlogoImportWizard extends NewElementWizard implements
 	private void exportReLogoModel(IFolder rsFolder, String projectName)
 			throws UnsupportedEncodingException {
 		loadStringTemplates();
-		StringTemplate model_file = modelTemplateGroup
-				.getInstanceOf("model_file");
+		StringTemplate model_file = modelTemplateGroup.getInstanceOf("model_file");
 		model_file.setAttribute("modelName", projectName);
-		createFileResource(rsFolder, "user_path.xml", new ByteArrayInputStream(
-				model_file.toString().getBytes("UTF-8")));
+		createFileResource(rsFolder, "user_path.xml", new ByteArrayInputStream(model_file.toString()
+				.getBytes("UTF-8")));
 	}
 
 	private void exportReLogoDataLoader(IFolder rsFolder, String packageName)
 			throws UnsupportedEncodingException {
 		String dataLoaderFileName = "repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml";
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("dataLoader_file");
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("dataLoader_file");
 		st.setAttribute("Model", packageName);
-		createFileResource(rsFolder, dataLoaderFileName,
-				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
+		createFileResource(rsFolder, dataLoaderFileName, new ByteArrayInputStream(st.toString()
+				.getBytes("UTF-8")));
 	}
 
 	private void exportReLogoUserPanel(IFolder rsFolder, String packageName)
 			throws UnsupportedEncodingException {
 		String userPanelFileName = "repast.simphony.userpanel.ui.DefaultUserPanelDescriptorAction_1.xml";
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("userPanel_file");
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("userPanel_file");
 		st.setAttribute("Model", packageName);
-		createFileResource(rsFolder, userPanelFileName,
-				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
+		createFileResource(rsFolder, userPanelFileName, new ByteArrayInputStream(st.toString()
+				.getBytes("UTF-8")));
 	}
 
 	private void exportReLogoScenario(IFolder rsFolder, String projectName)
 			throws UnsupportedEncodingException {
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("scenario_file");
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("scenario_file");
 		st.setAttribute("Model", projectName);
-		createFileResource(rsFolder, "scenario.xml", new ByteArrayInputStream(
-				st.toString().getBytes("UTF-8")));
+		createFileResource(rsFolder, "scenario.xml",
+				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
 	}
 
-	private void exportReLogoStyles(IFolder styleFolder)
-			throws UnsupportedEncodingException {
-		String[] stylesList = { "DirectedLinks", "UndirectedLinks",
-				"TrackingNetwork" };
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("directedLinksStyle_file");
+	private void exportReLogoStyles(IFolder styleFolder) throws UnsupportedEncodingException {
+		String[] stylesList = { "DirectedLinks", "UndirectedLinks", "TrackingNetwork" };
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("directedLinksStyle_file");
 		String styleFileName = stylesList[0] + ".style_0.xml";
 		createFileResource(styleFolder, styleFileName,
 				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
@@ -1040,17 +1004,15 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
 	}
 
-	private void exportAdditionalNetworkStyleFile(String networkName,
-			IFolder styleFolder) throws UnsupportedEncodingException {
-		StringTemplate st = catchAllTemplateGroup
-				.getInstanceOf("additionalNetworksStyle_file");
+	private void exportAdditionalNetworkStyleFile(String networkName, IFolder styleFolder)
+			throws UnsupportedEncodingException {
+		StringTemplate st = catchAllTemplateGroup.getInstanceOf("additionalNetworksStyle_file");
 		String styleFileName = networkName + ".style_0.xml";
 		st.setAttribute("number", Math.random());
 		createFileResource(styleFolder, styleFileName,
 				new ByteArrayInputStream(st.toString().getBytes("UTF-8")));
 	}
 
-	
 	private boolean hasAttributesToGenerate(RelogoClass relogoClass) {
 		for (Attribute attr : relogoClass.attributes()) {
 			if (attr.generate) {
@@ -1060,7 +1022,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		return false;
 	}
 
-	private void exportRelogoTemplates(IFolder srcFolder, IFolder rsFolder,
+	private void exportRelogoTemplates(IFolder srcFolder, IFolder srcGenFolder, IFolder rsFolder,
 			IFolder styleFolder) throws IOException {
 		loadStringTemplates();
 		String packageName = pageOne.getPackageName();
@@ -1068,84 +1030,85 @@ public class NetlogoImportWizard extends NewElementWizard implements
 		// two static java classes in the style package
 		IFolder folder = createFolderResource(srcFolder, STYLE_PACKAGE_NAME);
 		for (int i = 0; i < RELOGO_STYLE_TEMPLATES.length; i++) {
-			String templateName = "/templates/" + RELOGO_STYLE_TEMPLATES[i]
-					+ ".java.txt";
+			String templateName = "/templates/" + RELOGO_STYLE_TEMPLATES[i] + ".java.txt";
 			String instantiationName = RELOGO_STYLE_TEMPLATES[i] + ".java";
-			InputStream stream = loadClassTemplate(templateName, packageName,
-					"");
+			InputStream stream = loadClassTemplate(templateName, packageName, "");
 			createFileResource(folder, instantiationName, stream);
 		}
 		// a single static groovy class in the context package
 		folder = createFolderResource(srcFolder, CONTEXT_PACKAGE_NAME);
 		for (int i = 0; i < RELOGO_CONTEXT_TEMPLATES.length; i++) {
-			String templateName = "/templates/" + RELOGO_CONTEXT_TEMPLATES[i]
-					+ ".groovy.txt";
+			String templateName = "/templates/" + RELOGO_CONTEXT_TEMPLATES[i] + ".groovy.txt";
 			String instantiationName = RELOGO_CONTEXT_TEMPLATES[i] + ".groovy";
-			InputStream stream = loadClassTemplate(templateName, packageName,
-					"");
+			InputStream stream = loadClassTemplate(templateName, packageName, "");
 			createFileResource(folder, instantiationName, stream);
 		}
 		// a single static groovy class in the factories package
-		IFolder factoriesFolder = createFolderResource(srcFolder,
-				FACTORIES_PACKAGE_NAME);
+		IFolder factoriesFolder = createFolderResource(srcFolder, FACTORIES_PACKAGE_NAME);
 		for (int i = 0; i < RELOGO_FACTORIES_TEMPLATES.length; i++) {
-			String templateName = "/templates/" + RELOGO_FACTORIES_TEMPLATES[i]
-					+ ".java.txt";
+			String templateName = "/templates/" + RELOGO_FACTORIES_TEMPLATES[i] + ".java.txt";
 			String instantiationName = RELOGO_FACTORIES_TEMPLATES[i] + ".java";
-			InputStream stream = loadClassTemplate(templateName, packageName,
-					"");
+			InputStream stream = loadClassTemplate(templateName, packageName, "");
 			createFileResource(factoriesFolder, instantiationName, stream);
+		}
+
+		String[] instances = { "reLogoTurtle", "reLogoPatch", "reLogoLink", "reLogoObserver" };
+		String[] fileNames = { "ReLogoTurtle.java", "ReLogoPatch.java", "ReLogoLink.java",
+				"ReLogoObserver.java" };
+		for (int i = 0; i < instances.length; i++) {
+			StringTemplate rlTemplate = reLogoOTPLTemplateGroup.getInstanceOf(instances[i]);
+
+			rlTemplate.setAttribute("packageName", packageName);
+			createFileResource(srcGenFolder, fileNames[i], new ByteArrayInputStream(
+					rlTemplate.toString().getBytes("UTF-8")));
 		}
 
 		/*
 		 * for (int i = 0; i < RELOGO_FACTORIES_TEMPLATES.length; i++) { String
 		 * templateName = "/templates/" + RELOGO_FACTORIES_TEMPLATES[i] +
-		 * ".groovy.txt"; String instantiationName =
-		 * RELOGO_FACTORIES_TEMPLATES[i] + ".groovy"; InputStream stream =
-		 * loadClassTemplate(templateName, packageName, "");
-		 * createFileResource(factoriesFolder, instantiationName, stream); }
+		 * ".groovy.txt"; String instantiationName = RELOGO_FACTORIES_TEMPLATES[i] +
+		 * ".groovy"; InputStream stream = loadClassTemplate(templateName,
+		 * packageName, ""); createFileResource(factoriesFolder, instantiationName,
+		 * stream); }
 		 */
 		LinkedList<RelogoClass> allClasses = pageOne.getGeneratedClasses();
 		IFolder relogoSourceFolder = createFolderResource(srcFolder, "relogo");
 		// output the Model class, adding in all global variables
 		/*
 		 * { RelogoClass modelClass = null; for (RelogoClass relogoClass :
-		 * allClasses) { if (relogoClass != null &&
-		 * relogoClass.getGenericCategory() == RelogoClass.RELOGO_CLASS_MODEL) {
-		 * modelClass = relogoClass; } } if (modelClass != null) { String
-		 * templateName = "/templates/" + RELOGO_CUSTOM_MODEL_TEMPLATE +
-		 * ".java.txt"; String instantiationName = RELOGO_CUSTOM_MODEL_TEMPLATE
-		 * + ".java"; InputStream stream = loadClassTemplate(templateName,
-		 * packageName, modelClass.getJavaCode()); createFileResource(srcFolder,
-		 * instantiationName, stream); } else {
+		 * allClasses) { if (relogoClass != null && relogoClass.getGenericCategory()
+		 * == RelogoClass.RELOGO_CLASS_MODEL) { modelClass = relogoClass; } } if
+		 * (modelClass != null) { String templateName = "/templates/" +
+		 * RELOGO_CUSTOM_MODEL_TEMPLATE + ".java.txt"; String instantiationName =
+		 * RELOGO_CUSTOM_MODEL_TEMPLATE + ".java"; InputStream stream =
+		 * loadClassTemplate(templateName, packageName, modelClass.getJavaCode());
+		 * createFileResource(srcFolder, instantiationName, stream); } else {
 		 * System.err.println("No global class generated!"); } }
 		 */
 		// output the Plot class, adding in all plots and series.
 		// Template code implies one Plot class to support all plots.
 		/*
 		 * { StringTemplate plotTpl = plotTemplateGroup.getInstanceOf("plot");
-		 * NLPlot[] plots = pageOne.getPlots(); // do these two for each plot,
-		 * axis, and series String plots_and_pens = ""; for (int plotId = 0;
-		 * plotId < plots.length; plotId++) { if (plots_and_pens.length() == 0)
-		 * { plots_and_pens = plots[plotId].getTitle()+":["; } else {
-		 * plots_and_pens = plots_and_pens + ",\n" +
-		 * plots[plotId].getTitle()+":["; } String pens = ""; for (NLPen pen :
-		 * plots[plotId].getPens()) { StringTemplate seriesTpl =
-		 * plotTemplateGroup.getInstanceOf("series");
+		 * NLPlot[] plots = pageOne.getPlots(); // do these two for each plot, axis,
+		 * and series String plots_and_pens = ""; for (int plotId = 0; plotId <
+		 * plots.length; plotId++) { if (plots_and_pens.length() == 0) {
+		 * plots_and_pens = plots[plotId].getTitle()+":["; } else { plots_and_pens =
+		 * plots_and_pens + ",\n" + plots[plotId].getTitle()+":["; } String pens =
+		 * ""; for (NLPen pen : plots[plotId].getPens()) { StringTemplate seriesTpl
+		 * = plotTemplateGroup.getInstanceOf("series");
 		 * seriesTpl.setAttribute("plot", plots[plotId].getTitle());
 		 * seriesTpl.setAttribute("axis", plots[plotId].getYTitle());
 		 * seriesTpl.setAttribute("series", pen.getLabel());
 		 * seriesTpl.setAttribute("series_label", pen.getLabel());
 		 * plotTpl.setAttribute("series", seriesTpl.toString()); if
-		 * (pens.length()==0) { pens = "\"" + pen.getLabel() + "\""; } else {
-		 * pens = pens + ",\"" + pen.getLabel() + "\""; } } plots_and_pens +=
-		 * pens+"]"; } plotTpl.setAttribute("package", packageName);
+		 * (pens.length()==0) { pens = "\"" + pen.getLabel() + "\""; } else { pens =
+		 * pens + ",\"" + pen.getLabel() + "\""; } } plots_and_pens += pens+"]"; }
+		 * plotTpl.setAttribute("package", packageName);
 		 * plotTpl.setAttribute("plots_and_pens", plots_and_pens);
 		 * plotTpl.setAttribute("dollar", "$"); // we need this unless we code a
 		 * custom TokenLexer for StringTemplate String instantiationName =
-		 * RELOGO_CUSTOM_PLOT_TEMPLATE + ".groovy";
-		 * createFileResource(srcFolder, instantiationName, new
-		 * StringInputStream(plotTpl.toString())); }
+		 * RELOGO_CUSTOM_PLOT_TEMPLATE + ".groovy"; createFileResource(srcFolder,
+		 * instantiationName, new StringInputStream(plotTpl.toString())); }
 		 */
 		// Build the template for built-ins dependent upon user breeds.
 		// StringTemplate utilityTpl =
@@ -1161,8 +1124,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				if (relogoClass != null
 						&& relogoClass.getGenericCategory() == RelogoClass.RELOGO_CLASS_TURTLE) {
 					String breedPlural = relogoClass.getBreed().getPluralName();
-					String breedSingular = relogoClass.getBreed()
-							.getSingularName();
+					String breedSingular = relogoClass.getBreed().getSingularName();
 
 					// Collect the turtle attributes into a @TurtlesOwn
 					// statement, turtlesOwnCode
@@ -1195,30 +1157,18 @@ public class NetlogoImportWizard extends NewElementWizard implements
 						 */
 
 						if (breedPlural != null) {
-							StringTemplate ctTemplate = userOTPLTemplateGroup
-									.getInstanceOf("customTurtle");
+							StringTemplate ctTemplate = userOTPLTemplateGroup.getInstanceOf("customTurtle");
 							ctTemplate.setAttribute("packageName", packageName);
 
-							String breedName = WizardUtilities
-									.getJavaName(breedSingular);
-							String className = Character.toString(
-									breedName.charAt(0)).toUpperCase()
+							String breedName = WizardUtilities.getJavaName(breedSingular);
+							String className = Character.toString(breedName.charAt(0)).toUpperCase()
 									+ breedName.substring(1);
-							if (!WizardUtilities.getJavaName(breedPlural)
-									.equals(
-											WizardUtilities
-													.getJavaName(breedSingular)
-													+ "s")) {
-								ctTemplate
-										.setAttribute(
-												"pluralAnnotation",
-												"@Plural('"
-														+ WizardUtilities
-																.getJavaName(breedPlural)
-														+ "')");
+							if (!WizardUtilities.getJavaName(breedPlural).equals(
+									WizardUtilities.getJavaName(breedSingular) + "s")) {
+								ctTemplate.setAttribute("pluralAnnotation",
+										"@Plural('" + WizardUtilities.getJavaName(breedPlural) + "')");
 							}
-							ctTemplate.setAttribute("turtleClassName",
-									className);
+							ctTemplate.setAttribute("turtleClassName", className);
 
 							if (hasAttributesToGenerate(relogoClass)) {
 								StringBuffer sb = new StringBuffer();
@@ -1234,12 +1184,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 										attributeCounter++;
 									}
 								}
-								ctTemplate.setAttribute("turtleVars", sb
-										.toString());
+								ctTemplate.setAttribute("turtleVars", sb.toString());
 							}
-							createFileResource(relogoSourceFolder, className
-									+ ".groovy", new ByteArrayInputStream(
-									ctTemplate.toString().getBytes("UTF-8")));
+							createFileResource(relogoSourceFolder, className + ".groovy",
+									new ByteArrayInputStream(ctTemplate.toString().getBytes("UTF-8")));
 						}
 					}
 					// This should probably remain the same, and go to the
@@ -1249,26 +1197,22 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			}
 			// Accumulated information above
 
-			StringTemplate utTemplate = userOTPLTemplateGroup
-					.getInstanceOf("userTurtle");
+			StringTemplate utTemplate = userOTPLTemplateGroup.getInstanceOf("userTurtle");
 
 			utTemplate.setAttribute("packageName", packageName);
 			if (turtlesOwnCode.length() != 0) {
-				utTemplate
-						.setAttribute("turtleVars", turtlesOwnCode.toString());
+				utTemplate.setAttribute("turtleVars", turtlesOwnCode.toString());
 			}
 			utTemplate.setAttribute("bodyCode", bodyCode);
-			createFileResource(relogoSourceFolder, "UserTurtle.groovy",
-					new ByteArrayInputStream(utTemplate.toString().getBytes(
-							"UTF-8")));
+			createFileResource(relogoSourceFolder, "UserTurtle.groovy", new ByteArrayInputStream(
+					utTemplate.toString().getBytes("UTF-8")));
 
 		}
 		{
 			// UserPatch
 			StringBuffer patchesOwnCode = new StringBuffer();
 			StringBuffer bodyCode = new StringBuffer();
-			StringTemplate upTemplate = userOTPLTemplateGroup
-					.getInstanceOf("userPatch");
+			StringTemplate upTemplate = userOTPLTemplateGroup.getInstanceOf("userPatch");
 			upTemplate.setAttribute("packageName", packageName);
 			for (RelogoClass relogoClass : allClasses) {
 				if (relogoClass != null
@@ -1287,31 +1231,26 @@ public class NetlogoImportWizard extends NewElementWizard implements
 								attributeCounter++;
 							}
 						}
-						upTemplate.setAttribute("patchVars", patchesOwnCode
-								.toString());
+						upTemplate.setAttribute("patchVars", patchesOwnCode.toString());
 
 					}
 					bodyCode.append(relogoClass.getGroovyCode());
 				}
 			}
 			upTemplate.setAttribute("bodyCode", bodyCode.toString());
-			createFileResource(relogoSourceFolder, "UserPatch.groovy",
-					new ByteArrayInputStream(upTemplate.toString().getBytes(
-							"UTF-8")));
+			createFileResource(relogoSourceFolder, "UserPatch.groovy", new ByteArrayInputStream(
+					upTemplate.toString().getBytes("UTF-8")));
 		}
 		{
 			// UserLink
-			StringTemplate ulTemplate = userOTPLTemplateGroup
-					.getInstanceOf("userLink");
+			StringTemplate ulTemplate = userOTPLTemplateGroup.getInstanceOf("userLink");
 			ulTemplate.setAttribute("packageName", packageName);
 			StringBuffer linksOwnCode = new StringBuffer();
 			StringBuffer bodyCode = new StringBuffer();
 			StringBuffer projections = new StringBuffer();
 
-			String[] displayStrings = { "netStylesEntry",
-					"editedNetStylesEntry",
-					"repastSimphonyScoreProjectionData",
-					"projectionDescriptorsEntry" };
+			String[] displayStrings = { "netStylesEntry", "editedNetStylesEntry",
+					"repastSimphonyScoreProjectionData", "projectionDescriptorsEntry" };
 			StringTemplate displayTemplate = new StringTemplate();
 			StringBuffer netStylesEntryBuffer = new StringBuffer();
 			StringBuffer editedNetStylesEntryBuffer = new StringBuffer();
@@ -1334,12 +1273,9 @@ public class NetlogoImportWizard extends NewElementWizard implements
 						&& relogoClass.getGenericCategory() == RelogoClass.RELOGO_CLASS_LINK) {
 
 					if (relogoClass.getBreed() != null) {
-						String breedPlural = relogoClass.getBreed()
-								.getPluralName();
-						String breedSingular = relogoClass.getBreed()
-								.getSingularName();
-						boolean linkBreedDirected = relogoClass.getBreed()
-								.isLinkBreedDirected();
+						String breedPlural = relogoClass.getBreed().getPluralName();
+						String breedSingular = relogoClass.getBreed().getSingularName();
+						boolean linkBreedDirected = relogoClass.getBreed().isLinkBreedDirected();
 						// Collect the link attributes into @LinksOwn field
 						// declarations
 						if (breedPlural.equals("links")) {
@@ -1359,41 +1295,30 @@ public class NetlogoImportWizard extends NewElementWizard implements
 									}
 								}
 								// linkVars to utTemplate
-								ulTemplate.setAttribute("linkVars",
-										linksOwnCode.toString());
+								ulTemplate.setAttribute("linkVars", linksOwnCode.toString());
 							}
 						}
 						if (!breedPlural.equals("links")) {
-							StringTemplate clTemplate = userOTPLTemplateGroup
-									.getInstanceOf("customLink");
+							StringTemplate clTemplate = userOTPLTemplateGroup.getInstanceOf("customLink");
 							clTemplate.setAttribute("packageName", packageName);
-							String breedName = WizardUtilities
-									.getJavaName(breedSingular);
-							String className = Character.toString(
-									breedName.charAt(0)).toUpperCase()
+							String breedName = WizardUtilities.getJavaName(breedSingular);
+							String className = Character.toString(breedName.charAt(0)).toUpperCase()
 									+ breedName.substring(1);
 							clTemplate.setAttribute("linkClassName", className);
 
 							if (breedPlural != null) {
-								projections.append("<projection id=\""
-										+ className
-										+ "\" type=\"network\" />\n");
+								projections.append("<projection id=\"" + className + "\" type=\"network\" />\n");
 								for (int i = 0; i < 4; i++) {
-									displayTemplate = displayTemplateGroup
-											.getInstanceOf(displayStrings[i]);
-									displayTemplate.setAttribute("networkName",
-											className);
+									displayTemplate = displayTemplateGroup.getInstanceOf(displayStrings[i]);
+									displayTemplate.setAttribute("networkName", className);
 									if (i == 0) {
-										displayTemplate.setAttribute(
-												"packageName", packageName);
+										displayTemplate.setAttribute("packageName", packageName);
 									}
 									if (i == 3) {
-										displayTemplate.setAttribute("number",
-												5 + linkBreedCounter);
+										displayTemplate.setAttribute("number", 5 + linkBreedCounter);
 										linkBreedCounter++;
 									}
-									bufferList.get(i).append(
-											displayTemplate.toString() + "\n");
+									bufferList.get(i).append(displayTemplate.toString() + "\n");
 								}
 								// exportAdditionalNetworkStyleFile(camelCase(
 								// breedPlural, false), styleFolder);
@@ -1402,26 +1327,14 @@ public class NetlogoImportWizard extends NewElementWizard implements
 								// allLinkBreedCode
 
 								if (!linkBreedDirected) {
-									clTemplate
-											.setAttribute("directedAnnotation",
-													"@Undirected");
+									clTemplate.setAttribute("directedAnnotation", "@Undirected");
 								} else {
-									clTemplate.setAttribute(
-											"directedAnnotation", "@Directed");
+									clTemplate.setAttribute("directedAnnotation", "@Directed");
 								}
-								if (!WizardUtilities
-										.getJavaName(breedPlural)
-										.equals(
-												WizardUtilities
-														.getJavaName(breedSingular)
-														+ "s")) {
-									clTemplate
-											.setAttribute(
-													"pluralAnnotation",
-													"@Plural('"
-															+ WizardUtilities
-																	.getJavaName(breedPlural)
-															+ "')");
+								if (!WizardUtilities.getJavaName(breedPlural).equals(
+										WizardUtilities.getJavaName(breedSingular) + "s")) {
+									clTemplate.setAttribute("pluralAnnotation",
+											"@Plural('" + WizardUtilities.getJavaName(breedPlural) + "')");
 								}
 
 							}
@@ -1443,12 +1356,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 										attributeCounter++;
 									}
 								}
-								clTemplate.setAttribute("linkVars",
-										breedsOwnCode.toString());
+								clTemplate.setAttribute("linkVars", breedsOwnCode.toString());
 							}
-							createFileResource(relogoSourceFolder, className
-									+ ".groovy", new ByteArrayInputStream(
-									clTemplate.toString().getBytes("UTF-8")));
+							createFileResource(relogoSourceFolder, className + ".groovy",
+									new ByteArrayInputStream(clTemplate.toString().getBytes("UTF-8")));
 						}
 						bodyCode.append(relogoClass.getGroovyCode());
 					}
@@ -1456,36 +1367,27 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			}
 			// Create UserLink.groovy
 			ulTemplate.setAttribute("bodyCode", bodyCode.toString());
-			createFileResource(relogoSourceFolder, "UserLink.groovy",
-					new ByteArrayInputStream(ulTemplate.toString().getBytes(
-							"UTF-8")));
+			createFileResource(relogoSourceFolder, "UserLink.groovy", new ByteArrayInputStream(ulTemplate
+					.toString().getBytes("UTF-8")));
 
-			StringTemplate context_file = contextTemplateGroup
-					.getInstanceOf("context_file");
+			StringTemplate context_file = contextTemplateGroup.getInstanceOf("context_file");
 			context_file.setAttribute("modelName", pageOne.getProjectName());
-			context_file.setAttribute("additionalProjections", projections
-					.toString());
-			createFileResource(rsFolder, "context.xml",
-					new ByteArrayInputStream(context_file.toString().getBytes(
-							"UTF-8")));
+			context_file.setAttribute("additionalProjections", projections.toString());
+			createFileResource(rsFolder, "context.xml", new ByteArrayInputStream(context_file.toString()
+					.getBytes("UTF-8")));
 
-			StringTemplate display_file = displayTemplateGroup
-					.getInstanceOf("display_file");
+			StringTemplate display_file = displayTemplateGroup.getInstanceOf("display_file");
 			// display_file(packageName,additionalNetStyles,additionalEditedNetStylesEntries,additionalRepastSimphonyScoreProjectionDatas,additionalProjectionDescriptorsEntries)
 			display_file.setAttribute("packageName", packageName);
-			display_file.setAttribute("additionalNetStyles", bufferList.get(0)
+			display_file.setAttribute("additionalNetStyles", bufferList.get(0).toString());
+			display_file.setAttribute("additionalEditedNetStylesEntries", bufferList.get(1).toString());
+			display_file.setAttribute("additionalRepastSimphonyScoreProjectionDatas", bufferList.get(2)
 					.toString());
-			display_file.setAttribute("additionalEditedNetStylesEntries",
-					bufferList.get(1).toString());
-			display_file.setAttribute(
-					"additionalRepastSimphonyScoreProjectionDatas", bufferList
-							.get(2).toString());
-			display_file.setAttribute("additionalProjectionDescriptorsEntries",
-					bufferList.get(3).toString());
+			display_file.setAttribute("additionalProjectionDescriptorsEntries", bufferList.get(3)
+					.toString());
 			String displayFileName = "repast.simphony.action.display_relogoDefault.xml";
-			createFileResource(rsFolder, displayFileName,
-					new ByteArrayInputStream(display_file.toString().getBytes(
-							"UTF-8")));
+			createFileResource(rsFolder, displayFileName, new ByteArrayInputStream(display_file
+					.toString().getBytes("UTF-8")));
 
 		}
 		{
@@ -1493,8 +1395,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			String templateName = "userObserver";
 			String instantiationName = "UserObserver.groovy";
 			String upccInstantiationName = RELOGO_CUSTOM_UGPF + ".groovy";
-			StringTemplate ugpfTemplate = ugpfTemplateGroup
-					.getInstanceOf("ugpf");
+			StringTemplate ugpfTemplate = ugpfTemplateGroup.getInstanceOf("ugpf");
 			ugpfTemplate.setAttribute("packageName", packageName);
 			StringBuffer bodyCode = new StringBuffer();
 			StringBuffer globalsCode = new StringBuffer();
@@ -1513,15 +1414,13 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				// Collect the global attributes into addGlobal('attribute')
 				// statement,
 				// globalsCode
-				if (relogoClass != null
-						&& relogoClass.getClassName() == "*global*") {
+				if (relogoClass != null && relogoClass.getClassName() == "*global*") {
 
 					if (hasAttributesToGenerate(relogoClass)) {
 						for (Attribute attr : relogoClass.attributes()) {
 							if (attr.generate) {
 								String name = attr.toString();
-								globalsCode.append("addGlobal('" + name
-										+ "')\n");
+								globalsCode.append("addGlobal('" + name + "')\n");
 							}
 						}
 					}
@@ -1531,9 +1430,9 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				ugpfTemplate.setAttribute("globals", globalsCode.toString());
 			}
 			/**
-			 * Use the information gathered by the NetlogoSimulation scan method
-			 * to generate the appropriate UPCC code, using the UPCC.stg group
-			 * string template file.
+			 * Use the information gathered by the NetlogoSimulation scan method to
+			 * generate the appropriate UPCC code, using the UPCC.stg group string
+			 * template file.
 			 * 
 			 */
 			List<ProcedureDefinition> observerNonButtonMethods = new ArrayList<ProcedureDefinition>();
@@ -1542,8 +1441,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			for (ProcedureDefinition procDef : observerMethods) {
 				if (procDef.getName().startsWith("button_method_")) {
 					observerButtonMethods.add(procDef);
-				} else if (procDef.getName()
-						.startsWith("toggle_button_method_")) {
+				} else if (procDef.getName().startsWith("toggle_button_method_")) {
 					observerToggleButtonMethods.add(procDef);
 				} else {
 					observerNonButtonMethods.add(procDef);
@@ -1553,8 +1451,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			StringBuffer ugpfComponents = new StringBuffer();
 
 			// button methods
-			StringTemplate buttonTemplate = ugpfTemplateGroup
-					.getInstanceOf("button");
+			StringTemplate buttonTemplate = ugpfTemplateGroup.getInstanceOf("button");
 			buttonTemplate.setAttribute("observerName", "default_observer");
 			for (ProcedureDefinition procDef : observerButtonMethods) {
 
@@ -1564,13 +1461,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				if (ll.size() == 1) {
 					Object o = ll.getFirst();
 					if (o instanceof ProcedureInvocation) {
-						String buttonInnerMethodName = ((ProcedureInvocation) o)
-								.getProfile().getJavaName();
+						String buttonInnerMethodName = ((ProcedureInvocation) o).getProfile().getJavaName();
 						for (ProcedureDefinition obsProcDef : observerNonButtonMethods) {
-							String observerMethodName = obsProcDef.getProfile()
-									.getJavaName();
-							if (observerMethodName
-									.equals(buttonInnerMethodName)
+							String observerMethodName = obsProcDef.getProfile().getJavaName();
+							if (observerMethodName.equals(buttonInnerMethodName)
 									&& obsProcDef.getProfile().getSize() == 1) {
 								generateButtonUsingExistingMethod = true;
 								buttonMethodName = observerMethodName;
@@ -1594,8 +1488,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					// bodyCode.append(buttonTemplate.toString());
 				}
 				/**
-				 * if (allBreedsOwnCode.length()!=0){
-				 * allBreedsOwnCode.append("\n"); }
+				 * if (allBreedsOwnCode.length()!=0){ allBreedsOwnCode.append("\n"); }
 				 */
 				if (ugpfComponents.length() != 0) {
 					ugpfComponents.append("\n");
@@ -1605,10 +1498,8 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			}
 
 			// toggle button methods
-			StringTemplate toggleButtonTemplate = ugpfTemplateGroup
-					.getInstanceOf("toggleButton");
-			toggleButtonTemplate.setAttribute("observerName",
-					"default_observer");
+			StringTemplate toggleButtonTemplate = ugpfTemplateGroup.getInstanceOf("toggleButton");
+			toggleButtonTemplate.setAttribute("observerName", "default_observer");
 			for (ProcedureDefinition procDef : observerToggleButtonMethods) {
 				boolean generateButtonUsingExistingMethod = false;
 				String buttonMethodName = procDef.getName();
@@ -1616,13 +1507,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				if (ll.size() == 1) {
 					Object o = ll.getFirst();
 					if (o instanceof ProcedureInvocation) {
-						String buttonInnerMethodName = ((ProcedureInvocation) o)
-								.getProfile().getJavaName();
+						String buttonInnerMethodName = ((ProcedureInvocation) o).getProfile().getJavaName();
 						for (ProcedureDefinition obsProcDef : observerNonButtonMethods) {
-							String observerMethodName = obsProcDef.getProfile()
-									.getJavaName();
-							if (observerMethodName
-									.equals(buttonInnerMethodName)) {
+							String observerMethodName = obsProcDef.getProfile().getJavaName();
+							if (observerMethodName.equals(buttonInnerMethodName)) {
 								generateButtonUsingExistingMethod = true;
 								buttonMethodName = observerMethodName;
 								break;
@@ -1633,22 +1521,19 @@ public class NetlogoImportWizard extends NewElementWizard implements
 
 				if (generateButtonUsingExistingMethod) {
 					// create button with existing method name as argument
-					toggleButtonTemplate.setAttribute("methodName",
-							buttonMethodName);
+					toggleButtonTemplate.setAttribute("methodName", buttonMethodName);
 				} else {
 					buttonMethodName = buttonMethodName.substring(21);
 					procDef.setName(buttonMethodName);
 					// create button with button method name as argument
-					toggleButtonTemplate.setAttribute("methodName",
-							buttonMethodName);
+					toggleButtonTemplate.setAttribute("methodName", buttonMethodName);
 					// add button method to UserObserver bodyCode
 					bodyCode.append(procDef);
 					bodyCode.append("\n\n");
 					// bodyCode.append(buttonTemplate.toString());
 				}
 				/**
-				 * if (allBreedsOwnCode.length()!=0){
-				 * allBreedsOwnCode.append("\n"); }
+				 * if (allBreedsOwnCode.length()!=0){ allBreedsOwnCode.append("\n"); }
 				 */
 				if (ugpfComponents.length() != 0) {
 					ugpfComponents.append("\n");
@@ -1657,22 +1542,18 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				toggleButtonTemplate.removeAttribute("methodName");
 			}
 
-			StringTemplate uoTemplate = userOTPLTemplateGroup
-					.getInstanceOf("userObserver");
+			StringTemplate uoTemplate = userOTPLTemplateGroup.getInstanceOf("userObserver");
 			uoTemplate.setAttribute("packageName", packageName);
 			uoTemplate.setAttribute("bodyCode", bodyCode.toString());
-			createFileResource(relogoSourceFolder, "UserObserver.groovy",
-					new ByteArrayInputStream(uoTemplate.toString().getBytes(
-							"UTF-8")));
+			createFileResource(relogoSourceFolder, "UserObserver.groovy", new ByteArrayInputStream(
+					uoTemplate.toString().getBytes("UTF-8")));
 
 			// at this point the UserObserver is completed.
 
-			List<NLControl> nlControls = pageOne.getNetlogoSimulation()
-					.getNLControls();
+			List<NLControl> nlControls = pageOne.getNetlogoSimulation().getNLControls();
 			for (NLControl ctl : nlControls) {
 				if (ctl instanceof NLMonitor) {
-					StringTemplate monitorTemplate = ugpfTemplateGroup
-							.getInstanceOf("monitor");
+					StringTemplate monitorTemplate = ugpfTemplateGroup.getInstanceOf("monitor");
 					String var = ((NLMonitor) ctl).getVariable();
 					String label = ((NLMonitor) ctl).getLabel();
 					if (label != null && label.length() > 0) {
@@ -1682,8 +1563,7 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 					label = "monitor_reporter_" + label;
 					// observerName,reporterName,interval
-					monitorTemplate.setAttribute("observerName",
-							"default_observer");
+					monitorTemplate.setAttribute("observerName", "default_observer");
 					monitorTemplate.setAttribute("reporterName", label);
 					monitorTemplate.setAttribute("interval", 5.0);
 					if (ugpfComponents.length() != 0) {
@@ -1691,14 +1571,12 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 					ugpfComponents.append(monitorTemplate.toString());
 				} else if (ctl instanceof NLChooser) {
-					StringTemplate chooserTemplate = ugpfTemplateGroup
-							.getInstanceOf("chooser");
+					StringTemplate chooserTemplate = ugpfTemplateGroup.getInstanceOf("chooser");
 					// variableName and list
 					String var = ((NLChooser) ctl).getVariable().trim();
 					int index = ((NLChooser) ctl).getInitialValue();
 					List list = ((NLChooser) ctl).getChoices();
-					chooserTemplate.setAttribute("variableName", camelCase(var,
-							false));
+					chooserTemplate.setAttribute("variableName", camelCase(var, false));
 					chooserTemplate.setAttribute("list", list);
 					chooserTemplate.setAttribute("index", index);
 					if (ugpfComponents.length() != 0) {
@@ -1706,12 +1584,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 					ugpfComponents.append(chooserTemplate.toString());
 				} else if (ctl instanceof NLInputBox) {
-					StringTemplate inputTemplate = ugpfTemplateGroup
-							.getInstanceOf("input");
+					StringTemplate inputTemplate = ugpfTemplateGroup.getInstanceOf("input");
 					String var = ((NLInputBox) ctl).getVariable();
 					Object val = ((NLInputBox) ctl).getInitialValue();
-					inputTemplate.setAttribute("variableName", camelCase(var,
-							false));
+					inputTemplate.setAttribute("variableName", camelCase(var, false));
 					if (val != null) {
 						inputTemplate.setAttribute("value", val);
 					}
@@ -1720,12 +1596,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 					ugpfComponents.append(inputTemplate.toString());
 				} else if (ctl instanceof NLSwitch) {
-					StringTemplate switchTemplate = ugpfTemplateGroup
-							.getInstanceOf("switch");
+					StringTemplate switchTemplate = ugpfTemplateGroup.getInstanceOf("switch");
 					String var = ((NLSwitch) ctl).getVariable();
 					Boolean on = (Boolean) ((NLSwitch) ctl).getInitialValue();
-					switchTemplate.setAttribute("variableName", camelCase(var,
-							false));
+					switchTemplate.setAttribute("variableName", camelCase(var, false));
 					if (on != null) {
 						switchTemplate.setAttribute("selected", on);
 					}
@@ -1734,16 +1608,14 @@ public class NetlogoImportWizard extends NewElementWizard implements
 					}
 					ugpfComponents.append(switchTemplate.toString());
 				} else if (ctl instanceof NLSlider) {
-					StringTemplate sliderTemplate = ugpfTemplateGroup
-							.getInstanceOf("slider");
+					StringTemplate sliderTemplate = ugpfTemplateGroup.getInstanceOf("slider");
 					String var = ((NLSlider) ctl).getVariable();
 					double minVal = ((NLSlider) ctl).getMinimum();
 					double increment = ((NLSlider) ctl).getStep();
 					double maxVal = ((NLSlider) ctl).getMaximum();
 					Number val = (Number) ((NLSlider) ctl).getInitialValue();
 					String units = ((NLSlider) ctl).getUnits();
-					sliderTemplate.setAttribute("variableName", camelCase(var,
-							false));
+					sliderTemplate.setAttribute("variableName", camelCase(var, false));
 					sliderTemplate.setAttribute("minVal", minVal);
 					sliderTemplate.setAttribute("increment", increment);
 					sliderTemplate.setAttribute("maxVal", maxVal);
@@ -1759,9 +1631,8 @@ public class NetlogoImportWizard extends NewElementWizard implements
 			}
 			ugpfTemplate.setAttribute("components", ugpfComponents.toString());
 
-			createFileResource(relogoSourceFolder, upccInstantiationName,
-					new ByteArrayInputStream(ugpfTemplate.toString().getBytes(
-							"UTF-8")));
+			createFileResource(relogoSourceFolder, upccInstantiationName, new ByteArrayInputStream(
+					ugpfTemplate.toString().getBytes("UTF-8")));
 		}
 	}
 
@@ -1781,13 +1652,10 @@ public class NetlogoImportWizard extends NewElementWizard implements
 				buf.setCharAt(i, 'p');
 			} else if (buf.charAt(i) == '!') {
 				buf.setCharAt(i, 'X');
-			} else if (Character.isWhitespace(buf.charAt(i))
-					|| buf.charAt(i) == '-') {
+			} else if (Character.isWhitespace(buf.charAt(i)) || buf.charAt(i) == '-') {
 				buf.deleteCharAt(i);
-				if (i < buf.length()
-						&& Character.isLetterOrDigit(buf.charAt(i))) {
-					if (buf.charAt(i) != '?' && buf.charAt(i) != '%'
-							&& buf.charAt(i) != '!') {
+				if (i < buf.length() && Character.isLetterOrDigit(buf.charAt(i))) {
+					if (buf.charAt(i) != '?' && buf.charAt(i) != '%' && buf.charAt(i) != '!') {
 						buf.setCharAt(i, Character.toUpperCase(buf.charAt(i)));
 					} else if (buf.charAt(i) == '_') {
 						continue;

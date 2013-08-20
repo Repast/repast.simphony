@@ -6,9 +6,9 @@ import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
-import repast.simphony.gis.GeometryUtil;
-import static repast.simphony.gis.GeometryUtil.GeometryType.*;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.*;
 import repast.simphony.gis.display.PGISCanvas;
+import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import simphony.util.messages.MessageCenter;
 

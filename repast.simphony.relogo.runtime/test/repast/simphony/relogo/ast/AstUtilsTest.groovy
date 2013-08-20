@@ -81,7 +81,8 @@ class AstUtilsTest extends GroovyTestCase {
 		trans.modifyDisplayFile(projectPath, projectName, className, basePackageName)
 		String destFileContent = new File(destinationFileName).text
 		String expectedFileContent = new File(expectedFileName).text
-		assertEquals(expectedFileContent,destFileContent)
+		println destFileContent
+		assertTrue(expectedFileContent.equals(destFileContent))
 	}
 	
 	/**

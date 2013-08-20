@@ -1,2 +1,6 @@
 .DS_Store
 bin/
+test_bin/
+test-bin/
+bin-standalone/
+

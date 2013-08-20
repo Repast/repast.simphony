@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.data.analysis.NetworkAnalysisPluginWizard;
@@ -83,10 +83,11 @@ public class PajekWizard extends NetworkAnalysisPluginWizard {
 	}
 
 	private String getExecutableLoc() {
-		String home = getInstallHome();
-		if (!home.endsWith(File.separator))
-			home += File.separator;
-		return home + "pajek.exe";
+//		String home = getInstallHome();
+//		if (!home.endsWith(File.separator))
+//			home += File.separator;
+//		return home + "pajek.exe";
+		return getInstallHome();
 	}
 
 	public String getCannotRunMessage() {

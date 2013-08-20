@@ -17,7 +17,7 @@ import java.awt.Componentimport javax.swing.BoxLayoutimport java.awt.Colorimp
 import javax.swing.AbstractButton;
 import javax.swing.JPanelimport javax.swing.JButtonimport javax.swing.JToggleButtonimport javax.swing.JSliderimport repast.simphony.relogo.BaseObserverimport repast.simphony.relogo.BaseTurtleimport repast.simphony.relogo.BasePatchimport repast.simphony.relogo.BaseLinkimport javax.swing.event.ChangeListener
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import simphony.util.messages.MessageCenterimport java.awt.BorderLayoutimport java.awt.FlowLayout
 import java.awt.Font;
@@ -93,14 +93,14 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 		
 	}
 	
-	public static JPanel createMonitor(String observerID, String reporterName, String elementLabel, double interval){
+	public static JPanel createMonitor(String observerID, String closureName, String elementLabel, double interval){
 		if (isBatch()) return null;
 
 		ReLogoModel model = ReLogoModel.getInstance();
-		model.monitorsMap[reporterName] = ""
+		model.monitorsMap[closureName] = ""
 		//TODO: possibly change the start time to 0.0
 		ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule()
-   		def action = [execute: { -> ReLogoModel.getInstance().setMonitor(reporterName, Utility.getObserverByID(observerID)."$reporterName"())}]  as IAction
+   		def action = [execute: { -> ReLogoModel.getInstance().setMonitor(closureName, Utility.getObserverByID(observerID)."$closureName"())}]  as IAction
    		schedule.schedule(ScheduleParameters.createRepeating(1.0, interval, ReLogoModel.MONITOR_PRIORITY), action)
 		NumberFormat nf = NumberFormat.getNumberInstance();
 		SwingBuilder swing = new SwingBuilder()
@@ -126,7 +126,7 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 			}
 			panel(alignmentX: Component.LEFT_ALIGNMENT/*, border: lineBorder(color: Color.BLUE)*/){
 				borderLayout()
-				label(text: bind(source: model.monitorsMap, sourceProperty: reporterName, converter: converterClosure))
+				label(text: bind(source: model.monitorsMap, sourceProperty: closureName, converter: converterClosure))
 			}
 		}
 		return fixMaximumSize(result)

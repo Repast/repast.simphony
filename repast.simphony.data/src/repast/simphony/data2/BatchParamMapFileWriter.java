@@ -21,14 +21,15 @@ import repast.simphony.parameter.Parameters;
  * @author Nick Collier
  */
 public class BatchParamMapFileWriter implements DataSink {
-  
+
   private class Updater {
-   
-    public void update() {}
+
+    public void update() {
+    }
   }
-  
+
   private class OneTimeUpdater extends Updater {
-    
+
     public void update() {
       write();
       updater = new Updater();
@@ -43,6 +44,8 @@ public class BatchParamMapFileWriter implements DataSink {
   private AggregateDataSource batchRunDS;
   private List<AggregateDataSource> sources;
   private Updater updater = new Updater();
+
+  private boolean closed = false;
 
   public BatchParamMapFileWriter(BatchRunDataSource source, FileNameFormatter fnFormatter,
       String delimiter, FormatType formatType) {
@@ -66,8 +69,14 @@ public class BatchParamMapFileWriter implements DataSink {
     sources.add(batchRunDS);
     Parameters params = RunEnvironment.getInstance().getParameters();
     for (String pName : params.getSchema().parameterNames()) {
-      ParameterDataSource ds = new ParameterDataSource(pName);
-      sources.add(ds);
+      // this keeps the synthetic parameter used by the distributed batch code
+      // to track the run number out of the actual output.
+      // we can't use a constant here because that would create bad
+      // dependencies.
+      if (!pName.equals("repast.simphony.batch.BatchConstantsbatch.name")) {
+        ParameterDataSource ds = new ParameterDataSource(pName);
+        sources.add(ds);
+      }
     }
 
     formatter = formatType == FormatType.TABULAR ? new TabularFormatter(sources, delimiter)
@@ -96,26 +105,29 @@ public class BatchParamMapFileWriter implements DataSink {
    * @see repast.simphony.data2.DataSink#flush()
    */
   @Override
-  public void flush() {
-    try {
-      if (writer != null) {
-        writer.flush();
+  public synchronized void flush() {
+    if (!closed) {
+      try {
+        if (writer != null) {
+          writer.flush();
+        }
+      } catch (IOException ex) {
+        throw new DataException("Error while flushing BatchParamMapFileWriter.", ex);
       }
-    } catch (IOException ex) {
-      throw new DataException("Error while flushing FileDataSink.", ex);
     }
   }
 
   /**
-   * Notifies this BatchParamMapFileWriter that another batch run has started, so we
-   * write the current parameter values to a file.
+   * Notifies this BatchParamMapFileWriter that another batch run has started,
+   * so we write the current parameter values to a file.
    */
   public void runStarted() {
     updater = new OneTimeUpdater();
   }
-  
+
   private void write() {
-    if (formatter == null) init();
+    if (formatter == null)
+      init();
     for (AggregateDataSource source : sources) {
       formatter.addData(source.getId(), source.get(null, 0));
     }
@@ -172,15 +184,18 @@ public class BatchParamMapFileWriter implements DataSink {
    * @see repast.simphony.data2.DataSink#close()
    */
   @Override
-  public void close() {
-    try {
-      writer.flush();
-    } catch (IOException ex) {
-      throw new DataException("Error closing FileDataSink.", ex);
-    } finally {
+  public synchronized void close() {
+    if (!closed) {
       try {
-        writer.close();
+        writer.flush();
       } catch (IOException ex) {
+        throw new DataException("Error closing BatchParamMapFileWriter.", ex);
+      } finally {
+        try {
+          closed = true;
+          writer.close();
+        } catch (IOException ex) {
+        }
       }
     }
   }

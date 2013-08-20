@@ -13,7 +13,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import repast.simphony.freezedry.AbstractDataSource;
 import repast.simphony.freezedry.FieldUtilities;

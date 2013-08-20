@@ -5,28 +5,35 @@ package repast.simphony.chart2.engine;
 
 import java.awt.Color;
 
-import repast.simphony.engine.schedule.Descriptor;
+import repast.simphony.scenario.AbstractDescriptor;
 
 /**
  * @author Nick Collier
  */
-public class ChartDescriptor implements Descriptor {
-  
-  public enum ChartType { TIME_SERIES, HISTOGRAM}; 
-  
-  protected String name, dataSet;
+public class ChartDescriptor extends AbstractDescriptor {
+
+  public enum ChartType {
+    TIME_SERIES, HISTOGRAM
+  };
+
+  protected String dataSet;
   protected String xAxisLabel, yAxisLabel, chartTitle;
   protected ChartType type = ChartType.TIME_SERIES;
   protected Color background, gridLineColor;
   protected boolean showGrid = true;
+  protected boolean showLegend = true;
+
+  // used by xstream serialization
+  protected ChartDescriptor() {
+    super("");
+  }
 
   public ChartDescriptor(String name) {
-    this.name = name;
+    super(name);
     xAxisLabel = yAxisLabel = chartTitle = "";
     background = Color.LIGHT_GRAY;
     gridLineColor = Color.WHITE;
   }
-  
 
   /**
    * @return the background
@@ -35,14 +42,16 @@ public class ChartDescriptor implements Descriptor {
     return background;
   }
 
-
   /**
-   * @param background the background to set
+   * @param background
+   *          the background to set
    */
   public void setBackground(Color background) {
-    this.background = background;
+    if (!this.background.equals(background)) {
+      this.background = background;
+      scs.fireScenarioChanged(this, "backgroundColor");
+    }
   }
-
 
   /**
    * @return the gridLineColor
@@ -51,14 +60,16 @@ public class ChartDescriptor implements Descriptor {
     return gridLineColor;
   }
 
-
   /**
-   * @param gridLineColor the gridLineColor to set
+   * @param gridLineColor
+   *          the gridLineColor to set
    */
   public void setGridLineColor(Color gridLineColor) {
-    this.gridLineColor = gridLineColor;
+    if (!this.gridLineColor.equals(gridLineColor)) {
+      this.gridLineColor = gridLineColor;
+      scs.fireScenarioChanged(this, "gridLineColor");
+    }
   }
-
 
   /**
    * @return the showGrid
@@ -67,35 +78,17 @@ public class ChartDescriptor implements Descriptor {
     return showGrid;
   }
 
-
   /**
-   * @param showGrid the showGrid to set
+   * @param showGrid
+   *          the showGrid to set
    */
   public void setShowGrid(boolean showGrid) {
-    this.showGrid = showGrid;
+    if (this.showGrid != showGrid) {
+      this.showGrid = showGrid;
+      scs.fireScenarioChanged(this, "showGrid");
+    }
   }
 
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see repast.simphony.engine.schedule.Descriptor#getName()
-   */
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see repast.simphony.engine.schedule.Descriptor#setName(java.lang.String)
-   */
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-  
   /**
    * @return the dataSet
    */
@@ -104,10 +97,14 @@ public class ChartDescriptor implements Descriptor {
   }
 
   /**
-   * @param dataSet the dataSet to set
+   * @param dataSet
+   *          the dataSet to set
    */
   public void setDataSet(String dataSet) {
-    this.dataSet = dataSet;
+    if (this.dataSet == null || !this.dataSet.equals(dataSet)) {
+      this.dataSet = dataSet;
+      scs.fireScenarioChanged(this, "dataSet");
+    }
   }
 
   /**
@@ -118,10 +115,14 @@ public class ChartDescriptor implements Descriptor {
   }
 
   /**
-   * @param xAxisLabel the xAxisLabel to set
+   * @param xAxisLabel
+   *          the xAxisLabel to set
    */
   public void setXAxisLabel(String xAxisLabel) {
-    this.xAxisLabel = xAxisLabel;
+    if (!this.xAxisLabel.equals(xAxisLabel)) {
+      this.xAxisLabel = xAxisLabel;
+      scs.fireScenarioChanged(this, "xAxisLabel");
+    }
   }
 
   /**
@@ -132,10 +133,14 @@ public class ChartDescriptor implements Descriptor {
   }
 
   /**
-   * @param yAxisLabel the yAxisLabel to set
+   * @param yAxisLabel
+   *          the yAxisLabel to set
    */
   public void setYAxisLabel(String yAxisLabel) {
-    this.yAxisLabel = yAxisLabel;
+    if (!this.yAxisLabel.equals(yAxisLabel)) {
+      this.yAxisLabel = yAxisLabel;
+      scs.fireScenarioChanged(this, "yAxisLabel");
+    }
   }
 
   /**
@@ -146,9 +151,24 @@ public class ChartDescriptor implements Descriptor {
   }
 
   /**
-   * @param chartTitle the chartTitle to set
+   * @param chartTitle
+   *          the chartTitle to set
    */
   public void setChartTitle(String chartTitle) {
-    this.chartTitle = chartTitle;
+    if (!this.chartTitle.equals(chartTitle)) {
+      this.chartTitle = chartTitle;
+      scs.fireScenarioChanged(this, "chartTitle");
+    }
+  }
+
+  public boolean doShowLegend() {
+    return showLegend;
+  }
+
+  public void setShowLegend(boolean val) {
+    if (this.showLegend != val) {
+      this.showLegend = val;
+      scs.fireScenarioChanged(this, "showLegend");
+    }
   }
 }

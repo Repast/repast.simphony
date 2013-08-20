@@ -4,7 +4,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import repast.simphony.gis.GeometryUtil;
+
+import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.space.gis.GISAdder;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.visualization.gis.DisplayGIS;

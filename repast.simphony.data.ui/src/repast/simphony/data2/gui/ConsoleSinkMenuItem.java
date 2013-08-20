@@ -56,6 +56,8 @@ public class ConsoleSinkMenuItem extends AbstractEditorMenuItem {
           ControllerActionConstants.OUTPUTTER_ROOT);
       registry.addAction(contextID, parent, action);
       evt.addActionToTree(action);
+      action.getDescriptor().addScenarioChangedListener(evt.getScenario());
+      evt.getScenario().setDirty(true);
     }
   }
 }

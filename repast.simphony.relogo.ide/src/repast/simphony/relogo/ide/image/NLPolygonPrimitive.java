@@ -20,6 +20,8 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.util.*;
 
+import repast.simphony.relogo.image.NLImagePrimitive;
+
 /**
  *
  * @author CBURKE

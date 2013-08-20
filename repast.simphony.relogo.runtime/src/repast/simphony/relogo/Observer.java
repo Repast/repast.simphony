@@ -144,7 +144,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number);
+	public AgentSet<Turtle> createTurtles(int number);
 
 	/**
 	 * Makes a number of randomly oriented turtles then executes a set of
@@ -156,7 +156,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -170,7 +170,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, String type);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -184,7 +184,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createTurtles(int number, Closure closure, Class type);
+	public AgentSet<Turtle> createTurtles(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of randomly oriented turtles.
@@ -194,7 +194,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createTurtles()
 	 */
-	public AgentSet crt(int number);
+	public AgentSet<Turtle> crt(int number);
 
 	/**
 	 * Makes a number of randomly oriented turtles then executes a set of
@@ -208,7 +208,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure)
 	 */
-	public AgentSet crt(int number, Closure closure);
+	public AgentSet<Turtle> crt(int number, Closure closure);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -224,7 +224,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure, String)
 	 */
-	public AgentSet crt(int number, Closure closure, String type);
+	public AgentSet<Turtle> crt(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of randomly oriented turtles of a specific type then
@@ -240,7 +240,7 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @see #createTurtles(int, Closure, Class)
 	 */
-	public AgentSet crt(int number, Closure closure, Class type);
+	public AgentSet<Turtle> crt(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles.
@@ -250,7 +250,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int)
 	 */
-	public AgentSet cro(int number);
+	public AgentSet<Turtle> cro(int number);
 
 	/**
 	 * Makes a number of uniformly fanned turtles.
@@ -259,7 +259,7 @@ public interface Observer extends ProjectionListener {
 	 *            an integer
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number);
+	public AgentSet<Turtle> createOrderedTurtles(int number);
 
 	/**
 	 * Makes a number of uniformly fanned turtles then executes a set of
@@ -272,7 +272,7 @@ public interface Observer extends ProjectionListener {
 	 * @return created turtles
 	 * @see #createOrderedTurtles(int, Closure)
 	 */
-	public AgentSet cro(int number, Closure closure);
+	public AgentSet<Turtle> cro(int number, Closure closure);
 
 	/**
 	 * Makes a number of uniformly fanned turtles then executes a set of
@@ -284,7 +284,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -298,7 +298,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, String type);
+	public AgentSet<Turtle> cro(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -312,7 +312,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet cro(int number, Closure closure, Class type);
+	public AgentSet<Turtle> cro(int number, Closure closure, Class type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -326,7 +326,7 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, String type);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, String type);
 
 	/**
 	 * Makes a number of uniformly fanned turtles of a specific type then
@@ -340,10 +340,10 @@ public interface Observer extends ProjectionListener {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet createOrderedTurtles(int number, Closure closure, Class type);
+	public AgentSet<Turtle> createOrderedTurtles(int number, Closure closure, Class type);
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset
@@ -476,8 +476,10 @@ public interface Observer extends ProjectionListener {
 
 	/**
 	 * Stops an observer executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop();
+	@Deprecated
+	public Stop oldStop();
 
 	/**
 	 * Returns the patch containing a point.
@@ -495,19 +497,19 @@ public interface Observer extends ProjectionListener {
 	 * 
 	 * @return agentset containing all patches
 	 */
-	public AgentSet patches();
+	public AgentSet<Patch> patches();
 
 	/**
 	 * Queries if all agents in a collection are true for a boolean closure.
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter);
+	public boolean allQ(Collection a, Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the smallest value when operated on by a set of
@@ -519,7 +521,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -535,7 +537,7 @@ public interface Observer extends ProjectionListener {
 	 *         operated on by closure
 	 */
 	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 	/**
 	 * Returns the ReLogoAgent with the largest value when operated on by a set of
@@ -547,7 +549,7 @@ public interface Observer extends ProjectionListener {
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a,Closure reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a,Closure closure);
 
 	/**
 	 * Returns an agentset consisting of a specified number of agents which have
@@ -563,7 +565,7 @@ public interface Observer extends ProjectionListener {
 	 *         operated on by closure
 	 */
 	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter);
+			Closure closure);
 
 	/**
 	 * Returns the minimum x coordinate for all patches.
@@ -716,4 +718,442 @@ public interface Observer extends ProjectionListener {
 	 * @param closure the closure to execute (the closure input parameter is a java.beans.PropertyChangeEvent)
 	 */
 	public void registerModelParameterListener(String varName, final Closure closure);
+	
+	/**
+	 * Creates default turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromCSV(String fileName, Closure initClosure);
+	
+	/**
+	 * Creates default turtles from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromCSV(String fileName);
+	
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 * 
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+	
+	/**
+	 * Creates turtles of specific type from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * 
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromCSV(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates default ordered turtles from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromCSV(String fileName, Closure initClosure);
+
+	/**
+	 * Creates default ordered turtles from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 * 
+	 * @param fileName the path to the CSV file
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromCSV(String fileName);
+	
+	/**
+	 * Creates ordered turtles of specific type from a CSV file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates ordered turtles of specific type from a CSV file.
+	 * <p>
+	 * The format for the CSV file is:<p>
+	 * 	prop1,prop2,prop3<br>
+	 * 	val1a,val2a,val3a<br>
+	 * 	val1b,val2b,val3b<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path to the CSV file
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromCSV(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcel(String fileName, Closure initClosure);
+
+	/**
+	 * Creates default turtles from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcel(String fileName);
+	
+	/**
+	 * Creates default turtles from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure);
+
+	/**
+	 * Creates default turtles from a specific sheet in an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 *
+	 */
+	public AgentSet<Turtle> createTurtlesFromExcelWithSheet(String fileName, String sheetName);
+	
+	/**
+	 * Creates turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates turtles of specific type from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcel(String fileName, Class<E> turtleType);
+	
+	/**
+	 * Creates turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates turtles of specific type from a specific sheet in an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
+
+	
+	/**
+	 * Creates ordered default turtles from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcel(String fileName, Closure initClosure);
+
+	/**
+	 * Creates ordered default turtles from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcel(String fileName);
+	
+	/**
+	 * Creates ordered default turtles from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Closure initClosure);
+
+	/**
+	 * Creates ordered default turtles from a specific sheet in an Excel file.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 *
+	 */
+	public AgentSet<Turtle> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName);
+	
+	/**
+	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
+	 * Optionally provide an initialization closure.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType, Closure initClosure);
+
+	/**
+	 * Creates ordered turtles of specific type from the first sheet of an Excel file.
+	 * <p>
+	 * The format for the Excel file is:<p>
+	 * 	| prop1 | prop2 | prop3 |<br>
+	 * 	| val1a | val2a | val3a |<br>
+	 * 	| val1b | val2b | val3b |<br>
+	 * <p>
+	 * Where if the turtle type has any of the properties 
+	 * (prop1,prop2,prop3), they will be set to (val1a,val2a,val3a)
+	 * for the first turtle, (val1b,val2b,val3b) for the second 
+	 * turtle, and so on.<p>
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcel(String fileName, Class<E> turtleType);
+
+	
+	/**
+	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
+	 * Optionally provide an initialization closure.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 * @param initClosure the initialization routine
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType, Closure initClosure);
+	
+	/**
+	 * Creates ordered turtles of specific type from a specific sheet in an Excel file.
+	 *
+	 * @param fileName the path from the default system directory
+	 * @param sheetName the specific sheet name
+	 * @param turtleType the class of turtle to create
+	 *
+	 */
+	public <E extends ReLogoAgent> AgentSet<E> createOrderedTurtlesFromExcelWithSheet(String fileName, String sheetName, Class<E> turtleType);
 }

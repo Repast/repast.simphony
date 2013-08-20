@@ -26,6 +26,23 @@ public class MethodDataSourceDefinition {
     this.aggType = def.aggType;
   }
   
+  public boolean equals(Object obj) {
+    if (obj instanceof MethodDataSourceDefinition) {
+      MethodDataSourceDefinition other = (MethodDataSourceDefinition)obj;
+      return id.equals(other.id) && className.equals(other.className) &&
+          methodName.equals(other.methodName) && aggType == other.aggType;
+      
+    }
+    return false;
+  }
+  
+  public int hashCode() {
+    int hash = 31 * 17 + id.hashCode();
+    hash = 31 * hash + className.hashCode();
+    hash = 31 * hash + methodName.hashCode();
+    if (aggType != null) hash = 31 * hash + aggType.hashCode();
+    return hash;
+  }
   /**
    * @return the AggregateType
    */

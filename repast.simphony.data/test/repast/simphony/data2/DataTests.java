@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.junit.Test;
 
 import repast.simphony.context.Context;
@@ -450,7 +450,7 @@ public class DataTests {
     objs.add(new ObjectB("C"));
     return objs;
   }
-
+  
   @Test
   public void testAction() throws IOException {
     try {
@@ -528,14 +528,14 @@ public class DataTests {
     sinks.add(sink1);
 
     NonAggregateDataSet set1 = new NonAggregateDataSet("ds1", sources, sinks);
-    manager.addDataSet(set1, ScheduleParameters.createRepeating(1, 1));
+    manager.addDataSet(set1, ScheduleParameters.createRepeating(1, 1), false);
 
     sinks = new ArrayList<DataSink>();
     Sink sink2 = new Sink();
     sinks.add(sink2);
 
     NonAggregateDataSet set2 = new NonAggregateDataSet("ds2", sources, sinks);
-    manager.addDataSet(set2, ScheduleParameters.createRepeating(1, 1));
+    manager.addDataSet(set2, ScheduleParameters.createRepeating(1, 1), false);
 
     List<ObjectB> objs = createObjs();
     Context<ObjectB> context = new DefaultContext<ObjectB>("root");
@@ -646,14 +646,14 @@ public class DataTests {
     sinks.add(sink1);
 
     NonAggregateDataSet set1 = new NonAggregateDataSet("ds1", sources, sinks);
-    manager.addDataSet(set1, ScheduleParameters.createRepeating(1, 1));
+    manager.addDataSet(set1, ScheduleParameters.createRepeating(1, 1), false);
 
     sinks = new ArrayList<DataSink>();
     Sink sink2 = new Sink();
     sinks.add(sink2);
 
     NonAggregateDataSet set2 = new NonAggregateDataSet("ds2", sources, sinks);
-    manager.addDataSet(set2, ScheduleParameters.createRepeating(1, 1));
+    manager.addDataSet(set2, ScheduleParameters.createRepeating(1, 1), false);
 
     RunState runState = createRunState(1, null);
     manager.batchStarted();

@@ -1,25 +1,29 @@
 package repast.simphony.query.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+
 import repast.simphony.query.Query;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
 import simphony.util.messages.MessageCenter;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Query that returns items in a geography that are some specified distance from
- * another item or a geometry.
+ * another item or a geometry.  The distance is either calculated from the
+ * center of a point, or from the buffer zone which is created around the line
+ * or polygon feature, see {@link com.vividsolutions.jts.geom.Geometry} .buffer() 
  *
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class GeographyWithin<T> implements Query<T> {
 
@@ -84,23 +88,23 @@ public class GeographyWithin<T> implements Query<T> {
     init(geography, distance, location);
   }
 
-  private void init(Geography geography, double distance, Geometry location) {
-    Point p = location.getCentroid();
+  private void init(Geography geography, double distance, Geometry geom) {
     // don't convert if we are already in a meter based crs
     boolean convert = !geography.getUnits(0).equals(SI.METER);
 
     CoordinateReferenceSystem utm = null;
     Geometry buffer = null;
     CoordinateReferenceSystem crs = geography.getCRS();
+    Geometry tempGeom = geom;
 
     try {
       // convert p to UTM
       if (convert) {
-        utm = UTMFinder.getUTMFor(p, crs);
-        p = (Point) JTS.transform(p, cFactory.createOperation(crs, utm).getMathTransform());
+        utm = UTMFinder.getUTMFor(geom, crs);
+        tempGeom = JTS.transform(geom, cFactory.createOperation(crs, utm).getMathTransform());
       }
 
-      buffer = p.buffer(distance);
+      buffer = tempGeom.buffer(distance);
 
       // convert buffer back to geography's crs.
       if (convert) {

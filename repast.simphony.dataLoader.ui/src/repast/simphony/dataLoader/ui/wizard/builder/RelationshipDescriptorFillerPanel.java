@@ -6,10 +6,9 @@ import repast.simphony.ui.plugin.editor.UISaver;
 import saf.core.ui.util.DoubleDocument;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
+import com.jgoodies.forms.layout.FormSpecs;
 
 public class RelationshipDescriptorFillerPanel extends UISaver {
 
@@ -29,8 +28,8 @@ public class RelationshipDescriptorFillerPanel extends UISaver {
 		this.canvas = canvas;
 		this.descriptor = descriptor;
 		this.networkDescriptor = networkDescriptor;
-		FormLayout layout = FormFactory.createColumnLayout(1, 1,
-				new ColumnSpec("right:p"), Sizes.DLUX9, Sizes.DLUX1);
+		FormLayout layout = new FormLayout(new ColumnSpec[]{FormSpecs.DEFAULT_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+                    ColumnSpec.decode("right:p")});
 
 		builder = new DefaultFormBuilder(layout, this);
 		builder.setDefaultDialogBorder();

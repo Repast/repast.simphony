@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.distributed.batch.ui" version="">
+
+	<attributes>
+		<attribute id="simphony" value="2.1.0"/>
+	</attributes>
+
+	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.distributed.batch" reverse-lookup="false"/>
+	</requires>
+
+	<runtime>
+
+		<library id="icons" path="icons/" type="resources">
+			<export prefix="*"/>
+		</library>
+
+		<library id="distributed.batch.ui" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jgoodies-forms-1.7.1.jar" path="lib/jgoodies-forms-1.7.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jgoodies-common-1.6.0.jar" path="lib/jgoodies-common-1.6.0.jar" type="code">
+            <export prefix="*"/>
+        </library>
+        
+        <library id="jgoodies-binding-2.9.0.jar" path="lib/jgoodies-binding-2.9.0.jar" type="code">
+            <export prefix="*"/>
+        </library>
+		
+		
+	</runtime>
+
+	<extension id="distributed.batch.ui.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.batch.gui.ShowBatchDialog"/>
+			<parameter id="label" value="Configure &amp; Launch Batch Runs"/>
+			<parameter id="icon" value="restart.png"/>
+			<parameter id="class" value="repast.simphony.batch.gui.ShowBatchDialog"/>
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+			<parameter id="groupID" value="batchTools"/>
+			<parameter id="tooltip" value="Configure &amp; Launch Batch Runs"/>
+		</parameter>
+	</extension>
+
+</plugin>

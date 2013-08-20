@@ -24,7 +24,7 @@ public class GridValueLayer implements IGridValueLayer {
   protected String name;
 
   protected DoubleMatrix1D matrix;
-
+  
   protected int[] stride;
 
   protected Dimensions dims;

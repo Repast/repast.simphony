@@ -39,11 +39,11 @@ import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -219,31 +219,31 @@ public class MovieMakerDialog extends JDialog {
 
     //======== dialogPane ========
     {
-    	dialogPane.setBorder(Borders.DIALOG_BORDER);
+    	dialogPane.setBorder(Borders.DIALOG);
     	dialogPane.setLayout(new BorderLayout());
 
     	//======== contentPanel ========
     	{
     		contentPanel.setLayout(new FormLayout(
     			new ColumnSpec[] {
-    				FormFactory.RELATED_GAP_COLSPEC,
-    				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-    				new ColumnSpec("max(default;50dlu)"),
-    				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+    				FormSpecs.RELATED_GAP_COLSPEC,
+    				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+    				ColumnSpec.decode("max(default;50dlu)"),
+    				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
     				new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-    				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-    				FormFactory.DEFAULT_COLSPEC
+    				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+    				FormSpecs.DEFAULT_COLSPEC
     			},
     			new RowSpec[] {
-    				FormFactory.DEFAULT_ROWSPEC,
-    				FormFactory.LINE_GAP_ROWSPEC,
-    				FormFactory.DEFAULT_ROWSPEC,
-    				FormFactory.LINE_GAP_ROWSPEC,
-    				FormFactory.DEFAULT_ROWSPEC,
-    				FormFactory.LINE_GAP_ROWSPEC,
-    				FormFactory.DEFAULT_ROWSPEC,
-    				FormFactory.LINE_GAP_ROWSPEC,
-    				FormFactory.DEFAULT_ROWSPEC
+    				FormSpecs.DEFAULT_ROWSPEC,
+    				FormSpecs.LINE_GAP_ROWSPEC,
+    				FormSpecs.DEFAULT_ROWSPEC,
+    				FormSpecs.LINE_GAP_ROWSPEC,
+    				FormSpecs.DEFAULT_ROWSPEC,
+    				FormSpecs.LINE_GAP_ROWSPEC,
+    				FormSpecs.DEFAULT_ROWSPEC,
+    				FormSpecs.LINE_GAP_ROWSPEC,
+    				FormSpecs.DEFAULT_ROWSPEC
     			}));
 
     		//======== panel1 ========
@@ -294,13 +294,13 @@ public class MovieMakerDialog extends JDialog {
 
     	//======== buttonBar ========
     	{
-    		buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+    		buttonBar.setBorder(Borders.BUTTON_BAR_PAD);
     		buttonBar.setLayout(new FormLayout(
     			new ColumnSpec[] {
-    				FormFactory.GLUE_COLSPEC,
-    				FormFactory.BUTTON_COLSPEC,
-    				FormFactory.RELATED_GAP_COLSPEC,
-    				FormFactory.BUTTON_COLSPEC
+    				FormSpecs.GLUE_COLSPEC,
+    				FormSpecs.BUTTON_COLSPEC,
+    				FormSpecs.RELATED_GAP_COLSPEC,
+    				FormSpecs.BUTTON_COLSPEC
     			},
     			RowSpec.decodeSpecs("pref")));
 

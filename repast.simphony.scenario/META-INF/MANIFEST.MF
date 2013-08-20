@@ -2,17 +2,24 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.scenario;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.core,
- org.junit4,
+ org.junit,
  org.eclipse.wst.xml.core,
  repast.simphony.eclipse,
  org.eclipse.ui
-Export-Package: repast.simphony.annotate,
- repast.simphony.plugin,
+Export-Package: repast.simphony.annotate;uses:="simphony.util.messages",
+ repast.simphony.plugin;
+  uses:="repast.simphony.engine.environment,
+   repast.simphony.scenario,
+   org.java.plugin,
+   org.java.plugin.registry",
  repast.simphony.scenario,
- repast.simphony.scenario.data
+ repast.simphony.scenario.data;uses:="junit.framework",
+ repast.simphony.scenario.eclipse,
+ repast.simphony.score
 Bundle-Vendor: %providerName
 Bundle-ClassPath: bin/
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

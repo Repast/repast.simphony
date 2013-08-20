@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import repast.simphony.scenario.data.ContextData;
-import repast.simphony.visualization.gis3D.style.EdgeStyleGIS3D;
-import repast.simphony.visualization.gisnew.StyleGIS;
+import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
@@ -84,6 +83,7 @@ public class StyleClassFinder {
   public static List<String> getAvailableGIS3DStyles(ContextData context) {
     java.util.List<Class<?>> classes = StyleClassFinder.getClasses(context);
     List<String> names = new ArrayList<String>();
+    // TODO WWJ - need to find all StyleGIS subclasses?
     for (Class<?> clazz : classes)
       if (StyleGIS.class.isAssignableFrom(clazz))
 	names.add(clazz.getName());
@@ -99,15 +99,16 @@ public class StyleClassFinder {
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public static List<String> getAvailable3DGISEdgeStyles(ContextData context) {
-    java.util.List<Class<?>> classes = StyleClassFinder.getClasses(context);
-    List<String> names = new ArrayList<String>();
-    for (Class<?> clazz : classes)
-      if (EdgeStyleGIS3D.class.isAssignableFrom(clazz))
-	names.add(clazz.getName());
-
-    return names;
-  }
+  // TODO WWJ - networks
+//  public static List<String> getAvailable3DGISEdgeStyles(ContextData context) {
+//    java.util.List<Class<?>> classes = StyleClassFinder.getClasses(context);
+//    List<String> names = new ArrayList<String>();
+//    for (Class<?> clazz : classes)
+//      if (EdgeStyleGIS3D.class.isAssignableFrom(clazz))
+//	names.add(clazz.getName());
+//
+//    return names;
+//  }
 
   /**
    * Gets a list of Class<?> names that are assignable from EdgeStyle3D

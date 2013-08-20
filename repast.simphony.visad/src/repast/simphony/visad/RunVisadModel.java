@@ -1,6 +1,6 @@
 package repast.simphony.visad;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**
@@ -16,11 +16,11 @@ public class RunVisadModel extends AnalysisPluginRunner {
 
   static {
     if (SystemUtils.IS_OS_MAC) 
-    	path = "/Applications/VisAD/";
+    	path = "/Applications/VisAD/visad.jar";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files\\visad\\";
+    	path = "C:\\Program Files\\visad\\visad.jar";
     else
-    	path = "/usr/local/bin/VisAD/";
+    	path = "/usr/local/bin/VisAD/visad.jar";
   }
 
   public RunVisadModel() {

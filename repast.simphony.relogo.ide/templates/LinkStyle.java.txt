@@ -3,7 +3,7 @@ package $PKGNAME$.style;
 import java.awt.Color;
 
 import repast.simphony.relogo.BaseLink;
-import repast.simphony.relogo.ide.runtime.ReLogoSupport;
+import repast.simphony.relogo.util.ReLogoSupport;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.visualizationOGL2D.EdgeStyleOGL2D;
 
@@ -23,9 +23,8 @@ public class LinkStyle implements EdgeStyleOGL2D {
 	 * repast.simphony.visualizationOGL2D.EdgeStyleOGL2D#getColor(repast.simphony
 	 * .space.graph.RepastEdge)
 	 */
-	@SuppressWarnings("unchecked")
 	public Color getColor(RepastEdge<?> edge) {
-		BaseLink link = (BaseLink) edge;
+		BaseLink<?> link = (BaseLink<?>) edge;
 		return ReLogoSupport.lookupColor(link.getColor());
 	}
 

@@ -1,6 +1,6 @@
 package repast.simphony.iReport;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**
@@ -18,9 +18,9 @@ public class RunIReportModel extends AnalysisPluginRunner  {
     if (SystemUtils.IS_OS_MAC) 
     	path = "/Applications/iReport.app/Contents/Resources/ireport/bin/ireport";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files\\JasperSoft\\iReport-3.0.0\\bin\\startup.bat";
+    	path = "C:\\Program Files (x86)\\JasperSoft\\iReport-5.1.0\\bin\\ireport.exe";
     else
-    	path = "/usr/local/bin/iReport-3.0.0/bin/startup.sh";
+    	path = "";
   }
 
   public RunIReportModel(){

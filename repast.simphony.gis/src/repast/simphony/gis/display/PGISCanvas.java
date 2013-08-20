@@ -1,6 +1,36 @@
 package repast.simphony.gis.display;
 
+import java.awt.Cursor;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
+import org.geotools.map.event.MapBoundsEvent;
+import org.geotools.map.event.MapBoundsListener;
+import org.geotools.map.event.MapLayerListEvent;
+import org.geotools.map.event.MapLayerListListener;
+import org.geotools.map.event.MapLayerListener;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.referencing.datum.DefaultEllipsoid;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import repast.simphony.gis.tools.DistanceTool;
+import repast.simphony.gis.tools.MapTool;
+import simphony.util.ThreadUtilities;
+import simphony.util.messages.MessageCenter;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
@@ -12,82 +42,45 @@ import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPickPath;
-import org.geotools.feature.Feature;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.MapContext;
-import org.geotools.map.MapLayer;
-import org.geotools.map.event.*;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.geotools.referencing.datum.DefaultEllipsoid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import repast.simphony.gis.tools.MapTool;
-import repast.simphony.gis.tools.ScaleDenominatorChanged;
-import simphony.util.ThreadUtilities;
-import simphony.util.messages.MessageCenter;
-import simphony.util.messages.TaskMessage;
-
-import java.awt.*;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This will show a MapContext and adds support for various tools.
  *
  * @author Howe
+ * @author Eric Tatara
  */
 public class PGISCanvas extends PCanvas implements MapLayerListListener,
         PropertyChangeListener, MapBoundsListener {
   private static final long serialVersionUID = 2739102421248235987L;
 
-  MessageCenter msg = MessageCenter.getMessageCenter(getClass());
+  protected MessageCenter msg = MessageCenter.getMessageCenter(getClass());
 
-  PInputEventListener currentListener;
-
-  PLayer toolLayer = new PLayer();
-
-  MapContext context;
-
-  Rectangle2D rect;
-
-  Map<String, PLayer> layerNames;
-
-  Map<MapLayer, PLayer> layers;
-
-  double scaleDenominator;
-
-  DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
-
-  List<PDynamicGisLayer> dynamicLayers = new ArrayList<PDynamicGisLayer>();
-
-  private PLayer layerListening;
-
-  private PLayer mapLayer = new PLayer();
-
-  private GisDisplayMediator2 mediator = new GisDisplayMediator2();
+  protected PInputEventListener currentListener;
+  protected PLayer toolLayer = new PLayer();
+  protected MapContent context;
+  protected Rectangle2D rect;
+  protected Map<String, PGisLayer> layerNames;
+  protected Map<Layer, PGisLayer> layers;
+  protected double scaleDenominator;
+  protected DefaultEllipsoid ellipse = DefaultEllipsoid.WGS84;
+  protected  PLayer layerListening;
+  protected  PLayer mapLayer = new PLayer();
+  protected  GisDisplayMediator mediator = new GisDisplayMediator();
 
   /**
    * Create and new Canvas for the given context.
    *
    * @param context The context to be displayed
    */
-  public PGISCanvas(MapContext context) {
-    if (context.getAreaOfInterest() == null) {
-      context.setAreaOfInterest(new ReferencedEnvelope(-90, 90, -90, 90,
+  public PGISCanvas(MapContent context) {
+    if (context.getViewport().getBounds() == null) {
+      context.getViewport().setBounds(new ReferencedEnvelope(-90, 90, -90, 90,
               DefaultGeographicCRS.WGS84));
     }
     this.context = context;
     calcScaleDenominator(context);
-    //msg.info(new ScaleDenominatorChanged(getScaleDenominator()));
     getCamera().addPropertyChangeListener(this);
+    
     context.addMapLayerListListener(this);
     context.addMapBoundsListener(this);
     init();
@@ -99,10 +92,12 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     tooltipNode.setPickable(false);
     camera.addChild(tooltipNode);
     camera.addInputEventListener(new PBasicInputEventHandler() {
-      public void mouseMoved(PInputEvent event) {
+    	@Override
+    	public void mouseMoved(PInputEvent event) {
         updateToolTip(event);
       }
 
+      @Override
       public void mouseDragged(PInputEvent event) {
         updateToolTip(event);
       }
@@ -127,14 +122,29 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
       }
     });
     setBounds(0, 0, 800, 800);
+    
+    // Event handler to set cursor based on tool
     addInputEventListener(new PBasicInputEventHandler() {
+
+    	// TODO Geotools [major] - set the cursor for each tool.
+
+    	@Override
+    	public void mouseDragged(PInputEvent event) {
+    		 if (currentListener instanceof MapTool) {
+           PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+         } 
+    		 else {
+           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
+         }
+    	}
 
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (currentListener instanceof MapTool) {
-          PGISCanvas.this.setCursor(((MapTool) currentListener)
-                  .getCursor());
-        } else {
+        // The Distance Tool cursor should always be visible when enabled
+      	if (currentListener instanceof DistanceTool) {
+          PGISCanvas.this.setCursor(((MapTool) currentListener).getCursor());
+        } 
+      	else {
           PGISCanvas.this.setCursor(Cursor.getDefaultCursor());
         }
       }
@@ -153,8 +163,8 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     return context.getCoordinateReferenceSystem();
   }
 
-  private void calcScaleDenominator(MapContext context) {
-    Envelope mapArea = context.getAreaOfInterest();
+  private void calcScaleDenominator(MapContent context) {
+    Envelope mapArea = context.getViewport().getBounds();
     Rectangle2D paintArea = getBounds();
     Point2D point1 = new Point2D.Double(mapArea.getMinX(), mapArea
             .getMinY());
@@ -172,6 +182,14 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   }
 
+  /**
+   * Probe event handler for clicks on the Piccolo GIS canvas.
+   * 
+   * ---- NOTE THAT THIS IS CURRENTLY NOT USED ----	
+   *    
+   *   Kept in case a mouse click handler is used in the future.
+   *
+   */
   class ProbeEventHandler extends PBasicInputEventHandler {
     ProbeHandler handler;
 
@@ -184,10 +202,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
       PPickPath path = ev.getPath();
       PNode node = ev.getPickedNode();
       do {
-//        msg.debug("NodeSelectionType: " + node.getClass().getName());
-//        MessageCenter.getMessageCenter(getClass()).debug(
-//                "Node selection type: " + node.getClass().getName());
-        Feature feature = (Feature) node.getAttribute(Feature.class);
+        SimpleFeature feature = (SimpleFeature) node.getAttribute(SimpleFeature.class);
         if (feature != null) {
           handler.handleFeatureProbe(feature, ev);
           break;
@@ -202,8 +217,8 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
   }
 
   private void init() {
-    layers = new HashMap<MapLayer, PLayer>();
-    layerNames = new HashMap<String, PLayer>();
+    layers = new HashMap<Layer, PGisLayer>();
+    layerNames = new HashMap<String, PGisLayer>();
     removeInputEventListener(getZoomEventHandler());
     removeInputEventListener(this.getPanEventHandler());
     setEventHandler(getPanEventHandler());
@@ -211,13 +226,14 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     AffineTransform transform = getCamera().getViewTransformReference();
     transform.scale(1, -1);
     getCamera().addLayer(toolLayer);
-    for (MapLayer mapLayer : context.getLayers()) {
-      addMapLayer(mapLayer);
+    
+    for (Layer mapLayer : context.layers()) {
+    	addMapLayer(mapLayer);
     }
     getCamera().addLayer(toolLayer);
     getRoot().addChild(toolLayer);
 
-    if (context.getAreaOfInterest() != null) {
+    if (context.getViewport().getBounds() != null) {
       zoomToAreaOfInterest();
     }
   }
@@ -226,22 +242,22 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     return scaleDenominator;
   }
 
-  private void addMapLayer(MapLayer mapLayer) {
+  private void addMapLayer(Layer mapLayer) {
     addMapLayer(this.mapLayer.getChildrenCount(), mapLayer);
   }
 
-  private void addMapLayer(int index, MapLayer mapLayer) {
-    PGisLayer gisLayer = new PGisLayer(mapLayer, context, getCamera().getViewTransformReference());
-    mediator.layerAdded(mapLayer, gisLayer);
+  private void addMapLayer(int index, Layer mapLayer) {
+   	PGisLayer gisLayer = new PGisLayer(mapLayer, context, getCamera().getViewTransformReference());
+  	mediator.layerAdded(mapLayer, gisLayer);
     mapLayer.addMapLayerListener(gisLayer);
     this.mapLayer.addChild(index, gisLayer);
-    layerNames.put(mapLayer.getFeatureSource().getSchema().getTypeName(), gisLayer);
+    layerNames.put(mapLayer.getFeatureSource().getSchema().getName().getLocalPart(), gisLayer);
     layers.put(mapLayer, gisLayer);
   }
 
-  private void removeMapLayer(MapLayer mapLayer) {
+  private void removeMapLayer(Layer mapLayer) {
     mediator.layerRemoved(mapLayer);
-    layerNames.remove(mapLayer.getFeatureSource().getSchema().getTypeName());
+    layerNames.remove(mapLayer.getFeatureSource().getSchema().getName().getLocalPart());
     PLayer gisLayer = layers.get(mapLayer);
     if (gisLayer instanceof MapLayerListener) {
       MapLayerListener listener = (MapLayerListener) gisLayer;
@@ -265,14 +281,13 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     }
 
     layers.remove(mapLayer);
-//    msg.debug("done removing map layer:" + mapLayer);
   }
 
   /**
    * Zoom the map to the area of interest specified in the MapContext.
    */
   public void zoomToAreaOfInterest() {
-    Envelope aoe = context.getAreaOfInterest();
+    Envelope aoe = context.getViewport().getBounds();
     if (aoe.getWidth() == 0) {
       aoe.expandBy(.001, 0);
     }
@@ -283,11 +298,9 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     Rectangle2D rect = new Rectangle2D.Double(aoe.getMinX(), aoe.getMinY(),
             aoe.getWidth(), aoe.getHeight());
     getCamera().animateViewToCenterBounds(rect, true, 0);
-//    msg.info(new ScaleDenominatorChanged(getScaleDenominator()));
   }
 
   public void setAreaOfInterest(ReferencedEnvelope aoe) {
-//    msg.info("Requested aoe: " + aoe);
     //First checkthe scale X and Y of the new area of interest match the canvas x-y ratio
     PBounds cRect = getCamera().getViewBounds();
     ReferencedEnvelope envelope = new ReferencedEnvelope(getCRS());
@@ -308,15 +321,13 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     double w2 = wid / 2.0;
     double h2 = hi / 2.0;
 
-    envelope.init(aoe.getCenter(0) - w2, aoe.getCenter(0) + w2, aoe.getCenter(1) - h2, aoe.getCenter(1) + h2);
-//    msg.info("Calculated aoe: " + envelope);
+    envelope.init(aoe.getMedian(0) - w2, aoe.getMedian(0) + w2, aoe.getMedian(1) - h2, aoe.getMedian(1) + h2);
     setAreaOfInterest_preScaled(envelope);
   }
 
   private void setAreaOfInterest_preScaled(ReferencedEnvelope aoe) {
-    context.setAreaOfInterest(aoe);
+    context.getViewport().setBounds(aoe);
     zoomToAreaOfInterest();
-//    msg.info(new ScaleDenominatorChanged(getScaleDenominator()));
   }
 
   /**
@@ -365,37 +376,30 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     return mapLayer;
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
-  public void layerAdded(MapLayerListEvent arg0) {
-    addMapLayer(arg0.getToIndex(), arg0.getLayer());
+  @Override
+  public void layerAdded(MapLayerListEvent event) {
+    addMapLayer(event.getToIndex(), event.getElement());
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
-  public void layerChanged(MapLayerListEvent arg0) {
+  @Override
+  public void layerChanged(MapLayerListEvent event) {
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
-  public void layerMoved(MapLayerListEvent arg0) {
-    MapLayer layer = arg0.getLayer();
-    int toIndex = arg0.getToIndex();
+  @Override
+  public void layerMoved(MapLayerListEvent event) {
+    Layer layer = event.getElement();
+    int toIndex = event.getToIndex();
     removeMapLayer(layer);
-    addMapLayer(toIndex, arg0.getLayer());
+    addMapLayer(toIndex, event.getElement());
   }
 
-  /**
-   * Implement MapLayerListListener.
-   */
-  public void layerRemoved(MapLayerListEvent arg0) {
-    MapLayer mapLayer = arg0.getLayer();
+  @Override
+  public void layerRemoved(MapLayerListEvent event) {
+    Layer mapLayer = event.getElement();
     removeMapLayer(mapLayer);
   }
 
+  @Override
   public void repaint() {
     ThreadUtilities.runInEventThread(new Runnable() {
       public void run() {
@@ -406,26 +410,30 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
     });
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent arg0) {
     if (!arg0.getPropertyName().equals(PCamera.PROPERTY_VIEW_TRANSFORM)) {
       return;
     }
-//    msg.info("Prop Change start");
     calcScaleDenominator(context);
-//    msg.info("Prop chang end");
   }
 
-  /**
-   * Implement MapBoundsListener interface
-   */
-
+  @Override
   public void mapBoundsChanged(MapBoundsEvent event) {
-//    msg.info("Map Bounds Changed");
-//    msg.info(new TaskMessage(TaskMessage.TaskStatus.STARTED, "MAP",
-//            "Updating Map"));
     zoomToAreaOfInterest();
     mediator.update();
-//    msg.info(new TaskMessage(TaskMessage.TaskStatus.FINISHED, "MAP",
-//            "Finished Updating Map"));
   }
+
+	@Override
+	public void layerPreDispose(MapLayerListEvent event) {
+	}
+	
+	/**
+	 * Executes when simulation is paused.
+	 */
+	public void setPause(boolean pause) {
+		for (PGisLayer layer : layers.values()){
+			layer.setPause(pause);
+		}
+	}
 }

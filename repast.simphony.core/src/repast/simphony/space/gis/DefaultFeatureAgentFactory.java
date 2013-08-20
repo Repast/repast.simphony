@@ -1,34 +1,35 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.SchemaException;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import simphony.util.messages.MessageCenter;
-
 import java.beans.IntrospectionException;
 import java.util.List;
 
+import org.geotools.feature.SchemaException;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import simphony.util.messages.MessageCenter;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+
 /**
  * Default factory class for creating feature agents.
- * Instances of the this class
- * can be created using the FeatureAgentFactoryFinder.
+ * Instances of the this class can be created using the FeatureAgentFactoryFinder.
+ * 
+ * @author Nick Collier
+ * @author Eric Tatara
  *
  */
-public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
+public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory<T> {
 	MessageCenter msg = MessageCenter.getMessageCenter(getClass());
 
 	private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
 
 	private Class<? extends Geometry> geometryType = Point.class;
 
-	private FeatureType featureType;
+	private SimpleFeatureType featureType;
 
-	private FeatureCollection collection;
   private List<FeatureAttributeAdapter> adapters;
 
   DefaultFeatureAgentFactory(Class<T> agentType, Class<? extends Geometry> geometryType,
@@ -44,7 +45,7 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
    *
    * @return the created feature type.
    */
-  public FeatureType getFeatureType() {
+  public SimpleFeatureType getFeatureType() {
     return featureType;
   }
 
@@ -57,33 +58,29 @@ public class DefaultFeatureAgentFactory<T> extends FeatureAgentFactory {
     return crs;
   }
 
-  /**
-   * Resets this factory by creating a new feature collection.
-   */
-  public void reset() {
-    collection = FeatureCollections.newCollection();
-  }
-
   private void init(Class<T> agentType) {
-		try {
+  	try {
 			featureType = getFeatureType(agentType, crs, geometryType, adapters);
-			collection = FeatureCollections.newCollection();
 		} catch (IntrospectionException e) {
 			msg.error("Unable to introspect feature class: "
 					+ agentType.getName(), e);
 		} catch (SchemaException e) {
 			msg.error("Error creating FeatureType", e);
 		}
+  	createClassAttributes(agentType);
 	}
 
-	public FeatureAgent2 getFeature(T agent, Geography geography) {
-		FeatureAgent2<T> featureAgent = new FeatureAgent2<T>(featureType, agent, geography, adapters);
-		featureAgent.setParent(collection);
-		collection.add(featureAgent);
+  /**
+   * Create a FeatureAgent instance from the provided agent.
+   * 
+   * @param agent the agent instance from which to create a FeatureAgent
+   * @param geography the geography in which the FeatureAgent resides
+   * @return the FeatureAgent instance
+   */
+  @Override
+	public FeatureAgent getFeature(T agent, Geography geography) {
+		FeatureAgent<T> featureAgent = new FeatureAgent<T>(featureType, agent, 
+				geography, adapters, classAttributeList);
 		return featureAgent;
-	}
-
-	public FeatureCollection getFeatures() {
-		return collection;
 	}
 }

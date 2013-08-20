@@ -8,6 +8,7 @@ import repast.simphony.scenario.AbstractDescriptorControllerActionIO;
 import repast.simphony.scenario.ActionLoader;
 import repast.simphony.scenario.DescriptorActionLoader;
 import repast.simphony.scenario.FastMethodConvertor;
+import repast.simphony.scenario.Scenario;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -46,7 +47,8 @@ public class DataSetControllerActionIO extends
      * )
      */
     @Override
-    protected ControllerAction createAction(DataSetDescriptor data) {
+    protected ControllerAction createAction(DataSetDescriptor data, Scenario scenario) {
+      data.addScenarioChangedListener(scenario);
       return new DataSetComponentControllerAction(data);
     }
 

@@ -1,5 +1,10 @@
 package repast.simphony.relogo.ide;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
@@ -23,9 +28,33 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.progress.IProgressConstants;
 
+import repast.simphony.eclipse.IRepastPerspectiveConfigurator;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
+
 public class ReLogoPerspectiveFactory implements IPerspectiveFactory {
 
 	public static final String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer";
+	
+	private static final String CONFIG_EXTENSION_ID = "repast.simphony.perspective.config";
+
+	  private void configureLayout(IPageLayout layout) {
+	    IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(
+	        CONFIG_EXTENSION_ID);
+	    for (IConfigurationElement element : configs) {
+	      IContributor contrib = element.getContributor();
+	      try {
+	        Object obj = element.createExecutableExtension("class");
+	        if (obj instanceof IRepastPerspectiveConfigurator) {
+	          ((IRepastPerspectiveConfigurator) obj).configurePerspective(layout);
+	        }
+	      } catch (Exception ex) {
+	        RepastSimphonyPlugin.getInstance().log(
+	            new CoreException(new Status(Status.ERROR, contrib.getName(),
+	                "Error during perspective configuration", ex)));
+	      }
+	    }
+	  }
+
 
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
@@ -111,6 +140,9 @@ public class ReLogoPerspectiveFactory implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("repast.simphony.relogo.ide.new_link_wizard");
 		layout.addNewWizardShortcut("repast.simphony.relogo.ide.new_patch_wizard");
 		layout.addNewWizardShortcut("repast.simphony.relogo.ide.new_observer_wizard");
+		
+		configureLayout(layout);
+		
 		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
 		layout.addNewWizardShortcut("org.codehaus.groovy.eclipse.ui.groovyClassWizard");
 		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$

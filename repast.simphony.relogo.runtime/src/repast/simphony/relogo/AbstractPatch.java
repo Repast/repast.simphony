@@ -527,7 +527,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a number
 	 * @returns agentset at the direction (ndx, ndy) from the caller
 	 */
-	public AgentSet turtlesAt(Number ndx, Number ndy) {
+	public AgentSet<Turtle> turtlesAt(Number ndx, Number ndy) {
 		double dx = ndx.doubleValue();
 		double dy = ndy.doubleValue();
 		double[] displacement = { dx, dy };
@@ -543,9 +543,9 @@ public abstract class AbstractPatch implements Patch {
 	/**
 	 * Returns an agentset of turtles from the patch of the caller.
 	 * 
-	 * @return agentset of turtles from the caller’s patch
+	 * @return agentset of turtles from the caller's patch
 	 */
-	public AgentSet turtlesHere() {
+	public AgentSet<Turtle> turtlesHere() {
 		// get grid and space
 		Grid grid = getMyObserver().getGrid();
 		// get the turtle's grid location
@@ -659,7 +659,7 @@ public abstract class AbstractPatch implements Patch {
 	}
 
 	/**
-	 * Executes a set of commands for an agentset.
+	 * Executes a set of commands for an agentset in random order.
 	 * 
 	 * @param a
 	 *            an agentset
@@ -771,7 +771,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a number
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number) {
+	public AgentSet<Turtle> sprout(Number number) {
 		return sprout(number, null);
 	}
 
@@ -785,7 +785,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a set of commands
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure) {
 		return sprout(number, null, "default");
 	}
 
@@ -801,9 +801,9 @@ public abstract class AbstractPatch implements Patch {
 	 *            a turtle type
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, String turtleType) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure, String turtleType) {
 
-		AgentSet newTurtles = new AgentSet();
+		AgentSet<Turtle> newTurtles = new AgentSet<Turtle>();
 
 		for (int i = 0; i < number.intValue(); i++) {
 			newTurtles.add(getMyObserver().getTurtleFactory().createTurtle(
@@ -827,7 +827,7 @@ public abstract class AbstractPatch implements Patch {
 	 *            a turtle class
 	 * @return created turtles
 	 */
-	public AgentSet sprout(Number number, Closure closure, Class turtleType) {
+	public AgentSet<Turtle> sprout(Number number, Closure closure, Class turtleType) {
 		return sprout(number, closure, turtleType.getSimpleName());
 	}
 
@@ -877,8 +877,10 @@ public abstract class AbstractPatch implements Patch {
 
 	/**
 	 * Stops a patch executing within a command closure.
+	 * @deprecated use the {@link repast.simphony.relogo.Utility#stop()} method instead.
 	 */
-	public Stop stop() {
+	@Deprecated
+	public Stop oldStop() {
 		return Stop.TRUE;
 	}
 
@@ -893,8 +895,8 @@ public abstract class AbstractPatch implements Patch {
 	 * @return ReLogoAgent with the smallest value when operated on by closure
 	 */
 
-	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.minOneOfU(this, a, reporter);
+	public ReLogoAgent minOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.minOneOfU(this, a, closure);
 	}
 
 	/**
@@ -911,8 +913,8 @@ public abstract class AbstractPatch implements Patch {
 	 *         operated on by closure
 	 */
 	public AgentSet minNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.minNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.minNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -925,8 +927,8 @@ public abstract class AbstractPatch implements Patch {
 	 *            a set of commands
 	 * @return ReLogoAgent with the largest value when operated on by closure
 	 */
-	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return Utility.maxOneOfU(this, a, reporter);
+	public ReLogoAgent maxOneOf(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return Utility.maxOneOfU(this, a, closure);
 	}
 
 	/**
@@ -943,8 +945,8 @@ public abstract class AbstractPatch implements Patch {
 	 *         operated on by closure
 	 */
 	public AgentSet maxNOf(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return Utility.maxNOfU(this, number, a, reporter);
+			Closure closure) {
+		return Utility.maxNOfU(this, number, a, closure);
 	}
 
 	/**
@@ -952,13 +954,13 @@ public abstract class AbstractPatch implements Patch {
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public boolean allQ(Collection a, Closure reporter) {
-		return Utility.allQU(this, a, reporter);
+	public boolean allQ(Collection a, Closure closure) {
+		return Utility.allQU(this, a, closure);
 	}
 
 	/**

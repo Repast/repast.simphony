@@ -2,57 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gis
 Bundle-SymbolicName: repast.simphony.gis
-Bundle-Version: 2.0.1
-Bundle-ClassPath: lib/forms-1.0.5.jar,
- lib/swingx-2006_07_20.jar
+Bundle-Version: 2.1.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
- libs.piccolo
-Export-Package: anl.bwic.gis,
- anl.bwic.thread,
- com.jgoodies.forms.builder,
- com.jgoodies.forms.debug,
- com.jgoodies.forms.factories,
- com.jgoodies.forms.layout,
- com.jgoodies.forms.util,
- org.geotools.renderer.lite,
- org.jdesktop.swingx,
- org.jdesktop.swingx.action,
- org.jdesktop.swingx.auth,
- org.jdesktop.swingx.autocomplete,
- org.jdesktop.swingx.border,
- org.jdesktop.swingx.calendar,
- org.jdesktop.swingx.color,
- org.jdesktop.swingx.combobox,
- org.jdesktop.swingx.decorator,
- org.jdesktop.swingx.editors,
- org.jdesktop.swingx.error,
- org.jdesktop.swingx.event,
- org.jdesktop.swingx.icon,
- org.jdesktop.swingx.multislider,
- org.jdesktop.swingx.painter,
- org.jdesktop.swingx.painter.gradient,
- org.jdesktop.swingx.plaf,
- org.jdesktop.swingx.plaf.aqua,
- org.jdesktop.swingx.plaf.basic,
- org.jdesktop.swingx.plaf.metal,
- org.jdesktop.swingx.plaf.misc,
- org.jdesktop.swingx.plaf.motif,
- org.jdesktop.swingx.plaf.windows,
- org.jdesktop.swingx.table,
- org.jdesktop.swingx.tips,
- org.jdesktop.swingx.tree,
- org.jdesktop.swingx.treetable,
- org.jdesktop.swingx.util,
- org.mc4j.console.swing,
- repast.simphony,
- repast.simphony.gis,
+ libs.piccolo,
+ saf.core.ui
+Export-Package: org.geotools.renderer.lite,
  repast.simphony.gis.data,
  repast.simphony.gis.display,
- repast.simphony.gis.id,
  repast.simphony.gis.io,
+ repast.simphony.gis.layers,
  repast.simphony.gis.legend,
  repast.simphony.gis.styleEditor,
  repast.simphony.gis.tools,
  repast.simphony.gis.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

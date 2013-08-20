@@ -1,10 +1,21 @@
 package repast.simphony.gis.styleEditor;
 
-import org.geotools.filter.Expression;
-import org.geotools.styling.*;
-import org.geotools.styling.Stroke;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.awt.*;
+import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.styling.Fill;
+import org.geotools.styling.Graphic;
+import org.geotools.styling.LineSymbolizer;
+import org.geotools.styling.Mark;
+import org.geotools.styling.PointSymbolizer;
+import org.geotools.styling.Stroke;
+import org.geotools.styling.StyleBuilder;
+import org.geotools.styling.StyleFactory;
+import org.geotools.styling.Symbolizer;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.GraphicalSymbol;
 
 /**
  * Builds SymbolizerFactories of different types.
@@ -16,7 +27,7 @@ public class SymbolizerFactoryBuilder {
 
 	private static abstract class AbstractSymFactory implements SymbolizerFactory {
 
-		protected StyleFactory fac = StyleFactoryFinder.createStyleFactory();
+		protected StyleFactory fac =  CommonFactoryFinder.getStyleFactory();
 		protected StyleBuilder builder = new StyleBuilder();
 		protected Color color;
 
@@ -66,14 +77,20 @@ public class SymbolizerFactoryBuilder {
 
 
 		public Symbolizer createSymbolizer() {
-			Mark mark = graphic.getMarks()[0];
+			Mark mark = (Mark)graphic.graphicalSymbols().get(0); 
 			Stroke stroke = fac.createStroke(mark.getStroke().getColor(), mark.getStroke().getWidth());
 			String rgb = Integer.toHexString(color.getRGB());
 			// trim of the alpha portion
 			Fill fill = fac.createFill(builder.literalExpression("#" + rgb.substring(2, rgb.length())));
-			Mark newMark = fac.createMark(mark.getWellKnownName(), stroke, fill, mark.getSize(), mark.getRotation());
-			Graphic newGraphic = fac.createGraphic(null, new Mark[]{newMark}, null, graphic.getOpacity(),
-							graphic.getSize(), graphic.getRotation());
+			Mark newMark = fac.createMark(mark.getWellKnownName(), stroke, fill, graphic.getSize(), 
+					graphic.getRotation());
+			
+			List<GraphicalSymbol> list = new ArrayList<GraphicalSymbol>();
+			list.add(newMark);
+			
+			Graphic newGraphic = fac.graphic(list, graphic.getOpacity(), graphic.getSize(), 
+					graphic.getRotation(), graphic.getAnchorPoint(), graphic.getDisplacement());
+			
 			return fac.createPointSymbolizer(newGraphic, null);
 		}
 	}

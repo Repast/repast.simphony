@@ -9,7 +9,7 @@ package repast.simphony.relogo
  * @author jozik
  *
  */
-public class AgentSet<E> extends AbstractAgentSet<E>{
+public class AgentSet<E extends ReLogoAgent> extends AbstractAgentSet<E>{
 		
 	public AgentSet(){
 		super()
@@ -20,26 +20,26 @@ public class AgentSet<E> extends AbstractAgentSet<E>{
 	}
 	
 	/**
-     * Reports a new agentset containing only those agents that have the minimum value of the given reporter.
+     * Reports a new agentset containing only those agents that have the minimum value of the given closure.
      */ 
-    public AgentSet withMin(Closure reporter){
-		reporter.resolveStrategy = Closure.DELEGATE_FIRST
-		Closure cl = { reporter.delegate = it; reporter(it) }
+    public AgentSet withMin(Closure closure){
+		closure.resolveStrategy = Closure.DELEGATE_FIRST
+		Closure cl = { closure.delegate = it; closure(it) }
 		def minValue = cl(this.min(cl))
 		return new AgentSet(this.findAll({cl(it) == minValue}))
 	}
 	
     /**
-     * Reports a new agentset containing only those agents that have the maximum value of the given reporter.
+     * Reports a new agentset containing only those agents that have the maximum value of the given closure.
      */
-    public AgentSet withMax(Closure reporter){
-    	reporter.resolveStrategy = Closure.DELEGATE_FIRST
-		Closure cl = { reporter.delegate = it; reporter(it) }
+    public AgentSet withMax(Closure closure){
+    	closure.resolveStrategy = Closure.DELEGATE_FIRST
+		Closure cl = { closure.delegate = it; closure(it) }
 		def maxValue = cl(this.max(cl))
 		return new AgentSet(this.findAll({cl(it) == maxValue}))
 	}
 
-// withR = with reporter
+
 	public AgentSet with(Closure cl){
 		cl.resolveStrategy = Closure.DELEGATE_FIRST
 		def list = this.findAll {

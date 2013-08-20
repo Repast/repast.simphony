@@ -303,8 +303,8 @@ public class Utility {
 		return a;
 	}
 
-	public static AgentSet agentSetFromIterator(Iterator i) {
-		AgentSet a = new AgentSet();
+	public static <E extends ReLogoAgent> AgentSet<E> agentSetFromIterator(Iterator<E> i) {
+		AgentSet<E> a = new AgentSet<E>();
 		while (i.hasNext()) {
 			a.add(i.next());
 		}
@@ -710,26 +710,26 @@ public class Utility {
 	 * 
 	 * @param a
 	 *            a collection of ReLogoAgents
-	 * @param reporter
+	 * @param closure
 	 *            a boolean closure
 	 * @return true or false based on whether all agents in a collection are true
-	 *         for reporter
+	 *         for closure
 	 */
-	public static boolean allQU(Collection<? extends ReLogoAgent> a, Closure reporter) {
-		return allQU(null, a, reporter);
+	public static boolean allQU(Collection<? extends ReLogoAgent> a, Closure closure) {
+		return allQU(null, a, closure);
 	}
 
 	public static boolean allQU(Object caller, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
+			Closure closure) {
 		if (caller != null) {
 			for (ReLogoAgent o : a) {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		for (ReLogoAgent agent : a) {
-			reporter.setDelegate(agent);
-			if (!(Boolean) reporter.call(agent)) {
+			closure.setDelegate(agent);
+			if (!(Boolean) closure.call(agent)) {
 				return false;
 			}
 		}
@@ -923,8 +923,8 @@ public class Utility {
 	 *            a list
 	 * @return list randomly reordered
 	 */
-	public static ArrayList shuffle(List a) {
-		ArrayList result = new ArrayList(a);
+	public static <E> ArrayList<E> shuffle(List<E> a) {
+		ArrayList<E> result = new ArrayList<E>(a);
 		SimUtilities.shuffle(result, RandomHelper.getUniform());
 		return result;
 	}
@@ -1067,9 +1067,9 @@ public class Utility {
 	}
 
 	/**
-	 * Returns the number for pi (¹).
+	 * Returns the number for pi.
 	 * 
-	 * @returns number for pi (¹).
+	 * @returns number for pi.
 	 */
 	public static double pi() {
 		return Math.PI;
@@ -1422,7 +1422,7 @@ public class Utility {
 	public static void display() {
 	}
 
-	public static AgentSet getTurtleAgentSetOfType(String typeName,
+	public static AgentSet<Turtle> getTurtleAgentSetOfType(String typeName,
 			Observer observer) {
 		Class clazz = observer.getTurtleFactory().getTurtleTypeClass(typeName);
 		return getAgentSetOfClass(clazz, observer);
@@ -1498,12 +1498,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static ReLogoAgent minOneOfU(Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return minOneOfU(null, a, reporter);
+			Closure closure) {
+		return minOneOfU(null, a, closure);
 	}
 
 	public static ReLogoAgent minOneOfU(Object caller,
-			Collection<? extends ReLogoAgent> a, Closure reporter) {
+			Collection<? extends ReLogoAgent> a, Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		if (b.size() == 0){
 			return null;
@@ -1518,12 +1518,12 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		double currentMin = Double.POSITIVE_INFINITY;
 		ReLogoAgent currentMinAgent = null;
 		for (ReLogoAgent o : b) {
-			reporter.setDelegate(o);
-			Number result = (Number) reporter.call(o);
+			closure.setDelegate(o);
+			Number result = (Number) closure.call(o);
 			if (result.doubleValue() < currentMin) {
 				currentMin = result.doubleValue();
 				currentMinAgent = o;
@@ -1547,12 +1547,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static AgentSet minNOfU(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return minNOfU(null, number, a, reporter);
+			Closure closure) {
+		return minNOfU(null, number, a, closure);
 	}
 
 	public static AgentSet minNOfU(Object caller, int number,
-			Collection<? extends ReLogoAgent> a, final Closure reporter) {
+			Collection<? extends ReLogoAgent> a, final Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		int l = b.size();
 		if (l == 0){
@@ -1568,13 +1568,13 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		Collections.sort(b, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				reporter.setDelegate(o1);
-				Number n1 = (Number) reporter.call(o1);
-				reporter.setDelegate(o2);
-				Number n2 = (Number) reporter.call(o2);
+				closure.setDelegate(o1);
+				Number n1 = (Number) closure.call(o1);
+				closure.setDelegate(o2);
+				Number n2 = (Number) closure.call(o2);
 				return (n1.doubleValue() < n2.doubleValue() ? -1 : (n1
 						.doubleValue() == n2.doubleValue() ? 0 : 1));
 			}
@@ -1598,12 +1598,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static ReLogoAgent maxOneOfU(Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return maxOneOfU(null, a, reporter);
+			Closure closure) {
+		return maxOneOfU(null, a, closure);
 	}
 
 	public static ReLogoAgent maxOneOfU(Object caller,
-			Collection<? extends ReLogoAgent> a, Closure reporter) {
+			Collection<? extends ReLogoAgent> a, Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(a);
 		if (b.size() == 0){
 			return null;
@@ -1618,12 +1618,12 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		double currentMax = Double.NEGATIVE_INFINITY;
 		ReLogoAgent currentMaxAgent = null;
 		for (ReLogoAgent o : b) {
-			reporter.setDelegate(o);
-			Number result = (Number) reporter.call(o);
+			closure.setDelegate(o);
+			Number result = (Number) closure.call(o);
 			if (result.doubleValue() > currentMax) {
 				currentMax = result.doubleValue();
 				currentMaxAgent = o;
@@ -1647,12 +1647,12 @@ public class Utility {
 	 * @exclude
 	 */
 	public static AgentSet maxNOfU(int number, Collection<? extends ReLogoAgent> a,
-			Closure reporter) {
-		return maxNOfU(null, number, a, reporter);
+			Closure closure) {
+		return maxNOfU(null, number, a, closure);
 	}
 
 	public static AgentSet maxNOfU(Object caller, int number,
-			Collection<? extends ReLogoAgent> c, final Closure reporter) {
+			Collection<? extends ReLogoAgent> c, final Closure closure) {
 		List<ReLogoAgent> b = new ArrayList(c);
 		int l = b.size();
 		if (l == 0){
@@ -1668,13 +1668,13 @@ public class Utility {
 				o.setMyself(caller);
 			}
 		}
-		reporter.setResolveStrategy(Closure.DELEGATE_FIRST);
+		closure.setResolveStrategy(Closure.DELEGATE_FIRST);
 		Collections.sort(b, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				reporter.setDelegate(o1);
-				Number n1 = (Number) reporter.call(o1);
-				reporter.setDelegate(o2);
-				Number n2 = (Number) reporter.call(o2);
+				closure.setDelegate(o1);
+				Number n1 = (Number) closure.call(o1);
+				closure.setDelegate(o2);
+				Number n2 = (Number) closure.call(o2);
 				return (n1.doubleValue() < n2.doubleValue() ? 1 : (n1
 						.doubleValue() == n2.doubleValue() ? 0 : -1));
 			}
@@ -1811,14 +1811,14 @@ public class Utility {
 	 *            a list
 	 * @return list minus first list item
 	 */
-	public static ArrayList butFirst(List a) {
+	public static <E> List<E> butFirst(List<E> a) {
 
 		if (a.size() > 1) {
-			ArrayList result = new ArrayList(a);
+			ArrayList<E> result = new ArrayList<E>(a);
 			result.subList(0, 1).clear();
 			return result;
 		} else {
-			return new ArrayList();
+			return new ArrayList<E>();
 		}
 	}
 
@@ -1845,14 +1845,14 @@ public class Utility {
 	 *            a list
 	 * @return list minus last list item
 	 */
-	public static ArrayList butLast(List a) {
+	public static <E> List<E> butLast(List<E> a) {
 		int size = a.size();
 		if (size > 1) {
-			ArrayList result = new ArrayList(a);
+			ArrayList<E> result = new ArrayList<E>(a);
 			result.subList(size - 1, size).clear();
 			return result;
 		} else {
-			return new ArrayList();
+			return new ArrayList<E>();
 		}
 	}
 
@@ -1908,12 +1908,12 @@ public class Utility {
 	 *            an agentset
 	 * @return random subset of agentset a of size number
 	 */
-	public static AgentSet nOf(int number, AgentSet a) {
+	public static <E extends ReLogoAgent> AgentSet<E> nOf(int number, AgentSet<E> a) {
 		int size = a.size();
 		if (size <= number) {
 			return a;
 		}
-		AgentSet b = new AgentSet(a);
+		AgentSet<E> b = new AgentSet<E>(a);
 		SimUtilities.shuffle(b, RandomHelper.getUniform());
 		b.subList(number, size).clear();
 		return b;
@@ -1928,20 +1928,20 @@ public class Utility {
 	 *            a collection
 	 * @return random subset of collection c of size number
 	 */
-	public static List nOf(int number, Collection c) {
-		List a = new ArrayList(c);
+	public static <E> List<E> nOf(int number, Collection<E> c) {
+		List<E> a = new ArrayList<E>(c);
 		int size = a.size();
 		if (size <= number) {
 			return a;
 		}
-		ArrayList<Integer> indices = new ArrayList();
+		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for (int i = 0; i < number; i++) {
 			indices.add(i);
 		}
 		SimUtilities.shuffle(indices, RandomHelper.getUniform());
 		indices.subList(number, size).clear();
 		Collections.sort(indices);
-		ArrayList result = new ArrayList();
+		ArrayList<E> result = new ArrayList<E>();
 		for (Integer o : indices) {
 			result.add(a.get(o));
 		}
@@ -1959,7 +1959,7 @@ public class Utility {
 	 * @return list of length number from running the set of commands number
 	 *         times
 	 */
-	public static ArrayList nValues(int number, Closure closure) {
+	public static List nValues(int number, Closure closure) {
 		ArrayList temp = new ArrayList();
 		for (int i = 0; i < number; i++) {
 			temp.add(closure.call(i));
@@ -2021,7 +2021,7 @@ public class Utility {
 	 *            a list
 	 * @return list minus item
 	 */
-	public static Collection remove(Object item, Collection c) {
+	public static <E> Collection<E> remove(Object item, Collection<E> c) {
 		while(c.remove(item));
 		return c;
 	}
@@ -2046,10 +2046,10 @@ public class Utility {
 	 *            a list
 	 * @return list minus duplicated items
 	 */
-	public static ArrayList removeDuplicates(List list) {
-		Set set = new HashSet();
-		ArrayList newList = new ArrayList();
-		for (Object o : list) {
+	public static <E> List<E> removeDuplicates(List<E> list) {
+		Set<E> set = new HashSet<E>();
+		ArrayList<E> newList = new ArrayList<E>();
+		for (E o : list) {
 			if (set.add(o)) {
 				newList.add(o);
 			}
@@ -2066,8 +2066,8 @@ public class Utility {
 	 *            a list
 	 * @return list minus the index item
 	 */
-	public static ArrayList removeItem(int index, List list) {
-		ArrayList temp = new ArrayList(list);
+	public static <E> List<E> removeItem(int index, List<E> list) {
+		ArrayList<E> temp = new ArrayList<E>(list);
 		temp.remove(index);
 		return temp;
 	}
@@ -2145,8 +2145,8 @@ public class Utility {
 	 *            a list
 	 * @return list in reversed order
 	 */
-	public static ArrayList reverse(List list) {
-		ArrayList result = new ArrayList(list);
+	public static <E> List<E> reverse(List<E> list) {
+		ArrayList<E> result = new ArrayList<E>(list);
 		Collections.reverse(result);
 		return result;
 	}
@@ -2235,8 +2235,8 @@ public class Utility {
 	 *            a zero-based index
 	 * @return portion of a from position1 to before position2
 	 */
-	public static List sublist(List a, int position1, int position2) {
-		return new ArrayList(a.subList(position1, position2));
+	public static <E> List<E> sublist(List<E> a, int position1, int position2) {
+		return new ArrayList<E>(a.subList(position1, position2));
 	}
 
 	/**
@@ -2261,7 +2261,7 @@ public class Utility {
 	 *            a collection
 	 * @return largest number in collection
 	 */
-	public static Object max(Collection c) {
+	public static Number max(Collection c) {
 		return Collections.max(c, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {
@@ -2289,7 +2289,7 @@ public class Utility {
 	 *            a collection
 	 * @return smallest number in collection
 	 */
-	public static Object min(Collection c) {
+	public static Number min(Collection c) {
 		return Collections.min(c, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {
@@ -2875,5 +2875,20 @@ public class Utility {
 		for ( FileDataSink fds : registry.fileSinks()){
 			fds.flush();
 		}
+	}
+	
+	/**
+	 * Stop the simulation.
+	 */
+	public static void stop(){
+		RunEnvironment.getInstance().endRun();
+	}
+	
+	
+	/**
+	 * Pause the simulation.
+	 */
+	public static void pause(){
+		RunEnvironment.getInstance().pauseRun();
 	}
 }

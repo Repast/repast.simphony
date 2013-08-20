@@ -2,7 +2,7 @@
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
 <plugin id="repast.simphony.plugin.util" version="0">
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 		
 	<requires>
@@ -15,11 +15,6 @@
 		<library id="rspu" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-
-		<library id="wizard" path="lib/wizard-0.1.12.jar" type="code">
-			<export prefix="*"/>
-		</library>
-
 	</runtime>
 	
 	<extension-point extension-multiplicity="any" id="wizard.options"> 

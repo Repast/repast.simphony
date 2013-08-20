@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build DSLD Jar" default="Deploy" basedir=".">
+
+	<property name="destDir" value="dsldFolder" />
+	<property name="baseDir" value="src/"/>
+	<property name="jarName" value="ReLogoDSLD"/>
+	
+	<target name="Deploy">
+
+		<echo>Beginning ${jarName} jar deployment.</echo>
+		<delete file="${destDir}/${jarName}.jar" />
+		<zip destfile="${destDir}/${jarName}.jar"
+		       basedir="${baseDir}"
+		       includes="dsld/**"
+		  />
+		<echo>ReLogo DSLD jar successfully deployed to: ${destDir}/${jarName}.jar.</echo>
+
+	</target>
+
+</project>

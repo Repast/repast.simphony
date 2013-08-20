@@ -6,11 +6,11 @@ import java.awt.Point;
 import java.util.LinkedList;
 
 import repast.simphony.relogo.ide.image.NLCirclePrimitive;
-import repast.simphony.relogo.ide.image.NLImage;
-import repast.simphony.relogo.ide.image.NLImagePrimitive;
 import repast.simphony.relogo.ide.image.NLLinePrimitive;
 import repast.simphony.relogo.ide.image.NLPolygonPrimitive;
 import repast.simphony.relogo.ide.image.NLRectanglePrimitive;
+import repast.simphony.relogo.image.NLImage;
+import repast.simphony.relogo.image.NLImagePrimitive;
 
 
 import org.antlr.runtime.*;

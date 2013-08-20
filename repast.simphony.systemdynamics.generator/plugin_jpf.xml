@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.systemdynamics.generator" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.1.0"/>
+     </attributes>
+
+	<requires>
+			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
+  </requires>
+
+	<runtime>
+		<library id="systemdynamics.generator" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+	</runtime>
+
+</plugin>

@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.gis" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.0.1"/>
+         <attribute id="simphony" value="2.1.0"/>
      </attributes>
 	
 	<requires>
@@ -12,10 +12,19 @@
 	</requires>
 	
 	<runtime>
+	    <library id="icons" path="icons/" type="resources"/>
+	    
 		<library id="gis.bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
-		<library id="swingx" path="lib/swingx-2006_07_20.jar" type="code"/>
+		
+		<!-- JAI Tools libraries (jt-*) are required by Geotools at runtime. -->
+		<library id="jt-zonalstats-1.3.0jar" path="lib/jt-zonalstats-1.3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jt-utils-1.3.0jar" path="lib/jt-utils-1.3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
 	</runtime>
-
 </plugin>

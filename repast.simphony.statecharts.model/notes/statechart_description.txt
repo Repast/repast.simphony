@@ -1,0 +1,80 @@
+Components and options:
+
+States:
+
+    SimpleState
+        - id
+        - onEnter (optional StateAction<T> with access to "agent" and "state", default empty method)
+        - onExit (optional StateAction<T> with access to "agent" and "state", default empty method)
+    
+    CompositeState
+        - id
+        - onEnter (optional StateAction<T> with access to "agent" and "state", default empty method)
+        - onExit (optional StateAction<T> with access to "agent" and "state", default empty method)
+        
+    BranchState
+        - id
+    
+    HistoryState
+        - id
+        - onEnter (optional StateAction<T> with access to "agent" and "state", default empty method)
+        - shallow (true/false)
+    
+    FinalState
+        - id
+        - onEnter (optional StateAction<T> with access to "agent" and "state", default empty method)
+
+
+Transitions:
+
+    Transition
+        - priority (optional, default 0)
+        - onTransition (optional TransitionAction<T> with access to "agent" and "transition", default empty method)
+        - guard (optional GuardCondition<T> returning boolean with access to  "agent" and "transition", default returns true)
+        - trigger (one of the following Triggers)
+    
+        Triggers:
+            AlwaysTrigger
+                - polling time (optional, default 1)
+            
+            TimedTrigger
+                - time (length of time to trigger)
+            
+            ExponentialDecayRateTrigger
+                - decay rate (where the interval used when initialized is Math.log(1-rand)/(-decayRate))
+            
+            ProbabilityTrigger
+                - probability 
+                - polling time (optional, default 1, so by default the probability is per time unit but can be changed by specifying polling time)
+            
+            ConditionTrigger
+                - condition (ConditionTriggerCondition<T> returning boolean with access to  "agent" and "transition")
+                - polling time (optional, default 1)
+                
+            MessageTrigger
+                - polling time (optional, default 1)
+                - messageChecker (one of the following)
+    
+    
+            MessageCheckers:
+                MessageConditionMessageChecker
+                    - condition (MessageCondition<T> returning boolean with access to "agent" and "transition")
+                
+                MessageEqualsMessageChecker
+                    - class (offer a drop down list and the option to include a fully qualified class name)
+                    - object to check for equality using equals() 
+                
+                UnconditionalByClassMessageChecker
+                    - class (offer a drop down list and the option to include a fully qualified class name)
+            
+                UnconditionalMessageChecker
+            
+    
+    SelfTransition
+        - same as transition
+    
+    OutOfBranchTransition
+        - same as transition but trigger can only be a ConditionTrigger
+    
+    DefaultOutOfBranchTransition
+        - same as transition but without trigger
