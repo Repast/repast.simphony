@@ -2941,6 +2941,10 @@ public class Equation {
 	    return s.equals("GET XLS DATA");
 	}
 	
+	public static boolean isGetXlsConstantsFunction(String s) {
+	    return s.equals("GET XLS CONSTANTS");
+	}
+	
 	public static boolean isGetXlsLookupsFunction(String s) {
 	    return s.equals("GET XLS LOOKUPS");
 	}
@@ -3974,6 +3978,12 @@ public class Equation {
 
 	public void setBtwnMode(String btwnMode) {
 	    this.btwnMode = btwnMode;
+	}
+	
+public boolean isGetXlsConstants() {
+	    
+	    return vensimEquation.toUpperCase().contains("GET XLS CONSTANTS");
+//	    return definesLookupGetXls;
 	}
 
 	public boolean isDefinesLookupGetXls() {
