@@ -7,8 +7,13 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -16,9 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -36,14 +39,12 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
@@ -55,12 +56,12 @@ import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
  * 
  * @author Nick Collier
  */
-public class CodePropertyEditor implements ITextEditor {
+public class CodePropertyEditor extends CompilationUnitEditor /*implements ITextEditor, IJavaReconcilingListener*/ {
 
   private static int VERTICAL_RULER_WIDTH = 12;
-  
+
   // from JavaEditor
-  protected final static char[] BRACKETS= { '{', '}', '(', ')', '[', ']', '<', '>' };
+  protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
   // from AbstractDecoratedTextEditor
   /**
@@ -83,30 +84,34 @@ public class CodePropertyEditor implements ITextEditor {
    * Preference key for print margin ruler column.
    */
   private final static String PRINT_MARGIN_COLUMN = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
-  
+
   // from JavaEditor
   /** Preference key for matching brackets. */
-  protected final static String MATCHING_BRACKETS=  PreferenceConstants.EDITOR_MATCHING_BRACKETS;
+  protected final static String MATCHING_BRACKETS = PreferenceConstants.EDITOR_MATCHING_BRACKETS;
 
   /**
    * Preference key for highlighting bracket at caret location.
    * 
    * @since 3.8
    */
-  protected final static String HIGHLIGHT_BRACKET_AT_CARET_LOCATION= PreferenceConstants.EDITOR_HIGHLIGHT_BRACKET_AT_CARET_LOCATION;
-  
+  protected final static String HIGHLIGHT_BRACKET_AT_CARET_LOCATION = PreferenceConstants.EDITOR_HIGHLIGHT_BRACKET_AT_CARET_LOCATION;
+
   /**
    * Preference key for enclosing brackets.
    * 
    * @since 3.8
    */
-  protected final static String ENCLOSING_BRACKETS= PreferenceConstants.EDITOR_ENCLOSING_BRACKETS;
+  protected final static String ENCLOSING_BRACKETS = PreferenceConstants.EDITOR_ENCLOSING_BRACKETS;
 
   /** Preference key for matching brackets color. */
-  protected final static String MATCHING_BRACKETS_COLOR=  PreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR;
+  protected final static String MATCHING_BRACKETS_COLOR = PreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR;
+
+  // from CompilationUnitEditor
+  //private final ListenerList fReconcilingListeners = new ListenerList(ListenerList.IDENTITY);
 
   private IEditorInput input;
-  private IDocumentProvider provider = new TextFileDocumentProvider();
+  //private IDocumentProvider provider = new CompilationUnitDocumentProvider();
+
   private JavaSourceViewer viewer;
   private ViewerSupport support;
   private IWorkbenchPartSite site;
@@ -123,7 +128,7 @@ public class CodePropertyEditor implements ITextEditor {
 
   private IOverviewRuler fOverviewRuler;
   // from JavaEditor
-  protected JavaPairMatcher fBracketMatcher= new JavaPairMatcher(BRACKETS);
+  protected JavaPairMatcher fBracketMatcher = new JavaPairMatcher(BRACKETS);
 
   public CodePropertyEditor() {
     fAnnotationPreferences = EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
@@ -141,6 +146,7 @@ public class CodePropertyEditor implements ITextEditor {
   }
 
   public void setEditorInput(IEditorInput input) {
+    IDocumentProvider provider = getDocumentProvider();
     if (input != null)
       provider.disconnect(input);
     this.input = input;
@@ -150,8 +156,6 @@ public class CodePropertyEditor implements ITextEditor {
     } catch (CoreException e) {
       e.printStackTrace();
     }
-    
- 
   }
 
   protected ISharedTextColors getSharedColors() {
@@ -178,23 +182,76 @@ public class CodePropertyEditor implements ITextEditor {
     return fOverviewRuler;
   }
 
+  /**
+   * Returns the Java element wrapped by this editors input.
+   * 
+   * @return the Java element wrapped by this editors input.
+   * @since 3.0
+   */
+  protected ITypeRoot getInputJavaElement() {
+    return EditorUtility.getEditorInputJavaElement(this, false);
+  }
+
+  /*
+//   * @see org.eclipse.jdt.internal.ui.text.java.IJavaReconcilingListener#
+//   * aboutToBeReconciled()
+//   * 
+//   * @since 3.0
+//   */
+//  public void aboutToBeReconciled() {
+//
+//    // Notify AST provider
+//    // TODO do we need this
+//    // JavaPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputJavaElement());
+//
+//    // Notify listeners
+//    Object[] listeners = fReconcilingListeners.getListeners();
+//    for (int i = 0, length = listeners.length; i < length; ++i)
+//      ((IJavaReconcilingListener) listeners[i]).aboutToBeReconciled();
+//  }
+//
+//  /*
+//   * @see
+//   * org.eclipse.jdt.internal.ui.text.java.IJavaReconcilingListener#reconciled
+//   * (CompilationUnit, boolean, IProgressMonitor)
+//   * 
+//   * @since 3.0
+//   */
+//  public void reconciled(CompilationUnit ast, boolean forced, IProgressMonitor progressMonitor) {
+//
+//    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=58245
+//    JavaPlugin javaPlugin = JavaPlugin.getDefault();
+//    if (javaPlugin == null)
+//      return;
+//
+//    // Always notify AST provider
+//    // TODO I think we need this.
+//    // javaPlugin.getASTProvider().reconciled(ast, getInputJavaElement(),
+//    // progressMonitor);
+//
+//    // Notify listeners
+//    Object[] listeners = fReconcilingListeners.getListeners();
+//    for (int i = 0, length = listeners.length; i < length; ++i)
+//      ((IJavaReconcilingListener) listeners[i]).reconciled(ast, forced, progressMonitor);
+//
+//  }
+
   public void createPartControl(Composite parent) {
     viewer = new JavaSourceViewer(parent, new VerticalRuler(VERTICAL_RULER_WIDTH),
         getOverviewRuler());
     getSourceViewerDecorationSupport(viewer);
-    
+
     viewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(viewer).install(prefStore);
-    
+
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
-    
+
     try {
       int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
       viewer.setDocument(doc, model, offset, 0);
-      //doc.replace(offset, 0, vDoc.get());
-      //vDoc.addDocumentListener(new UpdatingDocListener(offset, vDoc));
     } catch (BadLocationException e) {
-      StatechartDiagramEditorPlugin.getInstance().logError("Error creating code editor document", e);
+      StatechartDiagramEditorPlugin.getInstance()
+          .logError("Error creating code editor document", e);
     }
 
     // sets up the keyboard actions
@@ -246,10 +303,11 @@ public class CodePropertyEditor implements ITextEditor {
    */
   @SuppressWarnings("rawtypes")
   protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
-    
+
     fBracketMatcher.setSourceVersion(prefStore.getString(JavaCore.COMPILER_SOURCE));
     support.setCharacterPairMatcher(fBracketMatcher);
-    support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR, HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);
+    support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR,
+        HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);
 
     Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();
     while (e.hasNext())
@@ -260,9 +318,9 @@ public class CodePropertyEditor implements ITextEditor {
     support.setSymbolicFontName(getFontPropertyPreferenceKey());
   }
 
-  protected final String getFontPropertyPreferenceKey() {
-    return JFaceResources.TEXT_FONT;
-  }
+  //protected final String getFontPropertyPreferenceKey() {
+  //  return JFaceResources.TEXT_FONT;
+ // }
 
   /*
    * (non-Javadoc)
@@ -297,7 +355,7 @@ public class CodePropertyEditor implements ITextEditor {
     this.site = site;
     JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
     IDocumentPartitioner partitioner = textTools.createDocumentPartitioner();
-    doc = provider.getDocument(input);
+    doc = getDocumentProvider().getDocument(input);
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
   }
@@ -311,6 +369,7 @@ public class CodePropertyEditor implements ITextEditor {
   public void dispose() {
     fSourceViewerDecorationSupport.uninstall();
     viewer.unconfigure();
+    super.dispose();
   }
 
   /*
@@ -328,10 +387,10 @@ public class CodePropertyEditor implements ITextEditor {
    * 
    * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
    */
-  @Override
-  public IDocumentProvider getDocumentProvider() {
-    return provider;
-  }
+//  @Override
+//  public IDocumentProvider getDocumentProvider() {
+//    return provider;
+//  }
 
   /*
    * (non-Javadoc)

@@ -6,6 +6,7 @@ package repast.simphony.statecharts.editor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -16,7 +17,6 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @author Nick Collier
  */
-@SuppressWarnings("restriction")
 public class JavaSourceViewer extends SourceViewer {
 
   /** Preference key for automatically closing strings */
@@ -81,8 +80,8 @@ public class JavaSourceViewer extends SourceViewer {
    */
   public void configure(IPreferenceStore prefStore, CodePropertyEditor editor) {
     JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
-    JSourceViewerConfiguration config = new JSourceViewerConfiguration(textTools.getColorManager(),
-        prefStore, editor);
+    JavaSourceViewerConfiguration config = new JavaSourceViewerConfiguration(textTools.getColorManager(),
+        prefStore, editor, null);
     super.configure(config);
 
     // from CompilationUnitEditor
