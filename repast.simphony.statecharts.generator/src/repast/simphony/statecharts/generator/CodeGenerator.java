@@ -42,8 +42,6 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  */
 public class CodeGenerator {
   
-  public static final String SRC_GEN = "src-gen";
-  
   private GeneratorRecord genRec = new GeneratorRecord();
   
   /**
@@ -123,9 +121,9 @@ public class CodeGenerator {
     IJavaProject javaProject = JavaCore.create(project);
     
     // workspace relative
-    IPath srcPath = javaProject.getPath().append(SRC_GEN + "/");
+    IPath srcPath = javaProject.getPath().append(CodeGeneratorConstants.SRC_GEN + "/");
     // project relative
-    IFolder folder = project.getFolder(SRC_GEN);
+    IFolder folder = project.getFolder(CodeGeneratorConstants.SRC_GEN);
  
     if (!folder.exists()) {
       // creates within the project
@@ -148,7 +146,7 @@ public class CodeGenerator {
       }
 
     } else {
-      String svgPath = SRC_GEN + "/" + ((statemachine.getPackage() + "." + statemachine.getClassName()).replace(".", "/")) + ".svg";
+      String svgPath = CodeGeneratorConstants.SRC_GEN + "/" + ((statemachine.getPackage() + "." + statemachine.getClassName()).replace(".", "/")) + ".svg";
       genRec.addSVG(new Path(project.getFullPath().toPortableString()).append(svgPath));
       CodeGenFilter filter = new CodeGenFilter(svgPath, statemachine.getUuid());
       DirectoryCleaner cleaner = new DirectoryCleaner(filter);
