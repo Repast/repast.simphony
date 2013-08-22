@@ -6,27 +6,69 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
-import org.eclipse.gmf.runtime.notation.NotationPackage;
+import org.junit.Test;
 
+import repast.simphony.statecharts.generator.CodeGeneratorConstants;
+import repast.simphony.statecharts.generator.TemplateStateActionGenerator;
+import repast.simphony.statecharts.scmodel.AbstractState;
+import repast.simphony.statecharts.scmodel.State;
+import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class GeneratorTest {
   
-  public static void main(String[] args) {
-    XMIResourceImpl resource = new XMIResourceImpl();
+  @Test
+  public void stateActionTest() throws CoreException {
+   
     try {
-      EPackage.Registry.INSTANCE.put(StatechartPackage.eNS_URI, StatechartPackage.eINSTANCE);
-      EPackage.Registry.INSTANCE.put(NotationPackage.eNS_URI, NotationPackage.eINSTANCE);
-      //Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(UMLResource.FILE_EXTENSION, StatechartR.Factory.INSTANCE);
-
-      resource.load(new FileInputStream(new File("./test-data/composite_test.rsc")), new HashMap<Object, Object>());
+      
+      IWorkspace workspace = ResourcesPlugin.getWorkspace();
+      
+      IProject project = workspace.getRoot().getProject("GeneratorTest");
+      if (!project.exists()) {
+        project.create(null);
+        project.open(null);
+        
+        IFolder folder = project.getFolder(CodeGeneratorConstants.SRC_GEN);
+        folder.create(false, true, null);
+      }
+      
+      IPath path  = new Path("./test_data/statechart.rsc");
+      XMIResourceImpl resource = new XMIResourceImpl();
+      resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
+      
+      StateMachine machine = null;
+      for (EObject obj : resource.getContents()) {
+        if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
+          machine = (StateMachine)obj;
+          break;
+        }
+      }
+      
+      State state = null;
+      for (AbstractState s : machine.getStates()) {
+        if (s instanceof State) {
+          state = (State)s;
+          break;
+        }
+      }
+      
+      System.out.println(state);
+      
+      TemplateStateActionGenerator gen = new TemplateStateActionGenerator();
+      gen.run(project, state);
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

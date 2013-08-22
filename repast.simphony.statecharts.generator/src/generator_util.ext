@@ -1,5 +1,8 @@
 import scmodel;
 
+String editorActionFilename(String package, LanguageTypes lang, String counter) :
+    package.trim().replaceAll("\\.", "/") + "/StateActionTemplate" + counter + (lang == LanguageTypes::java ? ".java" : ".groovy");
+
 String filename(scmodel::StateMachine sm) : 
     sm.package.trim().replaceAll("\\.", "/") + "/" + sm.className.trim() + ".java"; 
     
@@ -8,6 +11,9 @@ String actionFilename(String package, String actionType, LanguageTypes lang) :
     
 String generatorClassName(scmodel::StateMachine sm) :
     sm.className.trim() + "Generator"; 
+    
+String getCounter() : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.getCounter();
     
 String getPackageFromType(String agentType) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getPackageFromType(java.lang.String);
@@ -84,6 +90,9 @@ String parseCodeForImports(String body) : JAVA
     
 AbstractState findInitialState(List states) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.findInitialState(java.util.List);
+    
+StateMachine findStateMachine(Object obj) : JAVA
+    repast.simphony.statecharts.generator.GeneratorUtil.findStateMachine(java.lang.Object);
     
 AbstractState findFirstState(List states) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.findFirstState(java.util.List);

@@ -1,0 +1,45 @@
+«IMPORT scmodel»
+«EXTENSION  generator_util»
+
+«DEFINE Main FOR State-»
+«LET findStateMachine() AS machine-»
+«LET getCounter() AS counter-»
+«FILE editorActionFilename(machine.package, language, counter)-»
+ package «machine.package»;
+        
+«EXPAND imports(machine.agentType) FOR this.language-»
+«LET getSimpleClassName(machine.agentType) AS simpleType»
+
+public class StateActionTemplate«counter» implements StateAction<«simpleType»> {
+    @Override
+    public void action(«simpleType» agent, AbstractState<«simpleType»> state, Parameters params) throws Exception {
+        
+    }
+}
+«ENDLET»
+«ENDFILE»
+«ENDLET»
+«ENDLET»
+        
+«ENDDEFINE»
+
+«DEFINE imports(String agentType) FOR LanguageTypes»
+import repast.simphony.statecharts.*;
+import repast.simphony.parameter.Parameters;
+import static repast.simphony.random.RandomHelper.*;
+import repast.simphony.statecharts.generator.GeneratedFor;
+
+«IF this == LanguageTypes::groovy || this == LanguageTypes::relogo-»
+import static repast.simphony.relogo.Utility.*; 
+import static repast.simphony.relogo.UtilityG.*; 
+import repast.simphony.relogo.BaseTurtle; 
+import repast.simphony.relogo.BasePatch; 
+import repast.simphony.relogo.Plural; 
+import repast.simphony.relogo.Stop; 
+import repast.simphony.relogo.Utility; 
+import repast.simphony.relogo.UtilityG;
+«ENDIF-» 
+import static repast.simphony.essentials.RepastEssentials.*;
+
+import «getPackageFromType(agentType)».*;
+«ENDDEFINE»
