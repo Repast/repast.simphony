@@ -20,7 +20,7 @@ import org.eclipse.xpand2.output.OutputImpl;
 import org.eclipse.xtend.expression.Variable;
 import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel;
 
-import repast.simphony.statecharts.scmodel.State;
+import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
@@ -36,7 +36,7 @@ public class TemplateStateActionGenerator {
   private String pkgPath = null;
   private XpandFacade facade;
 
-  private void init(State state) {
+  private void init(AbstractState state) {
     Output output = new OutputImpl();
     Outlet outlet = new Outlet(srcPath.toPortableString());
     outlet.setOverwrite(true);
@@ -60,7 +60,7 @@ public class TemplateStateActionGenerator {
   /**
    * Generates the template class code for the specified state.
    */
-  public IPath run(IProject project, State state) {
+  public IPath run(IProject project, AbstractState state) {
     StateMachine machine = GeneratorUtil.findStateMachine(state);
     String pkg = machine.getPackage();
     String pkgPath = pkg.replaceAll("\\.", "/");

@@ -1,7 +1,7 @@
 «IMPORT scmodel»
 «EXTENSION  generator_util»
 
-«DEFINE Main FOR State-»
+«DEFINE Main FOR AbstractState-»
 «LET findStateMachine() AS machine-»
 «LET getCounter() AS counter-»
 «FILE editorActionFilename(machine.package, language, counter)-»
