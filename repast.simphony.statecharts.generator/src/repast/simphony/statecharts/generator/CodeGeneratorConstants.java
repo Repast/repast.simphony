@@ -8,5 +8,7 @@ package repast.simphony.statecharts.generator;
 public interface CodeGeneratorConstants {
   
  String SRC_GEN = "src-gen";
+ String STATE_ACTION_NAME = "StateActionTemplate";
+ 
 
 }

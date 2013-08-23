@@ -7,11 +7,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
@@ -19,7 +17,6 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -32,6 +29,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -126,7 +124,6 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
   private IAnnotationAccess fAnnotationAccess;
   private SourceViewerDecorationSupport fSourceViewerDecorationSupport;
 
-  private IOverviewRuler fOverviewRuler;
   // from JavaEditor
   protected JavaPairMatcher fBracketMatcher = new JavaPairMatcher(BRACKETS);
 
@@ -236,27 +233,14 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
 //
 //  }
 
-  public void createPartControl(Composite parent) {
+  public void createPartControl(IWorkbenchPartSite site, Composite parent) {
+    this.site = site;
     viewer = new JavaSourceViewer(parent, new VerticalRuler(VERTICAL_RULER_WIDTH),
-        getOverviewRuler());
+        null);//getOverviewRuler());
     getSourceViewerDecorationSupport(viewer);
 
     viewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(viewer).install(prefStore);
-
-    IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
-
-    try {
-      int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
-      viewer.setDocument(doc, model, offset, 0);
-    } catch (BadLocationException e) {
-      StatechartDiagramEditorPlugin.getInstance()
-          .logError("Error creating code editor document", e);
-    }
-
-    // sets up the keyboard actions
-    if (support == null)
-      support = new ViewerSupport(viewer, (IHandlerService) site.getService(IHandlerService.class));
   }
 
   @SuppressWarnings("rawtypes")
@@ -342,7 +326,7 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
   @Override
   public void init(IEditorSite site, IEditorInput input) throws PartInitException {
   }
-
+  
   /*
    * (non-Javadoc)
    * 
@@ -358,6 +342,19 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     doc = getDocumentProvider().getDocument(input);
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
+    IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
+
+    try {
+      int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
+      viewer.setDocument(doc, model, offset, 0);
+    } catch (BadLocationException e) {
+      StatechartDiagramEditorPlugin.getInstance()
+          .logError("Error creating code editor document", e);
+    }
+
+    // sets up the keyboard actions
+    if (support == null)
+      support = new ViewerSupport(viewer, (IHandlerService) site.getService(IHandlerService.class));
   }
 
   /*
@@ -380,6 +377,10 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
   @Override
   public IWorkbenchPartSite getSite() {
     return site;
+  }
+  
+  public StyledText getTextWidget() {
+    return viewer.getTextWidget();
   }
 
   /*

@@ -26,6 +26,8 @@ import repast.simphony.statecharts.scmodel.Transition;
  * @author Nick Collier
  */
 public class GeneratorUtil {
+  
+  private static long counter = 0;
 
   private static final State NULL_STATE = StatechartFactory.eINSTANCE.createState();
   static {
@@ -253,6 +255,10 @@ public class GeneratorUtil {
     }
     return ret;
   }
+  
+  public static StateMachine findStateMachine(Object obj) {
+    return GeneratorUtil.findStateMachine((EObject)obj);
+  }
 
   private static StateMachine findStateMachine(EObject obj) {
     EObject container = obj.eContainer();
@@ -305,6 +311,15 @@ public class GeneratorUtil {
     return ret;
   }
   
+  public static String getCounter() {
+    counter++;
+    return String.valueOf(counter);
+  }
+  
+  public static String getLastCounter() {
+    return String.valueOf(counter);
+  }
+  
   public static String parseImports(String code) {
     return expander.parseForImports(code);
   }
@@ -312,5 +327,7 @@ public class GeneratorUtil {
   public static String expandBody(String body, Boolean addReturn) {
     return expander.expand(body, addReturn);
   }
+  
+ 
  
 }

@@ -22,4 +22,12 @@ public class StatePropertySection extends AbstractEditorPropertySection {
   public void bindModel(EMFDataBindingContext context) {
     sheet.bindModel(context, getEObject());
   }
+
+  /* (non-Javadoc)
+   * @see repast.simphony.statecharts.sheets.AbstractEditorPropertySection#doDispose()
+   */
+  @Override
+  protected void doDispose() {
+    sheet.dispose();
+  }
 }
