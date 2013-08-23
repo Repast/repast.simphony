@@ -45,16 +45,19 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 
 import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
 
 /**
- * @generated
+ * @generated NOT
  */
-public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
+// ITextEditorExtension3 is there so we can turn on smart editing for the
+// code editors for the diagram object properties (e.g. OnEnter etc.).
+public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker, ITextEditorExtension3 {
 
   /**
-   * Generated NOT
+   * generated NOT
    */
   private static final int LIGHT_GRAY_RGB = 12632256;
 
@@ -307,5 +310,41 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
 
     }
   }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#getInsertMode()
+   */
+  @Override
+  public InsertMode getInsertMode() {
+    return ITextEditorExtension3.SMART_INSERT;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#setInsertMode(org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode)
+   */
+  @Override
+  public void setInsertMode(InsertMode mode) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#showChangeInformation(boolean)
+   */
+  @Override
+  public void showChangeInformation(boolean show) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#isChangeInformationShowing()
+   */
+  @Override
+  public boolean isChangeInformationShowing() {
+    return false;
+  }
+  
+  
 
 }

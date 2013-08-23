@@ -57,6 +57,8 @@ Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.eclipse,
  org.eclipse.jdt.groovy.core;bundle-version="2.7.1",
  org.junit,
- org.codehaus.groovy.eclipse.ui;bundle-version="2.7.1"
+ org.codehaus.groovy.eclipse.ui;bundle-version="2.7.1",
+ org.eclipse.jdt.ui,
+ org.eclipse.ui.workbench.texteditor
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
