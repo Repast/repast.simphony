@@ -1,7 +1,11 @@
 package repast.simphony.statecharts.part;
 
+import org.eclipse.core.internal.events.ResourceChangeEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -24,6 +28,7 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocumentProvider;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -48,6 +53,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 
 import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
+import repast.simphony.statecharts.validation.BadCodeFinder;
 
 /**
  * @generated NOT
@@ -70,13 +76,48 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
    * @generated
    */
   public static final String CONTEXT_ID = "repast.simphony.statecharts.ui.diagramContext"; //$NON-NLS-1$
+  
+  private IResourceChangeListener changeListener = new IResourceChangeListener() {
+    
+    private BadCodeFinder finder = new BadCodeFinder();
+    
+    @Override
+    public void resourceChanged(IResourceChangeEvent event) {
+      IResourceDelta delta = event.getDelta();
+      try {
+        finder.reset();
+        delta.accept(finder, IResourceDelta.MARKERS);
+      } catch (CoreException e) {
+        StatechartDiagramEditorPlugin.getInstance().logError("Error while looking for bad code", e);
+      }
+      
+      if (finder.foundBadCode()) {
+        ValidateAction.runValidation(StatechartDiagramEditor.this.getDiagramEditPart(), 
+            (View)getDocumentProvider().getDocument(getEditorInput()).getContent());
+      }
+    }
+  };
 
   /**
-   * @generated
+   * @generated NOT
    */
   public StatechartDiagramEditor() {
     super(true);
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, ResourceChangeEvent.POST_BUILD);
   }
+  
+  
+
+  /* (non-Javadoc)
+   * @see org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor#close(boolean)
+   */
+  @Override
+  public void close(boolean save) {
+    super.close(save);
+    ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+  }
+
+
 
   /**
    * @generated
@@ -84,7 +125,7 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   protected String getContextID() {
     return CONTEXT_ID;
   }
-
+  
   /**
    * @generated
    */

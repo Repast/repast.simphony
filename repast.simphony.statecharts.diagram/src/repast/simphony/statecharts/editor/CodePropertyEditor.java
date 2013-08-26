@@ -21,6 +21,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -382,6 +383,17 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
   public StyledText getTextWidget() {
     return viewer.getTextWidget();
   }
+  
+  /*
+  public boolean hasErrors() {
+    for (Iterator iter = viewer.getAnnotationModel().getAnnotationIterator(); iter.hasNext(); ) {
+      Annotation ann = (Annotation)iter.next();
+      // error ones have type of "org.eclipse.jdt.ui.error"
+      //System.out.println(ann.);
+    }
+    return false;
+  }
+  */
 
   /*
    * (non-Javadoc)

@@ -473,6 +473,9 @@ public class StatechartValidationProvider {
     public IStatus validate(IValidationContext ctx) {
       AbstractState state = (AbstractState) ctx.getTarget();
       if (!state.eClass().equals(StatechartPackage.Literals.COMPOSITE_STATE)) {
+        IStatus status = Validator.validateCode(ctx, state); 
+        if (!status.isOK()) return status;
+        
         return Validator.validateID(ctx, state);
       }
       return ctx.createSuccessStatus();

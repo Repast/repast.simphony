@@ -32,7 +32,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import repast.simphony.statecharts.editor.CodePropertyEditor;
 import repast.simphony.statecharts.generator.TemplateStateActionGenerator;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
-import repast.simphony.statecharts.scmodel.State;
+import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class StateSheet extends FocusFixComposite implements BindableFocusableSheet {
@@ -173,7 +173,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     idTxt.setFocus();
   }
   
-  private void initEditorInput(CodePropertyEditor editor, State state) {
+  private void initEditorInput(CodePropertyEditor editor, AbstractState state) {
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     IFileEditorInput input = (IFileEditorInput) window.getActivePage().getActiveEditor()
         .getEditorInput();
@@ -196,6 +196,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
   }
   
   private void disposeEditor(CodePropertyEditor editor) throws CoreException {
+    //editor.hasErrors();
     editor.dispose();
     FileEditorInput input = (FileEditorInput) editor.getEditorInput();
     if (input != null) input.getFile().delete(true, new NullProgressMonitor());
@@ -208,7 +209,6 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     try {
       disposeEditor(onEnterEditor);
       disposeEditor(onExitEditor);
-      
     } catch (CoreException ex) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
     }
@@ -221,8 +221,8 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
         400, idTxt);
     context.bindValue(observe, property.observe(eObject));
     
-    if (onEnterEditor.getEditorInput() == null) initEditorInput(onEnterEditor, (State)eObject);
-    if (onExitEditor.getEditorInput() == null) initEditorInput(onExitEditor, (State)eObject);
+    if (onEnterEditor.getEditorInput() == null) initEditorInput(onEnterEditor, (AbstractState)eObject);
+    if (onExitEditor.getEditorInput() == null) initEditorInput(onExitEditor, (AbstractState)eObject);
     
     context.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onEnterEditor.getTextWidget()),
