@@ -90,7 +90,9 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
   /**
    * Peform section specific disposal.
    */
-  protected void doDispose() {}
+  protected void doDispose() {
+    sheet.dispose();
+  }
   
   @Override
   public final void createControls(Composite parent,

@@ -1,5 +1,6 @@
 package repast.simphony.statecharts.sheets;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -8,22 +9,28 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import repast.simphony.statecharts.editor.CodePropertyEditor;
+import repast.simphony.statecharts.editor.EditorSupport;
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
+import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class HistoryStateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
   private Text idTxt;
-  private Text onEnterTxt;
+  private EditorSupport support = new EditorSupport();
   private Button btnShallow;
   private LanguageButtonsGroup buttonGroup;
 
@@ -103,23 +110,28 @@ public class HistoryStateSheet extends FocusFixComposite implements BindableFocu
     Label lblOnEnter = new Label(composite, SWT.NONE);
     toolkit.adapt(lblOnEnter, true, true);
     lblOnEnter.setText("On Enter:");
-
-    onEnterTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(onEnterTxt);
-    onEnterTxt.setText("");
-    GridData data = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    data.heightHint = 120;
-    onEnterTxt.setLayoutData(data);
-    toolkit.adapt(onEnterTxt, true, true);
-
-    onEnterTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
+    
+    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        .findView("org.eclipse.ui.views.PropertySheet");
+    
+    CodePropertyEditor onEnterEditor = support.createEditor();
+    Group group = new Group(composite, SWT.BORDER);
+    GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+    group.setLayoutData(data);
+    
+    GridLayout grpLayout = new GridLayout(1, true);
+    grpLayout.verticalSpacing = 0;
+    grpLayout.horizontalSpacing = 0;
+    grpLayout.marginHeight = 0;
+    grpLayout.marginWidth = 0;
+    
+    group.setLayout(grpLayout);
+    onEnterEditor.createPartControl(part.getSite(), group);
+    StyledText widget = onEnterEditor.getTextWidget();
+    data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+    //data.heightHint = -1;
+    widget.getParent().setLayoutData(data);
+    group.setLayoutData(data);
   }
 
   /*
@@ -130,6 +142,19 @@ public class HistoryStateSheet extends FocusFixComposite implements BindableFocu
   @Override
   public void resetFocus() {
     idTxt.setFocus();
+  }
+  
+  /* (non-Javadoc)
+   * @see org.eclipse.swt.widgets.Widget#dispose()
+   */
+  @Override
+  public void dispose() {
+    super.dispose();
+    try {
+      support.dispose();
+    } catch (CoreException ex) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
+    }
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
@@ -143,9 +168,11 @@ public class HistoryStateSheet extends FocusFixComposite implements BindableFocu
         WidgetProperties.selection().observe(btnShallow),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.HISTORY__SHALLOW).observe(eObject));
+    
+    if (support.getEditor(0).getEditorInput() == null) support.init((AbstractState)eObject);
 
     context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onEnterTxt),
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, support.getEditor(0).getTextWidget()),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 

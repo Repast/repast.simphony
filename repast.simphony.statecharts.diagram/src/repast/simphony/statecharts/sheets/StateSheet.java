@@ -1,11 +1,6 @@
 package repast.simphony.statecharts.sheets;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -22,15 +17,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.part.FileEditorInput;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
-import repast.simphony.statecharts.generator.TemplateGenerator;
+import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
@@ -38,8 +30,7 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
 public class StateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
   private Text idTxt;
-  private CodePropertyEditor onEnterEditor;
-  private CodePropertyEditor onExitEditor;
+  private EditorSupport edSupport = new EditorSupport();
 
   private LanguageButtonsGroup buttonGroup;
 
@@ -120,7 +111,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
         .findView("org.eclipse.ui.views.PropertySheet");
 
-    onEnterEditor = new CodePropertyEditor();
+    CodePropertyEditor onEnterEditor = edSupport.createEditor();
     Group group = new Group(composite, SWT.BORDER);
     GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     group.setLayoutData(data);
@@ -140,7 +131,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     group.setLayoutData(data);
     focusableControls.add(widget);
 
-    onExitEditor = new CodePropertyEditor();
+    CodePropertyEditor onExitEditor = edSupport.createEditor();
     group = new Group(composite, SWT.BORDER);
     data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     group.setLayoutData(data);
@@ -173,42 +164,13 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     idTxt.setFocus();
   }
   
-  private void initEditorInput(CodePropertyEditor editor, AbstractState state) {
-    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-    IFileEditorInput input = (IFileEditorInput) window.getActivePage().getActiveEditor()
-        .getEditorInput();
-    IProject proj = input.getFile().getProject();
-    
-    TemplateGenerator gen = new TemplateGenerator();
-    IPath path = gen.run(proj, state);
-    
-    IFile file = proj.getFile(path);
-    try {
-      file.refreshLocal(IResource.DEPTH_ZERO, null);
-    } catch (CoreException e) {
-      StatechartDiagramEditorPlugin.getInstance().logError("Error refreshing temporary edit file", e);
-    }
-    input = new FileEditorInput(file);
-    
-    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-        .findView("org.eclipse.ui.views.PropertySheet");
-    editor.init(part.getSite(), input);
-  }
-  
-  private void disposeEditor(CodePropertyEditor editor) throws CoreException {
-    //editor.hasErrors();
-    editor.dispose();
-    FileEditorInput input = (FileEditorInput) editor.getEditorInput();
-    if (input != null) input.getFile().delete(true, new NullProgressMonitor());
-  }
-  
   /**
    * Disposes of the resources, editors, etc. used by this property sheet.
    */
   public void dispose() {
+    super.dispose();
     try {
-      disposeEditor(onEnterEditor);
-      disposeEditor(onExitEditor);
+      edSupport.dispose();
     } catch (CoreException ex) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
     }
@@ -221,16 +183,15 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
         400, idTxt);
     context.bindValue(observe, property.observe(eObject));
     
-    if (onEnterEditor.getEditorInput() == null) initEditorInput(onEnterEditor, (AbstractState)eObject);
-    if (onExitEditor.getEditorInput() == null) initEditorInput(onExitEditor, (AbstractState)eObject);
+    if (edSupport.getEditor(0).getEditorInput() == null) edSupport.init((AbstractState)eObject);
     
     context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onEnterEditor.getTextWidget()),
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, edSupport.getEditor(0).getTextWidget()),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 
     context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onExitEditor.getTextWidget()),
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,  edSupport.getEditor(1).getTextWidget()),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
 
