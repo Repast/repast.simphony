@@ -9,6 +9,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
@@ -23,20 +24,21 @@ import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
+import repast.simphony.statecharts.scmodel.Transition;
 
 /**
- * Generates the dummy template class file that is used by the editor of state
- * action properties.
+ * Generates the dummy template class files that are used by
+ * editors to edit code properties.
  * 
  * @author Nick Collier
  */
-public class TemplateStateActionGenerator {
+public class TemplateGenerator {
 
   private IPath srcPath = null;
   private String pkgPath = null;
   private XpandFacade facade;
 
-  private void init(AbstractState state) {
+  private void init() {
     Output output = new OutputImpl();
     Outlet outlet = new Outlet(srcPath.toPortableString());
     outlet.setOverwrite(true);
@@ -56,12 +58,9 @@ public class TemplateStateActionGenerator {
     execCtx.registerMetaModel(metamodel);
     facade = XpandFacade.create(execCtx);
   }
-
-  /**
-   * Generates the template class code for the specified state.
-   */
-  public IPath run(IProject project, AbstractState state) {
-    StateMachine machine = GeneratorUtil.findStateMachine(state);
+  
+  private void preRun(IProject project, EObject obj) {
+    StateMachine machine = GeneratorUtil.findStateMachine(obj);
     String pkg = machine.getPackage();
     String pkgPath = pkg.replaceAll("\\.", "/");
 
@@ -72,13 +71,31 @@ public class TemplateStateActionGenerator {
       if (srcPath == null) {
         srcPath = project.getLocation().append(CodeGeneratorConstants.SRC_GEN);
       }
-      init(state);
+      init();
     }
+  }
+
+  /**
+   * Generates the template class code for the specified state.
+   */
+  public IPath run(IProject project, AbstractState state) {
+    preRun(project, state);
 
     String templatePath = "src::action_template::Main";
     facade.evaluate(templatePath, state);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
         append(CodeGeneratorConstants.STATE_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + state.getLanguage());
+  }
+  
+  public IPath generateGuard(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateGuard";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.GUARD_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+    
+    
   }
 }

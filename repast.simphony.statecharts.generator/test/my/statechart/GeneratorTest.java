@@ -17,54 +17,94 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.junit.Test;
 
 import repast.simphony.statecharts.generator.CodeGeneratorConstants;
-import repast.simphony.statecharts.generator.TemplateStateActionGenerator;
+import repast.simphony.statecharts.generator.TemplateGenerator;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.State;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
+import repast.simphony.statecharts.scmodel.Transition;
 
 public class GeneratorTest {
-  
+
   @Test
   public void stateActionTest() throws CoreException {
-   
+
     try {
-      
+
       IWorkspace workspace = ResourcesPlugin.getWorkspace();
-      
+
       IProject project = workspace.getRoot().getProject("GeneratorTest");
       if (!project.exists()) {
         project.create(null);
         project.open(null);
-        
+
         IFolder folder = project.getFolder(CodeGeneratorConstants.SRC_GEN);
         folder.create(false, true, null);
       }
-      
-      IPath path  = new Path("./test_data/statechart.rsc");
+
+      IPath path = new Path("./test_data/statechart.rsc");
       XMIResourceImpl resource = new XMIResourceImpl();
       resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
-      
+
       StateMachine machine = null;
       for (EObject obj : resource.getContents()) {
         if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
-          machine = (StateMachine)obj;
+          machine = (StateMachine) obj;
           break;
         }
       }
-      
+
       State state = null;
       for (AbstractState s : machine.getStates()) {
         if (s instanceof State) {
-          state = (State)s;
+          state = (State) s;
           break;
         }
       }
-      
+
       System.out.println(state);
-      
-      TemplateStateActionGenerator gen = new TemplateStateActionGenerator();
+
+      TemplateGenerator gen = new TemplateGenerator();
       gen.run(project, state);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void guardTest() throws CoreException {
+
+    try {
+
+      IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
+      IProject project = workspace.getRoot().getProject("GeneratorTest");
+      if (!project.exists()) {
+        project.create(null);
+        project.open(null);
+
+        IFolder folder = project.getFolder(CodeGeneratorConstants.SRC_GEN);
+        folder.create(false, true, null);
+      }
+
+      IPath path = new Path("./test_data/statechart.rsc");
+      XMIResourceImpl resource = new XMIResourceImpl();
+      resource.load(new FileInputStream(path.toFile()), new HashMap<Object, Object>());
+
+      StateMachine machine = null;
+      for (EObject obj : resource.getContents()) {
+        if (obj.eClass().equals(StatechartPackage.Literals.STATE_MACHINE)) {
+          machine = (StateMachine) obj;
+          break;
+        }
+      }
+
+      Transition trans = machine.getTransitions().get(0);
+
+      TemplateGenerator gen = new TemplateGenerator();
+      gen.generateGuard(project, trans);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {

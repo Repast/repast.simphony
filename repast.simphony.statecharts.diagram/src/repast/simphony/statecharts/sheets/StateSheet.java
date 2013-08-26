@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.FileEditorInput;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
-import repast.simphony.statecharts.generator.TemplateStateActionGenerator;
+import repast.simphony.statecharts.generator.TemplateGenerator;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
@@ -179,7 +179,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
         .getEditorInput();
     IProject proj = input.getFile().getProject();
     
-    TemplateStateActionGenerator gen = new TemplateStateActionGenerator();
+    TemplateGenerator gen = new TemplateGenerator();
     IPath path = gen.run(proj, state);
     
     IFile file = proj.getFile(path);
