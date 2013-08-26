@@ -129,5 +129,6 @@ String getTDFCode(Transition transition) :
     (transition.triggerType == TriggerTypes::timed ? nullToEmpty(transition.triggerTimedCode) :
     (transition.triggerType == TriggerTypes::exponential ? nullToEmpty(transition.triggerExpRateCode) : 
     (transition.triggerType == TriggerTypes::probability ? nullToEmpty(transition.triggerProbCode) : "")));
+
     
     

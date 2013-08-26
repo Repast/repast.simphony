@@ -341,7 +341,7 @@ private static class «generatorClassName()» {
 «ENDDEFINE»
 
 «DEFINE createAction(String package, String actType, String agentType, String body, String smUUID) FOR AbstractState»
-    «FILE actionFilename(package, actType, this.language)-»
+    «FILE  actionFilename(package, actType, this.language)-»
 	    package «package»;
 	    
 	   «EXPAND imports(agentType, body) FOR this.language-»

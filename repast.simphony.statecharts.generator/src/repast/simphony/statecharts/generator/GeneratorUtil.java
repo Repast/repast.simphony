@@ -200,6 +200,16 @@ public class GeneratorUtil {
     StateBlock block = getCSBlock(uuid);
     return block.onExitTypeName;
   }
+  
+  public static String getUUIDForTypeName(String typeName) {
+    for (Names names : namesMap.values()) {
+      for (Map.Entry<String, StateBlock> entry: names.stateBlockMap.entrySet()) {
+        if (entry.getValue().onEnterTypeName.equals(typeName) || 
+            entry.getValue().onEnterTypeName.equals(typeName)) return entry.getKey();
+      }
+    }
+    return null;
+  }
 
   private static StateBlock getCSBlock(String uuid) {
     return curNames.getStateBlock(uuid);
