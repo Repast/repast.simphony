@@ -1,7 +1,7 @@
 import scmodel;
 
-String editorActionFilename(String package, LanguageTypes lang, String counter) :
-    package.trim().replaceAll("\\.", "/") + "/StateActionTemplate" + counter + (lang == LanguageTypes::java ? ".java" : ".groovy");
+String editorActionFilename(String package, String base, LanguageTypes lang, String counter) :
+    package.trim().replaceAll("\\.", "/") + "/" + base + counter + (lang == LanguageTypes::java ? ".java" : ".groovy");
 
 String filename(scmodel::StateMachine sm) : 
     sm.package.trim().replaceAll("\\.", "/") + "/" + sm.className.trim() + ".java"; 

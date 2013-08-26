@@ -98,4 +98,13 @@ public class TemplateGenerator {
     
     
   }
+  
+  public IPath generateOnTrans(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateOnTrans";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.ON_TRANS_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+  }
 }
