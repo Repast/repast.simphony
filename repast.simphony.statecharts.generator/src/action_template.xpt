@@ -98,4 +98,111 @@ import «getPackageFromType(agentType)».*;
     «ENDLET»
 «ENDDEFINE»
 
+«DEFINE CreateTriggerDouble FOR Transition-»
+
+«LET findStateMachine() AS machine-»
+«EXPAND doCreateTriggerDouble(machine.package, machine.agentType, this.triggerCodeLanguage)-»
+«ENDLET»
 «ENDDEFINE»
+
+«DEFINE doCreateTriggerDouble(String package, String agentType, LanguageTypes lang) FOR Transition»
+    «LET getCounter() AS counter-»
+    «FILE editorActionFilename(package, "TriggerDoubleTemplate", this.triggerCodeLanguage, counter)-»
+        package «package»;
+        
+      «EXPAND imports(agentType) FOR this.triggerCodeLanguage-» 
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+       
+        public class TriggerDoubleTemplate«counter» implements TriggerDoubleFunction<«simpleType»> {
+            @Override
+            public double value(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+            
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDLET»
+«ENDDEFINE»
+
+«DEFINE CreateTriggerCondition FOR Transition-»
+
+«LET findStateMachine() AS machine-»
+«EXPAND doCreateTriggerCond(machine.package, machine.agentType, this.triggerCodeLanguage)-»
+«ENDLET»
+«ENDDEFINE»
+
+«DEFINE doCreateTriggerCond(String package, String agentType, LanguageTypes lang) FOR Transition»
+    «LET getCounter() AS counter-»
+    «FILE editorActionFilename(package, "TriggerCondTemplate", this.triggerCodeLanguage, counter)-»
+        package «package»;
+        
+      «EXPAND imports(agentType) FOR this.triggerCodeLanguage-» 
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+       
+        public class TriggerCondTemplate«counter» implements ConditionTriggerCondition<«simpleType»> {
+            @Override
+            public boolean condition(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+            
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDLET»
+«ENDDEFINE»
+
+«DEFINE CreateMessageCond FOR Transition-»
+
+«LET findStateMachine() AS machine-»
+«EXPAND doCreateMessageCond(machine.package, machine.agentType, this.triggerCodeLanguage, this.messageCheckerClass)-»
+«ENDLET»
+«ENDDEFINE»
+
+«DEFINE doCreateMessageCond(String package, String agentType, LanguageTypes lang, String msgClass) FOR Transition»
+    «LET getCounter() AS counter-»
+    «FILE editorActionFilename(package, "MessageCondTemplate", this.triggerCodeLanguage, counter)-»
+        package «package»;
+        
+      «EXPAND imports(agentType) FOR this.triggerCodeLanguage-» 
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+       
+        public class MessageCondTemplate«counter» implements MessageCondition<«simpleType», «msgClass»> {
+            @Override
+            public boolean isTrue(«simpleType» agent, Transition<«simpleType»> transition, «msgClass» message, Parameters params) throws Exception {
+            
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDLET»
+«ENDDEFINE»
+
+«DEFINE CreateMessageEq FOR Transition-»
+
+«LET findStateMachine() AS machine-»
+«EXPAND doCreateMessageEq(machine.package, machine.agentType, this.triggerCodeLanguage)-»
+«ENDLET»
+«ENDDEFINE»
+
+«DEFINE doCreateMessageEq(String package, String agentType, LanguageTypes lang) FOR Transition»
+    «LET getCounter() AS counter-»
+    «FILE editorActionFilename(package, "MessageEqualsTemplate", this.triggerCodeLanguage, counter)-»
+        package «package»;
+        
+      «EXPAND imports(agentType) FOR this.triggerCodeLanguage-» 
+        
+        «LET getSimpleClassName(agentType) AS simpleType»
+       
+        public class MessageEqualsTemplate«counter» implements MessageEquals<«simpleType»> {
+            @Override
+            public Object messageValue(«simpleType» agent, Transition<«simpleType»> transition, Parameters params) throws Exception {
+            
+            }
+        }
+        «ENDLET»
+    «ENDFILE»
+    «ENDLET»
+«ENDDEFINE»
+

@@ -95,8 +95,42 @@ public class TemplateGenerator {
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
         append(CodeGeneratorConstants.GUARD_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
-    
-    
+  }
+  
+  public IPath generateTriggerCondition(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateTriggerCondition";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.TRIGGER_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+  }
+  
+  public IPath generateTriggerDbl(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateTriggerDouble";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.TRIGGER_DBL_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+  }
+  
+  public IPath generateMessageEq(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateMessageEq";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.TRIGGER_MESSAGE_EQ_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+  }
+  
+  public IPath generateMessageCond(IProject project, Transition transition) {
+    preRun(project, transition);
+    String templatePath = "src::action_template::CreateMessageCond";
+    facade.evaluate(templatePath, transition);
+    // return the project relative path
+    return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
+        append(CodeGeneratorConstants.TRIGGER_MESSAGE_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
   }
   
   public IPath generateOnTrans(IProject project, Transition transition) {

@@ -145,8 +145,10 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
 
   public void setEditorInput(IEditorInput input) {
     IDocumentProvider provider = getDocumentProvider();
-    if (input != null)
-      provider.disconnect(input);
+    if (this.input != null) {
+      provider.disconnect(this.input);
+    }
+    
     this.input = input;
 
     try {
@@ -190,49 +192,6 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     return EditorUtility.getEditorInputJavaElement(this, false);
   }
 
-  /*
-//   * @see org.eclipse.jdt.internal.ui.text.java.IJavaReconcilingListener#
-//   * aboutToBeReconciled()
-//   * 
-//   * @since 3.0
-//   */
-//  public void aboutToBeReconciled() {
-//
-//    // Notify AST provider
-//    // TODO do we need this
-//    // JavaPlugin.getDefault().getASTProvider().aboutToBeReconciled(getInputJavaElement());
-//
-//    // Notify listeners
-//    Object[] listeners = fReconcilingListeners.getListeners();
-//    for (int i = 0, length = listeners.length; i < length; ++i)
-//      ((IJavaReconcilingListener) listeners[i]).aboutToBeReconciled();
-//  }
-//
-//  /*
-//   * @see
-//   * org.eclipse.jdt.internal.ui.text.java.IJavaReconcilingListener#reconciled
-//   * (CompilationUnit, boolean, IProgressMonitor)
-//   * 
-//   * @since 3.0
-//   */
-//  public void reconciled(CompilationUnit ast, boolean forced, IProgressMonitor progressMonitor) {
-//
-//    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=58245
-//    JavaPlugin javaPlugin = JavaPlugin.getDefault();
-//    if (javaPlugin == null)
-//      return;
-//
-//    // Always notify AST provider
-//    // TODO I think we need this.
-//    // javaPlugin.getASTProvider().reconciled(ast, getInputJavaElement(),
-//    // progressMonitor);
-//
-//    // Notify listeners
-//    Object[] listeners = fReconcilingListeners.getListeners();
-//    for (int i = 0, length = listeners.length; i < length; ++i)
-//      ((IJavaReconcilingListener) listeners[i]).reconciled(ast, forced, progressMonitor);
-//
-//  }
 
   public void createPartControl(IWorkbenchPartSite site, Composite parent) {
     this.site = site;
@@ -336,6 +295,9 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
    */
 
   public void init(IWorkbenchPartSite site, IEditorInput input) {
+    if (doc != null) {
+      doc.getDocumentPartitioner().disconnect();
+    }
     setEditorInput(input);
     this.site = site;
     JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();

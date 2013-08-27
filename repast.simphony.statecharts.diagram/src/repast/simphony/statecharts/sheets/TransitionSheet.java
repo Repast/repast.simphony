@@ -3,6 +3,7 @@ package repast.simphony.statecharts.sheets;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -14,10 +15,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -25,33 +25,49 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.wb.swt.SWTResourceManager;
 
+import repast.simphony.statecharts.editor.CodePropertyEditor;
+import repast.simphony.statecharts.editor.EditorSupport;
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class TransitionSheet extends FocusFixComposite implements BindableFocusableSheet {
+
+  private static final int TRIGGER_TIME_INDEX = 0;
+  private static final int TRIGGER_EXP_INDEX = 1;
+  private static final int TRIGGER_PROB_INDEX = 2;
+  private static final int TRIGGER_COND_INDEX = 3;
+  private static final int TRIGGER_MESSAGE_INDEX = 4;
+  private static final int GUARD_INDEX = 5;
+  private static final int ON_TRANS_INDEX = 6;
 
   private static final String[] MESSAGE_TYPES = { "When Message Meets a Condition",
       "When Message Equals ...", "When Message is of the Specified Class", "Always" };
 
-  private static final String[] CLASS_TYPES = {"Object", "String", "int", "long", "float", "double",
-      "boolean" };
+  private static final String[] CLASS_TYPES = { "Object", "String", "int", "long", "float",
+      "double", "boolean" };
 
   private static final int CONDITION_INDEX = 3;
 
-  private Text idTxt, onTransitionTxt, guardTxt;
+  private Text idTxt;
+  private EditorSupport support = new EditorSupport();
   private LanguageButtonsGroup buttonGroup;
   private Combo cmbTriggerType;
   private Text priorityTxt;
   private Text txtAlwaysPolling;
-  private Text txtTimedTime, txtExpRate, txtProbProb, txtProbPolling, txtCondPolling, txtCondCond,
-      txtMessagePolling;
+  private Text txtProbPolling, txtCondPolling, txtMessagePolling;
+  private MessageCheckerTypes currentType = null;
 
   private EMFDataBindingContext bindingContext;
   private Binding pollingBinding;
@@ -59,7 +75,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   private StackLayout triggerLayout;
   private Composite[] triggerComps = new Composite[6];
-  private Text txtMessage;
+  
   private Label lblMessage, lblMessageClass;
   private Combo cmbMessageType, cmbMessageClass;
 
@@ -99,14 +115,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
         SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
-    createTriggerSection(toolkit, tabFolder);
-    createGuardSection(toolkit, tabFolder);
-    createTransitionSection(toolkit, tabFolder);
+    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        .findView("org.eclipse.ui.views.PropertySheet");
+    IWorkbenchPartSite site = part.getSite();
+
+    createTriggerSection(toolkit, tabFolder, site);
+    createGuardSection(toolkit, tabFolder, site);
+    createTransitionSection(toolkit, tabFolder, site);
 
     cmbTriggerType.select(0);
     cmbMessageType.select(3);
     cmbMessageClass.setText(CLASS_TYPES[0]);
-    
+
     triggerLayout.topControl = triggerComps[0];
     addListeners();
   }
@@ -196,7 +216,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
 
-  private void createGuardSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createGuardSection(FormToolkit toolkit, CTabFolder tabFolder, IWorkbenchPartSite site) {
     tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
     tbtmGuard.setText("Guard");
 
@@ -207,17 +227,11 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     compGuard.setLayout(gl_composite);
     toolkit.adapt(compGuard);
     toolkit.paintBordersFor(compGuard);
-
-    guardTxt = new Text(compGuard, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(guardTxt);
-    guardTxt.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
-    gd_onExitTxt.heightHint = 140;
-    guardTxt.setLayoutData(gd_onExitTxt);
-    toolkit.adapt(guardTxt, true, true);
+    createEditor(compGuard, site, 1);
   }
 
-  private void createTriggerSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createTriggerSection(FormToolkit toolkit, CTabFolder tabFolder,
+      IWorkbenchPartSite site) {
 
     tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
     tbtmTrigger.setText("Trigger");
@@ -249,18 +263,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Composite composite = toolkit.createComposite(compTrigger, SWT.NONE);
     triggerLayout = new StackLayout();
     composite.setLayout(triggerLayout);
-    composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
     toolkit.paintBordersFor(composite);
 
     createAlwaysComp(composite, toolkit);
-    createTimeComp(composite, toolkit);
-    createExpRateComp(composite, toolkit);
-    createProbComp(composite, toolkit);
-    createConditionComp(composite, toolkit);
-    createMessageComp(composite, toolkit);
+    createTimeComp(composite, toolkit, site);
+    createExpRateComp(composite, toolkit, site);
+    createProbComp(composite, toolkit, site);
+    createConditionComp(composite, toolkit, site);
+    createMessageComp(composite, toolkit, site);
   }
 
-  private void createMessageComp(Composite parent, FormToolkit toolkit) {
+  private void createMessageComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpMessage = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[5] = cmpMessage;
     toolkit.paintBordersFor(cmpMessage);
@@ -321,17 +335,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.paintBordersFor(cmbMessageClass);
 
     lblMessage = toolkit.createLabel(composite, "Condition:", SWT.NONE);
+    createEditor(composite, site, 1);
 
-    txtMessage = toolkit.createText(composite, "New Text", SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(txtMessage);
-    txtMessage.addTraverseListener(new CancelTraverseOnReturn());
-    txtMessage.setText("");
-    GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-    gd_text_1.heightHint = 40;
-    txtMessage.setLayoutData(gd_text_1);
+//    txtMessage = toolkit.createText(composite, "New Text", SWT.V_SCROLL | SWT.MULTI);
+//    focusableControls.add(txtMessage);
+//    txtMessage.addTraverseListener(new CancelTraverseOnReturn());
+//    txtMessage.setText("");
+//    GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+//    gd_text_1.heightHint = 40;
+//    txtMessage.setLayoutData(gd_text_1);
   }
 
-  private void createProbComp(Composite parent, FormToolkit toolkit) {
+  private void createProbComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpProb = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[2] = cmpProb;
     toolkit.paintBordersFor(cmpProb);
@@ -348,17 +363,21 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtProbPolling);
 
     toolkit.createLabel(cmpProb, "Probability:", SWT.NONE);
-    new Label(cmpProb, SWT.NONE);
-    txtProbProb = toolkit.createText(cmpProb, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtProbProb);
-    txtProbProb.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtProbProb.setLayoutData(gd_txtTimedTime);
+    createEditor(cmpProb, site, 2);
+
+    // new Label(cmpProb, SWT.NONE);
+    // txtProbProb = toolkit.createText(cmpProb, "", SWT.H_SCROLL | SWT.V_SCROLL
+    // | SWT.CANCEL
+    // | SWT.MULTI);
+    // focusableControls.add(txtProbProb);
+    // txtProbProb.addTraverseListener(new CancelTraverseOnReturn());
+    // GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false,
+    // 2, 1);
+    // gd_txtTimedTime.heightHint = 40;
+    // txtProbProb.setLayoutData(gd_txtTimedTime);
   }
 
-  private void createConditionComp(Composite parent, FormToolkit toolkit) {
+  private void createConditionComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpCond = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[3] = cmpCond;
     toolkit.paintBordersFor(cmpCond);
@@ -375,46 +394,84 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtCondPolling);
 
     toolkit.createLabel(cmpCond, "Condition:", SWT.NONE);
-    new Label(cmpCond, SWT.NONE);
-    txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtCondCond);
-    txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtCondCond.setLayoutData(gd_txtTimedTime);
+    createEditor(cmpCond, site, 2);
+
+    // new Label(cmpCond, SWT.NONE);
+    // txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL
+    // | SWT.CANCEL
+    // | SWT.MULTI);
+    // focusableControls.add(txtCondCond);
+    // txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
+    // GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false,
+    // 2, 1);
+    // gd_txtTimedTime.heightHint = 40;
+    // txtCondCond.setLayoutData(gd_txtTimedTime);
   }
 
-  private void createTimeComp(Composite parent, FormToolkit toolkit) {
+  private void createEditor(Composite parent, IWorkbenchPartSite site, int colSpan) {
+    CodePropertyEditor editor = support.createEditor();
+    Group group = new Group(parent, SWT.BORDER);
+    GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
+    group.setLayoutData(data);
+
+    GridLayout grpLayout = new GridLayout(colSpan, true);
+    grpLayout.verticalSpacing = 0;
+    grpLayout.horizontalSpacing = 0;
+    grpLayout.marginHeight = 0;
+    grpLayout.marginWidth = 0;
+
+    group.setLayout(grpLayout);
+    editor.createPartControl(site, group);
+
+    StyledText widget = editor.getTextWidget();
+    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
+    // gd_onExitTxt.heightHint = -1;
+    gd_onExitTxt.horizontalIndent = 1;
+    widget.getParent().setLayoutData(gd_onExitTxt);
+    group.setLayoutData(gd_onExitTxt);
+
+  }
+
+  private void createTimeComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpTimed = toolkit.createComposite(parent, SWT.NONE);
+    GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+    cmpTimed.setLayoutData(data);
     triggerComps[1] = cmpTimed;
     toolkit.paintBordersFor(cmpTimed);
     cmpTimed.setLayout(new GridLayout(1, false));
 
     toolkit.createLabel(cmpTimed, "Time:", SWT.NONE);
-    txtTimedTime = toolkit.createText(cmpTimed, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtTimedTime);
-    txtTimedTime.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtTimedTime.setLayoutData(gd_txtTimedTime);
+    createEditor(cmpTimed, site, 1);
+
+    // txtTimedTime = toolkit.createText(cmpTimed, "", SWT.H_SCROLL |
+    // SWT.V_SCROLL | SWT.CANCEL
+    // | SWT.MULTI);
+    // focusableControls.add(txtTimedTime);
+    // txtTimedTime.addTraverseListener(new CancelTraverseOnReturn());
+    // GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false,
+    // 1, 1);
+    // gd_txtTimedTime.heightHint = 40;
+    // txtTimedTime.setLayoutData(gd_txtTimedTime);
   }
 
-  private void createExpRateComp(Composite parent, FormToolkit toolkit) {
+  private void createExpRateComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpExp = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[4] = cmpExp;
     toolkit.paintBordersFor(cmpExp);
     cmpExp.setLayout(new GridLayout(1, false));
 
     toolkit.createLabel(cmpExp, "Exponential Decay Rate:", SWT.NONE);
-    txtExpRate = toolkit.createText(cmpExp, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtExpRate);
-    txtExpRate.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtExpRate.setLayoutData(gd_txtTimedTime);
+    createEditor(cmpExp, site, 1);
+
+    // txtExpRate = toolkit.createText(cmpExp, "", SWT.H_SCROLL | SWT.V_SCROLL |
+    // SWT.CANCEL
+    // | SWT.MULTI);
+    // focusableControls.add(txtExpRate);
+    // txtExpRate.addTraverseListener(new CancelTraverseOnReturn());
+    // GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false,
+    // 1, 1);
+    // gd_txtTimedTime.heightHint = 40;
+    // txtExpRate.setLayoutData(gd_txtTimedTime);
   }
 
   private void createAlwaysComp(Composite parent, FormToolkit toolkit) {
@@ -435,7 +492,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtAlwaysPolling);
   }
 
-  private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder,
+      IWorkbenchPartSite site) {
     tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
     tbtmOnTrans.setText("On Transition");
 
@@ -444,38 +502,12 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tbtmOnTrans.setControl(compTrans);
     compTrans.setLayout(new GridLayout(1, false));
 
-    onTransitionTxt = new Text(compTrans, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
-        | SWT.CANCEL | SWT.MULTI);
-    focusableControls.add(onTransitionTxt);
-    onTransitionTxt.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_onTransitionTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    gd_onTransitionTxt.heightHint = 140;
-    onTransitionTxt.setLayoutData(gd_onTransitionTxt);
-    onTransitionTxt.setText("");
-    toolkit.adapt(onTransitionTxt, true, true);
+    createEditor(compTrans, site, 1);
   }
 
   private void addListeners() {
 
     priorityTxt.addVerifyListener(new DoubleVerifier());
-
-    guardTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
-
-    onTransitionTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
 
     cmbTriggerType.addSelectionListener(new SelectionAdapter() {
 
@@ -595,6 +627,21 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   private void messageTypeChanged() {
     MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
+    StyledText txtMessage = support.getEditor(TRIGGER_MESSAGE_INDEX).getTextWidget();
+    if (support.getEditor(TRIGGER_MESSAGE_INDEX).getEditorInput() != null && type != currentType) {
+      String txt = txtMessage.getText();
+      // input != null so message trigger type is active in the UI and
+      // the type has been changed.
+      if (type == MessageCheckerTypes.EQUALS) {
+        support.initTriggerME((Transition)object, TRIGGER_MESSAGE_INDEX);
+      } else if (type == MessageCheckerTypes.CONDITIONAL) {
+        support.initTriggerMC((Transition)object, TRIGGER_MESSAGE_INDEX);
+      }
+      // the re-init clears the text so we add it back in here
+      txtMessage.setText(txt);
+    }
+    
+    currentType = type;
     txtMessage.setEnabled(!(type.equals(MessageCheckerTypes.ALWAYS) || type
         .equals(MessageCheckerTypes.UNCONDITIONAL)));
     Color color = (txtMessage.isEnabled() ? ColorConstants.black : Display.getDefault()
@@ -615,13 +662,37 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   private void triggerChanged() {
     int index = cmbTriggerType.getSelectionIndex();
     TriggerTypes ttype = TriggerTypeItem.getTriggerType(cmbTriggerType.getItem(index));
+    initEditor(ttype);
     updateBinding(ttype);
     triggerLayout.topControl = triggerComps[index];
     triggerComps[index].getParent().layout();
     triggerComps[index].getParent().getParent().layout();
-    
+
     if (cmbMessageClass.getSelectionIndex() == -1) {
       cmbMessageClass.select(0);
+    }
+  }
+
+  private void initEditor(TriggerTypes ttype) {
+    if (ttype.equals(TriggerTypes.CONDITION) && support.getEditor(TRIGGER_COND_INDEX).getEditorInput() == null) {
+      support.initTriggerCondition((Transition)object, TRIGGER_COND_INDEX);
+      
+    } else if (ttype.equals(TriggerTypes.EXPONENTIAL) && support.getEditor(TRIGGER_EXP_INDEX).getEditorInput() == null) {
+      support.initTriggerDbl((Transition)object, TRIGGER_EXP_INDEX);
+
+    } else if (ttype.equals(TriggerTypes.PROBABILITY) && support.getEditor(TRIGGER_PROB_INDEX).getEditorInput() == null) {
+      support.initTriggerDbl((Transition)object, TRIGGER_PROB_INDEX);
+
+    } else if (ttype.equals(TriggerTypes.TIMED) && support.getEditor(TRIGGER_TIME_INDEX).getEditorInput() == null) {
+      support.initTriggerDbl((Transition)object, TRIGGER_TIME_INDEX); 
+    }  else if (ttype.equals(TriggerTypes.MESSAGE) && support.getEditor(TRIGGER_MESSAGE_INDEX).getEditorInput() == null) {
+      MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
+      if (type == MessageCheckerTypes.EQUALS) {
+        support.initTriggerME((Transition)object, TRIGGER_MESSAGE_INDEX);
+      } else if (type == MessageCheckerTypes.CONDITIONAL) {
+        support.initTriggerMC((Transition)object, TRIGGER_MESSAGE_INDEX);
+      }
+      currentType = type;
     }
   }
 
@@ -654,14 +725,30 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     return strategy;
   }
 
+  public void dispose() {
+    super.dispose();
+    try {
+      support.dispose();
+    } catch (CoreException ex) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
+    }
+  }
+
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
     bindingContext = context;
     pollingBinding = null;
     object = eObject;
 
+    if (support.getEditor(GUARD_INDEX).getEditorInput() == null)
+      support.initGuard((Transition) eObject, GUARD_INDEX);
+    if (support.getEditor(ON_TRANS_INDEX).getEditorInput() == null)
+      support.initOnTrans((Transition) eObject, ON_TRANS_INDEX);
+
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
-    bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
-    bindTextField(guardTxt, StatechartPackage.Literals.TRANSITION__GUARD);
+    bindTextField(support.getEditor(ON_TRANS_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
+    bindTextField(support.getEditor(GUARD_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__GUARD);
 
     bindTextField(priorityTxt, StatechartPackage.Literals.TRANSITION__PRIORITY,
         createUpdateValueStrategy(new StringToDoubleConverter()),
@@ -706,10 +793,14 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
             StatechartPackage.Literals.TRANSITION__TRIGGER_TYPE).observe(eObject), targetToModel,
         modelToTarget);
 
-    bindTextField(txtTimedTime, StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE);
-    bindTextField(txtExpRate, StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE);
-    bindTextField(txtProbProb, StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE);
-    bindTextField(txtCondCond, StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE);
+    bindTextField(support.getEditor(TRIGGER_TIME_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE);
+    bindTextField(support.getEditor(TRIGGER_EXP_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE);
+    bindTextField(support.getEditor(TRIGGER_PROB_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE);
+    bindTextField(support.getEditor(TRIGGER_COND_INDEX).getTextWidget(),
+        StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE);
 
     context.bindValue(
         WidgetProperties.selection().observe(cmbMessageType),
@@ -723,10 +814,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CLASS).observe(eObject));
 
-    bindTextField(txtMessage, StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE);
+    bindTextField(support.getEditor(TRIGGER_MESSAGE_INDEX).getTextWidget(), 
+        StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE);
   }
 
   private Binding bindTextField(Text text, EAttribute attribute) {
+    return bindingContext.bindValue(
+        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
+            .observe(object));
+  }
+
+  private Binding bindTextField(StyledText text, EAttribute attribute) {
     return bindingContext.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
@@ -820,12 +919,12 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     }
   }
 
-  private static class CancelTraverseOnReturn implements TraverseListener {
-    public void keyTraversed(TraverseEvent e) {
-      if (e.detail == SWT.TRAVERSE_RETURN) {
-        e.doit = false;
-        e.detail = SWT.TRAVERSE_NONE;
-      }
-    }
-  }
+//  private static class CancelTraverseOnReturn implements TraverseListener {
+//    public void keyTraversed(TraverseEvent e) {
+//      if (e.detail == SWT.TRAVERSE_RETURN) {
+//        e.doit = false;
+//        e.detail = SWT.TRAVERSE_NONE;
+//      }
+//    }
+//  }
 }
