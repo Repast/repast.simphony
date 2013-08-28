@@ -18,10 +18,11 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.VerticalRuler;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -306,6 +308,8 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
+    
+    
 
     try {
       int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
@@ -314,6 +318,20 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
       StatechartDiagramEditorPlugin.getInstance()
           .logError("Error creating code editor document", e);
     }
+    
+    doc.addDocumentListener(new IDocumentListener() {
+      @Override
+      public void documentAboutToBeChanged(DocumentEvent event) {}
+      
+      // this is necessary because the autocompletion adds text to the
+      // document but does not notify the text widget. Consequently,
+      // adding text via text completion doesn't set the inserted code
+      // as the property of the eObject via binding.
+      @Override
+      public void documentChanged(DocumentEvent event) {
+        getTextWidget().notifyListeners(SWT.Modify, null);
+      }
+    });
 
     // sets up the keyboard actions
     if (support == null)
