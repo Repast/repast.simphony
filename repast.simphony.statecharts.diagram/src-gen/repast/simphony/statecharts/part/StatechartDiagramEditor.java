@@ -92,6 +92,9 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
       }
       
       if (finder.foundBadCode()) {
+        //System.out.println(StatechartDiagramEditor.this.getDiagramEditPart());
+        //System.out.println(getDocumentProvider());
+        //System.out.println(getDocumentProvider().getDocument(getEditorInput()).getContent());
         ValidateAction.runValidation(StatechartDiagramEditor.this.getDiagramEditPart(), 
             (View)getDocumentProvider().getDocument(getEditorInput()).getContent());
       }
@@ -105,19 +108,15 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     super(true);
     ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, ResourceChangeEvent.POST_BUILD);
   }
-  
-  
-
+ 
   /* (non-Javadoc)
-   * @see org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor#close(boolean)
+   * @see org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor#dispose()
    */
   @Override
-  public void close(boolean save) {
-    super.close(save);
+  public void dispose() {
     ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+    super.dispose();
   }
-
-
 
   /**
    * @generated
