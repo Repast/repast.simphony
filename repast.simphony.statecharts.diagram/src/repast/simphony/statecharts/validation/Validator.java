@@ -14,6 +14,7 @@ import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.PseudoState;
 import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
+import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.util.StatechartsModelUtil;
 
 /**
@@ -88,6 +89,10 @@ public class Validator {
   
   public static boolean isCodeValid(AbstractState state) {
     return !badCode.contains(state.getUuid());
+  }
+  
+  public static boolean isCodeValid(Transition trans) {
+    return !badCode.contains(trans.getUuid());
   }
   
   /**
