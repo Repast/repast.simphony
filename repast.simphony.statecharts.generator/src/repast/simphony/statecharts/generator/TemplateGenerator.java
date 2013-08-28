@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -60,6 +62,12 @@ public class TemplateGenerator {
   }
   
   private void preRun(IProject project, EObject obj) {
+    try {
+      // this will only create the path if it doesn't already exist
+      PathUtils.createSrcPath(project, CodeGeneratorConstants.SRC_GEN, new NullProgressMonitor());
+    } catch (CoreException ex) {
+      ex.printStackTrace();
+    }
     StateMachine machine = GeneratorUtil.findStateMachine(obj);
     String pkg = machine.getPackage();
     String pkgPath = pkg.replaceAll("\\.", "/");
