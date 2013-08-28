@@ -16,7 +16,6 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
@@ -51,28 +50,6 @@ public class JavaSourceViewer extends SourceViewer {
       IVerticalRulerExtension e = (IVerticalRulerExtension) getVerticalRuler();
       e.setFont(font);
     }
-  }
-
-  public void configure(SourceViewerConfiguration config) {
-    super.configure(config);
-
-    IPreferenceStore prefStore = JavaPlugin.getDefault().getCombinedPreferenceStore();
-    // from CompilationUnitEditor
-    boolean closeBrackets = prefStore.getBoolean(CLOSE_BRACKETS);
-    boolean closeStrings = prefStore.getBoolean(CLOSE_STRINGS);
-    boolean closeAngularBrackets = JavaCore.VERSION_1_5.compareTo(prefStore
-        .getString(JavaCore.COMPILER_SOURCE)) <= 0;
-
-    bracketInserter.setCloseBracketsEnabled(closeBrackets);
-    bracketInserter.setCloseStringsEnabled(closeStrings);
-    bracketInserter.setCloseAngularBracketsEnabled(closeAngularBrackets);
-
-    if (this instanceof ITextViewerExtension)
-      ((ITextViewerExtension) this).prependVerifyKeyListener(bracketInserter);
-    // end from CompilationUnitEditor
-
-    //configureFont(prefStore);
-
   }
 
   /**

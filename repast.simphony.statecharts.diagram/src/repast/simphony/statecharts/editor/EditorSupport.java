@@ -48,6 +48,7 @@ public class EditorSupport {
 
     try {
       file.refreshLocal(IResource.DEPTH_ZERO, null);
+      //file.setHidden(true);
     } catch (CoreException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error refreshing temporary edit file",
           e);
@@ -62,6 +63,7 @@ public class EditorSupport {
       try {
         oldFile.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
         oldFile.delete(IResource.FORCE, new NullProgressMonitor());
+        oldFile.setHidden(false);
       } catch (CoreException e) {
         StatechartDiagramEditorPlugin.getInstance().logError("Error deleting temporary edit file",
             e);
@@ -135,6 +137,7 @@ public class EditorSupport {
       IPath path = gen.run(proj, state);
 
       IFile file = proj.getFile(path);
+      
       try {
         file.refreshLocal(IResource.DEPTH_ZERO, null);
       } catch (CoreException e) {
@@ -155,6 +158,7 @@ public class EditorSupport {
       editor.dispose();
       FileEditorInput input = (FileEditorInput) editor.getEditorInput();
       if (input != null)
+        //if (input.getFile().isHidden()) input.getFile().setHidden(false);
         input.getFile().delete(true, new NullProgressMonitor());
     }
     editors.clear();
