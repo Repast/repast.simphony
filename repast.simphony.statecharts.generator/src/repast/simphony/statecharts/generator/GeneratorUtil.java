@@ -201,13 +201,26 @@ public class GeneratorUtil {
     return block.onExitTypeName;
   }
   
+  // todo can probably call this with a trans or state arg
+  // so we can search one or other of the blocks.
   public static String getUUIDForTypeName(String typeName) {
     for (Names names : namesMap.values()) {
       for (Map.Entry<String, StateBlock> entry: names.stateBlockMap.entrySet()) {
         if (entry.getValue().onEnterTypeName.equals(typeName) || 
             entry.getValue().onEnterTypeName.equals(typeName)) return entry.getKey();
       }
+      
+      for (Map.Entry<String, TransitionBlock> entry : names.transitionMap.entrySet()) {
+        TransitionBlock block = entry.getValue();
+        if (block.guardType.equals(typeName) ||
+            block.onTransType.equals(typeName) ||
+            block.tdfType.equals(typeName) ||
+            block.ctcType.equals(typeName) ||
+            block.mcType.equals(typeName) ||
+            block.meType.equals(typeName)) return entry.getKey();
+      }
     }
+    
     return null;
   }
 
