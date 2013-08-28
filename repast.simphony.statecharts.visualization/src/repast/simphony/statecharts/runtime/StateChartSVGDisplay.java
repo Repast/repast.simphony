@@ -1,7 +1,6 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +19,11 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -48,10 +50,10 @@ public class StateChartSVGDisplay {
 	AbstractAction frameCloseAction;
 
 	/**
-	 * Custom JSVGCanvas. This is needed to account for the IllegalStateException
-	 * thrown by RunnableQueue when updates related to mouse events or resizing
-	 * events collide with the dynamic SVG updates we make to the statechart
-	 * images.
+	 * Custom JSVGCanvas. This is needed to account for the
+	 * IllegalStateException thrown by RunnableQueue when updates related to
+	 * mouse events or resizing events collide with the dynamic SVG updates we
+	 * make to the statechart images.
 	 * 
 	 * @author jozik
 	 * 
@@ -85,6 +87,27 @@ public class StateChartSVGDisplay {
 		 * To get rid of illegal state exception thrown by RunnableQueue.
 		 */
 		protected class CustomCanvasSVGListener extends CanvasSVGListener {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (SwingUtilities.isRightMouseButton(e)) {
+					System.out.println("Mouse right clicked.");
+					// find enclosing uuid
+//					CustomJSVGCanvas.this.getSVGDocument().
+					e.getSource();
+					JPopupMenu menu = new JPopupMenu();
+					JMenuItem item = new JMenuItem("Activate state.");
+					menu.add(item);
+					menu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
+			// @Override
+			// public void mousePressed(MouseEvent e) {
+			// super.mousePressed(e);
+			// System.out.println("Mouse pressed.");
+			// }
 
 			@Override
 			protected void dispatchKeyTyped(KeyEvent e) {
@@ -192,7 +215,8 @@ public class StateChartSVGDisplay {
 		this.model = model;
 	}
 
-	public StateChartSVGDisplay(StateChartSVGDisplayController controller, String frameTitle, URI uri) {
+	public StateChartSVGDisplay(StateChartSVGDisplayController controller,
+			String frameTitle, URI uri) {
 		this.controller = controller;
 		frame = new JFrame(frameTitle);
 		frame.setAlwaysOnTop(true);
@@ -204,7 +228,7 @@ public class StateChartSVGDisplay {
 				timer.cancel();
 				frame.setVisible(false);
 				frame.dispose();
-				
+
 				StateChartSVGDisplay.this.controller.notifyCloseListeners();
 			}
 		};
@@ -216,25 +240,24 @@ public class StateChartSVGDisplay {
 		JPanel panel = createComponents();
 
 		JMenuBar bar = new JMenuBar();
-		    JMenu menu = new JMenu("Options");
-		    menu.setMnemonic(KeyEvent.VK_O);
-		    JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
-		    item.setSelected(true);
-		    item.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent evt) {
-		       frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource()).isSelected());
-		      }
-		    });
-		    menu.add(item);
-		    bar.add(menu);
-		    panel.add(bar, BorderLayout.NORTH);
-		    
-		
+		JMenu menu = new JMenu("Options");
+		menu.setMnemonic(KeyEvent.VK_O);
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
+		item.setSelected(true);
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource())
+						.isSelected());
+			}
+		});
+		menu.add(item);
+		bar.add(menu);
+		panel.add(bar, BorderLayout.NORTH);
 
-
-		KeyStroke closeKey = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit()
-				.getMenuShortcutKeyMask());
-		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey, "closeWindow");
+		KeyStroke closeKey = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit
+				.getDefaultToolkit().getMenuShortcutKeyMask());
+		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey,
+				"closeWindow");
 		panel.getActionMap().put("closeWindow", frameCloseAction);
 
 		frame.getContentPane().add(panel);
@@ -281,7 +304,7 @@ public class StateChartSVGDisplay {
 
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
-				
+
 				isReadyForModification.set(true);
 				if (needsInitialUpdate.compareAndSet(true, false)) {
 					controller.update();
@@ -311,7 +334,7 @@ public class StateChartSVGDisplay {
 	 * document
 	 * 
 	 * @param doc
-	 *          The new document
+	 *            The new document
 	 * 
 	 * @author jozik
 	 * @author 
@@ -322,7 +345,7 @@ public class StateChartSVGDisplay {
 		long ts = System.currentTimeMillis();
 
 		// Throttling here.
-		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL /* true */) { 
+		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL /* true */) {
 			if (isReadyForModification.compareAndSet(true, false)) {
 				controller.tryAnotherUpdate = false;
 				final SVGDocument doc = model.getCurrentSVGDocument();
@@ -339,8 +362,12 @@ public class StateChartSVGDisplay {
 
 									// Get the root tags of the documents
 									DOMImplementation impl;
-									impl = SVGDOMImplementation.getDOMImplementation();
-									Document d = DOMUtilities.deepCloneDocument(svgCanvas.getSVGDocument(), impl);
+									impl = SVGDOMImplementation
+											.getDOMImplementation();
+									Document d = DOMUtilities
+											.deepCloneDocument(
+													svgCanvas.getSVGDocument(),
+													impl);
 
 									Node oldRoot = d.getFirstChild();
 									Node newRoot = doc.getFirstChild();
@@ -363,19 +390,18 @@ public class StateChartSVGDisplay {
 			} else {// wasn't ready for update, wait for gvt notification
 				controller.tryAnotherUpdate = true;
 			}
-		}
-		else {
+		} else {
 			synchronized (this) {
-				if (!isTimerScheduled){
+				if (!isTimerScheduled) {
 					isTimerScheduled = true;
-					timer.schedule(new TimerTask(){
+					timer.schedule(new TimerTask() {
 
 						@Override
 						public void run() {
 							renewDocument();
 							isTimerScheduled = false;
 						}
-						
+
 					}, FRAME_UPDATE_INTERVAL);
 				}
 			}
