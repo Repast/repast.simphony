@@ -207,7 +207,7 @@ public class GeneratorUtil {
     for (Names names : namesMap.values()) {
       for (Map.Entry<String, StateBlock> entry: names.stateBlockMap.entrySet()) {
         if (entry.getValue().onEnterTypeName.equals(typeName) || 
-            entry.getValue().onEnterTypeName.equals(typeName)) return entry.getKey();
+            entry.getValue().onExitTypeName.equals(typeName)) return entry.getKey();
       }
       
       for (Map.Entry<String, TransitionBlock> entry : names.transitionMap.entrySet()) {
