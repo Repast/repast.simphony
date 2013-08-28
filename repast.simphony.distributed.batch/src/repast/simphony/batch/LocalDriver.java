@@ -138,7 +138,6 @@ public class LocalDriver {
         runInstance(vmArgs, inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
 
-      int counter = 0;
       for (Future<Void> future : futures) {
         try {
           future.get();
@@ -166,15 +165,16 @@ public class LocalDriver {
       builder.redirectErrorStream(true);
 
       // try mklink first,
-      builder.command("cmd", "/c", "mklink", "/D", "/J", "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"",
-          "\"" + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
+      builder.command("cmd", "/c", "mklink", "/D", "/J",
+          "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"", "\""
+              + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
 
       Process p = builder.start();
       exitCode = p.waitFor();
 
     } catch (InterruptedException ex) {
     } catch (IOException ex) {
-      // catch this with no error -- assumed tried on non-windows machine 
+      // catch this with no error -- assumed tried on non-windows machine
     }
 
     if (exitCode != 0) {
@@ -188,9 +188,10 @@ public class LocalDriver {
 
         Process p = builder.start();
         exitCode = p.waitFor();
-        
+
         if (exitCode != 0) {
-          msg.error("Error while creating symlinks to data directory. Error = " + exitCode, new RuntimeException());
+          msg.error("Error while creating symlinks to data directory. Error = " + exitCode,
+              new RuntimeException());
         }
 
       } catch (InterruptedException ex) {
@@ -247,11 +248,12 @@ public class LocalDriver {
 
   private List<String> createParameterStrings(File input) throws IOException {
     List<String> list = new ArrayList<String>();
-    BufferedReader reader = new BufferedReader(new FileReader(input));
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      if (line.trim().length() > 0)
-        list.add(line);
+    try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (line.trim().length() > 0)
+          list.add(line);
+      }
     }
 
     return list;
