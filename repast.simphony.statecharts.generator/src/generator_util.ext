@@ -117,13 +117,15 @@ String getMessageCheckerClass(String type) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.getClassNameFor(java.lang.String);
     
 String getCTCCode(Transition transition) :
-    (transition.triggerType == TriggerTypes::condition ? nullToEmpty(transition.triggerConditionCode) : "");
+     transition.triggerType == TriggerTypes::condition ? nullToEmpty(transition.triggerConditionCode) : "";
     
 String getMCCode(Transition transition) :
-    transition.messageCheckerType == MessageCheckerTypes::conditional ? nullToEmpty(transition.messageCheckerCode) : "";
+    (transition.triggerType == TriggerTypes::message ?
+    (transition.messageCheckerType == MessageCheckerTypes::conditional ? nullToEmpty(transition.messageCheckerCode) : "") : "");
     
 String getMECode(Transition transition) :
-    transition.messageCheckerType == MessageCheckerTypes::equals ? nullToEmpty(transition.messageCheckerCode) : "";
+    (transition.triggerType == TriggerTypes::message ?
+    (transition.messageCheckerType == MessageCheckerTypes::equals ? nullToEmpty(transition.messageCheckerCode) : "") : "");
     
 String getTDFCode(Transition transition) :
     (transition.triggerType == TriggerTypes::timed ? nullToEmpty(transition.triggerTimedCode) :
