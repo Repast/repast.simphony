@@ -4,10 +4,12 @@
 package repast.simphony.batch;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +86,12 @@ public class LocalDriver {
     toInput.formatForInput(input, new File(workingDir, "parameters_for_run.csv"));
     return input;
   }
+  
+  private void writeInput(String input, File file) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+      writer.write(input);
+    }
+  }
 
   public void run(String propsFile) throws IOException {
     // load the message center log4j properties.
@@ -134,8 +142,10 @@ public class LocalDriver {
         if (mkSymLink)
           makeSymLink(subwd);
         instances.add(new Instance(id, subwd));
-        String inputArg = inputs.get(i);
-        runInstance(vmArgs, inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
+        String input = inputs.get(i);
+        File inputFile = new File(subwd, "param_input.txt");
+        writeInput(input, inputFile);
+        runInstance(vmArgs, inputFile.getCanonicalPath(), libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
 
       for (Future<Void> future : futures) {

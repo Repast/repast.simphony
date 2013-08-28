@@ -6,10 +6,10 @@ package repast.simphony.batch;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.util.Properties;
 
 import org.apache.log4j.Level;
@@ -99,12 +99,12 @@ public class InstanceRunner {
     runner = new OneRunBatchRunner(scenario);
   }
 
-  public void run(String lines) throws ScenarioLoadException {
+  public void run(String inputFile) throws ScenarioLoadException {
     runner.batchInit();
 
-    BufferedReader reader = new BufferedReader(new StringReader(lines));
     String line = null;
-    try {
+    try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));) {
+      
       while ((line = reader.readLine()) != null) {
         Parameters params = lineParser.parse(line);
         int runNum = (Integer) params.getValue(BatchConstants.BATCH_RUN_PARAM_NAME);
@@ -113,12 +113,12 @@ public class InstanceRunner {
           break;
       }
     } catch (IOException ex) {
-      // this is reading string so its not going to IOExcept
-      ex.printStackTrace();
-    }
+      throw new ScenarioLoadException("Error while reading parameter input", ex);
+    } 
 
     runner.batchCleanup();
   }
+  
 
   // arg[0] is the xml parameter file
   // arg[1] is the scenario directory
