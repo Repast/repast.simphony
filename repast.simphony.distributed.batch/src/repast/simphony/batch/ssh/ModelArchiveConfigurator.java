@@ -1,6 +1,8 @@
 package repast.simphony.batch.ssh;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,18 +33,18 @@ public class ModelArchiveConfigurator {
   /**
    * Configures the existing model archive to work with the specified remote.
    * 
-   * @param remote
+   * @param session
    * @param modelArchive
    * @throws IOException
    */
-  public File configure(Session remote, Configuration config)
+  public File configure(Session session, Configuration config)
       throws ModelArchiveConfiguratorException {
     File file = null;
     ZipFile zip = null;
     ZipOutputStream out = null;
     
     try {
-      file = File.createTempFile(remote.getUser() + "_" + remote.getHost(), ".zip");
+      file = File.createTempFile(session.getUser() + "_" + session.getHost(), ".zip");
       out = new ZipOutputStream(new FileOutputStream(file));
 
       zip = new ZipFile(config.getModelArchive());
@@ -62,7 +64,7 @@ public class ModelArchiveConfigurator {
       String params = config.getBatchParamsFile();
       if (!params.startsWith("./"))
         params = "./" + params;
-      String contents = PROP_FILE_CONTENTS + "instance.count = " + remote.getInstances() + "\n"
+      String contents = PROP_FILE_CONTENTS + "instance.count = " + session.getInstances() + "\n"
           + "batch.parameter.file = " + params;
       contents += "\n" + BatchConstants.VM_ARGS + " = " + config.getVMArguments();
       out.write(contents.getBytes());
@@ -70,7 +72,7 @@ public class ModelArchiveConfigurator {
 
       entry = new ZipEntry(PARAMS_FILE);
       out.putNextEntry(entry);
-      out.write(remote.getInput().getBytes());
+      copy(new BufferedInputStream(new FileInputStream(session.getInput())), out);
       out.closeEntry();
       out.close();
 

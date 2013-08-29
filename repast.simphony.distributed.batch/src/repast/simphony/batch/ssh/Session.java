@@ -43,16 +43,14 @@ public interface Session {
   int getInstances();
   
   /**
-   * Gets the parameter input for this remote.This should be a string
-   * containing a series of lines each of which is a parameter combination.
+   * Gets the file that contains parameter input for this Session.
    * 
    * @return the parameter input for this remote.
    */
   String getInput();
   
   /**
-   * Sets the parameter input for this remote. This should be a string
-   * containing a series of lines each of which is a parameter combination.
+   * Sets the file that contains the parameter input for this Session.
    * 
    * @param input
    */

@@ -8,12 +8,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -43,33 +43,76 @@ public class ParametersToInput {
     producer = new XMLSweeperProducer(in);
   }
 
+  private static class Iter implements Iterator<String> {
+
+    private int batchRun = 1;
+    private List<String> paramNames = new ArrayList<>();
+    private Parameters params;
+    private ParameterTreeSweeper sweeper;
+    private String next = null;
+
+    public Iter(XMLSweeperProducer producer) throws IOException {
+      params = producer.getParameters();
+
+      for (String pName : params.getSchema().parameterNames()) {
+        paramNames.add(pName);
+      }
+
+      sweeper = producer.getParameterSweeper();
+      formatNext();
+    }
+
+    private void formatNext() {
+      next = null;
+      if (!sweeper.atEnd()) {
+        sweeper.next(params);
+        StringBuilder buf = new StringBuilder(String.valueOf(batchRun));
+        buf.append("\t");
+
+        boolean addComma = false;
+        for (String pName : paramNames) {
+          if (addComma)
+            buf.append(",");
+          buf.append(pName);
+          buf.append("\t");
+          buf.append(params.getValueAsString(pName));
+          addComma = true;
+        }
+
+        batchRun++;
+        next = buf.toString();
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      return next != null;
+    }
+
+    @Override
+    public String next() {
+      if (next == null) throw new NoSuchElementException();
+      String tmp = next;
+      formatNext();
+      return tmp;
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
+  }
+
   /**
-   * Writes each batch parameter combination in line format and returns each
-   * line in the list of strings.
+   * Gets an iterator over the formatted input. Each element returned
+   * by the iterator is a batch parameter combination in "line" format.
    * 
-   * @return a list of each string where each string a batch parameter
-   *         combination in "line" format.
+   * @return an iterator over the formatted input. Each element returned
+   * by the iterator is a batch parameter combination in "line" format.
    * @throws IOException
    */
-  public List<String> formatForInput() throws IOException {
-    batchRun = 1;
-    Parameters params = producer.getParameters();
-    paramNames.clear();
-
-    for (String pName : params.getSchema().parameterNames()) {
-      paramNames.add(pName);
-    }
-
-    ParameterTreeSweeper sweeper = producer.getParameterSweeper();
-
-    StringWriter writer = new StringWriter();
-    while (!sweeper.atEnd()) {
-      sweeper.next(params);
-      write(writer, params);
-      batchRun++;
-    }
-    
-    return Arrays.asList(writer.toString().split("\n"));
+  public Iterator<String> formatForInput() throws IOException {
+    return new Iter(producer);
   }
 
   /**
