@@ -8,7 +8,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.net.URI;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,7 +30,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.apache.batik.bridge.UpdateManager;
+import org.apache.batik.dom.svg.SVGContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.svg.SVGSVGContext;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
@@ -38,6 +45,11 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGRect;
+import org.w3c.dom.svg.SVGRectElement;
+import org.w3c.dom.svg.SVGSVGElement;
+
+import repast.simphony.statecharts.AbstractState;
 
 public class StateChartSVGDisplay {
 
@@ -58,7 +70,7 @@ public class StateChartSVGDisplay {
 	 * @author jozik
 	 * 
 	 */
-	private static class CustomJSVGCanvas extends JSVGCanvas {
+	private class CustomJSVGCanvas extends JSVGCanvas {
 
 		/**
 		 * 
@@ -94,12 +106,95 @@ public class StateChartSVGDisplay {
 				if (SwingUtilities.isRightMouseButton(e)) {
 					System.out.println("Mouse right clicked.");
 					// find enclosing uuid
-//					CustomJSVGCanvas.this.getSVGDocument().
-					e.getSource();
-					JPopupMenu menu = new JPopupMenu();
-					JMenuItem item = new JMenuItem("Activate state.");
-					menu.add(item);
-					menu.show(e.getComponent(), e.getX(), e.getY());
+					SVGSVGElement svgSvgElement = CustomJSVGCanvas.this
+							.getSVGDocument().getRootElement();
+					if (svgSvgElement instanceof SVGOMElement) {
+						SVGOMElement svgOmElement = (SVGOMElement) svgSvgElement;
+						SVGContext sContext = svgOmElement.getSVGContext();
+						if (sContext instanceof SVGSVGContext) {
+							SVGSVGContext svgSContext = (SVGSVGContext) sContext;
+							AffineTransform at;
+							try {
+								at = CustomJSVGCanvas.this
+										.getViewBoxTransform().createInverse();
+
+								Point2D mousePoint = new Point2D.Float(
+										e.getX(), e.getY());
+								Point2D.Float transformedPoint = new Point2D.Float();
+								at.transform(mousePoint, transformedPoint);
+
+								System.out.println("Mouse point is: "
+										+ mousePoint.getX() + ","
+										+ mousePoint.getY());
+								System.out.println("Transformed point is: "
+										+ transformedPoint.getX() + ","
+										+ transformedPoint.getY());
+								SVGRect rect = svgSvgElement.createSVGRect();
+								rect.setX(transformedPoint.x);
+								rect.setY(transformedPoint.y);
+								rect.setHeight(1);
+								rect.setWidth(1);
+								System.out
+										.println("=======> Selection Rect has: x = "
+												+ rect.getX()
+												+ " y = "
+												+ rect.getY()
+												+ " width = "
+												+ rect.getWidth()
+												+ " height = "
+												+ rect.getHeight());
+								if (rect instanceof SVGRect) {
+									// Element el =
+									// svgOmElement.getViewportElement();
+									List intersectionList = svgSContext
+											.getIntersectionList(rect, null);
+									System.out
+											.println("The intersection list contains:");
+									String uuid = null;
+									for (Object o : intersectionList) {
+										System.out.println(o);
+										if (o instanceof SVGRectElement) {
+											SVGRectElement sre = (SVGRectElement) o;
+											String tempUuid = sre.getAttribute("uuid");
+											if (tempUuid != null) uuid = tempUuid;
+											// System.out.println("Rect has: x = "
+											// + sre.getX().getBaseVal()
+											// .getValue()
+											// + " y = "
+											// + sre.getY().getBaseVal()
+											// .getValue()
+											// + " width = "
+											// + sre.getWidth()
+											// .getBaseVal()
+											// .getValue()
+											// + " height = "
+											// + sre.getHeight()
+											// .getBaseVal()
+											// .getValue());
+										}
+									}
+									// Object source = e.getSource();
+									if (uuid != null) {
+										AbstractState state = StateChartSVGDisplay.this.controller.stateChart
+												.getStateForUuid(uuid);
+										if (state != null) {
+											
+											JPopupMenu menu = new JPopupMenu();
+											JMenuItem item = new JMenuItem(
+													"Activate "
+															+ state.getId());
+											menu.add(item);
+											menu.show(e.getComponent(),
+													e.getX(), e.getY());
+										}
+									}
+								}
+							} catch (NoninvertibleTransformException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
 				}
 			}
 
@@ -298,6 +393,26 @@ public class StateChartSVGDisplay {
 			public void documentLoadingCompleted(SVGDocumentLoaderEvent evt) {
 				SVGDocument svgDoc = svgCanvas.getSVGDocument();
 				controller.initializeModel(svgDoc);
+				// Node root = svgDoc.getRootElement();
+				// EventTarget etr = (EventTarget) root;
+				//
+				// etr.addEventListener("click",
+				// new org.w3c.dom.events.EventListener()
+				//
+				// {
+				// public void handleEvent(org.w3c.dom.events.Event evt) {
+				// Node node = (Node) evt.getTarget();
+				// try {
+				// System.out.println("clicked "
+				// + node.getNodeName());
+				//
+				// } catch (Exception e) {
+				// System.err
+				// .println("not usable element clicked");
+				// }
+				// }
+				// }, false
+				// );
 			}
 		});
 		svgCanvas.addGVTTreeRendererListener(new GVTTreeRendererAdapter() {

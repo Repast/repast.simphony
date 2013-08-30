@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
@@ -690,6 +691,16 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	public String getUuidForState(AbstractState<T> state) {
 		String result = stateUuidMap.get(state);
 		return result;
+	}
+	
+	
+	public AbstractState<T> getStateForUuid(String uuid){
+		for (Entry<AbstractState<T>,String> entry :stateUuidMap.entrySet()){
+			if (entry.getValue().equals(uuid)){
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 
 	private Set<StateChartListener> stateChartListeners = new LinkedHashSet<StateChartListener>();

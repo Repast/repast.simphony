@@ -19,7 +19,7 @@ import repast.simphony.ui.probe.ProbeIntrospector;
 
 public class StateChartSVGDisplayController implements StateChartListener {
 
-  private StateChart stateChart;
+  StateChart stateChart;
   StateChartSVGDisplay svgDisplay;
   StateChartSVGModel model;
 

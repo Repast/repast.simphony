@@ -38,6 +38,7 @@ public interface StateChart<T> {
 	public List<AbstractState<T>> getCurrentStates();
 	
 	public String getUuidForState(AbstractState<T> state);
+	public AbstractState<T> getStateForUuid(String uuid);
 	
 	public void registerStateChartListener(StateChartListener scl);
 	
