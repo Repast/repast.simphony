@@ -154,7 +154,6 @@ public class InstanceRunner {
     CommandLineParser parser = new GnuParser();
     try {
       CommandLine line = parser.parse(options, args);
-      System.out.println(line);
      
       if (line.hasOption(PXML)) {
         String paramFile = line.getOptionValue(PXML);
