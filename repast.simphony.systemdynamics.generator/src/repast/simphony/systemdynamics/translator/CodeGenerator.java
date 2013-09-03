@@ -381,7 +381,7 @@ public class CodeGenerator {
 				if (equations.get(lhs).getCleanEquation().contains("=")) {
 
 					// Need to deal with arrays
-					if (equations.get(lhs).isHasLHSArrayReference()) {
+					if (equations.get(lhs).isHasLHSArrayReference() ) {
 						// add the units and comments as the java comment for the equation 
 						bw.append(eqn.getUnitsAndComment());
 						bw.append("{\n");
@@ -422,7 +422,8 @@ public class CodeGenerator {
 						}
 						}
 
-						initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
+						if (!equations.get(lhs).isGetXlsConstants())
+							initialValues.put(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]), forceDouble(bothSides[1]));
 
 						bw.append("{\n");
 						bw.append(scrub(statement));

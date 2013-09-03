@@ -1,7 +1,7 @@
 /**
  * 
  */
-package repast.simphony.statechart.parts;
+package repast.simphony.statechart.part;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -131,11 +131,20 @@ public class CodeAdderTests {
   }
 
   private void checkIfAdded(IFile file) throws IOException {
+	String fieldName = CLASS_NAME.substring(0, 1).toLowerCase()
+            + CLASS_NAME.substring(1);
     assertTrue(contains(file, "import " + PACKAGE_NAME + "." + CLASS_NAME));
-    String expected = CLASS_NAME + " " + CLASS_NAME.substring(0, 1).toLowerCase()
-        + CLASS_NAME.substring(1) + " = " + CLASS_NAME + ".createStateChart(this, 1);";
+    String expected = CLASS_NAME + " " + fieldName + " = " + CLASS_NAME + ".createStateChart(this, 0);";
     assertTrue(contains(file, expected));
-    expected = "@ProbedProperty(usageName=\"statechart\", displayName=\"statechart\")";
+    expected = "@ProbedProperty(displayName=\"statechart\")";
+    assertTrue(contains(file, expected));
+    expected = "public String get" + CLASS_NAME + "State(){";
+    assertTrue(contains(file, expected));
+    expected = "if (" + fieldName + " == null) return \"\";";
+    assertTrue(contains(file, expected));
+    expected = "Object result = " + fieldName + ".getCurrentSimpleState();";
+    assertTrue(contains(file, expected));
+    expected = "return result == null ? \"\" : result.toString();";
     assertTrue(contains(file, expected));
   }
 
@@ -145,6 +154,7 @@ public class CodeAdderTests {
       reader = new BufferedReader(new FileReader(new File(file.getLocation().toOSString())));
       String line = null;
       while ((line = reader.readLine()) != null) {
+//    	  System.out.println("Line is: " + line); // For testing the test purposes
         if (line.contains(match))
           return true;
       }
