@@ -9,6 +9,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISources;
 
+/**
+ * A kind of predicate that returns true if a control has focus.
+ * 
+ * @author Nick Collier
+ */
 public class ActiveFocusControlExpression extends Expression {
 
   private Control focusControl;
