@@ -35,6 +35,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
+import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
@@ -746,9 +747,9 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
     bindTextField(support.getEditor(ON_TRANS_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
+        StatechartPackage.Literals.TRANSITION__ON_TRANSITION, ON_TRANS_INDEX);
     bindTextField(support.getEditor(GUARD_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__GUARD);
+        StatechartPackage.Literals.TRANSITION__GUARD, GUARD_INDEX);
 
     bindTextField(priorityTxt, StatechartPackage.Literals.TRANSITION__PRIORITY,
         createUpdateValueStrategy(new StringToDoubleConverter()),
@@ -794,13 +795,13 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         modelToTarget);
 
     bindTextField(support.getEditor(TRIGGER_TIME_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE);
+        StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE, TRIGGER_TIME_INDEX);
     bindTextField(support.getEditor(TRIGGER_EXP_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE);
+        StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE, TRIGGER_EXP_INDEX);
     bindTextField(support.getEditor(TRIGGER_PROB_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE);
+        StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE, TRIGGER_PROB_INDEX);
     bindTextField(support.getEditor(TRIGGER_COND_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE);
+        StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE, TRIGGER_COND_INDEX);
 
     context.bindValue(
         WidgetProperties.selection().observe(cmbMessageType),
@@ -815,7 +816,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CLASS).observe(eObject));
 
     bindTextField(support.getEditor(TRIGGER_MESSAGE_INDEX).getTextWidget(), 
-        StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE);
+        StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE, TRIGGER_MESSAGE_INDEX);
   }
 
   private Binding bindTextField(Text text, EAttribute attribute) {
@@ -825,11 +826,11 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
             .observe(object));
   }
 
-  private Binding bindTextField(StyledText text, EAttribute attribute) {
+  private Binding bindTextField(StyledText text, EAttribute attribute, int editorIndex) {
     return bindingContext.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
-            .observe(object));
+            .observe(object), null, new CodeUpdateStrategy(support.getEditor(editorIndex).getJavaSourceViewer()));
   }
 
   private Binding bindTextField(Text text, EAttribute attribute, UpdateValueStrategy targetToModel,

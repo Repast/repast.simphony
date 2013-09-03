@@ -101,4 +101,13 @@ public class JavaSourceViewer extends SourceViewer {
       font.dispose();
     }
   }
+
+  /**
+   * Ignores auto-indenting when set to true.
+   * 
+   * @param ignore
+   */
+  public void ignoreAutoIndent(boolean ignore) {
+    super.ignoreAutoEditStrategies(ignore);
+  }
 }

@@ -22,12 +22,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
+import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class StateSheet extends FocusFixComposite implements BindableFocusableSheet {
+
+  private static int ON_ENTER_IDX = 0;
+  private static int ON_EXIT_IDX = 1;
 
   private Text idTxt;
   private EditorSupport edSupport = new EditorSupport();
@@ -58,7 +62,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     new Label(this, SWT.NONE);
 
     Composite composite = new Composite(this, SWT.NONE);
-    //gd_composite.heightHint = 183;
+    // gd_composite.heightHint = 183;
     composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 3, 1));
     GridLayout gl_composite = new GridLayout(2, false);
     gl_composite.horizontalSpacing = 12;
@@ -107,7 +111,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     Label lblOnExit = new Label(composite, SWT.NONE);
     toolkit.adapt(lblOnExit, true, true);
     lblOnExit.setText("On Exit:");
-    
+
     IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
         .findView("org.eclipse.ui.views.PropertySheet");
 
@@ -115,18 +119,18 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     Group group = new Group(composite, SWT.BORDER);
     GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     group.setLayoutData(data);
-    
+
     GridLayout grpLayout = new GridLayout(1, true);
     grpLayout.verticalSpacing = 0;
     grpLayout.horizontalSpacing = 0;
     grpLayout.marginHeight = 0;
     grpLayout.marginWidth = 0;
-    
+
     group.setLayout(grpLayout);
     onEnterEditor.createPartControl(part.getSite(), group);
     StyledText widget = onEnterEditor.getTextWidget();
     data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-    //data.heightHint = -1;
+    // data.heightHint = -1;
     widget.getParent().setLayoutData(data);
     group.setLayoutData(data);
     focusableControls.add(widget);
@@ -135,19 +139,19 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     group = new Group(composite, SWT.BORDER);
     data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     group.setLayoutData(data);
-    
+
     grpLayout = new GridLayout(1, true);
     grpLayout.verticalSpacing = 0;
     grpLayout.horizontalSpacing = 0;
     grpLayout.marginHeight = 0;
     grpLayout.marginWidth = 0;
-    
+
     group.setLayout(grpLayout);
     onExitEditor.createPartControl(part.getSite(), group);
     new Label(composite, SWT.NONE);
     widget = onExitEditor.getTextWidget();
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-    //gd_onExitTxt.heightHint = -1;
+    // gd_onExitTxt.heightHint = -1;
     gd_onExitTxt.horizontalIndent = 1;
     widget.getParent().setLayoutData(gd_onExitTxt);
     group.setLayoutData(gd_onExitTxt);
@@ -163,7 +167,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
   public void resetFocus() {
     idTxt.setFocus();
   }
-  
+
   /**
    * Disposes of the resources, editors, etc. used by this property sheet.
    */
@@ -182,18 +186,27 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
         400, idTxt);
     context.bindValue(observe, property.observe(eObject));
-    
-    if (edSupport.getEditor(0).getEditorInput() == null) edSupport.init((AbstractState)eObject);
-    
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, edSupport.getEditor(0).getTextWidget()),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
 
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,  edSupport.getEditor(1).getTextWidget()),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
+    if (edSupport.getEditor(ON_ENTER_IDX).getEditorInput() == null)
+      edSupport.init((AbstractState) eObject);
+
+    CodePropertyEditor editor = edSupport.getEditor(ON_ENTER_IDX);
+    context
+        .bindValue(
+            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
+                editor.getTextWidget()),
+            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+                StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject), null,
+            new CodeUpdateStrategy(editor.getJavaSourceViewer()));
+
+    editor = edSupport.getEditor(ON_EXIT_IDX);
+    context
+        .bindValue(
+            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
+                editor.getTextWidget()),
+            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+                StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject), null,
+            new CodeUpdateStrategy(editor.getJavaSourceViewer()));
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }

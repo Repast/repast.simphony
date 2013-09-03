@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
+import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
@@ -162,7 +163,8 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
     context.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, support.getEditor(0).getTextWidget()),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
+            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject), null, 
+            new CodeUpdateStrategy(support.getEditor(0).getJavaSourceViewer()));
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }

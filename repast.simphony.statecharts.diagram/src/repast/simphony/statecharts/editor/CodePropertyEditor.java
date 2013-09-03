@@ -134,6 +134,15 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     fAnnotationPreferences = EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
     prefStore = JavaPlugin.getDefault().getCombinedPreferenceStore();
   }
+  
+  /**
+   * Gets the viewer for this editor.
+   * 
+   * @return the viewer for this editor.
+   */
+  public JavaSourceViewer getJavaSourceViewer() {
+    return viewer;
+  }
 
   /*
    * (non-Javadoc)
@@ -297,6 +306,7 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
    */
 
   public void init(IWorkbenchPartSite site, IEditorInput input) {
+    viewer.ignoreAutoIndent(true);
     if (doc != null) {
       doc.getDocumentPartitioner().disconnect();
     }
@@ -308,8 +318,6 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
-    
-    
 
     try {
       int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
@@ -336,6 +344,8 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     // sets up the keyboard actions
     if (support == null)
       support = new ViewerSupport(viewer, (IHandlerService) site.getService(IHandlerService.class));
+    
+    viewer.ignoreAutoIndent(false);
   }
 
   /*
