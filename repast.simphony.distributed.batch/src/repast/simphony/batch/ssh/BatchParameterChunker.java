@@ -91,8 +91,6 @@ public class BatchParameterChunker {
   // to run in that session.
   private void createInstanceInput(ParametersToInput toInput, int runCount) throws IOException {
 
-    System.out.println(runCount);
-
     int instances = 0;
     for (Session session : config.sessions()) {
       instances += session.getInstances();
@@ -131,7 +129,6 @@ public class BatchParameterChunker {
         numRuns += counts[i];
       }
 
-      System.out.println(numRuns);
       start = end;
       File file = new File(System.getProperty("java.io.tmpdir"), new Date().getTime()
           + "unrolled_params_" + index + ".txt");
