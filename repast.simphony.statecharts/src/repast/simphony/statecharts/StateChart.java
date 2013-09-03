@@ -8,7 +8,7 @@ public interface StateChart<T> {
 	/**
 	 * Receive a message into the statechart queue.
 	 */
-	public void receiveMessage(Object message);
+	void receiveMessage(Object message);
 	
 	/**
 	 * Gets the agent associated with this StateChart.
@@ -20,28 +20,43 @@ public interface StateChart<T> {
 	/**
 	 * Begin state chart.
 	 */
-	public void begin(StateChartSimIntegrator integrator);
+	void begin(StateChartSimIntegrator integrator);
 	
 	/**
 	 * Stops the state chart.
 	 */
-	public void stop();
+	void stop();
 	
 	/**
 	 * Retrieve current state.
 	 * @return
 	 */
-	public AbstractState<T> getCurrentSimpleState();
+	AbstractState<T> getCurrentSimpleState();
 	
-	public boolean withinState(String id);
+	boolean withinState(String id);
 	
-	public List<AbstractState<T>> getCurrentStates();
+	List<AbstractState<T>> getCurrentStates();
 	
-	public String getUuidForState(AbstractState<T> state);
-	public AbstractState<T> getStateForUuid(String uuid);
+	String getUuidForState(AbstractState<T> state);
 	
-	public void registerStateChartListener(StateChartListener scl);
+	/**
+	 * Returns the state associated with the uuid or
+	 * null if not found.
+	 * @param uuid
+	 * @return
+	 */
+	AbstractState<T> getStateForUuid(String uuid);
 	
-	public void removeStateChartListener(StateChartListener scl);
+	void registerStateChartListener(StateChartListener scl);
+	
+	void removeStateChartListener(StateChartListener scl);
+
+	/**
+	 * Returns the transition associated with the uuid or
+	 * null if not found.
+	 * @param uuid
+	 * @return
+	 */
+	Transition<T> getTransitionForUuid(String uuid);
 
 }

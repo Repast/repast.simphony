@@ -63,8 +63,10 @@ import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState5EditPart;
 import repast.simphony.statecharts.edit.parts.State2EditPart;
 import repast.simphony.statecharts.edit.parts.StateEditPart;
+import repast.simphony.statecharts.edit.parts.TransitionEditPart;
 import repast.simphony.statecharts.part.StatechartVisualIDRegistry;
 import repast.simphony.statecharts.scmodel.impl.AbstractStateImpl;
+import repast.simphony.statecharts.scmodel.impl.TransitionImpl;
 
 public class SVGGenerator {
 
@@ -233,9 +235,34 @@ public class SVGGenerator {
 		decorations = findDecorations(connectionsToPaint);
 
 		for (Iterator<GraphicalEditPart> connItr = connectionsToPaint.iterator(); connItr.hasNext();) {
-			IFigure figure = connItr.next().getFigure();
+			IGraphicalEditPart gep =(IGraphicalEditPart) connItr.next();
+			IFigure figure = gep.getFigure();
 			paintFigure(graphics, figure);
 			paintDecorations(graphics, figure, decorations);
+			
+			// mimic the procedure above to insert uuid attribute into transitions
+			tlg = svg2d.getTopLevelGroup();
+
+			NodeList nl = tlg.getChildNodes();
+			int newLength = nl.getLength();
+			// if the new nodelist contains more children, process them
+			if (newLength > oldLength) {
+//				if (newLength - oldLength == 3) { // defs1 is included so skip first
+//					oldLength++;
+//				}
+				switch (StatechartVisualIDRegistry.getVisualID(gep.getNotationView())) {
+
+				case TransitionEditPart.VISUAL_ID:
+					processTransition(oldLength, nl, gep);
+					break;
+				default:
+					// Nothing to do otherwise
+
+				}
+
+			}
+			svg2d.setTopLevelGroup(tlg);
+			oldLength = newLength;
 		}
 	}
 
@@ -286,6 +313,23 @@ public class SVGGenerator {
 		}
 		Element firstElement = (Element) g.getFirstChild();
 		firstElement.setAttribute("fill", "black");
+		String uuid = findUUID(editPart);
+		firstElement.setAttribute("uuid", uuid);
+	}
+	
+	/**
+	 * Adds uuid attribute to transition svg elements.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 */
+	private void processTransition(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+		Node g = nl.item(oldLength);
+		Element firstElement = (Element) g.getFirstChild();
+		if (!firstElement.getNodeName().equals("line")) {
+			throw new IllegalStateException(
+					"The first svg element of a transition should be 'line'.");
+		}
 		String uuid = findUUID(editPart);
 		firstElement.setAttribute("uuid", uuid);
 	}
@@ -690,10 +734,12 @@ public class SVGGenerator {
 	 * @return
 	 */
 	private String findUUID(IGraphicalEditPart editPart) {
-		EObject stateObject = ViewUtil.resolveSemanticElement(editPart.getNotationView());
+		EObject statechartElementObject = ViewUtil.resolveSemanticElement(editPart.getNotationView());
 		String result = "";
-		if (stateObject instanceof AbstractStateImpl) {
-			result = ((AbstractStateImpl) stateObject).getUuid();
+		if (statechartElementObject instanceof AbstractStateImpl) {
+			result = ((AbstractStateImpl) statechartElementObject).getUuid();
+		} else if (statechartElementObject instanceof TransitionImpl){
+			result = ((TransitionImpl) statechartElementObject).getUuid();
 		}
 		return result;
 	}

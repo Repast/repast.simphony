@@ -68,6 +68,16 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	protected void putStateUuid(AbstractState<T> state, String uuid) {
 		stateUuidMap.put(state, uuid);
 	}
+	
+	private Map<Transition<T>, String> transitionUuidMap;
+	
+	protected void setTransitionUuidMap(Map<Transition<T>, String> transitionUuidMap) {
+		this.transitionUuidMap = transitionUuidMap;
+	}
+
+	protected void putTransitionUuid(Transition<T> transition, String uuid) {
+		transitionUuidMap.put(transition, uuid);
+	}
 
 	protected void registerEntryState(AbstractState<T> state) {
 		entryState = state;
@@ -693,9 +703,19 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return result;
 	}
 	
-	
+	@Override
 	public AbstractState<T> getStateForUuid(String uuid){
 		for (Entry<AbstractState<T>,String> entry :stateUuidMap.entrySet()){
+			if (entry.getValue().equals(uuid)){
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public Transition<T> getTransitionForUuid(String uuid){
+		for (Entry<Transition<T>,String> entry : transitionUuidMap.entrySet()){
 			if (entry.getValue().equals(uuid)){
 				return entry.getKey();
 			}

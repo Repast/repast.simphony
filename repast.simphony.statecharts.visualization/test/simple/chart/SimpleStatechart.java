@@ -91,6 +91,8 @@ public class SimpleStatechart extends DefaultStateChart<simple.Agent> {
 			createTransition1(mscb);
 			// creates transition Transition 8
 			createTransition2(mscb);
+			// creates transition Transition 14
+			createTransition3(mscb);
 
 		}
 
@@ -102,7 +104,7 @@ public class SimpleStatechart extends DefaultStateChart<simple.Agent> {
 			tb.addTrigger(new TimedTrigger<Agent>(
 					new SC1TriggerDoubleFunction1()));
 			tb.setPriority(0.0);
-			mscb.addRegularTransition(tb.build());
+			mscb.addRegularTransition(tb.build(), "_CiLEQQ_9EeOpYuNLQpQPLA");
 		}
 
 		// creates transition Transition 8, from = State 5, to = State 6
@@ -113,7 +115,17 @@ public class SimpleStatechart extends DefaultStateChart<simple.Agent> {
 			tb.addTrigger(new TimedTrigger<Agent>(
 					new SC1TriggerDoubleFunction2()));
 			tb.setPriority(0.0);
-			mscb.addRegularTransition(tb.build());
+			mscb.addRegularTransition(tb.build(), "_GTkSQQ_9EeOpYuNLQpQPLA");
+		}
+
+		// creates transition Transition 14, from = State 6, to = State 6
+		private void createTransition3(MyStateChartBuilder mscb) {
+			// true
+			SelfTransitionBuilder<Agent> tb = new SelfTransitionBuilder<Agent>(
+					"Transition 14", stateMap.get("_EmoPUQ_9EeOpYuNLQpQPLA"));
+			tb.addTrigger(new AlwaysTrigger(1.0));
+			tb.setPriority(0.0);
+			mscb.addSelfTransition(tb.build(), "_PF8xEBTjEeOha-s4VV8EjQ");
 		}
 
 	}

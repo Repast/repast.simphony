@@ -33,6 +33,7 @@ import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.dom.svg.SVGContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.svg.SVGOMRect;
 import org.apache.batik.dom.svg.SVGSVGContext;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
@@ -45,11 +46,13 @@ import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGLineElement;
 import org.w3c.dom.svg.SVGRect;
 import org.w3c.dom.svg.SVGRectElement;
 import org.w3c.dom.svg.SVGSVGElement;
 
 import repast.simphony.statecharts.AbstractState;
+import repast.simphony.statecharts.Transition;
 
 public class StateChartSVGDisplay {
 
@@ -71,6 +74,8 @@ public class StateChartSVGDisplay {
 	 * 
 	 */
 	private class CustomJSVGCanvas extends JSVGCanvas {
+		
+		
 
 		/**
 		 * 
@@ -100,11 +105,13 @@ public class StateChartSVGDisplay {
 		 */
 		protected class CustomCanvasSVGListener extends CanvasSVGListener {
 
+			private static final int SELECTION_WIDTH = 6;
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
 				if (SwingUtilities.isRightMouseButton(e)) {
-					System.out.println("Mouse right clicked.");
+//					System.out.println("Mouse right clicked.");
 					// find enclosing uuid
 					SVGSVGElement svgSvgElement = CustomJSVGCanvas.this
 							.getSVGDocument().getRootElement();
@@ -123,54 +130,30 @@ public class StateChartSVGDisplay {
 								Point2D.Float transformedPoint = new Point2D.Float();
 								at.transform(mousePoint, transformedPoint);
 
-								System.out.println("Mouse point is: "
-										+ mousePoint.getX() + ","
-										+ mousePoint.getY());
-								System.out.println("Transformed point is: "
-										+ transformedPoint.getX() + ","
-										+ transformedPoint.getY());
-								SVGRect rect = svgSvgElement.createSVGRect();
-								rect.setX(transformedPoint.x);
-								rect.setY(transformedPoint.y);
-								rect.setHeight(1);
-								rect.setWidth(1);
-								System.out
-										.println("=======> Selection Rect has: x = "
-												+ rect.getX()
-												+ " y = "
-												+ rect.getY()
-												+ " width = "
-												+ rect.getWidth()
-												+ " height = "
-												+ rect.getHeight());
+								SVGRect rect = new SVGOMRect(transformedPoint.x-SELECTION_WIDTH/2, transformedPoint.y-SELECTION_WIDTH/2,SELECTION_WIDTH,SELECTION_WIDTH);//svgSvgElement.createSVGRect();
+								
 								if (rect instanceof SVGRect) {
 									// Element el =
 									// svgOmElement.getViewportElement();
 									List intersectionList = svgSContext
 											.getIntersectionList(rect, null);
-									System.out
-											.println("The intersection list contains:");
+//									System.out
+//											.println("The intersection list contains:");
 									String uuid = null;
 									for (Object o : intersectionList) {
-										System.out.println(o);
+//										System.out.println(o);
 										if (o instanceof SVGRectElement) {
 											SVGRectElement sre = (SVGRectElement) o;
 											String tempUuid = sre.getAttribute("uuid");
-											if (tempUuid != null) uuid = tempUuid;
-											// System.out.println("Rect has: x = "
-											// + sre.getX().getBaseVal()
-											// .getValue()
-											// + " y = "
-											// + sre.getY().getBaseVal()
-											// .getValue()
-											// + " width = "
-											// + sre.getWidth()
-											// .getBaseVal()
-											// .getValue()
-											// + " height = "
-											// + sre.getHeight()
-											// .getBaseVal()
-											// .getValue());
+											if (!tempUuid.isEmpty()) uuid = tempUuid;
+										} 
+									}
+									// Transitions override states
+									for (Object o : intersectionList){
+										if (o instanceof SVGLineElement){
+											SVGLineElement sle = (SVGLineElement) o;
+											String tempUuid = sle.getAttribute("uuid");
+											if (!tempUuid.isEmpty()) uuid = tempUuid;
 										}
 									}
 									// Object source = e.getSource();
@@ -186,6 +169,18 @@ public class StateChartSVGDisplay {
 											menu.add(item);
 											menu.show(e.getComponent(),
 													e.getX(), e.getY());
+										} else {
+											Transition transition = StateChartSVGDisplay.this.controller.stateChart.getTransitionForUuid(uuid);
+											if (transition != null) {
+
+												JPopupMenu menu = new JPopupMenu();
+												JMenuItem item = new JMenuItem(
+														"Follow "
+																+ transition.getId());
+												menu.add(item);
+												menu.show(e.getComponent(),
+														e.getX(), e.getY());
+											}
 										}
 									}
 								}
