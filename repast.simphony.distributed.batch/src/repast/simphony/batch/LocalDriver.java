@@ -276,12 +276,18 @@ public class LocalDriver {
 
     if (vmArgs.length() > 0)
       builder.command("java", vmArgs, "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
-          scenarioFile.getCanonicalPath(), inputArg, id);
+          "repast.simphony.batch.InstanceRunner", 
+          "-pxml", batchParamFile.getCanonicalPath(),
+          "-scenario", scenarioFile.getCanonicalPath(), 
+          "-pinput", inputArg, 
+          "-id", id);
     else
       builder.command("java", "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
-          scenarioFile.getCanonicalPath(), inputArg, id);
+          "repast.simphony.batch.InstanceRunner", 
+          "-pxml", batchParamFile.getCanonicalPath(),
+          "-scenario", scenarioFile.getCanonicalPath(), 
+          "-pinput", inputArg, 
+          "-id", id);
 
     builder.redirectErrorStream(true);
     ProcessRunner runner = new ProcessRunner(builder, new File(workingDirectory, "instance.log"));
