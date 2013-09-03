@@ -17,6 +17,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -63,12 +64,12 @@ public class ViewerSupport implements FocusListener, DisposeListener {
       activateHandler(ISourceViewer.QUICK_ASSIST, ITextEditorActionDefinitionIds.QUICK_ASSIST);
       activateHandler(ISourceViewer.CONTENTASSIST_PROPOSALS,
           ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-      activateHandler(ITextOperationTarget.CUT, ITextEditorActionDefinitionIds.CUT);
-      activateHandler(ITextOperationTarget.COPY, ITextEditorActionDefinitionIds.COPY);
-      activateHandler(ITextOperationTarget.PASTE, ITextEditorActionDefinitionIds.PASTE);
-      activateHandler(ITextOperationTarget.DELETE, ITextEditorActionDefinitionIds.DELETE);
-      activateHandler(ITextOperationTarget.UNDO, ITextEditorActionDefinitionIds.UNDO);
-      activateHandler(ITextOperationTarget.REDO, ITextEditorActionDefinitionIds.REDO);
+      activateHandler(ITextOperationTarget.CUT, IWorkbenchCommandConstants.EDIT_CUT);
+      activateHandler(ITextOperationTarget.COPY,IWorkbenchCommandConstants.EDIT_COPY);
+      activateHandler(ITextOperationTarget.PASTE, IWorkbenchCommandConstants.EDIT_PASTE);
+      activateHandler(ITextOperationTarget.DELETE, IWorkbenchCommandConstants.EDIT_DELETE);
+      activateHandler(ITextOperationTarget.UNDO, IWorkbenchCommandConstants.EDIT_UNDO);
+      activateHandler(ITextOperationTarget.REDO, IWorkbenchCommandConstants.EDIT_REDO);
     }
   }
 
