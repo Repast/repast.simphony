@@ -757,7 +757,7 @@ public class NativeDataTypeManager {
 		
 		try {
 			bw.append("package "+packageName+";\n\n");
-			bw.append("public class MemoryGetter"+objectName+"() {\n");
+			bw.append("public class MemoryGetter"+objectName+" {\n");
 			bw.append("protected Memory"+objectName+" memory;\n");
 			bw.append("public MemoryGetter"+objectName+"(Memory"+objectName+" memory) {\n");
 			bw.append("this.memory = memory;\n");
