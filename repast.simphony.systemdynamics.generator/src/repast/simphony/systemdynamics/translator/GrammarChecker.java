@@ -5,6 +5,7 @@ import java.util.List;
 import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
+import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 
 public class GrammarChecker {
 
@@ -27,6 +28,8 @@ public class GrammarChecker {
 	public static final String FUNCTION = "sdFunctions.";
 	public static final String SCALAR = "memory.";
 	public static final String LOOKUP = "lookup.";
+	
+	private Equation equation;
 
 	/*
 	 * Tokens are one of
@@ -39,8 +42,9 @@ public class GrammarChecker {
 
 	List<String> tokens;
 
-	public GrammarChecker(List<String> tokens) {
+	public GrammarChecker(Equation eqn, List<String> tokens) {
 		this.tokens = tokens;
+		equation = eqn;
 	}
 
 	// make sure proper number of parens
@@ -48,11 +52,15 @@ public class GrammarChecker {
 
 	public OperationResult checkGrammar() {
 
-//		System.out
-//				.println("######################## check Grammar #############################");
+		System.out
+				.println("######################## check Grammar #############################");
+		for (String t : tokens) {
+			System.out.println("Token: "+t);
+		}
 
 		OperationResult or = new OperationResult();
 		String type = determineEquationType(or);
+		System.out.println("Eqn Type: "+type);
 		if (!or.isOk())
 			return or;
 		if (type.equals(ARRAY_INITIALIZATION)) {
@@ -72,11 +80,142 @@ public class GrammarChecker {
 		return or;
 	}
 	
+//	private OperationResult checkArrayInitializationGrammar() {
+//		OperationResult or = new OperationResult();
+//		
+//		// for now assume OK, see if this works
+//		
+//		return or;
+//	}
+	
 	private OperationResult checkArrayInitializationGrammar() {
 		OperationResult or = new OperationResult();
-		
-		// for now assume OK, see if this works
-		
+		MutableInteger pos = new MutableInteger(0);
+		ArrayReference arLHS = new ArrayReference(equation.getLhs());
+		int numDimensions = arLHS.getSubscripts().size();
+		boolean needSemiColon = numDimensions > 1;
+		String token;
+
+		// to have gotten this, we know that this is True.
+
+		// format x[a] = 1,2,3,...
+		// format x[a,b] = 1,2,3;4,5,6;...
+
+		token = tokens.get(pos.value()); // LHS
+		pos.add(1); 
+		token = tokens.get(pos.value()); // = 
+		pos.add(1);
+		token = tokens.get(pos.value()); // first value
+
+		boolean done = false;
+
+		// Simple case for vectors: alternate between values and commas and end with a value
+		if (!needSemiColon) {
+			while(!done) {
+				if (pos.value() % 2 == 0) {
+					if (!Parser.isNumber(token)) {
+						or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+						return or;
+					}
+				} else {
+					if (!token.equals(COMMA)) {
+						or.setErrorMessage("Expected comma. Found "+token+" in position "+pos.value());
+						return or;
+					}
+				}
+
+				pos.add(1);
+
+				if (pos.value() >= tokens.size()) {
+					// finished all tokens -- are we in right state?
+					if (pos.value() % 2 == 0) { // i.e. would we be looking for an another number
+						or.setErrorMessage("Array Initialization cannot end with a comma");
+					}
+					return or;
+				}
+				token = tokens.get(pos.value());
+			}
+			// here we have a multidimensional array
+			// NOTE: Vensim limits this type of initialization to two dimensions
+		} else {
+			int[] numValues = new int[]{0, 0};
+			List<String> subscripts = arLHS.getSubscripts();
+			int sub = 0;
+			NamedSubscriptManager nsm = InformationManagers.getInstance().getNamedSubscriptManager();
+			for (String subr : subscripts) {
+				int numV = nsm.getNumIndexFor(subr);
+				if (sub < 2) {
+					numValues[sub] = numV;
+				} else {
+					if (numV != 1) {
+						
+						// special case -- a single value supplied for all array slots
+						if (tokens.size() == 3 && Parser.isNumber(token)) {
+							return or;
+						} else {
+						or.setErrorMessage("Only the first two dimensions can vary in this array initialization");
+							return or;
+						}
+					}
+				}
+				sub++;
+			}
+
+			for (int repeatCount = 0; repeatCount < numValues[0]; repeatCount++) {
+				for (int current = 0; current < numValues[1]; current++) {
+					if (repeatCount > 0 || current > 0) {
+						pos.add(1);
+						if (pos.value() >= tokens.size()) {
+							or.setErrorMessage("Unexpected end of data values");
+							return or;
+						} else {
+							token = tokens.get(pos.value());
+						}
+					}
+					// first check for a number
+					if (!Parser.isNumber(token)) {
+						or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+						return or;
+					}
+					// then punctuation
+					// advance token to punctuation position
+					pos.add(1);
+					if (pos.value() >= tokens.size()) {
+						
+						// there is one special case:
+						// an array can be initialized with a single value for all slots
+						
+						if (repeatCount == 0 && current == 0) {
+							return or;
+						}
+						
+						or.setErrorMessage("Unexpected end of data values");
+						return or;
+					} else {
+						token = tokens.get(pos.value());
+					}
+
+					// check for proper comma and semicolons
+					if (current < numValues[1]-1) {
+						if (!token.equals(COMMA)) {
+							or.setErrorMessage("Expected \",\" . Found "+token+" in position "+pos.value());
+							return or;
+						}
+					} else {
+						if (!token.equals(SEMICOLON)) {
+							or.setErrorMessage("Expected \";\" . Found "+token+" in position "+pos.value());
+							return or;
+						}
+					}
+				}
+			}
+			pos.add(1);
+			if (pos.value() < tokens.size()) {
+				or.setErrorMessage("Unexpected tokens at end of initialization");
+				return or;
+			}
+		}		
+
 		return or;
 	}
 
@@ -615,6 +754,8 @@ public class GrammarChecker {
 		String type = "UNKNOWN";
 		or.clear();
 		
+		boolean initialization = true;
+		
 		// Need to worry about array initialization first
 		if (tokens.get(0).startsWith(ARRAY)) {
 			if (tokens.get(1).equals("=")) {
@@ -623,14 +764,17 @@ public class GrammarChecker {
 					if (i % 2 == 0) {
 						if (!Parser.isNumber(tokens.get(i))) {
 //							System.out.println("Looking for ");
+							initialization = false;
 							break;
 						}
 					} else {
 						if (!(tokens.get(i).equals(COMMA) || tokens.get(i).equals(SEMICOLON)))
+							initialization = false;
 							break;
 					}
 				}
-				return ARRAY_INITIALIZATION;
+				if (initialization)
+					return ARRAY_INITIALIZATION;
 			}
 			
 		}
