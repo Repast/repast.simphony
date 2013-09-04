@@ -1,12 +1,13 @@
 package repast.simphony.statecharts.part;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gmf.runtime.common.ui.services.action.contributionitem.ContributionItemService;
 import org.eclipse.gmf.runtime.diagram.ui.actions.ActionIds;
 import org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -26,13 +27,23 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
   private DeleteElementAction deleteAction;
 
   /**
-   * @generated
+   * @generated NOT
    */
   public DiagramEditorContextMenuProvider(IWorkbenchPart part, EditPartViewer viewer) {
     super(part, viewer);
     this.part = part;
     deleteAction = new DeleteElementAction(part);
     deleteAction.init();
+    
+    // exclude unwanted items from the context menu
+    @SuppressWarnings("unchecked")
+    Set<String> exclusion = super.getExclusionSet();
+    exclusion.add("org.eclipse.gmf.ecore.editor.LoadResourceAction");
+    exclusion.add("repast.simphony.statecharts.diagram.LoadResourceAction");
+    exclusion.add("groovyfile");
+    exclusion.add("groovyresource");
+    
+    super.setExclusionSet(exclusion);
   }
 
   /**
@@ -68,4 +79,6 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
       StatechartDiagramEditorPlugin.getInstance().logError("Error building context menu", e);
     }
   }
+  
+  
 }
