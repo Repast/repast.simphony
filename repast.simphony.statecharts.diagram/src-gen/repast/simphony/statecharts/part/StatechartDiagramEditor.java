@@ -38,11 +38,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -77,6 +83,56 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
    */
   public static final String CONTEXT_ID = "repast.simphony.statecharts.ui.diagramContext"; //$NON-NLS-1$
   
+  class FocusSetter implements Runnable {
+
+    @Override
+    public void run() {
+      IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+          .findView("org.eclipse.ui.views.PropertySheet");
+      part.getSite().getPage().activate(part);
+    }
+  }
+  
+  
+  private IPartListener2 partListener = new IPartListener2() {
+    
+      @Override
+      public void partActivated(IWorkbenchPartReference partRef) {
+        if (activatePropSheet) {
+          activatePropSheet = false;
+          Display.getCurrent().syncExec(new FocusSetter());
+        }
+      }
+
+      @Override
+      public void partBroughtToTop(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partClosed(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partDeactivated(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partOpened(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partHidden(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partVisible(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partInputChanged(IWorkbenchPartReference partRef) {
+      }
+    };
+  
   private IResourceChangeListener changeListener = new IResourceChangeListener() {
     
     private BadCodeFinder finder = new BadCodeFinder();
@@ -100,6 +156,8 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
       }
     }
   };
+  
+  private boolean activatePropSheet = false;
 
   /**
    * @generated NOT
@@ -108,6 +166,14 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
     super(true);
     ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, ResourceChangeEvent.POST_BUILD);
   }
+  
+  public void init(final IEditorSite site, final IEditorInput input)
+      throws PartInitException {
+    super.init(site, input);
+    site.getPage().addPartListener(partListener);
+  }
+  
+  
  
   /* (non-Javadoc)
    * @see org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor#dispose()
@@ -115,7 +181,18 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   @Override
   public void dispose() {
     ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+    getEditorSite().getPage().removePartListener(partListener);
     super.dispose();
+  }
+  
+  /**
+   * @generated NOT
+   */
+  @Override
+  public void doSave(IProgressMonitor monitor) {
+    IViewPart part = getSite().getPage().findView("org.eclipse.ui.views.PropertySheet");
+    activatePropSheet = part != null && getSite().getPage().getActivePart().equals(part);
+    super.doSave(monitor);
   }
 
   /**
