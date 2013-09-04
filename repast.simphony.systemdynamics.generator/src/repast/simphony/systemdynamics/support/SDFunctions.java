@@ -11,6 +11,9 @@ public class SDFunctions {
     private Map<String, Lookup> lookups = new HashMap<String, Lookup>();
 
     private Map<String, Double> initials = new HashMap<String, Double>();
+    
+    private int obCount = 0;
+    private static int MAX_OB = 300;
 
 
 
@@ -38,14 +41,14 @@ public class SDFunctions {
 	int len = lookupArray[xval].length;
 	// out of range
 	if (x < lookupArray[0][0]) {
-	    System.out.println("WARNING: Below Out of range access to lookup: "
-		    + x);
+		if (++obCount <= MAX_OB)
+			System.out.println("WARNING: Below Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
 	    return lookupArray[1][0];
 	}
 
 	if (x > lookupArray[xval][len - 1]) {
-	    System.out.println("WARNING: Above Out of range access to lookup: "
-		    + x);
+		if (++obCount <= MAX_OB)
+			System.out.println("WARNING: Above Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
 	    return lookupArray[yval][len - 1];
 	}
 
@@ -452,8 +455,7 @@ public class SDFunctions {
 	return arg1;
     }
     public double INTEGER(String varName, double currentValue, double time, double timeStep,double arg1) {
-	notImplemented();
-	return arg1;
+	return (int) arg1;
     }
     public double INTERNALRATEOFRETURN(String varName, double currentValue, double time, double timeStep,double arg1,double arg2,double arg3,double arg4) {
 	notImplemented();
