@@ -66,9 +66,9 @@ import java.util.Properties;
         
         protected void logit(String var, double time, double value, double savper) {
         	int t = (int) (time/savper);
-        	double remainder = (time - ((double) t * savper));
-//        	if ((time - ((double) t * savper)) == 0.0)
-        		logger.log(var.replace("memory.", "")+","+time+","+value+","+remainder);
+        	double remainder = (time - (((double) t) * savper));
+        	if (remainder == 0.0)
+        		logger.log(var.replace("memory.", "")+","+time+","+value);
         }
         
         protected void logitVector(String var, double time, int length, double[] value) {
