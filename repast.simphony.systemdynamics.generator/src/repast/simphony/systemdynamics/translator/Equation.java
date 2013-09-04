@@ -200,7 +200,7 @@ public class Equation {
 		
 		// if we were able to cleanly tokenize the equation, let's check for other syntax errors
 		if (syntacticallyCorrect) {
-			GrammarChecker checker = new GrammarChecker(tokens);
+			GrammarChecker checker = new GrammarChecker(this, tokens);
 			OperationResult or = checker.checkGrammar();
 			if (!or.isOk()) {
 				syntacticallyCorrect = false;
@@ -3301,9 +3301,9 @@ public class Equation {
 	}
 	
 	public boolean isGetExternalData() {
-		if (getVensimEquation().contains("GET XLS LOOKUPS") || 
-				getVensimEquation().contains("GET XLS DATA") ||
-				getVensimEquation().contains("GET XLS CONSTANTS"))
+		if (getVensimEquationOnly().contains("GET XLS LOOKUPS") || 
+				getVensimEquationOnly().contains("GET XLS DATA") ||
+				getVensimEquationOnly().contains("GET XLS CONSTANTS"))
 			return true;
 		else
 			return false;
