@@ -6,6 +6,9 @@ public class Lookup {
 	private double[] xVals;
 	private double[] yVals;
 	
+	private int outOfBoundsCount = 0;
+	private static int MAX_OB = 10;
+	
 	private double minX, minXY, maxX, maxXY;
 	
 	public Lookup(String name, double minX, double minXY, double maxX, double maxXY,  double...ds ) {
@@ -48,12 +51,14 @@ public class Lookup {
 		Double yVal = null;
 		// out of range
 		if (x < xVals[0]) {
-			System.out.println("WARNING: Below Out of range access to lookup: "+name+" "+x);
+			if (++outOfBoundsCount <= MAX_OB)
+				System.out.println("WARNING: Below Out of range access to lookup: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
 			return yVals[0]; 
 		}
 		
 		if (x > xVals[xVals.length-1]) {
-			System.out.println("WARNING: Above Out of range access to lookup: "+name+" "+x);
+			if (++outOfBoundsCount <= MAX_OB)
+				System.out.println("WARNING: Above Out of range access to lookup: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
 			return yVals[yVals.length-1]; 
 		}
 		
