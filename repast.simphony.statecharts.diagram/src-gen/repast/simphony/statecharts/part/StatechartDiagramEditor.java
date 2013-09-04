@@ -398,7 +398,6 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   /**
    * @generated NOT
    */
-  @SuppressWarnings("restriction")
   protected void configureGraphicalViewer() {
     super.configureGraphicalViewer();
     DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
