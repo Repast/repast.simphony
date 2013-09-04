@@ -85,8 +85,8 @@ public class StateChartBuilder<T> {
 	}
 	
 	public void addRegularTransition(Transition<T> transition, String uuid) {
-		addRootState(transition.getSource());
-		addRootState(transition.getTarget());
+//		addRootState(transition.getSource());
+//		addRootState(transition.getTarget());
 		if (regularTransitions.add(transition)){
 			if (uuid == null) {
 				uuid = UUID.randomUUID().toString();
