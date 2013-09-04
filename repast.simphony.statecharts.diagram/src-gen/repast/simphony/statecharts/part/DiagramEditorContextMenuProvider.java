@@ -6,6 +6,7 @@ import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gmf.runtime.common.ui.services.action.contributionitem.ContributionItemService;
 import org.eclipse.gmf.runtime.diagram.ui.actions.ActionIds;
 import org.eclipse.gmf.runtime.diagram.ui.providers.DiagramContextMenuProvider;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -49,6 +50,7 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
    * @generated
    */
   public void buildContextMenu(final IMenuManager menu) {
+
     getViewer().flush();
     try {
       TransactionUtil.getEditingDomain((EObject) getViewer().getContents().getModel())
@@ -59,6 +61,7 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
                   DiagramEditorContextMenuProvider.this, part);
               menu.remove(ActionIds.ACTION_DELETE_FROM_MODEL);
               menu.appendToGroup("editGroup", deleteAction);
+              menu.remove("properties");
             }
           });
     } catch (Exception e) {
