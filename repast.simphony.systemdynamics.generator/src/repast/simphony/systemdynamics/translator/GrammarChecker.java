@@ -52,15 +52,11 @@ public class GrammarChecker {
 
 	public OperationResult checkGrammar() {
 
-		System.out
-				.println("######################## check Grammar #############################");
-		for (String t : tokens) {
-			System.out.println("Token: "+t);
-		}
+//		System.out
+//				.println("######################## check Grammar #############################");
 
 		OperationResult or = new OperationResult();
 		String type = determineEquationType(or);
-		System.out.println("Eqn Type: "+type);
 		if (!or.isOk())
 			return or;
 		if (type.equals(ARRAY_INITIALIZATION)) {
