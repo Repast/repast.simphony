@@ -1141,10 +1141,7 @@ public class Translator {
 			HashMap<String, String> expandedLhsToRealLhsMap,
 			ArrayList<String> evaluationOrder) {
 
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
 		for (String toRemove : toRemoveFromRequires) {
-			System.out.println("toRemove "+toRemove);
 			
 			// toRemove will be either a realLHS or expLHS
 
@@ -1187,10 +1184,10 @@ public class Translator {
 					// if the size is now 0, we can add the realLHS to the evaluation order list
 					if (realLHSToExpLHS.size() == 0 /* || (realLHSToExpLHS.size() == 1) && realLHSToExpLHS.contains(toRemove) */ ) {  // try this for multi def
 //						System.out.println("add to EO: <"+toRemove+"> "+realLHS);
-						validateEO(realLHS, 
-								 requiresLhsScalarExpandedRhs,
-								 requiresExpandedLhsExpandedRHS,
-								 realLhsToExpandedLhsNotInitialized);
+//						validateEO(realLHS, 
+//								 requiresLhsScalarExpandedRhs,
+//								 requiresExpandedLhsExpandedRHS,
+//								 realLhsToExpandedLhsNotInitialized);
 						evaluationOrder.add(realLHS);
 						
 						// never need to process this again
@@ -1210,10 +1207,10 @@ public class Translator {
 					} else {
 //						// here when the "toRemove" actually was a realLHS originally
 //						System.out.println("add to EO: <"+toRemove+"> "+realLHS);
-						validateEO(realLHS, 
-								 requiresLhsScalarExpandedRhs,
-								 requiresExpandedLhsExpandedRHS,
-								 realLhsToExpandedLhsNotInitialized);
+//						validateEO(realLHS, 
+//								 requiresLhsScalarExpandedRhs,
+//								 requiresExpandedLhsExpandedRHS,
+//								 realLhsToExpandedLhsNotInitialized);
 						evaluationOrder.add(realLHS);
 						// and again remove from to process set and from rhs data structures
 						realLhsToExpandedLhsNotInitialized.remove(realLHS);
@@ -1225,10 +1222,10 @@ public class Translator {
 			} else {
 				// we remove from requiresLhsScalarExpandedRhs and then check requires and requiresExpanded
 				// this will always be a non array LHS
-				validateEO(toRemove, 
-						 requiresLhsScalarExpandedRhs,
-						 requiresExpandedLhsExpandedRHS,
-						 realLhsToExpandedLhsNotInitialized);
+//				validateEO(toRemove, 
+//						 requiresLhsScalarExpandedRhs,
+//						 requiresExpandedLhsExpandedRHS,
+//						 realLhsToExpandedLhsNotInitialized);
 				requiresLhsScalarExpandedRhs.remove(toRemove);
 				evaluationOrder.add(toRemove);
 //				System.out.println("add to EO: "+toRemove);
@@ -1243,7 +1240,7 @@ public class Translator {
 			HashMap<String, HashSet<String>> realLhsToExpandedLhsNotInitialized) {
 		boolean valid = true;
 		
-		System.out.println("ValidateEO: "+eoLHS);
+		System.out.println("validateEO: "+eoLHS);
 		
 		if (inMap(eoLHS, requiresLhsScalarExpandedRhs, "requiresLhsScalarExpandedRhs"))
 			valid = false;
