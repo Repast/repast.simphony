@@ -104,6 +104,10 @@ public class GrammarChecker {
 		token = tokens.get(pos.value()); // first value
 
 		boolean done = false;
+		needSemiColon = true;
+		
+		// simplified grammar checking for array initialization
+		// activate other code once we insure that subscript information is available 
 
 		// Simple case for vectors: alternate between values and commas and end with a value
 		if (!needSemiColon) {
@@ -156,60 +160,101 @@ public class GrammarChecker {
 				}
 				sub++;
 			}
-
-			for (int repeatCount = 0; repeatCount < numValues[0]; repeatCount++) {
-				for (int current = 0; current < numValues[1]; current++) {
-					if (repeatCount > 0 || current > 0) {
-						pos.add(1);
-						if (pos.value() >= tokens.size()) {
-							or.setErrorMessage("Unexpected end of data values");
-							return or;
-						} else {
-							token = tokens.get(pos.value());
-						}
-					}
-					// first check for a number
-					if (!Parser.isNumber(token)) {
-						or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
-						return or;
-					}
-					// then punctuation
-					// advance token to punctuation position
+			
+			while (pos.value() < tokens.size()) {
+				// special case for internal minus sign which is stored as a separate token
+				if (token.equals("_")) {
 					pos.add(1);
-					if (pos.value() >= tokens.size()) {
-						
-						// there is one special case:
-						// an array can be initialized with a single value for all slots
-						
-						if (repeatCount == 0 && current == 0) {
-							return or;
-						}
-						
+					if (pos.value() < tokens.size()) {
+						token = tokens.get(pos.value());
+					} else {
 						or.setErrorMessage("Unexpected end of data values");
 						return or;
-					} else {
-						token = tokens.get(pos.value());
-					}
-
-					// check for proper comma and semicolons
-					if (current < numValues[1]-1) {
-						if (!token.equals(COMMA)) {
-							or.setErrorMessage("Expected \",\" . Found "+token+" in position "+pos.value());
-							return or;
-						}
-					} else {
-						if (!token.equals(SEMICOLON)) {
-							or.setErrorMessage("Expected \";\" . Found "+token+" in position "+pos.value());
-							return or;
-						}
 					}
 				}
+				if (Parser.isNumber(token)) {
+					// everything ok
+				} else {
+				
+					or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+					return or;
+				}
+				pos.add(1);
+				if (pos.value() < tokens.size()) {
+					token = tokens.get(pos.value());
+				} else {
+					// done! break
+					break;
+				}
+				if (token.equals(COMMA) || token.equals(SEMICOLON) ) {
+					// everything ok
+				} else {
+					or.setErrorMessage("Expected Separator. Found "+token+" in position "+pos.value());
+					return or;
+				}
+				pos.add(1);
+				if (pos.value() < tokens.size()) {
+					token = tokens.get(pos.value());
+				} else {
+					// done! break
+					break;
+				}
 			}
-			pos.add(1);
-			if (pos.value() < tokens.size()) {
-				or.setErrorMessage("Unexpected tokens at end of initialization");
-				return or;
-			}
+
+
+//			for (int repeatCount = 0; repeatCount < numValues[0]; repeatCount++) {
+//				for (int current = 0; current < numValues[1]; current++) {
+//					if (repeatCount > 0 || current > 0) {
+//						pos.add(1);
+//						if (pos.value() >= tokens.size()) {
+//							or.setErrorMessage("Unexpected end of data values");
+//							return or;
+//						} else {
+//							token = tokens.get(pos.value());
+//						}
+//					}
+//					// first check for a number
+//					if (!Parser.isNumber(token)) {
+//						or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+//						return or;
+//					}
+//					// then punctuation
+//					// advance token to punctuation position
+//					pos.add(1);
+//					if (pos.value() >= tokens.size()) {
+//						
+//						// there is one special case:
+//						// an array can be initialized with a single value for all slots
+//						
+//						if (repeatCount == 0 && current == 0) {
+//							return or;
+//						}
+//						
+//						or.setErrorMessage("Unexpected end of data values");
+//						return or;
+//					} else {
+//						token = tokens.get(pos.value());
+//					}
+//
+//					// check for proper comma and semicolons
+//					if (current < numValues[1]-1) {
+//						if (!token.equals(COMMA)) {
+//							or.setErrorMessage("Expected \",\" . Found "+token+" in position "+pos.value());
+//							return or;
+//						}
+//					} else {
+//						if (!token.equals(SEMICOLON)) {
+//							or.setErrorMessage("Expected \";\" . Found "+token+" in position "+pos.value());
+//							return or;
+//						}
+//					}
+//				}
+//			}
+//			pos.add(1);
+//			if (pos.value() < tokens.size()) {
+//				or.setErrorMessage("Unexpected tokens at end of initialization");
+//				return or;
+//			}
 		}		
 
 		return or;
