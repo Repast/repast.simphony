@@ -7,18 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import repast.simphony.engine.schedule.ISchedule;
-import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.systemdynamics.support.ArrayReference;
-import repast.simphony.systemdynamics.support.MappedSubscriptManager;
-import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 import repast.simphony.systemdynamics.support.Utilities;
 
 public class CodeGenerator {
@@ -628,7 +623,7 @@ public class CodeGenerator {
 		bw.append("protected ");
 	    bw.append("void repeated(double time, double timeStep) {\n\n");
 	    if (!Translator.target.equals(ReaderConstants.C)) {
-		bw.append("  message.println(\"repeated: \"+time+\" \"+timeStep);\n");
+//		bw.append("  message.println(\"repeated: \"+time+\" \"+timeStep);\n");
 		bw.append("  data.setCurrentTime(time);\n");
 		bw.append("  setValue(\"Time\", time);\n");
 		bw.append("  timeSeriesData.advanceTime(data, time);\n");
@@ -2076,8 +2071,10 @@ public class CodeGenerator {
 		String valueArg;
 		String nameArg;
 		
+		
+		
 		valueArg = InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs);
-		    nameArg = "\""+lhs+"\"";
+		    nameArg = "/* FixThis  */ \""+lhs+"\"";
 		    
 		    
 //		if (ArrayReference.isArrayReference(lhs)) {
@@ -2117,12 +2114,17 @@ public class CodeGenerator {
 		theTail.append(name);
 
 		String aRef = n.getToken();
+		
+		currentGenerate.printTree();
+		System.out.println("aRef = "+aRef);
+		
+//		 valueArg = new ArrayReferenceNative(lhs, currentGenerate).generateRHSImplementation();
 
-//		if (ArrayReference.isArrayReference(aRef)) {
-//		    nameArg = new ArrayReference(aRef).generateRHSName();
-//		} else {
-//		    nameArg = generateRHSName(aRef);
-//		}
+		if (ArrayReferenceNative.isArrayReference(aRef)) {
+		    nameArg = new ArrayReferenceNative(aRef, currentGenerate).generateRHSOriginalName();
+		} else {
+		    nameArg = generateRHSName(aRef);
+		}
 
 		//		}   NEED TO CHECK THIS!
 
