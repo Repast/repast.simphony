@@ -28,7 +28,7 @@ import java.util.Properties;
     	DATA_DIRECTORY = PROPERTIES.getProperty("dataDirectory");
     	
     	logger.setLogFile(name+"Log.csv");
-    	logger.log("Variable,Time,Value,Saveper");
+    	logger.log("Variable,Time,Value");
     	
         }
 
