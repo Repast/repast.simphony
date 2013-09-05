@@ -29,6 +29,9 @@ import repast.simphony.statecharts.scmodel.Transition;
  * @author Nick Collier
  */
 public class EditorSupport {
+  
+  private static int RETURN_VOID_OFFSET = 4;
+  private static int RETURN_VALUE_OFFSET = 5;
 
   private List<CodePropertyEditor> editors = new ArrayList<>();
 
@@ -39,7 +42,7 @@ public class EditorSupport {
     return input.getFile().getProject();
   }
 
-  private void initEditorInput(IFile file, CodePropertyEditor editor) {
+  private void initEditorInput(IFile file, CodePropertyEditor editor, int lineOffset) {
     IFileEditorInput oldInput = (IFileEditorInput) editor.getEditorInput();
     IFile oldFile = null;
     if (oldInput != null) {
@@ -57,13 +60,12 @@ public class EditorSupport {
 
     IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
         .findView("org.eclipse.ui.views.PropertySheet");
-    editor.init(part.getSite(), input);
+    editor.init(part.getSite(), input, lineOffset);
     
     if (oldFile != null && oldFile.exists()) {
       try {
         oldFile.getParent().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
         oldFile.delete(IResource.FORCE, new NullProgressMonitor());
-        oldFile.setHidden(false);
       } catch (CoreException e) {
         StatechartDiagramEditorPlugin.getInstance().logError("Error deleting temporary edit file",
             e);
@@ -77,7 +79,7 @@ public class EditorSupport {
     IPath path = gen.generateTriggerCondition(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VALUE_OFFSET);
   }
 
   public void initTriggerDbl(Transition transition, int editorIndex) {
@@ -86,7 +88,7 @@ public class EditorSupport {
     IPath path = gen.generateTriggerDbl(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VALUE_OFFSET);
   }
 
   public void initTriggerME(Transition transition, int editorIndex) {
@@ -95,7 +97,7 @@ public class EditorSupport {
     IPath path = gen.generateMessageEq(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VALUE_OFFSET);
   }
 
   public void initTriggerMC(Transition transition, int editorIndex) {
@@ -105,7 +107,7 @@ public class EditorSupport {
     IPath path = gen.generateMessageCond(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VALUE_OFFSET);
   }
 
   public void initGuard(Transition transition, int editorIndex) {
@@ -114,7 +116,7 @@ public class EditorSupport {
     IPath path = gen.generateGuard(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VALUE_OFFSET);
   }
 
   public void initOnTrans(Transition transition, int editorIndex) {
@@ -123,7 +125,7 @@ public class EditorSupport {
     IPath path = gen.generateOnTrans(proj, transition);
 
     IFile file = proj.getFile(path);
-    initEditorInput(file, editors.get(editorIndex));
+    initEditorInput(file, editors.get(editorIndex), RETURN_VOID_OFFSET);
   }
 
   public void init(AbstractState state) {
@@ -148,9 +150,8 @@ public class EditorSupport {
 
       IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
           .findView("org.eclipse.ui.views.PropertySheet");
-      editor.init(part.getSite(), input);
+      editor.init(part.getSite(), input, RETURN_VOID_OFFSET);
     }
-
   }
 
   public void dispose() throws CoreException {

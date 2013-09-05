@@ -305,7 +305,7 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
    * org.eclipse.ui.IEditorInput)
    */
 
-  public void init(IWorkbenchPartSite site, IEditorInput input) {
+  public void init(IWorkbenchPartSite site, IEditorInput input, int lineOffset) {
     viewer.ignoreAutoIndent(true);
     if (doc != null) {
       doc.getDocumentPartitioner().disconnect();
@@ -320,7 +320,7 @@ public class CodePropertyEditor extends CompilationUnitEditor /*implements IText
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
 
     try {
-      int offset = doc.getLineOffset(doc.getNumberOfLines() - 4);
+      int offset = doc.getLineOffset(doc.getNumberOfLines() - lineOffset);
       viewer.setDocument(doc, model, offset, 0);
     } catch (BadLocationException e) {
       StatechartDiagramEditorPlugin.getInstance()

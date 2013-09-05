@@ -639,7 +639,9 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         support.initTriggerMC((Transition)object, TRIGGER_MESSAGE_INDEX);
       }
       // the re-init clears the text so we add it back in here
+      support.getEditor(TRIGGER_MESSAGE_INDEX).getJavaSourceViewer().ignoreAutoIndent(true);
       txtMessage.setText(txt);
+      support.getEditor(TRIGGER_MESSAGE_INDEX).getJavaSourceViewer().ignoreAutoIndent(false);
     }
     
     currentType = type;
