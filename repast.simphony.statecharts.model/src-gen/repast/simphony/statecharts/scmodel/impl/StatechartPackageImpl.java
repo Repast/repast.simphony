@@ -399,7 +399,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTransition_TriggerConditionImports() {
+  public EAttribute getTransition_TriggerConditionCodeImports() {
     return (EAttribute)transitionEClass.getEStructuralFeatures().get(10);
   }
 
@@ -444,7 +444,7 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTransition_TriggerProbeCodeImports() {
+  public EAttribute getTransition_TriggerProbCodeImports() {
     return (EAttribute)transitionEClass.getEStructuralFeatures().get(15);
   }
 
@@ -773,12 +773,12 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_TYPE);
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_TIME);
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_CONDITION_CODE);
-    createEAttribute(transitionEClass, TRANSITION__TRIGGER_CONDITION_IMPORTS);
+    createEAttribute(transitionEClass, TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS);
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_CODE_LANGUAGE);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_TYPE);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CLASS);
     createEAttribute(transitionEClass, TRANSITION__TRIGGER_PROB_CODE);
-    createEAttribute(transitionEClass, TRANSITION__TRIGGER_PROBE_CODE_IMPORTS);
+    createEAttribute(transitionEClass, TRANSITION__TRIGGER_PROB_CODE_IMPORTS);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CODE);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS);
     createEAttribute(transitionEClass, TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE);
@@ -879,12 +879,12 @@ public class StatechartPackageImpl extends EPackageImpl implements StatechartPac
     initEAttribute(getTransition_TriggerType(), this.getTriggerTypes(), "triggerType", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerTime(), ecorePackage.getEDouble(), "triggerTime", "1.0", 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerConditionCode(), ecorePackage.getEString(), "triggerConditionCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTransition_TriggerConditionImports(), ecorePackage.getEString(), "triggerConditionImports", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTransition_TriggerConditionCodeImports(), ecorePackage.getEString(), "triggerConditionCodeImports", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerCodeLanguage(), this.getLanguageTypes(), "triggerCodeLanguage", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerType(), this.getMessageCheckerTypes(), "messageCheckerType", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerClass(), ecorePackage.getEString(), "messageCheckerClass", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_TriggerProbCode(), ecorePackage.getEString(), "triggerProbCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTransition_TriggerProbeCodeImports(), ecorePackage.getEString(), "triggerProbeCodeImports", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTransition_TriggerProbCodeImports(), ecorePackage.getEString(), "triggerProbCodeImports", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerCode(), ecorePackage.getEString(), "messageCheckerCode", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerCodeImports(), ecorePackage.getEString(), "messageCheckerCodeImports", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTransition_MessageCheckerConditionLanguage(), this.getLanguageTypes(), "messageCheckerConditionLanguage", null, 0, 1, Transition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

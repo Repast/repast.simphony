@@ -70,12 +70,12 @@ public class TransitionItemProvider
       addTriggerTypePropertyDescriptor(object);
       addTriggerTimePropertyDescriptor(object);
       addTriggerConditionCodePropertyDescriptor(object);
-      addTriggerConditionImportsPropertyDescriptor(object);
+      addTriggerConditionCodeImportsPropertyDescriptor(object);
       addTriggerCodeLanguagePropertyDescriptor(object);
       addMessageCheckerTypePropertyDescriptor(object);
       addMessageCheckerClassPropertyDescriptor(object);
       addTriggerProbCodePropertyDescriptor(object);
-      addTriggerProbeCodeImportsPropertyDescriptor(object);
+      addTriggerProbCodeImportsPropertyDescriptor(object);
       addMessageCheckerCodePropertyDescriptor(object);
       addMessageCheckerCodeImportsPropertyDescriptor(object);
       addMessageCheckerConditionLanguagePropertyDescriptor(object);
@@ -313,19 +313,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Trigger Condition Imports feature.
+   * This adds a property descriptor for the Trigger Condition Code Imports feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addTriggerConditionImportsPropertyDescriptor(Object object) {
+  protected void addTriggerConditionCodeImportsPropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_triggerConditionImports_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerConditionImports_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_IMPORTS,
+         getString("_UI_Transition_triggerConditionCodeImports_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerConditionCodeImports_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS,
          true,
          false,
          false,
@@ -423,19 +423,19 @@ public class TransitionItemProvider
   }
 
   /**
-   * This adds a property descriptor for the Trigger Probe Code Imports feature.
+   * This adds a property descriptor for the Trigger Prob Code Imports feature.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected void addTriggerProbeCodeImportsPropertyDescriptor(Object object) {
+  protected void addTriggerProbCodeImportsPropertyDescriptor(Object object) {
     itemPropertyDescriptors.add
       (createItemPropertyDescriptor
         (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
          getResourceLocator(),
-         getString("_UI_Transition_triggerProbeCodeImports_feature"),
-         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerProbeCodeImports_feature", "_UI_Transition_type"),
-         StatechartPackage.Literals.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS,
+         getString("_UI_Transition_triggerProbCodeImports_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_Transition_triggerProbCodeImports_feature", "_UI_Transition_type"),
+         StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE_IMPORTS,
          true,
          false,
          false,
@@ -753,12 +753,12 @@ public class TransitionItemProvider
       case StatechartPackage.TRANSITION__TRIGGER_TYPE:
       case StatechartPackage.TRANSITION__TRIGGER_TIME:
       case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS:
       case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
       case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
-      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:

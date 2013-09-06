@@ -33,13 +33,13 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerTime" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         defaultValueLiteral="1.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionImports"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerConditionCodeImports"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerCodeLanguage" eType="#//LanguageTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerType" eType="#//MessageCheckerTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbeCodeImports"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerProbCodeImports"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageCheckerCodeImports"

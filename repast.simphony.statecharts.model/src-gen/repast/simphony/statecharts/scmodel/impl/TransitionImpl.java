@@ -33,12 +33,12 @@ import repast.simphony.statecharts.scmodel.TriggerTypes;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerType <em>Trigger Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTime <em>Trigger Time</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionCode <em>Trigger Condition Code</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionImports <em>Trigger Condition Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionCodeImports <em>Trigger Condition Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerCodeLanguage <em>Trigger Code Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerType <em>Message Checker Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerClass <em>Message Checker Class</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbCodeImports <em>Trigger Prob Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCode <em>Message Checker Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCodeImports <em>Message Checker Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
@@ -228,24 +228,24 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String triggerConditionCode = TRIGGER_CONDITION_CODE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerConditionImports() <em>Trigger Condition Imports</em>}' attribute.
+   * The default value of the '{@link #getTriggerConditionCodeImports() <em>Trigger Condition Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTriggerConditionImports()
+   * @see #getTriggerConditionCodeImports()
    * @generated
    * @ordered
    */
-  protected static final String TRIGGER_CONDITION_IMPORTS_EDEFAULT = null;
+  protected static final String TRIGGER_CONDITION_CODE_IMPORTS_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerConditionImports() <em>Trigger Condition Imports</em>}' attribute.
+   * The cached value of the '{@link #getTriggerConditionCodeImports() <em>Trigger Condition Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTriggerConditionImports()
+   * @see #getTriggerConditionCodeImports()
    * @generated
    * @ordered
    */
-  protected String triggerConditionImports = TRIGGER_CONDITION_IMPORTS_EDEFAULT;
+  protected String triggerConditionCodeImports = TRIGGER_CONDITION_CODE_IMPORTS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getTriggerCodeLanguage() <em>Trigger Code Language</em>}' attribute.
@@ -328,24 +328,24 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String triggerProbCode = TRIGGER_PROB_CODE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerProbeCodeImports() <em>Trigger Probe Code Imports</em>}' attribute.
+   * The default value of the '{@link #getTriggerProbCodeImports() <em>Trigger Prob Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTriggerProbeCodeImports()
+   * @see #getTriggerProbCodeImports()
    * @generated
    * @ordered
    */
-  protected static final String TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT = null;
+  protected static final String TRIGGER_PROB_CODE_IMPORTS_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerProbeCodeImports() <em>Trigger Probe Code Imports</em>}' attribute.
+   * The cached value of the '{@link #getTriggerProbCodeImports() <em>Trigger Prob Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTriggerProbeCodeImports()
+   * @see #getTriggerProbCodeImports()
    * @generated
    * @ordered
    */
-  protected String triggerProbeCodeImports = TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT;
+  protected String triggerProbCodeImports = TRIGGER_PROB_CODE_IMPORTS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessageCheckerCode() <em>Message Checker Code</em>}' attribute.
@@ -840,8 +840,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getTriggerConditionImports() {
-    return triggerConditionImports;
+  public String getTriggerConditionCodeImports() {
+    return triggerConditionCodeImports;
   }
 
   /**
@@ -849,11 +849,11 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTriggerConditionImports(String newTriggerConditionImports) {
-    String oldTriggerConditionImports = triggerConditionImports;
-    triggerConditionImports = newTriggerConditionImports;
+  public void setTriggerConditionCodeImports(String newTriggerConditionCodeImports) {
+    String oldTriggerConditionCodeImports = triggerConditionCodeImports;
+    triggerConditionCodeImports = newTriggerConditionCodeImports;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS, oldTriggerConditionImports, triggerConditionImports));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS, oldTriggerConditionCodeImports, triggerConditionCodeImports));
   }
 
   /**
@@ -937,8 +937,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getTriggerProbeCodeImports() {
-    return triggerProbeCodeImports;
+  public String getTriggerProbCodeImports() {
+    return triggerProbCodeImports;
   }
 
   /**
@@ -946,11 +946,11 @@ public class TransitionImpl extends EObjectImpl implements Transition {
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTriggerProbeCodeImports(String newTriggerProbeCodeImports) {
-    String oldTriggerProbeCodeImports = triggerProbeCodeImports;
-    triggerProbeCodeImports = newTriggerProbeCodeImports;
+  public void setTriggerProbCodeImports(String newTriggerProbCodeImports) {
+    String oldTriggerProbCodeImports = triggerProbCodeImports;
+    triggerProbCodeImports = newTriggerProbCodeImports;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS, oldTriggerProbeCodeImports, triggerProbeCodeImports));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS, oldTriggerProbCodeImports, triggerProbCodeImports));
   }
 
   /**
@@ -1218,8 +1218,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         return getTriggerTime();
       case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
         return getTriggerConditionCode();
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
-        return getTriggerConditionImports();
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS:
+        return getTriggerConditionCodeImports();
       case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
         return getTriggerCodeLanguage();
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
@@ -1228,8 +1228,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         return getMessageCheckerClass();
       case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
         return getTriggerProbCode();
-      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
-        return getTriggerProbeCodeImports();
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS:
+        return getTriggerProbCodeImports();
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
         return getMessageCheckerCode();
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
@@ -1295,8 +1295,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
       case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
         setTriggerConditionCode((String)newValue);
         return;
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
-        setTriggerConditionImports((String)newValue);
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS:
+        setTriggerConditionCodeImports((String)newValue);
         return;
       case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
         setTriggerCodeLanguage((LanguageTypes)newValue);
@@ -1310,8 +1310,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
       case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
         setTriggerProbCode((String)newValue);
         return;
-      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
-        setTriggerProbeCodeImports((String)newValue);
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS:
+        setTriggerProbCodeImports((String)newValue);
         return;
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
         setMessageCheckerCode((String)newValue);
@@ -1390,8 +1390,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
       case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
         setTriggerConditionCode(TRIGGER_CONDITION_CODE_EDEFAULT);
         return;
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
-        setTriggerConditionImports(TRIGGER_CONDITION_IMPORTS_EDEFAULT);
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS:
+        setTriggerConditionCodeImports(TRIGGER_CONDITION_CODE_IMPORTS_EDEFAULT);
         return;
       case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
         setTriggerCodeLanguage(TRIGGER_CODE_LANGUAGE_EDEFAULT);
@@ -1405,8 +1405,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
       case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
         setTriggerProbCode(TRIGGER_PROB_CODE_EDEFAULT);
         return;
-      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
-        setTriggerProbeCodeImports(TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT);
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS:
+        setTriggerProbCodeImports(TRIGGER_PROB_CODE_IMPORTS_EDEFAULT);
         return;
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
         setMessageCheckerCode(MESSAGE_CHECKER_CODE_EDEFAULT);
@@ -1475,8 +1475,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         return triggerTime != TRIGGER_TIME_EDEFAULT;
       case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
         return TRIGGER_CONDITION_CODE_EDEFAULT == null ? triggerConditionCode != null : !TRIGGER_CONDITION_CODE_EDEFAULT.equals(triggerConditionCode);
-      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
-        return TRIGGER_CONDITION_IMPORTS_EDEFAULT == null ? triggerConditionImports != null : !TRIGGER_CONDITION_IMPORTS_EDEFAULT.equals(triggerConditionImports);
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS:
+        return TRIGGER_CONDITION_CODE_IMPORTS_EDEFAULT == null ? triggerConditionCodeImports != null : !TRIGGER_CONDITION_CODE_IMPORTS_EDEFAULT.equals(triggerConditionCodeImports);
       case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
         return triggerCodeLanguage != TRIGGER_CODE_LANGUAGE_EDEFAULT;
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
@@ -1485,8 +1485,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
         return MESSAGE_CHECKER_CLASS_EDEFAULT == null ? messageCheckerClass != null : !MESSAGE_CHECKER_CLASS_EDEFAULT.equals(messageCheckerClass);
       case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
         return TRIGGER_PROB_CODE_EDEFAULT == null ? triggerProbCode != null : !TRIGGER_PROB_CODE_EDEFAULT.equals(triggerProbCode);
-      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
-        return TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT == null ? triggerProbeCodeImports != null : !TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT.equals(triggerProbeCodeImports);
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE_IMPORTS:
+        return TRIGGER_PROB_CODE_IMPORTS_EDEFAULT == null ? triggerProbCodeImports != null : !TRIGGER_PROB_CODE_IMPORTS_EDEFAULT.equals(triggerProbCodeImports);
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
         return MESSAGE_CHECKER_CODE_EDEFAULT == null ? messageCheckerCode != null : !MESSAGE_CHECKER_CODE_EDEFAULT.equals(messageCheckerCode);
       case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
@@ -1540,8 +1540,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
     result.append(triggerTime);
     result.append(", triggerConditionCode: ");
     result.append(triggerConditionCode);
-    result.append(", triggerConditionImports: ");
-    result.append(triggerConditionImports);
+    result.append(", triggerConditionCodeImports: ");
+    result.append(triggerConditionCodeImports);
     result.append(", triggerCodeLanguage: ");
     result.append(triggerCodeLanguage);
     result.append(", messageCheckerType: ");
@@ -1550,8 +1550,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
     result.append(messageCheckerClass);
     result.append(", triggerProbCode: ");
     result.append(triggerProbCode);
-    result.append(", triggerProbeCodeImports: ");
-    result.append(triggerProbeCodeImports);
+    result.append(", triggerProbCodeImports: ");
+    result.append(triggerProbCodeImports);
     result.append(", messageCheckerCode: ");
     result.append(messageCheckerCode);
     result.append(", messageCheckerCodeImports: ");

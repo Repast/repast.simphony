@@ -512,13 +512,13 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__TRIGGER_CONDITION_CODE = 9;
 
   /**
-   * The feature id for the '<em><b>Trigger Condition Imports</b></em>' attribute.
+   * The feature id for the '<em><b>Trigger Condition Code Imports</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_CONDITION_IMPORTS = 10;
+  int TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS = 10;
 
   /**
    * The feature id for the '<em><b>Trigger Code Language</b></em>' attribute.
@@ -557,13 +557,13 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__TRIGGER_PROB_CODE = 14;
 
   /**
-   * The feature id for the '<em><b>Trigger Probe Code Imports</b></em>' attribute.
+   * The feature id for the '<em><b>Trigger Prob Code Imports</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_PROBE_CODE_IMPORTS = 15;
+  int TRANSITION__TRIGGER_PROB_CODE_IMPORTS = 15;
 
   /**
    * The feature id for the '<em><b>Message Checker Code</b></em>' attribute.
@@ -1257,15 +1257,15 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_TriggerConditionCode();
 
   /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports <em>Trigger Condition Imports</em>}'.
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCodeImports <em>Trigger Condition Code Imports</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Trigger Condition Imports</em>'.
-   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports()
+   * @return the meta object for the attribute '<em>Trigger Condition Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCodeImports()
    * @see #getTransition()
    * @generated
    */
-  EAttribute getTransition_TriggerConditionImports();
+  EAttribute getTransition_TriggerConditionCodeImports();
 
   /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCodeLanguage <em>Trigger Code Language</em>}'.
@@ -1312,15 +1312,15 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_TriggerProbCode();
 
   /**
-   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}'.
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCodeImports <em>Trigger Prob Code Imports</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Trigger Probe Code Imports</em>'.
-   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports()
+   * @return the meta object for the attribute '<em>Trigger Prob Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerProbCodeImports()
    * @see #getTransition()
    * @generated
    */
-  EAttribute getTransition_TriggerProbeCodeImports();
+  EAttribute getTransition_TriggerProbCodeImports();
 
   /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}'.
@@ -1867,12 +1867,12 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__TRIGGER_CONDITION_CODE = eINSTANCE.getTransition_TriggerConditionCode();
 
     /**
-     * The meta object literal for the '<em><b>Trigger Condition Imports</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Trigger Condition Code Imports</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TRANSITION__TRIGGER_CONDITION_IMPORTS = eINSTANCE.getTransition_TriggerConditionImports();
+    EAttribute TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS = eINSTANCE.getTransition_TriggerConditionCodeImports();
 
     /**
      * The meta object literal for the '<em><b>Trigger Code Language</b></em>' attribute feature.
@@ -1907,12 +1907,12 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__TRIGGER_PROB_CODE = eINSTANCE.getTransition_TriggerProbCode();
 
     /**
-     * The meta object literal for the '<em><b>Trigger Probe Code Imports</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Trigger Prob Code Imports</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TRANSITION__TRIGGER_PROBE_CODE_IMPORTS = eINSTANCE.getTransition_TriggerProbeCodeImports();
+    EAttribute TRANSITION__TRIGGER_PROB_CODE_IMPORTS = eINSTANCE.getTransition_TriggerProbCodeImports();
 
     /**
      * The meta object literal for the '<em><b>Message Checker Code</b></em>' attribute feature.

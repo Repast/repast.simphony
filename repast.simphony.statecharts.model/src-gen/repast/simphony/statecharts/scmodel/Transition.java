@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerType <em>Trigger Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTime <em>Trigger Time</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCode <em>Trigger Condition Code</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports <em>Trigger Condition Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCodeImports <em>Trigger Condition Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCodeLanguage <em>Trigger Code Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerType <em>Message Checker Type</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerClass <em>Message Checker Class</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
- *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCodeImports <em>Trigger Prob Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCodeImports <em>Message Checker Code Imports</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
@@ -316,30 +316,30 @@ public interface Transition extends EObject {
   void setTriggerConditionCode(String value);
 
   /**
-   * Returns the value of the '<em><b>Trigger Condition Imports</b></em>' attribute.
+   * Returns the value of the '<em><b>Trigger Condition Code Imports</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger Condition Imports</em>' attribute isn't clear,
+   * If the meaning of the '<em>Trigger Condition Code Imports</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger Condition Imports</em>' attribute.
-   * @see #setTriggerConditionImports(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerConditionImports()
+   * @return the value of the '<em>Trigger Condition Code Imports</em>' attribute.
+   * @see #setTriggerConditionCodeImports(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerConditionCodeImports()
    * @model
    * @generated
    */
-  String getTriggerConditionImports();
+  String getTriggerConditionCodeImports();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports <em>Trigger Condition Imports</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionCodeImports <em>Trigger Condition Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger Condition Imports</em>' attribute.
-   * @see #getTriggerConditionImports()
+   * @param value the new value of the '<em>Trigger Condition Code Imports</em>' attribute.
+   * @see #getTriggerConditionCodeImports()
    * @generated
    */
-  void setTriggerConditionImports(String value);
+  void setTriggerConditionCodeImports(String value);
 
   /**
    * Returns the value of the '<em><b>Trigger Code Language</b></em>' attribute.
@@ -452,30 +452,30 @@ public interface Transition extends EObject {
   void setTriggerProbCode(String value);
 
   /**
-   * Returns the value of the '<em><b>Trigger Probe Code Imports</b></em>' attribute.
+   * Returns the value of the '<em><b>Trigger Prob Code Imports</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Trigger Probe Code Imports</em>' attribute isn't clear,
+   * If the meaning of the '<em>Trigger Prob Code Imports</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Trigger Probe Code Imports</em>' attribute.
-   * @see #setTriggerProbeCodeImports(String)
-   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerProbeCodeImports()
+   * @return the value of the '<em>Trigger Prob Code Imports</em>' attribute.
+   * @see #setTriggerProbCodeImports(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getTransition_TriggerProbCodeImports()
    * @model
    * @generated
    */
-  String getTriggerProbeCodeImports();
+  String getTriggerProbCodeImports();
 
   /**
-   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}' attribute.
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbCodeImports <em>Trigger Prob Code Imports</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Trigger Probe Code Imports</em>' attribute.
-   * @see #getTriggerProbeCodeImports()
+   * @param value the new value of the '<em>Trigger Prob Code Imports</em>' attribute.
+   * @see #getTriggerProbCodeImports()
    * @generated
    */
-  void setTriggerProbeCodeImports(String value);
+  void setTriggerProbCodeImports(String value);
 
   /**
    * Returns the value of the '<em><b>Message Checker Code</b></em>' attribute.
