@@ -395,17 +395,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
     toolkit.createLabel(cmpCond, "Condition:", SWT.NONE);
     createEditor(cmpCond, site, 2);
-
-    // new Label(cmpCond, SWT.NONE);
-    // txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL
-    // | SWT.CANCEL
-    // | SWT.MULTI);
-    // focusableControls.add(txtCondCond);
-    // txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
-    // GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false,
-    // 2, 1);
-    // gd_txtTimedTime.heightHint = 40;
-    // txtCondCond.setLayoutData(gd_txtTimedTime);
   }
 
   private void createEditor(Composite parent, IWorkbenchPartSite site, int colSpan) {
@@ -414,7 +403,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
     group.setLayoutData(data);
 
-    GridLayout grpLayout = new GridLayout(colSpan, true);
+    GridLayout grpLayout = new GridLayout(1, true);
     grpLayout.verticalSpacing = 0;
     grpLayout.horizontalSpacing = 0;
     grpLayout.marginHeight = 0;
@@ -424,11 +413,13 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     editor.createPartControl(site, group);
 
     StyledText widget = editor.getCodeTextWidget();
-    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
+    GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
     // gd_onExitTxt.heightHint = -1;
-    gd_onExitTxt.horizontalIndent = 1;
-    widget.getParent().setLayoutData(gd_onExitTxt);
-    group.setLayoutData(gd_onExitTxt);
+    layoutData.horizontalIndent = 1;
+    widget.getParent().setLayoutData(layoutData);
+    widget.setLayoutData(layoutData);
+    editor.getImportTextWidget().setLayoutData(layoutData);
+    group.setLayoutData(layoutData);
 
   }
 
