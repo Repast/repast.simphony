@@ -208,6 +208,14 @@
         <element xmi:type="ecore:EAttribute" href="statechart.ecore#//AbstractState/uuid"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_xa8nYT_kEeKqcdTPsdilrg"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_HafO8BcMEeOnPompW9SnTw" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//AbstractState/onEnterImports"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_HafO8RcMEeOnPompW9SnTw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_MGdO0BcMEeOnPompW9SnTw" type="3001">
+        <element xmi:type="ecore:EAttribute" href="statechart.ecore#//AbstractState/onExitImports"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_MGdO0RcMEeOnPompW9SnTw"/>
+      </children>
       <styles xmi:type="notation:SortingStyle" xmi:id="_g04WQjA8EeKcldlxofIQtg"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_g04WQzA8EeKcldlxofIQtg"/>
     </children>

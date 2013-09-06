@@ -23,67 +23,37 @@ import repast.simphony.statecharts.scmodel.TriggerTypes;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getFrom
- * <em>From</em>}</li>
- * <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTo <em>
- * To</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getPriority
- * <em>Priority</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getOnTransition
- * <em>On Transition</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isOutOfBranch
- * <em>Out Of Branch</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isDefaultTransition
- * <em>Default Transition</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerType
- * <em>Trigger Type</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTime
- * <em>Trigger Time</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionCode
- * <em>Trigger Condition Code</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerCodeLanguage
- * <em>Trigger Code Language</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerType
- * <em>Message Checker Type</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerClass
- * <em>Message Checker Class</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbCode
- * <em>Trigger Prob Code</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCode
- * <em>Message Checker Code</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerConditionLanguage
- * <em>Message Checker Condition Language</em>}</li>
- * <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getId <em>
- * Id</em>}</li>
- * <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getGuard
- * <em>Guard</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTimedCode
- * <em>Trigger Timed Code</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerExpRateCode
- * <em>Trigger Exp Rate Code</em>}</li>
- * <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getUuid
- * <em>Uuid</em>}</li>
- * <li>
- * {@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isSelfTransition
- * <em>Self Transition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getFrom <em>From</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTo <em>To</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getPriority <em>Priority</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getOnTransition <em>On Transition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getOnTransitionImports <em>On Transition Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isOutOfBranch <em>Out Of Branch</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isDefaultTransition <em>Default Transition</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerType <em>Trigger Type</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTime <em>Trigger Time</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionCode <em>Trigger Condition Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerConditionImports <em>Trigger Condition Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerCodeLanguage <em>Trigger Code Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerType <em>Message Checker Type</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerClass <em>Message Checker Class</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbCode <em>Trigger Prob Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCode <em>Message Checker Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerCodeImports <em>Message Checker Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getId <em>Id</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getGuard <em>Guard</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getGuardImports <em>Guard Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTimedCode <em>Trigger Timed Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerTimedCodeImports <em>Trigger Timed Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getTriggerExpRateCodeImports <em>Trigger Exp Rate Code Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.TransitionImpl#isSelfTransition <em>Self Transition</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class TransitionImpl extends EObjectImpl implements Transition {
@@ -108,9 +78,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected AbstractState to;
 
   /**
-   * The default value of the '{@link #getPriority() <em>Priority</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The default value of the '{@link #getPriority() <em>Priority</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getPriority()
    * @generated
    * @ordered
@@ -118,9 +87,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final double PRIORITY_EDEFAULT = 0.0;
 
   /**
-   * The cached value of the '{@link #getPriority() <em>Priority</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The cached value of the '{@link #getPriority() <em>Priority</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getPriority()
    * @generated
    * @ordered
@@ -128,9 +96,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected double priority = PRIORITY_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getOnTransition() <em>On Transition</em>}
-   * ' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The default value of the '{@link #getOnTransition() <em>On Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getOnTransition()
    * @generated
    * @ordered
@@ -138,9 +105,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String ON_TRANSITION_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getOnTransition() <em>On Transition</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The cached value of the '{@link #getOnTransition() <em>On Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getOnTransition()
    * @generated
    * @ordered
@@ -148,9 +114,28 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String onTransition = ON_TRANSITION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isOutOfBranch() <em>Out Of Branch</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The default value of the '{@link #getOnTransitionImports() <em>On Transition Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnTransitionImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String ON_TRANSITION_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOnTransitionImports() <em>On Transition Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnTransitionImports()
+   * @generated
+   * @ordered
+   */
+  protected String onTransitionImports = ON_TRANSITION_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isOutOfBranch() <em>Out Of Branch</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #isOutOfBranch()
    * @generated
    * @ordered
@@ -158,9 +143,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final boolean OUT_OF_BRANCH_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isOutOfBranch() <em>Out Of Branch</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The cached value of the '{@link #isOutOfBranch() <em>Out Of Branch</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #isOutOfBranch()
    * @generated
    * @ordered
@@ -168,10 +152,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected boolean outOfBranch = OUT_OF_BRANCH_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isDefaultTransition()
-   * <em>Default Transition</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #isDefaultTransition() <em>Default Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #isDefaultTransition()
    * @generated
    * @ordered
@@ -179,10 +162,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final boolean DEFAULT_TRANSITION_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isDefaultTransition()
-   * <em>Default Transition</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #isDefaultTransition() <em>Default Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #isDefaultTransition()
    * @generated
    * @ordered
@@ -190,9 +172,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected boolean defaultTransition = DEFAULT_TRANSITION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerType() <em>Trigger Type</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The default value of the '{@link #getTriggerType() <em>Trigger Type</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getTriggerType()
    * @generated
    * @ordered
@@ -200,9 +181,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final TriggerTypes TRIGGER_TYPE_EDEFAULT = TriggerTypes.ALWAYS;
 
   /**
-   * The cached value of the '{@link #getTriggerType() <em>Trigger Type</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The cached value of the '{@link #getTriggerType() <em>Trigger Type</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getTriggerType()
    * @generated
    * @ordered
@@ -210,9 +190,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected TriggerTypes triggerType = TRIGGER_TYPE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerTime() <em>Trigger Time</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The default value of the '{@link #getTriggerTime() <em>Trigger Time</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getTriggerTime()
    * @generated
    * @ordered
@@ -220,9 +199,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final double TRIGGER_TIME_EDEFAULT = 1.0;
 
   /**
-   * The cached value of the '{@link #getTriggerTime() <em>Trigger Time</em>}'
-   * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
+   * The cached value of the '{@link #getTriggerTime() <em>Trigger Time</em>}' attribute.
+   * <!-- begin-user-doc --> <!-- end-user-doc -->
    * @see #getTriggerTime()
    * @generated
    * @ordered
@@ -230,10 +208,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected double triggerTime = TRIGGER_TIME_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerConditionCode()
-   * <em>Trigger Condition Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getTriggerConditionCode() <em>Trigger Condition Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerConditionCode()
    * @generated
    * @ordered
@@ -241,10 +218,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String TRIGGER_CONDITION_CODE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerConditionCode()
-   * <em>Trigger Condition Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getTriggerConditionCode() <em>Trigger Condition Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerConditionCode()
    * @generated
    * @ordered
@@ -252,10 +228,29 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String triggerConditionCode = TRIGGER_CONDITION_CODE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerCodeLanguage()
-   * <em>Trigger Code Language</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getTriggerConditionImports() <em>Trigger Condition Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerConditionImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String TRIGGER_CONDITION_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTriggerConditionImports() <em>Trigger Condition Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerConditionImports()
+   * @generated
+   * @ordered
+   */
+  protected String triggerConditionImports = TRIGGER_CONDITION_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTriggerCodeLanguage() <em>Trigger Code Language</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerCodeLanguage()
    * @generated
    * @ordered
@@ -263,10 +258,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final LanguageTypes TRIGGER_CODE_LANGUAGE_EDEFAULT = LanguageTypes.JAVA;
 
   /**
-   * The cached value of the '{@link #getTriggerCodeLanguage()
-   * <em>Trigger Code Language</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getTriggerCodeLanguage() <em>Trigger Code Language</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerCodeLanguage()
    * @generated
    * @ordered
@@ -274,10 +268,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected LanguageTypes triggerCodeLanguage = TRIGGER_CODE_LANGUAGE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getMessageCheckerType()
-   * <em>Message Checker Type</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getMessageCheckerType() <em>Message Checker Type</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerType()
    * @generated
    * @ordered
@@ -285,10 +278,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final MessageCheckerTypes MESSAGE_CHECKER_TYPE_EDEFAULT = MessageCheckerTypes.CONDITIONAL;
 
   /**
-   * The cached value of the '{@link #getMessageCheckerType()
-   * <em>Message Checker Type</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getMessageCheckerType() <em>Message Checker Type</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerType()
    * @generated
    * @ordered
@@ -296,10 +288,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected MessageCheckerTypes messageCheckerType = MESSAGE_CHECKER_TYPE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getMessageCheckerClass()
-   * <em>Message Checker Class</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getMessageCheckerClass() <em>Message Checker Class</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerClass()
    * @generated
    * @ordered
@@ -307,10 +298,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String MESSAGE_CHECKER_CLASS_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getMessageCheckerClass()
-   * <em>Message Checker Class</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getMessageCheckerClass() <em>Message Checker Class</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerClass()
    * @generated
    * @ordered
@@ -318,10 +308,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String messageCheckerClass = MESSAGE_CHECKER_CLASS_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerProbCode()
-   * <em>Trigger Prob Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getTriggerProbCode() <em>Trigger Prob Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerProbCode()
    * @generated
    * @ordered
@@ -329,10 +318,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String TRIGGER_PROB_CODE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerProbCode()
-   * <em>Trigger Prob Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getTriggerProbCode() <em>Trigger Prob Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerProbCode()
    * @generated
    * @ordered
@@ -340,10 +328,29 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String triggerProbCode = TRIGGER_PROB_CODE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getMessageCheckerCode()
-   * <em>Message Checker Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getTriggerProbeCodeImports() <em>Trigger Probe Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerProbeCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTriggerProbeCodeImports() <em>Trigger Probe Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerProbeCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected String triggerProbeCodeImports = TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getMessageCheckerCode() <em>Message Checker Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerCode()
    * @generated
    * @ordered
@@ -351,15 +358,34 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String MESSAGE_CHECKER_CODE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getMessageCheckerCode()
-   * <em>Message Checker Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getMessageCheckerCode() <em>Message Checker Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getMessageCheckerCode()
    * @generated
    * @ordered
    */
   protected String messageCheckerCode = MESSAGE_CHECKER_CODE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getMessageCheckerCodeImports() <em>Message Checker Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMessageCheckerCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String MESSAGE_CHECKER_CODE_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getMessageCheckerCodeImports() <em>Message Checker Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMessageCheckerCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected String messageCheckerCodeImports = MESSAGE_CHECKER_CODE_IMPORTS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessageCheckerConditionLanguage()
@@ -406,7 +432,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   /**
    * The default value of the '{@link #getGuard() <em>Guard</em>}' attribute.
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @see #getGuard()
    * @generated
    * @ordered
@@ -416,7 +441,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   /**
    * The cached value of the '{@link #getGuard() <em>Guard</em>}' attribute.
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @see #getGuard()
    * @generated
    * @ordered
@@ -424,10 +448,29 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String guard = GUARD_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerTimedCode()
-   * <em>Trigger Timed Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getGuardImports() <em>Guard Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGuardImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String GUARD_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getGuardImports() <em>Guard Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGuardImports()
+   * @generated
+   * @ordered
+   */
+  protected String guardImports = GUARD_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTriggerTimedCode() <em>Trigger Timed Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerTimedCode()
    * @generated
    * @ordered
@@ -435,10 +478,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String TRIGGER_TIMED_CODE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerTimedCode()
-   * <em>Trigger Timed Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getTriggerTimedCode() <em>Trigger Timed Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerTimedCode()
    * @generated
    * @ordered
@@ -446,10 +488,29 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String triggerTimedCode = TRIGGER_TIMED_CODE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTriggerExpRateCode()
-   * <em>Trigger Exp Rate Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #getTriggerTimedCodeImports() <em>Trigger Timed Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerTimedCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String TRIGGER_TIMED_CODE_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTriggerTimedCodeImports() <em>Trigger Timed Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerTimedCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected String triggerTimedCodeImports = TRIGGER_TIMED_CODE_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTriggerExpRateCode() <em>Trigger Exp Rate Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerExpRateCode()
    * @generated
    * @ordered
@@ -457,15 +518,34 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final String TRIGGER_EXP_RATE_CODE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getTriggerExpRateCode()
-   * <em>Trigger Exp Rate Code</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #getTriggerExpRateCode() <em>Trigger Exp Rate Code</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #getTriggerExpRateCode()
    * @generated
    * @ordered
    */
   protected String triggerExpRateCode = TRIGGER_EXP_RATE_CODE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTriggerExpRateCodeImports() <em>Trigger Exp Rate Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerExpRateCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String TRIGGER_EXP_RATE_CODE_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTriggerExpRateCodeImports() <em>Trigger Exp Rate Code Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTriggerExpRateCodeImports()
+   * @generated
+   * @ordered
+   */
+  protected String triggerExpRateCodeImports = TRIGGER_EXP_RATE_CODE_IMPORTS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getUuid() <em>Uuid</em>}' attribute. <!--
@@ -488,10 +568,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected String uuid = UUID_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isSelfTransition()
-   * <em>Self Transition</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The default value of the '{@link #isSelfTransition() <em>Self Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #isSelfTransition()
    * @generated
    * @ordered
@@ -499,10 +578,9 @@ public class TransitionImpl extends EObjectImpl implements Transition {
   protected static final boolean SELF_TRANSITION_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isSelfTransition()
-   * <em>Self Transition</em>}' attribute. <!-- begin-user-doc --> <!--
+   * The cached value of the '{@link #isSelfTransition() <em>Self Transition</em>}' attribute.
+   * <!-- begin-user-doc --> <!--
    * end-user-doc -->
-   * 
    * @see #isSelfTransition()
    * @generated
    * @ordered
@@ -511,7 +589,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   protected TransitionImpl() {
@@ -520,7 +597,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
@@ -530,17 +606,15 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public AbstractState getFrom() {
     if (from != null && from.eIsProxy()) {
-      InternalEObject oldFrom = (InternalEObject) from;
-      from = (AbstractState) eResolveProxy(oldFrom);
+      InternalEObject oldFrom = (InternalEObject)from;
+      from = (AbstractState)eResolveProxy(oldFrom);
       if (from != oldFrom) {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE,
-              StatechartPackage.TRANSITION__FROM, oldFrom, from));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, StatechartPackage.TRANSITION__FROM, oldFrom, from));
       }
     }
     return from;
@@ -548,7 +622,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public AbstractState basicGetFrom() {
@@ -573,17 +646,15 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public AbstractState getTo() {
     if (to != null && to.eIsProxy()) {
-      InternalEObject oldTo = (InternalEObject) to;
-      to = (AbstractState) eResolveProxy(oldTo);
+      InternalEObject oldTo = (InternalEObject)to;
+      to = (AbstractState)eResolveProxy(oldTo);
       if (to != oldTo) {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE,
-              StatechartPackage.TRANSITION__TO, oldTo, to));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, StatechartPackage.TRANSITION__TO, oldTo, to));
       }
     }
     return to;
@@ -591,7 +662,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public AbstractState basicGetTo() {
@@ -613,7 +683,6 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public double getPriority() {
@@ -622,20 +691,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setPriority(double newPriority) {
     double oldPriority = priority;
     priority = newPriority;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__PRIORITY,
-          oldPriority, priority));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__PRIORITY, oldPriority, priority));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getOnTransition() {
@@ -644,20 +710,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setOnTransition(String newOnTransition) {
     String oldOnTransition = onTransition;
     onTransition = newOnTransition;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__ON_TRANSITION, oldOnTransition, onTransition));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ON_TRANSITION, oldOnTransition, onTransition));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getOnTransitionImports() {
+    return onTransitionImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOnTransitionImports(String newOnTransitionImports) {
+    String oldOnTransitionImports = onTransitionImports;
+    onTransitionImports = newOnTransitionImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ON_TRANSITION_IMPORTS, oldOnTransitionImports, onTransitionImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public boolean isOutOfBranch() {
@@ -666,20 +750,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setOutOfBranch(boolean newOutOfBranch) {
     boolean oldOutOfBranch = outOfBranch;
     outOfBranch = newOutOfBranch;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__OUT_OF_BRANCH, oldOutOfBranch, outOfBranch));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__OUT_OF_BRANCH, oldOutOfBranch, outOfBranch));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public boolean isDefaultTransition() {
@@ -688,20 +769,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setDefaultTransition(boolean newDefaultTransition) {
     boolean oldDefaultTransition = defaultTransition;
     defaultTransition = newDefaultTransition;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__DEFAULT_TRANSITION, oldDefaultTransition, defaultTransition));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__DEFAULT_TRANSITION, oldDefaultTransition, defaultTransition));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public TriggerTypes getTriggerType() {
@@ -710,20 +788,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerType(TriggerTypes newTriggerType) {
     TriggerTypes oldTriggerType = triggerType;
     triggerType = newTriggerType == null ? TRIGGER_TYPE_EDEFAULT : newTriggerType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_TYPE, oldTriggerType, triggerType));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_TYPE, oldTriggerType, triggerType));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public double getTriggerTime() {
@@ -732,20 +807,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerTime(double newTriggerTime) {
     double oldTriggerTime = triggerTime;
     triggerTime = newTriggerTime;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_TIME, oldTriggerTime, triggerTime));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_TIME, oldTriggerTime, triggerTime));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getTriggerConditionCode() {
@@ -754,21 +826,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerConditionCode(String newTriggerConditionCode) {
     String oldTriggerConditionCode = triggerConditionCode;
     triggerConditionCode = newTriggerConditionCode;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE, oldTriggerConditionCode,
-          triggerConditionCode));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE, oldTriggerConditionCode, triggerConditionCode));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getTriggerConditionImports() {
+    return triggerConditionImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTriggerConditionImports(String newTriggerConditionImports) {
+    String oldTriggerConditionImports = triggerConditionImports;
+    triggerConditionImports = newTriggerConditionImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS, oldTriggerConditionImports, triggerConditionImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public LanguageTypes getTriggerCodeLanguage() {
@@ -777,22 +866,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerCodeLanguage(LanguageTypes newTriggerCodeLanguage) {
     LanguageTypes oldTriggerCodeLanguage = triggerCodeLanguage;
-    triggerCodeLanguage = newTriggerCodeLanguage == null ? TRIGGER_CODE_LANGUAGE_EDEFAULT
-        : newTriggerCodeLanguage;
+    triggerCodeLanguage = newTriggerCodeLanguage == null ? TRIGGER_CODE_LANGUAGE_EDEFAULT : newTriggerCodeLanguage;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE, oldTriggerCodeLanguage,
-          triggerCodeLanguage));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE, oldTriggerCodeLanguage, triggerCodeLanguage));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public MessageCheckerTypes getMessageCheckerType() {
@@ -801,22 +885,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setMessageCheckerType(MessageCheckerTypes newMessageCheckerType) {
     MessageCheckerTypes oldMessageCheckerType = messageCheckerType;
-    messageCheckerType = newMessageCheckerType == null ? MESSAGE_CHECKER_TYPE_EDEFAULT
-        : newMessageCheckerType;
+    messageCheckerType = newMessageCheckerType == null ? MESSAGE_CHECKER_TYPE_EDEFAULT : newMessageCheckerType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE, oldMessageCheckerType,
-          messageCheckerType));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE, oldMessageCheckerType, messageCheckerType));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getMessageCheckerClass() {
@@ -825,21 +904,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setMessageCheckerClass(String newMessageCheckerClass) {
     String oldMessageCheckerClass = messageCheckerClass;
     messageCheckerClass = newMessageCheckerClass;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS, oldMessageCheckerClass,
-          messageCheckerClass));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS, oldMessageCheckerClass, messageCheckerClass));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getTriggerProbCode() {
@@ -848,20 +923,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerProbCode(String newTriggerProbCode) {
     String oldTriggerProbCode = triggerProbCode;
     triggerProbCode = newTriggerProbCode;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_PROB_CODE, oldTriggerProbCode, triggerProbCode));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_PROB_CODE, oldTriggerProbCode, triggerProbCode));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getTriggerProbeCodeImports() {
+    return triggerProbeCodeImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTriggerProbeCodeImports(String newTriggerProbeCodeImports) {
+    String oldTriggerProbeCodeImports = triggerProbeCodeImports;
+    triggerProbeCodeImports = newTriggerProbeCodeImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS, oldTriggerProbeCodeImports, triggerProbeCodeImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getMessageCheckerCode() {
@@ -870,21 +963,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setMessageCheckerCode(String newMessageCheckerCode) {
     String oldMessageCheckerCode = messageCheckerCode;
     messageCheckerCode = newMessageCheckerCode;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE, oldMessageCheckerCode,
-          messageCheckerCode));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE, oldMessageCheckerCode, messageCheckerCode));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getMessageCheckerCodeImports() {
+    return messageCheckerCodeImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMessageCheckerCodeImports(String newMessageCheckerCodeImports) {
+    String oldMessageCheckerCodeImports = messageCheckerCodeImports;
+    messageCheckerCodeImports = newMessageCheckerCodeImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS, oldMessageCheckerCodeImports, messageCheckerCodeImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public LanguageTypes getMessageCheckerConditionLanguage() {
@@ -893,22 +1003,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setMessageCheckerConditionLanguage(LanguageTypes newMessageCheckerConditionLanguage) {
     LanguageTypes oldMessageCheckerConditionLanguage = messageCheckerConditionLanguage;
-    messageCheckerConditionLanguage = newMessageCheckerConditionLanguage == null ? MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT
-        : newMessageCheckerConditionLanguage;
+    messageCheckerConditionLanguage = newMessageCheckerConditionLanguage == null ? MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT : newMessageCheckerConditionLanguage;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE,
-          oldMessageCheckerConditionLanguage, messageCheckerConditionLanguage));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE, oldMessageCheckerConditionLanguage, messageCheckerConditionLanguage));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getId() {
@@ -917,20 +1022,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setId(String newId) {
     String oldId = id;
     id = newId;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ID,
-          oldId, id));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__ID, oldId, id));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getGuard() {
@@ -939,20 +1041,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setGuard(String newGuard) {
     String oldGuard = guard;
     guard = newGuard;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__GUARD,
-          oldGuard, guard));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__GUARD, oldGuard, guard));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getGuardImports() {
+    return guardImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setGuardImports(String newGuardImports) {
+    String oldGuardImports = guardImports;
+    guardImports = newGuardImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__GUARD_IMPORTS, oldGuardImports, guardImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getTriggerTimedCode() {
@@ -961,20 +1081,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerTimedCode(String newTriggerTimedCode) {
     String oldTriggerTimedCode = triggerTimedCode;
     triggerTimedCode = newTriggerTimedCode;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE, oldTriggerTimedCode, triggerTimedCode));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE, oldTriggerTimedCode, triggerTimedCode));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getTriggerTimedCodeImports() {
+    return triggerTimedCodeImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTriggerTimedCodeImports(String newTriggerTimedCodeImports) {
+    String oldTriggerTimedCodeImports = triggerTimedCodeImports;
+    triggerTimedCodeImports = newTriggerTimedCodeImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS, oldTriggerTimedCodeImports, triggerTimedCodeImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getTriggerExpRateCode() {
@@ -983,21 +1121,38 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setTriggerExpRateCode(String newTriggerExpRateCode) {
     String oldTriggerExpRateCode = triggerExpRateCode;
     triggerExpRateCode = newTriggerExpRateCode;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE, oldTriggerExpRateCode,
-          triggerExpRateCode));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE, oldTriggerExpRateCode, triggerExpRateCode));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getTriggerExpRateCodeImports() {
+    return triggerExpRateCodeImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTriggerExpRateCodeImports(String newTriggerExpRateCodeImports) {
+    String oldTriggerExpRateCodeImports = triggerExpRateCodeImports;
+    triggerExpRateCodeImports = newTriggerExpRateCodeImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS, oldTriggerExpRateCodeImports, triggerExpRateCodeImports));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public String getUuid() {
@@ -1006,20 +1161,17 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setUuid(String newUuid) {
     String oldUuid = uuid;
     uuid = newUuid;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__UUID,
-          oldUuid, uuid));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__UUID, oldUuid, uuid));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public boolean isSelfTransition() {
@@ -1028,301 +1180,356 @@ public class TransitionImpl extends EObjectImpl implements Transition {
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   public void setSelfTransition(boolean newSelfTransition) {
     boolean oldSelfTransition = selfTransition;
     selfTransition = newSelfTransition;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET,
-          StatechartPackage.TRANSITION__SELF_TRANSITION, oldSelfTransition, selfTransition));
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.TRANSITION__SELF_TRANSITION, oldSelfTransition, selfTransition));
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
-    case StatechartPackage.TRANSITION__FROM:
-      if (resolve)
-        return getFrom();
-      return basicGetFrom();
-    case StatechartPackage.TRANSITION__TO:
-      if (resolve)
-        return getTo();
-      return basicGetTo();
-    case StatechartPackage.TRANSITION__PRIORITY:
-      return getPriority();
-    case StatechartPackage.TRANSITION__ON_TRANSITION:
-      return getOnTransition();
-    case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
-      return isOutOfBranch();
-    case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
-      return isDefaultTransition();
-    case StatechartPackage.TRANSITION__TRIGGER_TYPE:
-      return getTriggerType();
-    case StatechartPackage.TRANSITION__TRIGGER_TIME:
-      return getTriggerTime();
-    case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
-      return getTriggerConditionCode();
-    case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
-      return getTriggerCodeLanguage();
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
-      return getMessageCheckerType();
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
-      return getMessageCheckerClass();
-    case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
-      return getTriggerProbCode();
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
-      return getMessageCheckerCode();
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
-      return getMessageCheckerConditionLanguage();
-    case StatechartPackage.TRANSITION__ID:
-      return getId();
-    case StatechartPackage.TRANSITION__GUARD:
-      return getGuard();
-    case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
-      return getTriggerTimedCode();
-    case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
-      return getTriggerExpRateCode();
-    case StatechartPackage.TRANSITION__UUID:
-      return getUuid();
-    case StatechartPackage.TRANSITION__SELF_TRANSITION:
-      return isSelfTransition();
+      case StatechartPackage.TRANSITION__FROM:
+        if (resolve) return getFrom();
+        return basicGetFrom();
+      case StatechartPackage.TRANSITION__TO:
+        if (resolve) return getTo();
+        return basicGetTo();
+      case StatechartPackage.TRANSITION__PRIORITY:
+        return getPriority();
+      case StatechartPackage.TRANSITION__ON_TRANSITION:
+        return getOnTransition();
+      case StatechartPackage.TRANSITION__ON_TRANSITION_IMPORTS:
+        return getOnTransitionImports();
+      case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
+        return isOutOfBranch();
+      case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
+        return isDefaultTransition();
+      case StatechartPackage.TRANSITION__TRIGGER_TYPE:
+        return getTriggerType();
+      case StatechartPackage.TRANSITION__TRIGGER_TIME:
+        return getTriggerTime();
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
+        return getTriggerConditionCode();
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
+        return getTriggerConditionImports();
+      case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
+        return getTriggerCodeLanguage();
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
+        return getMessageCheckerType();
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
+        return getMessageCheckerClass();
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
+        return getTriggerProbCode();
+      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
+        return getTriggerProbeCodeImports();
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
+        return getMessageCheckerCode();
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
+        return getMessageCheckerCodeImports();
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
+        return getMessageCheckerConditionLanguage();
+      case StatechartPackage.TRANSITION__ID:
+        return getId();
+      case StatechartPackage.TRANSITION__GUARD:
+        return getGuard();
+      case StatechartPackage.TRANSITION__GUARD_IMPORTS:
+        return getGuardImports();
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
+        return getTriggerTimedCode();
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS:
+        return getTriggerTimedCodeImports();
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
+        return getTriggerExpRateCode();
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS:
+        return getTriggerExpRateCodeImports();
+      case StatechartPackage.TRANSITION__UUID:
+        return getUuid();
+      case StatechartPackage.TRANSITION__SELF_TRANSITION:
+        return isSelfTransition();
     }
     return super.eGet(featureID, resolve, coreType);
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
   public void eSet(int featureID, Object newValue) {
     switch (featureID) {
-    case StatechartPackage.TRANSITION__FROM:
-      setFrom((AbstractState) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TO:
-      setTo((AbstractState) newValue);
-      return;
-    case StatechartPackage.TRANSITION__PRIORITY:
-      setPriority((Double) newValue);
-      return;
-    case StatechartPackage.TRANSITION__ON_TRANSITION:
-      setOnTransition((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
-      setOutOfBranch((Boolean) newValue);
-      return;
-    case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
-      setDefaultTransition((Boolean) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TYPE:
-      setTriggerType((TriggerTypes) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TIME:
-      setTriggerTime((Double) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
-      setTriggerConditionCode((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
-      setTriggerCodeLanguage((LanguageTypes) newValue);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
-      setMessageCheckerType((MessageCheckerTypes) newValue);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
-      setMessageCheckerClass((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
-      setTriggerProbCode((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
-      setMessageCheckerCode((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
-      setMessageCheckerConditionLanguage((LanguageTypes) newValue);
-      return;
-    case StatechartPackage.TRANSITION__ID:
-      setId((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__GUARD:
-      setGuard((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
-      setTriggerTimedCode((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
-      setTriggerExpRateCode((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__UUID:
-      setUuid((String) newValue);
-      return;
-    case StatechartPackage.TRANSITION__SELF_TRANSITION:
-      setSelfTransition((Boolean) newValue);
-      return;
+      case StatechartPackage.TRANSITION__FROM:
+        setFrom((AbstractState)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TO:
+        setTo((AbstractState)newValue);
+        return;
+      case StatechartPackage.TRANSITION__PRIORITY:
+        setPriority((Double)newValue);
+        return;
+      case StatechartPackage.TRANSITION__ON_TRANSITION:
+        setOnTransition((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__ON_TRANSITION_IMPORTS:
+        setOnTransitionImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
+        setOutOfBranch((Boolean)newValue);
+        return;
+      case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
+        setDefaultTransition((Boolean)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TYPE:
+        setTriggerType((TriggerTypes)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIME:
+        setTriggerTime((Double)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
+        setTriggerConditionCode((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
+        setTriggerConditionImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
+        setTriggerCodeLanguage((LanguageTypes)newValue);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
+        setMessageCheckerType((MessageCheckerTypes)newValue);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
+        setMessageCheckerClass((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
+        setTriggerProbCode((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
+        setTriggerProbeCodeImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
+        setMessageCheckerCode((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
+        setMessageCheckerCodeImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
+        setMessageCheckerConditionLanguage((LanguageTypes)newValue);
+        return;
+      case StatechartPackage.TRANSITION__ID:
+        setId((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__GUARD:
+        setGuard((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__GUARD_IMPORTS:
+        setGuardImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
+        setTriggerTimedCode((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS:
+        setTriggerTimedCodeImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
+        setTriggerExpRateCode((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS:
+        setTriggerExpRateCodeImports((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__UUID:
+        setUuid((String)newValue);
+        return;
+      case StatechartPackage.TRANSITION__SELF_TRANSITION:
+        setSelfTransition((Boolean)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
   public void eUnset(int featureID) {
     switch (featureID) {
-    case StatechartPackage.TRANSITION__FROM:
-      setFrom((AbstractState) null);
-      return;
-    case StatechartPackage.TRANSITION__TO:
-      setTo((AbstractState) null);
-      return;
-    case StatechartPackage.TRANSITION__PRIORITY:
-      setPriority(PRIORITY_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__ON_TRANSITION:
-      setOnTransition(ON_TRANSITION_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
-      setOutOfBranch(OUT_OF_BRANCH_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
-      setDefaultTransition(DEFAULT_TRANSITION_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TYPE:
-      setTriggerType(TRIGGER_TYPE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TIME:
-      setTriggerTime(TRIGGER_TIME_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
-      setTriggerConditionCode(TRIGGER_CONDITION_CODE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
-      setTriggerCodeLanguage(TRIGGER_CODE_LANGUAGE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
-      setMessageCheckerType(MESSAGE_CHECKER_TYPE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
-      setMessageCheckerClass(MESSAGE_CHECKER_CLASS_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
-      setTriggerProbCode(TRIGGER_PROB_CODE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
-      setMessageCheckerCode(MESSAGE_CHECKER_CODE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
-      setMessageCheckerConditionLanguage(MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__ID:
-      setId(ID_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__GUARD:
-      setGuard(GUARD_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
-      setTriggerTimedCode(TRIGGER_TIMED_CODE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
-      setTriggerExpRateCode(TRIGGER_EXP_RATE_CODE_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__UUID:
-      setUuid(UUID_EDEFAULT);
-      return;
-    case StatechartPackage.TRANSITION__SELF_TRANSITION:
-      setSelfTransition(SELF_TRANSITION_EDEFAULT);
-      return;
+      case StatechartPackage.TRANSITION__FROM:
+        setFrom((AbstractState)null);
+        return;
+      case StatechartPackage.TRANSITION__TO:
+        setTo((AbstractState)null);
+        return;
+      case StatechartPackage.TRANSITION__PRIORITY:
+        setPriority(PRIORITY_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__ON_TRANSITION:
+        setOnTransition(ON_TRANSITION_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__ON_TRANSITION_IMPORTS:
+        setOnTransitionImports(ON_TRANSITION_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
+        setOutOfBranch(OUT_OF_BRANCH_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
+        setDefaultTransition(DEFAULT_TRANSITION_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TYPE:
+        setTriggerType(TRIGGER_TYPE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIME:
+        setTriggerTime(TRIGGER_TIME_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
+        setTriggerConditionCode(TRIGGER_CONDITION_CODE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
+        setTriggerConditionImports(TRIGGER_CONDITION_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
+        setTriggerCodeLanguage(TRIGGER_CODE_LANGUAGE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
+        setMessageCheckerType(MESSAGE_CHECKER_TYPE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
+        setMessageCheckerClass(MESSAGE_CHECKER_CLASS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
+        setTriggerProbCode(TRIGGER_PROB_CODE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
+        setTriggerProbeCodeImports(TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
+        setMessageCheckerCode(MESSAGE_CHECKER_CODE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
+        setMessageCheckerCodeImports(MESSAGE_CHECKER_CODE_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
+        setMessageCheckerConditionLanguage(MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__ID:
+        setId(ID_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__GUARD:
+        setGuard(GUARD_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__GUARD_IMPORTS:
+        setGuardImports(GUARD_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
+        setTriggerTimedCode(TRIGGER_TIMED_CODE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS:
+        setTriggerTimedCodeImports(TRIGGER_TIMED_CODE_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
+        setTriggerExpRateCode(TRIGGER_EXP_RATE_CODE_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS:
+        setTriggerExpRateCodeImports(TRIGGER_EXP_RATE_CODE_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__UUID:
+        setUuid(UUID_EDEFAULT);
+        return;
+      case StatechartPackage.TRANSITION__SELF_TRANSITION:
+        setSelfTransition(SELF_TRANSITION_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
   public boolean eIsSet(int featureID) {
     switch (featureID) {
-    case StatechartPackage.TRANSITION__FROM:
-      return from != null;
-    case StatechartPackage.TRANSITION__TO:
-      return to != null;
-    case StatechartPackage.TRANSITION__PRIORITY:
-      return priority != PRIORITY_EDEFAULT;
-    case StatechartPackage.TRANSITION__ON_TRANSITION:
-      return ON_TRANSITION_EDEFAULT == null ? onTransition != null : !ON_TRANSITION_EDEFAULT
-          .equals(onTransition);
-    case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
-      return outOfBranch != OUT_OF_BRANCH_EDEFAULT;
-    case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
-      return defaultTransition != DEFAULT_TRANSITION_EDEFAULT;
-    case StatechartPackage.TRANSITION__TRIGGER_TYPE:
-      return triggerType != TRIGGER_TYPE_EDEFAULT;
-    case StatechartPackage.TRANSITION__TRIGGER_TIME:
-      return triggerTime != TRIGGER_TIME_EDEFAULT;
-    case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
-      return TRIGGER_CONDITION_CODE_EDEFAULT == null ? triggerConditionCode != null
-          : !TRIGGER_CONDITION_CODE_EDEFAULT.equals(triggerConditionCode);
-    case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
-      return triggerCodeLanguage != TRIGGER_CODE_LANGUAGE_EDEFAULT;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
-      return messageCheckerType != MESSAGE_CHECKER_TYPE_EDEFAULT;
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
-      return MESSAGE_CHECKER_CLASS_EDEFAULT == null ? messageCheckerClass != null
-          : !MESSAGE_CHECKER_CLASS_EDEFAULT.equals(messageCheckerClass);
-    case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
-      return TRIGGER_PROB_CODE_EDEFAULT == null ? triggerProbCode != null
-          : !TRIGGER_PROB_CODE_EDEFAULT.equals(triggerProbCode);
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
-      return MESSAGE_CHECKER_CODE_EDEFAULT == null ? messageCheckerCode != null
-          : !MESSAGE_CHECKER_CODE_EDEFAULT.equals(messageCheckerCode);
-    case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
-      return messageCheckerConditionLanguage != MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT;
-    case StatechartPackage.TRANSITION__ID:
-      return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-    case StatechartPackage.TRANSITION__GUARD:
-      return GUARD_EDEFAULT == null ? guard != null : !GUARD_EDEFAULT.equals(guard);
-    case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
-      return TRIGGER_TIMED_CODE_EDEFAULT == null ? triggerTimedCode != null
-          : !TRIGGER_TIMED_CODE_EDEFAULT.equals(triggerTimedCode);
-    case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
-      return TRIGGER_EXP_RATE_CODE_EDEFAULT == null ? triggerExpRateCode != null
-          : !TRIGGER_EXP_RATE_CODE_EDEFAULT.equals(triggerExpRateCode);
-    case StatechartPackage.TRANSITION__UUID:
-      return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
-    case StatechartPackage.TRANSITION__SELF_TRANSITION:
-      return selfTransition != SELF_TRANSITION_EDEFAULT;
+      case StatechartPackage.TRANSITION__FROM:
+        return from != null;
+      case StatechartPackage.TRANSITION__TO:
+        return to != null;
+      case StatechartPackage.TRANSITION__PRIORITY:
+        return priority != PRIORITY_EDEFAULT;
+      case StatechartPackage.TRANSITION__ON_TRANSITION:
+        return ON_TRANSITION_EDEFAULT == null ? onTransition != null : !ON_TRANSITION_EDEFAULT.equals(onTransition);
+      case StatechartPackage.TRANSITION__ON_TRANSITION_IMPORTS:
+        return ON_TRANSITION_IMPORTS_EDEFAULT == null ? onTransitionImports != null : !ON_TRANSITION_IMPORTS_EDEFAULT.equals(onTransitionImports);
+      case StatechartPackage.TRANSITION__OUT_OF_BRANCH:
+        return outOfBranch != OUT_OF_BRANCH_EDEFAULT;
+      case StatechartPackage.TRANSITION__DEFAULT_TRANSITION:
+        return defaultTransition != DEFAULT_TRANSITION_EDEFAULT;
+      case StatechartPackage.TRANSITION__TRIGGER_TYPE:
+        return triggerType != TRIGGER_TYPE_EDEFAULT;
+      case StatechartPackage.TRANSITION__TRIGGER_TIME:
+        return triggerTime != TRIGGER_TIME_EDEFAULT;
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_CODE:
+        return TRIGGER_CONDITION_CODE_EDEFAULT == null ? triggerConditionCode != null : !TRIGGER_CONDITION_CODE_EDEFAULT.equals(triggerConditionCode);
+      case StatechartPackage.TRANSITION__TRIGGER_CONDITION_IMPORTS:
+        return TRIGGER_CONDITION_IMPORTS_EDEFAULT == null ? triggerConditionImports != null : !TRIGGER_CONDITION_IMPORTS_EDEFAULT.equals(triggerConditionImports);
+      case StatechartPackage.TRANSITION__TRIGGER_CODE_LANGUAGE:
+        return triggerCodeLanguage != TRIGGER_CODE_LANGUAGE_EDEFAULT;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_TYPE:
+        return messageCheckerType != MESSAGE_CHECKER_TYPE_EDEFAULT;
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CLASS:
+        return MESSAGE_CHECKER_CLASS_EDEFAULT == null ? messageCheckerClass != null : !MESSAGE_CHECKER_CLASS_EDEFAULT.equals(messageCheckerClass);
+      case StatechartPackage.TRANSITION__TRIGGER_PROB_CODE:
+        return TRIGGER_PROB_CODE_EDEFAULT == null ? triggerProbCode != null : !TRIGGER_PROB_CODE_EDEFAULT.equals(triggerProbCode);
+      case StatechartPackage.TRANSITION__TRIGGER_PROBE_CODE_IMPORTS:
+        return TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT == null ? triggerProbeCodeImports != null : !TRIGGER_PROBE_CODE_IMPORTS_EDEFAULT.equals(triggerProbeCodeImports);
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE:
+        return MESSAGE_CHECKER_CODE_EDEFAULT == null ? messageCheckerCode != null : !MESSAGE_CHECKER_CODE_EDEFAULT.equals(messageCheckerCode);
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS:
+        return MESSAGE_CHECKER_CODE_IMPORTS_EDEFAULT == null ? messageCheckerCodeImports != null : !MESSAGE_CHECKER_CODE_IMPORTS_EDEFAULT.equals(messageCheckerCodeImports);
+      case StatechartPackage.TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE:
+        return messageCheckerConditionLanguage != MESSAGE_CHECKER_CONDITION_LANGUAGE_EDEFAULT;
+      case StatechartPackage.TRANSITION__ID:
+        return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+      case StatechartPackage.TRANSITION__GUARD:
+        return GUARD_EDEFAULT == null ? guard != null : !GUARD_EDEFAULT.equals(guard);
+      case StatechartPackage.TRANSITION__GUARD_IMPORTS:
+        return GUARD_IMPORTS_EDEFAULT == null ? guardImports != null : !GUARD_IMPORTS_EDEFAULT.equals(guardImports);
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE:
+        return TRIGGER_TIMED_CODE_EDEFAULT == null ? triggerTimedCode != null : !TRIGGER_TIMED_CODE_EDEFAULT.equals(triggerTimedCode);
+      case StatechartPackage.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS:
+        return TRIGGER_TIMED_CODE_IMPORTS_EDEFAULT == null ? triggerTimedCodeImports != null : !TRIGGER_TIMED_CODE_IMPORTS_EDEFAULT.equals(triggerTimedCodeImports);
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE:
+        return TRIGGER_EXP_RATE_CODE_EDEFAULT == null ? triggerExpRateCode != null : !TRIGGER_EXP_RATE_CODE_EDEFAULT.equals(triggerExpRateCode);
+      case StatechartPackage.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS:
+        return TRIGGER_EXP_RATE_CODE_IMPORTS_EDEFAULT == null ? triggerExpRateCodeImports != null : !TRIGGER_EXP_RATE_CODE_IMPORTS_EDEFAULT.equals(triggerExpRateCodeImports);
+      case StatechartPackage.TRANSITION__UUID:
+        return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
+      case StatechartPackage.TRANSITION__SELF_TRANSITION:
+        return selfTransition != SELF_TRANSITION_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
 
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
-   * 
    * @generated
    */
   @Override
   public String toString() {
-    if (eIsProxy())
-      return super.toString();
+    if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (priority: ");
     result.append(priority);
     result.append(", onTransition: ");
     result.append(onTransition);
+    result.append(", onTransitionImports: ");
+    result.append(onTransitionImports);
     result.append(", outOfBranch: ");
     result.append(outOfBranch);
     result.append(", defaultTransition: ");
@@ -1333,6 +1540,8 @@ public class TransitionImpl extends EObjectImpl implements Transition {
     result.append(triggerTime);
     result.append(", triggerConditionCode: ");
     result.append(triggerConditionCode);
+    result.append(", triggerConditionImports: ");
+    result.append(triggerConditionImports);
     result.append(", triggerCodeLanguage: ");
     result.append(triggerCodeLanguage);
     result.append(", messageCheckerType: ");
@@ -1341,18 +1550,28 @@ public class TransitionImpl extends EObjectImpl implements Transition {
     result.append(messageCheckerClass);
     result.append(", triggerProbCode: ");
     result.append(triggerProbCode);
+    result.append(", triggerProbeCodeImports: ");
+    result.append(triggerProbeCodeImports);
     result.append(", messageCheckerCode: ");
     result.append(messageCheckerCode);
+    result.append(", messageCheckerCodeImports: ");
+    result.append(messageCheckerCodeImports);
     result.append(", messageCheckerConditionLanguage: ");
     result.append(messageCheckerConditionLanguage);
     result.append(", id: ");
     result.append(id);
     result.append(", guard: ");
     result.append(guard);
+    result.append(", guardImports: ");
+    result.append(guardImports);
     result.append(", triggerTimedCode: ");
     result.append(triggerTimedCode);
+    result.append(", triggerTimedCodeImports: ");
+    result.append(triggerTimedCodeImports);
     result.append(", triggerExpRateCode: ");
     result.append(triggerExpRateCode);
+    result.append(", triggerExpRateCodeImports: ");
+    result.append(triggerExpRateCodeImports);
     result.append(", uuid: ");
     result.append(uuid);
     result.append(", selfTransition: ");

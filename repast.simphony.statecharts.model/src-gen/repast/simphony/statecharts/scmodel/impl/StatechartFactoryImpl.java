@@ -28,7 +28,7 @@ public class StatechartFactoryImpl extends EFactoryImpl implements StatechartFac
    */
   public static StatechartFactory init() {
     try {
-      StatechartFactory theStatechartFactory = (StatechartFactory)EPackage.Registry.INSTANCE.getEFactory("http://repast.sf.net/statecharts"); 
+      StatechartFactory theStatechartFactory = (StatechartFactory)EPackage.Registry.INSTANCE.getEFactory(StatechartPackage.eNS_URI);
       if (theStatechartFactory != null) {
         return theStatechartFactory;
       }

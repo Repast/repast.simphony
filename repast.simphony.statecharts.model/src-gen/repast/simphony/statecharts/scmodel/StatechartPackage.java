@@ -221,13 +221,31 @@ public interface StatechartPackage extends EPackage {
   int ABSTRACT_STATE__UUID = 4;
 
   /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_STATE__ON_ENTER_IMPORTS = 5;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ABSTRACT_STATE__ON_EXIT_IMPORTS = 6;
+
+  /**
    * The number of structural features of the '<em>Abstract State</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ABSTRACT_STATE_FEATURE_COUNT = 5;
+  int ABSTRACT_STATE_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.StateImpl <em>State</em>}' class.
@@ -283,6 +301,24 @@ public interface StatechartPackage extends EPackage {
    * @ordered
    */
   int STATE__UUID = ABSTRACT_STATE__UUID;
+
+  /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE__ON_ENTER_IMPORTS = ABSTRACT_STATE__ON_ENTER_IMPORTS;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STATE__ON_EXIT_IMPORTS = ABSTRACT_STATE__ON_EXIT_IMPORTS;
 
   /**
    * The number of structural features of the '<em>State</em>' class.
@@ -349,6 +385,24 @@ public interface StatechartPackage extends EPackage {
   int FINAL_STATE__UUID = STATE__UUID;
 
   /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FINAL_STATE__ON_ENTER_IMPORTS = STATE__ON_ENTER_IMPORTS;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FINAL_STATE__ON_EXIT_IMPORTS = STATE__ON_EXIT_IMPORTS;
+
+  /**
    * The number of structural features of the '<em>Final State</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -404,13 +458,22 @@ public interface StatechartPackage extends EPackage {
   int TRANSITION__ON_TRANSITION = 3;
 
   /**
+   * The feature id for the '<em><b>On Transition Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__ON_TRANSITION_IMPORTS = 4;
+
+  /**
    * The feature id for the '<em><b>Out Of Branch</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TRANSITION__OUT_OF_BRANCH = 4;
+  int TRANSITION__OUT_OF_BRANCH = 5;
 
   /**
    * The feature id for the '<em><b>Default Transition</b></em>' attribute.
@@ -419,7 +482,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__DEFAULT_TRANSITION = 5;
+  int TRANSITION__DEFAULT_TRANSITION = 6;
 
   /**
    * The feature id for the '<em><b>Trigger Type</b></em>' attribute.
@@ -428,7 +491,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_TYPE = 6;
+  int TRANSITION__TRIGGER_TYPE = 7;
 
   /**
    * The feature id for the '<em><b>Trigger Time</b></em>' attribute.
@@ -437,7 +500,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_TIME = 7;
+  int TRANSITION__TRIGGER_TIME = 8;
 
   /**
    * The feature id for the '<em><b>Trigger Condition Code</b></em>' attribute.
@@ -446,7 +509,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_CONDITION_CODE = 8;
+  int TRANSITION__TRIGGER_CONDITION_CODE = 9;
+
+  /**
+   * The feature id for the '<em><b>Trigger Condition Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_CONDITION_IMPORTS = 10;
 
   /**
    * The feature id for the '<em><b>Trigger Code Language</b></em>' attribute.
@@ -455,7 +527,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_CODE_LANGUAGE = 9;
+  int TRANSITION__TRIGGER_CODE_LANGUAGE = 11;
 
   /**
    * The feature id for the '<em><b>Message Checker Type</b></em>' attribute.
@@ -464,7 +536,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__MESSAGE_CHECKER_TYPE = 10;
+  int TRANSITION__MESSAGE_CHECKER_TYPE = 12;
 
   /**
    * The feature id for the '<em><b>Message Checker Class</b></em>' attribute.
@@ -473,7 +545,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__MESSAGE_CHECKER_CLASS = 11;
+  int TRANSITION__MESSAGE_CHECKER_CLASS = 13;
 
   /**
    * The feature id for the '<em><b>Trigger Prob Code</b></em>' attribute.
@@ -482,7 +554,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_PROB_CODE = 12;
+  int TRANSITION__TRIGGER_PROB_CODE = 14;
+
+  /**
+   * The feature id for the '<em><b>Trigger Probe Code Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_PROBE_CODE_IMPORTS = 15;
 
   /**
    * The feature id for the '<em><b>Message Checker Code</b></em>' attribute.
@@ -491,7 +572,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__MESSAGE_CHECKER_CODE = 13;
+  int TRANSITION__MESSAGE_CHECKER_CODE = 16;
+
+  /**
+   * The feature id for the '<em><b>Message Checker Code Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS = 17;
 
   /**
    * The feature id for the '<em><b>Message Checker Condition Language</b></em>' attribute.
@@ -500,7 +590,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = 14;
+  int TRANSITION__MESSAGE_CHECKER_CONDITION_LANGUAGE = 18;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -509,7 +599,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__ID = 15;
+  int TRANSITION__ID = 19;
 
   /**
    * The feature id for the '<em><b>Guard</b></em>' attribute.
@@ -518,7 +608,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__GUARD = 16;
+  int TRANSITION__GUARD = 20;
+
+  /**
+   * The feature id for the '<em><b>Guard Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__GUARD_IMPORTS = 21;
 
   /**
    * The feature id for the '<em><b>Trigger Timed Code</b></em>' attribute.
@@ -527,7 +626,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_TIMED_CODE = 17;
+  int TRANSITION__TRIGGER_TIMED_CODE = 22;
+
+  /**
+   * The feature id for the '<em><b>Trigger Timed Code Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_TIMED_CODE_IMPORTS = 23;
 
   /**
    * The feature id for the '<em><b>Trigger Exp Rate Code</b></em>' attribute.
@@ -536,7 +644,16 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__TRIGGER_EXP_RATE_CODE = 18;
+  int TRANSITION__TRIGGER_EXP_RATE_CODE = 24;
+
+  /**
+   * The feature id for the '<em><b>Trigger Exp Rate Code Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS = 25;
 
   /**
    * The feature id for the '<em><b>Uuid</b></em>' attribute.
@@ -545,7 +662,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__UUID = 19;
+  int TRANSITION__UUID = 26;
 
   /**
    * The feature id for the '<em><b>Self Transition</b></em>' attribute.
@@ -554,7 +671,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION__SELF_TRANSITION = 20;
+  int TRANSITION__SELF_TRANSITION = 27;
 
   /**
    * The number of structural features of the '<em>Transition</em>' class.
@@ -563,7 +680,7 @@ public interface StatechartPackage extends EPackage {
    * @generated
    * @ordered
    */
-  int TRANSITION_FEATURE_COUNT = 21;
+  int TRANSITION_FEATURE_COUNT = 28;
 
   /**
    * The meta object id for the '{@link repast.simphony.statecharts.scmodel.impl.CompositeStateImpl <em>Composite State</em>}' class.
@@ -619,6 +736,24 @@ public interface StatechartPackage extends EPackage {
    * @ordered
    */
   int COMPOSITE_STATE__UUID = ABSTRACT_STATE__UUID;
+
+  /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPOSITE_STATE__ON_ENTER_IMPORTS = ABSTRACT_STATE__ON_ENTER_IMPORTS;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPOSITE_STATE__ON_EXIT_IMPORTS = ABSTRACT_STATE__ON_EXIT_IMPORTS;
 
   /**
    * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -694,6 +829,24 @@ public interface StatechartPackage extends EPackage {
   int PSEUDO_STATE__UUID = ABSTRACT_STATE__UUID;
 
   /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PSEUDO_STATE__ON_ENTER_IMPORTS = ABSTRACT_STATE__ON_ENTER_IMPORTS;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PSEUDO_STATE__ON_EXIT_IMPORTS = ABSTRACT_STATE__ON_EXIT_IMPORTS;
+
+  /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -765,6 +918,24 @@ public interface StatechartPackage extends EPackage {
    * @ordered
    */
   int HISTORY__UUID = STATE__UUID;
+
+  /**
+   * The feature id for the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int HISTORY__ON_ENTER_IMPORTS = STATE__ON_ENTER_IMPORTS;
+
+  /**
+   * The feature id for the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int HISTORY__ON_EXIT_IMPORTS = STATE__ON_EXIT_IMPORTS;
 
   /**
    * The feature id for the '<em><b>Shallow</b></em>' attribute.
@@ -1020,6 +1191,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_OnTransition();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getOnTransitionImports <em>On Transition Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>On Transition Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getOnTransitionImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_OnTransitionImports();
+
+  /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#isOutOfBranch <em>Out Of Branch</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1075,6 +1257,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_TriggerConditionCode();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports <em>Trigger Condition Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Condition Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerConditionImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerConditionImports();
+
+  /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerCodeLanguage <em>Trigger Code Language</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1119,6 +1312,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_TriggerProbCode();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports <em>Trigger Probe Code Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Probe Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerProbeCodeImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerProbeCodeImports();
+
+  /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCode <em>Message Checker Code</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1128,6 +1332,17 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getTransition_MessageCheckerCode();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCodeImports <em>Message Checker Code Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Checker Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getMessageCheckerCodeImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_MessageCheckerCodeImports();
 
   /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getMessageCheckerConditionLanguage <em>Message Checker Condition Language</em>}'.
@@ -1163,6 +1378,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_Guard();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getGuardImports <em>Guard Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Guard Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getGuardImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_GuardImports();
+
+  /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCode <em>Trigger Timed Code</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1174,6 +1400,17 @@ public interface StatechartPackage extends EPackage {
   EAttribute getTransition_TriggerTimedCode();
 
   /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCodeImports <em>Trigger Timed Code Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Timed Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerTimedCodeImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerTimedCodeImports();
+
+  /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCode <em>Trigger Exp Rate Code</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1183,6 +1420,17 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getTransition_TriggerExpRateCode();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCodeImports <em>Trigger Exp Rate Code Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Exp Rate Code Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.Transition#getTriggerExpRateCodeImports()
+   * @see #getTransition()
+   * @generated
+   */
+  EAttribute getTransition_TriggerExpRateCodeImports();
 
   /**
    * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.Transition#getUuid <em>Uuid</em>}'.
@@ -1291,6 +1539,28 @@ public interface StatechartPackage extends EPackage {
    * @generated
    */
   EAttribute getAbstractState_Uuid();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnEnterImports <em>On Enter Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>On Enter Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.AbstractState#getOnEnterImports()
+   * @see #getAbstractState()
+   * @generated
+   */
+  EAttribute getAbstractState_OnEnterImports();
+
+  /**
+   * Returns the meta object for the attribute '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExitImports <em>On Exit Imports</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>On Exit Imports</em>'.
+   * @see repast.simphony.statecharts.scmodel.AbstractState#getOnExitImports()
+   * @see #getAbstractState()
+   * @generated
+   */
+  EAttribute getAbstractState_OnExitImports();
 
   /**
    * Returns the meta object for class '{@link repast.simphony.statecharts.scmodel.PseudoState <em>Pseudo State</em>}'.
@@ -1549,6 +1819,14 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__ON_TRANSITION = eINSTANCE.getTransition_OnTransition();
 
     /**
+     * The meta object literal for the '<em><b>On Transition Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__ON_TRANSITION_IMPORTS = eINSTANCE.getTransition_OnTransitionImports();
+
+    /**
      * The meta object literal for the '<em><b>Out Of Branch</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1589,6 +1867,14 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__TRIGGER_CONDITION_CODE = eINSTANCE.getTransition_TriggerConditionCode();
 
     /**
+     * The meta object literal for the '<em><b>Trigger Condition Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_CONDITION_IMPORTS = eINSTANCE.getTransition_TriggerConditionImports();
+
+    /**
      * The meta object literal for the '<em><b>Trigger Code Language</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1621,12 +1907,28 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__TRIGGER_PROB_CODE = eINSTANCE.getTransition_TriggerProbCode();
 
     /**
+     * The meta object literal for the '<em><b>Trigger Probe Code Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_PROBE_CODE_IMPORTS = eINSTANCE.getTransition_TriggerProbeCodeImports();
+
+    /**
      * The meta object literal for the '<em><b>Message Checker Code</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute TRANSITION__MESSAGE_CHECKER_CODE = eINSTANCE.getTransition_MessageCheckerCode();
+
+    /**
+     * The meta object literal for the '<em><b>Message Checker Code Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS = eINSTANCE.getTransition_MessageCheckerCodeImports();
 
     /**
      * The meta object literal for the '<em><b>Message Checker Condition Language</b></em>' attribute feature.
@@ -1653,6 +1955,14 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__GUARD = eINSTANCE.getTransition_Guard();
 
     /**
+     * The meta object literal for the '<em><b>Guard Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__GUARD_IMPORTS = eINSTANCE.getTransition_GuardImports();
+
+    /**
      * The meta object literal for the '<em><b>Trigger Timed Code</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1661,12 +1971,28 @@ public interface StatechartPackage extends EPackage {
     EAttribute TRANSITION__TRIGGER_TIMED_CODE = eINSTANCE.getTransition_TriggerTimedCode();
 
     /**
+     * The meta object literal for the '<em><b>Trigger Timed Code Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_TIMED_CODE_IMPORTS = eINSTANCE.getTransition_TriggerTimedCodeImports();
+
+    /**
      * The meta object literal for the '<em><b>Trigger Exp Rate Code</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute TRANSITION__TRIGGER_EXP_RATE_CODE = eINSTANCE.getTransition_TriggerExpRateCode();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Exp Rate Code Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS = eINSTANCE.getTransition_TriggerExpRateCodeImports();
 
     /**
      * The meta object literal for the '<em><b>Uuid</b></em>' attribute feature.
@@ -1751,6 +2077,22 @@ public interface StatechartPackage extends EPackage {
      * @generated
      */
     EAttribute ABSTRACT_STATE__UUID = eINSTANCE.getAbstractState_Uuid();
+
+    /**
+     * The meta object literal for the '<em><b>On Enter Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_STATE__ON_ENTER_IMPORTS = eINSTANCE.getAbstractState_OnEnterImports();
+
+    /**
+     * The meta object literal for the '<em><b>On Exit Imports</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ABSTRACT_STATE__ON_EXIT_IMPORTS = eINSTANCE.getAbstractState_OnExitImports();
 
     /**
      * The meta object literal for the '{@link repast.simphony.statecharts.scmodel.impl.PseudoStateImpl <em>Pseudo State</em>}' class.
