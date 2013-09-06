@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
-import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
@@ -128,7 +127,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
 
     group.setLayout(grpLayout);
     onEnterEditor.createPartControl(part.getSite(), group);
-    StyledText widget = onEnterEditor.getTextWidget();
+    StyledText widget = onEnterEditor.getCodeTextWidget();
     data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     // data.heightHint = -1;
     widget.getParent().setLayoutData(data);
@@ -149,7 +148,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     group.setLayout(grpLayout);
     onExitEditor.createPartControl(part.getSite(), group);
     new Label(composite, SWT.NONE);
-    widget = onExitEditor.getTextWidget();
+    widget = onExitEditor.getCodeTextWidget();
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     // gd_onExitTxt.heightHint = -1;
     gd_onExitTxt.horizontalIndent = 1;
@@ -185,28 +184,20 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
     ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
         400, idTxt);
+    
     context.bindValue(observe, property.observe(eObject));
 
     if (edSupport.getEditor(ON_ENTER_IDX).getEditorInput() == null)
       edSupport.init((AbstractState) eObject);
 
     CodePropertyEditor editor = edSupport.getEditor(ON_ENTER_IDX);
-    context
-        .bindValue(
-            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
-                editor.getTextWidget()),
-            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-                StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject), null,
-            new CodeUpdateStrategy(editor.getJavaSourceViewer()));
-
+    BindingSupport binding = new BindingSupport(context, eObject);
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, editor.getJavaSourceViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, editor.getImportViewer());
+   
     editor = edSupport.getEditor(ON_EXIT_IDX);
-    context
-        .bindValue(
-            WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400,
-                editor.getTextWidget()),
-            EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-                StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject), null,
-            new CodeUpdateStrategy(editor.getJavaSourceViewer()));
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT, editor.getJavaSourceViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT_IMPORTS, editor.getImportViewer());
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }

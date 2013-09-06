@@ -35,7 +35,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
-import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
@@ -424,7 +423,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     group.setLayout(grpLayout);
     editor.createPartControl(site, group);
 
-    StyledText widget = editor.getTextWidget();
+    StyledText widget = editor.getCodeTextWidget();
     GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
     // gd_onExitTxt.heightHint = -1;
     gd_onExitTxt.horizontalIndent = 1;
@@ -628,7 +627,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   private void messageTypeChanged() {
     MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
-    StyledText txtMessage = support.getEditor(TRIGGER_MESSAGE_INDEX).getTextWidget();
+    StyledText txtMessage = support.getEditor(TRIGGER_MESSAGE_INDEX).getCodeTextWidget();
     if (support.getEditor(TRIGGER_MESSAGE_INDEX).getEditorInput() != null && type != currentType) {
       String txt = txtMessage.getText();
       // input != null so message trigger type is active in the UI and
@@ -741,17 +740,26 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     bindingContext = context;
     pollingBinding = null;
     object = eObject;
+    
+    bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
 
     if (support.getEditor(GUARD_INDEX).getEditorInput() == null)
       support.initGuard((Transition) eObject, GUARD_INDEX);
     if (support.getEditor(ON_TRANS_INDEX).getEditorInput() == null)
       support.initOnTrans((Transition) eObject, ON_TRANS_INDEX);
+    
+    BindingSupport binding = new BindingSupport(context, eObject);
+    
+    binding.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION, 
+        support.getEditor(ON_TRANS_INDEX).getJavaSourceViewer());
+    binding.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION_IMPORTS, 
+        support.getEditor(ON_TRANS_INDEX).getImportViewer());
+    
+    binding.bind(StatechartPackage.Literals.TRANSITION__GUARD,
+        support.getEditor(GUARD_INDEX).getJavaSourceViewer());
+    binding.bind(StatechartPackage.Literals.TRANSITION__GUARD_IMPORTS, 
+        support.getEditor(GUARD_INDEX).getImportViewer());
 
-    bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
-    bindTextField(support.getEditor(ON_TRANS_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__ON_TRANSITION, ON_TRANS_INDEX);
-    bindTextField(support.getEditor(GUARD_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__GUARD, GUARD_INDEX);
 
     bindTextField(priorityTxt, StatechartPackage.Literals.TRANSITION__PRIORITY,
         createUpdateValueStrategy(new StringToDoubleConverter()),
@@ -795,16 +803,25 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__TRIGGER_TYPE).observe(eObject), targetToModel,
         modelToTarget);
-
-    bindTextField(support.getEditor(TRIGGER_TIME_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE, TRIGGER_TIME_INDEX);
-    bindTextField(support.getEditor(TRIGGER_EXP_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE, TRIGGER_EXP_INDEX);
-    bindTextField(support.getEditor(TRIGGER_PROB_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE, TRIGGER_PROB_INDEX);
-    bindTextField(support.getEditor(TRIGGER_COND_INDEX).getTextWidget(),
-        StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE, TRIGGER_COND_INDEX);
-
+    
+    BindingSupport binding = new BindingSupport(context, eObject);
+    
+    CodePropertyEditor editor = support.getEditor(TRIGGER_TIME_INDEX);
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE, editor.getJavaSourceViewer()); 
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS, editor.getImportViewer());
+    
+    editor = support.getEditor(TRIGGER_EXP_INDEX);
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE, editor.getJavaSourceViewer()); 
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS, editor.getImportViewer());
+    
+    editor = support.getEditor(TRIGGER_PROB_INDEX);
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE, editor.getJavaSourceViewer()); 
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE_IMPORTS, editor.getImportViewer());
+    
+    editor = support.getEditor(TRIGGER_COND_INDEX);
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE, editor.getJavaSourceViewer()); 
+    binding.bind(StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS, editor.getImportViewer());
+    
     context.bindValue(
         WidgetProperties.selection().observe(cmbMessageType),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
@@ -816,9 +833,10 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         WidgetProperties.text().observe(cmbMessageClass),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CLASS).observe(eObject));
-
-    bindTextField(support.getEditor(TRIGGER_MESSAGE_INDEX).getTextWidget(), 
-        StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE, TRIGGER_MESSAGE_INDEX);
+    
+    editor = support.getEditor(TRIGGER_MESSAGE_INDEX);
+    binding.bind(StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE, editor.getJavaSourceViewer()); 
+    binding.bind(StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS, editor.getImportViewer());
   }
 
   private Binding bindTextField(Text text, EAttribute attribute) {
@@ -826,13 +844,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
             .observe(object));
-  }
-
-  private Binding bindTextField(StyledText text, EAttribute attribute, int editorIndex) {
-    return bindingContext.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
-            .observe(object), null, new CodeUpdateStrategy(support.getEditor(editorIndex).getJavaSourceViewer()));
   }
 
   private Binding bindTextField(Text text, EAttribute attribute, UpdateValueStrategy targetToModel,

@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import repast.simphony.statecharts.editor.CodePropertyEditor;
-import repast.simphony.statecharts.editor.CodeUpdateStrategy;
 import repast.simphony.statecharts.editor.EditorSupport;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
@@ -121,7 +120,7 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
     
     group.setLayout(grpLayout);
     onEnterEditor.createPartControl(part.getSite(), group);
-    StyledText widget = onEnterEditor.getTextWidget();
+    StyledText widget = onEnterEditor.getCodeTextWidget();
     data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
     //data.heightHint = -1;
     widget.getParent().setLayoutData(data);
@@ -159,12 +158,10 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
     context.bindValue(observe, property.observe(eObject));
     
     if (support.getEditor(0).getEditorInput() == null) support.init((AbstractState)eObject);
-
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, support.getEditor(0).getTextWidget()),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject), null, 
-            new CodeUpdateStrategy(support.getEditor(0).getJavaSourceViewer()));
+    
+    BindingSupport binding = new BindingSupport(context, eObject);
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, support.getEditor(0).getJavaSourceViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, support.getEditor(0).getImportViewer());
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }
