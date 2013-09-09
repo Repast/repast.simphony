@@ -85,9 +85,6 @@ String getMEType(String uuid) : JAVA
 String expandCodeBody(String body, Boolean addReturn) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.expandBody(java.lang.String, java.lang.Boolean);
     
-String parseCodeForImports(String body) : JAVA
-    repast.simphony.statecharts.generator.GeneratorUtil.parseImports(java.lang.String);
-    
 AbstractState findInitialState(List states) : JAVA
     repast.simphony.statecharts.generator.GeneratorUtil.findInitialState(java.util.List);
     
@@ -118,14 +115,30 @@ String getMessageCheckerClass(String type) : JAVA
     
 String getCTCCode(Transition transition) :
      transition.triggerType == TriggerTypes::condition ? nullToEmpty(transition.triggerConditionCode) : "";
+     
+String getCTCCodeImports(Transition transition) :
+     transition.triggerType == TriggerTypes::condition ? nullToEmpty(transition.triggerConditionCodeImports) : "";
     
 String getMCCode(Transition transition) :
     (transition.triggerType == TriggerTypes::message ?
     (transition.messageCheckerType == MessageCheckerTypes::conditional ? nullToEmpty(transition.messageCheckerCode) : "") : "");
     
+String getMCCodeImports(Transition transition) :
+    (transition.triggerType == TriggerTypes::message ?
+    (transition.messageCheckerType == MessageCheckerTypes::conditional ? nullToEmpty(transition.messageCheckerCodeImports) : "") : "");
+    
 String getMECode(Transition transition) :
     (transition.triggerType == TriggerTypes::message ?
     (transition.messageCheckerType == MessageCheckerTypes::equals ? nullToEmpty(transition.messageCheckerCode) : "") : "");
+    
+String getMECodeImports(Transition transition) :
+    (transition.triggerType == TriggerTypes::message ?
+    (transition.messageCheckerType == MessageCheckerTypes::equals ? nullToEmpty(transition.messageCheckerCodeImports) : "") : "");
+    
+String getTDFCodeImports(Transition transition) :
+    (transition.triggerType == TriggerTypes::timed ? nullToEmpty(transition.triggerTimedCodeImports) :
+    (transition.triggerType == TriggerTypes::exponential ? nullToEmpty(transition.triggerExpRateCodeImports) : 
+    (transition.triggerType == TriggerTypes::probability ? nullToEmpty(transition.triggerProbCodeImports) : "")));
     
 String getTDFCode(Transition transition) :
     (transition.triggerType == TriggerTypes::timed ? nullToEmpty(transition.triggerTimedCode) :
