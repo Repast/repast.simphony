@@ -57,7 +57,7 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
     new Label(this, SWT.NONE);
 
     Composite composite = new Composite(this, SWT.NONE);
-    GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1);
+    GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, true, 3, 1);
     gd_composite.heightHint = 183;
     composite.setLayoutData(gd_composite);
     GridLayout gl_composite = new GridLayout(1, false);
