@@ -23,7 +23,7 @@ import repast.simphony.statecharts.generator.GeneratorUtil;
 public class BadCodeFinder implements IResourceDeltaVisitor {
 
   private static final String[] ACTION_NAMES = { "OnEnterAction", "OnExitAction", "Guard",
-      "OnTransition", "TriggerDoubleFunction", "ConditionTriggerFunction", "MessageCondition",
+      "OnTransition", "TriggerDoubleFunction", "ConditionTriggerCondition", "MessageCondition",
       "MessageEquals" };
 
   private boolean foundBadCode = false;
