@@ -186,7 +186,7 @@ private static class «generatorClassName()» {
     «FILE actionFilename(package, getMEType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        «EXPAND imports(agentType, getMECode(this)) FOR this.triggerCodeLanguage-»
+        «EXPAND imports(agentType, getMECodeImports(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -210,7 +210,7 @@ private static class «generatorClassName()» {
     «LET getMessageCheckerClass(this.messageCheckerClass.trim()) AS ctype-»
         package «package»;
         
-        «EXPAND imports(agentType, getMCCode(this)) FOR this.triggerCodeLanguage-»
+        «EXPAND imports(agentType, getMCCodeImports(this)) FOR this.triggerCodeLanguage-»
         «IF ctype.contains(".")-»
         import «ctype»;
         «ENDIF»
@@ -239,7 +239,7 @@ private static class «generatorClassName()» {
     «FILE actionFilename(package, getCTCType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-       «EXPAND imports(agentType, getCTCCode(this)) FOR this.triggerCodeLanguage-»
+       «EXPAND imports(agentType, getCTCCodeImports(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -262,7 +262,7 @@ private static class «generatorClassName()» {
     «FILE actionFilename(package, getTDFType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-       «EXPAND imports(agentType, getTDFCode(this)) FOR this.triggerCodeLanguage-»
+       «EXPAND imports(agentType, getTDFCodeImports(this)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -286,7 +286,7 @@ private static class «generatorClassName()» {
     «FILE actionFilename(package, getGuardType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-      «EXPAND imports(agentType, this.guard.trim()) FOR this.triggerCodeLanguage-» 
+      «EXPAND imports(agentType, nullToEmpty(this.guardImports)) FOR this.triggerCodeLanguage-» 
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -309,7 +309,7 @@ private static class «generatorClassName()» {
     «FILE actionFilename(package, getOnTransType(this.uuid), this.triggerCodeLanguage)-»
         package «package»;
         
-        «EXPAND imports(agentType, this.onTransition.trim()) FOR this.triggerCodeLanguage-»
+        «EXPAND imports(agentType, nullToEmpty(this.onTransitionImports)) FOR this.triggerCodeLanguage-»
         
         «LET getSimpleClassName(agentType) AS simpleType»
         /**
@@ -332,19 +332,21 @@ private static class «generatorClassName()» {
 «REM» expansions for creating state actions «ENDREM»
 «DEFINE createActionsCore(String package, String agentType, String smUUID) FOR AbstractState»
 «IF this.onEnter != null && this.onEnter.trim().length > 0-»
-    «EXPAND createAction(package.trim(), getOnEnterActionType(this.uuid), agentType.trim(), this.onEnter.trim(), smUUID) FOR this-»
+    «EXPAND createAction(package.trim(), getOnEnterActionType(this.uuid), agentType.trim(), 
+    this.onEnter.trim(), nullToEmpty(this.onEnterImports), smUUID) FOR this-»
 «ENDIF»
 
 «IF this.onExit != null && this.onExit.trim().length > 0-»
-    «EXPAND createAction(package.trim(), getOnExitActionType(this.uuid), agentType.trim(), this.onExit.trim(), smUUID) FOR this-»
+    «EXPAND createAction(package.trim(), getOnExitActionType(this.uuid), agentType.trim(), 
+    this.onExit.trim(), nullToEmpty(this.onExitImports), smUUID) FOR this-»
 «ENDIF»
 «ENDDEFINE»
 
-«DEFINE createAction(String package, String actType, String agentType, String body, String smUUID) FOR AbstractState»
+«DEFINE createAction(String package, String actType, String agentType, String body, String imports, String smUUID) FOR AbstractState»
     «FILE  actionFilename(package, actType, this.language)-»
 	    package «package»;
 	    
-	   «EXPAND imports(agentType, body) FOR this.language-»
+	   «EXPAND imports(agentType, imports) FOR this.language-»
 	    
 	    «LET getSimpleClassName(agentType) AS simpleType»
 	    /**
@@ -476,7 +478,7 @@ private static class «generatorClassName()» {
 «getVar(this)»
 «ENDDEFINE»
 
-«DEFINE imports(String agentType, String code) FOR LanguageTypes»
+«DEFINE imports(String agentType, String imports) FOR LanguageTypes-»
 import repast.simphony.statecharts.*;
 import repast.simphony.parameter.Parameters;
 import static repast.simphony.random.RandomHelper.*;
@@ -494,14 +496,14 @@ import repast.simphony.relogo.UtilityG;
 «ENDIF-» 
 import static repast.simphony.essentials.RepastEssentials.*;
 
-«parseCodeForImports(code)»
-        
+«imports»
+
 import «getPackageFromType(agentType)».*;
 «ENDDEFINE»
 
 «DEFINE codeBlock(LanguageTypes type, boolean needsRet) FOR String-»
     «IF type == LanguageTypes::java-»
-        «expandCodeBody(this, needsRet)-»
+        «this»
     «ELSEIF type == LanguageTypes::groovy-»
         «expandCodeBody(this, false)-»
     «ELSE-»
