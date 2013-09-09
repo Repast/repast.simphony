@@ -45,8 +45,11 @@ import org.apache.batik.util.RunnableQueue;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.svg.SVGCircleElement;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLineElement;
+import org.w3c.dom.svg.SVGPolygonElement;
 import org.w3c.dom.svg.SVGRect;
 import org.w3c.dom.svg.SVGRectElement;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -140,15 +143,19 @@ public class StateChartSVGDisplay {
 //									System.out
 //											.println("The intersection list contains:");
 									String uuid = null;
+									// Find rects (simple and composite states)
+									// Find polygons (branching states and transition arrow heads)
+									// Find circles (final states)
 									for (Object o : intersectionList) {
 //										System.out.println(o);
-										if (o instanceof SVGRectElement) {
-											SVGRectElement sre = (SVGRectElement) o;
-											String tempUuid = sre.getAttribute("uuid");
+										if (o instanceof SVGRectElement || o instanceof SVGPolygonElement || o instanceof SVGCircleElement) {
+											SVGElement svgE = (SVGElement) o;
+											String tempUuid = svgE.getAttribute("uuid");
 											if (!tempUuid.isEmpty()) uuid = tempUuid;
 										} 
 									}
-									// Transitions override states
+									
+									// Find lines (transitions) transitions override states
 									for (Object o : intersectionList){
 										if (o instanceof SVGLineElement){
 											SVGLineElement sle = (SVGLineElement) o;

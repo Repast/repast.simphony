@@ -58,6 +58,7 @@ import repast.simphony.statecharts.edit.parts.FinalState2EditPart;
 import repast.simphony.statecharts.edit.parts.FinalStateEditPart;
 import repast.simphony.statecharts.edit.parts.History2EditPart;
 import repast.simphony.statecharts.edit.parts.HistoryEditPart;
+import repast.simphony.statecharts.edit.parts.PseudoState2EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState3EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState4EditPart;
 import repast.simphony.statecharts.edit.parts.PseudoState5EditPart;
@@ -84,7 +85,7 @@ public class SVGGenerator {
 	 * Creates a new instance.
 	 * 
 	 * @param dgrmEP
-	 *          the diagram editpart
+	 *            the diagram editpart
 	 */
 	public SVGGenerator(DiagramEditPart dgrmEP) {
 		this._dgrmEP = dgrmEP;
@@ -92,7 +93,8 @@ public class SVGGenerator {
 				LayerConstants.PRINTABLE_LAYERS);
 		IMapMode mm = getMapMode();
 		image_margin = mm.DPtoLP(DEFAULT_IMAGE_MARGIN_PIXELS);
-		emptyImageSize = (Dimension) mm.DPtoLP(new Dimension(DEFAULT_EMPTY_IMAGE_SIZE_PIXELS,
+		emptyImageSize = (Dimension) mm.DPtoLP(new Dimension(
+				DEFAULT_EMPTY_IMAGE_SIZE_PIXELS,
 				DEFAULT_EMPTY_IMAGE_SIZE_PIXELS));
 		populateUUIDMap();
 	}
@@ -101,7 +103,8 @@ public class SVGGenerator {
 
 	}
 
-	public void renderPartsToGraphics(List editparts, org.eclipse.swt.graphics.Rectangle sourceRect) {
+	public void renderPartsToGraphics(List editparts,
+			org.eclipse.swt.graphics.Rectangle sourceRect) {
 
 		Graphics graphics = null;
 		try {
@@ -119,9 +122,11 @@ public class SVGGenerator {
 			graphics = setUpGraphics((int) Math.round(rect.preciseWidth),
 					(int) Math.round(rect.preciseHeight));
 
-			RenderedMapModeGraphics mapModeGraphics = new RenderedMapModeGraphics(graphics, getMapMode());
+			RenderedMapModeGraphics mapModeGraphics = new RenderedMapModeGraphics(
+					graphics, getMapMode());
 
-			renderToGraphics(graphics, mapModeGraphics, new Point(sourceRect.x, sourceRect.y), editparts);
+			renderToGraphics(graphics, mapModeGraphics, new Point(sourceRect.x,
+					sourceRect.y), editparts);
 			setSVGRoot(graphics);
 		} finally {
 			if (graphics != null)
@@ -146,7 +151,8 @@ public class SVGGenerator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gmf.runtime.diagram.ui.render.clipboard.DiagramGenerator#
+	 * @see
+	 * org.eclipse.gmf.runtime.diagram.ui.render.clipboard.DiagramGenerator#
 	 * setUpGraphics(int, int)
 	 */
 	protected Graphics setUpGraphics(int width, int height) {
@@ -155,20 +161,20 @@ public class SVGGenerator {
 	}
 
 	/**
-	 * Renders the list of editparts to the graphics object. Any connections where
-	 * both the source and target editparts are passed in are also drawn.
+	 * Renders the list of editparts to the graphics object. Any connections
+	 * where both the source and target editparts are passed in are also drawn.
 	 * 
 	 * @param graphics
-	 *          the graphics object on which to draw
+	 *            the graphics object on which to draw
 	 * @param translateOffset
-	 *          a <code>Point</code> that the value the <code>graphics</code>
-	 *          object will be translated by in relative coordinates.
+	 *            a <code>Point</code> that the value the <code>graphics</code>
+	 *            object will be translated by in relative coordinates.
 	 * @param editparts
-	 *          the list of <code>IGraphicalEditParts</code> that will be rendered
-	 *          to the graphics object
+	 *            the list of <code>IGraphicalEditParts</code> that will be
+	 *            rendered to the graphics object
 	 */
-	final protected void renderToGraphics(Graphics graphics, Graphics mapModeGraphics,
-			Point translateOffset, List editparts) {
+	final protected void renderToGraphics(Graphics graphics,
+			Graphics mapModeGraphics, Point translateOffset, List editparts) {
 		GraphicsSVG svgG = (GraphicsSVG) graphics;
 		// Document doc = svgG.getDocument();
 		SVGGraphics2D svg2d = svgG.getSVGGraphics2D();
@@ -182,8 +188,10 @@ public class SVGGenerator {
 
 		Map decorations = findDecorations(editparts);
 		int oldLength = 0;
-		for (Iterator editPartsItr = editparts.listIterator(); editPartsItr.hasNext();) {
-			IGraphicalEditPart editPart = (IGraphicalEditPart) editPartsItr.next();
+		for (Iterator editPartsItr = editparts.listIterator(); editPartsItr
+				.hasNext();) {
+			IGraphicalEditPart editPart = (IGraphicalEditPart) editPartsItr
+					.next();
 
 			// do not paint selected connection part
 			if (editPart instanceof ConnectionEditPart) {
@@ -203,10 +211,12 @@ public class SVGGenerator {
 
 				// if the new nodelist contains more children, process them
 				if (newLength > oldLength) {
-					if (newLength - oldLength == 3) { // defs1 is included so skip first
+					if (newLength - oldLength == 3) { // defs1 is included so
+														// skip first
 						oldLength++;
 					}
-					switch (StatechartVisualIDRegistry.getVisualID(editPart.getNotationView())) {
+					switch (StatechartVisualIDRegistry.getVisualID(editPart
+							.getNotationView())) {
 
 					case CompositeStateEditPart.VISUAL_ID:
 						processBaseCompositeState(oldLength, nl, editPart);
@@ -219,6 +229,9 @@ public class SVGGenerator {
 						break;
 					case FinalStateEditPart.VISUAL_ID:
 						processBaseFinalState(oldLength, nl, editPart);
+						break;
+					case PseudoState2EditPart.VISUAL_ID:
+						processBaseBranchingState(oldLength, nl, editPart);
 						break;
 					default:
 						// Nothing to do otherwise
@@ -234,23 +247,27 @@ public class SVGGenerator {
 		// paint the connection parts after shape parts paint
 		decorations = findDecorations(connectionsToPaint);
 
-		for (Iterator<GraphicalEditPart> connItr = connectionsToPaint.iterator(); connItr.hasNext();) {
-			IGraphicalEditPart gep =(IGraphicalEditPart) connItr.next();
+		for (Iterator<GraphicalEditPart> connItr = connectionsToPaint
+				.iterator(); connItr.hasNext();) {
+			IGraphicalEditPart gep = (IGraphicalEditPart) connItr.next();
 			IFigure figure = gep.getFigure();
 			paintFigure(graphics, figure);
 			paintDecorations(graphics, figure, decorations);
-			
-			// mimic the procedure above to insert uuid attribute into transitions
+
+			// mimic the procedure above to insert uuid attribute into
+			// transitions
 			tlg = svg2d.getTopLevelGroup();
 
 			NodeList nl = tlg.getChildNodes();
 			int newLength = nl.getLength();
 			// if the new nodelist contains more children, process them
 			if (newLength > oldLength) {
-//				if (newLength - oldLength == 3) { // defs1 is included so skip first
-//					oldLength++;
-//				}
-				switch (StatechartVisualIDRegistry.getVisualID(gep.getNotationView())) {
+				// if (newLength - oldLength == 3) { // defs1 is included so
+				// skip first
+				// oldLength++;
+				// }
+				switch (StatechartVisualIDRegistry.getVisualID(gep
+						.getNotationView())) {
 
 				case TransitionEditPart.VISUAL_ID:
 					processTransition(oldLength, nl, gep);
@@ -273,15 +290,17 @@ public class SVGGenerator {
 	 * @param nl
 	 * @param editPart
 	 */
-	private void processBaseEntryState(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+	private void processBaseEntryState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Node g = nl.item(oldLength);
 		// Corner case when entry state is the first element
 		if (g == null) {
-			throw new IllegalStateException("Found a null node when parsing for an entry state marker.");
+			throw new IllegalStateException(
+					"Found a null node when parsing for an entry state marker.");
 		}
-		if (g instanceof Element){
-			Element e = (Element)g;
-			if (e.getNodeName().equals("defs")){
+		if (g instanceof Element) {
+			Element e = (Element) g;
+			if (e.getNodeName().equals("defs")) {
 				g = g.getNextSibling();
 			}
 		}
@@ -299,15 +318,17 @@ public class SVGGenerator {
 	 * @param nl
 	 * @param editPart
 	 */
-	private void processBaseFinalState(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+	private void processBaseFinalState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Node g = nl.item(oldLength);
 		// Corner case when final state is the first element
 		if (g == null) {
-			throw new IllegalStateException("Found a null node when parsing for a final state.");
+			throw new IllegalStateException(
+					"Found a null node when parsing for a final state.");
 		}
-		if (g instanceof Element){
-			Element e = (Element)g;
-			if (e.getNodeName().equals("defs")){
+		if (g instanceof Element) {
+			Element e = (Element) g;
+			if (e.getNodeName().equals("defs")) {
 				g = g.getNextSibling();
 			}
 		}
@@ -318,20 +339,55 @@ public class SVGGenerator {
 	}
 	
 	/**
+	 * Fixes the final state appearance by adding a fill="black" attribute.
+	 * 
+	 * @param oldLength
+	 * @param nl
+	 * @param editPart
+	 */
+	private void processBaseBranchingState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
+		Node g = nl.item(oldLength);
+		// Corner case when branching state is the first element
+		if (g == null) {
+			throw new IllegalStateException(
+					"Found a null node when parsing for a branching state.");
+		}
+		if (g instanceof Element) {
+			Element e = (Element) g;
+			if (e.getNodeName().equals("defs")) {
+				g = g.getNextSibling();
+			}
+		}
+		Element firstElement = (Element) g.getFirstChild();
+		String uuid = findUUID(editPart);
+		firstElement.setAttribute("uuid", uuid);
+	}
+
+	/**
 	 * Adds uuid attribute to transition svg elements.
 	 * 
 	 * @param oldLength
 	 * @param nl
 	 */
-	private void processTransition(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+	private void processTransition(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Node g = nl.item(oldLength);
 		Element firstElement = (Element) g.getFirstChild();
-		if (!firstElement.getNodeName().equals("line")) {
-			throw new IllegalStateException(
-					"The first svg element of a transition should be 'line'.");
+		if (firstElement != null) {
+			if (!firstElement.getNodeName().equals("line")) {
+				throw new IllegalStateException(
+						"The first svg element of a transition should be 'line'.");
+			}
+			String uuid = findUUID(editPart);
+			firstElement.setAttribute("uuid", uuid);
+			Element sibling = (Element)firstElement.getNextSibling();
+			while (sibling != null){
+				sibling.setAttribute("uuid", uuid);
+				sibling = (Element)sibling.getNextSibling();
+			}
 		}
-		String uuid = findUUID(editPart);
-		firstElement.setAttribute("uuid", uuid);
+
 	}
 
 	/**
@@ -340,7 +396,8 @@ public class SVGGenerator {
 	 * @param oldLength
 	 * @param nl
 	 */
-	private void processBaseSimpleState(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+	private void processBaseSimpleState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Element firstElement = processAndGetFirstStateElement(oldLength, nl);
 		String uuid = findUUID(editPart);
 		firstElement.setAttribute("uuid", uuid);
@@ -354,7 +411,8 @@ public class SVGGenerator {
 	 * @param nl
 	 * @param editPart
 	 */
-	private void processBaseCompositeState(int oldLength, NodeList nl, IGraphicalEditPart editPart) {
+	private void processBaseCompositeState(int oldLength, NodeList nl,
+			IGraphicalEditPart editPart) {
 		Element firstElement = processAndGetFirstStateElement(oldLength, nl);
 		if (!firstElement.getNodeName().equals("rect")) {
 			throw new IllegalStateException(
@@ -373,11 +431,13 @@ public class SVGGenerator {
 			}
 		}
 		if (compartmentEditPart != null) {
-			List baseCompositeStateCompartmentEditPartChildren = compartmentEditPart.getChildren();
+			List baseCompositeStateCompartmentEditPartChildren = compartmentEditPart
+					.getChildren();
 			// CompositeStateCompositeStateCompartmentEditPart
 			// process in a depth first manner the EditParts contained within
 			try {
-				nextElement = processSubElements(nextElement, baseCompositeStateCompartmentEditPartChildren);
+				nextElement = processSubElements(nextElement,
+						baseCompositeStateCompartmentEditPartChildren);
 			} catch (IllegalStateException e) {
 				// fast forward to last element
 				while (nextElement.getNextSibling() != null) {
@@ -400,33 +460,38 @@ public class SVGGenerator {
 	 * @param childrenEditParts
 	 * @return
 	 */
-	private Element processSubElements(Element nextElement, List childrenEditParts) {
+	private Element processSubElements(Element nextElement,
+			List childrenEditParts) {
 		for (Object child : childrenEditParts) {
 			if (child instanceof IGraphicalEditPart) {
 				IGraphicalEditPart childGraphicalEditPart = (IGraphicalEditPart) child;
-				switch (StatechartVisualIDRegistry.getVisualID(childGraphicalEditPart.getNotationView())) {
+				switch (StatechartVisualIDRegistry
+						.getVisualID(childGraphicalEditPart.getNotationView())) {
 
 				case CompositeState2EditPart.VISUAL_ID: // Sub Composite
 					// State
-					nextElement = processSubCompositeState(nextElement, childGraphicalEditPart);
+					nextElement = processSubCompositeState(nextElement,
+							childGraphicalEditPart);
 					break;
 				case State2EditPart.VISUAL_ID: // Sub Simple State
-					nextElement = processSubSimpleState(nextElement, childGraphicalEditPart);
+					nextElement = processSubSimpleState(nextElement,
+							childGraphicalEditPart);
 					break;
 				case PseudoState3EditPart.VISUAL_ID: // Initial State Marker
 					nextElement = processInitialStateMarker(nextElement);
 					break;
 				case PseudoState4EditPart.VISUAL_ID: // Sub Branching State
-					nextElement = processSubBranchingState(nextElement);
+					nextElement = processSubBranchingState(nextElement,childGraphicalEditPart);
 					break;
 				case FinalState2EditPart.VISUAL_ID: // Sub Final State
-					nextElement = processSubFinalState(nextElement, childGraphicalEditPart);
+					nextElement = processSubFinalState(nextElement,
+							childGraphicalEditPart);
 					break;
 				case HistoryEditPart.VISUAL_ID: // Shallow History State
-					nextElement = processShallowHistoryState(nextElement);
+					nextElement = processShallowHistoryState(nextElement,childGraphicalEditPart);
 					break;
 				case History2EditPart.VISUAL_ID: // Deep History State
-					nextElement = processDeepHistoryState(nextElement);
+					nextElement = processDeepHistoryState(nextElement,childGraphicalEditPart);
 					break;
 				default:
 					// Nothing to do otherwise
@@ -445,7 +510,8 @@ public class SVGGenerator {
 	 * @param editPart
 	 * @return the next svg element
 	 */
-	private Element processSubCompositeState(Element nextElement, IGraphicalEditPart editPart) {
+	private Element processSubCompositeState(Element nextElement,
+			IGraphicalEditPart editPart) {
 
 		if (!nextElement.getNodeName().equals("rect")) {
 			throw new IllegalStateException(
@@ -465,13 +531,15 @@ public class SVGGenerator {
 			}
 		}
 		if (compartment2EditPart != null) {
-			List baseCompositeStateCompartment2EditPartChildren = compartment2EditPart.getChildren();
+			List baseCompositeStateCompartment2EditPartChildren = compartment2EditPart
+					.getChildren();
 			try {
 				nextElement = processSubElements(nextElement,
 						baseCompositeStateCompartment2EditPartChildren);
 			} catch (IllegalStateException e) {
 				// fast forward to last element
-				while (!nextElement.getNodeName().equals("line") && nextElement.getNextSibling() != null) {
+				while (!nextElement.getNodeName().equals("line")
+						&& nextElement.getNextSibling() != null) {
 					nextElement = (Element) nextElement.getNextSibling();
 				}
 			}
@@ -493,12 +561,15 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processShallowHistoryState(Element nextElement) {
+	private Element processShallowHistoryState(Element nextElement,
+			IGraphicalEditPart editPart) {
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
 					"The first svg element of a shallow history state should be 'circle'.");
 		}
 		nextElement.setAttribute("fill", "black");
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
@@ -529,12 +600,16 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processDeepHistoryState(Element nextElement) {
+	private Element processDeepHistoryState(Element nextElement,
+			IGraphicalEditPart editPart) {
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
 					"The first svg element of a deep history state should be 'circle'.");
 		}
+		
 		nextElement.setAttribute("fill", "black");
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("circle")) {
 			throw new IllegalStateException(
@@ -595,16 +670,21 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processSubBranchingState(Element nextElement) {
+	private Element processSubBranchingState(Element nextElement,
+			IGraphicalEditPart editPart) {
+		
 		if (!nextElement.getNodeName().equals("polygon")) {
 			throw new IllegalStateException(
 					"The first svg element of a branching state should be 'polygon'.");
 		}
+		String uuid = findUUID(editPart);
+		nextElement.setAttribute("uuid", uuid);
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("polygon")) {
 			throw new IllegalStateException(
 					"The second svg element of a branching state should be 'polygon'.");
 		}
+//		nextElement.setAttribute("uuid", uuid); // Likely unnecessary so omit
 		return (Element) nextElement.getNextSibling();
 	}
 
@@ -614,9 +694,11 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processSubFinalState(Element nextElement, IGraphicalEditPart editPart) {
+	private Element processSubFinalState(Element nextElement,
+			IGraphicalEditPart editPart) {
 		if (!nextElement.getNodeName().equals("circle")) {
-			throw new IllegalStateException("The first svg element of a final state should be 'circle'.");
+			throw new IllegalStateException(
+					"The first svg element of a final state should be 'circle'.");
 		}
 		nextElement.setAttribute("fill", "black");
 		String uuid = findUUID(editPart);
@@ -640,19 +722,23 @@ public class SVGGenerator {
 	 * @param nextElement
 	 * @return
 	 */
-	private Element processSubSimpleState(Element nextElement, IGraphicalEditPart editPart) {
+	private Element processSubSimpleState(Element nextElement,
+			IGraphicalEditPart editPart) {
 		if (!nextElement.getNodeName().equals("rect")) {
-			throw new IllegalStateException("The first svg element of a simple state should be 'rect'.");
+			throw new IllegalStateException(
+					"The first svg element of a simple state should be 'rect'.");
 		}
 		String uuid = findUUID(editPart);
 		nextElement.setAttribute("uuid", uuid);
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("rect")) {
-			throw new IllegalStateException("The second svg element of a simple state should be 'rect'.");
+			throw new IllegalStateException(
+					"The second svg element of a simple state should be 'rect'.");
 		}
 		nextElement = (Element) nextElement.getNextSibling();
 		if (!nextElement.getNodeName().equals("text")) {
-			throw new IllegalStateException("The third svg element of a simple state should be 'text'.");
+			throw new IllegalStateException(
+					"The third svg element of a simple state should be 'text'.");
 		}
 		return (Element) nextElement.getNextSibling();
 	}
@@ -734,11 +820,12 @@ public class SVGGenerator {
 	 * @return
 	 */
 	private String findUUID(IGraphicalEditPart editPart) {
-		EObject statechartElementObject = ViewUtil.resolveSemanticElement(editPart.getNotationView());
+		EObject statechartElementObject = ViewUtil
+				.resolveSemanticElement(editPart.getNotationView());
 		String result = "";
 		if (statechartElementObject instanceof AbstractStateImpl) {
 			result = ((AbstractStateImpl) statechartElementObject).getUuid();
-		} else if (statechartElementObject instanceof TransitionImpl){
+		} else if (statechartElementObject instanceof TransitionImpl) {
 			result = ((TransitionImpl) statechartElementObject).getUuid();
 		}
 		return result;
@@ -748,8 +835,8 @@ public class SVGGenerator {
 	 * Find the decorations that adorn the specified <code>editParts</code>.
 	 * 
 	 * @param editparts
-	 *          the list of <code>IGraphicalEditParts</code> for which to find
-	 *          decorations
+	 *            the list of <code>IGraphicalEditParts</code> for which to find
+	 *            decorations
 	 * @return a mapping of {@link IFigure}to ({@link Decoration}or
 	 *         {@link Collection}of decorations})
 	 */
@@ -761,7 +848,8 @@ public class SVGGenerator {
 		Map result = new java.util.HashMap();
 
 		if (!editparts.isEmpty()) {
-			IGraphicalEditPart first = (IGraphicalEditPart) editparts.iterator().next();
+			IGraphicalEditPart first = (IGraphicalEditPart) editparts
+					.iterator().next();
 
 			IFigure decorationLayer = LayerManager.Helper.find(first).getLayer(
 					DiagramRootEditPart.DECORATION_PRINTABLE_LAYER);
@@ -774,7 +862,8 @@ public class SVGGenerator {
 				}
 
 				// find the decorations on figures that were selected
-				for (Iterator iter = decorationLayer.getChildren().iterator(); iter.hasNext();) {
+				for (Iterator iter = decorationLayer.getChildren().iterator(); iter
+						.hasNext();) {
 					Object next = iter.next();
 
 					if (next instanceof Decoration) {
@@ -812,7 +901,7 @@ public class SVGGenerator {
 	 * Constructs a mapping of figures to their corresponding edit parts.
 	 * 
 	 * @param editParts
-	 *          a collection of <code>IGraphicalEditParts</code>
+	 *            a collection of <code>IGraphicalEditParts</code>
 	 * @return a mapping of {@link IFigure}to {@link IGraphicalEditPart}
 	 */
 	private Map mapFiguresToEditParts(Collection editParts) {
@@ -828,13 +917,13 @@ public class SVGGenerator {
 	}
 
 	/**
-	 * This method is used when a figure needs to be painted to the graphics. The
-	 * figure will be translated based on its absolute positioning.
+	 * This method is used when a figure needs to be painted to the graphics.
+	 * The figure will be translated based on its absolute positioning.
 	 * 
 	 * @param graphics
-	 *          Graphics object to render figure
+	 *            Graphics object to render figure
 	 * @param figure
-	 *          the figure to be rendered
+	 *            the figure to be rendered
 	 */
 	private void paintFigure(Graphics graphics, IFigure figure) {
 
@@ -844,7 +933,8 @@ public class SVGGenerator {
 		// Calculate the Relative bounds and absolute bounds
 		Rectangle relBounds = null;
 		if (figure instanceof IExpandableFigure)
-			relBounds = ((IExpandableFigure) figure).getExtendedBounds().getCopy();
+			relBounds = ((IExpandableFigure) figure).getExtendedBounds()
+					.getCopy();
 		else
 			relBounds = figure.getBounds().getCopy();
 
@@ -868,7 +958,7 @@ public class SVGGenerator {
 	 * <code>Graphics</code> object used for rendering.
 	 * 
 	 * @param g
-	 *          Graphics element that is to be disposed.
+	 *            Graphics element that is to be disposed.
 	 */
 	protected void disposeGraphics(Graphics g) {
 		g.dispose();
@@ -878,24 +968,25 @@ public class SVGGenerator {
 	 * Collects all connections contained within the given edit part
 	 * 
 	 * @param editPart
-	 *          the container editpart
+	 *            the container editpart
 	 * @return connections within it
 	 */
-	private Collection<ConnectionEditPart> findConnectionsToPaint(IGraphicalEditPart editPart) {
+	private Collection<ConnectionEditPart> findConnectionsToPaint(
+			IGraphicalEditPart editPart) {
 		/*
 		 * Set of node editparts contained within the given editpart
 		 */
 		HashSet<GraphicalEditPart> editParts = new HashSet<GraphicalEditPart>();
 
 		/*
-		 * All connection editparts that have a source contained within the given
-		 * editpart
+		 * All connection editparts that have a source contained within the
+		 * given editpart
 		 */
 		HashSet<ConnectionEditPart> connectionEPs = new HashSet<ConnectionEditPart>();
 
 		/*
-		 * Connections contained within the given editpart (or just the connections
-		 * to paint
+		 * Connections contained within the given editpart (or just the
+		 * connections to paint
 		 */
 		HashSet<ConnectionEditPart> connectionsToPaint = new HashSet<ConnectionEditPart>();
 
@@ -905,9 +996,11 @@ public class SVGGenerator {
 		getNestedEditParts(editPart, editParts);
 
 		/*
-		 * Populate the set of connections whose source is within the given editpart
+		 * Populate the set of connections whose source is within the given
+		 * editpart
 		 */
-		for (Iterator<GraphicalEditPart> editPartsItr = editParts.iterator(); editPartsItr.hasNext();) {
+		for (Iterator<GraphicalEditPart> editPartsItr = editParts.iterator(); editPartsItr
+				.hasNext();) {
 			connectionEPs.addAll(getAllConnectionsFrom(editPartsItr.next()));
 		}
 
@@ -916,8 +1009,9 @@ public class SVGGenerator {
 		 */
 		while (!connectionEPs.isEmpty()) {
 			/*
-			 * Take the first connection and check whethe there is a path through that
-			 * connection that leads to the target contained within the given editpart
+			 * Take the first connection and check whethe there is a path
+			 * through that connection that leads to the target contained within
+			 * the given editpart
 			 */
 			Stack<ConnectionEditPart> connectionsPath = new Stack<ConnectionEditPart>();
 			ConnectionEditPart conn = connectionEPs.iterator().next();
@@ -931,10 +1025,10 @@ public class SVGGenerator {
 			while (connectionEPs.contains(target)) {
 				/*
 				 * If the target end is a connection, check if it's one of the
-				 * connection's whose target is a connection and within the given
-				 * editpart. Append it to the path if it is. Otherwise check if the
-				 * target is within the actual connections or nodes contained within the
-				 * given editpart
+				 * connection's whose target is a connection and within the
+				 * given editpart. Append it to the path if it is. Otherwise
+				 * check if the target is within the actual connections or nodes
+				 * contained within the given editpart
 				 */
 				ConnectionEditPart targetConn = (ConnectionEditPart) target;
 				connectionEPs.remove(targetConn);
@@ -950,7 +1044,8 @@ public class SVGGenerator {
 			 * The path is built, check if it's target is a node or a connection
 			 * contained within the given editpart
 			 */
-			if (editParts.contains(target) || connectionsToPaint.contains(target)) {
+			if (editParts.contains(target)
+					|| connectionsToPaint.contains(target)) {
 				connectionsToPaint.addAll(connectionsPath);
 			}
 		}
@@ -958,22 +1053,25 @@ public class SVGGenerator {
 	}
 
 	/**
-	 * Paints the decorations adorning the specified <code>figure</code>, if any.
+	 * Paints the decorations adorning the specified <code>figure</code>, if
+	 * any.
 	 * 
 	 * @param graphics
-	 *          the graphics to paint on
+	 *            the graphics to paint on
 	 * @param figure
-	 *          the figure
+	 *            the figure
 	 * @param decorations
-	 *          mapping of figures to decorations, in which we will find the
-	 *          <code>figure</code>'s decorations
+	 *            mapping of figures to decorations, in which we will find the
+	 *            <code>figure</code>'s decorations
 	 */
-	private void paintDecorations(Graphics graphics, IFigure figure, Map decorations) {
+	private void paintDecorations(Graphics graphics, IFigure figure,
+			Map decorations) {
 		Object decoration = decorations.get(figure);
 
 		if (decoration != null) {
 			if (decoration instanceof Collection) {
-				for (Iterator iter = ((Collection) decoration).iterator(); iter.hasNext();) {
+				for (Iterator iter = ((Collection) decoration).iterator(); iter
+						.hasNext();) {
 					paintFigure(graphics, (IFigure) iter.next());
 				}
 			} else {
@@ -987,13 +1085,15 @@ public class SVGGenerator {
 	 * compartments.
 	 * 
 	 * @param childEditPart
-	 *          base edit part to get the list of children editparts
+	 *            base edit part to get the list of children editparts
 	 * @param editParts
-	 *          list of nested shape edit parts
+	 *            list of nested shape edit parts
 	 */
-	private void getNestedEditParts(IGraphicalEditPart childEditPart, Collection editParts) {
+	private void getNestedEditParts(IGraphicalEditPart childEditPart,
+			Collection editParts) {
 
-		for (Iterator iter = childEditPart.getChildren().iterator(); iter.hasNext();) {
+		for (Iterator iter = childEditPart.getChildren().iterator(); iter
+				.hasNext();) {
 
 			IGraphicalEditPart child = (IGraphicalEditPart) iter.next();
 			editParts.add(child);
@@ -1003,11 +1103,11 @@ public class SVGGenerator {
 
 	/**
 	 * Returns all connections orginating from a given editpart. All means that
-	 * connections originating from connections that have a source given editpart
-	 * will be included
+	 * connections originating from connections that have a source given
+	 * editpart will be included
 	 * 
 	 * @param ep
-	 *          the editpart
+	 *            the editpart
 	 * @return all source connections
 	 */
 	private List<ConnectionEditPart> getAllConnectionsFrom(GraphicalEditPart ep) {
@@ -1024,19 +1124,21 @@ public class SVGGenerator {
 	 * Writes the SVG Model out to a file.
 	 * 
 	 * @param outputStream
-	 *          output stream to store the SVG Model
+	 *            output stream to store the SVG Model
 	 */
 	public void stream(OutputStream outputStream) {
 		try {
 
 			// Define the view box
-			svgRoot.setAttributeNS(null, "viewBox", String.valueOf(viewBox.x) + " " + //$NON-NLS-1$ //$NON-NLS-2$
-					String.valueOf(viewBox.y) + " " + //$NON-NLS-1$
-					String.valueOf(viewBox.width) + " " + //$NON-NLS-1$
-					String.valueOf(viewBox.height));
+			svgRoot.setAttributeNS(null,
+					"viewBox", String.valueOf(viewBox.x) + " " + //$NON-NLS-1$ //$NON-NLS-2$
+							String.valueOf(viewBox.y) + " " + //$NON-NLS-1$
+							String.valueOf(viewBox.width) + " " + //$NON-NLS-1$
+							String.valueOf(viewBox.height));
 
 			// Write the document to the stream
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = TransformerFactory.newInstance()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -1045,7 +1147,8 @@ public class SVGGenerator {
 			StreamResult result = new StreamResult(outputStream);
 			transformer.transform(source, result);
 		} catch (Exception ex) {
-			Log.error(DiagramUIRenderPlugin.getInstance(), IStatus.ERROR, ex.getMessage(), ex);
+			Log.error(DiagramUIRenderPlugin.getInstance(), IStatus.ERROR,
+					ex.getMessage(), ex);
 		}
 	}
 
@@ -1058,20 +1161,22 @@ public class SVGGenerator {
 	}
 
 	/**
-	 * Determine the minimal rectangle required to bound the list of editparts. A
-	 * margin is used around each of the editpart's figures when calculating the
-	 * size.
+	 * Determine the minimal rectangle required to bound the list of editparts.
+	 * A margin is used around each of the editpart's figures when calculating
+	 * the size.
 	 * 
 	 * @param editparts
-	 *          the list of <code>IGraphicalEditParts</code> from which their
-	 *          figure bounds will be used
+	 *            the list of <code>IGraphicalEditParts</code> from which their
+	 *            figure bounds will be used
 	 * @return Rectangle the minimal rectangle that can bound the figures of the
 	 *         list of editparts
 	 */
-	public org.eclipse.swt.graphics.Rectangle calculateImageRectangle(List editparts) {
-		Rectangle rect = DiagramImageUtils.calculateImageRectangle(editparts, getImageMargin(),
-				emptyImageSize);
-		return new org.eclipse.swt.graphics.Rectangle(rect.x, rect.y, rect.width, rect.height);
+	public org.eclipse.swt.graphics.Rectangle calculateImageRectangle(
+			List editparts) {
+		Rectangle rect = DiagramImageUtils.calculateImageRectangle(editparts,
+				getImageMargin(), emptyImageSize);
+		return new org.eclipse.swt.graphics.Rectangle(rect.x, rect.y,
+				rect.width, rect.height);
 	}
 
 	/**
