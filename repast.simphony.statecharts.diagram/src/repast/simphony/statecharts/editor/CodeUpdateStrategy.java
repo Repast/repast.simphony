@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class CodeUpdateStrategy extends UpdateValueStrategy {
   
-  private JavaSourceViewer viewer;
+  private StatechartSourceViewer viewer;
   
-  public CodeUpdateStrategy(JavaSourceViewer viewer) {
+  public CodeUpdateStrategy(StatechartSourceViewer viewer) {
     this.viewer = viewer;
   }
 

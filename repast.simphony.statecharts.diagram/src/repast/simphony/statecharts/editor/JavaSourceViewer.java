@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @author Nick Collier
  */
-public class JavaSourceViewer extends SourceViewer {
+public class JavaSourceViewer extends SourceViewer implements StatechartSourceViewer {
 
   /** Preference key for automatically closing strings */
   private final static String CLOSE_STRINGS = PreferenceConstants.EDITOR_CLOSE_STRINGS;

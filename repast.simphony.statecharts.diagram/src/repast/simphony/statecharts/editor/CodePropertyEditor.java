@@ -62,11 +62,7 @@ import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
  * 
  * @author Nick Collier
  */
-public class CodePropertyEditor extends CompilationUnitEditor /*
-                                                               * implements
-                                                               * ITextEditor,
-                                                               * IJavaReconcilingListener
-                                                               */{
+public class CodePropertyEditor extends CompilationUnitEditor implements StatechartCodeEditor {
 
   private static int VERTICAL_RULER_WIDTH = 12;
 
@@ -150,7 +146,7 @@ public class CodePropertyEditor extends CompilationUnitEditor /*
    * 
    * @return the viewer for this editor.
    */
-  public JavaSourceViewer getJavaSourceViewer() {
+  public JavaSourceViewer getCodeViewer() {
     return viewer;
   }
   

@@ -1,6 +1,9 @@
 package repast.simphony.statecharts.sheets;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -9,29 +12,44 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import repast.simphony.statecharts.editor.CodePropertyEditor;
 import repast.simphony.statecharts.editor.EditorSupport;
+import repast.simphony.statecharts.editor.StatechartCodeEditor;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.scmodel.AbstractState;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class FinalStateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
+  private static String ON_ENTER_ID = "on.enter.id";
+
   private Text idTxt;
   private EditorSupport support = new EditorSupport();
   private LanguageButtonsGroup buttonGroup;
+  private LanguageTypes language;
+  private AbstractState state;
+  private BindingSupport binding;
+
+  // we have to use the emf notification mechanism
+  // for listening to language changes because
+  // we use the state itself to get is current language
+  private Adapter langNotify = new AdapterImpl() {
+    @Override
+    public void notifyChanged(Notification msg) {
+      if (msg.getFeature() != null
+          && msg.getFeature().equals(StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE)) {
+        languageChanged();
+      }
+    }
+  };
 
   public FinalStateSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -104,36 +122,31 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
     toolkit.adapt(lblOnEnter, true, true);
     lblOnEnter.setText("On Enter:");
 
-    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-        .findView("org.eclipse.ui.views.PropertySheet");
-    
-    CodePropertyEditor onEnterEditor = support.createEditor();
-    Group group = new Group(composite, SWT.BORDER);
-    GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-    group.setLayoutData(data);
-    
-    GridLayout grpLayout = new GridLayout(1, true);
-    grpLayout.verticalSpacing = 0;
-    grpLayout.horizontalSpacing = 0;
-    grpLayout.marginHeight = 0;
-    grpLayout.marginWidth = 0;
-    
-    group.setLayout(grpLayout);
-    onEnterEditor.createPartControl(part.getSite(), group);
-    StyledText widget = onEnterEditor.getCodeTextWidget();
-    data = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-    //data.heightHint = -1;
-    widget.getParent().setLayoutData(data);
-    group.setLayoutData(data);
+    support.createEntry(ON_ENTER_ID, composite);
   }
   
-  /* (non-Javadoc)
+  private void languageChanged() {
+    LanguageTypes newLang = buttonGroup.getSelectedType();
+    if (newLang != language) {
+      language = newLang;
+      support.resetStateOnEditor(ON_ENTER_ID, state);
+      binding.removeBindings();
+      StatechartCodeEditor editor = support.getEditor(ON_ENTER_ID);
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, editor.getCodeViewer());
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, editor.getImportViewer());
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.eclipse.swt.widgets.Widget#dispose()
    */
   @Override
   public void dispose() {
     super.dispose();
     try {
+      state.eAdapters().remove(langNotify);
       support.dispose();
     } catch (CoreException ex) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
@@ -157,11 +170,17 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
         400, idTxt);
     context.bindValue(observe, property.observe(eObject));
     
-    if (support.getEditor(0).getEditorInput() == null) support.init((AbstractState)eObject);
-    
-    BindingSupport binding = new BindingSupport(context, eObject);
-    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, support.getEditor(0).getJavaSourceViewer());
-    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, support.getEditor(0).getImportViewer());
+    state = (AbstractState)eObject;
+    language = state.getLanguage();
+    support.initStateOnEditor(ON_ENTER_ID, state);
+    state.eAdapters().add(langNotify);
+
+
+    binding = new BindingSupport(context, eObject);
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, support.getEditor(ON_ENTER_ID)
+        .getCodeViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, support.getEditor(ON_ENTER_ID)
+        .getImportViewer());
 
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
   }
