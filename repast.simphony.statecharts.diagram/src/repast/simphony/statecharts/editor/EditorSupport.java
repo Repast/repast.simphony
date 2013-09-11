@@ -355,7 +355,7 @@ public class EditorSupport {
     if (data.editor == null) {
 
       if (language == LanguageTypes.JAVA) {
-        data.editor = new CodePropertyEditor();
+        data.editor = new StatechartJavaEditor();
       } else {
         data.editor = new StatechartGroovyEditor();
       }

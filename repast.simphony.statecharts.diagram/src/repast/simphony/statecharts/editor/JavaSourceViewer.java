@@ -55,7 +55,7 @@ public class JavaSourceViewer extends SourceViewer implements StatechartSourceVi
   /**
    * Configures this viewer with a default JavaSourceViewerConfiguration.
    */
-  public void configure(IPreferenceStore prefStore, CodePropertyEditor editor) {
+  public void configure(IPreferenceStore prefStore, StatechartJavaEditor editor) {
     JavaTextTools textTools = JavaPlugin.getDefault().getJavaTextTools();
     JavaSourceViewerConfiguration config = new JavaSourceViewerConfiguration(textTools.getColorManager(),
         prefStore, editor, null);
