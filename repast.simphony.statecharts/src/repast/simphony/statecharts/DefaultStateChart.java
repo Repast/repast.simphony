@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
@@ -66,6 +67,16 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	protected void putStateUuid(AbstractState<T> state, String uuid) {
 		stateUuidMap.put(state, uuid);
+	}
+	
+	private Map<Transition<T>, String> transitionUuidMap;
+	
+	protected void setTransitionUuidMap(Map<Transition<T>, String> transitionUuidMap) {
+		this.transitionUuidMap = transitionUuidMap;
+	}
+
+	protected void putTransitionUuid(Transition<T> transition, String uuid) {
+		transitionUuidMap.put(transition, uuid);
 	}
 
 	protected void registerEntryState(AbstractState<T> state) {
@@ -456,7 +467,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return triggeredTransitions;
 	}
 
-	protected void resolve() {
+	public void resolve() {
 		// Partition active self transitions into queue consuming and non queue
 		// consuming
 		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
@@ -633,7 +644,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	protected double getPriority() {
+	public double getPriority() {
 		return priority;
 	}
 
@@ -691,6 +702,26 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		String result = stateUuidMap.get(state);
 		return result;
 	}
+	
+	@Override
+	public AbstractState<T> getStateForUuid(String uuid){
+		for (Entry<AbstractState<T>,String> entry :stateUuidMap.entrySet()){
+			if (entry.getValue().equals(uuid)){
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public Transition<T> getTransitionForUuid(String uuid){
+		for (Entry<Transition<T>,String> entry : transitionUuidMap.entrySet()){
+			if (entry.getValue().equals(uuid)){
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
 
 	private Set<StateChartListener> stateChartListeners = new LinkedHashSet<StateChartListener>();
 
@@ -709,6 +740,49 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			scl.update();
 		}
 
+	}
+
+	@Override
+	public void activateState(AbstractState<T> state) {
+		SimpleState<T> simpleState = getCurrentSimpleState();
+		// Check that there exists a current active simple state
+		if (simpleState != null){
+			AbstractState<T> lca = null;
+			// Being in a final state is like being in no state
+			if (simpleState instanceof FinalState){
+				currentSimpleState = null;
+			}
+			else {
+				lca = simpleState.calculateLowestCommonAncestor(state);
+				List<AbstractState<T>> statesToExit = getStatesToExit(lca);
+				currentSimpleState = null;
+				for (AbstractState<T> as : statesToExit) {
+					clearTransitions(as);
+					as.onExit();
+				}
+			}
+			
+			List<AbstractState<T>> statesToEnter = getStatesToEnter(lca, state);
+
+			stateInit(statesToEnter);
+		}
+		//TODO: consider activating the statechart if it's not active
+	}
+
+	@Override
+	public void followTransition(Transition<T> transition) {
+		List<AbstractState<T>> currentStates = getCurrentStates();
+		if (!currentStates.isEmpty()){
+			if (currentStates.contains(transition.getSource())){
+				if (transition instanceof SelfTransition){
+					transition.onTransition();
+				}
+				else {
+					makeRegularTransition(transition);
+				}
+			}
+		}
+		
 	}
 
 }
