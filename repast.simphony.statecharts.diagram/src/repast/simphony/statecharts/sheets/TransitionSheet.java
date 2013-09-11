@@ -704,9 +704,10 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   private void languageChanged() {
     LanguageTypes newLang = buttonGroup.getSelectedType();
-    if (newLang != language) {
-      language = newLang;
-
+    // only switch if switching from Java to something else
+    // switching between Groovy and ReLogo doesn't require an editor switch
+    if (newLang != language && (newLang == LanguageTypes.JAVA || language == LanguageTypes.JAVA)) {
+      
       support.resetTriggerDblEditor(TRIGGER_TIME_ID, transition);
       support.resetTriggerDblEditor(TRIGGER_EXP_ID, transition);
       support.resetTriggerDblEditor(TRIGGER_PROB_ID, transition);
@@ -737,6 +738,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
       bindings.bind(StatechartPackage.Literals.TRANSITION__GUARD_IMPORTS, editor.getImportViewer());
       triggerChanged();
     }
+    language = newLang;
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
@@ -933,13 +935,4 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
       return null;
     }
   }
-
-  // private static class CancelTraverseOnReturn implements TraverseListener {
-  // public void keyTraversed(TraverseEvent e) {
-  // if (e.detail == SWT.TRAVERSE_RETURN) {
-  // e.doit = false;
-  // e.detail = SWT.TRAVERSE_NONE;
-  // }
-  // }
-  // }
 }

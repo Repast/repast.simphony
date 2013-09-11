@@ -146,8 +146,10 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
 
   private void languageChanged() {
     LanguageTypes newLang = buttonGroup.getSelectedType();
-    if (newLang != language) {
-      language = newLang;
+    // only switch if switching from Java to something else
+    // switching between Groovy and ReLogo doesn't require an editor switch
+    if (newLang != language && (newLang == LanguageTypes.JAVA || language == LanguageTypes.JAVA)) {
+
       edSupport.resetStateOnEditor(ON_ENTER_ID, state);
       edSupport.resetStateOnEditor(ON_EXIT_ID, state);
 
@@ -162,6 +164,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
       binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT_IMPORTS,
           editor.getImportViewer());
     }
+    language = newLang;
   }
 
   /**
@@ -183,17 +186,18 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     // is not disposed
     if (state != null && !eObject.equals(state)) {
       state.eAdapters().remove(langNotify);
-      if (state.getLanguage() != ((AbstractState)eObject).getLanguage()) {
+      if (state.getLanguage() != ((AbstractState) eObject).getLanguage()) {
         // if the language is different the dispose of the editors
         // and start again.
         try {
           edSupport.disposeAllEditors();
         } catch (CoreException e) {
-          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors", e);
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors",
+              e);
         }
       }
     }
-    
+
     state = (AbstractState) eObject;
     language = state.getLanguage();
 
@@ -205,7 +209,6 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     context.bindValue(observe, property.observe(eObject));
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
 
-    
     edSupport.initStateOnEditor(ON_ENTER_ID, state);
     edSupport.initStateOnEditor(ON_EXIT_ID, state);
 

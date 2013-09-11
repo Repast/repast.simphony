@@ -160,14 +160,16 @@ public class HistoryStateSheet extends FocusFixComposite implements BindableFocu
   
   private void languageChanged() {
     LanguageTypes newLang = buttonGroup.getSelectedType();
-    if (newLang != language) {
-      language = newLang;
+    // only switch if switching from Java to something else
+    // switching between Groovy and ReLogo doesn't require an editor switch
+    if (newLang != language && (newLang == LanguageTypes.JAVA || language == LanguageTypes.JAVA)) {
       support.resetStateOnEditor(EDITOR_ID, state);
       binding.removeBindings();
       StatechartCodeEditor editor = support.getEditor(EDITOR_ID);
       binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, editor.getCodeViewer());
       binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS, editor.getImportViewer());
     }
+    language = newLang;
   }
 
 
