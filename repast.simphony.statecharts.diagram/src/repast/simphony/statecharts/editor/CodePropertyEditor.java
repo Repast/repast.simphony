@@ -173,6 +173,8 @@ public class CodePropertyEditor extends CompilationUnitEditor implements Statech
     IDocumentProvider provider = getDocumentProvider();
     if (this.input != null) {
       provider.disconnect(this.input);
+      fSourceViewerDecorationSupport.uninstall();
+      fSourceViewerDecorationSupport = null;
     }
 
     this.input = input;
