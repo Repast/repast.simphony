@@ -24,6 +24,7 @@ import org.eclipse.xtend.expression.Variable;
 import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel;
 
 import repast.simphony.statecharts.scmodel.AbstractState;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StateMachine;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
@@ -82,6 +83,11 @@ public class TemplateGenerator {
       init();
     }
   }
+  
+  private String getLangExt(LanguageTypes type) {
+    if (type == LanguageTypes.JAVA) return "java";
+    return "groovy";
+  }
 
   /**
    * Generates the template class code for the specified state.
@@ -93,7 +99,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, state);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.STATE_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + state.getLanguage());
+        append(CodeGeneratorConstants.STATE_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(state.getLanguage()));
   }
   
   public IPath generateGuard(IProject project, Transition transition) {
@@ -102,7 +108,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.GUARD_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.GUARD_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
   
   public IPath generateTriggerCondition(IProject project, Transition transition) {
@@ -111,7 +117,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.TRIGGER_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.TRIGGER_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
   
   public IPath generateTriggerDbl(IProject project, Transition transition) {
@@ -120,7 +126,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.TRIGGER_DBL_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.TRIGGER_DBL_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
   
   public IPath generateMessageEq(IProject project, Transition transition) {
@@ -129,7 +135,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.TRIGGER_MESSAGE_EQ_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.TRIGGER_MESSAGE_EQ_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
   
   public IPath generateMessageCond(IProject project, Transition transition) {
@@ -138,7 +144,7 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.TRIGGER_MESSAGE_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.TRIGGER_MESSAGE_COND_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
   
   public IPath generateOnTrans(IProject project, Transition transition) {
@@ -147,6 +153,6 @@ public class TemplateGenerator {
     facade.evaluate(templatePath, transition);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
-        append(CodeGeneratorConstants.ON_TRANS_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + transition.getTriggerCodeLanguage());
+        append(CodeGeneratorConstants.ON_TRANS_ACTION_NAME + GeneratorUtil.getLastCounter() + "." + getLangExt(transition.getTriggerCodeLanguage()));
   }
 }
