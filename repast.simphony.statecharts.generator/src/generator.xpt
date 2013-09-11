@@ -505,9 +505,9 @@ import «getPackageFromType(agentType)».*;
     «IF type == LanguageTypes::java-»
         «this»
     «ELSEIF type == LanguageTypes::groovy-»
-        «expandCodeBody(this, false)-»
+        «this-»
     «ELSE-»
-        Closure cl = {«expandCodeBody(this, false)»}
+        Closure cl = {«this»}
         cl.setResolveStrategy(Closure.DELEGATE_FIRST);
         cl.setDelegate(agent);
         cl.call(agent);
