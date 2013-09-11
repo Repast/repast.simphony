@@ -164,17 +164,30 @@ public class FinalStateSheet extends FocusFixComposite implements BindableFocusa
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    if (state != null && !eObject.equals(state)) {
+      state.eAdapters().remove(langNotify);
+      if (state.getLanguage() != ((AbstractState)eObject).getLanguage()) {
+        // if the language is different the dispose of the editors
+        // and start again.
+        try {
+          support.disposeAllEditors();
+        } catch (CoreException e) {
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors", e);
+        }
+      }
+    }
+    
+    state = (AbstractState)eObject;
+    language = state.getLanguage();
+    
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
     ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
         400, idTxt);
     context.bindValue(observe, property.observe(eObject));
     
-    state = (AbstractState)eObject;
-    language = state.getLanguage();
     support.initStateOnEditor(ON_ENTER_ID, state);
     state.eAdapters().add(langNotify);
-
 
     binding = new BindingSupport(context, eObject);
     binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, support.getEditor(ON_ENTER_ID)

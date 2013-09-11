@@ -740,12 +740,26 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   }
 
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    if (transition != null && !eObject.equals(transition)) {
+      transition.eAdapters().remove(langNotify);
+      if (transition.getTriggerCodeLanguage() != ((Transition)eObject).getTriggerCodeLanguage()) {
+        // if the language is different the dispose of the editors
+        // and start again.
+        try {
+          support.disposeAllEditors();
+        } catch (CoreException e) {
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors", e);
+        }
+      }
+    }
+    
+    transition = (Transition) eObject;
+    language = transition.getTriggerCodeLanguage();
+    transition.eAdapters().add(langNotify);
+    
     bindingContext = context;
     pollingBinding = null;
-    transition = (Transition) eObject;
-    transition.eAdapters().add(langNotify);
-    language = transition.getTriggerCodeLanguage();
-
+    
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
 
     support.initGuardEditor(GUARD_ID, transition);

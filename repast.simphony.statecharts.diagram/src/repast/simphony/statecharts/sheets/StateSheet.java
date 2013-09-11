@@ -181,8 +181,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     // this can happen if switch between elements of the same
     // type -- the eObject is changed but the property sheet
     // is not disposed
-    boolean reset = state != null && !eObject.equals(state);
-    if (reset) {
+    if (state != null && !eObject.equals(state)) {
       state.eAdapters().remove(langNotify);
       if (state.getLanguage() != ((AbstractState)eObject).getLanguage()) {
         // if the language is different the dispose of the editors

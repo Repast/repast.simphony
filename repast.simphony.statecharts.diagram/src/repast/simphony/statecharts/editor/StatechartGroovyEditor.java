@@ -177,7 +177,7 @@ public class StatechartGroovyEditor extends GroovyEditor implements StatechartCo
    */
   @Override
   public void dispose() {
-    fSourceViewerDecorationSupport.uninstall();
+    if (fSourceViewerDecorationSupport != null) fSourceViewerDecorationSupport.uninstall();
     viewer.unconfigure();
     importViewer.unconfigure();
     uninstallGroovySemanticHighlighting();

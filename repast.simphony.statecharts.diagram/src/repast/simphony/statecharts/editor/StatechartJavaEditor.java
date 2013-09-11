@@ -400,7 +400,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
    */
   @Override
   public void dispose() {
-    fSourceViewerDecorationSupport.uninstall();
+    if (fSourceViewerDecorationSupport != null) fSourceViewerDecorationSupport.uninstall();
     viewer.unconfigure();
     importViewer.unconfigure();
     super.dispose();
