@@ -77,6 +77,11 @@ public class JavaSourceViewer extends SourceViewer implements StatechartSourceVi
 
     configureFont(prefStore);
   }
+  
+  public void unconfigure() {
+    super.unconfigure();
+    removeVerifyKeyListener(bracketInserter);
+  }
 
   private void configureFont(IPreferenceStore prefStore) {
 

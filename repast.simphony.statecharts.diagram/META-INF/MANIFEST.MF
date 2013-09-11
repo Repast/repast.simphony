@@ -61,6 +61,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.ui,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.gmf.runtime.diagram.ui.printing;bundle-version="1.7.0",
- org.eclipse.gmf.runtime.diagram.ui.printing.render;bundle-version="1.7.0"
+ org.eclipse.gmf.runtime.diagram.ui.printing.render;bundle-version="1.7.0",
+ org.eclipse.jdt.debug.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.codehaus.groovy.eclipse.core
