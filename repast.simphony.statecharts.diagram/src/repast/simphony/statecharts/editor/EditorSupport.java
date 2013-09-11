@@ -59,6 +59,7 @@ public class EditorSupport {
         FileEditorInput input = (FileEditorInput) editor.getEditorInput();
         if (input != null)
           input.getFile().delete(true, new NullProgressMonitor());
+        editor = null;
       }
     }
   }
@@ -259,12 +260,17 @@ public class EditorSupport {
     try {
       data.dispose();
     } catch (CoreException e) {
-      StatechartDiagramEditorPlugin.getInstance().logError(
-          "Error while reseting editor on language change", e);
+      StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing editor", e);
     }
+    
     data.editor = null;
-    for (Control control : data.group.getChildren()) {
-      control.dispose();
+    // group can be disposed if the sheet that shows the editor
+    // is being disposed rather than the editor being reset due
+    // to a language change
+    if (!data.group.isDisposed()) {
+      for (Control control : data.group.getChildren()) {
+        control.dispose();
+      }
     }
     return disposed;
   }
@@ -301,11 +307,25 @@ public class EditorSupport {
     editor.init(part.getSite(), input, RETURN_VOID_OFFSET);
   }
 
+  /**
+   * Disposes of all the editors and removes all the entries.
+   * 
+   * @throws CoreException
+   */
   public void dispose() throws CoreException {
-    for (EditorData data : editors.values()) {
-      data.dispose();
-    }
+    disposeAllEditors();
     editors.clear();
+  }
+
+  /**
+   * Disposes of all the editors but does not remove the entries.
+   * 
+   * @throws CoreException
+   */
+  public void disposeAllEditors() throws CoreException {
+    for (EditorData data : editors.values()) {
+      disposeEditor(data);
+    }
   }
 
   public Group createEntry(String editorId, Composite parent, int colSpan) {
@@ -337,9 +357,7 @@ public class EditorSupport {
       if (language == LanguageTypes.JAVA) {
         data.editor = new CodePropertyEditor();
       } else {
-        System.out.println("groovy editor");
-        data.editor = new StatechartGroovyEditor(); // new
-                                                    // PlaceholderGroovyEditor();
+        data.editor = new StatechartGroovyEditor();
       }
 
       IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
