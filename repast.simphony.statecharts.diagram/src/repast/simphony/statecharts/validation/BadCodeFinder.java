@@ -72,7 +72,7 @@ public class BadCodeFinder implements IResourceDeltaVisitor {
         if (sPath.contains(CodeGeneratorConstants.SRC_GEN)) {
 
           String ext = path.getFileExtension();
-          if (ext != null && ext.equals("java") && isCheckedClass(sPath)) {
+          if (ext != null && (ext.equals("java") || ext.equals("groovy")) && isCheckedClass(sPath)) {
             for (IMarkerDelta mDelta : delta.getMarkerDeltas()) {
               int kind = mDelta.getKind();
               if (kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED) {
