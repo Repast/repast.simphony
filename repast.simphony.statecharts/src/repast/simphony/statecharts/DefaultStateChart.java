@@ -467,7 +467,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return triggeredTransitions;
 	}
 
-	protected void resolve() {
+	public void resolve() {
 		// Partition active self transitions into queue consuming and non queue
 		// consuming
 		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
@@ -644,7 +644,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	protected double getPriority() {
+	public double getPriority() {
 		return priority;
 	}
 
@@ -740,6 +740,49 @@ public class DefaultStateChart<T> implements StateChart<T> {
 			scl.update();
 		}
 
+	}
+
+	@Override
+	public void activateState(AbstractState<T> state) {
+		SimpleState<T> simpleState = getCurrentSimpleState();
+		// Check that there exists a current active simple state
+		if (simpleState != null){
+			AbstractState<T> lca = null;
+			// Being in a final state is like being in no state
+			if (simpleState instanceof FinalState){
+				currentSimpleState = null;
+			}
+			else {
+				lca = simpleState.calculateLowestCommonAncestor(state);
+				List<AbstractState<T>> statesToExit = getStatesToExit(lca);
+				currentSimpleState = null;
+				for (AbstractState<T> as : statesToExit) {
+					clearTransitions(as);
+					as.onExit();
+				}
+			}
+			
+			List<AbstractState<T>> statesToEnter = getStatesToEnter(lca, state);
+
+			stateInit(statesToEnter);
+		}
+		//TODO: consider activating the statechart if it's not active
+	}
+
+	@Override
+	public void followTransition(Transition<T> transition) {
+		List<AbstractState<T>> currentStates = getCurrentStates();
+		if (!currentStates.isEmpty()){
+			if (currentStates.contains(transition.getSource())){
+				if (transition instanceof SelfTransition){
+					transition.onTransition();
+				}
+				else {
+					makeRegularTransition(transition);
+				}
+			}
+		}
+		
 	}
 
 }

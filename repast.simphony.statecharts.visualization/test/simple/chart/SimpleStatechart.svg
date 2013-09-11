@@ -67,25 +67,25 @@
 <path d="M-1 -1 L583 -1 L583 250 L-1 250 L-1 -1 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath22">
-<path d="M403 140 L413 140 L413 149 L403 149 L403 140 Z"/>
+<path d="M466 57 L477 57 L477 65 L466 65 L466 57 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath23">
 <path d="M-1 -1 L583 -1 L583 250 L-1 250 L-1 -1 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath24">
-<path d="M465 105 L476 105 L476 114 L465 114 L465 105 Z"/>
+<path d="M320 97 L328 97 L328 108 L320 108 L320 97 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath25">
 <path d="M-1 -1 L583 -1 L583 250 L-1 250 L-1 -1 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath26">
-<path d="M466 57 L477 57 L477 65 L466 65 L466 57 Z"/>
+<path d="M465 105 L476 105 L476 114 L465 114 L465 105 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath27">
 <path d="M-1 -1 L583 -1 L583 250 L-1 250 L-1 -1 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath28">
-<path d="M320 97 L328 97 L328 108 L320 108 L320 97 Z"/>
+<path d="M403 140 L413 140 L413 149 L403 149 L403 140 Z"/>
 </clipPath>
 <clipPath clipPathUnits="userSpaceOnUse" id="clipPath29">
 <path d="M-1 -1 L583 -1 L583 250 L-1 250 L-1 -1 Z"/>
@@ -206,25 +206,25 @@
 <circle clip-path="url(#clipPath20)" fill="black" r="1.5" cx="563.5" cy="139.5" stroke="none"/>
 </g>
 <g font-size="9" font-family="'Lucida Grande'" stroke-linecap="butt">
-<line clip-path="url(#clipPath21)" fill="none" uuid="_GTkSQQ_9EeOpYuNLQpQPLA" x1="357" x2="375" y1="136" y2="166"/>
-<line clip-path="url(#clipPath21)" fill="none" uuid="_GTkSQQ_9EeOpYuNLQpQPLA" x1="375" x2="411" y1="166" y2="141"/>
-<polygon uuid="_GTkSQQ_9EeOpYuNLQpQPLA" clip-path="url(#clipPath22)" points=" 411 141 407 147 404 143" stroke="none"/>
-<polygon uuid="_GTkSQQ_9EeOpYuNLQpQPLA" fill="none" clip-path="url(#clipPath22)" points=" 411 141 407 147 404 143"/>
+<line clip-path="url(#clipPath21)" fill="none" uuid="_UTiqYBmQEeOyIYh7Z3s24Q" x1="357" x2="475" y1="106" y2="58"/>
+<polygon uuid="_UTiqYBmQEeOyIYh7Z3s24Q" clip-path="url(#clipPath22)" points=" 475 58 470 63 467 58" stroke="none"/>
+<polygon uuid="_UTiqYBmQEeOyIYh7Z3s24Q" fill="none" clip-path="url(#clipPath22)" points=" 475 58 470 63 467 58"/>
 </g>
 <g font-size="9" font-family="'Lucida Grande'" stroke-linecap="butt">
-<line clip-path="url(#clipPath23)" fill="none" uuid="_VilQYRmQEeOyIYh7Z3s24Q" x1="454" x2="474" y1="118" y2="106"/>
-<polygon uuid="_VilQYRmQEeOyIYh7Z3s24Q" clip-path="url(#clipPath24)" points=" 474 106 470 112 466 107" stroke="none"/>
-<polygon uuid="_VilQYRmQEeOyIYh7Z3s24Q" fill="none" clip-path="url(#clipPath24)" points=" 474 106 470 112 466 107"/>
+<line clip-path="url(#clipPath23)" fill="none" uuid="_F6dOsQ_9EeOpYuNLQpQPLA" x1="308" x2="326" y1="63" y2="106"/>
+<polygon uuid="_F6dOsQ_9EeOpYuNLQpQPLA" clip-path="url(#clipPath24)" points=" 326 106 321 101 326 98" stroke="none"/>
+<polygon uuid="_F6dOsQ_9EeOpYuNLQpQPLA" fill="none" clip-path="url(#clipPath24)" points=" 326 106 321 101 326 98"/>
 </g>
 <g font-size="9" font-family="'Lucida Grande'" stroke-linecap="butt">
-<line clip-path="url(#clipPath25)" fill="none" uuid="_UTiqYBmQEeOyIYh7Z3s24Q" x1="357" x2="475" y1="106" y2="58"/>
-<polygon uuid="_UTiqYBmQEeOyIYh7Z3s24Q" clip-path="url(#clipPath26)" points=" 475 58 470 63 467 58" stroke="none"/>
-<polygon uuid="_UTiqYBmQEeOyIYh7Z3s24Q" fill="none" clip-path="url(#clipPath26)" points=" 475 58 470 63 467 58"/>
+<line clip-path="url(#clipPath25)" fill="none" uuid="_VilQYRmQEeOyIYh7Z3s24Q" x1="454" x2="474" y1="118" y2="106"/>
+<polygon uuid="_VilQYRmQEeOyIYh7Z3s24Q" clip-path="url(#clipPath26)" points=" 474 106 470 112 466 107" stroke="none"/>
+<polygon uuid="_VilQYRmQEeOyIYh7Z3s24Q" fill="none" clip-path="url(#clipPath26)" points=" 474 106 470 112 466 107"/>
 </g>
 <g font-size="9" font-family="'Lucida Grande'" stroke-linecap="butt">
-<line clip-path="url(#clipPath27)" fill="none" uuid="_F6dOsQ_9EeOpYuNLQpQPLA" x1="308" x2="326" y1="63" y2="106"/>
-<polygon uuid="_F6dOsQ_9EeOpYuNLQpQPLA" clip-path="url(#clipPath28)" points=" 326 106 321 101 326 98" stroke="none"/>
-<polygon uuid="_F6dOsQ_9EeOpYuNLQpQPLA" fill="none" clip-path="url(#clipPath28)" points=" 326 106 321 101 326 98"/>
+<line clip-path="url(#clipPath27)" fill="none" uuid="_GTkSQQ_9EeOpYuNLQpQPLA" x1="357" x2="375" y1="136" y2="166"/>
+<line clip-path="url(#clipPath27)" fill="none" uuid="_GTkSQQ_9EeOpYuNLQpQPLA" x1="375" x2="411" y1="166" y2="141"/>
+<polygon uuid="_GTkSQQ_9EeOpYuNLQpQPLA" clip-path="url(#clipPath28)" points=" 411 141 407 147 404 143" stroke="none"/>
+<polygon uuid="_GTkSQQ_9EeOpYuNLQpQPLA" fill="none" clip-path="url(#clipPath28)" points=" 411 141 407 147 404 143"/>
 </g>
 <g font-size="9" font-family="'Lucida Grande'" stroke-linecap="butt">
 <line clip-path="url(#clipPath29)" fill="none" uuid="_PF8xEBTjEeOha-s4VV8EjQ" x1="454" x2="433" y1="138" y2="158"/>

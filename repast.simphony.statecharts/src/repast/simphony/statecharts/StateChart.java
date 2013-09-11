@@ -58,5 +58,23 @@ public interface StateChart<T> {
 	 * @return
 	 */
 	Transition<T> getTransitionForUuid(String uuid);
+	
+	/**
+	 * Activates the state if it exists. Should be called when simulation is paused.
+	 * @param state
+	 * 			the state to activate
+	 */
+	void activateState(AbstractState<T> state);
+	
+	/**
+	 * Follow the transition if valid. Should be called when simulation is paused.
+	 * @param transition
+	 * 			the transition to follow
+	 */
+	void followTransition(Transition<T> transition);
+
+	double getPriority();
+
+	void resolve();
 
 }

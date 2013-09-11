@@ -13,11 +13,11 @@ import simple.*;
  * Trigger Function for Transition 3, from = State 0, to = Choice 17.
  */
 @GeneratedFor("_2VqLcA_5EeOncZTLucYA7w")
-public class SC3TriggerDoubleFunction1 implements TriggerDoubleFunction<Agent> {
+public class SC5TriggerDoubleFunction1 implements TriggerDoubleFunction<Agent> {
 	@Override
 	public double value(Agent agent, Transition<Agent> transition,
 			Parameters params) throws Exception {
-		return 2;
+		return 1000;
 
 	}
 }

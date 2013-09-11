@@ -10,15 +10,14 @@ import repast.simphony.statecharts.generator.GeneratedFor;
 import simple.*;
 
 /**
- * Condition trigger condition for Transition 18, from = Choice 17, to = State 5.
+ * Trigger Function for Transition 35, from = State 6, to = Deep History 31.
  */
 @GeneratedFor("_2VqLcA_5EeOncZTLucYA7w")
-public class SC3ConditionTriggerCondition4 implements
-		ConditionTriggerCondition<Agent> {
+public class SC5TriggerDoubleFunction8 implements TriggerDoubleFunction<Agent> {
 	@Override
-	public boolean condition(Agent agent, Transition<Agent> transition,
+	public double value(Agent agent, Transition<Agent> transition,
 			Parameters params) throws Exception {
-		return true;
+		return 500;
 
 	}
 }
