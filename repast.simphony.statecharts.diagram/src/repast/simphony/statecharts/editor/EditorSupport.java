@@ -85,7 +85,6 @@ public class EditorSupport {
 
     try {
       file.refreshLocal(IResource.DEPTH_ZERO, null);
-      // file.setHidden(true);
     } catch (CoreException e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error refreshing temporary edit file",
           e);
@@ -213,16 +212,13 @@ public class EditorSupport {
     EditorData data = getEditor(editorId, transition.getTriggerCodeLanguage());
     if (resetInput || data.editor.getEditorInput() == null) {
       // create the input temlate file if its doesn't already exist
-      if (transition.getTriggerCodeLanguage() == LanguageTypes.JAVA) {
-        IProject proj = findProject();
-        TemplateGenerator gen = new TemplateGenerator();
-        IPath path = genCall.call(proj, gen, transition);
+      IProject proj = findProject();
+      TemplateGenerator gen = new TemplateGenerator();
+      IPath path = genCall.call(proj, gen, transition);
 
-        IFile file = proj.getFile(path);
-        initEditorInput(file, getEditorData(editorId), offset);
-      }
+      IFile file = proj.getFile(path);
+      initEditorInput(file, getEditorData(editorId), offset);
     }
-
   }
 
   public void resetGuardEditor(String editorId, Transition transition) {
@@ -282,30 +278,27 @@ public class EditorSupport {
   }
 
   private void doInit(StatechartCodeEditor editor, AbstractState state) {
-    // TODO update for Groovy etc.
-    if (state.getLanguage() == LanguageTypes.JAVA) {
-      IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-      IFileEditorInput input = (IFileEditorInput) window.getActivePage().getActiveEditor()
-          .getEditorInput();
-      IProject proj = input.getFile().getProject();
+    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+    IFileEditorInput input = (IFileEditorInput) window.getActivePage().getActiveEditor()
+        .getEditorInput();
+    IProject proj = input.getFile().getProject();
 
-      TemplateGenerator gen = new TemplateGenerator();
-      IPath path = gen.run(proj, state);
+    TemplateGenerator gen = new TemplateGenerator();
+    IPath path = gen.run(proj, state);
 
-      IFile file = proj.getFile(path);
+    IFile file = proj.getFile(path);
 
-      try {
-        file.refreshLocal(IResource.DEPTH_ZERO, null);
-      } catch (CoreException e) {
-        StatechartDiagramEditorPlugin.getInstance().logError(
-            "Error refreshing temporary edit file", e);
-      }
-      input = new FileEditorInput(file);
-
-      IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-          .findView("org.eclipse.ui.views.PropertySheet");
-      editor.init(part.getSite(), input, RETURN_VOID_OFFSET);
+    try {
+      file.refreshLocal(IResource.DEPTH_ZERO, null);
+    } catch (CoreException e) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Error refreshing temporary edit file",
+          e);
     }
+    input = new FileEditorInput(file);
+
+    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        .findView("org.eclipse.ui.views.PropertySheet");
+    editor.init(part.getSite(), input, RETURN_VOID_OFFSET);
   }
 
   public void dispose() throws CoreException {
@@ -344,7 +337,9 @@ public class EditorSupport {
       if (language == LanguageTypes.JAVA) {
         data.editor = new CodePropertyEditor();
       } else {
-        data.editor = new PlaceholderGroovyEditor();
+        System.out.println("groovy editor");
+        data.editor = new StatechartGroovyEditor(); // new
+                                                    // PlaceholderGroovyEditor();
       }
 
       IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
