@@ -22,10 +22,12 @@ import java.util.concurrent.Future;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.SAXException;
 
 import repast.simphony.batch.parameter.ParametersToInput;
+import repast.simphony.util.FileUtils;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -139,8 +141,12 @@ public class LocalDriver {
         int id = i + 1;
         File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + id).getCanonicalFile();
         subwd.mkdirs();
-        if (mkSymLink)
+        if (mkSymLink && SystemUtils.IS_OS_WINDOWS_XP) {
+          // windows xp doesn't allow sim links so we copy the data
+          FileUtils.copyDirs(new File(subwd.getParentFile(), "data"), new File(subwd, "data"));
+        } else if (mkSymLink) {
           makeSymLink(subwd);
+        }
         instances.add(new Instance(id, subwd));
         String input = inputs.get(i);
         File inputFile = new File(subwd, "param_input.txt");
