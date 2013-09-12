@@ -273,7 +273,7 @@ public class StateChartSVGDisplay {
 				doStatechartAction(new Runnable() {
 					@Override
 					public void run() {
-						StateChartScheduler.INSTANCE.beginNowWithoutScheduling((DefaultStateChart)controller.stateChart);
+						StateChartScheduler.INSTANCE.beginNowWithoutScheduling(controller.stateChart);
 					}
 				});
 			}
