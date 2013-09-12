@@ -163,6 +163,10 @@ public class Transition<T> {
 				+ priority + ")";
 	}
 
+	public String getId() {
+		return id;
+	}
+
 	protected void rescheduleRegularTransition(DefaultStateChart<T> stateChart, double currentTime) {
 		// if recurring && getNextTime is currentTime
 		if (trigger.isRecurring() && Double.compare(trigger.getNextTime(), currentTime) == 0) {

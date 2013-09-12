@@ -205,6 +205,10 @@ public class Parser {
     		String aChar = characterAt(expression, ptr);
     		if (aChar.equals("\""))
     			inQuote = !inQuote;
+    		if (!inQuote && startMemoryReference(expression, ptr)) {
+    			String memoryRef = getMemoryReferenceStartingAt(expression, ptr);
+    			tokens.add(memoryRef);
+    		} else {
 
     		if (!inQuote && (Character.isDigit(aChar.charAt(0)) || aChar.equals("."))) {
     			String number = getNumberStartingAt(expression, ptr);
@@ -214,6 +218,7 @@ public class Parser {
     		} else {
     			tokens.add(aChar);
     			ptr.add(1);
+    		}
     		}
 
     	}
@@ -225,6 +230,31 @@ public class Parser {
 
     	return forced;
     }
+    
+    private static boolean startMemoryReference(String expression, MutableInteger ptr) {
+    	if (characterAt(ptr.value(), expression).equals("m") &&
+    			characterAt(ptr.value()+1, expression).equals("e") &&
+    			characterAt(ptr.value()+2, expression).equals("m") &&
+    			characterAt(ptr.value()+3, expression).equals("o") &&
+    			characterAt(ptr.value()+4, expression).equals("r") &&
+    			characterAt(ptr.value()+5, expression).equals("y") &&
+    			characterAt(ptr.value()+6, expression).equals(".") )
+    		return true;
+    	else
+    		return false;
+    }
+    
+    private static String getMemoryReferenceStartingAt(String equation, MutableInteger position) {
+    	String memoryReference = "";
+
+    	// gather characters until the , and return trim()
+    	while (inRange(equation, position) && !characterAt(equation, position).equals(",")) {
+    	    memoryReference += characterAt(equation, position);
+    	    position.add(1);
+    	}
+
+    	return memoryReference;
+        }
 
     public static String characterAt(String equation, MutableInteger position) {
 	return equation.substring(position.value(), position.value()+1);

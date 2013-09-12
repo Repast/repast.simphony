@@ -212,8 +212,11 @@ public class EquationArrayReferenceStructure {
 		code.append("/* getOuterLoops 1 */\n");
 //		code.append("for (int outer"+dim+" = 0; outer"+dim+" < "+NamedSubscriptManager.getNumIndexFor(sub)+"; outer"+dim+"++) {\n");
 		
+		// as a work-around before refactoring, make sure that there are "touter" variables for each "outer"
 		code.append("int outer"+dim+";\n");
+		code.append("int touter"+dim+";\n");
 		code.append("for (outer"+dim+" = 0; outer"+dim+" < "+InformationManagers.getInstance().getNamedSubscriptManager().getNumIndexFor(sub)+"; outer"+dim+"++) {\n");
+		code.append("touter"+dim+" = outer"+dim+";\n");
 		
 	    } else {
 //		code.append("/* getOuterLoops 2 */\n");
@@ -536,7 +539,7 @@ public class EquationArrayReferenceStructure {
 	    if (!dimensionsRequiringIndexArray.contains(dim)) {
 		code.append(",\"[\",intToString(outer"+dim+"),\"]\"");
 	    } else {
-		code.append(",\"[\"+"+getSubscriptForImplementation(lhsArrayReference.getArrayName(), sub, dim)+",\"]\"");
+		code.append(",\"[\","+getSubscriptForImplementation(lhsArrayReference.getArrayName(), sub, dim)+",\"]\"");
 
 	    }
 	}
