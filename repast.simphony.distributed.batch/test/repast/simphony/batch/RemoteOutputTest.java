@@ -108,6 +108,7 @@ public class RemoteOutputTest {
         baseNames.add(finder.find(zip.getInputStream(entry)));
       }
     }
+    zip.close();
     assertEquals(1, baseNames.size());
     assertEquals("ModelOutput.txt", baseNames.get(0));
   }
@@ -146,6 +147,11 @@ public class RemoteOutputTest {
 
   @Test
   public void testRemoteStatus() throws StatusException, IOException  {
+    File exp1 = new File("./test_out/sshtesting_128.135.250.205_1_failure.txt");
+    if (exp1.exists()) exp1.delete();
+    File exp2 = new File("./test_out/sshtesting_128.135.250.205_3_warn.txt");
+    if (exp2.exists()) exp2.delete();
+    
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteStatusGetter getter = new RemoteStatusGetter();
     RemoteSession remote = (RemoteSession) getTestingRemote(config);
@@ -154,8 +160,8 @@ public class RemoteOutputTest {
     RemoteStatusCopier copier = new RemoteStatusCopier();
     copier.run(remote, REMOTE_DIR, "./test_out");
     
-    assertEquals(true, new File("./test_out/sshtesting_128.135.250.205_1_failure.txt").exists());
-    assertEquals(true, new File("./test_out/sshtesting_128.135.250.205_3_warn.txt").exists());
+    assertEquals(true, exp1.exists());
+    assertEquals(true, exp2.exists());
   }
 
   private void testOutput(Set<String> expected, File file) throws IOException {
@@ -210,7 +216,7 @@ public class RemoteOutputTest {
 
   private File findExpectedMatch(File file) {
     String path = file.getPath();
-    path = path.replace("./test_out", "./test_data");
+    path = path.replace("." + File.separator + "test_out", "." + File.separator + "test_data");
 
     for (File exp : expectedFiles) {
       if (path.equals(exp.getPath()))

@@ -23,8 +23,15 @@ public class RemoteOutputFinderCopier extends OutputFinder {
       SftpException {
 
     for (Instance instance : instances) {
-      List<String> files = session.listRemoteDirectory(instance.getDirectory());
-      findFiles(files, instance);
+      List<String> files = session.listRemoteDirectory(instance.getDirectory(), true);
+      // session returns file including instance directory, we want to remove that.
+      List<String> fixedFiles = new ArrayList<>();
+      for (String file : files) {
+        fixedFiles.add(file.substring(instance.getDirectory().length()));
+      }
+      // assumes remote file use "/" as separator so
+      // false
+      findFiles(fixedFiles, instance, false);
     }
   }
 
@@ -49,15 +56,14 @@ public class RemoteOutputFinderCopier extends OutputFinder {
       List<Instance> instances = new ArrayList<Instance>();
       for (String dir : dirs) {
         if (dir.contains(BatchConstants.INSTANCE_DIR_PREFIX)) {
-          instances.add(new Instance(remoteDir + "/" + dir));
+          instances.add(new Instance(dir));
         }
       }
 
       findOutputFiles(session, instances);
       // instance dirs should now contain the output file
       for (Instance instance : instances) {
-        out.addAll(session.copyFilesFromRemote(localDir + "/" + instance.getDirectory(),
-            instance.getFiles()));
+        out.addAll(session.copyFilesFromRemote(localDir, instance.getFiles()));
       }
 
     } catch (SftpException e) {

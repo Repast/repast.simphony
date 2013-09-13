@@ -34,8 +34,10 @@ public class RemoteStatusCopier {
           String dir = new File(remoteDir,  BatchConstants.INSTANCE_DIR_PREFIX + i).getPath().replace("\\", "/");
           List<String> ls = session.listRemoteDirectory(dir);
           for (String fname : ls) {
-            if (fname.startsWith(RunningStatus.FAILURE.toString()) || fname.startsWith(RunningStatus.WARN.toString())) {
-              filesToCopy.add(new File(dir, fname));
+            // check the filename and ignore the path
+            File f = new File(fname);
+            if (f.getName().startsWith(RunningStatus.FAILURE.toString()) || f.getName().startsWith(RunningStatus.WARN.toString())) {
+              filesToCopy.add(f);
             }
           }
         }

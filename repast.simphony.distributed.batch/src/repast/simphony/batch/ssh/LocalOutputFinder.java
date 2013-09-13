@@ -4,24 +4,57 @@
 package repast.simphony.batch.ssh;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+
+import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.batch.BatchConstants;
 
 /**
- * Copies the output from remote ssh runs into a local directory.
+ * Finds the output in the local instance directories. Output is identified
+ * as those files that have the batch_param_map suffix, their corresponding 
+ * output files and those that match user supplied patterns.
  * 
  * @author Nick Collier
  */
 public class LocalOutputFinder extends OutputFinder {
+  
+  private static class FileGatherer extends SimpleFileVisitor<Path> {
+    
+    private List<String> files = new ArrayList<String>();
+    private Path instanceDir;
+    
+    public FileGatherer(Path instanceDir) {
+      this.instanceDir = instanceDir;
+    }
 
-  private void findOutputFiles(List<Instance> instances) {
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+      files.add(instanceDir.relativize(file).toString());
+      return FileVisitResult.CONTINUE;
+    }
+  }
 
+  private void findOutputFiles(List<Instance> instances) throws StatusException {
+    EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
     for (Instance instance : instances) {
-      List<String> files = Arrays.asList(new File(instance.getDirectory()).list());
-      findFiles(files, instance);
+      Path instanceDir = new File(instance.getDirectory()).toPath();
+      FileGatherer fileGatherer = new FileGatherer(instanceDir);
+      try {
+        Files.walkFileTree(instanceDir, opts, Integer.MAX_VALUE, fileGatherer);
+      } catch (IOException ex) {
+        throw new StatusException(ex);
+      }
+      findFiles(fileGatherer.files, instance, SystemUtils.IS_OS_WINDOWS);
     }
   }
 
