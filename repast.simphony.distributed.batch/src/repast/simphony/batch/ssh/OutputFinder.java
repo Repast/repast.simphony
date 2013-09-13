@@ -79,8 +79,8 @@ public abstract class OutputFinder {
    * </ul>
    * 
    * For example **&#47;output/my_output.txt will match any file called
-   * my_output.txt in an "output" directory where the parent of that
-   * "output" directory can be anything. 
+   * my_output.txt in an "output" directory where the parent of that "output"
+   * directory can be anything.
    * 
    * @param pattern
    */
@@ -100,7 +100,8 @@ public abstract class OutputFinder {
     List<String> fPatterns = new ArrayList<>(this.filePatterns);
     // find the batch parameter map file
     List<String> paramMapFiles = new ArrayList<String>();
-    String mapPattern = useWindowsSeparators ? PARAM_MAP_PATTERN.replace("/", "\\\\") : PARAM_MAP_PATTERN;
+    String mapPattern = useWindowsSeparators ? PARAM_MAP_PATTERN.replace("/", "\\\\")
+        : PARAM_MAP_PATTERN;
     PathMatcher matcher = FileSystems.getDefault().getPathMatcher(mapPattern);
     for (String file : allFiles) {
       if (matcher.matches(new File(file).toPath())) {
@@ -127,18 +128,17 @@ public abstract class OutputFinder {
       }
     }
 
-    // got the batch_param file, find the matching output file
-    if (paramMapFiles.isEmpty())
-      logger.warn("No model output found in " + instance.getDirectory());
-    else {
-      for (String file : allFiles) {
-        for (PathMatcher pMatcher : matchers) {
-          if (pMatcher.matches(new File(file).toPath())) {
-            instance.addFile(new File(instance.getDirectory(), file));
-            break;
-          }
+    for (String file : allFiles) {
+      for (PathMatcher pMatcher : matchers) {
+        if (pMatcher.matches(new File(file).toPath())) {
+          instance.addFile(new File(instance.getDirectory(), file));
+          break;
         }
       }
+    }
+
+    if (instance.getFiles().isEmpty()) {
+      logger.warn("No model output found in " + instance.getDirectory());
     }
   }
 }
