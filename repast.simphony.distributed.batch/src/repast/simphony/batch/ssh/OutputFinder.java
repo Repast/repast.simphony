@@ -4,14 +4,13 @@
 package repast.simphony.batch.ssh;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
-
-import repast.simphony.batch.BatchConstants;
 
 /**
  * Base class for classes that find simphony model output. This works with
@@ -22,10 +21,7 @@ import repast.simphony.batch.BatchConstants;
  */
 public abstract class OutputFinder {
 
-  private static final String FILE_SINK_FILE_PREFIX = "glob:{**/,}";
-  private static final String PARAM_MAP_PATTERN = "glob:{**/,}*batch_param_map{.*,}";
-
-  private List<String> filePatterns = new ArrayList<>();
+  private List<Pair<String, String>> filePatterns = new ArrayList<Pair<String, String>>();
 
   protected static class Instance {
     String dir;
@@ -48,22 +44,14 @@ public abstract class OutputFinder {
     }
   }
 
-  protected static Logger logger = Logger.getLogger(RemoteOutputFinderCopier.class);
-
-  private String cleanMatchFile(String filename) {
-    String ret = filename.replace("*", "\\*");
-    ret = ret.replace("?", "\\?");
-    ret = ret.replace("{", "\\{");
-    ret = ret.replace("}", "\\}");
-    ret = ret.replace("\\", "\\\\");
-    return ret;
-  }
+  protected static Logger logger = Logger.getLogger(OutputFinder.class);
 
   /**
-   * Adds the specified pattern to the list of patterns used to find output. Any
-   * files that match the pattern will considered as model output. The patterns
-   * should all relative to the directory in which the model runs. The patterns
-   * should be specified in glob style.
+   * Adds the specified pattern to the list of patterns used to find output. All
+   * the output that matches this pattern will be aggregated into a file whose
+   * name starts with the specified output file name plus a time stamp. The
+   * patterns shuld relative to the directory in which the model runs. and
+   * specified in glob style.
    * <ul>
    * <li>The * character matches zero or more characters of a name component
    * without crossing directory boundaries.
@@ -82,10 +70,38 @@ public abstract class OutputFinder {
    * my_output.txt in an "output" directory where the parent of that "output"
    * directory can be anything.
    * 
+   * @param outputFileName
+   *          the name into which all the output the matches the specified
+   *          pattern is aggregated.
    * @param pattern
+   *          the pattern to match
    */
-  public void addPattern(String pattern) {
-    filePatterns.add("glob:" + pattern);
+  public void addPattern(String outputFileName, String pattern) {
+    pattern = pattern.replace("./", "");
+    pattern = pattern.replace(".\\", "");
+    filePatterns.add(Pair.of("glob:" + pattern, outputFileName));
+  }
+
+  protected List<MatchedFiles> createMatches(boolean useWindowsSeparators) {
+    List<MatchedFiles> list = new ArrayList<>();
+    // sort so the longer patterns are first -- in this way we should
+    // match ModelOutput2 with ModelOutput2* rather than ModelOutput*
+    Collections.sort(filePatterns, new Comparator<Pair<String, String>>() {
+      @Override
+      public int compare(Pair<String, String> o1, Pair<String, String> o2) {
+        return o1.getLeft().length() > o2.getLeft().length() ? -1 : o1.getLeft().length() ==
+            o2.getLeft().length() ? 0 : 1;
+      }
+    });
+    
+    for (Pair<String, String> pair : filePatterns) {
+      String pattern = pair.getLeft();
+      if (useWindowsSeparators) {
+        pattern = pattern.replace("/", "\\\\");
+      }
+      list.add(new MatchedFiles(pair.getLeft(), pair.getRight()));
+    }
+    return list;
   }
 
   /**
@@ -96,49 +112,24 @@ public abstract class OutputFinder {
    * @param allFiles
    * @param instance
    */
-  protected void findFiles(List<String> allFiles, Instance instance, boolean useWindowsSeparators) {
-    List<String> fPatterns = new ArrayList<>(this.filePatterns);
-    // find the batch parameter map file
-    List<String> paramMapFiles = new ArrayList<String>();
-    String mapPattern = useWindowsSeparators ? PARAM_MAP_PATTERN.replace("/", "\\\\")
-        : PARAM_MAP_PATTERN;
-    PathMatcher matcher = FileSystems.getDefault().getPathMatcher(mapPattern);
+  protected void findFiles(List<MatchedFiles> matchers, List<String> allFiles, 
+      String instanceDir) {
+    
     for (String file : allFiles) {
-      if (matcher.matches(new File(file).toPath())) {
-        paramMapFiles.add(file);
-
-        instance.addFile(new File(instance.getDirectory(), file));
-        int index = file.indexOf(BatchConstants.PARAM_MAP_SUFFIX);
-        String matchFile = file.substring(0, index - 1);
-        index = file.lastIndexOf(".");
-        String ext = "";
-        if (index != -1) {
-          ext = file.substring(index, file.length());
-        }
-        fPatterns.add(FILE_SINK_FILE_PREFIX + cleanMatchFile(matchFile) + ext);
-      }
-    }
-
-    List<PathMatcher> matchers = new ArrayList<>();
-    for (String pattern : fPatterns) {
-      if (useWindowsSeparators) {
-        matchers.add(FileSystems.getDefault().getPathMatcher(pattern.replace("/", "\\\\")));
-      } else {
-        matchers.add(FileSystems.getDefault().getPathMatcher(pattern));
-      }
-    }
-
-    for (String file : allFiles) {
-      for (PathMatcher pMatcher : matchers) {
-        if (pMatcher.matches(new File(file).toPath())) {
-          instance.addFile(new File(instance.getDirectory(), file));
+      for (MatchedFiles matcher : matchers) {
+        if (matcher.matches(new File(file).toPath())) {
+          matcher.addFile(new File(instanceDir, file));
           break;
         }
       }
     }
 
-    if (instance.getFiles().isEmpty()) {
-      logger.warn("No model output found in " + instance.getDirectory());
+    for (MatchedFiles matcher : matchers) {
+      if (matcher.isEmpty()) {
+        logger.warn("No model output found matching " + matcher.getPattern() + " in "
+            + instanceDir);
+      }
     }
+    
   }
 }

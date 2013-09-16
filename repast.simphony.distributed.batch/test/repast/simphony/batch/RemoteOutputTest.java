@@ -4,7 +4,6 @@
 package repast.simphony.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -27,14 +26,15 @@ import org.junit.Test;
 
 import repast.simphony.batch.ssh.BaseOutputNamesFinder;
 import repast.simphony.batch.ssh.Configuration;
-import repast.simphony.batch.ssh.OutputAggregator;
-import repast.simphony.batch.ssh.RemoteOutputFinderCopier;
+import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
+import repast.simphony.batch.ssh.LocalOutputFinder;
+import repast.simphony.batch.ssh.MatchedFiles;
 import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.RemoteStatusCopier;
-import repast.simphony.batch.ssh.StatusException;
 import repast.simphony.batch.ssh.RemoteStatusGetter;
 import repast.simphony.batch.ssh.SSHSessionFactory;
 import repast.simphony.batch.ssh.Session;
+import repast.simphony.batch.ssh.StatusException;
 import repast.simphony.data2.engine.FileSinkControllerActionIO;
 
 /**
@@ -43,10 +43,6 @@ import repast.simphony.data2.engine.FileSinkControllerActionIO;
 public class RemoteOutputTest {
 
   private static final String REMOTE_DIR = "for_testing_simphony_model";
-  private static final String MODEL_OUT = "ModelOutput.2012.Aug.21.11_58_43.txt";
-  private static final String MODEL2_OUT = "ModelOutput.2012.Aug.21.11_58_43.txt";
-  private static final String P_OUT = "ModelOutput.2012.Aug.21.11_58_43.batch_param_map.txt";
-  private static final String P2_OUT = "ModelOutput.2012.Aug.21.11_58_43.batch_param_map.txt";
 
   private Set<File> expectedFiles = new HashSet<File>();
 
@@ -114,11 +110,24 @@ public class RemoteOutputTest {
   }
 
   @Test
-  public void testAggregator() throws IOException, XMLStreamException {
-    OutputAggregator aggregator = new OutputAggregator();
-    aggregator.run(new BaseOutputNamesFinder().find("./test_data/test_scenario.rs"), 
-        new ArrayList<File>(expectedFiles), "./test_out");
-
+  public void testAggregator() throws IOException, XMLStreamException, StatusException {
+    LocalOutputFinder finder = new LocalOutputFinder();
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("ModelOutput.txt");
+    finder.addPattern(creator.getFinalParamMapFileName(), creator.getParamMapPattern());
+    finder.addPattern(creator.getFinalFileName(), creator.getFilePattern());
+    
+    DefaultOutputPatternCreator creator2 = new DefaultOutputPatternCreator("ModelOutput2.txt");
+    finder.addPattern(creator2.getFinalParamMapFileName(), creator2.getParamMapPattern());
+    finder.addPattern(creator2.getFinalFileName(), creator2.getFilePattern());
+    
+    List<MatchedFiles> files = finder.run(new File("./test_data/for_testing_simphony_model"));
+    assertEquals(4, files.size());
+    
+    for (MatchedFiles mf : files) {
+      mf.aggregateOutput("./test_out");
+    }
+    
+    // create the expected output
     Set<String> expOut = new HashSet<String>();
     Set<String> expPOut = new HashSet<String>();
     for (File file : expectedFiles) {
@@ -132,10 +141,20 @@ public class RemoteOutputTest {
     // match with the expected.
     assertEquals(true, expOut.size() > 0);
     assertEquals(true, expPOut.size() > 0);
-    testOutput(expOut, new File("./test_out/" + MODEL_OUT));
-    testOutput(expPOut, new File("./test_out/" + P_OUT));
-    testOutput(expOut, new File("./test_out/" + MODEL2_OUT));
-    testOutput(expPOut, new File("./test_out/" + P2_OUT));
+    
+    File model = new File("./test_out/" + creator.getFinalFileName());
+    testOutput(expOut, model);
+    File modelP = new File("./test_out/" + creator.getFinalParamMapFileName());
+    testOutput(expPOut, modelP);
+    File model2 = new File("./test_out/" + creator2.getFinalFileName());
+    testOutput(expOut, model2);
+    File modelP2 = new File("./test_out/" + creator.getFinalParamMapFileName());
+    testOutput(expPOut, modelP2);
+    
+    model.delete();
+    modelP.delete();
+    model2.delete();
+    modelP2.delete();
   }
   
   private Session getTestingRemote(Configuration config) {
@@ -180,26 +199,6 @@ public class RemoteOutputTest {
         reader.close();
     }
   }
-
-  @Test
-  public void testRemoteCopy() throws IOException, StatusException  {
-    Configuration config = new Configuration("./test_data/test_remote_config.properties");
-    // Session session = SSHUtil.connect(remotes.get(0));
-    // SSHUtil.copyFileToRemote(session, remotes.get(0).getModelArchive());
-    RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
-    RemoteSession remote = (RemoteSession) getTestingRemote(config);
-    List<File> copiedFiles = copier.run(remote, REMOTE_DIR, "./test_out");
-    
-    // 4 outputs from 4 instances
-    assertEquals(16, copiedFiles.size());
-
-    for (File file : copiedFiles) {
-      File match = findExpectedMatch(file);
-      assertNotNull(match);
-      assertEquals(match.length(), file.length());
-      expectedFiles.remove(match);
-    }
-  }
   
   @Test
   public void testRemoteStatusGetter()  throws IOException, StatusException {
@@ -213,18 +212,4 @@ public class RemoteOutputTest {
     assertEquals(remote.getStatus(3), RunningStatus.WARN);
     assertEquals(remote.getStatus(4), RunningStatus.OK);
   }
-
-  private File findExpectedMatch(File file) {
-    String path = file.getPath();
-    path = path.replace("." + File.separator + "test_out", "." + File.separator + "test_data");
-
-    for (File exp : expectedFiles) {
-      if (path.equals(exp.getPath()))
-        return exp;
-    }
-
-    return null;
-
-  }
-
 }

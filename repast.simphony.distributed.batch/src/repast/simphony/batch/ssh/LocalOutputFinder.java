@@ -44,38 +44,31 @@ public class LocalOutputFinder extends OutputFinder {
     }
   }
 
-  private void findOutputFiles(List<Instance> instances) throws StatusException {
+  private List<MatchedFiles> findOutputFiles(List<String> instanceDirs) throws StatusException {
     EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
-    for (Instance instance : instances) {
-      Path instanceDir = new File(instance.getDirectory()).toPath();
+    List<MatchedFiles> matchers = createMatches(SystemUtils.IS_OS_WINDOWS);
+    for (String dir : instanceDirs) {
+      Path instanceDir = new File(dir).toPath();
       FileGatherer fileGatherer = new FileGatherer(instanceDir);
       try {
         Files.walkFileTree(instanceDir, opts, Integer.MAX_VALUE, fileGatherer);
       } catch (IOException ex) {
         throw new StatusException(ex);
       }
-      findFiles(fileGatherer.files, instance, SystemUtils.IS_OS_WINDOWS);
+      
+      findFiles(matchers, fileGatherer.files, dir);
     }
+    return matchers;
   }
 
-  public List<File> run(File instanceParentDirectory) throws StatusException {
-    List<File> out = new ArrayList<File>();
-
-    List<Instance> instances = new ArrayList<Instance>();
-
+  public List<MatchedFiles> run(File instanceParentDirectory) throws StatusException {
+    List<String> instances = new ArrayList<String>();
     for (File dir : instanceParentDirectory.listFiles()) {
       if (dir.getName().contains(BatchConstants.INSTANCE_DIR_PREFIX)) {
-        instances.add(new Instance(dir.getAbsolutePath()));
+        instances.add(dir.getAbsolutePath());
       }
     }
 
-    findOutputFiles(instances);
-    // instance dirs should now contain the output file
-    for (Instance instance : instances) {
-      out.addAll(instance.getFiles());
-    }
-
-    return out;
-
+    return findOutputFiles(instances);
   }
 }

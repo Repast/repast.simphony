@@ -18,21 +18,24 @@ import com.jcraft.jsch.SftpException;
  * @author Nick Collier
  */
 public class RemoteOutputFinderCopier extends OutputFinder {
-  
-  private void findOutputFiles(SSHSession session, List<Instance> instances) throws JSchException,
+
+  private List<MatchedFiles> findOutputFiles(SSHSession session, List<String> instanceDirs) throws JSchException,
       SftpException {
 
-    for (Instance instance : instances) {
-      List<String> files = session.listRemoteDirectory(instance.getDirectory(), true);
-      // session returns file including instance directory, we want to remove that.
+    // assumes remote file use "/" as separator so useWindowsSeparator is false
+    List<MatchedFiles> matchers = createMatches(false);
+    for (String dir : instanceDirs) {
+      List<String> files = session.listRemoteDirectory(dir, true);
+      // session returns file including instance directory, we want to remove
+      // that.
       List<String> fixedFiles = new ArrayList<>();
       for (String file : files) {
-        fixedFiles.add(file.substring(instance.getDirectory().length()));
+        fixedFiles.add(file.substring(dir.length()));
       }
-      // assumes remote file use "/" as separator so
-      // false
-      findFiles(fixedFiles, instance, false);
+
+      findFiles(matchers, fixedFiles, dir);
     }
+    return matchers;
   }
 
   /**
@@ -41,29 +44,35 @@ public class RemoteOutputFinderCopier extends OutputFinder {
    * @param remoteDir
    * @param localDir
    * 
-   * @return a list of the copied files on the local machine.
+   * @return a list of the MatchedFiles copied to the local matchine.
    * 
    * @throws JSchException
    * @throws SftpException
    */
-  public List<File> run(RemoteSession remote, String remoteDir, String localDir)
+  public List<MatchedFiles> run(RemoteSession remote, String remoteDir, String localDir)
       throws StatusException {
     SSHSession session = null;
-    List<File> out = new ArrayList<File>();
+    
+    List<MatchedFiles> localMatches  = new ArrayList<>();
+    
     try {
       session = SSHSessionFactory.getInstance().create(remote);
       List<String> dirs = session.listRemoteDirectory(remoteDir);
-      List<Instance> instances = new ArrayList<Instance>();
+      List<String> instances = new ArrayList<String>();
       for (String dir : dirs) {
         if (dir.contains(BatchConstants.INSTANCE_DIR_PREFIX)) {
-          instances.add(new Instance(dir));
+          instances.add(dir);
         }
       }
 
-      findOutputFiles(session, instances);
+      List<MatchedFiles> matches = findOutputFiles(session, instances);
       // instance dirs should now contain the output file
-      for (Instance instance : instances) {
-        out.addAll(session.copyFilesFromRemote(localDir, instance.getFiles()));
+      for (MatchedFiles match : matches) {
+        MatchedFiles newMatch = new MatchedFiles(match.getPattern(), match.getOutputFile());
+        for (File file : session.copyFilesFromRemote(localDir, match.getFiles())) {
+          newMatch.addFile(file);
+        }
+        localMatches.add(newMatch);
       }
 
     } catch (SftpException e) {
@@ -74,14 +83,11 @@ public class RemoteOutputFinderCopier extends OutputFinder {
       String msg = String.format("Error while creating connection to %s", remote.getId());
       throw new StatusException(msg, e);
 
-   
-
     } finally {
       if (session != null)
         session.disconnect();
     }
 
-    return out;
-
+    return localMatches;
   }
 }

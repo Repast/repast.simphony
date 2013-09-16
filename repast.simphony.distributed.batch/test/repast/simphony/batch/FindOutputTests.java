@@ -2,6 +2,7 @@ package repast.simphony.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,9 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.Test;
 
 import repast.simphony.batch.ssh.Configuration;
+import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
+import repast.simphony.batch.ssh.MatchedFiles;
 import repast.simphony.batch.ssh.RemoteOutputFinderCopier;
 import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.SSHSessionFactory;
@@ -32,16 +35,14 @@ public class FindOutputTests {
     SSHSessionFactory.init(home + "/.ssh");
   }
 
-  private static final String[] EXP = { "instance_1/one", "instance_1/one_batch_param_map",
-      "instance_1/output/two.txt", "instance_1/output/two_batch_param_map.txt", "instance_2/one",
-      "instance_2/one_batch_param_map", "instance_2/output/two.txt",
-      "instance_2/output/two_batch_param_map.txt" };
-
-  private static final String[] EXP2 = { "instance_1/one", "instance_1/one_batch_param_map",
-      "instance_1/output/two.txt", "instance_1/output/two_batch_param_map.txt", "instance_2/one",
-      "instance_2/one_batch_param_map", "instance_2/output/two.txt",
-      "instance_2/output/two_batch_param_map.txt",
-      "instance_1/output/more_output/some_output123.txt",
+  private static final String[] ONE_EXP = { "instance_1/one", "instance_2/one" };
+  private static final String[] TWO_EXP = { "instance_1/output/two.txt",
+      "instance_2/output/two.txt" };
+  private static final String[] ONE_BP_EXP = { "instance_1/one.batch_param_map",
+      "instance_2/one.batch_param_map" };
+  private static final String[] TWO_BP_EXP = { "instance_1/output/two.batch_param_map.txt",
+      "instance_2/output/two.batch_param_map.txt" };
+  private static final String[] OTHER_EXP = { "instance_1/output/more_output/some_output123.txt",
       "instance_2/output/more_output/some_output345.txt" };
 
   private Set<String> createSet(String prefix, String[] expected) {
@@ -50,6 +51,7 @@ public class FindOutputTests {
     for (String f : expected) {
       set.add(new File(file, f).getAbsolutePath().replace("\\", "/"));
     }
+
     return set;
   }
 
@@ -61,33 +63,105 @@ public class FindOutputTests {
     assertTrue(!matcher.matches(new File("a/b/c/abc.txt").toPath()));
   }
 
-  @Test
-  public void findViaBatchParam() throws StatusException {
-    LocalOutputFinder finder = new LocalOutputFinder();
-    List<File> files = finder.run(new File("./test_data"));
-    assertEquals(8, files.size());
-    Set<String> set = createSet("./test_data", EXP);
-
-    for (File file : files) {
-    	String f = file.getAbsolutePath().replace("\\", "/");
-        assertTrue(f, set.remove(f));
+  private void testFoundFiles(String msg, MatchedFiles mf, String prefix, String[] exp) {
+    Set<String> set = createSet(prefix, exp);
+    for (File file : mf.getFiles()) {
+      String f = file.getAbsolutePath().replace("\\", "/");
+      assertTrue(msg + ": " + f, set.remove(f));
     }
     assertEquals(0, set.size());
   }
 
   @Test
+  public void findViaBatchParam() throws StatusException {
+    LocalOutputFinder finder = new LocalOutputFinder();
+
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    String onePattern = creator.getFilePattern();
+    String oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
+    finder.addPattern(creator.getFinalFileName(), onePattern);
+
+    creator = new DefaultOutputPatternCreator("two.txt");
+    String twoPattern = creator.getFilePattern();
+    String twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
+    finder.addPattern(creator.getFinalFileName(), twoPattern);
+
+    List<MatchedFiles> files = finder.run(new File("./test_data"));
+    assertEquals(4, files.size());
+
+    boolean[] found = new boolean[4];
+    for (MatchedFiles mf : files) {
+      if (mf.getPattern().equals("glob:" + onePattern)) {
+        testFoundFiles("one", mf, "./test_data", ONE_EXP);
+        found[0] = true;
+      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+        testFoundFiles("two", mf, "./test_data", TWO_EXP);
+        found[1] = true;
+      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+        testFoundFiles("one bp", mf, "./test_data", ONE_BP_EXP);
+        found[2] = true;
+      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+        testFoundFiles("two bp", mf, "./test_data", TWO_BP_EXP);
+        found[3] = true;
+      } else {
+        fail("bad pattern");
+      }
+    }
+    
+    for (int i = 0; i < found.length; i++) {
+      assertTrue("matched files " + i + "not tested", found[i]);
+    }
+  }
+
+  @Test
   public void testPattern() throws StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
-    finder.addPattern("**/more_output/some_output*.txt");
-    List<File> files = finder.run(new File("./test_data"));
-    assertEquals(10, files.size());
-    Set<String> set = createSet("./test_data", EXP2);
 
-    for (File file : files) {
-    	String f = file.getAbsolutePath().replace("\\", "/");
-      assertTrue(f, set.remove(f));
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    String onePattern = creator.getFilePattern();
+    String oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
+    finder.addPattern(creator.getFinalFileName(), onePattern);
+
+    creator = new DefaultOutputPatternCreator("two.txt");
+    String twoPattern = creator.getFilePattern();
+    String twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
+    finder.addPattern(creator.getFinalFileName(), twoPattern);
+
+    String otherPattern = "**/more_output/some_output*.txt";
+    finder.addPattern("some_output.txt", otherPattern);
+
+    List<MatchedFiles> files = finder.run(new File("./test_data"));
+    assertEquals(5, files.size());
+
+    boolean[] found = new boolean[5];
+    for (MatchedFiles mf : files) {
+      if (mf.getPattern().equals("glob:" + onePattern)) {
+        testFoundFiles("one", mf, "./test_data", ONE_EXP);
+        found[0] = true;
+      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+        testFoundFiles("two", mf, "./test_data", TWO_EXP);
+        found[1] = true;
+      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+        testFoundFiles("one bp", mf, "./test_data", ONE_BP_EXP);
+        found[2] = true;
+      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+        testFoundFiles("two bp", mf, "./test_data", TWO_BP_EXP);
+        found[3] = true;
+      } else if (mf.getPattern().equals("glob:" + otherPattern)) {
+        testFoundFiles("other", mf, "./test_data", OTHER_EXP);
+        found[4] = true;
+      } else {
+        fail("bad pattern");
+      }
     }
-    assertEquals(0, set.size());
+    
+    for (int i = 0; i < found.length; i++) {
+      assertTrue("matched files " + i + "not tested", found[i]);
+    }
   }
 
   private Session getTestingRemote(Configuration config) {
@@ -103,17 +177,50 @@ public class FindOutputTests {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteSession remote = (RemoteSession) getTestingRemote(config);
     RemoteOutputFinderCopier finder = new RemoteOutputFinderCopier();
-    finder.addPattern("**/more_output/some_output*.txt");
-    
-    Path local = Files.createTempDirectory(String.valueOf(System.currentTimeMillis()));
-    List<File> out = finder.run(remote, "for_testing_simphony_model2", local.toString());
-    assertEquals(10, out.size());
-    Set<String> set = createSet(local.toString() + "/for_testing_simphony_model2", EXP2);
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    String onePattern = creator.getFilePattern();
+    String oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
+    finder.addPattern(creator.getFinalFileName(), onePattern);
 
-    for (File file : out) {
-    	String f = file.getAbsolutePath().replace("\\", "/");
-        assertTrue(f, set.remove(f));
+    creator = new DefaultOutputPatternCreator("two.txt");
+    String twoPattern = creator.getFilePattern();
+    String twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
+    finder.addPattern(creator.getFinalFileName(), twoPattern);
+
+    String otherPattern = "**/more_output/some_output*.txt";
+    finder.addPattern("some_output.txt", otherPattern);
+
+    Path local = Files.createTempDirectory(String.valueOf(System.currentTimeMillis()));
+    List<MatchedFiles> files = finder.run(remote, "for_testing_simphony_model2", local.toString());
+    assertEquals(5, files.size());
+
+    String prefix = local.toString() + "/for_testing_simphony_model2";
+    boolean[] found = new boolean[5];
+    for (MatchedFiles mf : files) {
+      if (mf.getPattern().equals("glob:" + onePattern)) {
+        testFoundFiles("one", mf, prefix, ONE_EXP);
+        found[0] = true;
+      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+        testFoundFiles("two", mf, prefix, TWO_EXP);
+        found[1] = true;
+      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+        testFoundFiles("one bp", mf, prefix, ONE_BP_EXP);
+        found[2] = true;
+      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+        testFoundFiles("two bp", mf, prefix, TWO_BP_EXP);
+        found[3] = true;
+      } else if (mf.getPattern().equals("glob:" + otherPattern)) {
+        testFoundFiles("other", mf, prefix, OTHER_EXP);
+        found[4] = true;
+      } else {
+        fail("bad pattern");
+      }
     }
-    assertEquals(0, set.size());
+
+    for (int i = 0; i < found.length; i++) {
+      assertTrue("matched files " + i + "not tested", found[i]);
+    }
   }
 }
