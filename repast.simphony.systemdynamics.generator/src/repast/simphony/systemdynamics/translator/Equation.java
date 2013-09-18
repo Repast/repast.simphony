@@ -2107,10 +2107,20 @@ public class Equation {
 				boolean needsIncrement = false;
 				if (values.length > 1)
 					needsIncrement = true;
-				sb.append(values.length);
+				
+				int len = values.length;
+				for (int j = 0; j < values.length; j++) {
+					if (values[j].equals("_"))
+						len--;
+				}
+				sb.append(len);
 				for (int j = 0; j < values.length; j++) {
 
 					sb.append(",");
+					if (values[j].equals("_")) {
+						sb.append("-");
+						j++;
+					} 
 					sb.append(values[j]);
 				}
 				sb.append(");\n");
