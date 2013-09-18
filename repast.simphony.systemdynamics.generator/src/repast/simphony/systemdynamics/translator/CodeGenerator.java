@@ -1312,7 +1312,7 @@ public class CodeGenerator {
 	String vectorDeclaration = "";
 	if (Translator.target.equals(ReaderConstants.C)){
 //	    vectorDeclaration = "double "+resultsVariable+"["+vectorLength+"];";
-	    vectorDeclaration = "double *"+resultsVariable+" = newDoubleArray("+vectorLength+");";
+		vectorDeclaration = "double *"+resultsVariable+/* " = newDoubleArray("+vectorLength+ ");";*/ ";";
 	} else {
 	    vectorDeclaration = "double[] "+resultsVariable+" = new double["+vectorLength+"];";
 	}
