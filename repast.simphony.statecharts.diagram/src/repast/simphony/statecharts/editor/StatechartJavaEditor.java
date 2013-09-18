@@ -10,8 +10,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
+import org.eclipse.jdt.internal.ui.javaeditor.SCCompilationUnitDocumentProvider;
 import org.eclipse.jdt.internal.ui.text.JavaPairMatcher;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -139,6 +141,8 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
   public StatechartJavaEditor() {
     fAnnotationPreferences = EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
     prefStore = JavaPlugin.getDefault().getCombinedPreferenceStore();
+    setDocumentProvider(new SCCompilationUnitDocumentProvider((CompilationUnitDocumentProvider) 
+        super.getDocumentProvider()));
   }
 
   /**
@@ -357,6 +361,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
+    System.out.println(model);
 
     try {
       int offset = doc.getLineOffset(doc.getNumberOfLines() - lineOffset);
