@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
 import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.dom.svg.SVGContext;
@@ -55,12 +54,16 @@ import org.w3c.dom.svg.SVGRect;
 import org.w3c.dom.svg.SVGRectElement;
 import org.w3c.dom.svg.SVGSVGElement;
 
+import repast.simphony.engine.environment.GUIRegistry;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunListener;
+import repast.simphony.engine.environment.RunState;
 import repast.simphony.statecharts.AbstractState;
-import repast.simphony.statecharts.DefaultStateChart;
 import repast.simphony.statecharts.StateChartScheduler;
 import repast.simphony.statecharts.Transition;
+import repast.simphony.ui.RSApplication;
+import repast.simphony.ui.probe.ProbeManager;
+import repast.simphony.visualization.IDisplay;
 
 public class StateChartSVGDisplay {
 
@@ -273,7 +276,8 @@ public class StateChartSVGDisplay {
 				doStatechartAction(new Runnable() {
 					@Override
 					public void run() {
-						StateChartScheduler.INSTANCE.beginNowWithoutScheduling(controller.stateChart);
+						StateChartScheduler.INSTANCE
+								.beginNowWithoutScheduling(controller.stateChart);
 					}
 				});
 			}
@@ -313,7 +317,41 @@ public class StateChartSVGDisplay {
 					RunEnvironment.getInstance().addRunListener(listener);
 					RunEnvironment.getInstance().pauseRun();
 				} else {
+					// Sim is paused so run action directly
 					statechartAction.run();
+					// Update probes and displays to reflect any changes
+					probesUpdate();
+					displaysUpdate();
+
+				}
+			}
+
+			/**
+			 * Updates all probes.
+			 */
+			private void probesUpdate() {
+				RSApplication rsApp = RSApplication.getRSApplicationInstance();
+				if (rsApp != null) {
+					ProbeManager probeManager = rsApp.getProbeManager();
+					if (probeManager != null) {
+						probeManager.update();
+					}
+				}
+			}
+
+			/**
+			 * Updates all displays.
+			 */
+			private void displaysUpdate() {
+				RunState rs = RunState.getInstance();
+				if (rs != null){
+					GUIRegistry registry = rs.getGUIRegistry();
+					if (registry != null){
+						for (IDisplay display : registry.getDisplays()){
+							display.update();
+							display.render();
+						}
+					}
 				}
 			}
 
