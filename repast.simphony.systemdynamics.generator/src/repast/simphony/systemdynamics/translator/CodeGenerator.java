@@ -2146,6 +2146,10 @@ public class CodeGenerator {
 		theTail.append(");\n");
 	    } else if (Parser.isFunctionInvocation(node.getToken())){
 
+	    	FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			int numFunctionArgs = fd.getNumArgsAll();
+			boolean providesInitialValue = fd.isSuppliesInitialValue();
+			int processArgNum = 0;
 
 
 		theTail.append(node.getResultsVariable()+" = ");
@@ -2182,6 +2186,7 @@ public class CodeGenerator {
 		    numTransfer = 0;
 
 		for (int i = 0; i < numTransfer; i++) {
+			processArgNum++;
 		    if (i > 0)
 			theTail.append(",");
 		    if (i == 1)
@@ -2201,14 +2206,23 @@ public class CodeGenerator {
 		int cnt = 0;
 
 		while(n != null) {
-		    if (numTransfer == 4 || (numTransfer == 0 && cnt > 0))
-			theTail.append(",");
-		    cnt++;
+			if (numTransfer == 4 || (numTransfer == 0 && cnt > 0))
+				theTail.append(",");
+			cnt++;
 
-		    String t = getNextDouble();
-		    n.setResultsVariable(t);
-		    theTail.append(t);
-		    n = n.getNext();
+			String t = getNextDouble();
+			n.setResultsVariable(t);
+			if (!providesInitialValue) {
+				theTail.append(t);
+			} else {
+				if (processArgNum < numFunctionArgs-1) {
+					theTail.append("(time == 0.0 ? 0.0 : "+t+" )");
+				} else {
+					theTail.append(t);
+				}
+			}
+			processArgNum++;
+			n = n.getNext();
 		}
 
 
