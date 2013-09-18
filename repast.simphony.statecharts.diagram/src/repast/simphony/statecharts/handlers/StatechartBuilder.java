@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 
 import repast.simphony.eclipse.util.DirectoryCleaner;
 import repast.simphony.statecharts.generator.CodeGenerator;
+import repast.simphony.statecharts.generator.CodeGeneratorConstants;
 import repast.simphony.statecharts.generator.OrphanFilter;
 import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 import repast.simphony.statecharts.svg.SVGExporter;
@@ -104,7 +105,7 @@ public class StatechartBuilder extends IncrementalProjectBuilder {
     public void removeOrphans() {
       OrphanFilter filter = new OrphanFilter(generator.getGeneratorRecord());
       DirectoryCleaner cleaner = new DirectoryCleaner(filter);
-      String rootPath = project.getLocation().append(CodeGenerator.SRC_GEN).toFile().getAbsolutePath();
+      String rootPath = project.getLocation().append(CodeGeneratorConstants.SRC_GEN).toFile().getAbsolutePath();
       cleaner.run(rootPath);
     }
 

@@ -26,6 +26,8 @@ import repast.simphony.statecharts.scmodel.Transition;
  * @author Nick Collier
  */
 public class GeneratorUtil {
+  
+  private static long counter = 0;
 
   private static final State NULL_STATE = StatechartFactory.eINSTANCE.createState();
   static {
@@ -198,6 +200,29 @@ public class GeneratorUtil {
     StateBlock block = getCSBlock(uuid);
     return block.onExitTypeName;
   }
+  
+  // todo can probably call this with a trans or state arg
+  // so we can search one or other of the blocks.
+  public static String getUUIDForTypeName(String typeName) {
+    for (Names names : namesMap.values()) {
+      for (Map.Entry<String, StateBlock> entry: names.stateBlockMap.entrySet()) {
+        if (entry.getValue().onEnterTypeName.equals(typeName) || 
+            entry.getValue().onExitTypeName.equals(typeName)) return entry.getKey();
+      }
+      
+      for (Map.Entry<String, TransitionBlock> entry : names.transitionMap.entrySet()) {
+        TransitionBlock block = entry.getValue();
+        if (block.guardType.equals(typeName) ||
+            block.onTransType.equals(typeName) ||
+            block.tdfType.equals(typeName) ||
+            block.ctcType.equals(typeName) ||
+            block.mcType.equals(typeName) ||
+            block.meType.equals(typeName)) return entry.getKey();
+      }
+    }
+    
+    return null;
+  }
 
   private static StateBlock getCSBlock(String uuid) {
     return curNames.getStateBlock(uuid);
@@ -253,6 +278,10 @@ public class GeneratorUtil {
     }
     return ret;
   }
+  
+  public static StateMachine findStateMachine(Object obj) {
+    return GeneratorUtil.findStateMachine((EObject)obj);
+  }
 
   private static StateMachine findStateMachine(EObject obj) {
     EObject container = obj.eContainer();
@@ -305,6 +334,15 @@ public class GeneratorUtil {
     return ret;
   }
   
+  public static String getCounter() {
+    counter++;
+    return String.valueOf(counter);
+  }
+  
+  public static String getLastCounter() {
+    return String.valueOf(counter);
+  }
+  
   public static String parseImports(String code) {
     return expander.parseForImports(code);
   }
@@ -312,5 +350,7 @@ public class GeneratorUtil {
   public static String expandBody(String body, Boolean addReturn) {
     return expander.expand(body, addReturn);
   }
+  
+ 
  
 }

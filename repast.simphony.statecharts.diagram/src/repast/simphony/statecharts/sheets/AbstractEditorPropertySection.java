@@ -84,6 +84,14 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       bindingContext.dispose();
     if (toolkit != null)
       toolkit.dispose();
+    doDispose();
+  }
+  
+  /**
+   * Peform section specific disposal.
+   */
+  protected void doDispose() {
+    sheet.dispose();
   }
   
   @Override

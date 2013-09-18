@@ -162,9 +162,22 @@ public class CompositeStateValidator {
     return ctx.createSuccessStatus();
   }
   
+  private IStatus validateCode(IValidationContext ctx) {
+    Node node = (Node)ctx.getTarget();
+    CompositeState state = (CompositeState) node.getElement();
+    if (!Validator.isCodeValid(state)) {
+      return ctx.createFailureStatus("Composite State has invalid onEnter or onExit code.");
+    }
+    return ctx.createSuccessStatus();
+  }
+  
   public IStatus checkForErrors(IValidationContext ctx) {
     IStatus status = validateInitialState(ctx);
     if (!status.isOK()) return status;
+    
+    status = validateCode(ctx); 
+    if (!status.isOK()) return status;
+    
     return validateID(ctx);
   }
 }

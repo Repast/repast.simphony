@@ -50,21 +50,28 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference statechart.ecore#//Transition/to"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/priority"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/onTransition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/onTransitionImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/outOfBranch"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/defaultTransition"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTime"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerConditionCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerConditionCodeImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerCodeLanguage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerClass"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerProbCodeImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerCodeImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/messageCheckerConditionLanguage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/guard"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/guardImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTimedCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerTimedCodeImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerExpRateCode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/triggerExpRateCodeImports"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/uuid"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//Transition/selfTransition"/>
     </genClasses>
@@ -77,6 +84,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onExit"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/language"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/uuid"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onEnterImports"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//AbstractState/onExitImports"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//PseudoState">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//PseudoState/type"/>

@@ -1,23 +1,38 @@
 package repast.simphony.statecharts.sheets;
 
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE_IMPORTS;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE;
+import static repast.simphony.statecharts.scmodel.StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE_IMPORTS;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,58 +42,81 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.wb.swt.SWTResourceManager;
 
+import repast.simphony.statecharts.editor.EditorSupport;
+import repast.simphony.statecharts.editor.StatechartCodeEditor;
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.MessageCheckerTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.scmodel.TriggerTypes;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class TransitionSheet extends FocusFixComposite implements BindableFocusableSheet {
+
+  private static final String TRIGGER_TIME_ID = "trigger.time.id";
+  private static final String TRIGGER_EXP_ID = "trigger.exp.id";
+  private static final String TRIGGER_PROB_ID = "trigger.prob.id";
+  private static final String TRIGGER_COND_ID = "trigger.cond.id";
+  private static final String TRIGGER_MESSAGE_ID = "trigger.message.id";
+  private static final String GUARD_ID = "guard.id";
+  private static final String ON_TRANS_ID = "on.trans.id";
 
   private static final String[] MESSAGE_TYPES = { "When Message Meets a Condition",
       "When Message Equals ...", "When Message is of the Specified Class", "Always" };
 
-  private static final String[] CLASS_TYPES = {"Object", "String", "int", "long", "float", "double",
-      "boolean" };
+  private static final String[] CLASS_TYPES = { "Object", "String", "int", "long", "float",
+      "double", "boolean" };
 
   private static final int CONDITION_INDEX = 3;
 
-  private Text idTxt, onTransitionTxt, guardTxt;
+  private Text idTxt;
+  private EditorSupport support = new EditorSupport();
   private LanguageButtonsGroup buttonGroup;
   private Combo cmbTriggerType;
   private Text priorityTxt;
   private Text txtAlwaysPolling;
-  private Text txtTimedTime, txtExpRate, txtProbProb, txtProbPolling, txtCondPolling, txtCondCond,
-      txtMessagePolling;
+  private Text txtProbPolling, txtCondPolling, txtMessagePolling;
+  private MessageCheckerTypes currentType = null;
 
   private EMFDataBindingContext bindingContext;
   private Binding pollingBinding;
-  private EObject object;
+  private Transition transition;
 
   private StackLayout triggerLayout;
   private Composite[] triggerComps = new Composite[6];
-  private Text txtMessage;
+
   private Label lblMessage, lblMessageClass;
   private Combo cmbMessageType, cmbMessageClass;
 
   private Button btnIsDefaultOut;
   private Button btnSelfTransition;
 
-  private CTabItem tbtmTrigger;
-
-  private CTabItem tbtmGuard;
-
-  private CTabItem tbtmOnTrans;
-
+  private CTabItem tbtmTrigger, tbtmGuard, tbtmOnTrans;
   private CTabFolder tabFolder;
+  private Composite compTrigger, compGuard, compTrans;
 
-  private Composite compTrigger;
+  private LanguageTypes language;
 
-  private Composite compGuard;
+  // we have to use the emf notification mechanism
+  // for listening to language changes because
+  // we use the state itself to get is current language
+  private Adapter langNotify = new AdapterImpl() {
+    @Override
+    public void notifyChanged(Notification msg) {
+      if (msg.getFeature() != null
+          && msg.getFeature().equals(StatechartPackage.Literals.TRANSITION__TRIGGER_CODE_LANGUAGE)) {
+        languageChanged();
+      }
+    }
+  };
 
-  private Composite compTrans;
+  private BindingSupport bindings;
 
   public TransitionSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NO_FOCUS);
@@ -99,14 +137,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
         SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
-    createTriggerSection(toolkit, tabFolder);
-    createGuardSection(toolkit, tabFolder);
-    createTransitionSection(toolkit, tabFolder);
+    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        .findView("org.eclipse.ui.views.PropertySheet");
+    IWorkbenchPartSite site = part.getSite();
+
+    createTriggerSection(toolkit, tabFolder, site);
+    createGuardSection(toolkit, tabFolder, site);
+    createTransitionSection(toolkit, tabFolder, site);
 
     cmbTriggerType.select(0);
     cmbMessageType.select(3);
     cmbMessageClass.setText(CLASS_TYPES[0]);
-    
+
     triggerLayout.topControl = triggerComps[0];
     addListeners();
   }
@@ -196,7 +238,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
 
-  private void createGuardSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createGuardSection(FormToolkit toolkit, CTabFolder tabFolder, IWorkbenchPartSite site) {
     tbtmGuard = new CTabItem(tabFolder, SWT.NONE);
     tbtmGuard.setText("Guard");
 
@@ -207,17 +249,11 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     compGuard.setLayout(gl_composite);
     toolkit.adapt(compGuard);
     toolkit.paintBordersFor(compGuard);
-
-    guardTxt = new Text(compGuard, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(guardTxt);
-    guardTxt.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
-    gd_onExitTxt.heightHint = 140;
-    guardTxt.setLayoutData(gd_onExitTxt);
-    toolkit.adapt(guardTxt, true, true);
+    support.createEntry(GUARD_ID, compGuard);
   }
 
-  private void createTriggerSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createTriggerSection(FormToolkit toolkit, CTabFolder tabFolder,
+      IWorkbenchPartSite site) {
 
     tbtmTrigger = new CTabItem(tabFolder, SWT.NONE);
     tbtmTrigger.setText("Trigger");
@@ -249,18 +285,18 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Composite composite = toolkit.createComposite(compTrigger, SWT.NONE);
     triggerLayout = new StackLayout();
     composite.setLayout(triggerLayout);
-    composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
     toolkit.paintBordersFor(composite);
 
     createAlwaysComp(composite, toolkit);
-    createTimeComp(composite, toolkit);
-    createExpRateComp(composite, toolkit);
-    createProbComp(composite, toolkit);
-    createConditionComp(composite, toolkit);
-    createMessageComp(composite, toolkit);
+    createTimeComp(composite, toolkit, site);
+    createExpRateComp(composite, toolkit, site);
+    createProbComp(composite, toolkit, site);
+    createConditionComp(composite, toolkit, site);
+    createMessageComp(composite, toolkit, site);
   }
 
-  private void createMessageComp(Composite parent, FormToolkit toolkit) {
+  private void createMessageComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpMessage = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[5] = cmpMessage;
     toolkit.paintBordersFor(cmpMessage);
@@ -300,7 +336,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     gl_composite.marginHeight = 0;
     gl_composite.marginLeft = 12;
     composite.setLayout(gl_composite);
-    composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1));
     toolkit.paintBordersFor(composite);
 
     Composite composite_1 = new Composite(composite, SWT.NONE);
@@ -321,17 +357,10 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     toolkit.paintBordersFor(cmbMessageClass);
 
     lblMessage = toolkit.createLabel(composite, "Condition:", SWT.NONE);
-
-    txtMessage = toolkit.createText(composite, "New Text", SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(txtMessage);
-    txtMessage.addTraverseListener(new CancelTraverseOnReturn());
-    txtMessage.setText("");
-    GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-    gd_text_1.heightHint = 40;
-    txtMessage.setLayoutData(gd_text_1);
+    support.createEntry(TRIGGER_MESSAGE_ID, composite);
   }
 
-  private void createProbComp(Composite parent, FormToolkit toolkit) {
+  private void createProbComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpProb = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[2] = cmpProb;
     toolkit.paintBordersFor(cmpProb);
@@ -348,17 +377,10 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtProbPolling);
 
     toolkit.createLabel(cmpProb, "Probability:", SWT.NONE);
-    new Label(cmpProb, SWT.NONE);
-    txtProbProb = toolkit.createText(cmpProb, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtProbProb);
-    txtProbProb.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtProbProb.setLayoutData(gd_txtTimedTime);
+    support.createEntry(TRIGGER_PROB_ID, cmpProb, 2);
   }
 
-  private void createConditionComp(Composite parent, FormToolkit toolkit) {
+  private void createConditionComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpCond = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[3] = cmpCond;
     toolkit.paintBordersFor(cmpCond);
@@ -375,46 +397,29 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtCondPolling);
 
     toolkit.createLabel(cmpCond, "Condition:", SWT.NONE);
-    new Label(cmpCond, SWT.NONE);
-    txtCondCond = toolkit.createText(cmpCond, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtCondCond);
-    txtCondCond.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtCondCond.setLayoutData(gd_txtTimedTime);
+    support.createEntry(TRIGGER_COND_ID, cmpCond, 2);
   }
 
-  private void createTimeComp(Composite parent, FormToolkit toolkit) {
+  private void createTimeComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpTimed = toolkit.createComposite(parent, SWT.NONE);
+    GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+    cmpTimed.setLayoutData(data);
     triggerComps[1] = cmpTimed;
     toolkit.paintBordersFor(cmpTimed);
     cmpTimed.setLayout(new GridLayout(1, false));
 
     toolkit.createLabel(cmpTimed, "Time:", SWT.NONE);
-    txtTimedTime = toolkit.createText(cmpTimed, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtTimedTime);
-    txtTimedTime.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtTimedTime.setLayoutData(gd_txtTimedTime);
+    support.createEntry(TRIGGER_TIME_ID, cmpTimed);
   }
 
-  private void createExpRateComp(Composite parent, FormToolkit toolkit) {
+  private void createExpRateComp(Composite parent, FormToolkit toolkit, IWorkbenchPartSite site) {
     Composite cmpExp = toolkit.createComposite(parent, SWT.NONE);
     triggerComps[4] = cmpExp;
     toolkit.paintBordersFor(cmpExp);
     cmpExp.setLayout(new GridLayout(1, false));
 
     toolkit.createLabel(cmpExp, "Exponential Decay Rate:", SWT.NONE);
-    txtExpRate = toolkit.createText(cmpExp, "", SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL
-        | SWT.MULTI);
-    focusableControls.add(txtExpRate);
-    txtExpRate.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_txtTimedTime = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-    gd_txtTimedTime.heightHint = 40;
-    txtExpRate.setLayoutData(gd_txtTimedTime);
+    support.createEntry(TRIGGER_EXP_ID, cmpExp);
   }
 
   private void createAlwaysComp(Composite parent, FormToolkit toolkit) {
@@ -435,7 +440,8 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     Bug383650Fix.applyFix(txtAlwaysPolling);
   }
 
-  private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder) {
+  private void createTransitionSection(FormToolkit toolkit, CTabFolder tabFolder,
+      IWorkbenchPartSite site) {
     tbtmOnTrans = new CTabItem(tabFolder, SWT.NONE);
     tbtmOnTrans.setText("On Transition");
 
@@ -443,39 +449,12 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     compTrans.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
     tbtmOnTrans.setControl(compTrans);
     compTrans.setLayout(new GridLayout(1, false));
-
-    onTransitionTxt = new Text(compTrans, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL
-        | SWT.CANCEL | SWT.MULTI);
-    focusableControls.add(onTransitionTxt);
-    onTransitionTxt.addTraverseListener(new CancelTraverseOnReturn());
-    GridData gd_onTransitionTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    gd_onTransitionTxt.heightHint = 140;
-    onTransitionTxt.setLayoutData(gd_onTransitionTxt);
-    onTransitionTxt.setText("");
-    toolkit.adapt(onTransitionTxt, true, true);
+    support.createEntry(ON_TRANS_ID, compTrans);
   }
 
   private void addListeners() {
 
     priorityTxt.addVerifyListener(new DoubleVerifier());
-
-    guardTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
-
-    onTransitionTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
 
     cmbTriggerType.addSelectionListener(new SelectionAdapter() {
 
@@ -499,15 +478,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         defaultOutChanged(btnIsDefaultOut.getSelection());
       }
     });
-
-    /*
-     * sctnGuard.addExpansionListener(new IExpansionListener() {
-     * 
-     * @Override public void expansionStateChanging(ExpansionEvent e) {}
-     * 
-     * @Override public void expansionStateChanged(ExpansionEvent e) {
-     * sctnGuard.getParent().s } });
-     */
   }
 
   private void resetTabs() {
@@ -537,7 +507,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   void defaultOutChanged(boolean isSelected) {
     // default out from branch cannot have any triggers
-    if (object != null && ((Transition) object).isOutOfBranch()) {
+    if (transition != null && ((Transition) transition).isOutOfBranch()) {
       if (isSelected) {
 
         if (!tbtmTrigger.isDisposed()) {
@@ -574,13 +544,12 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
   }
 
   void doOutOfChoiceCheck() {
-    boolean outOfChoice = (object != null && ((Transition) object).isOutOfBranch());
+    boolean outOfChoice = (transition != null && ((Transition) transition).isOutOfBranch());
     btnIsDefaultOut.setVisible(outOfChoice);
   }
 
   void doSelfCheck() {
-    if (object != null) {
-      Transition transition = (Transition) object;
+    if (transition != null) {
       if (transition.getFrom() != null && transition.getTo() != null)
         btnSelfTransition.setVisible(transition.getFrom().equals(transition.getTo()));
       else {
@@ -595,33 +564,102 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
 
   private void messageTypeChanged() {
     MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
-    txtMessage.setEnabled(!(type.equals(MessageCheckerTypes.ALWAYS) || type
-        .equals(MessageCheckerTypes.UNCONDITIONAL)));
-    Color color = (txtMessage.isEnabled() ? ColorConstants.black : Display.getDefault()
-        .getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-    lblMessage.setForeground(color);
+    StatechartCodeEditor editor = support.getEditor(TRIGGER_MESSAGE_ID);
+    if (editor != null) {
+      StyledText txtMessage = editor.getCodeViewer().getTextWidget();
+      if (support.getEditor(TRIGGER_MESSAGE_ID).getEditorInput() != null && type != currentType) {
+        String txt = txtMessage.getText();
+        // input != null so message trigger type is active in the UI and
+        // the type has been changed, so we need to reset the editor input
+        // to appropriate template file.
+        if (type == MessageCheckerTypes.EQUALS) {
+          support.resetTriggerMEEditorInput(TRIGGER_MESSAGE_ID, transition);
+        } else if (type == MessageCheckerTypes.CONDITIONAL) {
+          support.resetTriggerMCEditorInput(TRIGGER_MESSAGE_ID, transition);
+        }
+        // the re-init clears the text so we add it back in here
+        support.getEditor(TRIGGER_MESSAGE_ID).getCodeViewer().ignoreAutoIndent(true);
+        txtMessage.setText(txt);
+        support.getEditor(TRIGGER_MESSAGE_ID).getCodeViewer().ignoreAutoIndent(false);
+      }
 
-    cmbMessageClass.setEnabled(!type.equals(MessageCheckerTypes.ALWAYS));
-    color = (cmbMessageClass.isEnabled() ? ColorConstants.black : Display.getDefault()
-        .getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-    lblMessageClass.setForeground(color);
+      txtMessage.setEnabled(!(type.equals(MessageCheckerTypes.ALWAYS) || type
+          .equals(MessageCheckerTypes.UNCONDITIONAL)));
+      if (!txtMessage.isEnabled()) {
+        txtMessage.setText("");
+      }
+      
+      Color color = (txtMessage.isEnabled() ? ColorConstants.black : Display.getDefault()
+          .getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 
-    if (type.equals(MessageCheckerTypes.CONDITIONAL))
-      lblMessage.setText("Condition:");
-    else if (type.equals(MessageCheckerTypes.EQUALS))
-      lblMessage.setText("Equals:");
+      lblMessage.setForeground(color);
+
+      cmbMessageClass.setEnabled(!type.equals(MessageCheckerTypes.ALWAYS));
+      color = (cmbMessageClass.isEnabled() ? ColorConstants.black : Display.getDefault()
+          .getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+      lblMessageClass.setForeground(color);
+
+      if (type.equals(MessageCheckerTypes.CONDITIONAL))
+        lblMessage.setText("Condition:");
+      else if (type.equals(MessageCheckerTypes.EQUALS))
+        lblMessage.setText("Equals:");
+      
+      lblMessage.getParent().layout(true);
+      currentType = type;
+    }
   }
 
   private void triggerChanged() {
     int index = cmbTriggerType.getSelectionIndex();
     TriggerTypes ttype = TriggerTypeItem.getTriggerType(cmbTriggerType.getItem(index));
+    initEditor(ttype);
     updateBinding(ttype);
     triggerLayout.topControl = triggerComps[index];
     triggerComps[index].getParent().layout();
     triggerComps[index].getParent().getParent().layout();
-    
+
     if (cmbMessageClass.getSelectionIndex() == -1) {
       cmbMessageClass.select(0);
+    }
+    
+    if (ttype.equals(TriggerTypes.MESSAGE)) {
+      messageTypeChanged();
+    }
+  }
+
+  private void initEditor(TriggerTypes ttype) {
+    if (ttype.equals(TriggerTypes.CONDITION)) {
+      // initialize the editor (create the styled text etc.) if its not
+      // initialized and
+      // create the template file if the editorInput is null
+      support.initTriggerConditionEditor(TRIGGER_COND_ID, transition);
+      bindEditorComponent(TRIGGER_COND_ID, TRANSITION__TRIGGER_CONDITION_CODE,
+          TRANSITION__TRIGGER_CONDITION_CODE_IMPORTS);
+
+    } else if (ttype.equals(TriggerTypes.EXPONENTIAL)) {
+      support.initTriggerDblEditor(TRIGGER_EXP_ID, transition);
+      bindEditorComponent(TRIGGER_EXP_ID, TRANSITION__TRIGGER_EXP_RATE_CODE,
+          TRANSITION__TRIGGER_EXP_RATE_CODE_IMPORTS);
+
+    } else if (ttype.equals(TriggerTypes.PROBABILITY)) {
+      support.initTriggerDblEditor(TRIGGER_PROB_ID, transition);
+      bindEditorComponent(TRIGGER_PROB_ID, TRANSITION__TRIGGER_PROB_CODE,
+          TRANSITION__TRIGGER_PROB_CODE_IMPORTS);
+
+    } else if (ttype.equals(TriggerTypes.TIMED)) {
+      support.initTriggerDblEditor(TRIGGER_TIME_ID, transition);
+      bindEditorComponent(TRIGGER_TIME_ID, TRANSITION__TRIGGER_TIMED_CODE,
+          TRANSITION__TRIGGER_TIMED_CODE_IMPORTS);
+
+    } else if (ttype.equals(TriggerTypes.MESSAGE)) {
+      MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
+      if (type == MessageCheckerTypes.EQUALS) {
+        support.initTriggerMEEditor(TRIGGER_MESSAGE_ID, transition);
+      } else if (type == MessageCheckerTypes.CONDITIONAL) {
+        support.initTriggerMCEditor(TRIGGER_MESSAGE_ID, transition);
+      }
+      bindEditorComponent(TRIGGER_MESSAGE_ID, TRANSITION__MESSAGE_CHECKER_CODE,
+          TRANSITION__MESSAGE_CHECKER_CODE_IMPORTS);
     }
   }
 
@@ -654,20 +692,96 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     return strategy;
   }
 
+  public void dispose() {
+    super.dispose();
+    try {
+      transition.eAdapters().remove(langNotify);
+      support.dispose();
+    } catch (CoreException ex) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
+    }
+  }
+
+  private void languageChanged() {
+    LanguageTypes newLang = buttonGroup.getSelectedType();
+    // only switch if switching from Java to something else
+    // switching between Groovy and ReLogo doesn't require an editor switch
+    if (newLang != language && (newLang == LanguageTypes.JAVA || language == LanguageTypes.JAVA)) {
+      
+      support.resetTriggerDblEditor(TRIGGER_TIME_ID, transition);
+      support.resetTriggerDblEditor(TRIGGER_EXP_ID, transition);
+      support.resetTriggerDblEditor(TRIGGER_PROB_ID, transition);
+      support.resetTriggerConditionEditor(TRIGGER_COND_ID, transition);
+      MessageCheckerTypes type = MessageCheckerTypes.get(cmbMessageType.getSelectionIndex());
+      if (type == MessageCheckerTypes.EQUALS)
+        support.resetTriggerMEEditor(TRIGGER_MESSAGE_ID, transition);
+      else if (type == MessageCheckerTypes.CONDITIONAL)
+        support.resetTriggerMCEditor(TRIGGER_MESSAGE_ID, transition);
+      
+      int index = cmbTriggerType.getSelectionIndex();
+      TriggerTypes ttype = TriggerTypeItem.getTriggerType(cmbTriggerType.getItem(index));
+      if (ttype == TriggerTypes.MESSAGE) {
+        messageTypeChanged();
+      }
+
+      support.resetGuardEditor(GUARD_ID, transition);
+      support.resetOnTransEditor(ON_TRANS_ID, transition);
+
+      bindings.removeBindings();
+      StatechartCodeEditor editor = support.getEditor(ON_TRANS_ID);
+      bindings.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION, editor.getCodeViewer());
+      bindings.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION_IMPORTS,
+          editor.getImportViewer());
+
+      editor = support.getEditor(GUARD_ID);
+      bindings.bind(StatechartPackage.Literals.TRANSITION__GUARD, editor.getCodeViewer());
+      bindings.bind(StatechartPackage.Literals.TRANSITION__GUARD_IMPORTS, editor.getImportViewer());
+      triggerChanged();
+    }
+    language = newLang;
+  }
+
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    if (transition != null && !eObject.equals(transition)) {
+      transition.eAdapters().remove(langNotify);
+      if (transition.getTriggerCodeLanguage() != ((Transition)eObject).getTriggerCodeLanguage()) {
+        // if the language is different the dispose of the editors
+        // and start again.
+        try {
+          support.disposeAllEditors();
+        } catch (CoreException e) {
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors", e);
+        }
+      }
+    }
+    
+    transition = (Transition) eObject;
+    language = transition.getTriggerCodeLanguage();
+    transition.eAdapters().add(langNotify);
+    
     bindingContext = context;
     pollingBinding = null;
-    object = eObject;
-
+    
     bindTextField(idTxt, StatechartPackage.Literals.TRANSITION__ID);
-    bindTextField(onTransitionTxt, StatechartPackage.Literals.TRANSITION__ON_TRANSITION);
-    bindTextField(guardTxt, StatechartPackage.Literals.TRANSITION__GUARD);
+
+    support.initGuardEditor(GUARD_ID, transition);
+    support.initOnTransEditor(ON_TRANS_ID, transition);
+
+    bindings = new BindingSupport(context, eObject);
+    StatechartCodeEditor editor = support.getEditor(ON_TRANS_ID);
+    bindings.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION, editor.getCodeViewer());
+    bindings.bind(StatechartPackage.Literals.TRANSITION__ON_TRANSITION_IMPORTS,
+        editor.getImportViewer());
+
+    editor = support.getEditor(GUARD_ID);
+    bindings.bind(StatechartPackage.Literals.TRANSITION__GUARD, editor.getCodeViewer());
+    bindings.bind(StatechartPackage.Literals.TRANSITION__GUARD_IMPORTS, editor.getImportViewer());
 
     bindTextField(priorityTxt, StatechartPackage.Literals.TRANSITION__PRIORITY,
         createUpdateValueStrategy(new StringToDoubleConverter()),
         createUpdateValueStrategy(new DoubleToStringConverter()));
 
-    bindTriggerComponents(context, eObject);
+    bindOtherComponents(context, eObject);
     triggerChanged();
     messageTypeChanged();
 
@@ -695,7 +809,7 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     }
   }
 
-  private void bindTriggerComponents(EMFDataBindingContext context, EObject eObject) {
+  private void bindOtherComponents(EMFDataBindingContext context, EObject eObject) {
     UpdateValueStrategy targetToModel = new UpdateValueStrategy();
     targetToModel.setConverter(new StringToTriggerType());
     UpdateValueStrategy modelToTarget = new UpdateValueStrategy();
@@ -705,11 +819,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__TRIGGER_TYPE).observe(eObject), targetToModel,
         modelToTarget);
-
-    bindTextField(txtTimedTime, StatechartPackage.Literals.TRANSITION__TRIGGER_TIMED_CODE);
-    bindTextField(txtExpRate, StatechartPackage.Literals.TRANSITION__TRIGGER_EXP_RATE_CODE);
-    bindTextField(txtProbProb, StatechartPackage.Literals.TRANSITION__TRIGGER_PROB_CODE);
-    bindTextField(txtCondCond, StatechartPackage.Literals.TRANSITION__TRIGGER_CONDITION_CODE);
 
     context.bindValue(
         WidgetProperties.selection().observe(cmbMessageType),
@@ -722,23 +831,30 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         WidgetProperties.text().observe(cmbMessageClass),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CLASS).observe(eObject));
+  }
 
-    bindTextField(txtMessage, StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_CODE);
+  private void bindEditorComponent(String editorId, EStructuralFeature codeFeature,
+      EStructuralFeature importFeature) {
+    if (!bindings.isBound(codeFeature)) {
+      StatechartCodeEditor editor = support.getEditor(editorId);
+      bindings.bind(codeFeature, editor.getCodeViewer());
+      bindings.bind(importFeature, editor.getImportViewer());
+    }
   }
 
   private Binding bindTextField(Text text, EAttribute attribute) {
     return bindingContext.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
-            .observe(object));
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(transition), attribute).observe(
+            transition));
   }
 
   private Binding bindTextField(Text text, EAttribute attribute, UpdateValueStrategy targetToModel,
       UpdateValueStrategy modelToTarget) {
     return bindingContext.bindValue(
         WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, text),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(object), attribute)
-            .observe(object), targetToModel, modelToTarget);
+        EMFEditProperties.value(TransactionUtil.getEditingDomain(transition), attribute).observe(
+            transition), targetToModel, modelToTarget);
   }
 
   private static class TriggerTypeToString implements IConverter {
@@ -817,15 +933,6 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         }
       }
       return null;
-    }
-  }
-
-  private static class CancelTraverseOnReturn implements TraverseListener {
-    public void keyTraversed(TraverseEvent e) {
-      if (e.detail == SWT.TRAVERSE_RETURN) {
-        e.doit = false;
-        e.detail = SWT.TRAVERSE_NONE;
-      }
     }
   }
 }

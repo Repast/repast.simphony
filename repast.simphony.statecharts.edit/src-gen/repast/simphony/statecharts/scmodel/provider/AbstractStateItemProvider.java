@@ -65,6 +65,8 @@ public class AbstractStateItemProvider
       addOnExitPropertyDescriptor(object);
       addLanguagePropertyDescriptor(object);
       addUuidPropertyDescriptor(object);
+      addOnEnterImportsPropertyDescriptor(object);
+      addOnExitImportsPropertyDescriptor(object);
     }
     return itemPropertyDescriptors;
   }
@@ -180,6 +182,50 @@ public class AbstractStateItemProvider
   }
 
   /**
+   * This adds a property descriptor for the On Enter Imports feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addOnEnterImportsPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_onEnterImports_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_onEnterImports_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
+   * This adds a property descriptor for the On Exit Imports feature.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  protected void addOnExitImportsPropertyDescriptor(Object object) {
+    itemPropertyDescriptors.add
+      (createItemPropertyDescriptor
+        (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+         getResourceLocator(),
+         getString("_UI_AbstractState_onExitImports_feature"),
+         getString("_UI_PropertyDescriptor_description", "_UI_AbstractState_onExitImports_feature", "_UI_AbstractState_type"),
+         StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT_IMPORTS,
+         true,
+         false,
+         false,
+         ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+         null,
+         null));
+  }
+
+  /**
    * This returns AbstractState.gif.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -221,6 +267,8 @@ public class AbstractStateItemProvider
       case StatechartPackage.ABSTRACT_STATE__ON_EXIT:
       case StatechartPackage.ABSTRACT_STATE__LANGUAGE:
       case StatechartPackage.ABSTRACT_STATE__UUID:
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS:
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS:
         fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
         return;
     }

@@ -1,7 +1,11 @@
 package repast.simphony.statecharts.part;
 
+import org.eclipse.core.internal.events.ResourceChangeEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -24,6 +28,7 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocument;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocumentProvider;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -33,11 +38,17 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IGotoMarker;
@@ -45,16 +56,20 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 
 import repast.simphony.statecharts.navigator.StatechartNavigatorItem;
+import repast.simphony.statecharts.validation.BadCodeFinder;
 
 /**
- * @generated
+ * @generated NOT
  */
-public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker {
+// ITextEditorExtension3 is there so we can turn on smart editing for the
+// code editors for the diagram object properties (e.g. OnEnter etc.).
+public class StatechartDiagramEditor extends DiagramDocumentEditor implements IGotoMarker, ITextEditorExtension3 {
 
   /**
-   * Generated NOT
+   * generated NOT
    */
   private static final int LIGHT_GRAY_RGB = 12632256;
 
@@ -67,12 +82,117 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
    * @generated
    */
   public static final String CONTEXT_ID = "repast.simphony.statecharts.ui.diagramContext"; //$NON-NLS-1$
+  
+  class FocusSetter implements Runnable {
+
+    @Override
+    public void run() {
+      IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+          .findView("org.eclipse.ui.views.PropertySheet");
+      part.getSite().getPage().activate(part);
+    }
+  }
+  
+  
+  private IPartListener2 partListener = new IPartListener2() {
+    
+      @Override
+      public void partActivated(IWorkbenchPartReference partRef) {
+        if (activatePropSheet) {
+          activatePropSheet = false;
+          Display.getCurrent().syncExec(new FocusSetter());
+        }
+      }
+
+      @Override
+      public void partBroughtToTop(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partClosed(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partDeactivated(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partOpened(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partHidden(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partVisible(IWorkbenchPartReference partRef) {
+      }
+
+      @Override
+      public void partInputChanged(IWorkbenchPartReference partRef) {
+      }
+    };
+  
+  private IResourceChangeListener changeListener = new IResourceChangeListener() {
+    
+    private BadCodeFinder finder = new BadCodeFinder();
+    
+    @Override
+    public void resourceChanged(IResourceChangeEvent event) {
+      IResourceDelta delta = event.getDelta();
+      try {
+        finder.reset();
+        delta.accept(finder, IResourceDelta.MARKERS);
+      } catch (CoreException e) {
+        StatechartDiagramEditorPlugin.getInstance().logError("Error while looking for bad code", e);
+      }
+      
+      if (finder.foundBadCode()) {
+        //System.out.println(StatechartDiagramEditor.this.getDiagramEditPart());
+        //System.out.println(getDocumentProvider());
+        //System.out.println(getDocumentProvider().getDocument(getEditorInput()).getContent());
+        ValidateAction.runValidation(StatechartDiagramEditor.this.getDiagramEditPart(), 
+            (View)getDocumentProvider().getDocument(getEditorInput()).getContent());
+      }
+    }
+  };
+  
+  private boolean activatePropSheet = false;
 
   /**
-   * @generated
+   * @generated NOT
    */
   public StatechartDiagramEditor() {
     super(true);
+    ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, ResourceChangeEvent.POST_BUILD);
+  }
+  
+  public void init(final IEditorSite site, final IEditorInput input)
+      throws PartInitException {
+    super.init(site, input);
+    site.getPage().addPartListener(partListener);
+  }
+  
+  
+ 
+  /* (non-Javadoc)
+   * @see org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor#dispose()
+   */
+  @Override
+  public void dispose() {
+    ResourcesPlugin.getWorkspace().removeResourceChangeListener(changeListener);
+    getEditorSite().getPage().removePartListener(partListener);
+    super.dispose();
+  }
+  
+  /**
+   * @generated NOT
+   */
+  @Override
+  public void doSave(IProgressMonitor monitor) {
+    IViewPart part = getSite().getPage().findView("org.eclipse.ui.views.PropertySheet");
+    activatePropSheet = part != null && getSite().getPage().getActivePart().equals(part);
+    super.doSave(monitor);
   }
 
   /**
@@ -81,7 +201,7 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   protected String getContextID() {
     return CONTEXT_ID;
   }
-
+  
   /**
    * @generated
    */
@@ -278,7 +398,6 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
   /**
    * @generated NOT
    */
-  @SuppressWarnings("restriction")
   protected void configureGraphicalViewer() {
     super.configureGraphicalViewer();
     DiagramEditorContextMenuProvider provider = new DiagramEditorContextMenuProvider(this,
@@ -307,5 +426,41 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
 
     }
   }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#getInsertMode()
+   */
+  @Override
+  public InsertMode getInsertMode() {
+    return ITextEditorExtension3.SMART_INSERT;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#setInsertMode(org.eclipse.ui.texteditor.ITextEditorExtension3.InsertMode)
+   */
+  @Override
+  public void setInsertMode(InsertMode mode) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#showChangeInformation(boolean)
+   */
+  @Override
+  public void showChangeInformation(boolean show) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.ITextEditorExtension3#isChangeInformationShowing()
+   */
+  @Override
+  public boolean isChangeInformationShowing() {
+    return false;
+  }
+  
+  
 
 }

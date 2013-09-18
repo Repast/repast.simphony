@@ -25,6 +25,8 @@ import repast.simphony.statecharts.scmodel.StatechartPackage;
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnExit <em>On Exit</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnEnterImports <em>On Enter Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.impl.AbstractStateImpl#getOnExitImports <em>On Exit Imports</em>}</li>
  * </ul>
  * </p>
  *
@@ -130,6 +132,46 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * @ordered
    */
   protected String uuid = UUID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getOnEnterImports() <em>On Enter Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnEnterImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String ON_ENTER_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOnEnterImports() <em>On Enter Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnEnterImports()
+   * @generated
+   * @ordered
+   */
+  protected String onEnterImports = ON_ENTER_IMPORTS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getOnExitImports() <em>On Exit Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnExitImports()
+   * @generated
+   * @ordered
+   */
+  protected static final String ON_EXIT_IMPORTS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOnExitImports() <em>On Exit Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOnExitImports()
+   * @generated
+   * @ordered
+   */
+  protected String onExitImports = ON_EXIT_IMPORTS_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -260,6 +302,48 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getOnEnterImports() {
+    return onEnterImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOnEnterImports(String newOnEnterImports) {
+    String oldOnEnterImports = onEnterImports;
+    onEnterImports = newOnEnterImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS, oldOnEnterImports, onEnterImports));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getOnExitImports() {
+    return onExitImports;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOnExitImports(String newOnExitImports) {
+    String oldOnExitImports = onExitImports;
+    onExitImports = newOnExitImports;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS, oldOnExitImports, onExitImports));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType) {
     switch (featureID) {
@@ -273,6 +357,10 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return getLanguage();
       case StatechartPackage.ABSTRACT_STATE__UUID:
         return getUuid();
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS:
+        return getOnEnterImports();
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS:
+        return getOnExitImports();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -299,6 +387,12 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return;
       case StatechartPackage.ABSTRACT_STATE__UUID:
         setUuid((String)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS:
+        setOnEnterImports((String)newValue);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS:
+        setOnExitImports((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -327,6 +421,12 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
       case StatechartPackage.ABSTRACT_STATE__UUID:
         setUuid(UUID_EDEFAULT);
         return;
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS:
+        setOnEnterImports(ON_ENTER_IMPORTS_EDEFAULT);
+        return;
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS:
+        setOnExitImports(ON_EXIT_IMPORTS_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -349,6 +449,10 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
         return language != LANGUAGE_EDEFAULT;
       case StatechartPackage.ABSTRACT_STATE__UUID:
         return UUID_EDEFAULT == null ? uuid != null : !UUID_EDEFAULT.equals(uuid);
+      case StatechartPackage.ABSTRACT_STATE__ON_ENTER_IMPORTS:
+        return ON_ENTER_IMPORTS_EDEFAULT == null ? onEnterImports != null : !ON_ENTER_IMPORTS_EDEFAULT.equals(onEnterImports);
+      case StatechartPackage.ABSTRACT_STATE__ON_EXIT_IMPORTS:
+        return ON_EXIT_IMPORTS_EDEFAULT == null ? onExitImports != null : !ON_EXIT_IMPORTS_EDEFAULT.equals(onExitImports);
     }
     return super.eIsSet(featureID);
   }
@@ -373,6 +477,10 @@ public abstract class AbstractStateImpl extends EObjectImpl implements AbstractS
     result.append(language);
     result.append(", uuid: ");
     result.append(uuid);
+    result.append(", onEnterImports: ");
+    result.append(onEnterImports);
+    result.append(", onExitImports: ");
+    result.append(onExitImports);
     result.append(')');
     return result.toString();
   }

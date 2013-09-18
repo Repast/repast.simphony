@@ -1,5 +1,7 @@
 package repast.simphony.statecharts.part;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.gef.EditPartViewer;
@@ -25,13 +27,23 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
   private DeleteElementAction deleteAction;
 
   /**
-   * @generated
+   * @generated NOT
    */
   public DiagramEditorContextMenuProvider(IWorkbenchPart part, EditPartViewer viewer) {
     super(part, viewer);
     this.part = part;
     deleteAction = new DeleteElementAction(part);
     deleteAction.init();
+    
+    // exclude unwanted items from the context menu
+    @SuppressWarnings("unchecked")
+    Set<String> exclusion = super.getExclusionSet();
+    exclusion.add("org.eclipse.gmf.ecore.editor.LoadResourceAction");
+    exclusion.add("repast.simphony.statecharts.diagram.LoadResourceAction");
+    exclusion.add("groovyfile");
+    exclusion.add("groovyresource");
+    
+    super.setExclusionSet(exclusion);
   }
 
   /**
@@ -49,6 +61,7 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
    * @generated
    */
   public void buildContextMenu(final IMenuManager menu) {
+
     getViewer().flush();
     try {
       TransactionUtil.getEditingDomain((EObject) getViewer().getContents().getModel())
@@ -59,10 +72,13 @@ public class DiagramEditorContextMenuProvider extends DiagramContextMenuProvider
                   DiagramEditorContextMenuProvider.this, part);
               menu.remove(ActionIds.ACTION_DELETE_FROM_MODEL);
               menu.appendToGroup("editGroup", deleteAction);
+              menu.remove("properties");
             }
           });
     } catch (Exception e) {
       StatechartDiagramEditorPlugin.getInstance().logError("Error building context menu", e);
     }
   }
+  
+  
 }
