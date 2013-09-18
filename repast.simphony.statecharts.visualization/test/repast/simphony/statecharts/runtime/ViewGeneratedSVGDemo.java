@@ -14,6 +14,7 @@ import org.w3c.dom.svg.*;
 
 public class ViewGeneratedSVGDemo {
 
+	// Make sure to run without -XstartOnFirstThread
     public static void main(String[] args) {
         // Create an SVG document.
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
