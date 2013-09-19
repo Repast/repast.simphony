@@ -640,18 +640,6 @@ public class Translator {
 			allRealLHS.add(realLHS);
 			
 			
-			// if a variable is initialized via external data, it has no dependencies
-//			if (currentEquation.isGetExternalData()) {
-//				if (!ArrayReference.isArrayReference(realLHS)) {
-//					requires.put(realLHS, null);
-//				} else {
-//					requiresExpanded.put(realLHS, null);
-//					lhsExpandedMap.put(realLHS, new HashSet<String>());
-//					lhsExpandedNotInitialized.put(realLHS, new HashSet<String>());
-//				}
-//				continue;
-//			}
-			
 			if (ArrayReference.isArrayReference(realLHS)) {
 				
 				// initial structures that will hold LHS -> Expanded LHS mapping
@@ -697,11 +685,7 @@ public class Translator {
 					expandedLhsToRealLhsMap.put(expandedLHS, realLHS);
 
 					realLhsToExpandedLhsMap.get(realLHS).add(expandedLHS);
-					
-					
-					
-					if (!realLHS.equals(expandedLHS))
-						realLhsToExpandedLhsNotInitialized.get(realLHS).add(expandedLHS);
+					realLhsToExpandedLhsNotInitialized.get(realLHS).add(expandedLHS);
 
 					// get the set of all rhsVariable reference
 					// these are the tokens stored during parsing. Note that we have the ! still there
@@ -755,11 +739,11 @@ public class Translator {
 									if (!expandedLHS.equals(arrayName)) {
 										requiresExpandedLhsExpandedRHS.get(expandedLHS).add(arrayName);
 										// try this
-										if (expandedLhsToRealLhsMap.containsKey(arrayName)) {
-											String myRealLHS = expandedLhsToRealLhsMap.get(arrayName);
-//											System.out.println("adding "+myRealLHS+" because of "+arrayName);
-											requiresExpandedLhsExpandedRHS.get(expandedLHS).add(myRealLHS);
-										}
+//										if (expandedLhsToRealLhsMap.containsKey(arrayName)) {
+//											String myRealLHS = expandedLhsToRealLhsMap.get(arrayName);
+////											System.out.println("adding "+myRealLHS+" because of "+arrayName);
+//											requiresExpandedLhsExpandedRHS.get(expandedLHS).add(myRealLHS);
+//										}
 									}
 
 								}
@@ -1433,29 +1417,20 @@ public class Translator {
 		HashMap<String, Integer> initializationLine = new HashMap<String, Integer>();
 		for (int i = 0; i < evaluationOrder.size(); i++) {
 			initializationLine.put(evaluationOrder.get(i), i);
-			
-			
-//			try {
-				String lhs = evaluationOrder.get(i);
-				//	    System.out.println("<"+lhs+">");
-//				bw.append("initLine1: "+lhs+" i = "+i+"\n");
 
-				if (expandedLhsMap.containsKey(lhs)) {
-					String real = expandedLhsMap.get(lhs);
-					initializationLine.put(real, i);
-//					bw.append("initLine2: "+real+" i = "+i+"\n");
-				}
 
-				if (lhsExpandedMap.containsKey(lhs)) {
-					for (String exp : lhsExpandedMap.get(lhs)) {
-//						bw.append("initLine3: "+exp+" i = "+i+"\n");
-						initializationLine.put(exp, i);
-					}
+			String lhs = evaluationOrder.get(i);
+
+			if (expandedLhsMap.containsKey(lhs)) {
+				String real = expandedLhsMap.get(lhs);
+				initializationLine.put(real, i);
+			}
+
+			if (lhsExpandedMap.containsKey(lhs)) {
+				for (String exp : lhsExpandedMap.get(lhs)) {
+					initializationLine.put(exp, i);
 				}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			}
 		}
 
 		try {
@@ -1487,9 +1462,11 @@ public class Translator {
 
 						if (initializationLine.get(rhs) != null) {
 							r = initializationLine.get(rhs);
-							bw.append("     <"+rhs+"> "+r + (i < r ? " <<<<<<<<" : "")+"\n");
-							if (i < r && !equations.get(lhs).isOrderedWithInitialValue())  {
+							if (i < r && !equations.get(lhs).isOrderedWithInitialValue()) {
 								orderingProblem = true;
+								bw.append("     <"+rhs+"> "+r + (i < r ? " <<<<<<<<" : "")+"\n");
+							} else {
+								bw.append("     <"+rhs+"> "+r + "\n");
 							}
 						} else {
 							// this might be a array assignment and we alooking at an expanded LHS
@@ -1498,12 +1475,68 @@ public class Translator {
 							if (initializationLine.containsKey(rLHS)) {
 								r = initializationLine.get(rLHS);
 								bw.append("     <"+rLHS+"> "+r + (i < r ? " <<<<<<<<" : "")+"\n");
-								if (i < r && !equations.get(rLHS).isOrderedWithInitialValue()) {
+								if (i < r && !equations.get(rLHS).isOrderedWithInitialValue()) 
 									orderingProblem = true;
-								}
 							} else {
-								bw.append(" >>>> initializtion line missing for <"+rhs+">\n");
-								missingProblem = true;
+								bw.append(" >>>> initializtion line missing for <"+rhs+"> try individuals\n");
+								missingProblem = false;
+								// if the rhs is an array reference to a "group"
+								// see if the individual array refers have initialization lines
+								if (rhs.contains("!") || !ArrayReference.isArrayReference(lhs)) {
+
+
+									ArrayReference rhsArrayReference = new ArrayReference(rhs.replace("!",""));
+									
+									for (SubscriptCombination subrCombo : InformationManagers.getInstance().getArrayManager().
+											getSubscriptValueCombinations(rhsArrayReference.getSubscriptsAsArray())) {
+										// Build an array reference based on the subscript value
+										String expandedRHS = "array."+rhsArrayReference.getArrayName()+ "[";
+										int subn = 0;
+										for (String subscript : rhsArrayReference.getSubscriptsAsArray()) {
+											if (subn++ > 0) {
+												expandedRHS += ",";
+											}
+											expandedRHS += subrCombo.getSubscriptValue(subscript);										 
+										}
+										expandedRHS += "]";
+										if (!initializationLine.containsKey(expandedRHS)) {
+											bw.append(" >>>> initializtion line missing for individual <"+expandedRHS+">\n");
+											missingProblem = true;
+										} else {
+											r = initializationLine.get(expandedRHS);
+											bw.append(" >>>> initializtion line FOUND for individual <"+expandedRHS+"> "+r+"\n");
+										}
+									}
+								
+								
+								} else 	if (ArrayReference.isArrayReference(lhs)) {
+									if (!ArrayReference.isArrayReference(rhs)) {
+//										System.out.println("Why do I think that this should be an AR");
+										continue;
+									}
+									ArrayReference rhsArrayReference = new ArrayReference(rhs.replace("!",""));
+									ArrayReference lhsArrayReference = new ArrayReference(lhs);
+									for (SubscriptCombination subrCombo : InformationManagers.getInstance().getArrayManager().
+											getSubscriptValueCombinations(lhsArrayReference.getSubscriptsAsArray())) {
+										// Build an array reference based on the subscript value
+										String expandedRHS = "array."+rhsArrayReference.getArrayName()+ "[";
+										int subn = 0;
+										for (String subscript : rhsArrayReference.getSubscriptsAsArray()) {
+											if (subn++ > 0) {
+												expandedRHS += ",";
+											}
+											expandedRHS += subrCombo.getSubscriptValue(subscript);										 
+										}
+										expandedRHS += "]";
+										if (!initializationLine.containsKey(expandedRHS)) {
+											bw.append(" >>>> initializtion line missing for individual <"+expandedRHS+">\n");
+											missingProblem = true;
+										} else {
+											r = initializationLine.get(expandedRHS);
+											bw.append(" >>>> initializtion line FOUND for individual <"+expandedRHS+"> "+r+"\n");
+										}
+									}
+								} else {}
 							}
 						}
 //						if (i > r /*&& (equations.get(lhs).getCleanEquation().contains("INTEG") ||

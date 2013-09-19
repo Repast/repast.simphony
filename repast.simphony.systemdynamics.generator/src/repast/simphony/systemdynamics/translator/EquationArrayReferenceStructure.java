@@ -539,7 +539,7 @@ public class EquationArrayReferenceStructure {
 	    if (!dimensionsRequiringIndexArray.contains(dim)) {
 		code.append(",\"[\",intToString(outer"+dim+"),\"]\"");
 	    } else {
-		code.append(",\"[\","+getSubscriptForImplementation(lhsArrayReference.getArrayName(), sub, dim)+",\"]\"");
+		code.append(",\"[\",intToString("+getSubscriptForImplementation(lhsArrayReference.getArrayName(), sub, dim)+"),\"]\"");
 
 	    }
 	}
