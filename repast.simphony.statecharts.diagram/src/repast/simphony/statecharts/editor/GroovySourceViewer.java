@@ -15,6 +15,7 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -102,6 +103,13 @@ public class GroovySourceViewer extends SourceViewer implements StatechartSource
     // from GroovyEditor.createPartControl(Composite)
     unsetJavaBreakpointUpdater();
 
+    // uninstall the quick assist as this doesn't
+    // work correctly when showing editor in property sheet
+    // options shown on the resulting window will open the editor
+    // for the template file
+    fQuickAssistAssistant.uninstall();
+    fQuickAssistAssistantInstalled = false;
+
     boolean closeBrackets = preferenceStore.getBoolean(CLOSE_BRACKETS);
     boolean closeStrings = preferenceStore.getBoolean(CLOSE_STRINGS);
     boolean closeBraces = preferenceStore.getBoolean(CLOSE_BRACES);
@@ -118,7 +126,7 @@ public class GroovySourceViewer extends SourceViewer implements StatechartSource
 
     configureFont(preferenceStore);
   }
-  
+
   public void unconfigure() {
     super.unconfigure();
     removeVerifyKeyListener(groovyBracketInserter);
@@ -177,5 +185,16 @@ public class GroovySourceViewer extends SourceViewer implements StatechartSource
    */
   public void ignoreAutoIndent(boolean ignore) {
     super.ignoreAutoEditStrategies(ignore);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.eclipse.jface.text.TextViewer#getTextHover(int, int)
+   */
+  @Override
+  protected ITextHover getTextHover(int offset, int stateMask) {
+    // turns off the error hovering
+    return null;
   }
 }
