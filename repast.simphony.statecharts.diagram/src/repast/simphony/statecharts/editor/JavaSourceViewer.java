@@ -11,6 +11,7 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -60,6 +61,13 @@ public class JavaSourceViewer extends SourceViewer implements StatechartSourceVi
     JavaSourceViewerConfiguration config = new JavaSourceViewerConfiguration(textTools.getColorManager(),
         prefStore, editor, null);
     super.configure(config);
+    
+    // uninstall the quick assist as this doesn't
+    // work correctly when showing editor in property sheet
+    // options shown on the resulting window will open the editor
+    // for the template file
+    fQuickAssistAssistant.uninstall();
+    fQuickAssistAssistantInstalled = false;
 
     // from CompilationUnitEditor
     boolean closeBrackets = prefStore.getBoolean(CLOSE_BRACKETS);
@@ -115,4 +123,15 @@ public class JavaSourceViewer extends SourceViewer implements StatechartSourceVi
   public void ignoreAutoIndent(boolean ignore) {
     super.ignoreAutoEditStrategies(ignore);
   }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.TextViewer#getTextHover(int, int)
+   */
+  @Override
+  protected ITextHover getTextHover(int offset, int stateMask) {
+    // turns off the error hovering
+    return null;
+  }
+  
+  
 }

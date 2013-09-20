@@ -240,8 +240,6 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     
     viewer = new JavaSourceViewer(comp, new VerticalRuler(VERTICAL_RULER_WIDTH), null);// getOverviewRuler());
     viewer.getTextWidget().getParent().setLayoutData(data);
-    getSourceViewerDecorationSupport(viewer);
-
     viewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(viewer).install(prefStore);
     
@@ -254,8 +252,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     
     importViewer = new JavaSourceViewer(comp, new VerticalRuler(VERTICAL_RULER_WIDTH), null);// getOverviewRuler());
     importViewer.getTextWidget().getParent().setLayoutData(data);
-    getSourceViewerDecorationSupport(importViewer);
-
+   
     importViewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(importViewer).install(prefStore);
     
