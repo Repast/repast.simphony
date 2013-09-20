@@ -3,13 +3,19 @@ package repast.simphony.statecharts.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.IBufferChangedListener;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.IProblemRequestor;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaMarkerAnnotation;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -23,6 +29,196 @@ import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 
 public class ErrorAnnotationHider implements IAnnotationModelListener,
     IAnnotationModelListenerExtension {
+  
+  static class Buffer implements IBuffer {
+    
+    String contents;
+    ICompilationUnit owner;
+    
+    public Buffer(ICompilationUnit owner, String contents) {
+        this.contents = contents;
+        this.owner = owner;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#addBufferChangedListener(org.eclipse.jdt.core.IBufferChangedListener)
+     */
+    @Override
+    public void addBufferChangedListener(IBufferChangedListener listener) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#append(char[])
+     */
+    @Override
+    public void append(char[] text) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#append(java.lang.String)
+     */
+    @Override
+    public void append(String text) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#close()
+     */
+    @Override
+    public void close() {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getChar(int)
+     */
+    @Override
+    public char getChar(int position) {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getCharacters()
+     */
+    @Override
+    public char[] getCharacters() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getContents()
+     */
+    @Override
+    public String getContents() {
+      return contents;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getLength()
+     */
+    @Override
+    public int getLength() {
+      // TODO Auto-generated method stub
+      return 0;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getOwner()
+     */
+    @Override
+    public IOpenable getOwner() {
+      return owner;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getText(int, int)
+     */
+    @Override
+    public String getText(int offset, int length) throws IndexOutOfBoundsException {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#getUnderlyingResource()
+     */
+    @Override
+    public IResource getUnderlyingResource() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#hasUnsavedChanges()
+     */
+    @Override
+    public boolean hasUnsavedChanges() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#isClosed()
+     */
+    @Override
+    public boolean isClosed() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#isReadOnly()
+     */
+    @Override
+    public boolean isReadOnly() {
+      // TODO Auto-generated method stub
+      return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#removeBufferChangedListener(org.eclipse.jdt.core.IBufferChangedListener)
+     */
+    @Override
+    public void removeBufferChangedListener(IBufferChangedListener listener) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#replace(int, int, char[])
+     */
+    @Override
+    public void replace(int position, int length, char[] text) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#replace(int, int, java.lang.String)
+     */
+    @Override
+    public void replace(int position, int length, String text) {
+      contents = contents.substring(0, position) + text + contents.substring(position);
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
+     */
+    @Override
+    public void save(IProgressMonitor progress, boolean force) throws JavaModelException {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#setContents(char[])
+     */
+    @Override
+    public void setContents(char[] contents) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.IBuffer#setContents(java.lang.String)
+     */
+    @Override
+    public void setContents(String contents) {
+      // TODO Auto-generated method stub
+      
+    }
+    
+  }
 
   static class PR implements IProblemRequestor {
 
@@ -49,7 +245,7 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
     }
   }
 
-  static class Owner extends WorkingCopyOwner {
+  class Owner extends WorkingCopyOwner {
 
     PR pr;
 
@@ -61,10 +257,19 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
     public IProblemRequestor getProblemRequestor(ICompilationUnit workingCopy) {
       return pr;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.eclipse.jdt.core.ICompilationUnit)
+     */
+    @Override
+    public IBuffer createBuffer(ICompilationUnit workingCopy) {
+      return new Buffer(workingCopy, doc.get());
+    }
   }
 
   private IDocument doc;
   private int count = 0;
+  private boolean running = false;
 
   public ErrorAnnotationHider(IDocument doc) {
     this.doc = doc;
@@ -111,7 +316,11 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
 
   @Override
   public void modelChanged(AnnotationModelEvent event) {
+    
+    if (running) return;
     if (count > 0) {
+      //System.out.println("\n\n");
+      //new RuntimeException().printStackTrace();
       --count;
       return;
     }
@@ -146,24 +355,53 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
       if (targetError != null) {
         PR pr = new PR();
         Owner owner = new Owner(pr);
-        try {
-          System.out.println("Error in last line: " + doc.get(data.getOffset(), data.getLength()));
-          ICompilationUnit unit = ((CompilationUnitDocumentProvider.ProblemAnnotation) targetError)
-              .getCompilationUnit();
-
-          unit = unit.getWorkingCopy(owner, null);
-          IBuffer buffer = unit.getBuffer();
-          count = 3;
-          buffer.replace(data.getOffset(), 0, "return ");
-          unit.reconcile(ICompilationUnit.NO_AST, false, owner, null);
-          if (pr.count < errors.size()) {
-            event.getAnnotationModel().removeAnnotation(targetError);
+        //ICompilationUnit unit = null;
+        //try {
+          ASTParser parser = ASTParser.newParser(AST.JLS4);
+          String source = doc.get();
+          source = source.substring(0, data.getOffset()) + "return " + source.substring(data.getOffset());
+          System.out.println(source);
+          
+          parser.setSource(source.toCharArray());
+          CompilationUnit result = (CompilationUnit)parser.createAST(null);
+          for (IProblem problem : result.getProblems()) {
+            System.out.println(problem);
           }
-        } catch (BadLocationException | JavaModelException ex) {
-          ex.printStackTrace();
+          
+          System.out.println("errors size: " + errors.size());
+          if (result.getProblems().length < errors.size()) {
+          running = true;
+          System.out.println("removed error");
+          event.getAnnotationModel().removeAnnotation(targetError);
+          running = false;
+        }
+          
+//          System.out.println("Error in last line: " + doc.get(data.getOffset(), data.getLength()));
+//          unit = ((CompilationUnitDocumentProvider.ProblemAnnotation) targetError)
+//              .getCompilationUnit();
+//
+//          unit = unit.getWorkingCopy(owner, null);
+//          
+//          IBuffer buffer = unit.getBuffer();
+//          count = 1;
+//         buffer.replace(data.getOffset(), 0, "return ");
+//          unit.reconcile(ICompilationUnit.NO_AST, false, owner, null);
+//          System.out.println("pr count: " + pr.count);
+//          if (pr.count < errors.size()) {
+//            running = true;
+//            System.out.println("removed error");
+//            event.getAnnotationModel().removeAnnotation(targetError);
+//            running = false;
+//          }
+        //} catch (BadLocationException | JavaModelException ex) {
+        //  ex.printStackTrace();
+        //} finally {
+        //  try {
+            //unit.discardWorkingCopy();
+         // } catch (JavaModelException ex) {}
         }
       }
-    }
+    
 
   }
 
