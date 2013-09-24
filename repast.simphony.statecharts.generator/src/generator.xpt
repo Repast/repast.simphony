@@ -503,11 +503,11 @@ import «getPackageFromType(agentType)».*;
 
 «DEFINE codeBlock(LanguageTypes type, boolean needsRet) FOR String-»
     «IF type == LanguageTypes::java-»
-        «this»
+        «expandCodeBody(this, needsRet)-»
     «ELSEIF type == LanguageTypes::groovy-»
-        «this-»
+        «expandCodeBody(this, false)-»
     «ELSE-»
-        Closure cl = {«this»}
+        Closure cl = {«expandCodeBody(this, false)»}
         cl.setResolveStrategy(Closure.DELEGATE_FIRST);
         cl.setDelegate(agent);
         cl.call(agent);
