@@ -258,7 +258,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
 
     importViewer = new JavaSourceViewer(comp, new VerticalRuler(VERTICAL_RULER_WIDTH), null);// getOverviewRuler());
     importViewer.getTextWidget().getParent().setLayoutData(data);
-   
+
     importViewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(importViewer).install(prefStore);
 
@@ -367,7 +367,8 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
       int line = doc.getNumberOfLines() - lineOffset;
       int offset = doc.getLineOffset(line);
       if (doAddErrorHider(input)) {
-        model.addAnnotationModelListener(new ErrorAnnotationHider(doc, ((FileEditorInput)input).getFile().getProject()));
+        model.addAnnotationModelListener(new ErrorAnnotationHider(doc, ((FileEditorInput) input)
+            .getFile().getProject()));
         doc.replace(offset, doc.getLineLength(line), "\n");
       }
 
@@ -403,9 +404,11 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
 
   private boolean doAddErrorHider(IEditorInput input) {
     String seg = ((FileEditorInput) input).getFile().getFullPath().lastSegment();
-    for (String name : NEED_ERROR_HIDING) {
-      if (seg.contains(name))
-        return true;
+    if (seg.endsWith(".java")) {
+      for (String name : NEED_ERROR_HIDING) {
+        if (seg.contains(name))
+          return true;
+      }
     }
     return false;
   }
