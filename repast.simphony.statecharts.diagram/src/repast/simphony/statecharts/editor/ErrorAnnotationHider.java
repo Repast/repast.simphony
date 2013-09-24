@@ -90,8 +90,6 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
   public ErrorAnnotationHider(IDocument doc, IProject project) {
     this.doc = doc;
     this.project = JavaCore.create(project);
-    // TODO move this
-    Compiler.INSTANCE.init(this.project);
   }
 
   private ErrorLineData findLastLineInMethod() {
@@ -175,7 +173,7 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
         source = source.substring(0, data.offset) + "return " + source.substring(data.offset);
         // compiler starts line numbers at 1
         DL dl = new DL(data.line + 1);
-        Compiler.INSTANCE.compile(name.substring(0, name.lastIndexOf(".")), source, dl);
+        Compiler.INSTANCE.getCompilerTask(project).compile(name.substring(0, name.lastIndexOf(".")), source, dl);
         if (dl.fixed) {
           running = true;
           //System.out.println("removed error");
