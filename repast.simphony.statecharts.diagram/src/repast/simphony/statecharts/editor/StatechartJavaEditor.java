@@ -68,7 +68,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
   private static int VERTICAL_RULER_WIDTH = 12;
 
   private static final String[] NEED_ERROR_HIDING = { "GuardTemplate", "TriggerDoubleTemplate",
-      "TriggerConditionTemplate", "MessageConditionTemplate", "MessageEqualsTemplate" };
+      "TriggerCondTemplate", "MessageCondTemplate", "MessageEqualsTemplate" };
 
   // from JavaEditor
   protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
@@ -177,7 +177,9 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     IDocumentProvider provider = getDocumentProvider();
     if (this.input != null) {
       provider.disconnect(this.input);
-      fSourceViewerDecorationSupport.uninstall();
+      if (fSourceViewerDecorationSupport != null) {
+        fSourceViewerDecorationSupport.uninstall();
+      }
       fSourceViewerDecorationSupport = null;
     }
 
@@ -185,10 +187,6 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
 
     try {
       provider.connect(input);
-      // CompilationUnitDocumentProvider cup =
-      // (CompilationUnitDocumentProvider)provider;
-      // ICompilationUnit unit = cup.getWorkingCopy(input);
-      // System.out.println(unit.getOwner());
     } catch (CoreException e) {
       e.printStackTrace();
     }
@@ -369,7 +367,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
       int line = doc.getNumberOfLines() - lineOffset;
       int offset = doc.getLineOffset(line);
       if (doAddErrorHider(input)) {
-        model.addAnnotationModelListener(new ErrorAnnotationHider(doc));
+        model.addAnnotationModelListener(new ErrorAnnotationHider(doc, ((FileEditorInput)input).getFile().getProject()));
         doc.replace(offset, doc.getLineLength(line), "\n");
       }
 

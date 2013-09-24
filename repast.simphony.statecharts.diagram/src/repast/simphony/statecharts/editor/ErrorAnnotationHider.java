@@ -3,19 +3,15 @@ package repast.simphony.statecharts.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IBuffer;
-import org.eclipse.jdt.core.IBufferChangedListener;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IOpenable;
-import org.eclipse.jdt.core.IProblemRequestor;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.WorkingCopyOwner;
-import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
+import javax.tools.DiagnosticListener;
+import javax.tools.JavaFileObject;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaMarkerAnnotation;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -27,258 +23,81 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 
+/**
+ * Listens for changes in the AnnotationModel and removes return value type errors,
+ * if appropriate. The intention here is that users can provide the return value
+ * without the return statement. For example, "0.5" to return a double. This
+ * classes looks for errors on the last line the method that returns the value
+ * and then compiles a new class with return prefixed to that line. If that
+ * compiled class no longer contains the error, then the error annotation
+ * is removed.
+ *  
+ * @author Nick Collier
+ */
 public class ErrorAnnotationHider implements IAnnotationModelListener,
     IAnnotationModelListenerExtension {
-  
-  static class Buffer implements IBuffer {
-    
-    String contents;
-    ICompilationUnit owner;
-    
-    public Buffer(ICompilationUnit owner, String contents) {
-        this.contents = contents;
-        this.owner = owner;
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#addBufferChangedListener(org.eclipse.jdt.core.IBufferChangedListener)
-     */
-    @Override
-    public void addBufferChangedListener(IBufferChangedListener listener) {
-      // TODO Auto-generated method stub
-      
-    }
+  // struct like class that holds data
+  // about the "return line"
+  class ErrorLineData {
+    int offset, length, line;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#append(char[])
-     */
-    @Override
-    public void append(char[] text) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#append(java.lang.String)
-     */
-    @Override
-    public void append(String text) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#close()
-     */
-    @Override
-    public void close() {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getChar(int)
-     */
-    @Override
-    public char getChar(int position) {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getCharacters()
-     */
-    @Override
-    public char[] getCharacters() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getContents()
-     */
-    @Override
-    public String getContents() {
-      return contents;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getLength()
-     */
-    @Override
-    public int getLength() {
-      // TODO Auto-generated method stub
-      return 0;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getOwner()
-     */
-    @Override
-    public IOpenable getOwner() {
-      return owner;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getText(int, int)
-     */
-    @Override
-    public String getText(int offset, int length) throws IndexOutOfBoundsException {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#getUnderlyingResource()
-     */
-    @Override
-    public IResource getUnderlyingResource() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#hasUnsavedChanges()
-     */
-    @Override
-    public boolean hasUnsavedChanges() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#isClosed()
-     */
-    @Override
-    public boolean isClosed() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#isReadOnly()
-     */
-    @Override
-    public boolean isReadOnly() {
-      // TODO Auto-generated method stub
-      return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#removeBufferChangedListener(org.eclipse.jdt.core.IBufferChangedListener)
-     */
-    @Override
-    public void removeBufferChangedListener(IBufferChangedListener listener) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#replace(int, int, char[])
-     */
-    @Override
-    public void replace(int position, int length, char[] text) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#replace(int, int, java.lang.String)
-     */
-    @Override
-    public void replace(int position, int length, String text) {
-      contents = contents.substring(0, position) + text + contents.substring(position);
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
-     */
-    @Override
-    public void save(IProgressMonitor progress, boolean force) throws JavaModelException {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#setContents(char[])
-     */
-    @Override
-    public void setContents(char[] contents) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.IBuffer#setContents(java.lang.String)
-     */
-    @Override
-    public void setContents(String contents) {
-      // TODO Auto-generated method stub
-      
-    }
-    
-  }
-
-  static class PR implements IProblemRequestor {
-
-    int count = 0;
-
-    @Override
-    public void acceptProblem(IProblem problem) {
-      if (problem.isError())
-        ++count;
-    }
-
-    @Override
-    public void beginReporting() {
-      count = 0;
-    }
-
-    @Override
-    public void endReporting() {
-    }
-
-    @Override
-    public boolean isActive() {
-      return true;
+    public ErrorLineData(IRegion region, int line) {
+      this.offset = region.getOffset();
+      this.length = region.getLength();
+      this.line = line;
     }
   }
 
-  class Owner extends WorkingCopyOwner {
+  /**
+   * Determines whether or not the return line error has been
+   * fixed by comparing compiler diagnostics with the error line.
+   * If there is still an error on that line, then the problem
+   * has not been fixed.
+   * 
+   * @author Nick Collier
+   */
+  class DL implements DiagnosticListener<JavaFileObject> {
 
-    PR pr;
+    // intention is that if the diagnostic reports
+    // an error at the line number then the issue
+    // is not fixed.
+    int lineNumber = 0;
+    boolean fixed = true;
 
-    public Owner(PR pr) {
-      this.pr = pr;
+    public DL(int lineNumber) {
+      this.lineNumber = lineNumber;
+      fixed = true;
     }
 
-    @Override
-    public IProblemRequestor getProblemRequestor(ICompilationUnit workingCopy) {
-      return pr;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jdt.core.WorkingCopyOwner#createBuffer(org.eclipse.jdt.core.ICompilationUnit)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.tools.DiagnosticListener#report(javax.tools.Diagnostic)
      */
     @Override
-    public IBuffer createBuffer(ICompilationUnit workingCopy) {
-      return new Buffer(workingCopy, doc.get());
+    public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+      //System.out.printf("%d: %s, %s%n", diagnostic.getLineNumber(), diagnostic.getKind(), diagnostic.getMessage(null));
+      if (diagnostic.getKind() == Kind.ERROR && diagnostic.getLineNumber() == lineNumber)
+        fixed = false;
     }
   }
 
   private IDocument doc;
-  private int count = 0;
   private boolean running = false;
+  private IJavaProject project;
 
-  public ErrorAnnotationHider(IDocument doc) {
+  public ErrorAnnotationHider(IDocument doc, IProject project) {
     this.doc = doc;
+    this.project = JavaCore.create(project);
+    // TODO move this
+    Compiler.INSTANCE.init(this.project);
   }
 
-  private IRegion findLastLineInMethod() {
+  private ErrorLineData findLastLineInMethod() {
     int bracketCount = 0;
     int lastLine = 0;
-    IRegion data = null;
+    ErrorLineData data = null;
     try {
       for (int i = doc.getNumberOfLines() - 1; i >= 0; i--) {
         int offset = doc.getLineOffset(i);
@@ -305,7 +124,7 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
         }
       }
       if (lastLine != -1)
-        data = doc.getLineInformation(lastLine);
+        data = new ErrorLineData(doc.getLineInformation(lastLine), lastLine);
       // System.out.println(doc.get(data.getOffset(), data.getLength()));
     } catch (BadLocationException ex) {
       data = null;
@@ -316,14 +135,9 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
 
   @Override
   public void modelChanged(AnnotationModelEvent event) {
-    
-    if (running) return;
-    if (count > 0) {
-      //System.out.println("\n\n");
-      //new RuntimeException().printStackTrace();
-      --count;
+
+    if (running)
       return;
-    }
 
     List<Annotation> errors = new ArrayList<Annotation>();
 
@@ -337,11 +151,11 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
 
     if (errors.size() > 0) {
       // find end of method
-      IRegion data = findLastLineInMethod();
+      ErrorLineData data = findLastLineInMethod();
       if (data != null) {
         for (Annotation error : errors) {
           Position pos = event.getAnnotationModel().getPosition(error);
-          if (pos.overlapsWith(data.getOffset(), data.getLength())) {
+          if (pos.overlapsWith(data.offset, data.length)) {
             if (targetError == null) {
               targetError = error;
             } else {
@@ -353,56 +167,23 @@ public class ErrorAnnotationHider implements IAnnotationModelListener,
       }
 
       if (targetError != null) {
-        PR pr = new PR();
-        Owner owner = new Owner(pr);
-        //ICompilationUnit unit = null;
-        //try {
-          ASTParser parser = ASTParser.newParser(AST.JLS4);
-          String source = doc.get();
-          source = source.substring(0, data.getOffset()) + "return " + source.substring(data.getOffset());
-          System.out.println(source);
-          
-          parser.setSource(source.toCharArray());
-          CompilationUnit result = (CompilationUnit)parser.createAST(null);
-          for (IProblem problem : result.getProblems()) {
-            System.out.println(problem);
-          }
-          
-          System.out.println("errors size: " + errors.size());
-          if (result.getProblems().length < errors.size()) {
+
+        String name = ((CompilationUnitDocumentProvider.ProblemAnnotation) targetError)
+            .getCompilationUnit().getElementName();
+
+        String source = doc.get();
+        source = source.substring(0, data.offset) + "return " + source.substring(data.offset);
+        // compiler starts line numbers at 1
+        DL dl = new DL(data.line + 1);
+        Compiler.INSTANCE.compile(name.substring(0, name.lastIndexOf(".")), source, dl);
+        if (dl.fixed) {
           running = true;
-          System.out.println("removed error");
+          //System.out.println("removed error");
           event.getAnnotationModel().removeAnnotation(targetError);
           running = false;
         }
-          
-//          System.out.println("Error in last line: " + doc.get(data.getOffset(), data.getLength()));
-//          unit = ((CompilationUnitDocumentProvider.ProblemAnnotation) targetError)
-//              .getCompilationUnit();
-//
-//          unit = unit.getWorkingCopy(owner, null);
-//          
-//          IBuffer buffer = unit.getBuffer();
-//          count = 1;
-//         buffer.replace(data.getOffset(), 0, "return ");
-//          unit.reconcile(ICompilationUnit.NO_AST, false, owner, null);
-//          System.out.println("pr count: " + pr.count);
-//          if (pr.count < errors.size()) {
-//            running = true;
-//            System.out.println("removed error");
-//            event.getAnnotationModel().removeAnnotation(targetError);
-//            running = false;
-//          }
-        //} catch (BadLocationException | JavaModelException ex) {
-        //  ex.printStackTrace();
-        //} finally {
-        //  try {
-            //unit.discardWorkingCopy();
-         // } catch (JavaModelException ex) {}
-        }
       }
-    
-
+    }
   }
 
   @Override
