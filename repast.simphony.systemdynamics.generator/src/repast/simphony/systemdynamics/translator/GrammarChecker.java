@@ -280,7 +280,7 @@ public class GrammarChecker {
 		MutableBoolean processingFunctionInvocation = new MutableBoolean(false);
 		String previousToken = "";
 		MutableInteger pos = new MutableInteger();
-		MutableInteger openParens = new MutableInteger();
+		MutableInteger openParens = new MutableInteger(0);
 		
 		MutableBoolean lhs = new MutableBoolean(true);
 
@@ -552,7 +552,7 @@ public class GrammarChecker {
 				
 				// found closing paren
 //				if (openParens.value() == 0) {
-				if (localOpenParen == 0) {
+				if (localOpenParen == 0 || openParens.value() == 0) { // 9/25 try this || op == 0
 					done = true;
 //					System.out.println("ends function");
 					processingFunctionInvocation.setValue(false);
