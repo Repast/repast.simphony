@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -65,6 +66,9 @@ import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 public class StatechartJavaEditor extends CompilationUnitEditor implements StatechartCodeEditor {
 
   private static int VERTICAL_RULER_WIDTH = 12;
+
+  private static final String[] NEED_ERROR_HIDING = { "GuardTemplate", "TriggerDoubleTemplate",
+      "TriggerCondTemplate", "MessageCondTemplate", "MessageEqualsTemplate" };
 
   // from JavaEditor
   protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
@@ -149,7 +153,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
   public JavaSourceViewer getCodeViewer() {
     return viewer;
   }
-  
+
   /**
    * Gets the viewer for the imports.
    * 
@@ -173,12 +177,14 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     IDocumentProvider provider = getDocumentProvider();
     if (this.input != null) {
       provider.disconnect(this.input);
-      fSourceViewerDecorationSupport.uninstall();
+      if (fSourceViewerDecorationSupport != null) {
+        fSourceViewerDecorationSupport.uninstall();
+      }
       fSourceViewerDecorationSupport = null;
     }
 
     this.input = input;
-    
+
     try {
       provider.connect(input);
     } catch (CoreException e) {
@@ -222,7 +228,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
 
   public void createPartControl(IWorkbenchPartSite site, Composite parent) {
     this.site = site;
-    
+
     CTabFolder tabFolder = new CTabFolder(parent, SWT.FLAT);
     tabFolder.setTabHeight(20);
     tabFolder.setTabPosition(SWT.BOTTOM);
@@ -230,32 +236,32 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     tabFolder.setLayoutData(data);
     tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(
         SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-    
+
     CTabItem item = new CTabItem(tabFolder, SWT.NONE);
     item.setText("Code");
     Composite comp = new Composite(tabFolder, SWT.NONE);
     comp.setLayout(new GridLayout(1, true));
     comp.setLayoutData(data);
     item.setControl(comp);
-    
+
     viewer = new JavaSourceViewer(comp, new VerticalRuler(VERTICAL_RULER_WIDTH), null);// getOverviewRuler());
     viewer.getTextWidget().getParent().setLayoutData(data);
     viewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(viewer).install(prefStore);
-    
+
     item = new CTabItem(tabFolder, SWT.NONE);
     item.setText("Imports");
     comp = new Composite(tabFolder, SWT.NONE);
     comp.setLayout(new GridLayout(1, true));
     comp.setLayoutData(data);
     item.setControl(comp);
-    
+
     importViewer = new JavaSourceViewer(comp, new VerticalRuler(VERTICAL_RULER_WIDTH), null);// getOverviewRuler());
     importViewer.getTextWidget().getParent().setLayoutData(data);
-   
+
     importViewer.configure(prefStore, this);
     getSourceViewerDecorationSupport(importViewer).install(prefStore);
-    
+
     importViewer.ignoreAutoIndent(true);
     tabFolder.setSelection(0);
   }
@@ -357,9 +363,15 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     doc.setDocumentPartitioner(partitioner);
     partitioner.connect(doc);
     IAnnotationModel model = getDocumentProvider().getAnnotationModel(input);
-
     try {
-      int offset = doc.getLineOffset(doc.getNumberOfLines() - lineOffset);
+      int line = doc.getNumberOfLines() - lineOffset;
+      int offset = doc.getLineOffset(line);
+      if (doAddErrorHider(input)) {
+        model.addAnnotationModelListener(new ErrorAnnotationHider(doc, ((FileEditorInput) input)
+            .getFile().getProject()));
+        doc.replace(offset, doc.getLineLength(line), "\n");
+      }
+
       viewer.setDocument(doc, model, offset, 0);
       importViewer.setDocument(doc, model, doc.getLineOffset(1), 0);
     } catch (BadLocationException e) {
@@ -390,6 +402,17 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
     viewer.ignoreAutoIndent(false);
   }
 
+  private boolean doAddErrorHider(IEditorInput input) {
+    String seg = ((FileEditorInput) input).getFile().getFullPath().lastSegment();
+    if (seg.endsWith(".java")) {
+      for (String name : NEED_ERROR_HIDING) {
+        if (seg.contains(name))
+          return true;
+      }
+    }
+    return false;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -397,7 +420,8 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
    */
   @Override
   public void dispose() {
-    if (fSourceViewerDecorationSupport != null) fSourceViewerDecorationSupport.uninstall();
+    if (fSourceViewerDecorationSupport != null)
+      fSourceViewerDecorationSupport.uninstall();
     viewer.unconfigure();
     importViewer.unconfigure();
     super.dispose();
@@ -416,7 +440,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
   public StyledText getCodeTextWidget() {
     return viewer.getTextWidget();
   }
-  
+
   public StyledText getImportTextWidget() {
     return importViewer.getTextWidget();
   }

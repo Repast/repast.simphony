@@ -24,11 +24,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
 
 /**
  * @author andreas muelder - Initial contribution and API
@@ -51,22 +54,8 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       bindingContext = new EMFDataBindingContext();
       bindModel(bindingContext);
     }
-    
-    
-    //else {
-      // this seems to be unecessary
-      //bindingContext.updateTargets();
-    //}
-    
-    /*
-     * this is the older version
-    if (bindingContext != null)
-      bindingContext.dispose();
-    bindingContext = new EMFDataBindingContext();
-    bindModel(bindingContext);
-    */
   }
-  
+
   @Override
   protected void setEObject(EObject object) {
     super.setEObject(object);
@@ -74,9 +63,18 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       bindingContext.dispose();
     }
     bindingContext = new EMFDataBindingContext();
-    bindModel(bindingContext);
+    IViewPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+        .findView("org.eclipse.ui.views.PropertySheet");
+    // if the user deletes the properties view this for some reason
+    // eclipse / gmf still drives the flow to this point, so 
+    // we need to check if a properties views actually exists
+    if (part != null) {
+      bindModel(bindingContext);
+    } else {
+      StatechartDiagramEditorPlugin.getInstance().logInfo("Eclipse trying to show properties editor when none exists");
+    }
   }
-  
+
   @Override
   public void dispose() {
     super.dispose();
@@ -86,17 +84,16 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
       toolkit.dispose();
     doDispose();
   }
-  
+
   /**
    * Peform section specific disposal.
    */
   protected void doDispose() {
     sheet.dispose();
   }
-  
+
   @Override
-  public final void createControls(Composite parent,
-      TabbedPropertySheetPage tabPage) {
+  public final void createControls(Composite parent, TabbedPropertySheetPage tabPage) {
     super.createControls(parent, tabPage);
     toolkit = new FormToolkit(parent.getDisplay());
     toolkit.setBorderStyle(SWT.BORDER);
@@ -104,7 +101,7 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
     parent.setLayout(new GridLayout(1, true));
     createControls(parent);
   }
-  
+
   public FormToolkit getToolkit() {
     return toolkit;
   }
@@ -113,41 +110,34 @@ public abstract class AbstractEditorPropertySection extends AbstractModelerPrope
    * returns the resource that is active in the current editor, this is used for
    * the {@link XtextPropertyDescriptor}s context resource to enable scoping to
    * elements outside the text block
-   *
-  protected Resource getActiveEditorResource() {
-    IEditorPart editor = ActiveEditorTracker.getLastActiveEditor();
-
-    EditingDomain domain = null;
-    if (editor instanceof IEditingDomainProvider) {
-      domain = ((IEditingDomainProvider) editor).getEditingDomain();
-    } else if (editor.getAdapter(IEditingDomainProvider.class) != null) {
-      domain = ((IEditingDomainProvider) editor.getAdapter(IEditingDomainProvider.class))
-          .getEditingDomain();
-    } else if (editor.getAdapter(EditingDomain.class) != null) {
-      domain = (EditingDomain) editor.getAdapter(EditingDomain.class);
-    }
-    if (domain == null) {
-      return null;
-    }
-
-    EList<Resource> resources = domain.getResourceSet().getResources();
-
-    return resources.get(0); // always take the first resource ...
-  }
-
-  protected void enableXtext(Control styledText, Injector injector) {
-    StyledTextXtextAdapter xtextAdapter = new StyledTextXtextAdapter(injector);
-    xtextAdapter.getFakeResourceContext().getFakeResource().eAdapters()
-        .add(new ContextElementAdapter(this));
-    xtextAdapter.adapt((StyledText) styledText);
-  }
-
-  protected Injector getInjector(SemanticTarget semanticTarget) {
-    IExpressionLanguageProvider registeredProvider = ExpressionLanguageProviderExtensions
-        .getRegisteredProvider(semanticTarget, getActiveEditorResource().getURI().fileExtension());
-    return registeredProvider.getInjector();
-  }
-  */
+   * 
+   * protected Resource getActiveEditorResource() { IEditorPart editor =
+   * ActiveEditorTracker.getLastActiveEditor();
+   * 
+   * EditingDomain domain = null; if (editor instanceof IEditingDomainProvider)
+   * { domain = ((IEditingDomainProvider) editor).getEditingDomain(); } else if
+   * (editor.getAdapter(IEditingDomainProvider.class) != null) { domain =
+   * ((IEditingDomainProvider) editor.getAdapter(IEditingDomainProvider.class))
+   * .getEditingDomain(); } else if (editor.getAdapter(EditingDomain.class) !=
+   * null) { domain = (EditingDomain) editor.getAdapter(EditingDomain.class); }
+   * if (domain == null) { return null; }
+   * 
+   * EList<Resource> resources = domain.getResourceSet().getResources();
+   * 
+   * return resources.get(0); // always take the first resource ... }
+   * 
+   * protected void enableXtext(Control styledText, Injector injector) {
+   * StyledTextXtextAdapter xtextAdapter = new StyledTextXtextAdapter(injector);
+   * xtextAdapter.getFakeResourceContext().getFakeResource().eAdapters()
+   * .add(new ContextElementAdapter(this)); xtextAdapter.adapt((StyledText)
+   * styledText); }
+   * 
+   * protected Injector getInjector(SemanticTarget semanticTarget) {
+   * IExpressionLanguageProvider registeredProvider =
+   * ExpressionLanguageProviderExtensions .getRegisteredProvider(semanticTarget,
+   * getActiveEditorResource().getURI().fileExtension()); return
+   * registeredProvider.getInjector(); }
+   */
 
   public EObject getContextObject() {
     return getEObject();

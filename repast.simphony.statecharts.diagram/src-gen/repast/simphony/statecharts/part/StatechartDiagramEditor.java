@@ -29,6 +29,8 @@ import org.eclipse.gmf.runtime.diagram.ui.resources.editor.document.IDocumentPro
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -171,6 +173,12 @@ public class StatechartDiagramEditor extends DiagramDocumentEditor implements IG
       throws PartInitException {
     super.init(site, input);
     site.getPage().addPartListener(partListener);
+    if (input instanceof IFileEditorInput) {
+      // this initializes the compiler so it can be used more quickly
+      // in the code property editors
+      IJavaProject project = JavaCore.create(((IFileEditorInput) input).getFile().getProject());
+      repast.simphony.statecharts.editor.Compiler.INSTANCE.getCompilerTask(project);
+    }
   }
   
   

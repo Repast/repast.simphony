@@ -33,6 +33,10 @@ import repast.simphony.statecharts.scmodel.Transition;
 
 /**
  * Support for creating, initializing and disposing of CodePropertyEditors.
+ * The creation of an editor is staggered. First an entry should be created
+ * and the resulting Group placed in the GUI. Then when the code property
+ * is bound in the propery sheet, the editor itself can be initialized
+ * using one of the init* methods.
  * 
  * @author Nick Collier
  */
@@ -42,6 +46,9 @@ public class EditorSupport {
     IPath call(IProject proj, TemplateGenerator gen, Transition trans);
   }
 
+  // individual data for each editor, including
+  // its UI group, layout column span and the
+  // editor itself.
   private static class EditorData {
 
     private StatechartCodeEditor editor;
@@ -58,6 +65,7 @@ public class EditorSupport {
         editor.dispose();
         FileEditorInput input = (FileEditorInput) editor.getEditorInput();
         if (input != null)
+          // deletes the template file
           input.getFile().delete(true, new NullProgressMonitor());
         editor = null;
       }
@@ -107,6 +115,14 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Resets the editor for any transition's trigger code property that
+   * returns a boolean  by disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerConditionEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     boolean disposed = disposeEditor(data);
@@ -117,6 +133,13 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Initalizes the editor for any transition code property
+   * that should return a boolean.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initTriggerConditionEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -125,6 +148,14 @@ public class EditorSupport {
     }, RETURN_VALUE_OFFSET);
   }
 
+  /**
+   * Resets the editor for any transition's trigger code property that
+   * returns a double  by disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerDblEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     boolean disposed = disposeEditor(data);
@@ -135,6 +166,13 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Initalizes the editor for any transition code property
+   * that should return a double.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initTriggerDblEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -143,6 +181,14 @@ public class EditorSupport {
     }, RETURN_VALUE_OFFSET);
   }
 
+  /**
+   * Resets the editor for a transition's trigger message equals property by
+   * disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerMEEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     boolean disposed = disposeEditor(data);
@@ -153,6 +199,15 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Resets the editor input for a transition's message equals
+   * trigger. This is necessary because the message equals trigger
+   * and the message condition trigger share the same code property,
+   * but need to use different template files.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerMEEditorInput(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -165,6 +220,12 @@ public class EditorSupport {
     data.group.getParent().layout(true, true);
   }
 
+  /**
+   * Initalizes the editor for a transition's trigger message equals property.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initTriggerMEEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -173,6 +234,14 @@ public class EditorSupport {
     }, RETURN_VALUE_OFFSET);
   }
 
+  /**
+   * Resets the editor for a transition's trigger message condition property by
+   * disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerMCEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     boolean disposed = disposeEditor(data);
@@ -183,6 +252,15 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Resets the editor input for a transition's message condition
+   * trigger. This is necessary because the message condition trigger
+   * and the message equals trigger share the same code property,
+   * but need to use different template files.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetTriggerMCEditorInput(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -195,6 +273,12 @@ public class EditorSupport {
     data.group.getParent().layout(true, true);
   }
 
+  /**
+   * Initalizes the editor for a transition's trigger message condition property.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initTriggerMCEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -222,6 +306,14 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Resets the editor for a transition's Guard property by
+   * disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetGuardEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     disposeEditor(data);
@@ -230,6 +322,12 @@ public class EditorSupport {
     data.group.getParent().layout(true, true);
   }
 
+  /**
+   * Initalizes the editor for a transition's Guard property.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initGuardEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -239,6 +337,14 @@ public class EditorSupport {
 
   }
 
+  /**
+   * Resets the editor for a transition's OnTransition property by
+   * disposing of the existing editor, initializing the new one,
+   * and refreshing the GUI.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void resetOnTransEditor(String editorId, Transition transition) {
     EditorData data = getEditorData(editorId);
     disposeEditor(data);
@@ -247,6 +353,12 @@ public class EditorSupport {
     data.group.getParent().layout(true, true);
   }
 
+  /**
+   * Initalizes the editor for a transition's OnTransition property.
+   * 
+   * @param editorId
+   * @param transition
+   */
   public void initOnTransEditor(String editorId, Transition transition) {
     doInit(editorId, transition, new GeneratorCall() {
       public IPath call(IProject proj, TemplateGenerator gen, Transition trans) {
@@ -275,6 +387,13 @@ public class EditorSupport {
     return disposed;
   }
 
+  /**
+   * Resets the editior for the AbstractStates on* code properties.
+   * This disposes of the existing editor, intializes a new one,
+   * and refreshes the GUI.
+   * @param editorId
+   * @param state
+   */
   public void resetStateOnEditor(String editorId, AbstractState state) {
     EditorData data = getEditorData(editorId);
     disposeEditor(data);
@@ -283,6 +402,9 @@ public class EditorSupport {
     data.group.getParent().layout(true, true);
   }
 
+  // initializes the editor for an abstract state on* code property
+  // this creates the appropriate template files, editor input and
+  // intializes the editor with that input
   private void doInit(StatechartCodeEditor editor, AbstractState state) {
     IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
     IFileEditorInput input = (IFileEditorInput) window.getActivePage().getActiveEditor()
@@ -319,6 +441,8 @@ public class EditorSupport {
 
   /**
    * Disposes of all the editors but does not remove the entries.
+   * New editor can be created using the init* methods without
+   * recreating an entry.
    * 
    * @throws CoreException
    */
@@ -328,6 +452,16 @@ public class EditorSupport {
     }
   }
 
+  /**
+   * Creates an "entry" for the specified editor in 
+   * this EditorSupport. 
+   * 
+   * @param editorId
+   * @param parent
+   * @param colSpan
+   * @return the group into which the editor gui widget will
+   * ultimately be placed.
+   */
   public Group createEntry(String editorId, Composite parent, int colSpan) {
     Group group = new Group(parent, SWT.BORDER);
     GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, colSpan, 1);
@@ -346,6 +480,15 @@ public class EditorSupport {
     return group;
   }
 
+  /**
+   * Creates an "entry" for the specified editor in 
+   * this EditorSupport. 
+   * 
+   * @param editorId
+   * @param parent
+   * @return the Group widget into which the editor will be placed
+   * when its created.
+   */
   public Group createEntry(String editorId, Composite parent) {
     return createEntry(editorId, parent, 1);
   }
@@ -377,6 +520,13 @@ public class EditorSupport {
     return data;
   }
 
+  /**
+   * Initializes an editor for editing an abstract states onEnter / onExit
+   * code properties.
+   * 
+   * @param editorId
+   * @param state
+   */
   public void initStateOnEditor(String editorId, AbstractState state) {
     EditorData data = getEditor(editorId, state.getLanguage());
     if (data.editor.getEditorInput() == null) {
