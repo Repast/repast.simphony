@@ -793,7 +793,7 @@ public class Translator {
 		// this is the order in which we will evaluate the equations
 		ArrayList<String> evaluationOrder = new ArrayList<String>();
 
-		int lastCount = 0;
+		int lastCount = -1;
 		int terminationLoopCount = 0;
 
 		// allLHS needs to be reset
@@ -808,6 +808,7 @@ public class Translator {
 		boolean pass1 = true;
 		boolean done = false;
 		int loopCount = 0;
+		List<String> lastToRemove = null;
 		while (!done) {
 
 			// this will contain LHS's that have been assigned a value
@@ -879,16 +880,26 @@ public class Translator {
 			if (toRemoveFromRequires.size() > 0) {
 				terminationLoopCount = 0;
 				if (lastCount == toRemoveFromRequires.size()) {
-					loopCount++;
-//					System.out.println("LoopCount: "+loopCount);
-					if (loopCount > 5) {
-						System.out.println("Break on loop count "+loopCount);
-						break;
+//					System.out.println("Same Size: "+lastCount);
+					List<String> tmpRemove = new ArrayList<String>(lastToRemove);
+					tmpRemove.removeAll(toRemoveFromRequires);
+					if (tmpRemove.size() == 0) {
+//						System.out.println("Identical");
+						loopCount++;
+						System.out.println("LoopCount: "+loopCount);
+						if (loopCount > 4) {
+							System.out.println("Not makeing progress. Terminating due to LoopCount: "+loopCount);
+							break;
+						}
+					} else {
+						loopCount = 0;
+//						System.out.println("Different");
 					}
 				} else {
 					loopCount = 0;
 				}
 
+				lastToRemove = new ArrayList<String>(toRemoveFromRequires);
 				lastCount = toRemoveFromRequires.size();
 				
 				// this is were the work really takes place manipulating the data structures
@@ -972,17 +983,19 @@ public class Translator {
 		return outList;
 	}
 
-	protected boolean containsInitialValueFunction(String equation) {
-		if (containsFunctionINTEG(equation) || 
-				containsFunctionSMOOTHI(equation) ||
-				containsFunctionDELAY3I(equation) ||
-				containsFunctionACTIVEINITIAL(equation)) {
-			return true;
-		} else {
-			return false;
+	protected boolean containsInitialValueFunction(Equation equation) {
+		// want to traverse tree (via tokens)
+		for (String token : equation.getTokens()) {
+			if (Parser.isFunctionInvocation(token)) {
+				FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(token);
+				if (fd.isSuppliesInitialValue()) {
+					return true;
+				}
+			} 
 		}
-
+		return false;
 	}
+
 
 	protected boolean containsFunctionINTEG(String equation) {
 		if (equation.contains("INTEG"))
@@ -1020,7 +1033,7 @@ public class Translator {
 
 		Equation eqn = equations.get(realLHS);
 		// functions that support initial values
-		if (containsInitialValueFunction(equations.get(realLHS).getVensimEquationOnly())) {
+		if (containsInitialValueFunction(eqn)) {
 
 			initialized = true;
 			ArrayList<String> initializationVariables = equations.get(realLHS).getFunctionInitialVariables();
@@ -1068,7 +1081,7 @@ public class Translator {
 		//	    return true;
 		//	}
 		// functions that support initial values
-		if (containsInitialValueFunction(equations.get(realLHS).getCleanEquation())) {
+		if (containsInitialValueFunction(eqn)) {
 
 			// HERE -- get a list of the initialization variables in the statement and check each of them
 
