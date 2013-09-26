@@ -107,7 +107,7 @@ public class MatchedFiles {
    * @param files
    */
   public void addAllFiles(Collection<File> files) {
-    files.addAll(files);
+    this.files.addAll(files);
   }
   
   private void process(BufferedWriter out, File file, boolean skip) throws IOException {
@@ -128,8 +128,12 @@ public class MatchedFiles {
    * 
    * @param outputDir
    */
-  public void aggregateOutput(String outputDir) throws IOException {  
-    try (BufferedWriter out = new BufferedWriter(new FileWriter( new File(outputDir, outputFile)))) {
+  public void aggregateOutput(String outputDir) throws IOException {
+    File f = new File(outputDir, outputFile);
+    if (!f.getParentFile().exists()) {
+      f.getParentFile().mkdirs();
+    }
+    try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
       boolean skip = false;
       for (File file : files) {
         process(out, file, skip);
