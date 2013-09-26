@@ -111,14 +111,14 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     Button btnJava = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnJava, true, true);
     btnJava.setText("Java");
+    
+    Button btnGroovy = new Button(composite_1, SWT.RADIO);
+    toolkit.adapt(btnGroovy, true, true);
+    btnGroovy.setText("Groovy");
 
     Button btnRelogo = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnRelogo, true, true);
     btnRelogo.setText("ReLogo");
-
-    Button btnGroovy = new Button(composite_1, SWT.RADIO);
-    toolkit.adapt(btnGroovy, true, true);
-    btnGroovy.setText("Groovy");
 
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
 

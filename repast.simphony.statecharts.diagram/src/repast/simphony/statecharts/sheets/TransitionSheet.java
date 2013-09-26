@@ -226,14 +226,14 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     btnJava.setLayoutData(gd_btnJava);
     toolkit.adapt(btnJava, true, true);
     btnJava.setText("Java");
-
-    Button btnRelogo = new Button(composite_1, SWT.RADIO);
-    toolkit.adapt(btnRelogo, true, true);
-    btnRelogo.setText("ReLogo");
-
+    
     Button btnGroovy = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnGroovy, true, true);
     btnGroovy.setText("Groovy");
+    
+    Button btnRelogo = new Button(composite_1, SWT.RADIO);
+    toolkit.adapt(btnRelogo, true, true);
+    btnRelogo.setText("ReLogo");
 
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
   }
