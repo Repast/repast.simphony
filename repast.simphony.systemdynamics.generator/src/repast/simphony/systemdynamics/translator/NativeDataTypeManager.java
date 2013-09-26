@@ -90,6 +90,8 @@ public class NativeDataTypeManager {
 	private  void addScalar(String scalar, String dataType) {
 		if (arrays.containsKey(scalar)) {
 			System.out.println("#####Attempting to add scalar already defined as array: "+scalar);
+			System.out.println("Using array definition");
+			return;
 		}
 
 		scalars.add(scalar);
