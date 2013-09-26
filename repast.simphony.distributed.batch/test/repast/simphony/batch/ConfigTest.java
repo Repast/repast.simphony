@@ -96,7 +96,7 @@ public class ConfigTest {
     Session session2 = findSession(config, "nick", "192.168.1.12");
     assertNotNull(session2);
     
-    Session session3 = findSession(config, "nick", "localhost");
+    Session session3 = findSession(config, System.getProperty("user.name"), "localhost");
     assertNotNull(session3);
     
     List<String> contents = getFileContents(session1.getInput());
