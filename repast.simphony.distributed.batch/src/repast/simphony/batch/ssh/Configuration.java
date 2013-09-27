@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Configuration data loaded from a config file for configuring remote ssh based execution. 
+ * Configuration data loaded from a config file for configuring batch
+ * run execution.
  * 
  * @author Nick Collier
  */
@@ -99,18 +100,44 @@ public class Configuration {
     return new ArrayList<String>(patterns);
   }
   
+  /**
+   * Gets the path to the model archive.
+   * 
+   * @return the path to the model archive.
+   */
   public String getModelArchive() {
     return modelArchive;
   }
   
+  /**
+   * Gets the path to the batch parameter file to
+   * use in the batch runs.
+   * 
+   * @return the path to the batch parameter file to
+   * use in the batch runs.
+   */
   public String getBatchParamsFile() {
     return paramsFile;
   }
   
+  /**
+   * Gets the directory where the ssh keys for the
+   * user are located. 
+   * 
+   * @return the directory where the ssh keys for the
+   * user are located. 
+   */
   public String getSSHKeyDir() {
     return sshKeyDir;
   }
   
+  /**
+   * Gets the directory into which the aggregated session output
+   * will be written.
+   * 
+   * @return he directory into which the aggregated session output
+   * will be written.
+   */
   public String getOutputDir() {
     return outDir;
   }
@@ -142,9 +169,9 @@ public class Configuration {
   }
   
   /**
-   * Gets an iterable over the Remotes described in this Configuration.
+   * Gets an iterable over the sessions described in this Configuration.
    * 
-   * @return  an iterable over the Remotes described in this Configuration.
+   * @return  an iterable over the sessions described in this Configuration.
    */
   public Iterable<? extends Session> sessions() {
     return sessions;
