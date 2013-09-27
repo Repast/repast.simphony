@@ -5,6 +5,7 @@ package repast.simphony.batch.ssh;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,10 +22,12 @@ public class Configuration {
   private static final String BATCH_PARAMS_KEY = "batch.params.file";
   private static final String POLL_INTERVAL_KEY = "poll.frequency";
   private static final String VM_ARGS_KEY = "vm.arguments";
+  private static final String PATTERN_PREFIX = "output.pattern";
   
   private String modelArchive, sshKeyDir, outDir, paramsFile, vmArgs;
   private float pollFrequency;
   private List<? extends Session> sessions;
+  private List<String> patterns = new ArrayList<>();
   
   public Configuration(String file) throws IOException {
     Properties props = new Properties();
@@ -61,7 +64,39 @@ public class Configuration {
     if (vmArgs == null) throw new IOException("Invalid configuration file: file is missing " + VM_ARGS_KEY + " property");
     props.remove(VM_ARGS_KEY);
     
+    // order is important here as SessionPropsParser assumes
+    // that all the non-session properties have been removed from
+    // the properties file
+    parseOutputPatterns(props);
     sessions = new SessionPropsParser().parse(props);
+  }
+  
+  private void parseOutputPatterns(Properties props) throws IOException {
+    List<String> toRemove = new ArrayList<>();
+    for (String key : props.stringPropertyNames()) {
+      if (key.startsWith(PATTERN_PREFIX)) {
+        String pattern = props.getProperty(key).trim();
+        if (pattern.trim().length() == 0) {
+          throw new IOException("Invalid configuration file: " + key + " is missing pattern value.");
+        }
+        toRemove.add(key);
+        patterns.add(pattern);
+      }
+    }
+    
+    for (String key : toRemove) {
+      props.remove(key);
+    }
+  }
+  
+  /**
+   * Gets the output patterns for this configuration. The output patterns
+   * should be specified in "glob" format using only "/".
+   * 
+   * @return the output patterns for this configuration.
+   */
+  public List<String> getOutputPatterns() {
+    return new ArrayList<String>(patterns);
   }
   
   public String getModelArchive() {

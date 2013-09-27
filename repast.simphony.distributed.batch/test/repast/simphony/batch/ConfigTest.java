@@ -10,8 +10,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -129,13 +132,22 @@ public class ConfigTest {
 
   @Test
   public void testConfig() throws IOException {
-    Configuration config = new Configuration("./test_data/test_config.properties");
+    Configuration config = new Configuration("./test_data/test_config_with_patterns.properties");
     assertEquals("./test_data/complete_model.jar", config.getModelArchive());
     assertEquals("./output", config.getOutputDir());
     String keydir = "/Users/nick/" + ".ssh";
     assertEquals(keydir, config.getSSHKeyDir());
     assertEquals(6.0f, config.getPollFrequency(), 0);
     assertEquals("scenario.rs/batch_params.xml", config.getBatchParamsFile());
+    
+    Set<String> expected = new HashSet<>(Arrays.asList("**/output/AgentStats.csv",
+        "EnvironmentStats.csv", "Logging.csv"));
+    List<String> patterns = config.getOutputPatterns();
+    for (String pattern : patterns) {
+      assertTrue(expected.remove(pattern));
+    }
+    assertEquals(0, expected.size());
+    
 
     int count = 0;
 
