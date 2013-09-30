@@ -5,11 +5,11 @@ package repast.simphony.batch.ssh;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
 /**
@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class OutputFinder {
 
-  private List<Pair<String, String>> filePatterns = new ArrayList<Pair<String, String>>();
+  private List<OutputPattern> filePatterns = new ArrayList<OutputPattern>();
 
   protected static class Instance {
     String dir;
@@ -47,28 +47,7 @@ public abstract class OutputFinder {
   protected static Logger logger = Logger.getLogger(OutputFinder.class);
 
   /**
-   * Adds the specified pattern to the list of patterns used to find output. All
-   * the output that matches this pattern will be aggregated into a file whose
-   * name starts with the specified output file name plus a time stamp. The
-   * patterns shuld relative to the directory in which the model runs. and
-   * specified in glob style.
-   * <ul>
-   * <li>The * character matches zero or more characters of a name component
-   * without crossing directory boundaries.
-   * 
-   * <li>The ** characters matches zero or more characters crossing directory
-   * boundaries.
-   * 
-   * <li>The ? character matches exactly one character of a name component.
-   * 
-   * <li>The backslash character (\) is used to escape characters that would
-   * otherwise be interpreted as special characters. The expression \\ matches a
-   * single backslash and "\{" matches a left brace for example.
-   * </ul>
-   * 
-   * For example **&#47;output/my_output.txt will match any file called
-   * my_output.txt in an "output" directory where the parent of that "output"
-   * directory can be anything.
+   * Adds the specified pattern to the list of patterns used to find output. 
    * 
    * @param outputFileName
    *          the name into which all the output the matches the specified
@@ -76,30 +55,49 @@ public abstract class OutputFinder {
    * @param pattern
    *          the pattern to match
    */
-  public void addPattern(String outputFileName, String pattern) {
-    pattern = pattern.replace("./", "");
-    pattern = pattern.replace(".\\", "");
-    filePatterns.add(Pair.of("glob:" + pattern, outputFileName));
+  public void addPattern(OutputPattern pattern) {
+    // patterns may be copied between OutputPatterns 
+    // or patterns maybe reused. In that case, we don't
+    // want to reprocess them.
+    if (!pattern.getPattern().startsWith("glob:")) {
+      pattern.setPattern(pattern.getPattern().replace("./", ""));
+      pattern.setPattern(pattern.getPattern().replace(".\\", ""));
+      pattern.setPattern("glob:" + pattern.getPattern());
+    }
+    filePatterns.add(pattern);
+  }
+
+  /**
+   * Adds all the OutputPatterns in the collection as patterns to find.
+   * 
+   * @param patterns
+   *          the patterns to add
+   */
+  public void addPatterns(Collection<OutputPattern> patterns) {
+    for (OutputPattern pattern : patterns) {
+      addPattern(pattern);
+    }
   }
 
   protected List<MatchedFiles> createMatches(boolean useWindowsSeparators) {
     List<MatchedFiles> list = new ArrayList<>();
     // sort so the longer patterns are first -- in this way we should
     // match ModelOutput2 with ModelOutput2* rather than ModelOutput*
-    Collections.sort(filePatterns, new Comparator<Pair<String, String>>() {
+    Collections.sort(filePatterns, new Comparator<OutputPattern>() {
       @Override
-      public int compare(Pair<String, String> o1, Pair<String, String> o2) {
-        return o1.getLeft().length() > o2.getLeft().length() ? -1 : o1.getLeft().length() ==
-            o2.getLeft().length() ? 0 : 1;
+      public int compare(OutputPattern o1, OutputPattern o2) {
+        String p1 = o1.getPattern();
+        String p2 = o2.getPattern();
+        return p1.length() > p2.length() ? -1 : p1.length() == p2.length() ? 0 : 1;
       }
     });
-    
-    for (Pair<String, String> pair : filePatterns) {
-      String pattern = pair.getLeft();
+
+    for (OutputPattern outPattern : filePatterns) {
+      String pattern = outPattern.getPattern();
       if (useWindowsSeparators) {
-        pattern = pattern.replace("/", "\\\\");
+        outPattern.setPattern(pattern.replace("/", "\\\\"));
       }
-      list.add(new MatchedFiles(pair.getLeft(), pair.getRight()));
+      list.add(new MatchedFiles(outPattern));
     }
     return list;
   }
@@ -112,9 +110,8 @@ public abstract class OutputFinder {
    * @param allFiles
    * @param instance
    */
-  protected void findFiles(List<MatchedFiles> matchers, List<String> allFiles, 
-      String instanceDir) {
-    
+  protected void findFiles(List<MatchedFiles> matchers, List<String> allFiles, String instanceDir) {
+
     for (String file : allFiles) {
       for (MatchedFiles matcher : matchers) {
         if (matcher.matches(new File(file).toPath())) {
@@ -126,10 +123,10 @@ public abstract class OutputFinder {
 
     for (MatchedFiles matcher : matchers) {
       if (matcher.isEmpty()) {
-        logger.warn("No model output found matching " + matcher.getPattern() + " in "
+        logger.warn("No model output found matching " + matcher.getPattern().getPattern() + " in "
             + instanceDir);
       }
     }
-    
+
   }
 }

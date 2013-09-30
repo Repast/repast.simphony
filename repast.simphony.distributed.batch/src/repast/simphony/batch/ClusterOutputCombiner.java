@@ -10,13 +10,13 @@ import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.PropertyConfigurator;
 
 import repast.simphony.batch.ssh.BaseOutputNamesFinder;
 import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
 import repast.simphony.batch.ssh.MatchedFiles;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.StatusException;
 import simphony.util.messages.MessageCenter;
 
@@ -36,16 +36,16 @@ public class ClusterOutputCombiner {
     PropertyConfigurator.configure(props);
   }
   
-  private List<Pair<String, String>> createPatterns() throws IOException, XMLStreamException {
+  private List<OutputPattern> createPatterns() throws IOException, XMLStreamException {
     List<String> baseNames = new BaseOutputNamesFinder().find("./scenario.rs");
-    List<Pair<String, String>> filePatterns = new ArrayList<Pair<String, String>>();
+    List<OutputPattern> patterns = new ArrayList<>();
     for (String name : baseNames) {
       DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(name);
       // this has to be first, otherwise the non param map pattern will catch it.
-      filePatterns.add(Pair.of(creator.getFinalParamMapFileName(), creator.getParamMapPattern()));
-      filePatterns.add(Pair.of(creator.getFinalFileName(), creator.getFilePattern()));
+      patterns.add(creator.getParamMapPattern());
+      patterns.add(creator.getFileSinkOutputPattern());
     }
-    return filePatterns;
+    return patterns;
   }
 
   public void run() {
@@ -68,11 +68,10 @@ public class ClusterOutputCombiner {
   }
 
   public List<MatchedFiles> findOutput(String directory) throws StatusException, IOException, XMLStreamException {
-    List<Pair<String, String>> filePatterns = createPatterns();
+    List<OutputPattern> filePatterns = createPatterns();
     LocalOutputFinder finder = new LocalOutputFinder();
-    for (Pair<String, String> pattern : filePatterns) {
-      finder.addPattern(pattern.getLeft(), pattern.getRight());
-    }
+    finder.addPatterns(filePatterns);
+    
     File localDir = new File(directory);
     msg.info(String.format("Finding output on localhost in %s", localDir.getPath()));
     return finder.run(localDir);

@@ -18,6 +18,11 @@ public class DefaultOutputPatternCreator {
   private String name, extension;
   private String timestamp;
   
+  /**
+   * Creates a DefaultOutputPatternCreator that will create output patterns for
+   * the specified basename. For example, a basename of ModelOutput would correspond
+   * to instance output of ModelOutput.X.csv where X is a timestamp.
+   */
   public DefaultOutputPatternCreator(String basename) {
     int index = basename.lastIndexOf(".");
     if (index != -1) {
@@ -30,30 +35,51 @@ public class DefaultOutputPatternCreator {
     this.timestamp = new SimpleDateFormat("yyyy.MMM.dd.HH_mm_ss").format(new Date());
   }
   
-  public String getFinalFileName() {
+  private String getFinalFileName() {
     return name + "." + timestamp + (extension.length() > 0 ? "." + extension : "");
   }
   
-  public String getParamMapPattern() {
+  /**
+   * Gets the OutputPattern for the parameter map file.
+   * 
+   * @return the OutputPattern for the parameter map file. 
+   */
+  public OutputPattern getParamMapPattern() {
     String fname = cleanMatchFile(name);
     String pattern = "{**/,}" + fname + "*" + ".batch_param_map";
     if (extension.length() > 0) {
       pattern += "." + cleanMatchFile(extension);
     }
-    return pattern;
     
+    OutputPattern outPattern = new OutputPattern();
+    outPattern.setPattern(pattern);
+    outPattern.setPath(getFinalParamMapFileName());
+    outPattern.setHeader(true);
+    outPattern.setConcatenate(true);
+    return outPattern;
   }
   
-  public String getFilePattern() {
+  /**
+   * Gets the OutputPattern for the file sink output.
+   * 
+   * @return the OutputPattern for the file sink output.
+   */
+  public OutputPattern getFileSinkOutputPattern() {
     String fname = cleanMatchFile(name);
     String pattern = "{**/,}" + fname + "*";
     if (extension.length() > 0) {
       pattern += "." + cleanMatchFile(extension);
     }
-    return pattern;
+    
+    OutputPattern outPattern = new OutputPattern();
+    outPattern.setPattern(pattern);
+    outPattern.setPath(getFinalFileName());
+    outPattern.setHeader(true);
+    outPattern.setConcatenate(true);
+    return outPattern;
   }
   
-  public String getFinalParamMapFileName() {
+  private String getFinalParamMapFileName() {
     return name + "." + timestamp + ".batch_param_map" + (extension.length() > 0 ? "." + extension : "");
   }
   

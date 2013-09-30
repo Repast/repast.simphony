@@ -10,7 +10,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +32,7 @@ import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
 import repast.simphony.batch.ssh.MatchedFiles;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.RemoteStatusCopier;
 import repast.simphony.batch.ssh.RemoteStatusGetter;
@@ -43,6 +47,10 @@ import repast.simphony.data2.engine.FileSinkControllerActionIO;
 public class RemoteOutputTest {
 
   private static final String REMOTE_DIR = "for_testing_simphony_model";
+  
+  private static final String[] NO_HEADER_OUTPUT = {"instance_4, output", "instance_3, output",
+    "instance_1, output", "instance_2, output"
+  };
 
   private Set<File> expectedFiles = new HashSet<File>();
 
@@ -108,17 +116,80 @@ public class RemoteOutputTest {
     assertEquals(1, baseNames.size());
     assertEquals("ModelOutput.txt", baseNames.get(0));
   }
+  
+  @Test
+  public void testAggregationNoHeader() throws StatusException, IOException {
+    File f = new File("./test_out/no_header.txt");
+    if (f.exists()) f.delete();
+    
+    LocalOutputFinder finder = new LocalOutputFinder();
+    OutputPattern pattern = new OutputPattern();
+    pattern.setPattern("MyCustomOutput.txt");
+    pattern.setConcatenate(true);
+    pattern.setPath("no_header.txt");
+    pattern.setHeader(false);
+    finder.addPattern(pattern);
+    
+    List<MatchedFiles> files = finder.run(new File("./test_data/for_testing_simphony_model"));
+    assertEquals(1, files.size());
+    files.get(0).aggregateOutput("./test_out");
+    f = new File("./test_out/no_header.txt");
+    
+    assertTrue(f.exists());
+    Set<String> expected = new HashSet<>(Arrays.asList(NO_HEADER_OUTPUT));
+    try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (line.trim().length() > 0)
+        assertTrue(expected.remove(line));
+      }
+    }
+    assertEquals(0, expected.size());
+  }
+  
+  @Test
+  public void testNoAggregation() throws StatusException, IOException {
+    File f = new File("./test_out/custom output");
+    if (f.exists()) {
+      for (File file : f.listFiles()) {
+        file.delete();
+      }
+      f.delete();
+    }
+    LocalOutputFinder finder = new LocalOutputFinder();
+    OutputPattern pattern = new OutputPattern();
+    pattern.setPattern("MyCustomOutput{2,}.txt");
+    pattern.setConcatenate(false);
+    pattern.setPath("custom output");
+    pattern.setHeader(false);
+    finder.addPattern(pattern);
+    
+    List<MatchedFiles> files = finder.run(new File("./test_data/for_testing_simphony_model"));
+    assertEquals(1, files.size());
+    files.get(0).aggregateOutput("./test_out");
+    Path path = FileSystems.getDefault().getPath("./test_out/custom output");
+    assertTrue(path.toFile().exists());
+    assertTrue(path.toFile().isDirectory());
+    assertEquals(8, path.toFile().list().length);
+    for (int i = 1; i < 5; ++i) {
+      File file = new File("./test_out/custom output/MyCustomOutput_" + i + ".txt");
+      assertTrue(file.exists());
+      file = new File("./test_out/custom output/MyCustomOutput2_" + i + ".txt");
+      assertTrue(file.exists());
+    }
+  }
 
   @Test
   public void testAggregator() throws IOException, XMLStreamException, StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
+    
     DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("ModelOutput.txt");
-    finder.addPattern(creator.getFinalParamMapFileName(), creator.getParamMapPattern());
-    finder.addPattern(creator.getFinalFileName(), creator.getFilePattern());
+    finder.addPattern(creator.getParamMapPattern());
+    finder.addPattern(creator.getFileSinkOutputPattern());
     
     DefaultOutputPatternCreator creator2 = new DefaultOutputPatternCreator("ModelOutput2.txt");
-    finder.addPattern(creator2.getFinalParamMapFileName(), creator2.getParamMapPattern());
-    finder.addPattern(creator2.getFinalFileName(), creator2.getFilePattern());
+    finder.addPattern(creator2.getParamMapPattern());
+    finder.addPattern(creator2.getFileSinkOutputPattern());
     
     List<MatchedFiles> files = finder.run(new File("./test_data/for_testing_simphony_model"));
     assertEquals(4, files.size());
@@ -142,13 +213,13 @@ public class RemoteOutputTest {
     assertEquals(true, expOut.size() > 0);
     assertEquals(true, expPOut.size() > 0);
     
-    File model = new File("./test_out/" + creator.getFinalFileName());
+    File model = new File("./test_out/" + creator.getFileSinkOutputPattern().getPath());
     testOutput(expOut, model);
-    File modelP = new File("./test_out/" + creator.getFinalParamMapFileName());
+    File modelP = new File("./test_out/" + creator.getParamMapPattern().getPath());
     testOutput(expPOut, modelP);
-    File model2 = new File("./test_out/" + creator2.getFinalFileName());
+    File model2 = new File("./test_out/" + creator2.getFileSinkOutputPattern().getPath());
     testOutput(expOut, model2);
-    File modelP2 = new File("./test_out/" + creator.getFinalParamMapFileName());
+    File modelP2 = new File("./test_out/" + creator2.getParamMapPattern().getPath());
     testOutput(expPOut, modelP2);
     
     model.delete();

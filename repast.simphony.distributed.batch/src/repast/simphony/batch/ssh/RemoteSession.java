@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -345,20 +344,18 @@ public class RemoteSession implements Session {
    * those files. In the case of remote output the output may be copied to local temporary location.
    * The patterns used to identify output is specified in the filePatterns parameters.
    * 
-   * @param filePatterns the first 
+   * @param patterns the patterns used to match potential output
    * @return the location of the output in a list of MatchedFiles. Each MatchedFiles object
    * holds one or more files for a specific match.
    * 
    * @throws StatusException 
    */
-   public List<MatchedFiles> findOutput(List<Pair<String, String>> filePatterns) 
+   public List<MatchedFiles> findOutput(List<OutputPattern> patterns) 
        throws StatusException {
     String tempDir = System.getProperty("java.io.tmpdir");
 
     RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
-    for (Pair<String, String> pattern : filePatterns) {
-      copier.addPattern(pattern.getLeft(), pattern.getRight());
-    }
+    copier.addPatterns(patterns);
     File outDir = new File(tempDir, getUser() + "_" + getHost());
     outDir.mkdir();
     logger.info(String.format("Finding and copying remote output from %s to %s", getUser() + "@"

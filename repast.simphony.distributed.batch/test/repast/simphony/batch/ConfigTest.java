@@ -10,11 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -23,6 +22,7 @@ import repast.simphony.batch.ssh.BatchParameterChunkerException;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.ModelArchiveConfigurator;
 import repast.simphony.batch.ssh.ModelArchiveConfiguratorException;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.Session;
 
 public class ConfigTest {
@@ -54,6 +54,10 @@ public class ConfigTest {
     "20\trandomSeed\t1,human_count\t120,zombie_count\t9",
     "21\trandomSeed\t1,human_count\t120,zombie_count\t10",
     "22\trandomSeed\t1,human_count\t120,zombie_count\t11"};
+  
+  private static String[] OUTPUT_1 = {"**/output/AgentStats.csv", "agent_stat_output", "true", "true"};
+  private static String[] OUTPUT_2 = {"EnvironmentStats.csv", "env_stat_output", "false", "true"};
+  private static String[] OUTPUT_3 = {"Logging.csv", "Logging.csv", "true", "true"};
 
   @Test
   public void testArchiveConfigurator() throws BatchParameterChunkerException, IOException,
@@ -140,13 +144,21 @@ public class ConfigTest {
     assertEquals(6.0f, config.getPollFrequency(), 0);
     assertEquals("scenario.rs/batch_params.xml", config.getBatchParamsFile());
     
-    Set<String> expected = new HashSet<>(Arrays.asList("**/output/AgentStats.csv",
-        "EnvironmentStats.csv", "Logging.csv"));
-    List<String> patterns = config.getOutputPatterns();
-    for (String pattern : patterns) {
-      assertTrue(expected.remove(pattern));
+    List<OutputPattern> patterns = config.getOutputPatterns();
+    assertEquals(3, patterns.size());
+    Map<String, String[]> expected = new HashMap<>();
+    expected.put(OUTPUT_1[1], OUTPUT_1);
+    expected.put(OUTPUT_2[1], OUTPUT_2);
+    expected.put(OUTPUT_3[1], OUTPUT_3);
+    
+    for (OutputPattern pattern : patterns) {
+      String[] vals = expected.remove(pattern.getPath());
+      assertTrue(vals != null);
+      assertEquals(vals[0], pattern.getPattern());
+      assertEquals(vals[1], pattern.getPath());
+      assertEquals(Boolean.parseBoolean(vals[3]), pattern.isHeader());
+      assertEquals(Boolean.parseBoolean(vals[2]), pattern.isConcatenate());
     }
-    assertEquals(0, expected.size());
     
 
     int count = 0;

@@ -21,6 +21,7 @@ import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
 import repast.simphony.batch.ssh.MatchedFiles;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.RemoteOutputFinderCopier;
 import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.SSHSessionFactory;
@@ -77,39 +78,39 @@ public class FindOutputTests {
     LocalOutputFinder finder = new LocalOutputFinder();
 
     DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
-    String onePattern = creator.getFilePattern();
-    String oneBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
-    finder.addPattern(creator.getFinalFileName(), onePattern);
+    OutputPattern onePattern = creator.getFileSinkOutputPattern();
+    OutputPattern oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(oneBPPattern);
+    finder.addPattern(onePattern);
 
     creator = new DefaultOutputPatternCreator("two.txt");
-    String twoPattern = creator.getFilePattern();
-    String twoBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
-    finder.addPattern(creator.getFinalFileName(), twoPattern);
+    OutputPattern twoPattern = creator.getFileSinkOutputPattern();
+    OutputPattern twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(twoBPPattern);
+    finder.addPattern(twoPattern);
 
     List<MatchedFiles> files = finder.run(new File("./test_data"));
     assertEquals(4, files.size());
 
     boolean[] found = new boolean[4];
     for (MatchedFiles mf : files) {
-      if (mf.getPattern().equals("glob:" + onePattern)) {
+      if (mf.getPattern().equals(onePattern)) {
         testFoundFiles("one", mf, "./test_data", ONE_EXP);
         found[0] = true;
-      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+      } else if (mf.getPattern().equals(twoPattern)) {
         testFoundFiles("two", mf, "./test_data", TWO_EXP);
         found[1] = true;
-      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+      } else if (mf.getPattern().equals(oneBPPattern)) {
         testFoundFiles("one bp", mf, "./test_data", ONE_BP_EXP);
         found[2] = true;
-      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+      } else if (mf.getPattern().equals(twoBPPattern)) {
         testFoundFiles("two bp", mf, "./test_data", TWO_BP_EXP);
         found[3] = true;
       } else {
         fail("bad pattern");
       }
     }
-    
+
     for (int i = 0; i < found.length; i++) {
       assertTrue("matched files " + i + "not tested", found[i]);
     }
@@ -120,45 +121,47 @@ public class FindOutputTests {
     LocalOutputFinder finder = new LocalOutputFinder();
 
     DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
-    String onePattern = creator.getFilePattern();
-    String oneBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
-    finder.addPattern(creator.getFinalFileName(), onePattern);
+    OutputPattern onePattern = creator.getFileSinkOutputPattern();
+    OutputPattern oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(oneBPPattern);
+    finder.addPattern(onePattern);
 
     creator = new DefaultOutputPatternCreator("two.txt");
-    String twoPattern = creator.getFilePattern();
-    String twoBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
-    finder.addPattern(creator.getFinalFileName(), twoPattern);
+    OutputPattern twoPattern = creator.getFileSinkOutputPattern();
+    OutputPattern twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(twoBPPattern);
+    finder.addPattern(twoPattern);
 
-    String otherPattern = "**/more_output/some_output*.txt";
-    finder.addPattern("some_output.txt", otherPattern);
+    OutputPattern otherPattern = new OutputPattern();
+    otherPattern.setPattern("**/more_output/some_output*.txt");
+    otherPattern.setPath("some_output.txt");
+    finder.addPattern(otherPattern);
 
     List<MatchedFiles> files = finder.run(new File("./test_data"));
     assertEquals(5, files.size());
 
     boolean[] found = new boolean[5];
     for (MatchedFiles mf : files) {
-      if (mf.getPattern().equals("glob:" + onePattern)) {
+      if (mf.getPattern().equals(onePattern)) {
         testFoundFiles("one", mf, "./test_data", ONE_EXP);
         found[0] = true;
-      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+      } else if (mf.getPattern().equals(twoPattern)) {
         testFoundFiles("two", mf, "./test_data", TWO_EXP);
         found[1] = true;
-      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+      } else if (mf.getPattern().equals(oneBPPattern)) {
         testFoundFiles("one bp", mf, "./test_data", ONE_BP_EXP);
         found[2] = true;
-      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+      } else if (mf.getPattern().equals(twoBPPattern)) {
         testFoundFiles("two bp", mf, "./test_data", TWO_BP_EXP);
         found[3] = true;
-      } else if (mf.getPattern().equals("glob:" + otherPattern)) {
+      } else if (mf.getPattern().equals(otherPattern)) {
         testFoundFiles("other", mf, "./test_data", OTHER_EXP);
         found[4] = true;
       } else {
         fail("bad pattern");
       }
     }
-    
+
     for (int i = 0; i < found.length; i++) {
       assertTrue("matched files " + i + "not tested", found[i]);
     }
@@ -177,20 +180,23 @@ public class FindOutputTests {
     Configuration config = new Configuration("./test_data/test_remote_config.properties");
     RemoteSession remote = (RemoteSession) getTestingRemote(config);
     RemoteOutputFinderCopier finder = new RemoteOutputFinderCopier();
+    
     DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
-    String onePattern = creator.getFilePattern();
-    String oneBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), oneBPPattern);
-    finder.addPattern(creator.getFinalFileName(), onePattern);
+    OutputPattern onePattern = creator.getFileSinkOutputPattern();
+    OutputPattern oneBPPattern = creator.getParamMapPattern();
+    finder.addPattern(oneBPPattern);
+    finder.addPattern(onePattern);
 
     creator = new DefaultOutputPatternCreator("two.txt");
-    String twoPattern = creator.getFilePattern();
-    String twoBPPattern = creator.getParamMapPattern();
-    finder.addPattern(creator.getFinalParamMapFileName(), twoBPPattern);
-    finder.addPattern(creator.getFinalFileName(), twoPattern);
+    OutputPattern twoPattern = creator.getFileSinkOutputPattern();
+    OutputPattern twoBPPattern = creator.getParamMapPattern();
+    finder.addPattern(twoBPPattern);
+    finder.addPattern(twoPattern);
 
-    String otherPattern = "**/more_output/some_output*.txt";
-    finder.addPattern("some_output.txt", otherPattern);
+    OutputPattern otherPattern = new OutputPattern();
+    otherPattern.setPattern("**/more_output/some_output*.txt");
+    otherPattern.setPath("some_output.txt");
+    finder.addPattern(otherPattern);
 
     Path local = Files.createTempDirectory(String.valueOf(System.currentTimeMillis()));
     List<MatchedFiles> files = finder.run(remote, "for_testing_simphony_model2", local.toString());
@@ -199,19 +205,19 @@ public class FindOutputTests {
     String prefix = local.toString() + "/for_testing_simphony_model2";
     boolean[] found = new boolean[5];
     for (MatchedFiles mf : files) {
-      if (mf.getPattern().equals("glob:" + onePattern)) {
+      if (mf.getPattern().equals(onePattern)) {
         testFoundFiles("one", mf, prefix, ONE_EXP);
         found[0] = true;
-      } else if (mf.getPattern().equals("glob:" + twoPattern)) {
+      } else if (mf.getPattern().equals(twoPattern))  {
         testFoundFiles("two", mf, prefix, TWO_EXP);
         found[1] = true;
-      } else if (mf.getPattern().equals("glob:" + oneBPPattern)) {
+      } else if (mf.getPattern().equals(oneBPPattern))  {
         testFoundFiles("one bp", mf, prefix, ONE_BP_EXP);
         found[2] = true;
-      } else if (mf.getPattern().equals("glob:" + twoBPPattern)) {
+      } else if (mf.getPattern().equals(twoBPPattern)) {
         testFoundFiles("two bp", mf, prefix, TWO_BP_EXP);
         found[3] = true;
-      } else if (mf.getPattern().equals("glob:" + otherPattern)) {
+      } else if (mf.getPattern().equals(otherPattern))  {
         testFoundFiles("other", mf, prefix, OTHER_EXP);
         found[4] = true;
       } else {

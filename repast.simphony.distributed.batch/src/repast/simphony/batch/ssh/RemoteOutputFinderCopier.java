@@ -68,7 +68,7 @@ public class RemoteOutputFinderCopier extends OutputFinder {
       List<MatchedFiles> matches = findOutputFiles(session, instances);
       // instance dirs should now contain the output file
       for (MatchedFiles match : matches) {
-        MatchedFiles newMatch = new MatchedFiles(match.getPattern(), match.getOutputFile());
+        MatchedFiles newMatch = new MatchedFiles(match.getPattern());
         for (File file : session.copyFilesFromRemote(localDir, match.getFiles())) {
           newMatch.addFile(file);
         }

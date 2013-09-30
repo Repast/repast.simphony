@@ -20,7 +20,6 @@ import java.util.zip.ZipFile;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -163,21 +162,25 @@ public class SessionsDriver {
     } catch (IOException | XMLStreamException ex) {
       throw new SessionException("Error while finding default output file names", ex);
     }
+    
+    
 
     // TODO get the other patterns from the configuration file
-    List<Pair<String, String>> filePatterns = new ArrayList<Pair<String, String>>();
+    List<OutputPattern> patterns = new ArrayList<>();
     for (String name : baseNames) {
       DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(name);
       // this has to be first, otherwise the non param map pattern will catch it.
-      filePatterns.add(Pair.of(creator.getFinalParamMapFileName(), creator.getParamMapPattern()));
-      filePatterns.add(Pair.of(creator.getFinalFileName(), creator.getFilePattern()));
+      patterns.add(creator.getParamMapPattern());
+      patterns.add(creator.getFileSinkOutputPattern());
     }
 
     // merge the MatchedFiles from all the sessions.
+    // MatchedFiles with the same output path are
+    // combined.
     Map<String, MatchedFiles> matches = new HashMap<>();
     for (Session session : config.sessions()) {
-      for (MatchedFiles match : session.findOutput(filePatterns)) {
-        String output = match.getOutputFile();
+      for (MatchedFiles match : session.findOutput(patterns)) {
+        String output = match.getPattern().getPath();
         MatchedFiles files = matches.get(output);
         if (files == null) {
           matches.put(output, match);

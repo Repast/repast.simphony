@@ -17,18 +17,32 @@ import java.util.Properties;
  */
 public class Configuration {
   
-  private static final String MA_KEY = "model.archive";
-  private static final String SSH_DIR_KEY = "ssh.key_dir";
-  private static final String OUT_DIR_KEY = "model.output";
-  private static final String BATCH_PARAMS_KEY = "batch.params.file";
-  private static final String POLL_INTERVAL_KEY = "poll.frequency";
-  private static final String VM_ARGS_KEY = "vm.arguments";
-  private static final String PATTERN_PREFIX = "output.pattern";
+  public static final String MA_KEY = "model.archive";
+  public static final String SSH_DIR_KEY = "ssh.key_dir";
+  public static final String OUT_DIR_KEY = "model.output";
+  public static final String BATCH_PARAMS_KEY = "batch.params.file";
+  public static final String POLL_INTERVAL_KEY = "poll.frequency";
+  public static final String VM_ARGS_KEY = "vm.arguments";
+  public static final String LOCAL_PREFIX = "local";
+  public static final String REMOTE_PREFIX = "remote";
+  
+  public static final String SESSION_USER = "user";
+  public static final String SESSION_HOST = "host";
+  public static final String SESSION_INSTANCES = "instances";
+  public static final String SESSION_KEY_FILE = "ssh_key_file";
+  
+  public static final String PATTERN_PREFIX = "output.pattern";
+  public static final String PATTERN = "pattern";
+  public static final String PATH = "path";
+  public static final String HEADER = "header";
+  public static final String CONCATENATE = "concatenate";
+  
+  
   
   private String modelArchive, sshKeyDir, outDir, paramsFile, vmArgs;
   private float pollFrequency;
   private List<? extends Session> sessions;
-  private List<String> patterns = new ArrayList<>();
+  private List<OutputPattern> patterns = new ArrayList<>();
   
   public Configuration(String file) throws IOException {
     Properties props = new Properties();
@@ -73,21 +87,21 @@ public class Configuration {
   }
   
   private void parseOutputPatterns(Properties props) throws IOException {
+    Properties patternProps = new Properties();
     List<String> toRemove = new ArrayList<>();
     for (String key : props.stringPropertyNames()) {
       if (key.startsWith(PATTERN_PREFIX)) {
-        String pattern = props.getProperty(key).trim();
-        if (pattern.trim().length() == 0) {
-          throw new IOException("Invalid configuration file: " + key + " is missing pattern value.");
-        }
+        patternProps.setProperty(key, props.getProperty(key));
         toRemove.add(key);
-        patterns.add(pattern);
       }
     }
     
     for (String key : toRemove) {
       props.remove(key);
     }
+    
+    OutputPatternPropsParser parser = new OutputPatternPropsParser();
+    patterns = parser.parse(patternProps);
   }
   
   /**
@@ -96,8 +110,8 @@ public class Configuration {
    * 
    * @return the output patterns for this configuration.
    */
-  public List<String> getOutputPatterns() {
-    return new ArrayList<String>(patterns);
+  public List<OutputPattern> getOutputPatterns() {
+    return new ArrayList<OutputPattern>(patterns);
   }
   
   /**

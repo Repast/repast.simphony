@@ -21,7 +21,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
 import repast.simphony.batch.BatchConstants;
@@ -151,22 +150,21 @@ public class LocalSession implements Session {
   }
 
   /**
-   * Finds the model output of that is the result of running this Session and returns that
+   * Finds the model output that is the result of running this Session and returns 
    * those files. In the case of remote output the output may be copied to local temporary location.
    * The patterns used to identify output is specified in the filePatterns parameters.
    * 
-   * @param filePatterns the first 
+   * @param patterns the OutputPatterns of the files to find.
    * @return the location of the output in a list of MatchedFiles. Each MatchedFiles object
    * holds one or more files for a specific match.
    * 
    * @throws StatusException 
    */
-   public List<MatchedFiles> findOutput(List<Pair<String, String>> filePatterns) 
+   public List<MatchedFiles> findOutput(List<OutputPattern> patterns) 
        throws StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
-    for (Pair<String, String> pattern : filePatterns) {
-      finder.addPattern(pattern.getLeft(), pattern.getRight());
-    }
+    
+    finder.addPatterns(patterns);
     File localDir = new File(workingDir, localRunningDirectory);
     logger.info(String.format("Finding output on localhost in %s", localDir.getPath()));
     return finder.run(localDir);
