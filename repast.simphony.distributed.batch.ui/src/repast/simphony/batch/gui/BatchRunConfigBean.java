@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.jgoodies.binding.beans.ExtendedPropertyChangeSupport;
-
 import repast.simphony.batch.gui.Host.Type;
+import repast.simphony.batch.ssh.Configuration;
+import repast.simphony.batch.ssh.OutputPattern;
+import repast.simphony.batch.ssh.OutputPatternPropsParser;
+
+import com.jgoodies.binding.beans.ExtendedPropertyChangeSupport;
 
 /**
  * Contains the data used by the GUI interface. 
@@ -45,6 +48,7 @@ public class BatchRunConfigBean {
   private String batchParameterFile = "", parameterFile = "";
   private double pollFrequency = 1;
   private List<Host> hosts = new ArrayList<Host>();
+  private List<OutputPattern> patterns = new ArrayList<>();
   
   protected ExtendedPropertyChangeSupport pcs = new ExtendedPropertyChangeSupport(this);
   
@@ -99,6 +103,16 @@ public class BatchRunConfigBean {
       this.modelDirectory = modelDirectory;
       pcs.firePropertyChange("modelDirectory", tmp, this.modelDirectory);
     }
+  }
+  
+  public List<OutputPattern> getOutputPatterns() {
+    return patterns;
+  }
+  
+  public void setOutputPatterns(List<OutputPattern> patterns) {
+    this.patterns.clear();
+    this.patterns.addAll(patterns);
+    pcs.firePropertyChange("outputPatterns", null, this.patterns);
   }
 
   /**
@@ -234,6 +248,9 @@ public class BatchRunConfigBean {
     setPollFrequency(Double.parseDouble(props.getProperty(POLL_FREQUENCY, "5")));
     setVMArguments(props.getProperty(VM_ARGUMENTS, ""));
     
+    OutputPatternPropsParser parser = new OutputPatternPropsParser();
+    setOutputPatterns(parser.parse(props));
+    
     Map<Integer, Host> hostMap = new HashMap<Integer, Host>();
     for (String key : props.stringPropertyNames()) {
       if (key.startsWith(HOST_PREFIX)) {
@@ -275,7 +292,20 @@ public class BatchRunConfigBean {
     props.setProperty(POLL_FREQUENCY, String.valueOf(getPollFrequency()));
     props.setProperty(VM_ARGUMENTS, getVMArguments());
     
-    int i = 0;
+   
+    int i = 1;
+    for (OutputPattern pattern : patterns) {
+      props.setProperty(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.PATH, pattern.getPath());
+      props.setProperty(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.PATTERN, pattern.getPattern());
+      props.setProperty(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.CONCATENATE, 
+          String.valueOf(pattern.isConcatenate()));
+      props.setProperty(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.HEADER, 
+          String.valueOf(pattern.isHeader()));
+      i++;
+    }
+    
+    
+    i = 0;
     for (Host host : hosts) {
       String prefix = HOST_PREFIX + "." + i + ".";
       props.setProperty(prefix + TYPE, host.getType().toString());
@@ -287,6 +317,8 @@ public class BatchRunConfigBean {
       }
       i++;
     }
+    
+    
     
     props.store(new FileWriter(configFile), "");
   }

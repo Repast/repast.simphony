@@ -42,7 +42,7 @@ public class ShowBatchDialog extends AbstractSAFAction<RSApplication> {
     dialog.add(main, BorderLayout.CENTER);
     dialog.addWindowListener(new OnClose(dialog, main));
   
-    dialog.setSize(700, 500);
+    dialog.setSize(700, 550);
     dialog.setTitle("Batch Run Configuration");
     dialog.setLocationRelativeTo(frame);
     dialog.setVisible(true);
