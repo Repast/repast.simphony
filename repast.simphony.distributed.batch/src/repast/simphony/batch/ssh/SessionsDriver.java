@@ -163,9 +163,6 @@ public class SessionsDriver {
       throw new SessionException("Error while finding default output file names", ex);
     }
     
-    
-
-    // TODO get the other patterns from the configuration file
     List<OutputPattern> patterns = new ArrayList<>();
     for (String name : baseNames) {
       DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(name);
@@ -173,6 +170,8 @@ public class SessionsDriver {
       patterns.add(creator.getParamMapPattern());
       patterns.add(creator.getFileSinkOutputPattern());
     }
+    
+    patterns.addAll(config.getOutputPatterns());
 
     // merge the MatchedFiles from all the sessions.
     // MatchedFiles with the same output path are

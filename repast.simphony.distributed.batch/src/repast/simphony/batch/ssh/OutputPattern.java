@@ -10,7 +10,7 @@ package repast.simphony.batch.ssh;
  */
 public class OutputPattern {
   
-  private String pattern, path;
+  private String pattern = "", path = "";
   private boolean concatenate, header;
   
   /**

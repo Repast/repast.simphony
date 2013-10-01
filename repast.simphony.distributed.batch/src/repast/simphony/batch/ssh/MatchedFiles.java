@@ -111,15 +111,19 @@ public class MatchedFiles {
       }
     }
   }
+  
+  private void renamePath(Path path) throws IOException {
+    if (path.toFile().exists()) {
+      // rename the output directory appending the current time stamp.
+      String suffix = new SimpleDateFormat("yyyy.MMM.dd.HH_mm_ss").format(new Date());
+      Files.move(path,
+          path.resolveSibling(path.getFileName().toFile().getName() + "_" + suffix));
+    }
+  }
 
   private void copyFiles(String outputDir) throws IOException {
     Path outDir = FileSystems.getDefault().getPath(outputDir, pattern.getPath());
-    if (outDir.toFile().exists()) {
-      // rename the output directory appending the current time stamp.
-      String suffix = new SimpleDateFormat("yyyy.MMM.dd.HH_mm_ss").format(new Date());
-      Files.move(outDir,
-          outDir.resolveSibling(outDir.getFileName().toFile().getName() + "_" + suffix));
-    }
+    renamePath(outDir);
     outDir.toFile().mkdirs();
 
     Map<String, Integer> suffixMap = new HashMap<>();
@@ -151,6 +155,7 @@ public class MatchedFiles {
   public void aggregateOutput(String outputDir) throws IOException {
     if (pattern.isConcatenate()) {
       File f = new File(outputDir, pattern.getPath());
+      renamePath(f.toPath());
       if (!f.getParentFile().exists()) {
         f.getParentFile().mkdirs();
       }
