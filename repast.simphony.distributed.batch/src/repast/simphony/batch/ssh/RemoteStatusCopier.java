@@ -5,6 +5,8 @@ package repast.simphony.batch.ssh;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +45,9 @@ public class RemoteStatusCopier {
         }
       }
       
-      String tmp = System.getProperty("java.io.tmpdir");
-      List<File> copiedFiles = session.copyFilesFromRemote(tmp, filesToCopy);
+      //String tmp = System.getProperty("java.io.tmpdir");
+      Path tmp = Files.createTempDirectory(null);
+      List<File> copiedFiles = session.copyFilesFromRemote(tmp.toFile().getPath(), filesToCopy, false);
       String prefix = remote.getUser() + "_" + remote.getHost();
       for (File file : copiedFiles) {
         String fname = file.getName();

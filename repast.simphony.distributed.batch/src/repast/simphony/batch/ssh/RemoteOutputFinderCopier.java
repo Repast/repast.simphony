@@ -27,10 +27,11 @@ public class RemoteOutputFinderCopier extends OutputFinder {
     for (String dir : instanceDirs) {
       List<String> files = session.listRemoteDirectory(dir, true);
       // session returns file including instance directory, we want to remove
-      // that.
+      // that and the trailing "/"
       List<String> fixedFiles = new ArrayList<>();
       for (String file : files) {
-        fixedFiles.add(file.substring(dir.length()));
+        fixedFiles.add(file.substring(dir.length() + 1));
+        //System.out.println(fixedFiles.get(fixedFiles.size() - 1));
       }
 
       findFiles(matchers, fixedFiles, dir);
@@ -69,7 +70,7 @@ public class RemoteOutputFinderCopier extends OutputFinder {
       // instance dirs should now contain the output file
       for (MatchedFiles match : matches) {
         MatchedFiles newMatch = new MatchedFiles(match.getPattern());
-        for (File file : session.copyFilesFromRemote(localDir, match.getFiles())) {
+        for (File file : session.copyFilesFromRemote(localDir, match.getFiles(), true)) {
           newMatch.addFile(file);
         }
         localMatches.add(newMatch);
