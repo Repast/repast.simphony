@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Properties;
 
 
@@ -64,12 +66,33 @@ import java.util.Properties;
     	    logger.close();
     	}
         
+//        protected void logit(String var, double time, double value) {
+//        	
+//        	BigDecimal bd = new BigDecimal(value);
+//        	bd = bd.round(new MathContext(6));
+//        	double d = bd.doubleValue();
+//        	logger.log(var+","+time+","+d);
+////            logger.log(var+","+time+","+value);
+//        }
+        
         protected void logit(String var, double time, double value, double savper) {
         	int t = (int) (time/savper);
         	double remainder = (time - (((double) t) * savper));
-        	if (remainder == 0.0)
-        		logger.log(var.replace("memory.", "")+","+time+","+value);
+        	if (remainder == 0.0) {
+            	BigDecimal bd = new BigDecimal(value);
+            	bd = bd.round(new MathContext(6));
+            	double d = bd.doubleValue();
+        		logger.log(var.replace("memory.", "")+","+time+","+d);
+        	}
         }
+        
+//        protected void logit(String var, double time, double value, double savper) {
+//        	int t = (int) (time/savper);
+//        	double remainder = (time - (((double) t) * savper));
+//        	if (remainder == 0.0) {
+//        		logger.log(var.replace("memory.", "")+","+time+","+value);
+//        	}
+//        }
         
         protected void logitVector(String var, double time, int length, double[] value) {
             logger.log(var+","+time+","+value);
