@@ -168,7 +168,7 @@ public class Parser {
     		
 
     		if (!Character.isLetterOrDigit(aChar.charAt(0)) &&  !Character.isWhitespace(aChar.charAt(0)) &&
-    				!aChar.equals("_")) {
+    				!aChar.equals("_") && !aChar.equals(",")) {
     			return false;
     		}
     		
