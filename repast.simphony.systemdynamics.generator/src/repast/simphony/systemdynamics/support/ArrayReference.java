@@ -187,6 +187,11 @@ public class ArrayReference {
 	}
 
 	private List<String> extractSubscripts(String reference) {
+		
+		String[] verify = reference.split("\\[");
+		if (verify.length < 2) {
+			System.out.println("ArrayReference: bad extractSubscripts: "+reference);
+		}
 
 		List<String> subscripts = new ArrayList<String>();
 		for (String sub : reference.split("\\[")[1].split("]")[0].split(","))
