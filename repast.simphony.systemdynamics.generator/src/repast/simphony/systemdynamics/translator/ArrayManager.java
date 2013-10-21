@@ -113,6 +113,8 @@ public class ArrayManager {
 			if (isUsedAsLookup(ar.getArrayName())) {
 				na = InformationManagers.getInstance().getNativeDataTypeManager().getNativeArray(ar.getArrayName());
 				numDimensions = na.getNumDimensions();
+				
+				numDimensions -= 2; // account for two dimensions that are referenced from the lookup
 			} else {
 				numDimensions = getNumDimensions(ar.getArrayName());
 			}
@@ -196,7 +198,6 @@ public class ArrayManager {
 	}
 
 	public  boolean isUsedAsLookup(String arrayName) {
-//		System.out.println("Lookup? "+arrayName);
 		Iterator<String> iter = arraysUsedAsLookup.iterator();
 //		while (iter.hasNext()) {
 //			System.out.println(iter.next());
@@ -209,7 +210,9 @@ public class ArrayManager {
 		if (ArrayReference.isArrayReference(arrayName)) {
 			ArrayReference ar = new ArrayReference(arrayName);
 			arraysUsedAsLookup.add(ar.getArrayName());
+			
 		}
+		
 		arraysUsedAsLookup.add(arrayName);
 	}
 
