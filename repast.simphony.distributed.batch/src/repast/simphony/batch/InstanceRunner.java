@@ -31,39 +31,38 @@ import simphony.util.messages.MessageEvent;
 import simphony.util.messages.MessageEventListener;
 
 /**
- * Runs a single instance of a simphony model in a batch run. This expects to be passed
- * the following arguments: 
+ * Runs a single instance of a simphony model in a batch run. This expects to be
+ * passed the following arguments:
  * <ol>
- * <li> -pxml <parameter xml file>
- * <li> -scenario <scenario directory>
- * <li> -id <instance id>
- * <li> optional -pinput <input file> if the parameter input is in a file.
- * </ul>
- * if no -pinput then last arg is expected to be a string in unrolled parameter format.
- * A parameter line hasthe format R\tP1\tV1,P2\tV2,P3\tV3,... 
- * R is the run number followed by a tab. P* and V* is a parameter name and value 
- * pair which are separated from each other by a tab and from other PV
- * pairs by a comma delimeter.<p>
+ * <li>-pxml <parameter xml file>
+ * <li>-scenario <scenario directory>
+ * <li>-id <instance id>
+ * <li>optional -pinput <input file> if the parameter input is in a file. </ul>
+ * if no -pinput then last arg is expected to be a string in unrolled parameter
+ * format. A parameter line hasthe format R\tP1\tV1,P2\tV2,P3\tV3,... R is the
+ * run number followed by a tab. P* and V* is a parameter name and value pair
+ * which are separated from each other by a tab and from other PV pairs by a
+ * comma delimeter.
+ * <p>
  * 
- * The InstanceRunner will feed each line from the file / command line to the model and
- * run the model for that
- * parameter combination. When all the lines have been processed the batch run is finished.
- * If there are warnings or errors produced during the run then those will be written to 
- * a WARN or FAILURE file in the working directory. If there is an error, no more
- * lines will be read and the InstanceRunner will stop.
+ * The InstanceRunner will feed each line from the file / command line to the
+ * model and run the model for that parameter combination. When all the lines
+ * have been processed the batch run is finished. If there are warnings or
+ * errors produced during the run then those will be written to a WARN or
+ * FAILURE file in the working directory. If there is an error, no more lines
+ * will be read and the InstanceRunner will stop.
  * 
  * @author Nick Collier
  */
 public class InstanceRunner {
-  
+
   private static MessageCenter msg = MessageCenter.getMessageCenter(InstanceRunner.class);
-  
+
   private static final String PXML = "pxml";
   private static final String ID = "id";
   private static final String SCENARIO = "scenario";
   private static final String PINPUT = "pinput";
-  
-  
+
   private String input;
   private boolean isFileInput = false;
 
@@ -71,7 +70,7 @@ public class InstanceRunner {
   private OneRunBatchRunner runner;
   private String id;
   private RunningStatus status = RunningStatus.OK;
-  
+
   private Options options;
 
   public InstanceRunner() throws IOException {
@@ -93,37 +92,29 @@ public class InstanceRunner {
         }
       }
     });
-    
+
     initOptions();
   }
-  
+
   @SuppressWarnings("static-access")
   private void initOptions() {
     options = new Options();
     Option help = new Option("help", "print this message");
     options.addOption(help);
-    Option pxml = OptionBuilder.withArgName("file").
-        hasArg().
-        withDescription("use given parameter xml file").
-        create(PXML);
+    Option pxml = OptionBuilder.withArgName("file").hasArg()
+        .withDescription("use given parameter xml file").create(PXML);
     options.addOption(pxml);
-    
-    Option scenario = OptionBuilder.withArgName("directory").
-        hasArg().
-        withDescription("use given scenario").
-        create(SCENARIO);
+
+    Option scenario = OptionBuilder.withArgName("directory").hasArg()
+        .withDescription("use given scenario").create(SCENARIO);
     options.addOption(scenario);
-    
-    Option id = OptionBuilder.withArgName("value").
-        hasArg().
-        withDescription("use given value as instance id").
-        create(ID);
+
+    Option id = OptionBuilder.withArgName("value").hasArg()
+        .withDescription("use given value as instance id").create(ID);
     options.addOption(id);
-    
-    Option pinput = OptionBuilder.withArgName("file").
-        hasArg().
-        withDescription("use given file as run parameter input").
-        create(PINPUT);
+
+    Option pinput = OptionBuilder.withArgName("file").hasArg()
+        .withDescription("use given file as run parameter input").create(PINPUT);
     options.addOption(pinput);
   }
 
@@ -154,7 +145,7 @@ public class InstanceRunner {
     CommandLineParser parser = new GnuParser();
     try {
       CommandLine line = parser.parse(options, args);
-     
+
       if (line.hasOption(PXML)) {
         String paramFile = line.getOptionValue(PXML);
         File params = new File(paramFile);
@@ -162,20 +153,20 @@ public class InstanceRunner {
       } else {
         throw new ScenarioLoadException("Command line is missing required -pxml option");
       }
-      
+
       if (line.hasOption(SCENARIO)) {
         File scenario = new File(line.getOptionValue(SCENARIO));
         runner = new OneRunBatchRunner(scenario);
       } else {
         throw new ScenarioLoadException("Command line is missing required -scenario option");
       }
-      
+
       if (line.hasOption(ID)) {
         id = line.getOptionValue(ID);
       } else {
         throw new ScenarioLoadException("Command line is missing required -id option");
       }
-      
+
       if (line.hasOption(PINPUT)) {
         input = line.getOptionValue(PINPUT);
         isFileInput = true;
@@ -183,39 +174,41 @@ public class InstanceRunner {
         String[] otherArgs = line.getArgs();
         input = otherArgs[otherArgs.length - 1];
       }
-      
+
     } catch (ParseException ex) {
       throw new ScenarioLoadException("Error while parsing command line args", ex);
     }
-    
+
   }
 
   public void run() throws ScenarioLoadException {
     runner.batchInit();
-    
+
     String line = null;
-    try (BufferedReader reader = new BufferedReader(isFileInput ? new FileReader(input) : new StringReader(input))) {
-      
+    try (BufferedReader reader = new BufferedReader(isFileInput ? new FileReader(input)
+        : new StringReader(input))) {
+
       while ((line = reader.readLine()) != null) {
-        Parameters params = lineParser.parse(line);
-        int runNum = (Integer) params.getValue(BatchConstants.BATCH_RUN_PARAM_NAME);
-        runner.run(runNum, params);
-        if (status == RunningStatus.FAILURE)
-          break;
+        if (line.trim().length() > 0) {
+          Parameters params = lineParser.parse(line);
+          int runNum = (Integer) params.getValue(BatchConstants.BATCH_RUN_PARAM_NAME);
+          runner.run(runNum, params);
+          if (status == RunningStatus.FAILURE)
+            break;
+        }
       }
     } catch (IOException ex) {
       throw new ScenarioLoadException("Error while reading parameter input", ex);
-    } 
+    }
 
     runner.batchCleanup();
   }
-  
 
   // args are -pxml <parameter xml file>
   // -scenario scenario directory
   // -id instance id
   // option -input <file> if the parameter input in a file
-  // if no -input then last arg is expected to be a string in 
+  // if no -input then last arg is expected to be a string in
   // unrolled parameter format.
   public static void main(String[] args) {
     try {
