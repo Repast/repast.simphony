@@ -43,29 +43,33 @@ public class DefaultParameters implements MutableParameters {
     for (String name : schema.parameterNames()) {
       ParameterSchema details = schema.getDetails(name);
       String displayName = params.getDisplayName(name);
-      if (displayName == null) displayName = name;
-      Object defaultValue = params.getSchema().getDetails(name).getDefaultValue();
+      if (displayName == null)
+        displayName = name;
+      
+      Object defaultValue = details.getDefaultValue();
       addParameter(name, displayName, details.getType(), defaultValue, params.isReadOnly(name));
-      if (params.getValue(name) != Parameters.NULL) setValue(name, params.getValue(name));
+      
       if (details.getConstrainingList() != null)
-	addConstraint(name, details.getConstrainingList());
+        addConstraint(name, details.getConstrainingList());
       if (details.getConstrainingRange() != null)
-	addConstraint(name, details.getConstrainingRange());
+        addConstraint(name, details.getConstrainingRange());
       if (details.getConverter() != null)
-	addConvertor(name, details.getConverter());
+       addConvertor(name, details.getConverter());
+      
+      if (params.getValue(name) != Parameters.NULL)
+        setValue(name, params.getValue(name));
     }
   }
 
-	public Parameters clone(){
-		try{
-			return (Parameters) super.clone();
-		}
-		catch(CloneNotSupportedException e){
-			throw new InternalError(e.toString());
-		}
-		
-	}
-  
+  public Parameters clone() {
+    try {
+      return (Parameters) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new InternalError(e.toString());
+    }
+
+  }
+
   /**
    * Removes the named parameter
    * 
@@ -186,7 +190,7 @@ public class DefaultParameters implements MutableParameters {
       throw new IllegalParameterException("Parameter '" + paramName + "' not found in the schema.");
     }
   }
-  
+
   /**
    * Gets the Double value associated with the specified parameter name.
    * 
@@ -197,14 +201,13 @@ public class DefaultParameters implements MutableParameters {
   public Double getDouble(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == Double.class || paramType == double.class){
-    	return (Double) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of double type.");
+    if (paramType == Double.class || paramType == double.class) {
+      return (Double) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of double type.");
     }
   }
-  
+
   /**
    * Gets the Integer value associated with the specified parameter name.
    * 
@@ -215,11 +218,10 @@ public class DefaultParameters implements MutableParameters {
   public Integer getInteger(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == Integer.class || paramType == int.class){
-    	return (Integer) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of integer type.");
+    if (paramType == Integer.class || paramType == int.class) {
+      return (Integer) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of integer type.");
     }
   }
 
@@ -233,14 +235,13 @@ public class DefaultParameters implements MutableParameters {
   public Boolean getBoolean(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == Boolean.class || paramType == boolean.class){
-    	return (Boolean) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of boolean type.");
+    if (paramType == Boolean.class || paramType == boolean.class) {
+      return (Boolean) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of boolean type.");
     }
   }
-  
+
   /**
    * Gets the String value associated with the specified parameter name.
    * 
@@ -251,14 +252,13 @@ public class DefaultParameters implements MutableParameters {
   public String getString(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == String.class){
-    	return (String) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of String type.");
+    if (paramType == String.class) {
+      return (String) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of String type.");
     }
   }
-  
+
   /**
    * Gets the Boolean value associated with the specified parameter name.
    * 
@@ -269,14 +269,13 @@ public class DefaultParameters implements MutableParameters {
   public Long getLong(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == Long.class || paramType == long.class){
-    	return (Long) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of long type.");
+    if (paramType == Long.class || paramType == long.class) {
+      return (Long) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of long type.");
     }
   }
-  
+
   /**
    * Gets the Float value associated with the specified parameter name.
    * 
@@ -287,14 +286,13 @@ public class DefaultParameters implements MutableParameters {
   public Float getFloat(String paramName) {
     Object value = getValue(paramName);
     Class<?> paramType = schema.getDetails(paramName).getType();
-    if (paramType == Float.class || paramType == float.class){
-    	return (Float) value;
-    }
-    else {
-    	throw new IllegalParameterException("Parameter '" + paramName + "' not of float type.");
+    if (paramType == Float.class || paramType == float.class) {
+      return (Float) value;
+    } else {
+      throw new IllegalParameterException("Parameter '" + paramName + "' not of float type.");
     }
   }
-  
+
   /**
    * Gets a String representation of the specified parameter's value.
    * 
@@ -331,7 +329,7 @@ public class DefaultParameters implements MutableParameters {
     if (val.getClass().equals(String.class) && !details.getType().equals(String.class)) {
       Object tmpVal = details.fromString((String) val);
       if (tmpVal != null)
-	val = tmpVal;
+        val = tmpVal;
     }
 
     Object newVal = coerce(paramName, val);
@@ -340,7 +338,7 @@ public class DefaultParameters implements MutableParameters {
       changed = true;
     } else
       throw new IllegalParameterException("Schema violation when setting parameter '" + paramName
-	  + "' to " + val);
+          + "' to " + val);
   }
 
   private Object coerce(String paramName, Object obj) {
@@ -349,26 +347,26 @@ public class DefaultParameters implements MutableParameters {
       Class type = getSchema().getDetails(paramName).getType();
 
       if (type.equals(Double.class) || type.equals(double.class)) {
-	return ((Number) obj).doubleValue();
+        return ((Number) obj).doubleValue();
       }
 
       if (type.equals(Float.class) || type.equals(float.class)) {
-	if (objClass.equals(Double.class) || objClass.equals(Long.class))
-	  return obj;
-	return ((Number) obj).floatValue();
+        if (objClass.equals(Double.class) || objClass.equals(Long.class))
+          return obj;
+        return ((Number) obj).floatValue();
       }
 
       if (type.equals(Long.class) || type.equals(long.class)) {
-	if (objClass.equals(float.class) || objClass.equals(double.class))
-	  return obj;
-	return ((Number) obj).longValue();
+        if (objClass.equals(float.class) || objClass.equals(double.class))
+          return obj;
+        return ((Number) obj).longValue();
       }
 
       if (type.equals(Integer.class) || type.equals(int.class)) {
-	if (objClass.equals(Integer.class) || objClass.equals(Short.class)
-	    || objClass.equals(Byte.class))
-	  return ((Number) obj).intValue();
-	return obj;
+        if (objClass.equals(Integer.class) || objClass.equals(Short.class)
+            || objClass.equals(Byte.class))
+          return ((Number) obj).intValue();
+        return obj;
       }
     }
     return obj;
