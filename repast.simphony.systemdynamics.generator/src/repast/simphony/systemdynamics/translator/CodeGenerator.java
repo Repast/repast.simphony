@@ -2115,8 +2115,8 @@ public class CodeGenerator {
 
 		String aRef = n.getToken();
 		
-		currentGenerate.printTree();
-		System.out.println("aRef = "+aRef);
+//		currentGenerate.printTree();
+//		System.out.println("aRef = "+aRef);
 		
 //		 valueArg = new ArrayReferenceNative(lhs, currentGenerate).generateRHSImplementation();
 

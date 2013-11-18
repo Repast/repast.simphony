@@ -1686,6 +1686,8 @@ public class Equation {
 
 	}
 	
+	
+	
 	public String getIntialValue() {
 		// valid on for stock variables
 		// return empty string is not stock
@@ -3341,7 +3343,7 @@ public class Equation {
 
 	
 	
-	public void generateTree() {
+	public void generateTree() {	
 	    treeRoot = generateEquationTree();
 	    validateIFTHENELSEInTree(treeRoot);
 	}
@@ -3698,36 +3700,13 @@ public class Equation {
 	
 	
 	
-	public ArrayList<String> getFunctionInitialVariables() {
-	    ArrayList<String> al = new ArrayList<String>();
+	public Set<String> getFunctionInitialVariables() {
+	    Set<String> al = new HashSet<String>();
 	    getFunctionInitialVariables(treeRoot, al);
 	    return al;
 	}
 	
-//	public void getFunctionInitialVariables(Node node, ArrayList<String> al) {
-//	    if (node == null)
-//		return;
-//	    
-//	    if (node.getToken().equals("sdFunctions.INTEG") ||
-//		    node.getToken().equals("sdFunctions.SMOOTHI") || 
-//		    node.getToken().equals("sdFunctions.DELAY3I") || 
-//		    node.getToken().equals("sdFunctions.ACTIVEINITIAL")) {
-//		Node child = node.getChild();
-//		while (child.getNext() != null)
-//		    child = child.getNext();
-//		al.add(child.getToken());
-//	    }
-//	    
-//	    getFunctionInitialVariables(node.getNext(), al);
-//	    getFunctionInitialVariables(node.getChild(), al);
-//	    
-//	    
-//	    
-//	    return;
-//	    
-//	}
-	
-	public void getFunctionInitialVariables(Node node, ArrayList<String> al) {
+	public void getFunctionInitialVariables(Node node, Set<String> al) {
 		if (node == null)
 			return;
 		
@@ -3737,29 +3716,155 @@ public class Equation {
 				Node child = node.getChild();
 				while (child.getNext() != null)
 					child = child.getNext();
-//				al.add(child.getToken());   // mjb need to traverse this tree root for all variables
 				
-//				System.out.println("Old initVar: "+child.getToken());
 				List<Node> nodeList = new ArrayList<Node>();
 				findTerminal(child, nodeList);
-//				System.out.println(" - Start -");
 				
 				for (Node n : nodeList) {
 					if (Parser.isQuotedString(n.getToken()))
 						continue;
 					if (Parser.isNumber(n.getToken()))
 						continue;
-//					System.out.println("initVar: "+n.getToken());
 					if (!al.contains(n.getToken()))
 						al.add(n.getToken());
 				}
-				
-//				System.out.println(" - End -");
 			}
 		}
 
 		getFunctionInitialVariables(node.getNext(), al);
 		getFunctionInitialVariables(node.getChild(), al);
+
+
+
+		return;
+
+	}
+	
+	// =================
+	
+	public Set<String> getRHSVariablesForOrderingExpanded() {
+		Set<String> s = new HashSet<String>();
+		
+		for (String rhsVar : getRHSVariablesForOrdering()) {
+			if (ArrayReference.isArrayReference(rhsVar)) {
+				s.addAll(InformationManagers.getInstance().getArrayManager().expand(new ArrayReference(rhsVar)));
+			} else {
+				s.add(rhsVar);
+			}
+		}
+		removeExceptions(s);
+		return s;
+	}
+	
+	public Set<String> getRHSVariablesForOrdering(boolean trace) {
+	    Set<String> al = new HashSet<String>();
+	    getRHSVariablesForOrdering(TreeTraversal.getRhs(getTreeRoot()), al, trace);
+	    return al;
+	}
+	
+	public void getRHSVariablesForOrdering(Node node, Set<String> al, boolean trace) {
+		if (node == null) {
+			if (trace) 
+				System.out.println("Null Node return");
+			return;
+		}
+		Node aNode = node;
+		if (trace)
+			System.out.println("Node: "+aNode.getToken());
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken())) {
+			if (trace) {
+				System.out.println("Function: "+aNode.getToken());
+			}
+			FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			aNode = TreeTraversal.getFunctionArgument(aNode, 1);
+			if (trace)
+				System.out.println("arg node: "+aNode.getToken());
+			getRHSVariablesForOrdering(aNode, al, trace);
+		} else {
+			String token = aNode.getToken();
+			if (!Parser.isOperator(token) &&
+					!Parser.isQuotedString(token) &&
+					!Parser.isNumber(token) &&
+					!Parser.isLeftParen(token) &&
+					!Parser.isRightParen(token)) {
+				al.add(token);
+				if (trace)
+					System.out.println("var? "+token);
+			}
+			
+		}
+
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getNext(), al, trace);
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getChild(), al, trace);
+	}
+	
+	// =======================
+	
+	public Set<Node> getLookupFunctionNodes(boolean trace) {
+	    Set<Node> aSet = new HashSet<Node>();
+	    getLookupFunctionNodes(TreeTraversal.getRhs(getTreeRoot()), aSet, trace);
+	    if (trace)
+	    	System.out.println("Returning Set of size: "+aSet.size());
+	    return aSet;
+	}
+	
+	public void getLookupFunctionNodes(Node node, Set<Node> aSet, boolean trace) {
+		if (node == null) {
+			if (trace) 
+				System.out.println("Null Node return");
+			return;
+		}
+		Node aNode = node;
+		if (trace)
+			System.out.println("Node: "+aNode.getToken());
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken()) && Parser.getFunctionName(aNode.getToken()).equals("LOOKUP")) {
+			if (trace) {
+				System.out.println("Function: "+aNode.getToken());
+			}
+			aSet.add(aNode);
+		} 
+
+		if (aNode != null)
+			getLookupFunctionNodes(aNode.getNext(), aSet, trace);
+		if (aNode != null)
+			getLookupFunctionNodes(aNode.getChild(), aSet, trace);
+	}
+
+	
+	public Set<String> getRHSVariablesForOrdering() {
+	    Set<String> al = new HashSet<String>();
+	    getRHSVariablesForOrdering(TreeTraversal.getRhs(getTreeRoot()), al);
+	    return al;
+	}
+	
+	
+	public void getRHSVariablesForOrdering(Node node, Set<String> al) {
+		if (node == null)
+			return;
+		Node aNode = node;
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken())) {
+			FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			aNode = TreeTraversal.getFunctionArgument(aNode, 1);
+			getRHSVariablesForOrdering(aNode, al);
+		} else {
+			String token = aNode.getToken();
+			if (!Parser.isOperator(token) &&
+					!Parser.isQuotedString(token) &&
+					!Parser.isNumber(token) &&
+					!Parser.isLeftParen(token) &&
+					!Parser.isRightParen(token))
+				al.add(token);
+		}
+
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getNext(), al);
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getChild(), al);
 
 
 

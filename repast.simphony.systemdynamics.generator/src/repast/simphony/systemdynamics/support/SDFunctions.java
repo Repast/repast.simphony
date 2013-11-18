@@ -41,14 +41,18 @@ public class SDFunctions {
 	int len = lookupArray[xval].length;
 	// out of range
 	if (x < lookupArray[0][0]) {
-		if (++obCount <= MAX_OB)
-			System.out.println("WARNING: Below Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
+		if (++obCount <= MAX_OB) {
+			System.out.println("(func) WARNING: Below Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
+//			System.out.println("Size: "+lookupArray.length+" x "+lookupArray[0].length);
+		}
 	    return lookupArray[1][0];
 	}
 
 	if (x > lookupArray[xval][len - 1]) {
-		if (++obCount <= MAX_OB)
-			System.out.println("WARNING: Above Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
+		if (++obCount <= MAX_OB) {
+			System.out.println("(func) WARNING: Above Out of range access to lookup: "+ x+" range: "+lookupArray[0][0]+" - "+lookupArray[xval][len - 1]);
+//			System.out.println("Size: "+lookupArray.length+" x "+lookupArray[0].length);
+		}
 	    return lookupArray[yval][len - 1];
 	}
 

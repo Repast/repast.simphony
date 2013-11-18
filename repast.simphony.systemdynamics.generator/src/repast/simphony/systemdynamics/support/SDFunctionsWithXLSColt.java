@@ -132,34 +132,42 @@ public class SDFunctionsWithXLSColt extends SDFunctions {
     }
     
     private double[] getTimeValues(XSSFSheet sheet, String timeRowOrCol, int startRow, int startCol) {
-	     List<Double> timeList = new ArrayList<Double>();
-	     double[] timeArray = null;
-	     
-	     boolean byRow = isInteger(timeRowOrCol);
-	     int row;
-	     int col;
-	     double value;
-	     
-	     if (byRow) {
-		 row = Integer.parseInt(timeRowOrCol);
-		 col = startCol;
-		 while((value = getNumericDataInCell(sheet, row, col++)) >= 0.0) {
-		     timeList.add(value);
-		 }
-	     } else {
-		 row = startRow;
-		 col = Utilities.convertColumnToNumber(timeRowOrCol);
-		 while((value = getNumericDataInCell(sheet, row++, col)) >= 0.0) {
-		     timeList.add(value);
-		 }
-	     }
-	     
-	     timeArray = new double[timeList.size()];
-	     int pos = 0;
-	     for (double d : timeList)
-		 timeArray[pos++] = d;
-	     return timeArray;
-	 }
+    	List<Double> timeList = new ArrayList<Double>();
+    	double[] timeArray = null;
+
+    	boolean byRow = isInteger(timeRowOrCol);
+    	double previousValue =-1.0;
+    	int row;
+    	int col;
+    	double value;
+
+    	if (byRow) {
+    		row = Integer.parseInt(timeRowOrCol);
+    		col = startCol;
+    		value = getNumericDataInCell(sheet, row, col++);
+    		while(value >= 0.0 && value > previousValue) {
+    			timeList.add(value);
+    			previousValue = value;
+    			value = getNumericDataInCell(sheet, row, col++);
+    		}
+    	} else {
+    		row = startRow;
+    		col = Utilities.convertColumnToNumber(timeRowOrCol);
+    		value = getNumericDataInCell(sheet, row++, col);
+    		while(value >= 0.0 && value > previousValue) {
+//    			System.out.println("Time: "+(row-1)+" value = "+value);
+    			timeList.add(value);
+    			previousValue = value;
+    			value = getNumericDataInCell(sheet, row++, col);
+    		}
+    	}
+
+    	timeArray = new double[timeList.size()];
+    	int pos = 0;
+    	for (double d : timeList)
+    		timeArray[pos++] = d;
+    	return timeArray;
+    }
 	    
 	    public double GETXLSDATA(String varName, double currentValue, double time, double timeStep, String book,String tab,String timeRowOrCol,String cell) {
 		
@@ -170,49 +178,49 @@ public class SDFunctionsWithXLSColt extends SDFunctions {
 	}
 	    
 	    public TimeSeriesInstance GETXLSLOOKUPS(String book, String tab, String timeRowOrCol, String cell, int numRows, int numColumns) {
-		return GETXLSDATA(book, tab, timeRowOrCol, cell, numRows, numColumns);
+	    	return GETXLSDATA(book, tab, timeRowOrCol, cell, numRows, numColumns);
 	    }
 	    
 	    public TimeSeriesInstance GETXLSDATA(String book, String tab, String timeRowOrCol, String cell, int numRows, int numColumns) {
 
-		     TimeSeriesInstance tsi = null;
+	    	TimeSeriesInstance tsi = null;
 
-		     XSSFWorkbook wb = getWorkbook(book);
-		     XSSFSheet sheet = wb.getSheet(tab);
+	    	XSSFWorkbook wb = getWorkbook(book);
+	    	XSSFSheet sheet = wb.getSheet(tab);
 
-		     // for now, assume there is only a single subscript being applied
-		     // numCols in this case is the number of colums or rows that contain data points
-		     // still need to determine the number of time values in the series
+	    	// for now, assume there is only a single subscript being applied
+	    	// numCols in this case is the number of colums or rows that contain data points
+	    	// still need to determine the number of time values in the series
 
-		     boolean byRow = isInteger(timeRowOrCol);
+	    	boolean byRow = isInteger(timeRowOrCol);
 
-		     int startRow =  getRowNumberFromCellAddress(cell);
-		     int startCol =  getColumnNumberFromCellAddress(cell);
+	    	int startRow =  getRowNumberFromCellAddress(cell);
+	    	int startCol =  getColumnNumberFromCellAddress(cell);
 
-		     double[] timeValues = getTimeValues(sheet, timeRowOrCol, startRow, startCol);
+	    	double[] timeValues = getTimeValues(sheet, timeRowOrCol, startRow, startCol);
 
-		     double[] fromXls = new double[numRows*numColumns*timeValues.length];
+	    	double[] fromXls = new double[numRows*numColumns*timeValues.length];
 
-		     int pos = 0;
-		     if (byRow) {
-			 for (int r = startRow; r < startRow + numRows; r++) {
-			     for (int c = startCol; c < startCol + timeValues.length; c++) {
-				 fromXls[pos++] = getNumericDataInCell(sheet, r, c);
-			     }
-			 }
-		     } else {
-			 for (int c = startCol; c < startCol + numColumns; c++) {
-			     for (int r = startRow; r < startRow + timeValues.length; r++) {
+	    	int pos = 0;
+	    	if (byRow) {
+	    		for (int r = startRow; r < startRow + numRows; r++) {
+	    			for (int c = startCol; c < startCol + timeValues.length; c++) {
+	    				fromXls[pos++] = getNumericDataInCell(sheet, r, c);
+	    			}
+	    		}
+	    	} else {
+	    		for (int c = startCol; c < startCol + numColumns; c++) {
+	    			for (int r = startRow; r < startRow + timeValues.length; r++) {
 
-				 fromXls[pos++] = getNumericDataInCell(sheet, r, c);
-			     }
-			 }
-		     }
-		     
-		     tsi = new TimeSeriesInstance(timeValues, fromXls);
+	    				fromXls[pos++] = getNumericDataInCell(sheet, r, c);
+	    			}
+	    		}
+	    	}
 
-		     return tsi;
-		}
+	    	tsi = new TimeSeriesInstance(timeValues, fromXls);
+
+	    	return tsi;
+	    }
 	    
 	    public double RANDOMUNIFORM(String varName,  double currentValue, double time, double timeStep, double arg1, double arg2, double arg3) {
 		if (uniformDistribution == null) {

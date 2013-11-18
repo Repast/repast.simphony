@@ -93,6 +93,10 @@ public class Parser {
 	else
 	    return false;
     }
+    
+    public static String getFunctionName(String functionInvocation) {
+    	return functionInvocation.replace("sdFunctions.", "");
+    }
 
     public static boolean isFunctionInvocation(String token) {
 	if (token == null)
