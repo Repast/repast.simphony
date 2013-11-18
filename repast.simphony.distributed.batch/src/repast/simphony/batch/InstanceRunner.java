@@ -37,9 +37,9 @@ import simphony.util.messages.MessageEventListener;
  * <li> -pxml <parameter xml file>
  * <li> -scenario <scenario directory>
  * <li> -id <instance id>
- * <li> optional -input <input file> if the parameter input is in a file.
+ * <li> optional -pinput <input file> if the parameter input is in a file.
  * </ul>
- * if no -input then l ast arg is expected to be a string in unrolled parameter format.
+ * if no -pinput then last arg is expected to be a string in unrolled parameter format.
  * A parameter line hasthe format R\tP1\tV1,P2\tV2,P3\tV3,... 
  * R is the run number followed by a tab. P* and V* is a parameter name and value 
  * pair which are separated from each other by a tab and from other PV

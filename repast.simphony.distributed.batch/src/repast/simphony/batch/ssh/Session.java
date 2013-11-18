@@ -3,7 +3,6 @@
  */
 package repast.simphony.batch.ssh;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -93,11 +92,15 @@ public interface Session {
   /**
    * Finds the model output of that is the result of running this Session and returns that
    * those files. In the case of remote output the output may be copied to local temporary location.
+   * The patterns used to identify output are specified in the filePatterns parameters.
    * 
-   * @return the location of the output.
+   * @param patterns the patterns to look for
+   * @return the location of the output in a list of MatchedFiles. Each MatchedFiles object
+   * holds one or more files for a specific match.
+   * 
    * @throws StatusException 
    */
-   List<File> findOutput() throws StatusException;
+   List<MatchedFiles> findOutput(List<OutputPattern> patterns) throws StatusException;
 
   /**
    * Retrieves the run completion status (e.g. FAILURE) and

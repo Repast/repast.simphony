@@ -10,8 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -20,6 +22,7 @@ import repast.simphony.batch.ssh.BatchParameterChunkerException;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.ModelArchiveConfigurator;
 import repast.simphony.batch.ssh.ModelArchiveConfiguratorException;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.Session;
 
 public class ConfigTest {
@@ -51,6 +54,10 @@ public class ConfigTest {
     "20\trandomSeed\t1,human_count\t120,zombie_count\t9",
     "21\trandomSeed\t1,human_count\t120,zombie_count\t10",
     "22\trandomSeed\t1,human_count\t120,zombie_count\t11"};
+  
+  private static String[] OUTPUT_1 = {"**/output/AgentStats.csv", "agent_stat_output", "true", "true"};
+  private static String[] OUTPUT_2 = {"EnvironmentStats.csv", "env_stat_output", "false", "true"};
+  private static String[] OUTPUT_3 = {"Logging.csv", "Logging.csv", "true", "true"};
 
   @Test
   public void testArchiveConfigurator() throws BatchParameterChunkerException, IOException,
@@ -96,7 +103,7 @@ public class ConfigTest {
     Session session2 = findSession(config, "nick", "192.168.1.12");
     assertNotNull(session2);
     
-    Session session3 = findSession(config, "nick", "localhost");
+    Session session3 = findSession(config, System.getProperty("user.name"), "localhost");
     assertNotNull(session3);
     
     List<String> contents = getFileContents(session1.getInput());
@@ -129,13 +136,30 @@ public class ConfigTest {
 
   @Test
   public void testConfig() throws IOException {
-    Configuration config = new Configuration("./test_data/test_config.properties");
+    Configuration config = new Configuration("./test_data/test_config_with_patterns.properties");
     assertEquals("./test_data/complete_model.jar", config.getModelArchive());
     assertEquals("./output", config.getOutputDir());
     String keydir = "/Users/nick/" + ".ssh";
     assertEquals(keydir, config.getSSHKeyDir());
     assertEquals(6.0f, config.getPollFrequency(), 0);
     assertEquals("scenario.rs/batch_params.xml", config.getBatchParamsFile());
+    
+    List<OutputPattern> patterns = config.getOutputPatterns();
+    assertEquals(3, patterns.size());
+    Map<String, String[]> expected = new HashMap<>();
+    expected.put(OUTPUT_1[1], OUTPUT_1);
+    expected.put(OUTPUT_2[1], OUTPUT_2);
+    expected.put(OUTPUT_3[1], OUTPUT_3);
+    
+    for (OutputPattern pattern : patterns) {
+      String[] vals = expected.remove(pattern.getPath());
+      assertTrue(vals != null);
+      assertEquals(vals[0], pattern.getPattern());
+      assertEquals(vals[1], pattern.getPath());
+      assertEquals(Boolean.parseBoolean(vals[3]), pattern.isHeader());
+      assertEquals(Boolean.parseBoolean(vals[2]), pattern.isConcatenate());
+    }
+    
 
     int count = 0;
 

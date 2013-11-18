@@ -28,7 +28,7 @@ import com.jcraft.jsch.SftpException;
  * @author Nick Collier
  */
 public class SSHSession {
-  
+
   private static Logger logger = Logger.getLogger(SSHSession.class);
 
   private Session session;
@@ -37,6 +37,12 @@ public class SSHSession {
     this.session = session;
   }
 
+  /**
+   * Executes teh specified command in the background.
+   * 
+   * @param cmd
+   * @throws JSchException
+   */
   public void executeBackgroundCommand(String cmd) throws JSchException {
     Channel channel = null;
     try {
@@ -46,25 +52,77 @@ public class SSHSession {
       ((ChannelExec) channel).setCommand(cmd + " > /dev/null 2>&1 &");
       channel.setInputStream(null);
       channel.connect();
-      
+
     } finally {
       if (channel != null)
         channel.disconnect();
     }
   }
 
+  /*
+   * Lists the non-directory contents the specified remote directory and places the
+   * results into the files parameters. If recurse is true, then
+   * this will recurse into any directories and list the contents
+   * of those directories.
+   * 
+   * @param sftp
+   * @param remoteDir
+   * @param files
+   * @param recurse
+   * @throws SftpException
+   */
   @SuppressWarnings("unchecked")
-  public List<String> listRemoteDirectory(String remoteDir) throws JSchException,
+  private void listRemoteDirectory(ChannelSftp sftp, String remoteDir, List<String> files,
+      boolean recurse) throws SftpException {
+
+    Vector<ChannelSftp.LsEntry> entries = sftp.ls(remoteDir);
+    List<String> subs = new ArrayList<>();
+    for (ChannelSftp.LsEntry entry : entries) {
+      String filename = entry.getFilename();
+      if (!filename.equals(".") && !filename.equals("..")) {
+        if (recurse && entry.getAttrs().isDir())
+          subs.add(remoteDir + "/" + filename);
+        
+        files.add(remoteDir + "/" + filename);
+      }
+    }
+
+    for (String sub : subs) {
+      listRemoteDirectory(sftp, sub, files, true);
+    }
+  }
+
+  /**
+   * Returns the listing of the specified remote directory as a list of Strings.
+   * 
+   * @param remoteDir
+   * @return
+   * @throws JSchException
+   * @throws SftpException
+   */
+  public List<String> listRemoteDirectory(String remoteDir) throws JSchException, SftpException {
+    return listRemoteDirectory(remoteDir, false);
+  }
+
+  /**
+   * Returns the file listing of the specified remote directory as a list of Strings
+   * with an option to recurse into any directories that are found. If recurse is true
+   * then the files in the subdirectories will be returned with that subdirectory
+   * prefixed to the file name (e.g. output/file1).
+   * 
+   * @param remoteDir
+   * @return
+   * @throws JSchException
+   * @throws SftpException
+   */
+  public List<String> listRemoteDirectory(String remoteDir, boolean recurse) throws JSchException,
       SftpException {
     List<String> out = new ArrayList<String>();
     ChannelSftp sftp = null;
     try {
       sftp = (ChannelSftp) session.openChannel("sftp");
       sftp.connect();
-      Vector<ChannelSftp.LsEntry> entries = sftp.ls(remoteDir);
-      for (ChannelSftp.LsEntry entry : entries) {
-        out.add(entry.getFilename());
-      }
+      listRemoteDirectory(sftp, remoteDir, out, recurse);
     } finally {
       if (sftp != null)
         sftp.exit();
@@ -74,6 +132,15 @@ public class SSHSession {
     return out;
   }
 
+  /**
+   * Execute the specifed command on the remote machine and 
+   * wait for the resutl.
+   * 
+   * @param cmd
+   * @param level
+   * @return
+   * @throws JSchException
+   */
   public int executeCmd(String cmd, Level level) throws JSchException {
     Channel channel = null;
     try {
@@ -82,8 +149,7 @@ public class SSHSession {
       ((ChannelExec) channel).setCommand(cmd);
       channel.setInputStream(null);
 
-      ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
-          level)));
+      ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger, level)));
       channel.connect();
 
       while (!channel.isClosed()) {
@@ -101,18 +167,19 @@ public class SSHSession {
   }
 
   /**
+   * Execute the specified command on the remote machine and append any
+   * output to the StringBuilder. If setErrStream is true then errors
+   * will be directory to a LoggingOutputStream.
    * 
-   * @param session
    * @param cmd
    * @param builder
-   *          output is appened to this builder
-   * 
-   * @return the commands exit status
+   * @param setErrStream
+   * @return
    * @throws JSchException
    * @throws IOException
    */
-  public int executeCmd(String cmd, StringBuilder builder, boolean setErrStream) throws JSchException,
-      IOException {
+  public int executeCmd(String cmd, StringBuilder builder, boolean setErrStream)
+      throws JSchException, IOException {
     Channel channel = null;
     int exitStatus = 0;
     try {
@@ -120,8 +187,9 @@ public class SSHSession {
       ((ChannelExec) channel).setCommand(cmd);
       channel.setInputStream(null);
 
-     if (setErrStream) ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
-          Level.ERROR)));
+      if (setErrStream)
+        ((ChannelExec) channel).setErrStream(new PrintStream(new LoggingOutputStream(logger,
+            Level.ERROR)));
       InputStream in = channel.getInputStream();
       channel.connect();
 
@@ -156,6 +224,14 @@ public class SSHSession {
     return exitStatus;
   }
 
+  /**
+   * Compies the specified file to the home directory of the user 
+   * used to log in to the remote.
+   * 
+   * @param localFile
+   * @throws JSchException
+   * @throws SftpException
+   */
   public void copyFileToRemote(File localFile) throws JSchException, SftpException {
     ChannelSftp sftp = null;
     try {
@@ -168,8 +244,17 @@ public class SSHSession {
       sftp.disconnect();
     }
   }
-  
-  public void copyFileToRemote(File localFile, String remoteDirectory) throws JSchException, SftpException {
+
+  /**
+   * Copies the specified file to the specified remote directory.
+   * 
+   * @param localFile
+   * @param remoteDirectory
+   * @throws JSchException
+   * @throws SftpException
+   */
+  public void copyFileToRemote(File localFile, String remoteDirectory) throws JSchException,
+      SftpException {
     ChannelSftp sftp = null;
     try {
       sftp = (ChannelSftp) session.openChannel("sftp");
@@ -183,14 +268,39 @@ public class SSHSession {
     }
   }
 
-  public File copyFileFromRemote(String localDir, File remoteFile)
-      throws SftpException, JSchException {
+  /**
+   * Copies the specified remote file to the specified local directory. If preserveRemotePath
+   * is true then path will be preserved when the file is copied. For example, assuming a local
+   * directory of "foo", then copying "output/out.txt" will create "foo/output/out.txt".  
+   *  
+   * @param localDir
+   * @param remoteFile
+   * @param preserveRemotePath
+   * @return
+   * @throws SftpException
+   * @throws JSchException
+   */
+  public File copyFileFromRemote(String localDir, File remoteFile, boolean preserveRemotePath) throws SftpException,
+      JSchException {
     List<File> files = new ArrayList<File>();
     files.add(remoteFile);
-    return copyFilesFromRemote(localDir, files).get(0);
+    return copyFilesFromRemote(localDir, files, preserveRemotePath).get(0);
   }
 
-  public List<File> copyFilesFromRemote(String localDir, List<File> remoteFiles)
+  /**
+   * Copies files from the remote to the local directory preserving the directory 
+   * structure. If preserveRemotePath
+   * is true then path will be preserved when the file is copied. For example, assuming a local
+   * directory of "foo", then copying "output/out.txt" will create "foo/output/out.txt".  
+   *  
+   * 
+   * @param localDir
+   * @param remoteFiles
+   * @return
+   * @throws SftpException
+   * @throws JSchException
+   */
+  public List<File> copyFilesFromRemote(String localDir, List<File> remoteFiles, boolean preserveRemotePath)
       throws SftpException, JSchException {
     ChannelSftp sftp = null;
     List<File> out = new ArrayList<File>();
@@ -201,11 +311,12 @@ public class SSHSession {
       ld.mkdirs();
 
       for (File remoteFile : remoteFiles) {
-        // System.out.printf("copying %s to %s%n", remoteFile.getPath(),
-        // localDir + "/" + remoteFile.getName());
-        File dst = new File(localDir + "/" + remoteFile.getName());
+        String path = preserveRemotePath ? remoteFile.getPath() : remoteFile.getName();
+        File dst = new File(localDir, path);
+        dst.getParentFile().mkdirs();
+        //System.out.printf("copying %s to %s%n", remoteFile.getPath(), dst.toString());
         sftp.get(remoteFile.getPath().replace("\\", "/"), dst.getPath().replace("\\", "/"));
-        
+
         out.add(dst);
       }
     } finally {
@@ -216,7 +327,7 @@ public class SSHSession {
 
     return out;
   }
-  
+
   public void disconnect() {
     session.disconnect();
   }

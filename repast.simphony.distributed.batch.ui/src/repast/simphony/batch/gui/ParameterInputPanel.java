@@ -149,7 +149,7 @@ public class ParameterInputPanel extends JPanel {
         inputPanels.add(inputPanel, type.toString());
       } else if (type == ParameterType.CONSTANT) {
         ConstantInputPanel inputPanel = new ConstantInputPanel(displayName, pType);
-        if (pType.equals(Boolean.class) || pType.equals(Boolean.class)) {
+        if (pType.equals(Boolean.class) || pType.equals(boolean.class)) {
           JCheckBox box = (JCheckBox)inputPanel.fld;
           box.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
