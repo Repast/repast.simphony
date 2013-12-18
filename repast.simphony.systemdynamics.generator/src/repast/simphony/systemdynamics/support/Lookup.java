@@ -36,13 +36,15 @@ public class Lookup {
 	public Lookup(String name, double[] xvals, double[] yvals ) {
 		this.name = name;
 		
-		
+//		System.out.println("New Lookup: "+name);
 		xVals = new double[xvals.length];
 		yVals = new double[xvals.length];
 		
 		for (int i = 0; i < xvals.length; i++) {
 			xVals[i] = xvals[i];
 			yVals[i] = yvals[i];
+			
+//			System.out.println(xvals[i]+" , "+yvals[i] );
 		}
 	}
 	
@@ -52,13 +54,13 @@ public class Lookup {
 		// out of range
 		if (x < xVals[0]) {
 			if (++outOfBoundsCount <= MAX_OB)
-				System.out.println("WARNING: Below Out of range access to lookup: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
+				System.out.println("WARNING: Below Out of range access to lookup.java: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
 			return yVals[0]; 
 		}
 		
 		if (x > xVals[xVals.length-1]) {
 			if (++outOfBoundsCount <= MAX_OB)
-				System.out.println("WARNING: Above Out of range access to lookup: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
+				System.out.println("WARNING: Above Out of range access to lookup.java: "+name+" "+x+" range: "+xVals[0]+" - "+xVals[xVals.length-1]);
 			return yVals[yVals.length-1]; 
 		}
 		

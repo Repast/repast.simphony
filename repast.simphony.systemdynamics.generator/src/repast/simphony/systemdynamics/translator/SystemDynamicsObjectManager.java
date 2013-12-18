@@ -233,6 +233,8 @@ public class SystemDynamicsObjectManager {
 
 		Map<String, List<Arrow>> inArrows = new HashMap<String, List<Arrow>> ();
 		Map<String, List<Arrow>> outArrows  = new HashMap<String, List<Arrow>> ();
+		
+		System.out.println("### Processing View: "+view.getName());
 
 		// need to combine the valve and associated rate into a single SDO
 		for (GraphicObject go : view.getGraphicObjects()) {
@@ -301,6 +303,16 @@ public class SystemDynamicsObjectManager {
 			// if pointing to a valve, set GO to its associated rate
 
 			GraphicObject EffectiveFromGO = idToGraphicObject.get(go.getFrom());
+			
+			if (EffectiveFromGO == null) {
+				System.out.println("EffectiveFromGO == null ");
+				go.print();
+				
+				for (String s : idToGraphicObject.keySet()) {
+					idToGraphicObject.get(s).print();
+				}
+			}
+			
 			if (EffectiveFromGO.isValve()) {
 				if (go.isInFlowArrow()) {
 					swap = true;

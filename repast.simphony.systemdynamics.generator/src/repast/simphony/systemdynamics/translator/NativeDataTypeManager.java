@@ -62,6 +62,9 @@ public class NativeDataTypeManager {
 			return or;
 		
 		if (arrays.containsKey(original)) {
+			if (InformationManagers.getInstance().getArrayManager().isUsedAsLookup(original)) {
+				return or;
+			}
 			or.setErrorMessage("Array referenced as Scalar - "+token+" - original name "+original);
 			return or;
 		}
@@ -629,7 +632,6 @@ public class NativeDataTypeManager {
 			for (String array : al) {
 
 				if (EquationProcessor.lookups.contains(array)) {
-					System.out.println("### recognized lookup: "+array);
 					continue;
 				}
 

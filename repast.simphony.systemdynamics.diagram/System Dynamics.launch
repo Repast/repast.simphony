@@ -14,6 +14,7 @@
 <stringAttribute key="deselected_workspace_plugins" value="libs.bsf,libs.piccolo,repast.simphony.R,repast.simphony.batch,repast.simphony.bin_and_src,repast.simphony.chart,repast.simphony.core,repast.simphony.data,repast.simphony.data.ui,repast.simphony.dataLoader,repast.simphony.dataLoader.ui,repast.simphony.distributed.batch,repast.simphony.distributed.batch.ui,repast.simphony.eclipse,repast.simphony.essentials,repast.simphony.freezedry,repast.simphony.gis,repast.simphony.grass,repast.simphony.groovy,repast.simphony.gui,repast.simphony.iReport,repast.simphony.integration,repast.simphony.jasperreports,repast.simphony.jdbcfreezedryer,repast.simphony.jung,repast.simphony.matlab,repast.simphony.ora,repast.simphony.pajek,repast.simphony.plugin.util,repast.simphony.relogo.ide,repast.simphony.relogo.runtime,repast.simphony.runtime,repast.simphony.scenario,repast.simphony.spreadsheet,repast.simphony.sql,repast.simphony.systemdynamics,repast.simphony.terracotta,repast.simphony.userpanel.ui,repast.simphony.visad,repast.simphony.visualization,repast.simphony.weka,saf.core.ui"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="location" value="${workspace_loc}/../runtime-SystemDynamicsDiagram"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m -Xmx512m -XX:MaxPermSize=512m -Dorg.eclipse.swt.internal.carbon.smallFonts"/>
@@ -27,5 +28,5 @@
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<booleanAttribute key="useProduct" value="true"/>
+<booleanAttribute key="useProduct" value="false"/>
 </launchConfiguration>
