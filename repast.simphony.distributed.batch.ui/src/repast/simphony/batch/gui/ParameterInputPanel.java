@@ -130,7 +130,7 @@ public class ParameterInputPanel extends JPanel {
     String sConverter = "";
     if (conv != null && !type.isPrimitive() && !(type.equals(Double.class) ||
         type.equals(Integer.class) || type.equals(String.class) || type.equals(Float.class) ||
-        type.equals(Byte.class) || type.equals(Short.class))) {
+        type.equals(Byte.class) || type.equals(Short.class) || type.equals(Boolean.class))) {
       sConverter = conv.getClass().getName();
     }
     getCurrentPanel().write(writer, pName, pType, sConverter);
