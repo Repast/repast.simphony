@@ -201,4 +201,22 @@ public class RunEnvironment {
   public void setParameters(Parameters params) {
     this.parameters = params;
   }
+  
+  /**
+   * Adds a run listener.
+   * @param runListener
+   * 			the run listener
+   */
+  public void addRunListener(RunListener runListener){
+	  scheduleRunner.addRunListener(runListener);
+  }
+  
+  /**
+   * Removes a run listener.
+   * @param runListener
+   * 			the run listener
+   */
+  public void removeRunListener(RunListener runListener){
+	  scheduleRunner.removeRunListener(runListener);
+  }
 }

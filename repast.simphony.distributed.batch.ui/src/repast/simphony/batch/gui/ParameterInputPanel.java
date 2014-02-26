@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 import repast.simphony.parameter.ParameterConstants;
 import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.parameter.StringConverter;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -41,10 +42,12 @@ public class ParameterInputPanel extends JPanel {
   private Class<?> pType;
   private BatchParamPanel batchPanel;
   private boolean notifyBP = true;
+  private Parameters params;
 
   public ParameterInputPanel(BatchParamPanel batchPanel, String pName, Parameters params,
       ParameterData pData) {
     super(new BorderLayout());
+    this.params = params;
     this.batchPanel = batchPanel;
     this.pName = pName;
     this.displayName = params.getDisplayName(pName);
@@ -121,7 +124,16 @@ public class ParameterInputPanel extends JPanel {
   }
 
   public void writeXML(XMLStreamWriter writer) throws XMLStreamException {
-    getCurrentPanel().write(writer, pName, pType);
+    ParameterSchema schema = params.getSchema().getDetails(pName);
+    Class<?> type = schema.getType();
+    StringConverter<?> conv = schema.getConverter();
+    String sConverter = "";
+    if (conv != null && !type.isPrimitive() && !(type.equals(Double.class) ||
+        type.equals(Integer.class) || type.equals(String.class) || type.equals(Float.class) ||
+        type.equals(Byte.class) || type.equals(Short.class) || type.equals(Boolean.class) || type.equals(Long.class))) {
+      sConverter = conv.getClass().getName();
+    }
+    getCurrentPanel().write(writer, pName, pType, sConverter);
   }
 
   private void fillTypeBox(String pName, Parameters params) {
@@ -139,7 +151,7 @@ public class ParameterInputPanel extends JPanel {
     }
   }
 
-  private void createInputPanels(Parameters params) {
+  private void createInputPanels(Parameters  params) {
     BatchInputListener listener = new BatchInputListener(this);
     for (int i = 0; i < typeBox.getModel().getSize(); i++) {
       Object type = typeBox.getModel().getElementAt(i);
@@ -149,7 +161,7 @@ public class ParameterInputPanel extends JPanel {
         inputPanels.add(inputPanel, type.toString());
       } else if (type == ParameterType.CONSTANT) {
         ConstantInputPanel inputPanel = new ConstantInputPanel(displayName, pType);
-        if (pType.equals(Boolean.class) || pType.equals(Boolean.class)) {
+        if (pType.equals(Boolean.class) || pType.equals(boolean.class)) {
           JCheckBox box = (JCheckBox)inputPanel.fld;
           box.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -188,7 +200,7 @@ public class ParameterInputPanel extends JPanel {
   }
 
   private interface InputPanel {
-    void write(XMLStreamWriter writer, String pName, Class<?> pType) throws XMLStreamException;
+    void write(XMLStreamWriter writer, String pName, Class<?> pType, String converter) throws XMLStreamException;
 
     void set(ParameterData data);
 
@@ -205,7 +217,6 @@ public class ParameterInputPanel extends JPanel {
       super(new BorderLayout());
       this.displayName = displayName;
     }
-
   }
 
   private static class NumberInputPanel extends AbstractInputPanel implements InputPanel {
@@ -284,7 +295,8 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
-    public void write(XMLStreamWriter writer, String pName, Class<?> pType)
+    public void write(XMLStreamWriter writer, String pName, Class<?> pType,
+        String converter)
         throws XMLStreamException {
       writer.writeStartElement("parameter");
       writer.writeAttribute("name", pName);
@@ -364,7 +376,8 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
-    public void write(XMLStreamWriter writer, String pName, Class<?> pType)
+    public void write(XMLStreamWriter writer, String pName, Class<?> pType,
+        String converter)
         throws XMLStreamException {
       writer.writeStartElement("parameter");
       writer.writeAttribute("name", pName);
@@ -375,6 +388,8 @@ public class ParameterInputPanel extends JPanel {
       else {
         writer.writeAttribute("value", String.valueOf(((JCheckBox) fld).isSelected()));
       }
+      if (converter.length() > 0)
+        writer.writeAttribute("converter", converter);
       writer.writeEndElement();
     }
 
@@ -411,13 +426,16 @@ public class ParameterInputPanel extends JPanel {
     }
 
     @Override
-    public void write(XMLStreamWriter writer, String pName, Class<?> pType)
+    public void write(XMLStreamWriter writer, String pName, Class<?> pType,
+        String converter)
         throws XMLStreamException {
       writer.writeStartElement("parameter");
       writer.writeAttribute("name", pName);
       writer.writeAttribute("type", "list");
       writer.writeAttribute("value_type", pType.getName());
       writer.writeAttribute("values", fld.getText().trim());
+      if (converter.length() > 0)
+        writer.writeAttribute("converter", converter);
     }
 
     @Override
@@ -461,7 +479,8 @@ public class ParameterInputPanel extends JPanel {
   private static class RandomInputPanel extends JPanel implements InputPanel {
 
     @Override
-    public void write(XMLStreamWriter writer, String pName, Class<?> pType)
+    public void write(XMLStreamWriter writer, String pName, Class<?> pType,
+        String converter)
         throws XMLStreamException {
     }
 

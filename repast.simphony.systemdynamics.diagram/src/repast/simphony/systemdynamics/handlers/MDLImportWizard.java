@@ -36,6 +36,7 @@ import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -70,12 +71,12 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
     if (file == null)
       return false;
 
-    translateFile(file);
+    boolean translate = translateFile(file);
 
-    return true;
+    return translate;
   }
 
-  private void translateFile(final IFile rsdFile) {
+  private boolean translateFile(final IFile rsdFile) {
 
     TransactionalEditingDomain editingDomain = GMFEditingDomainFactory.INSTANCE
         .createEditingDomain();
@@ -101,6 +102,8 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
 
         MDLToSystemModel trans = new MDLToSystemModel();
         trans.run(model, diagram, mdlFile);
+        GenerateCodeDialog dialog = null;
+        
 
         diagramResource.getContents().add(model);
         diagramResource.getContents().add(diagram);
@@ -121,6 +124,14 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
           SystemdynamicsDiagramEditorPlugin.getInstance().logError(
               "Unable to store import model and diagram resources", e); //$NON-NLS-1$
         }
+        
+        if (trans.isFatal()) {
+            dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), false, "MDL Import:   ", trans.getFatalMessages());
+        } else {
+        	dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), true, "MDL Import:   ", "Import Successful");
+        }
+        	  dialog.open();
+    	  
         return CommandResult.newOKCommandResult();
       }
     };
@@ -130,6 +141,7 @@ public class MDLImportWizard extends Wizard implements IImportWizard {
     } catch (ExecutionException e) {
       SystemdynamicsDiagramEditorPlugin.getInstance().logError("Unable import mdl file", e); //$NON-NLS-1$
     }
+    return true;
   }
   
   private IResource extractSelection(IStructuredSelection selection) {

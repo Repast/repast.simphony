@@ -39,10 +39,12 @@ public class Equation {
 	
 	private boolean syntacticallyCorrect = true;
 	private boolean usageCorrect = true;
+	private boolean fatal = false;
 	
 	private List<String> syntaxMessages = new ArrayList<String>();
 	private List<String> usageMessages = new ArrayList<String>();
 	private List<String> unitsMessages = new ArrayList<String>();
+	private List<String> fatalMessages = new ArrayList<String>();
 	
 	private OperationResult opRes = new OperationResult();  // reusable
 	
@@ -178,6 +180,8 @@ public class Equation {
 	public Equation(String vensimEquation) {
 		this();
 
+//		System.out.println("###########################################");
+//		System.out.println(vensimEquation);
 		// need to check if this equation contains a macro invocation
 		// if so, we need to redefine the equation
 
@@ -188,16 +192,23 @@ public class Equation {
 			this.vensimEquation = vensimEquation.replaceAll("\t", "");
 		}
 		
+		// if any subscript ranges have blanks before the "!", get rid of them
+		if (this.vensimEquation.contains("!")) {
+			this.vensimEquation = vensimEquation.replaceAll(" *!", "!");
+		}
+		
 		// tokenize will detect certain types of syntax errors
 		tokenize();
 		
 		// if we were able to cleanly tokenize the equation, let's check for other syntax errors
 		if (syntacticallyCorrect) {
-			GrammarChecker checker = new GrammarChecker(tokens);
+			GrammarChecker checker = new GrammarChecker(this, tokens);
 			OperationResult or = checker.checkGrammar();
 			if (!or.isOk()) {
 				syntacticallyCorrect = false;
 				syntaxMessages.add(or.getMessage());
+				System.out.println("Bad Grammar Check: "+vensimEquation);
+				System.out.println(or.getMessage());
 			}
 		}
 	}
@@ -834,8 +845,10 @@ public class Equation {
 		// replace := with = not that options such as :INTERPOLATE: can occur on the LHS
 		equation = eqn[0];
 		
-		if (equation.contains("="))
+		if (equation.contains("=")) {
+			
 			rhs = equation.split("=", 2)[1];
+		}
 		
 		if (canRemoveColonEqual())
 			equation = eqn[0].replace(":=", "=").trim();
@@ -907,6 +920,13 @@ public class Equation {
 		// not be used for any other purpose!
 
 		boolean hasEqualSign = equation.contains("=");
+		
+//		if (hasEqualSign) {
+//		
+//			System.out.println("Hash Equal Sign = "+hasEqualSign);
+//			System.out.println(equation);
+//		}
+		
 
 		String token = "";
 		skipWhiteSpace(position);
@@ -932,6 +952,7 @@ public class Equation {
 			boolean allowColon = false;
 			token = getNonQuotedStringStartingAt(position, allowColon, opRes);
 		}
+		
 		skipWhiteSpace(position);
 
 		cleanEquation = token;
@@ -957,7 +978,7 @@ public class Equation {
 			cleanEquation += "=";
 			ignore = false;
 		} else if (inRange(position) && characterAt(position).equals("(")) {
-//			System.out.println("Think this is lookup");
+//			System.out.println("Think this is lookup "+this.getVensimEquationOnly());
 			// need to tokenize the remaining characters in the lookup definition
 			ignore = false;
 			tokens.add(token);
@@ -988,7 +1009,11 @@ public class Equation {
 			InformationManagers.getInstance().getArrayManager().setUsedAsLookup(token); // BAD BAD BAD can we trick code?
 			lookupTables.add(token); // used to be clean(token)
 			EquationProcessor.lookups.add(token); // used to be clean(token)
+			
 		} else if (inRange(position) && characterAt(position).equals("[") && !hasEqualSign && equation.contains("(")) {
+			
+			
+//			System.out.println("Think this is a subscripted lookup definition: "+ vensimEquation);
 			// as of 8 Dec 2011, I believe that only a subscripted lookup definition can have this pattern
 
 			// need to gobble up the square brackets and subscript name and make then part of the first
@@ -1032,12 +1057,19 @@ public class Equation {
 					return false;
 				}
 			}
+			
+//			System.out.println("Defining as lookup: "+token);
+			
 			tokens.addAll(tokenizedLookup);
-			//		for (String s : tokenizedLookup)
+//					for (String s : tokenizedLookup)
+//						System.out.println(s);
 			//		    cleanEquation += s;
 			hasRHS = false;
 			definesLookup = true;
 			lookupTables.add(token); // used to be clean(token)
+			
+			
+			
 			InformationManagers.getInstance().getArrayManager().setUsedAsLookup(token);
 			EquationProcessor.lookups.add(token); // used to be clean(token)
 			//		List<String> s = new ArrayList<String>();
@@ -1105,6 +1137,8 @@ public class Equation {
 
 			String rhsSubscript = equation.split("<->")[1].trim();
 			InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameFullSubrangeMapping(lhs, rhsSubscript);
+//			this.fatal = true;
+//			fatalMessages.add("Mapped Subscripts are not supported in this version of Repast Simphony System Dynamics");
 
 		} else if (inRange(position) && characterAt(position).equals("[")) {
 			leftBracketCount++;
@@ -1185,7 +1219,7 @@ public class Equation {
 					ignore = true;
 				}
 			} else {
-				System.out.println("ERROR: Bad Array Reference (B)! character found is <"+characterAt(position)+"> position "+position);
+				System.out.println("ERROR: Bad Array Reference (B)! character found is <"+characterAt(position)+"> position "+position + " ###"+equation+"###");
 				ignore = true;
 			}
 			// Left Bracket Processing Ends
@@ -1197,6 +1231,8 @@ public class Equation {
 		}
 		if (ignore) {
 			System.out.println("IGNORING <"+equation+">");
+			syntacticallyCorrect = false;
+			syntaxMessages.add("Ignoring: "+equation);
 			return false;
 		}
 		cleanEquation = "";
@@ -1650,6 +1686,8 @@ public class Equation {
 
 	}
 	
+	
+	
 	public String getIntialValue() {
 		// valid on for stock variables
 		// return empty string is not stock
@@ -1802,6 +1840,9 @@ public class Equation {
 	}
 	
 	private void processSubscriptMapping(String rhsSubscriptName, List<String> rhsSubscriptValues, MutableInteger position) {
+		
+//		this.fatal = true;
+//		fatalMessages.add("Mapped Subscripts are not supported in this version of Repast Simphony System Dynamics");
 	    
 	    // position points to "-" of "->"
 	    
@@ -1813,8 +1854,8 @@ public class Equation {
 
 	    // position points to the "->"
 	    String mappedTo = equation.split("->")[1].trim();
-
-	    // format (1)
+	    
+	     // format (1)
 	    if (!mappedTo.contains("(")) {
 	    	InformationManagers.getInstance().getMappedSubscriptManager().addSubscriptNameMapping(rhsSubscriptName, mappedTo);
 
@@ -2086,10 +2127,20 @@ public class Equation {
 				boolean needsIncrement = false;
 				if (values.length > 1)
 					needsIncrement = true;
-				sb.append(values.length);
+				
+				int len = values.length;
+				for (int j = 0; j < values.length; j++) {
+					if (values[j].equals("_"))
+						len--;
+				}
+				sb.append(len);
 				for (int j = 0; j < values.length; j++) {
 
 					sb.append(",");
+					if (values[j].equals("_")) {
+						sb.append("-");
+						j++;
+					} 
 					sb.append(values[j]);
 				}
 				sb.append(");\n");
@@ -2920,6 +2971,10 @@ public class Equation {
 	    return s.equals("GET XLS DATA");
 	}
 	
+	public static boolean isGetXlsConstantsFunction(String s) {
+	    return s.equals("GET XLS CONSTANTS");
+	}
+	
 	public static boolean isGetXlsLookupsFunction(String s) {
 	    return s.equals("GET XLS LOOKUPS");
 	}
@@ -3042,6 +3097,8 @@ public class Equation {
 			if (ArrayReference.isArrayReference(tNoBang)) {
 				s.addAll(InformationManagers.getInstance().getArrayManager().expand(new ArrayReference(tNoBang)));
 			} else {
+				if (Parser.isFunctionInvocation(t))
+					continue;
 				s.add(t);
 			}
 		}
@@ -3276,9 +3333,9 @@ public class Equation {
 	}
 	
 	public boolean isGetExternalData() {
-		if (getVensimEquation().contains("GET XLS LOOKUPS") || 
-				getVensimEquation().contains("GET XLS DATA") ||
-				getVensimEquation().contains("GET XLS CONSTANTS"))
+		if (getVensimEquationOnly().contains("GET XLS LOOKUPS") || 
+				getVensimEquationOnly().contains("GET XLS DATA") ||
+				getVensimEquationOnly().contains("GET XLS CONSTANTS"))
 			return true;
 		else
 			return false;
@@ -3286,7 +3343,7 @@ public class Equation {
 
 	
 	
-	public void generateTree() {
+	public void generateTree() {	
 	    treeRoot = generateEquationTree();
 	    validateIFTHENELSEInTree(treeRoot);
 	}
@@ -3515,7 +3572,7 @@ public class Equation {
 	}
 	
 	public void printTree() {
-	    System.out.println(cleanEquation);
+	    System.out.println(getVensimEquationOnly());
 	    printTree(treeRoot, 0);
 	}
 	
@@ -3643,33 +3700,176 @@ public class Equation {
 	
 	
 	
-	public ArrayList<String> getFunctionInitialVariables() {
-	    ArrayList<String> al = new ArrayList<String>();
+	public Set<String> getFunctionInitialVariables() {
+	    Set<String> al = new HashSet<String>();
 	    getFunctionInitialVariables(treeRoot, al);
 	    return al;
 	}
 	
-	public void getFunctionInitialVariables(Node node, ArrayList<String> al) {
-	    if (node == null)
+	public void getFunctionInitialVariables(Node node, Set<String> al) {
+		if (node == null)
+			return;
+		
+		if (Parser.isFunctionInvocation(node.getToken())) {
+			FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			if (fd.isSuppliesInitialValue()) {
+				Node child = node.getChild();
+				while (child.getNext() != null)
+					child = child.getNext();
+				
+				List<Node> nodeList = new ArrayList<Node>();
+				findTerminal(child, nodeList);
+				
+				for (Node n : nodeList) {
+					if (Parser.isQuotedString(n.getToken()))
+						continue;
+					if (Parser.isNumber(n.getToken()))
+						continue;
+					if (!al.contains(n.getToken()))
+						al.add(n.getToken());
+				}
+			}
+		}
+
+		getFunctionInitialVariables(node.getNext(), al);
+		getFunctionInitialVariables(node.getChild(), al);
+
+
+
 		return;
-	    
-	    if (node.getToken().equals("sdFunctions.INTEG") ||
-		    node.getToken().equals("sdFunctions.SMOOTHI") || 
-		    node.getToken().equals("sdFunctions.DELAY3I") || 
-		    node.getToken().equals("sdFunctions.ACTIVEINITIAL")) {
-		Node child = node.getChild();
-		while (child.getNext() != null)
-		    child = child.getNext();
-		al.add(child.getToken());
-	    }
-	    
-	    getFunctionInitialVariables(node.getNext(), al);
-	    getFunctionInitialVariables(node.getChild(), al);
-	    
-	    
-	    
-	    return;
-	    
+
+	}
+	
+	// =================
+	
+	public Set<String> getRHSVariablesForOrderingExpanded() {
+		Set<String> s = new HashSet<String>();
+		
+		for (String rhsVar : getRHSVariablesForOrdering()) {
+			if (ArrayReference.isArrayReference(rhsVar)) {
+				s.addAll(InformationManagers.getInstance().getArrayManager().expand(new ArrayReference(rhsVar)));
+			} else {
+				s.add(rhsVar);
+			}
+		}
+		removeExceptions(s);
+		return s;
+	}
+	
+	public Set<String> getRHSVariablesForOrdering(boolean trace) {
+	    Set<String> al = new HashSet<String>();
+	    getRHSVariablesForOrdering(TreeTraversal.getRhs(getTreeRoot()), al, trace);
+	    return al;
+	}
+	
+	public void getRHSVariablesForOrdering(Node node, Set<String> al, boolean trace) {
+		if (node == null) {
+			if (trace) 
+				System.out.println("Null Node return");
+			return;
+		}
+		Node aNode = node;
+		if (trace)
+			System.out.println("Node: "+aNode.getToken());
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken())) {
+			if (trace) {
+				System.out.println("Function: "+aNode.getToken());
+			}
+			FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			aNode = TreeTraversal.getFunctionArgument(aNode, 1);
+			if (trace)
+				System.out.println("arg node: "+aNode.getToken());
+			getRHSVariablesForOrdering(aNode, al, trace);
+		} else {
+			String token = aNode.getToken();
+			if (!Parser.isOperator(token) &&
+					!Parser.isQuotedString(token) &&
+					!Parser.isNumber(token) &&
+					!Parser.isLeftParen(token) &&
+					!Parser.isRightParen(token)) {
+				al.add(token);
+				if (trace)
+					System.out.println("var? "+token);
+			}
+			
+		}
+
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getNext(), al, trace);
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getChild(), al, trace);
+	}
+	
+	// =======================
+	
+	public Set<Node> getLookupFunctionNodes(boolean trace) {
+	    Set<Node> aSet = new HashSet<Node>();
+	    getLookupFunctionNodes(TreeTraversal.getRhs(getTreeRoot()), aSet, trace);
+	    if (trace)
+	    	System.out.println("Returning Set of size: "+aSet.size());
+	    return aSet;
+	}
+	
+	public void getLookupFunctionNodes(Node node, Set<Node> aSet, boolean trace) {
+		if (node == null) {
+			if (trace) 
+				System.out.println("Null Node return");
+			return;
+		}
+		Node aNode = node;
+		if (trace)
+			System.out.println("Node: "+aNode.getToken());
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken()) && Parser.getFunctionName(aNode.getToken()).equals("LOOKUP")) {
+			if (trace) {
+				System.out.println("Function: "+aNode.getToken());
+			}
+			aSet.add(aNode);
+		} 
+
+		if (aNode != null)
+			getLookupFunctionNodes(aNode.getNext(), aSet, trace);
+		if (aNode != null)
+			getLookupFunctionNodes(aNode.getChild(), aSet, trace);
+	}
+
+	
+	public Set<String> getRHSVariablesForOrdering() {
+	    Set<String> al = new HashSet<String>();
+	    getRHSVariablesForOrdering(TreeTraversal.getRhs(getTreeRoot()), al);
+	    return al;
+	}
+	
+	
+	public void getRHSVariablesForOrdering(Node node, Set<String> al) {
+		if (node == null)
+			return;
+		Node aNode = node;
+		// looking at a function, need to strip generated arguments and process other args
+		if (Parser.isFunctionInvocation(aNode.getToken())) {
+			FunctionDescription fd = InformationManagers.getInstance().getFunctionManager().getDescription(node.getToken());
+			aNode = TreeTraversal.getFunctionArgument(aNode, 1);
+			getRHSVariablesForOrdering(aNode, al);
+		} else {
+			String token = aNode.getToken();
+			if (!Parser.isOperator(token) &&
+					!Parser.isQuotedString(token) &&
+					!Parser.isNumber(token) &&
+					!Parser.isLeftParen(token) &&
+					!Parser.isRightParen(token))
+				al.add(token);
+		}
+
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getNext(), al);
+		if (aNode != null)
+			getRHSVariablesForOrdering(aNode.getChild(), al);
+
+
+
+		return;
+
 	}
 	
 	public Node getCopyOfTree() {
@@ -3954,6 +4154,12 @@ public class Equation {
 	public void setBtwnMode(String btwnMode) {
 	    this.btwnMode = btwnMode;
 	}
+	
+public boolean isGetXlsConstants() {
+	    
+	    return vensimEquation.toUpperCase().contains("GET XLS CONSTANTS");
+//	    return definesLookupGetXls;
+	}
 
 	public boolean isDefinesLookupGetXls() {
 	    
@@ -4089,6 +4295,18 @@ public class Equation {
 
 	public void setTreeCodeGenerated(boolean treeCodeGenerated) {
 		this.treeCodeGenerated = treeCodeGenerated;
+	}
+
+	public boolean isFatal() {
+		return fatal;
+	}
+
+	public void setFatal(boolean fatal) {
+		this.fatal = fatal;
+	}
+
+	public List<String> getFatalMessages() {
+		return fatalMessages;
 	}
 
 }

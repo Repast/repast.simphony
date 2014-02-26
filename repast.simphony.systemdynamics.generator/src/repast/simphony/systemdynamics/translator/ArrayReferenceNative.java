@@ -177,6 +177,37 @@ public class ArrayReferenceNative {
 	return code.toString();
 }
     
+    public String generateRHSOriginalName() {
+    	
+    	
+	StringBuffer code = new StringBuffer();
+	// pop[race,state!]
+	// generates arrayValueOf("pop",concatAsSubscript(outerSub.getSubscriptValue("race"), rangeSub.getSubscriptValue("state")))
+	// generates range loops
+	// generates pop[outer0][range0]
+//	code.append("/* generateRHSName  */\n");
+	code.append("stringConcat(");
+	code.append("\"");
+//	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName));
+	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName)));
+	    
+		
+		for (String sub : subscripts) {
+		    if (isRangeSubscript(sub)) {
+			code.append("[\",intToString(range"+equation.getEars().getRangeSubscriptNumber(sub)+"),\"]");
+		    } else if (InformationManagers.getInstance().getNamedSubscriptManager().isNamedSubscript(sub)) { // if not a named subscript
+			code.append("[\",intToString(outer"+equation.getEars().getOuterSubscriptNumber(sub)+"),\"]");
+		    } else {
+			code.append("["+sub.replace("!", "")+"]");   // need a lookup to determine terminal value!
+		    }
+		   
+		}
+		code.append("\")");
+	
+//		System.out.println("RHS Name: "+code.toString());
+	return code.toString();
+    }
+    
     public String generateRHSName() {
 	
 	
@@ -189,6 +220,7 @@ public class ArrayReferenceNative {
 	code.append("stringConcat(");
 	code.append("\"");
 	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName));
+//	    code.append(InformationManagers.getInstance().getNativeDataTypeManager().getOriginalName(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(arrayName)));
 	    
 		
 		for (String sub : subscripts) {

@@ -269,7 +269,7 @@ public class GraphicObject {
 	    fillColor = fields[16];
 	    font = fields[17];
 	}
-	additionalText = new String(view.getNextRawObject());
+	// additionalText = new String(view.getNextRawObject());
     }
 
     private void parseAsMetafile(String[] fields) {

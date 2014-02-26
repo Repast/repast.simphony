@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExit <em>On Exit</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getLanguage <em>Language</em>}</li>
  *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getUuid <em>Uuid</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getOnEnterImports <em>On Enter Imports</em>}</li>
+ *   <li>{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExitImports <em>On Exit Imports</em>}</li>
  * </ul>
  * </p>
  *
@@ -158,5 +160,57 @@ public interface AbstractState extends EObject {
    * @generated
    */
   void setUuid(String value);
+
+  /**
+   * Returns the value of the '<em><b>On Enter Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>On Enter Imports</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>On Enter Imports</em>' attribute.
+   * @see #setOnEnterImports(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getAbstractState_OnEnterImports()
+   * @model
+   * @generated
+   */
+  String getOnEnterImports();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnEnterImports <em>On Enter Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>On Enter Imports</em>' attribute.
+   * @see #getOnEnterImports()
+   * @generated
+   */
+  void setOnEnterImports(String value);
+
+  /**
+   * Returns the value of the '<em><b>On Exit Imports</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>On Exit Imports</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>On Exit Imports</em>' attribute.
+   * @see #setOnExitImports(String)
+   * @see repast.simphony.statecharts.scmodel.StatechartPackage#getAbstractState_OnExitImports()
+   * @model
+   * @generated
+   */
+  String getOnExitImports();
+
+  /**
+   * Sets the value of the '{@link repast.simphony.statecharts.scmodel.AbstractState#getOnExitImports <em>On Exit Imports</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>On Exit Imports</em>' attribute.
+   * @see #getOnExitImports()
+   * @generated
+   */
+  void setOnExitImports(String value);
 
 } // AbstractState

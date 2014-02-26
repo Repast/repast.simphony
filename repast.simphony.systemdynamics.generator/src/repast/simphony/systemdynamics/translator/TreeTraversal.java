@@ -8,6 +8,11 @@ public class TreeTraversal {
 	}
 	
 	public static Node getRhs(Node aNode) {
+		
+		if (aNode == null) {
+			System.err.println("NODE INFO NOT AVAILABLE");
+		}
+		
 		// by definition, the rhs is the next sibling of the child of a given node
 		Node lhs = aNode.getChild();
 		if (lhs != null)

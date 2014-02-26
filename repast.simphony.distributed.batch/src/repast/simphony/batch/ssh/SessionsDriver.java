@@ -7,7 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -54,15 +56,16 @@ public class SessionsDriver {
       for (Session session : config.sessions()) {
         session.initModelArchive(config, directory);
       }
-      
-      String msg = String.format("Initialization Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
+
+      String msg = String.format("Initialization Time: %.4f",
+          (System.currentTimeMillis() - time) / 1000f / 60f);
       logger.info(msg);
 
       time = System.currentTimeMillis();
       for (Session session : config.sessions()) {
         session.runModel();
       }
-      
+
       pollForDone(directory);
       msg = String.format("Run Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
       logger.info(msg);
@@ -72,10 +75,11 @@ public class SessionsDriver {
       copyRemoteRunStatus();
       writeRemoteRunStatus();
       concatenateOutput(directory);
-      
-      msg = String.format("Get Output Time: %.4f", (System.currentTimeMillis() - time) / 1000f / 60f);
+
+      msg = String.format("Get Output Time: %.4f",
+          (System.currentTimeMillis() - time) / 1000f / 60f);
       logger.info(msg);
-      
+
       long duration = System.currentTimeMillis() - start;
       msg = String.format("Finished. Elapsed Time: %.4f", duration / 1000f / 60f);
       logger.info(msg);
@@ -141,42 +145,58 @@ public class SessionsDriver {
   }
 
   private void concatenateOutput(String remoteDir) throws StatusException, SessionException {
+    List<String> baseNames = new ArrayList<String>();
 
-    List<File> copiedFiles = new ArrayList<File>();
-    for (Session session : config.sessions()) {
-      copiedFiles.addAll(session.findOutput());
-    }
-
-    ZipFile zip = null;
-    try {
-      // look in the scenario directory in the zip file to find the 
+    try (ZipFile zip = new ZipFile(config.getModelArchive())) {
+      // look in the scenario directory in the zip file to find the
       // base output names.
       BaseOutputNamesFinder finder = new BaseOutputNamesFinder();
-      List<String> baseNames = new ArrayList<String>();
-      zip = new ZipFile(config.getModelArchive());
+
       for (Enumeration<? extends ZipEntry> iter = zip.entries(); iter.hasMoreElements();) {
         ZipEntry entry = iter.nextElement();
-        if (entry.getName().startsWith("scenario.rs/" + FileSinkControllerActionIO.SERIALIZATION_ID)) {
+        if (entry.getName()
+            .startsWith("scenario.rs/" + FileSinkControllerActionIO.SERIALIZATION_ID)) {
           baseNames.add(finder.find(zip.getInputStream(entry)));
         }
       }
-      
-      OutputAggregator aggregator = new OutputAggregator();
-      aggregator.run(baseNames, copiedFiles, config.getOutputDir());
-      logger.info("Aggregating output into " + config.getOutputDir());
-    } catch (IOException ex) {
-      throw new SessionException("Error while aggregating remote output", ex);
-    } catch (XMLStreamException ex) {
-      throw new SessionException("Error while aggregating remote output", ex);
-    } finally {
-      if (zip != null)
-        try {
-          zip.close();
-        } catch (IOException ex) {
-          throw new SessionException("Error while aggregating remote output", ex);
+    } catch (IOException | XMLStreamException ex) {
+      throw new SessionException("Error while finding default output file names", ex);
+    }
+    
+    List<OutputPattern> patterns = new ArrayList<>();
+    for (String name : baseNames) {
+      DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(name);
+      // this has to be first, otherwise the non param map pattern will catch it.
+      patterns.add(creator.getParamMapPattern());
+      patterns.add(creator.getFileSinkOutputPattern());
+    }
+    
+    patterns.addAll(config.getOutputPatterns());
+
+    // merge the MatchedFiles from all the sessions.
+    // MatchedFiles with the same output path are
+    // combined.
+    Map<String, MatchedFiles> matches = new HashMap<>();
+    for (Session session : config.sessions()) {
+      for (MatchedFiles match : session.findOutput(patterns)) {
+        String output = match.getPattern().getPath();
+        MatchedFiles files = matches.get(output);
+        if (files == null) {
+          matches.put(output, match);
+        } else {
+          files.addAllFiles(match.getFiles());
         }
+      }
     }
 
+    try {
+      logger.info("Aggregating output into " + config.getOutputDir());
+      for (MatchedFiles file : matches.values()) {
+        file.aggregateOutput(config.getOutputDir());
+      }
+    } catch (IOException ex) {
+      throw new SessionException("Error while aggregating output", ex);
+    } 
   }
 
   private void pollForDone(String remoteDir) throws SessionException {

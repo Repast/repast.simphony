@@ -26,5 +26,8 @@ if [ "$begin" -le "$totr" ]
     cd $instanceDir
     # echo $inputArg
     java -Xmx512m -cp "../lib/*" repast.simphony.batch.InstanceRunner \
-        ../scenario.rs/batch_params.xml ../scenario.rs "$inputArg" $instance
+        -pxml ../scenario.rs/batch_params.xml \
+        -scenario ../scenario.rs \
+        -id $instance \
+        "$inputArg"
 fi

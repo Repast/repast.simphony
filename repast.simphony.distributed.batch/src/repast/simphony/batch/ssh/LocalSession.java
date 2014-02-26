@@ -149,14 +149,22 @@ public class LocalSession implements Session {
     copier.run(this, localDir, outDirectory);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Finds the model output that is the result of running this Session and returns 
+   * those files. In the case of remote output the output may be copied to local temporary location.
+   * The patterns used to identify output is specified in the filePatterns parameters.
    * 
-   * @see repast.simphony.batch.ssh.Session#copyOutput()
+   * @param patterns the OutputPatterns of the files to find.
+   * @return the location of the output in a list of MatchedFiles. Each MatchedFiles object
+   * holds one or more files for a specific match.
+   * 
+   * @throws StatusException 
    */
-  @Override
-  public List<File> findOutput() throws StatusException {
+   public List<MatchedFiles> findOutput(List<OutputPattern> patterns) 
+       throws StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
+    
+    finder.addPatterns(patterns);
     File localDir = new File(workingDir, localRunningDirectory);
     logger.info(String.format("Finding output on localhost in %s", localDir.getPath()));
     return finder.run(localDir);

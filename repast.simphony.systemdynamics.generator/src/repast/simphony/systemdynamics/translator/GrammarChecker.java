@@ -1,9 +1,12 @@
 package repast.simphony.systemdynamics.translator;
 
 import java.util.List;
+import java.util.Stack;
 
+import repast.simphony.systemdynamics.support.ArrayReference;
 import repast.simphony.systemdynamics.support.MutableBoolean;
 import repast.simphony.systemdynamics.support.MutableInteger;
+import repast.simphony.systemdynamics.support.NamedSubscriptManager;
 
 public class GrammarChecker {
 
@@ -26,6 +29,13 @@ public class GrammarChecker {
 	public static final String FUNCTION = "sdFunctions.";
 	public static final String SCALAR = "memory.";
 	public static final String LOOKUP = "lookup.";
+	
+	Stack<MutableBoolean> functionStack = new Stack<MutableBoolean>();
+	Stack<MutableInteger> openParenStack = new Stack<MutableInteger>();
+	
+	private boolean debugPrint = false;
+	
+	private Equation equation;
 
 	/*
 	 * Tokens are one of
@@ -38,18 +48,17 @@ public class GrammarChecker {
 
 	List<String> tokens;
 
-	public GrammarChecker(List<String> tokens) {
+	public GrammarChecker(Equation eqn, List<String> tokens) {
 		this.tokens = tokens;
+		equation = eqn;
+		
 	}
 
 	// make sure proper number of parens
 	// ends with appropriate token type
 
 	public OperationResult checkGrammar() {
-
-//		System.out
-//				.println("######################## check Grammar #############################");
-
+		
 		OperationResult or = new OperationResult();
 		String type = determineEquationType(or);
 		if (!or.isOk())
@@ -71,11 +80,132 @@ public class GrammarChecker {
 		return or;
 	}
 	
+//	private OperationResult checkArrayInitializationGrammar() {
+//		OperationResult or = new OperationResult();
+//		
+//		// for now assume OK, see if this works
+//		
+//		return or;
+//	}
+	
 	private OperationResult checkArrayInitializationGrammar() {
 		OperationResult or = new OperationResult();
+		MutableInteger pos = new MutableInteger(0);
+		ArrayReference arLHS = new ArrayReference(equation.getLhs());
+		int numDimensions = arLHS.getSubscripts().size();
+		boolean needSemiColon = numDimensions > 1;
+		String token;
+
+		// to have gotten this, we know that this is True.
+
+		// format x[a] = 1,2,3,...
+		// format x[a,b] = 1,2,3;4,5,6;...
+
+		token = tokens.get(pos.value()); // LHS
+		pos.add(1); 
+		token = tokens.get(pos.value()); // = 
+		pos.add(1);
+		token = tokens.get(pos.value()); // first value
+
+		boolean done = false;
+		needSemiColon = true;
 		
-		// for now assume OK, see if this works
-		
+		// simplified grammar checking for array initialization
+		// activate other code once we insure that subscript information is available 
+
+		// Simple case for vectors: alternate between values and commas and end with a value
+		if (!needSemiColon) {
+			while(!done) {
+				if (pos.value() % 2 == 0) {
+					if (!Parser.isNumber(token)) {
+						or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+						return or;
+					}
+				} else {
+					if (!token.equals(COMMA)) {
+						or.setErrorMessage("Expected comma. Found "+token+" in position "+pos.value());
+						return or;
+					}
+				}
+
+				pos.add(1);
+
+				if (pos.value() >= tokens.size()) {
+					// finished all tokens -- are we in right state?
+					if (pos.value() % 2 == 0) { // i.e. would we be looking for an another number
+						or.setErrorMessage("Array Initialization cannot end with a comma");
+					}
+					return or;
+				}
+				token = tokens.get(pos.value());
+			}
+			// here we have a multidimensional array
+			// NOTE: Vensim limits this type of initialization to two dimensions
+		} else {
+			int[] numValues = new int[]{0, 0};
+			List<String> subscripts = arLHS.getSubscripts();
+			int sub = 0;
+			NamedSubscriptManager nsm = InformationManagers.getInstance().getNamedSubscriptManager();
+			for (String subr : subscripts) {
+				int numV = nsm.getNumIndexFor(subr);
+				if (sub < 2) {
+					numValues[sub] = numV;
+				} else {
+					if (numV != 1) {
+						
+						// special case -- a single value supplied for all array slots
+						if (tokens.size() == 3 && Parser.isNumber(token)) {
+							return or;
+						} else {
+						or.setErrorMessage("Only the first two dimensions can vary in this array initialization");
+							return or;
+						}
+					}
+				}
+				sub++;
+			}
+			
+			while (pos.value() < tokens.size()) {
+				// special case for internal minus sign which is stored as a separate token
+				if (token.equals("_")) {
+					pos.add(1);
+					if (pos.value() < tokens.size()) {
+						token = tokens.get(pos.value());
+					} else {
+						or.setErrorMessage("Unexpected end of data values");
+						return or;
+					}
+				}
+				if (Parser.isNumber(token)) {
+					// everything ok
+				} else {
+				
+					or.setErrorMessage("Expected numeric value. Found "+token+" in position "+pos.value());
+					return or;
+				}
+				pos.add(1);
+				if (pos.value() < tokens.size()) {
+					token = tokens.get(pos.value());
+				} else {
+					// done! break
+					break;
+				}
+				if (token.equals(COMMA) || token.equals(SEMICOLON) ) {
+					// everything ok
+				} else {
+					or.setErrorMessage("Expected Separator. Found "+token+" in position "+pos.value());
+					return or;
+				}
+				pos.add(1);
+				if (pos.value() < tokens.size()) {
+					token = tokens.get(pos.value());
+				} else {
+					// done! break
+					break;
+				}
+			}
+		}		
+
 		return or;
 	}
 
@@ -93,30 +223,47 @@ public class GrammarChecker {
 
 		// just need to verify classification of tokens
 		// usage checked elsewhere
+		
+//		System.out.println("######## check assignment grammar ########");
 
 		MutableBoolean lookingForBinaryOperator = new MutableBoolean(false);
 		MutableBoolean lookingForArgumentSeparator = new MutableBoolean(false);
-		MutableBoolean processingFunctionInvocation = new MutableBoolean(false);
-		String previousToken = "";
-		MutableInteger pos = new MutableInteger();
-		MutableInteger openParens = new MutableInteger();
 		
+		
+		
+		functionStack.push(new MutableBoolean(false));
+		openParenStack.push(new MutableInteger(0));
+		
+		MutableInteger openParens = openParenStack.peek();
+		MutableBoolean processingFunctionInvocation = functionStack.peek();
+		
+		// push, pop, empty peek
+		
+		// nested functions will need their own processingFunction and openParen instances
+		
+		
+		
+		MutableInteger pos = new MutableInteger();
 		MutableBoolean lhs = new MutableBoolean(true);
+		
+		String previousToken = "";
 
 		int calls = 0;
 
 		while (pos.value() < tokens.size()) {
+			
+			
+			
 			int posIn = pos.value();
 			String token = tokens.get(pos.value());
-//			System.out.println("GCin: " + token + " LkBinOP: "
-//					+ lookingForBinaryOperator.value() + " pos = "
-//					+ pos.value());
+//			if (pos.value() == 0 && (token.contains("Max_probabilities_of_exceeding_2_Deg_C") || 
+//					token.contains("Max probabilities of exceeding 2 Deg C")))
+//				debugPrint = true;
+
 			grammerCheck(token, lhs, lookingForBinaryOperator,
-					lookingForArgumentSeparator, processingFunctionInvocation,
-					previousToken, pos, openParens, or);
-//			System.out.println("###GCout: LkBinOP: "
-//					+ lookingForBinaryOperator.value() + " pos = "
-//					+ pos.value());
+					lookingForArgumentSeparator, /* functionStack, */
+					previousToken, pos, /* openParenStack,  */ or);
+
 			int posOut = pos.value();
 			calls++;
 			if (posIn == posOut) {
@@ -133,13 +280,23 @@ public class GrammarChecker {
 		return or;
 	}
 
+//	private void grammerCheck(String token,
+//			MutableBoolean lhs,
+//			MutableBoolean lookingForBinaryOperator,
+//			MutableBoolean lookingForArgumentSeparator,
+//			MutableBoolean processingFunctionInvocation, String previousToken,
+//			MutableInteger pos, MutableInteger openParens, OperationResult or) {
+	
 	private void grammerCheck(String token,
 			MutableBoolean lhs,
 			MutableBoolean lookingForBinaryOperator,
 			MutableBoolean lookingForArgumentSeparator,
-			MutableBoolean processingFunctionInvocation, String previousToken,
-			MutableInteger pos, MutableInteger openParens, OperationResult or) {
+			/* Stack<MutableBoolean> processingFunctionInvocationStack, */ String previousToken,
+			MutableInteger pos, /* Stack<MutableInteger> openParensStack,*/  OperationResult or) {
+		
 		or.clear();
+		MutableBoolean processingFunctionInvocation = functionStack.peek();
+		MutableInteger openParens = openParenStack.peek();
 
 		if (token.startsWith(ARRAY)) {
 //			System.out.println("Array " + token);
@@ -190,9 +347,17 @@ public class GrammarChecker {
 						+ token + " in pos " + pos.value());
 				return;
 			}
+//			functionStack.push(new MutableBoolean(true));
+//			openParenStack.push(new MutableInteger(0));
+//			consumeFunction(lookingForBinaryOperator,
+//					lookingForArgumentSeparator, processingFunctionInvocation,
+//					previousToken, pos, openParens, or);
+			
 			consumeFunction(lookingForBinaryOperator,
-					lookingForArgumentSeparator, processingFunctionInvocation,
-					previousToken, pos, openParens, or);
+					lookingForArgumentSeparator, /*functionStack, */
+					previousToken, pos, /* openParenStack, */ or);
+			
+			
 			if (!or.isOk())
 				return;
 			pos.add(1);
@@ -228,7 +393,14 @@ public class GrammarChecker {
 						+ token + " in pos " + pos.value());
 				return;
 			}
+			
+			
 			openParens.add(1);
+			
+			if (debugPrint) {
+				System.out.println("GC: LP "+openParens.value());
+			}
+			
 			pos.add(1);
 			return;
 
@@ -250,6 +422,10 @@ public class GrammarChecker {
 				return;
 			}
 			openParens.add(-1);
+			
+			if (debugPrint) {
+				System.out.println("GC: RP "+openParens.value());
+			}
 			pos.add(1);
 			return;
 		} else if (token.equals(COMMA)) {
@@ -314,20 +490,33 @@ public class GrammarChecker {
 		}
 	}
 
+//	private void consumeFunction(MutableBoolean lookingForBinaryOperator,
+//			MutableBoolean lookingForArgumentSeparator,
+//			MutableBoolean processingFunctionInvocation, String previousToken,
+//			MutableInteger pos, MutableInteger openParens, OperationResult or) {
+	
 	private void consumeFunction(MutableBoolean lookingForBinaryOperator,
 			MutableBoolean lookingForArgumentSeparator,
-			MutableBoolean processingFunctionInvocation, String previousToken,
-			MutableInteger pos, MutableInteger openParens, OperationResult or) {
+			/* Stack<MutableBoolean> processingFunctionInvocationStack, */ String previousToken,
+			MutableInteger pos, /* Stack<MutableInteger> openParensStack, */ OperationResult or) {
 
 		or.clear();
-		processingFunctionInvocation.setValue(true);
+//		processingFunctionInvocation.setValue(true);
+		
+		functionStack.push(new MutableBoolean(true));
+		openParenStack.push(new MutableInteger(0));
+		
+		MutableInteger openParens = openParenStack.peek();
+		MutableBoolean processingFunctionInvocation = functionStack.peek();
+		
+//		System.out.println("CF Start: "+openParens.value());
 		
 		MutableBoolean lhs = new MutableBoolean(false);
 
 		// func is func_name ( notB , notB, ..., notB)
 
 		boolean done = false;
-		int localOpenParen = 0;
+//		int localOpenParen = 0;
 
 		pos.add(1);
 		String token = tokens.get(pos.value());
@@ -337,48 +526,66 @@ public class GrammarChecker {
 			return;
 		}
 		openParens.add(1);
-		localOpenParen++;
-//		System.out.println("Left Paren "+token+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+		if (debugPrint) {
+			System.out.println("CF: LP "+openParens.value());
+		}
+		
 		// point to first argument
 		pos.add(1);
 
-		while (!done) {
+		// process the tokens that appear within the left and right parens
+		// we account for only opening and closing parens here. Other counts are performed in grammerCheck
+		while (!done && pos.value() < tokens.size()) {
 			token = tokens.get(pos.value());
-			// look ahead for a left paren
-			if (token.equals(LEFT_PAREN)) {
-				localOpenParen++;
-//				System.out.println("consumeFunc ahead LeftParen"+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+	
+			if (token.equals(RIGHT_PAREN)) {
+				if (!lookingForBinaryOperator.value()) {
+					or.setErrorMessage("[19] Found ) while expecting a variable/function call");
+					return;
+				}
+								
+				openParens.add(-1);
+				if (debugPrint) {
+					System.out.println("CF: RP "+openParens.value());
+				}
+				
+//				localOpenParen--;
+//				System.out.println("Right Paren "+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
+				
+				// found closing paren
+//				if (openParens.value() == 0) {
+				if (/* localOpenParen == 0 || */ openParens.value() == 0) { // 9/25 try this || op == 0
+					done = true;
+//					System.out.println("ends function");
+					processingFunctionInvocation.setValue(false);
+					
+					if (debugPrint) {
+						System.out.println("CF: pop stacks");
+					}
+					
+					openParenStack.pop();
+					functionStack.pop();
+					
+					return;
+				}
+				pos.add(1);
+				continue;
 			}
+			
+			
 			grammerCheck(token, lhs, lookingForBinaryOperator,
-					lookingForArgumentSeparator, processingFunctionInvocation,
-					previousToken, pos, openParens, or);
+					lookingForArgumentSeparator, /* processingFunctionInvocationStack, */
+					previousToken, pos, /* openParensStack,*/ or);
 			if (!or.isOk())
 				return;
 			if (pos.value() >= tokens.size() && openParens.value() > 0) {
-				or.setErrorMessage("[18] Cannot locate end of function invocation");
+				or.setErrorMessage("[18] Cannot locate end of function invocation. # open = "+openParens.value());
 				return;
 			}
 			// we may be done at this point
 			if (pos.value() >= tokens.size())
 				return;
-			if (tokens.get(pos.value()).equals(RIGHT_PAREN)) {
-				if (!lookingForBinaryOperator.value()) {
-					or.setErrorMessage("[19] Found ) while expecting a variable/function call");
-				}
-				openParens.add(-1);
-				localOpenParen--;
-//				System.out.println("Right Paren "+" glob ( "+openParens.value()+" loc ( "+localOpenParen);
-				
-				// found closing paren
-//				if (openParens.value() == 0) {
-				if (localOpenParen == 0) {
-					done = true;
-//					System.out.println("ends function");
-					processingFunctionInvocation.setValue(false);
-					return;
-				}
-				pos.add(1);
-			} else if (tokens.get(pos.value()).equals(COMMA)) {
+			if (tokens.get(pos.value()).equals(COMMA)) {
 //				System.out.println("Comma ");
 				// need to grab another function argument
 				pos.add(1);
@@ -386,19 +593,22 @@ public class GrammarChecker {
 				lookingForBinaryOperator.setValue(false);
 			}
 		}
+		System.out.println("EOT, OpenParens = "+openParens.value());
+		or.setErrorMessage("[20] reached end of tokens without complete statment?");
+		return;
 
 	}
 
-	private void consumeLookup(MutableBoolean lookingForBinaryOperator,
-			MutableBoolean lookingForArgumentSeparator,
-			MutableBoolean processingFunctionInvocation, String previousToken,
-			MutableInteger pos, MutableInteger openParens, OperationResult or) {
-
-		// for now...
-		consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator,
-				processingFunctionInvocation, previousToken, pos, openParens,
-				or);
-	}
+//	private void consumeLookup(MutableBoolean lookingForBinaryOperator,
+//			MutableBoolean lookingForArgumentSeparator,
+//			MutableBoolean processingFunctionInvocation, String previousToken,
+//			MutableInteger pos, MutableInteger openParens, OperationResult or) {
+//
+//		// for now...
+//		consumeFunction(lookingForBinaryOperator, lookingForArgumentSeparator,
+//				processingFunctionInvocation, previousToken, pos, openParens,
+//				or);
+//	}
 
 	private OperationResult checkLookupDefinitionGrammar() {
 
@@ -417,7 +627,7 @@ public class GrammarChecker {
 		String[] pattern = { "(", "#", ",", "#", ")" };
 
 		String token = tokens.get(pos.value());
-		if (!Parser.isWord(token)) {
+		if (!Parser.isWord(token) && !ArrayReference.isArrayReference(token)) {
 
 			or.setErrorMessage("Invalid Lookup Name \"" + token
 					+ "\" in position " + pos.value());
@@ -614,6 +824,8 @@ public class GrammarChecker {
 		String type = "UNKNOWN";
 		or.clear();
 		
+		boolean initialization = true;
+		
 		// Need to worry about array initialization first
 		if (tokens.get(0).startsWith(ARRAY)) {
 			if (tokens.get(1).equals("=")) {
@@ -622,14 +834,17 @@ public class GrammarChecker {
 					if (i % 2 == 0) {
 						if (!Parser.isNumber(tokens.get(i))) {
 //							System.out.println("Looking for ");
+							initialization = false;
 							break;
 						}
 					} else {
 						if (!(tokens.get(i).equals(COMMA) || tokens.get(i).equals(SEMICOLON)))
+							initialization = false;
 							break;
 					}
 				}
-				return ARRAY_INITIALIZATION;
+				if (initialization)
+					return ARRAY_INITIALIZATION;
 			}
 			
 		}

@@ -6,8 +6,13 @@ package repast.simphony.parameter.xml;
  */
 public interface SetterConstants {
 
-	static final String CONSTANT_VALUE = "value";
-	static final String CONSTANT_ID = "constant";
-	static final String CONSTANT_TYPE_NAME = "constant_type";
+	String CONSTANT_VALUE = "value";
+	String CONSTANT_ID = "constant";
+	String CONSTANT_TYPE_NAME = "constant_type";
+	String CONVERTER_ATTRIBUTE_NAME = "converter";
+	
+	String LIST_PARAM_TYPE = "list";
+	String LIST_VALUE_TYPE_NAME = "value_type";
+	String LIST_VALUES_NAME = "values";
 
 }

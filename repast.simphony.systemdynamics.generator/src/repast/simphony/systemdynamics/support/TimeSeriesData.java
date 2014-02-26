@@ -60,8 +60,10 @@ public class TimeSeriesData {
 	
 	Map<Double, Double> series = timeSeries.get(subscript);
 	
+//	System.out.println("add TS: "+arrayOrScalar+" "+subscript);
 	for (int i = 0; i < time.length; i++) {
 	    series.put(time[i], values[i]);
+//	    System.out.println(time[i]+" "+values[i]);
 	}
 	
 	// set initial values
@@ -111,6 +113,8 @@ public class TimeSeriesData {
     public double getDataForTime(String name, String subs, double time) {
 
 	Map<Double, Double> map = timeSeriesData.get(name).get(subs);
+//	System.out.println("getDataForTime: "+name+" "+subs+" "+time);
+//	System.out.println(map.get(time));
 	return map.get(time);
     }
     
@@ -124,6 +128,8 @@ public class TimeSeriesData {
     }
     
     public double getDataBetweenTimes(String tsDataName, double time, double mode) {
+    	
+//    	System.out.println("getDataBetweenTimes: "+tsDataName+" time = "+time+" mode = "+mode);
 	double result = 0.0;
 	String name = null;
 	String subs = null;
@@ -155,6 +161,7 @@ public class TimeSeriesData {
 	    double deltaT = time - times.get(prior);
 	    
 	    result = v1 + (v2-v1) * deltaT/timeStep;
+//	    System.out.println(result);
 	    return result;
 	}
 	

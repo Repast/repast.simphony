@@ -13,7 +13,7 @@ import repast.simphony.util.SimUtilities;
 
 public class StateChartBeginAction implements IAction {
 
-	Set<DefaultStateChart<?>> scSet = new LinkedHashSet<DefaultStateChart<?>>();
+	Set<StateChart<?>> scSet = new LinkedHashSet<StateChart<?>>();
 	private StateChartSimIntegrator integrator;
 	
 	public StateChartBeginAction(StateChartSimIntegrator integrator) {
@@ -21,7 +21,7 @@ public class StateChartBeginAction implements IAction {
 	}
 
 	// register listeners
-	public void registerListener(DefaultStateChart<?> sc) {
+	public void registerListener(StateChart<?> sc) {
 		if (sc != null){
 			scSet.add(sc);
 		}
@@ -29,7 +29,7 @@ public class StateChartBeginAction implements IAction {
 	
 	// Remove specific listener (can be used, for example, for unscheduling
 	// when agent is removed from context)
-	public void removeListener(DefaultStateChart<?> sc) {
+	public void removeListener(StateChart<?> sc) {
 		if (sc != null){
 			scSet.remove(sc);
 		}
@@ -40,15 +40,15 @@ public class StateChartBeginAction implements IAction {
 		scSet.clear();
 	}
 
-	private Comparator<DefaultStateChart<?>> pComp = new PriorityComparator();
+	private Comparator<StateChart<?>> pComp = new PriorityComparator();
 
 	/**
 	 * Compares StateCharts according to their priority. Lower priority later in
 	 * order.
 	 */
-	static class PriorityComparator implements Comparator<DefaultStateChart<?>> {
-		public int compare(DefaultStateChart<?> s1, DefaultStateChart<?> s2) {
-			double index1 = ((DefaultStateChart<?>) s1).getPriority();
+	static class PriorityComparator implements Comparator<StateChart<?>> {
+		public int compare(StateChart<?> s1, StateChart<?> s2) {
+			double index1 = ((StateChart<?>) s1).getPriority();
 			double index2 = s2.getPriority();
 			return index1 < index2 ? 1 : index1 == index2 ? 0 : -1;
 		}
@@ -56,11 +56,11 @@ public class StateChartBeginAction implements IAction {
 
 	// notify listeners
 	protected void notifyListeners() {
-		List<DefaultStateChart<?>> temp = new ArrayList<DefaultStateChart<?>>(scSet);
+		List<StateChart<?>> temp = new ArrayList<StateChart<?>>(scSet);
 		SimUtilities.shuffle(temp, RandomHelper.getUniform());
 		Collections.sort(temp, pComp);
 
-		for (DefaultStateChart<?> sc : temp) {
+		for (StateChart<?> sc : temp) {
 			sc.begin(integrator);
 		}
 	}

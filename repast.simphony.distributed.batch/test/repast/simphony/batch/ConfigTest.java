@@ -2,9 +2,18 @@ package repast.simphony.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -13,24 +22,47 @@ import repast.simphony.batch.ssh.BatchParameterChunkerException;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.ModelArchiveConfigurator;
 import repast.simphony.batch.ssh.ModelArchiveConfiguratorException;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.Session;
 
 public class ConfigTest {
-
-  /*
-   * model.archive = ./complete_model.zip model.output = ./test_out ssh.key_dir
-   * = ~/.ssh
-   * 
-   * remote.1.user = sshtesting remote.1.host = 128.135.250.205
-   * remote.1.instances = 4
-   * 
-   * remote.2.user = nick remote.2.host = 192.168.1.12 remote.2.instances = 2
-   */
+  
+  private static String[] EXPECTED_1 = {
+    "1\trandomSeed\t1,human_count\t100,zombie_count\t1",
+    "2\trandomSeed\t1,human_count\t100,zombie_count\t2",
+    "3\trandomSeed\t1,human_count\t100,zombie_count\t3",
+    "4\trandomSeed\t1,human_count\t100,zombie_count\t4",
+    "5\trandomSeed\t1,human_count\t100,zombie_count\t5",
+    "6\trandomSeed\t1,human_count\t100,zombie_count\t6",
+    "7\trandomSeed\t1,human_count\t100,zombie_count\t7",
+    "8\trandomSeed\t1,human_count\t100,zombie_count\t8",
+    "9\trandomSeed\t1,human_count\t100,zombie_count\t9",
+    "10\trandomSeed\t1,human_count\t100,zombie_count\t10",
+    "11\trandomSeed\t1,human_count\t100,zombie_count\t11",
+    "12\trandomSeed\t1,human_count\t120,zombie_count\t1"};
+  
+  private static String[] EXPECTED_2 = {
+    "13\trandomSeed\t1,human_count\t120,zombie_count\t2",
+    "14\trandomSeed\t1,human_count\t120,zombie_count\t3",
+    "15\trandomSeed\t1,human_count\t120,zombie_count\t4",
+    "16\trandomSeed\t1,human_count\t120,zombie_count\t5"};
+  
+  private static String[] EXPECTED_3 = {
+    "17\trandomSeed\t1,human_count\t120,zombie_count\t6",
+    "18\trandomSeed\t1,human_count\t120,zombie_count\t7",
+    "19\trandomSeed\t1,human_count\t120,zombie_count\t8",
+    "20\trandomSeed\t1,human_count\t120,zombie_count\t9",
+    "21\trandomSeed\t1,human_count\t120,zombie_count\t10",
+    "22\trandomSeed\t1,human_count\t120,zombie_count\t11"};
+  
+  private static String[] OUTPUT_1 = {"**/output/AgentStats.csv", "agent_stat_output", "true", "true"};
+  private static String[] OUTPUT_2 = {"EnvironmentStats.csv", "env_stat_output", "false", "true"};
+  private static String[] OUTPUT_3 = {"Logging.csv", "Logging.csv", "true", "true"};
 
   @Test
   public void testArchiveConfigurator() throws BatchParameterChunkerException, IOException,
       ModelArchiveConfiguratorException {
-    Configuration config = new Configuration("./test_data/test_remote_config.properties");
+    Configuration config = new Configuration("./test_data/test_config.properties");
     BatchParameterChunker chunker = new BatchParameterChunker(config);
     chunker.run();
 
@@ -38,13 +70,31 @@ public class ConfigTest {
     Session r1 = iter.next();
 
     ModelArchiveConfigurator archConfig = new ModelArchiveConfigurator();
-    archConfig.configure(r1, config);
-    // System.out.println(file);
+    System.out.println(archConfig.configure(r1, config));
+  }
+  
+  private List<String> getFileContents(String file) {
+    List<String> contents = new ArrayList<>();
+    String line = null;
+    try (BufferedReader reader = new BufferedReader(new FileReader(new File(file)))) {
+      while ((line = reader.readLine()) != null) {
+        line = line.trim();
+        contents.add(line);
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      assertTrue(false);
+    } catch (IOException e) {
+      e.printStackTrace();
+      assertTrue(false);
+    }
+    
+    return contents;
   }
 
   @Test
   public void testChunker() throws BatchParameterChunkerException, IOException {
-    Configuration config = new Configuration("./test_data/test_remote_config.properties");
+    Configuration config = new Configuration("./test_data/test_config.properties");
     BatchParameterChunker chunker = new BatchParameterChunker(config);
     chunker.run();
 
@@ -53,19 +103,26 @@ public class ConfigTest {
     Session session2 = findSession(config, "nick", "192.168.1.12");
     assertNotNull(session2);
     
-    String user = System.getProperty("user.name");
-    Session session3 = findSession(config, user, "localhost");
+    Session session3 = findSession(config, System.getProperty("user.name"), "localhost");
     assertNotNull(session3);
-
-    String[] lines1 = session1.getInput().split("\n");
-    String[] lines2 = session2.getInput().split("\n");
-    String[] lines3 = session3.getInput().split("\n");
     
-    // total number of lines should be 138
-    assertEquals(138, lines1.length + lines2.length + lines3.length);
-    assertEquals(63, lines1.length);
-    assertEquals(30, lines2.length);
-    assertEquals(45, lines3.length);
+    List<String> contents = getFileContents(session1.getInput());
+    assertEquals(EXPECTED_1.length, contents.size());
+    for (int i = 0; i < contents.size(); ++i) {
+      assertEquals(EXPECTED_1[i], contents.get(i));
+    }
+    
+    contents = getFileContents(session2.getInput());
+    assertEquals(EXPECTED_2.length, contents.size());
+    for (int i = 0; i < contents.size(); ++i) {
+      assertEquals(EXPECTED_2[i], contents.get(i));
+    }
+    
+    contents = getFileContents(session3.getInput());
+    assertEquals(EXPECTED_3.length, contents.size());
+    for (int i = 0; i < contents.size(); ++i) {
+      assertEquals(EXPECTED_3[i], contents.get(i));
+    }
   }
 
   public Session findSession(Configuration config, String user, String host) {
@@ -79,13 +136,30 @@ public class ConfigTest {
 
   @Test
   public void testConfig() throws IOException {
-    Configuration config = new Configuration("./test_data/test_remote_config.properties");
-    assertEquals("./test_data/complete_model.zip", config.getModelArchive());
-    assertEquals("./test_out", config.getOutputDir());
-    String keydir = System.getProperty("user.home") + "/" + ".ssh";
+    Configuration config = new Configuration("./test_data/test_config_with_patterns.properties");
+    assertEquals("./test_data/complete_model.jar", config.getModelArchive());
+    assertEquals("./output", config.getOutputDir());
+    String keydir = "/Users/nick/" + ".ssh";
     assertEquals(keydir, config.getSSHKeyDir());
-    assertEquals(10f, config.getPollFrequency(), 0);
+    assertEquals(6.0f, config.getPollFrequency(), 0);
     assertEquals("scenario.rs/batch_params.xml", config.getBatchParamsFile());
+    
+    List<OutputPattern> patterns = config.getOutputPatterns();
+    assertEquals(3, patterns.size());
+    Map<String, String[]> expected = new HashMap<>();
+    expected.put(OUTPUT_1[1], OUTPUT_1);
+    expected.put(OUTPUT_2[1], OUTPUT_2);
+    expected.put(OUTPUT_3[1], OUTPUT_3);
+    
+    for (OutputPattern pattern : patterns) {
+      String[] vals = expected.remove(pattern.getPath());
+      assertTrue(vals != null);
+      assertEquals(vals[0], pattern.getPattern());
+      assertEquals(vals[1], pattern.getPath());
+      assertEquals(Boolean.parseBoolean(vals[3]), pattern.isHeader());
+      assertEquals(Boolean.parseBoolean(vals[2]), pattern.isConcatenate());
+    }
+    
 
     int count = 0;
 
