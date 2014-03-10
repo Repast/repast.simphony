@@ -4,7 +4,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+
 import junit.framework.TestCase;
+
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
@@ -12,10 +14,16 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
+import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.query.space.gis.*;
+import repast.simphony.query.space.projection.Within;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionListener;
@@ -292,6 +300,30 @@ public class GeographyTest extends TestCase {
     assertEquals(0, expected.size());
   }
 
+  public void testWithinPredicate() {
+    GeometryFactory fac = new GeometryFactory();
+    // these shed's have lat lon of montanta cities
+    Shed billings = new Shed("Billings");
+    Coordinate coord = new Coordinate(-108.5333, 45.8);
+    Geometry geom = fac.createPoint(coord);
+    geography.move(billings, geom);
+
+    Shed bozeman = new Shed("bozeman");
+    coord = new Coordinate(-111.15, 45.78333);
+    geom = fac.createPoint(coord);
+    geography.move(bozeman, geom);
+
+    // ~203,000 meters from billings to bozeman
+    
+    Within within = new Within(billings, bozeman, 204000);
+    assertTrue(geography.evaluate(within));
+    
+    within = new Within(billings, bozeman, 201000);
+    assertFalse(geography.evaluate(within));
+    
+  }
+
+  
   public void testWithinDistance() throws TransformException {
     GeometryFactory fac = new GeometryFactory();
     // these shed's have lat lon of montanta cities

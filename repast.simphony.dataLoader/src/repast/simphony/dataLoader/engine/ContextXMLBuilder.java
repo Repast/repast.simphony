@@ -45,7 +45,9 @@ public class ContextXMLBuilder implements ContextBuilder {
 
     for (ProjectionData proj : context.projections()) {
       ContextBuilder builder = fac.createBuilder(proj);
-      builders.add(builder);
+      
+      if (builder != null)
+        builders.add(builder);
     }
 
     /*

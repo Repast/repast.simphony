@@ -1,19 +1,15 @@
 package repast.simphony.dataLoader.engine;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import repast.simphony.context.Context;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.ShapefileLoader;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -25,11 +21,14 @@ import simphony.util.messages.MessageCenter;
  */
 public class ContextBuilderFactory {
 
-  private static final String AGENT_COUNT_ID = "initialCount";
-  private static final String SHP_LOAD_ID = "shpFile";
+	 private MessageCenter msg = MessageCenter.getMessageCenter(ContextBuilderFactory.class);
 
-  private Map<ProjectionType, ProjectionBuilderFactory> builderMap =
-          new HashMap<ProjectionType, ProjectionBuilderFactory>();
+   // TODO Geotools: clean out	 
+//  private static final String AGENT_COUNT_ID = "initialCount";
+//  private static final String SHP_LOAD_ID = "shpFile";
+
+  private Map<String, ProjectionBuilderFactory> builderMap =
+          new HashMap<String, ProjectionBuilderFactory>();
 
   private static ContextBuilderFactory instance = new ContextBuilderFactory();
 
@@ -43,10 +42,22 @@ public class ContextBuilderFactory {
   }
 
   private ContextBuilderFactory() {
-    registerProjectionBuilder(ProjectionType.GRID, new GridProjectionBuilder());
-    registerProjectionBuilder(ProjectionType.NETWORK, new NetworkProjectionBuilder());
-    registerProjectionBuilder(ProjectionType.CONTINUOUS_SPACE, new SpaceProjectionBuilder());
-    registerProjectionBuilder(ProjectionType.GEOGRAPHY, new GeographyProjectionBuilder());
+  	
+  	System.out.println("ContextBuilderFactory()");
+  	
+  	// TODO Geotools: implement for other built in projections
+//    registerProjectionBuilder(ProjectionType.GRID, new GridProjectionBuilder());
+//    registerProjectionBuilder(ProjectionType.NETWORK, new NetworkProjectionBuilder());
+//    registerProjectionBuilder(ProjectionType.CONTINUOUS_SPACE, new SpaceProjectionBuilder());
+//    registerProjectionBuilder(ProjectionType.GEOGRAPHY, new GeographyProjectionBuilder());
+		
+		for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
+			if (data instanceof DataLoaderProjectionRegistryData){
+	
+				registerProjectionBuilder(data.getTypeName(), 
+						((DataLoaderProjectionRegistryData) data).getProjectionBuilderFactory());
+			}
+		}
   }
 
   /**
@@ -55,7 +66,7 @@ public class ContextBuilderFactory {
    * @param clazz   the class of the Projection to register the builder for
    * @param builder the builder to use to build the specified class of projections.
    */
-  public void registerProjectionBuilder(ProjectionType type, ProjectionBuilderFactory builder) {
+  public void registerProjectionBuilder(String type, ProjectionBuilderFactory builder) {
     builderMap.put(type, builder);
   }
 
@@ -67,9 +78,16 @@ public class ContextBuilderFactory {
    */
   public ContextBuilder createBuilder(ProjectionData proj) {
     ProjectionBuilderFactory builder = builderMap.get(proj.getType());
+    
+    if (builder == null){
+    	msg.warn("No projection builder found for " + proj.getType() + " " + proj.getId());
+    	return null;
+    }
+    
     return builder.getBuilder(proj);
   }
 
+  // TODO Geotools: re-work this into the context.xml dataloader mechanism
   /*
   public List<ContextBuilder> createBuilder(SAgent agent) {
     List<ContextBuilder> builders = new ArrayList<ContextBuilder>();
@@ -99,65 +117,6 @@ public class ContextBuilderFactory {
     return builders;
   }
   */
-
-  private static class ShapefileAgentBuilder implements ContextBuilder {
-
-    private MessageCenter msg = MessageCenter.getMessageCenter(ShapefileAgentBuilder.class);
-
-    private String clazzName;
-    private String parameterID;
-    private boolean useContext = false;
-
-    private ShapefileAgentBuilder(String clazzName, String parameterID) {
-      this.clazzName = clazzName;
-      this.parameterID = parameterID;
-    }
-
-    public Context build(Context context) {
-      Parameters p = RunEnvironment.getInstance().getParameters();
-      if (!p.getSchema().contains(parameterID)) {
-        String info = "Shapefile parameter '" + parameterID + "' is missing";
-        msg.error(info, new RuntimeException(info));
-        return context;
-      }
-
-      File shpFile = new File(p.getValue(parameterID).toString());
-      if (!shpFile.exists()) {
-        String emsg = "Unable to load agents from shapefile: '" + shpFile.getName() + "'does not exist";
-        msg.error(emsg, new IllegalArgumentException("Missing shapefile"));
-        return context;
-      }
-     
-      Geography geog = null;
-      Iterator iter = context.getProjections(Geography.class).iterator();
-      if (iter.hasNext()) geog = (Geography) iter.next();
-
-      //class loaded should not be an interface or abstract class
-      //empty constructors should be present in class loaded
-      try {
-        Class clazz = Class.forName(clazzName);
-        ShapefileLoader loader = new ShapefileLoader(clazz, shpFile.toURI().toURL(), geog,
-                context);
-        if (useContext) {
-          for (Object obj : context) {
-            if (!loader.hasNext()) break;
-            loader.next(obj);
-          }
-
-        } else {
-          while (loader.hasNext()) {
-            loader.next();
-          }
-        }
-
-      } catch (ClassNotFoundException e) {
-        msg.error("Agent creation error: unable to find agent class '" + clazzName + "'", e);
-      } catch (MalformedURLException e) {
-        msg.error("Shapefile loading error", e);
-      }
-      return context;
-    }
-  }
 
   private static class AgentContextBuilder implements ContextBuilder {
 
@@ -199,9 +158,7 @@ public class ContextBuilderFactory {
       } catch (InstantiationException e) {
         msg.error("Agent creation error: agent class missing no-arg constructor?", e);
       }
-
       return context;
     }
-
   }
 }

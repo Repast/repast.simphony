@@ -3,22 +3,24 @@
  */
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import repast.simphony.space.projection.Projection;
-import repast.simphony.space.projection.ProjectionPredicate;
-
 import java.util.Collection;
 
 import javax.measure.unit.Unit;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import repast.simphony.space.IGeography;
+import repast.simphony.space.projection.ProjectionPredicate;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Space that locates objects in a geographic gis-type space.
  *
  * @param <T> Object type contained by the geography.
  */
-public interface Geography<T> extends Projection<T> {
+public interface Geography<T> extends IGeography<T> {
 
   /**
    * Gets the names of the layers in this geography. There will be one layer
@@ -181,7 +183,7 @@ public interface Geography<T> extends Projection<T> {
    *         Projection. For example, a linked type predicate evaluated
    *         against a grid projection.
    */
-  // @Override
+   @Override
   boolean evaluate(ProjectionPredicate predicate);
 
   /**

@@ -2,7 +2,7 @@
  * Created by JFormDesigner on Tue Oct 30 17:44:38 EDT 2007
  */
 
-package repast.simphony.ui.gis;
+package repast.simphony.gis.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

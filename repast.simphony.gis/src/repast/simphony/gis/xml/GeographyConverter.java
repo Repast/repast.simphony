@@ -1,4 +1,17 @@
-package repast.simphony.xml;
+package repast.simphony.gis.xml;
+
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import repast.simphony.context.Context;
+import repast.simphony.context.space.gis.ContextGeography;
+import repast.simphony.context.space.gis.GeographyFactoryFinder;
+import repast.simphony.space.gis.GISAdder;
+import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.GeographyParameters;
+import repast.simphony.util.collections.Pair;
+import repast.simphony.xml.AbstractConverter;
+import repast.simphony.xml.Keys;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -7,15 +20,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTReader;
-import org.geotools.referencing.CRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import repast.simphony.context.Context;
-import repast.simphony.context.space.gis.ContextGeography;
-import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.space.gis.GISAdder;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.GeographyParameters;
-import repast.simphony.util.collections.Pair;
 
 /**
  * XStream converter for ContextGeographies, the default gis space type

@@ -36,6 +36,8 @@ import simphony.util.messages.MessageCenter;
  * Creates and sets agents properties from a features in shapefile.
  *
  * @author Nick Collier
+ * 
+ * TODO Geotools: need a dispose method (see JIRA)
  */
 public class ShapefileLoader<T> {
 

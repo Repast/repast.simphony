@@ -1,9 +1,11 @@
-package repast.simphony.ui.probe;
+package repast.simphony.gis.ui.probe;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import repast.simphony.space.gis.Geography;
+import repast.simphony.ui.probe.LocationProbe;
+import repast.simphony.ui.probe.Utils;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -14,7 +16,7 @@ import com.vividsolutions.jts.geom.Point;
  * 
  * @author Nick Collier
  */
-public class GeographyLocationProbe {
+public class GeographyLocationProbe implements LocationProbe{
 
   private Object obj;
   private Geography<?> geog;

@@ -44,7 +44,7 @@ public class ContextData extends AttributeContainer {
     return contextClass;
   }
 
-  public ProjectionData addProjection(String id, ProjectionType type) {
+  public ProjectionData addProjection(String id, String type) {
     ProjectionData proj = new ProjectionData(id, type);
     projections.add(proj);
     return proj;

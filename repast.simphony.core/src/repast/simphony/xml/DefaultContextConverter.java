@@ -1,5 +1,18 @@
 package repast.simphony.xml;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import repast.simphony.context.Context;
+import repast.simphony.context.DefaultContext;
+import repast.simphony.space.IGeography;
+import repast.simphony.space.projection.Projection;
+import repast.simphony.valueLayer.ValueLayer;
+
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -7,14 +20,6 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import repast.simphony.context.Context;
-import repast.simphony.context.DefaultContext;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.projection.Projection;
-import repast.simphony.valueLayer.ValueLayer;
-
-import java.lang.reflect.Field;
-import java.util.*;
 
 /**
  * XStream converter for DefaultContexts.
@@ -28,7 +33,7 @@ public class DefaultContextConverter extends AbstractConverter implements Conver
   private class ProjectionComparator implements Comparator<Projection> {
 
     public int compare(Projection o1, Projection o2) {
-      return o1 instanceof Geography ? 1 : 0;
+      return o1 instanceof IGeography ? 1 : 0;
     }
   }
 

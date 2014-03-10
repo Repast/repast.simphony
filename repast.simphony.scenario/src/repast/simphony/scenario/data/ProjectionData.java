@@ -7,11 +7,12 @@ package repast.simphony.scenario.data;
  */
 public class ProjectionData extends AttributeContainer {
   
-  private ProjectionType type;
+//  private ProjectionType type;
+	private String type;
   
-  public ProjectionData(String id, ProjectionType type) {
+  public ProjectionData(String id, String type) {
     super(id);
-    this.type = type;
+//    this.type = type;
   }
 
   /**
@@ -19,7 +20,7 @@ public class ProjectionData extends AttributeContainer {
    * 
    * @return the projection's type.
    */
-  public ProjectionType getType() {
+  public String getType() {
     return type;
   }
 }

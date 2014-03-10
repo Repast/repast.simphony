@@ -32,6 +32,7 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
   private List<Object> probesToRemove = new ArrayList<Object>();
   private Map<Object, Probe> probesToAdd = new HashMap<Object, Probe>();
   private Map<Class<?>, PPUICreatorFactory> uiCreatorMap = new HashMap<Class<?>, PPUICreatorFactory>();
+  private Map<Class<?>, LocationProbeProvider> locationProviderMap = new HashMap<Class<?>, LocationProbeProvider>();
 
   /**
    * Creates a ProbeManager and associates it with the specified gui.
@@ -51,6 +52,10 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
    */
   public void addPPUICreator(Class<?> propertyClass, PPUICreatorFactory creator) {
     uiCreatorMap.put(propertyClass, creator);
+  }
+  
+  public void addLocationProbeProvider(Class<?> projectionClass, LocationProbeProvider provider){
+  	locationProviderMap.put(projectionClass, provider);
   }
 
   public void reset() {
@@ -95,7 +100,7 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
       gui.setActiveView(view);
     } else {
       ProbePanelCreator2 creator = new ProbePanelCreator2(obj);
-      Probe probe = creator.getProbe(uiCreatorMap, true);
+      Probe probe = creator.getProbe(uiCreatorMap, locationProviderMap, true);
       probesToAdd.put(obj, probe);
       view = gui.addProbeView("probe_" + probeCount++, probe.getTitle(), probe.getPanel());
       view.putClientProperty(PROBED_OBJ_KEY, obj);
@@ -182,5 +187,16 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
    */
   public boolean hasUICreatorFactory(Class<?> probedObjectClass) {
     return uiCreatorMap.containsKey(probedObjectClass);
+  }
+  
+  /**
+   * Gets whether or no this ProbeManager has an ProbeLocationProivder registered
+   * for the specified projection.
+   * 
+   * @param projection
+   * @return true if there is a ProbeLocationProivder otherwise false.
+   */
+  public boolean hasLocationProbeProvider(Class<?> projectionClass){
+  	return locationProviderMap.containsKey(projectionClass);
   }
 }

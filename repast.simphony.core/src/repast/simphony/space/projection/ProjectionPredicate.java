@@ -3,8 +3,8 @@
  */
 package repast.simphony.space.projection;
 
+import repast.simphony.space.IGeography;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 
@@ -56,5 +56,5 @@ public interface ProjectionPredicate {
 	 * @param geography the geography to evaluate against.
 	 * @return true if this predicate is true for the specified projection otherwise false.
 	 */
-	boolean evaluate(Geography geography);
+	boolean evaluate(IGeography geography);
 }

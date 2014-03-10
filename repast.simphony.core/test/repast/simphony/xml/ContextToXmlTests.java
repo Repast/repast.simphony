@@ -1,20 +1,21 @@
 package repast.simphony.xml;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import junit.framework.TestCase;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
-import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.context.space.graph.NetworkFactoryFinder;
 import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.space.continuous.BouncyBorders;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.RandomCartesianAdder;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.grid.Grid;
@@ -24,8 +25,8 @@ import repast.simphony.space.grid.StickyBorders;
 import repast.simphony.valueLayer.ContinuousValueLayer;
 import repast.simphony.valueLayer.GridValueLayer;
 
-import java.io.StringWriter;
-import java.util.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 
 
 /**
@@ -51,9 +52,6 @@ public class ContextToXmlTests extends TestCase {
       RepastEdge edge = network.addEdge(source, target);
       edge.setWeight(Math.random());
     }
-
-    GeographyFactoryFinder.createGeographyFactory(null).createGeography("geog", context,
-            new GeographyParameters());
 
     GridFactoryFinder.createGridFactory(null).createGrid("grid", context,
             GridBuilderParameters.multiOccupancy2D(new RandomGridAdder(), new StickyBorders(), 10, 20));
@@ -250,38 +248,6 @@ public class ContextToXmlTests extends TestCase {
     for (Object obj : newSpace.getObjects()) {
       Object other = agentMap.get(((TestAgent) obj).getIntVal());
       assertEquals(space.getLocation(other), newSpace.getLocation(obj));
-    }
-  }
-
-  public void testGeography() {
-    Map<Integer, TestAgent> agentMap = new HashMap<Integer, TestAgent>();
-    Geography geog = (Geography) context.getProjection("geog");
-    GeometryFactory factory = new GeometryFactory();
-    for (TestAgent agent : context) {
-      agentMap.put(agent.getIntVal(), agent);
-
-      Coordinate[] coords = new Coordinate[5];
-      for (int i = 0; i < 5; i++) {
-        Coordinate coord = new Coordinate(Math.random(), Math.random());
-        coords[i] = coord;
-      }
-
-      geog.move(agent, factory.createLineString(coords));
-    }
-
-    StringWriter string = new StringWriter();
-    xmlSer.toXML(context, string);
-
-    //System.out.println("string = " + string);
-    context = (Context<TestAgent>) xmlSer.fromXML(string.toString());
-
-    Geography newGeog = (Geography) context.getProjection("geog");
-    assertEquals(geog.size(), newGeog.size());
-    assertEquals(geog.getCRS().toWKT(), newGeog.getCRS().toWKT());
-    assertEquals(geog.getAdder().getClass(), newGeog.getAdder().getClass());
-    for (Object obj : newGeog.getAllObjects()) {
-      TestAgent agent = agentMap.get(((TestAgent) obj).getIntVal());
-      geomEquals(geog.getGeometry(agent), newGeog.getGeometry(obj));
     }
   }
 

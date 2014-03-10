@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 
+import repast.simphony.query.space.projection.Within;
 import repast.simphony.space.projection.DefaultProjection;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionEvent.Type;
@@ -585,5 +586,28 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
     public Iterator<T> iterator() {
       return items.iterator();
     }
+  }
+
+  /**
+   * Evaluates the Geography against this predicate comparing
+   * whether two objects are within a specified distance of each other.
+   * The distance is orthodromic and in meters. Note that
+   * for Polygons the distance is measured from the center
+   * and not from the nearest point.
+   *
+   * @param geography the geography to evaluate against.
+   * @return true if this predicate is true for the specified projection otherwise false.
+   */
+  @Override
+  public boolean evaluateWithin(Within within) {
+  	Geometry geom1 = getGeometry(within.getObj1());
+  	Geometry geom2 = getGeometry(within.getObj2());
+  	try {
+  		return JTS.orthodromicDistance(geom1.getCentroid().getCoordinate(),
+  				geom2.getCentroid().getCoordinate(), getCRS()) <= within.getDistance();
+  	} catch (TransformException e) {
+  		msg.error("Error calculating orthodromic distance", e);
+  	}
+  	return false;
   }
 }

@@ -1,17 +1,21 @@
 /*CopyrightHere*/
-package repast.simphony.freezedry.freezedryers.proj;
+package repast.simphony.gis.freezedry;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
+import repast.simphony.freezedry.freezedryers.proj.GridProjectionDryer2;
+import repast.simphony.freezedry.freezedryers.proj.ProjectionDryer;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import simphony.util.messages.MessageCenter;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * A projection layer that builds a {@link repast.simphony.space.continuous.ContinuousSpace}.

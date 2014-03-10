@@ -3,13 +3,13 @@
  */
 package repast.simphony.scenario.data;
 
+import repast.simphony.space.IGeography;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.valueLayer.ValueLayer;
 
-public enum ProjectionType {
+public enum ProjectionType_old {
   
   GRID {
     public String getName() {
@@ -47,7 +47,7 @@ public enum ProjectionType {
     }
     
     public Class<?> getInterface() {
-      return Geography.class;
+      return IGeography.class;
     }
   },
   
@@ -66,7 +66,7 @@ public enum ProjectionType {
   
   public abstract Class<?> getInterface();
 
-  public static ProjectionType getType(String name) {
+  public static ProjectionType_old getType(String name) {
     if (name.equalsIgnoreCase("grid")) return GRID;
     if (name.equals("network")) return NETWORK;
     if (name.equals("continuous space")) return CONTINUOUS_SPACE;

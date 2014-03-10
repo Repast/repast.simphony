@@ -1,8 +1,9 @@
-package repast.simphony.dataLoader.engine;
+package repast.simphony.gis.dataLoader;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.dataLoader.engine.ProjectionBuilderFactory;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.space.gis.GeographyParameters;
 

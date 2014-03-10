@@ -1,4 +1,4 @@
-package repast.simphony.ui.gis;
+package repast.simphony.gis.ui;
 
 import java.awt.event.ActionEvent;
 

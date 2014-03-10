@@ -7,8 +7,13 @@ Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.runtime,
  libs.piccolo,
- saf.core.ui
+ saf.core.ui,
+ libs.ext,
+ repast.simphony.scenario,
+ repast.simphony.dataLoader,
+ repast.simphony.gui
 Export-Package: org.geotools.renderer.lite,
+ repast.simphony.context.space.gis,
  repast.simphony.gis.data,
  repast.simphony.gis.display,
  repast.simphony.gis.io,
@@ -16,5 +21,8 @@ Export-Package: org.geotools.renderer.lite,
  repast.simphony.gis.legend,
  repast.simphony.gis.styleEditor,
  repast.simphony.gis.tools,
- repast.simphony.gis.util
+ repast.simphony.gis.ui,
+ repast.simphony.gis.util,
+ repast.simphony.query.space.gis,
+ repast.simphony.space.gis
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

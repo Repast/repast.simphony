@@ -69,6 +69,12 @@
     <parameter-def id="probedObjectClass" multiplicity="one" type="string"/>
     <parameter-def id="creatorClass" multiplicity="one" type="string"/>
   </extension-point>
+  
+  <!-- Extension point for adding a custom projection location provider to the probe panel-->
+  <extension-point extension-multiplicity="any" id="probe.location.provider">
+    <parameter-def id="projectionClass" multiplicity="one" type="string"/>
+    <parameter-def id="providerClass" multiplicity="one" type="string"/>
+  </extension-point>
 
   <!-- Extension point for child / component actions. Parameters:
     editorCreator - the name of a class that implements the repast.ui.plugin.ActionEditorCreator interface.
@@ -291,16 +297,6 @@
       <parameter id="label" value="&amp;Save Current Parameters"/>
       <parameter id="class" value="repast.simphony.ui.action.SaveCurrentParams"/>
       <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
-    </parameter>
-
-    <parameter id="actionSpec">
-      <parameter id="actionID" value="repast.simphony.ui.gis.ShowExportDialog"/>
-      <parameter id="label" value="&amp;Export Geography Layers"/>
-      <parameter id="class" value="repast.simphony.ui.gis.ShowExportDialog"/>
-      <parameter id="icon" value="nfs_mount.png"/>
-      <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
-      <parameter id="groupID" value="runTools"/>
-      <parameter id="tooltip" value="Export geography layers to a shapefile"/>
     </parameter>
 
     <parameter id="actionSpec">

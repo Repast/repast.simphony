@@ -1,12 +1,14 @@
 /*CopyrightHere*/
 package repast.simphony.freezedry.freezedryers.proj;
 
-import repast.simphony.context.Context;
-import repast.simphony.space.projection.Projection;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import repast.simphony.context.Context;
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
+import repast.simphony.space.projection.Projection;
 
 /**
  * Implementations of this class will handle storing settings for some projections. Implementations
@@ -169,6 +171,15 @@ public abstract class ProjectionDryer<T extends Projection> {
 				return (ProjectionDryer<T>) dryer;
 			}
 		}
+		
+		// Last, look for any additional dryers in the projection registry.
+		for (ProjectionRegistryData registryData : ProjectionRegistry.getRegistryData()){
+			ProjectionDryer<?> dryer = registryData.getProjectionDryer();
+			if (dryer.handles(type)) {
+				return (ProjectionDryer<T>) dryer;
+			}
+		}
+		
 		return null;
 	}
 
@@ -177,6 +188,5 @@ public abstract class ProjectionDryer<T extends Projection> {
 		addProjectionDryer(new NetworkProjectionDryer());
 		addProjectionDryer(new ContinuousProjectionDryer());
 		addProjectionDryer(new GridProjectionDryer2());
-		addProjectionDryer(new GeographyProjectionDryer());
 	}
 }
