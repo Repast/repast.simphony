@@ -1,6 +1,5 @@
 package repast.simphony.query.space.projection;
 
-import repast.simphony.space.IGeography;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
@@ -26,12 +25,9 @@ public abstract class SpatialPredicate implements ProjectionPredicate {
 	 * @param projection the projection to evaluate against.
 	 * @return false
 	 */
-	// this would eventually be added to so that we could register user predicates and
-	// evaluate them in here
 	public boolean evaluate(Projection projection) {
 		return false;
 	}
-
 
 	/**
 	 * Evaluates the Network against this predicate.
@@ -61,15 +57,5 @@ public abstract class SpatialPredicate implements ProjectionPredicate {
 	 */
 	public boolean evaluate(ContinuousSpace space) {
 		return false;
-	}
-
-	/**
-	 * Evaluates the Geography against this predicate.
-	 *
-	 * @param geography the geography to evaluate against.
-	 * @return true if this predicate is true for the specified projection otherwise false.
-	 */
-	public boolean evaluate(IGeography geography) {
-		return false; 
 	}
 }

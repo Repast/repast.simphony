@@ -25,9 +25,6 @@ import repast.simphony.space.grid.StickyBorders;
 import repast.simphony.valueLayer.ContinuousValueLayer;
 import repast.simphony.valueLayer.GridValueLayer;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-
 
 /**
  * @author Nick Collier
@@ -248,18 +245,6 @@ public class ContextToXmlTests extends TestCase {
     for (Object obj : newSpace.getObjects()) {
       Object other = agentMap.get(((TestAgent) obj).getIntVal());
       assertEquals(space.getLocation(other), newSpace.getLocation(obj));
-    }
-  }
-
-  private void geomEquals(Geometry one, Geometry two) {
-    Coordinate[] c1 = one.getCoordinates();
-    Coordinate[] c2 = two.getCoordinates();
-    assertEquals(c1.length, c2.length);
-    for (int i = 0; i < c1.length; i++) {
-      // for some reason some miniscule precision is lost
-      // when going back from wkt
-      assertEquals(c1[i].x, c2[i].x, .00000001);
-      assertEquals(c1[i].y, c2[i].y, .00000001);
     }
   }
 

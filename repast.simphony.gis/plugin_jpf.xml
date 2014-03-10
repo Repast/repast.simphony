@@ -22,6 +22,20 @@
 			<export prefix="*"/>
 		</library>
 		
+		<library id="gt-api-9.0" path="./lib/gt-api-9.0.jar" type="code"/>
+		<library id="gt-brewer-9.0" path="./lib/gt-brewer-9.0.jar" type="code"/>
+		<library id="gt-coverage-9.0" path="./lib/gt-coverage-9.0.jar" type="code"/>
+		<library id="gt-cql-9.0" path="./lib/gt-cql-9.0.jar" type="code"/>
+		<library id="gt-data-9.0" path="./lib/gt-data-9.0.jar" type="code"/>
+		<library id="gt-epsg-hsql-9.0" path="./lib/gt-epsg-hsql-9.0.jar" type="code"/>
+		<library id="gt-main-9.0" path="./lib/gt-main-9.0.jar" type="code"/>
+		<library id="gt-metadata-9.0" path="./lib/gt-metadata-9.0.jar" type="code"/>
+		<library id="gt-opengis-9.0" path="./lib/gt-opengis-9.0.jar" type="code"/>
+		<library id="gt-referencing-9.0" path="./lib/gt-referencing-9.0.jar" type="code"/>
+		<library id="gt-render-9.0" path="./lib/gt-render-9.0.jar" type="code"/>
+		<library id="gt-shapefile-9.0" path="./lib/gt-shapefile-9.0.jar" type="code"/>
+		<library id="jts-1.13" path="./lib/jts-1.13.jar" type="code"/>
+		
 		<!-- JAI Tools libraries (jt-*) are required by Geotools at runtime. -->
 		<library id="jt-zonalstats-1.3.0jar" path="lib/jt-zonalstats-1.3.0.jar" type="code">
 			<export prefix="*"/>
@@ -33,8 +47,8 @@
 	</runtime>
 	
 	<extension id="gis.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.gis.engine.GISCompositeControllerActionCreator"/>
-  </extension>
+    	<parameter id="creatorClass" value="repast.simphony.gis.engine.GISCompositeControllerActionCreator"/>
+    </extension>
 	
 	<extension id="probe.location.provider.gis" plugin-id="repast.simphony.gui" point-id="probe.location.provider">
         <parameter id="projectionClass" value="repast.simphony.space.gis.Geography"/>

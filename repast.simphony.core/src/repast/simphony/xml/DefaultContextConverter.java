@@ -3,13 +3,10 @@ package repast.simphony.xml;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
-import repast.simphony.space.IGeography;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.valueLayer.ValueLayer;
 
@@ -27,15 +24,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * @author Nick Collier
  */
 public class DefaultContextConverter extends AbstractConverter implements Converter {
-
-  // sorts projections based on instance such that geography projections
-  // are always last.
-  private class ProjectionComparator implements Comparator<Projection> {
-
-    public int compare(Projection o1, Projection o2) {
-      return o1 instanceof IGeography ? 1 : 0;
-    }
-  }
 
   public boolean canConvert(Class aClass) {
     return (DefaultContext.class.isAssignableFrom(aClass));
@@ -71,11 +59,8 @@ public class DefaultContextConverter extends AbstractConverter implements Conver
 
       // write its projections
       writeString("proj_count", String.valueOf(context.getProjections().size()), writer);
-      // we need to make sure to do the geography after the network
-      // in case we have network edges that are part of the geography
-      // but not part of the context.
+     
       List<Projection> projs = new ArrayList<Projection>(context.getProjections());
-      Collections.sort(projs, new ProjectionComparator());
       for (Projection proj : projs) {
         writeObject("projection", proj, writer, mContext);
       }

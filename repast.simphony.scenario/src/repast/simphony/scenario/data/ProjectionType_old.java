@@ -3,7 +3,6 @@
  */
 package repast.simphony.scenario.data;
 
-import repast.simphony.space.IGeography;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
@@ -41,15 +40,15 @@ public enum ProjectionType_old {
     }
   }, 
   
-  GEOGRAPHY {
-    public String getName() {
-      return "geography";
-    }
-    
-    public Class<?> getInterface() {
-      return IGeography.class;
-    }
-  },
+//  GEOGRAPHY {
+//    public String getName() {
+//      return "geography";
+//    }
+//    
+//    public Class<?> getInterface() {
+//      return IGeography.class;
+//    }
+//  },
   
   VALUE_LAYER {
     public String getName() {
@@ -70,7 +69,7 @@ public enum ProjectionType_old {
     if (name.equalsIgnoreCase("grid")) return GRID;
     if (name.equals("network")) return NETWORK;
     if (name.equals("continuous space")) return CONTINUOUS_SPACE;
-    if (name.equals("geography")) return GEOGRAPHY;
+//    if (name.equals("geography")) return GEOGRAPHY;
     if (name.equals("value layer")) return VALUE_LAYER;
     
     throw new IllegalArgumentException("Invalid projection type '" + name + "'");

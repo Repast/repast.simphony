@@ -3,6 +3,8 @@ package repast.simphony.freezedry;
 import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.freezedry.freezedryers.*;
 import simphony.util.messages.MessageCenter;
 
@@ -49,7 +51,11 @@ public class FreezeDryedRegistry {
 		driers.add(new ClassFreezeDryer(this));
     driers.add(new AmountFreezeDryer());
     driers.add(new BigDecimalFreezeDryer());
-    driers.add(new GeometryFreezeDryer());
+    
+    // Add additional driers from the projection registry.
+    for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
+    	driers.addAll(data.getFreezeDryers());
+    }
   }
 
 	public String getId(Object o) throws FreezeDryingException {

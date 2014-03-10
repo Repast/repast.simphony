@@ -78,6 +78,7 @@ public class XMLSerializer {
    * Creates an XMLSerializer.
    */
   public XMLSerializer() {
+  	// TODO Projections: use the projection registry.
     xstream.registerConverter(new DefaultContextConverter());
     xstream.registerConverter(new NetworkConverter());
     xstream.registerConverter(new GridConverter());
@@ -87,7 +88,7 @@ public class XMLSerializer {
     xstream.registerConverter(new GridValueLayerConverter());
     xstream.registerConverter(new ContinuousValueLayerConverter());
     
-    // add any additional converters from the projection registry.
+    // Add additional converters from the projection registry.
     for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
     	xstream.registerConverter(data.getProjectionXMLConverter());
     }

@@ -1,18 +1,13 @@
 package repast.simphony.query.space.projection;
 
-import org.geotools.geometry.jts.JTS;
-import org.opengis.referencing.operation.TransformException;
-
-import repast.simphony.space.IGeography;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.ShortestPath;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.space.projection.Projection;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Predicate that evalutes whether one object is within some distance of another in a projection.
@@ -91,18 +86,11 @@ public class Within extends SpatialPredicate {
 
 		return false;
 	}
-
-  /**
-   * Evaluates the Geography against this predicate comparing
-   * whether two objects are within a specified distance of each other.
-   * 
-   * @param geography the geography to evaluate against.
-   * @return true if this predicate is true for the specified projection otherwise false.
-   */
-  @Override
-  public boolean evaluate(IGeography geography) {
-  	return geography.evaluateWithin(this);
-  }
+	
+	@Override
+	public boolean evaluate(Projection projection) {
+		return projection.evaluate(this);
+	}
 
 	public Object getObj1() {
 		return obj1;

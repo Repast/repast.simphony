@@ -172,7 +172,7 @@ public abstract class ProjectionDryer<T extends Projection> {
 			}
 		}
 		
-		// Last, look for any additional dryers in the projection registry.
+		// Last, look for any projection dryers in the projection registry.
 		for (ProjectionRegistryData registryData : ProjectionRegistry.getRegistryData()){
 			ProjectionDryer<?> dryer = registryData.getProjectionDryer();
 			if (dryer.handles(type)) {
@@ -184,7 +184,8 @@ public abstract class ProjectionDryer<T extends Projection> {
 	}
 
 	static {
-		// when adding/removing things here make sure to note it in the class's javadocs
+		
+		// TODO Projections: update to use the projection registry
 		addProjectionDryer(new NetworkProjectionDryer());
 		addProjectionDryer(new ContinuousProjectionDryer());
 		addProjectionDryer(new GridProjectionDryer2());

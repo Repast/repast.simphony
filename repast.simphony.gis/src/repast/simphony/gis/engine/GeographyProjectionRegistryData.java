@@ -5,7 +5,13 @@ import repast.simphony.dataLoader.engine.ProjectionBuilderFactory;
 import repast.simphony.engine.environment.AbstractProjectionRegistryData;
 import repast.simphony.space.gis.Geography;
 
-public class GeographyProjectionRegistryData extends AbstractProjectionRegistryData 
+/**
+ * ProjectionRegistryData implementation for the Geography projection.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class GeographyProjectionRegistryData extends AbstractProjectionRegistryData<Geography<?>> 
 		implements DataLoaderProjectionRegistryData{
 
 	public static final String NAME = "geography";
@@ -25,12 +31,10 @@ public class GeographyProjectionRegistryData extends AbstractProjectionRegistryD
 	@Override
 	public void setProjectionBuilderFactory(ProjectionBuilderFactory projectionBuilderFactory) {
 		this.projectionBuilderFactory = projectionBuilderFactory;
-
 	}
 
 	@Override
-	public boolean isProjectionAttribute(String type, String attributeId) {
-		
+	public boolean isProjectionAttribute(String attributeId) {
 		return false;
 	}
 }

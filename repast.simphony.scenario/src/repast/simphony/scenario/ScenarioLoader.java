@@ -267,15 +267,17 @@ public class ScenarioLoader {
   
   private boolean isProjectionAttribute(String type, String attributeId) {
     
-  	ProjectionRegistryData data = ProjectionRegistry.getDataFor(type);
+  	// TODO Projections: Use the projection registry for other built in projections.
   	
-  	return data.isProjectionAttribute(type, attributeId);
+  	if (type == ProjectionData.NETWORK_TYPE && attributeId.equals("directed")) return false;
+    if (type == ProjectionData.GRID_TYPE && attributeId.equals("allows multi")) return false;
+    if ((type == ProjectionData.GRID_TYPE || type == ProjectionData.CONTINUOUS_SPACE_TYPE) 
+        && attributeId.equals("border rule")) return false;
+    
+    // The projection registry holds data for additional projections such as GIS.
+	  ProjectionRegistryData data = ProjectionRegistry.getDataFor(type);
   	
-  	// TODO Geotools: do this for other built in projections...
-//  	if (type == ProjectionType.NETWORK && attributeId.equals("directed")) return false;
-//    if (type == ProjectionType.GRID && attributeId.equals("allows multi")) return false;
-//    if ((type == ProjectionType.GRID || type == ProjectionType.CONTINUOUS_SPACE) 
-//        && attributeId.equals("border rule")) return false;
+  	return data.isProjectionAttribute(attributeId);
   }
 
   /*

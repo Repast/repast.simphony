@@ -43,17 +43,15 @@ public class ContextBuilderFactory {
 
   private ContextBuilderFactory() {
   	
-  	System.out.println("ContextBuilderFactory()");
-  	
-  	// TODO Geotools: implement for other built in projections
-//    registerProjectionBuilder(ProjectionType.GRID, new GridProjectionBuilder());
-//    registerProjectionBuilder(ProjectionType.NETWORK, new NetworkProjectionBuilder());
-//    registerProjectionBuilder(ProjectionType.CONTINUOUS_SPACE, new SpaceProjectionBuilder());
-//    registerProjectionBuilder(ProjectionType.GEOGRAPHY, new GeographyProjectionBuilder());
-		
+  	// TODO Projections: implement projection registry for other built in projections
+  	registerProjectionBuilder(ProjectionData.GRID_TYPE, new GridProjectionBuilder());
+    registerProjectionBuilder(ProjectionData.NETWORK_TYPE, new NetworkProjectionBuilder());
+    registerProjectionBuilder(ProjectionData.CONTINUOUS_SPACE_TYPE, new SpaceProjectionBuilder());
+
+    // Register projection builders for additional projections that provide a 
+    //   projection builder such as GIS.
 		for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
 			if (data instanceof DataLoaderProjectionRegistryData){
-	
 				registerProjectionBuilder(data.getTypeName(), 
 						((DataLoaderProjectionRegistryData) data).getProjectionBuilderFactory());
 			}

@@ -537,9 +537,10 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
   }
 
   /**
-   * Evaluate this Projection against the specified Predicate. This typically
-   * involves a double dispatch where the Projection calls back to the
-   * predicate, passing itself.
+   * Evaluate this Projection against the specified Predicate.  DefaultGeography
+   *   provides doesn't call predicate.evaluate() but rather checks the predicate
+   *   type and evaluates appropriately here.  This is because the Geography 
+   *   interface is not available to repast.simphony.space.projection.ProjectionPredicate. 
    * 
    * @param predicate
    * @return true if the predicate evaluates to true, otherwise false. False can
@@ -549,7 +550,12 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    */
   @Override
   public boolean evaluate(ProjectionPredicate predicate) {
-    return predicate.evaluate(this);
+ 	
+  	if (predicate instanceof Within){
+  		return evaluateWithin((Within)predicate);
+  	}
+  	
+  	return false;
   }
 
   private static class TypePredicate implements Predicate<Object> {
@@ -587,7 +593,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
       return items.iterator();
     }
   }
-
+  
   /**
    * Evaluates the Geography against this predicate comparing
    * whether two objects are within a specified distance of each other.
@@ -598,7 +604,6 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    * @param geography the geography to evaluate against.
    * @return true if this predicate is true for the specified projection otherwise false.
    */
-  @Override
   public boolean evaluateWithin(Within within) {
   	Geometry geom1 = getGeometry(within.getObj1());
   	Geometry geom2 = getGeometry(within.getObj2());

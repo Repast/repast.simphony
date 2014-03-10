@@ -1,4 +1,4 @@
-package repast.simphony.freezedry.freezedryers;
+package repast.simphony.gis.freezedry;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;

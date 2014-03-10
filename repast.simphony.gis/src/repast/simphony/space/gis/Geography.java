@@ -9,8 +9,7 @@ import javax.measure.unit.Unit;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import repast.simphony.space.IGeography;
-import repast.simphony.space.projection.ProjectionPredicate;
+import repast.simphony.space.projection.Projection;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -20,7 +19,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @param <T> Object type contained by the geography.
  */
-public interface Geography<T> extends IGeography<T> {
+public interface Geography<T> extends Projection<T>{
 
   /**
    * Gets the names of the layers in this geography. There will be one layer
@@ -171,20 +170,6 @@ public interface Geography<T> extends IGeography<T> {
    * @return the coordinate reference system's axis units.
    */
   Unit getUnits(int axis);
-
-  /**
-   * Evaluate this Projection against the specified Predicate. This typically
-   * involves a double dispatch where the Projection calls back to the
-   * predicate, passing itself.
-   *
-   * @param predicate
-   * @return true if the predicate evaluates to true, otherwise false. False
-   *         can also mean that the predicate is not applicable to this
-   *         Projection. For example, a linked type predicate evaluated
-   *         against a grid projection.
-   */
-   @Override
-  boolean evaluate(ProjectionPredicate predicate);
 
   /**
    * Gets an iterable over all the objects within the specified envelope
