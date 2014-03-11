@@ -28,7 +28,6 @@ import org.jscience.physics.amount.Amount;
 import repast.simphony.context.Context;
 import repast.simphony.context.Contexts;
 import repast.simphony.context.space.continuous.ContinuousSpaceFactoryFinder;
-import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.context.space.graph.DefaultNodeCreator;
 import repast.simphony.context.space.graph.Lattice1DGenerator;
 import repast.simphony.context.space.graph.Lattice2DGenerator;
@@ -55,8 +54,6 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.PointTranslator;
 import repast.simphony.space.continuous.RandomCartesianAdder;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.grid.Grid;
@@ -373,17 +370,6 @@ public class RepastEssentials {
 		return (ContinuousSpace) FindProjection(spacePath);
 	}
 
-	/**
-	 * Finds the Geography projection from the given path.
-	 * 
-	 * @param geographyPath
-	 *            the path of the Geography
-	 * @return the Geography
-	 */
-	public static Geography FindGeography(String geographyPath) {
-		return (Geography) FindProjection(geographyPath);
-	}
-
 	public static Context CreateContext(String parentContextPath,
 			String newContextName) {
 
@@ -515,13 +501,6 @@ public class RepastEssentials {
 				newProjectionName, "Continuous", borders, dimensions);
 	}
 	
-	public static Geography CreateGeography(String parentContextPath, 
-			String newProjectionName){
-		
-		return (Geography)RepastEssentials.CreateProjection(parentContextPath, 
-				newProjectionName, "GIS");
-	}
-	
 	public static Projection CreateProjection(String parentContextPath,
 			String newProjectionName, String newProjectionType) {
 		return RepastEssentials.CreateProjection(parentContextPath,
@@ -631,12 +610,6 @@ public class RepastEssentials {
 							newProjectionName, parentContext,
 							new RandomCartesianAdder(), pointTranslator,
 							dOptionalDimensions);
-
-		} else if (newProjectionType.equalsIgnoreCase("GIS")) {
-
-			newProjection = GeographyFactoryFinder.createGeographyFactory(null)
-					.createGeography(newProjectionName, parentContext,
-							new GeographyParameters());
 
 		} else {
 			throw new IllegalArgumentException("Projection type '"

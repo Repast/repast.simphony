@@ -26,7 +26,7 @@ public interface DisplayDescriptor extends Descriptor {
 
   Class<?>[] getDefaultStyles2D();
 
-  Class<?>[] getDefaultStylesGIS3D();
+//  Class<?>[] getDefaultStylesGIS3D();
 
   Class<?>[] getDefaultNetStyles3D();
 

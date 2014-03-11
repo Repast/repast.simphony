@@ -105,19 +105,19 @@ public class DisplayDescriptorXMLConverter {
 
   private static class ProjectionsProcessor implements IEventProcessor {
 
-    Map<String, ProjectionType> map = new HashMap<String, ProjectionType>();
+    Map<String, String> map = new HashMap<String, String>();
     String id;
-    ProjectionType type;
+    String type;
     XMLEventReader reader;
 
-    List<ProjectionType> foundTypes = new ArrayList<ProjectionType>();
+    List<String> foundTypes = new ArrayList<String>();
 
     public ProjectionsProcessor(XMLEventReader reader) {
-      map.put("repast.score.impl.SNetworkImpl", ProjectionType.NETWORK);
-      map.put("repast.score.impl.SContinuousSpaceImpl", ProjectionType.CONTINUOUS_SPACE);
-      map.put("repast.score.impl.SGridImpl", ProjectionType.GRID);
-      map.put("repast.score.impl.SValueLayerImpl", ProjectionType.VALUE_LAYER);
-      map.put("repast.score.impl.SGeographyImpl", ProjectionType.GEOGRAPHY);
+      map.put("repast.score.impl.SNetworkImpl", ProjectionData.NETWORK_TYPE);
+      map.put("repast.score.impl.SContinuousSpaceImpl", ProjectionData.CONTINUOUS_SPACE_TYPE);
+      map.put("repast.score.impl.SGridImpl", ProjectionData.GRID_TYPE);
+      map.put("repast.score.impl.SValueLayerImpl", ProjectionData.VALUE_LAYER_TYPE);
+      map.put("repast.score.impl.SGeographyImpl", ProjectionData.GEOGRAPHY_TYPE);
       this.reader = reader;
     }
 
@@ -145,7 +145,7 @@ public class DisplayDescriptorXMLConverter {
             int index = ref.lastIndexOf("/");
             clazz = ref.substring(index + 1, ref.length());
           }
-          ProjectionType type = map.get(clazz);
+          String type = map.get(clazz);
           int index = foundTypes.indexOf(type);
           String suffix = index > 0 ? "[" + (index + 1) + "]" : "";
           String txt = String

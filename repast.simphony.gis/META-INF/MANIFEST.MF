@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Gis
+Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.gis
 Bundle-Version: 2.1.0
 Bundle-Localization: plugin
@@ -259,8 +259,6 @@ Export-Package: com.vividsolutions.jts,
  repast.simphony.gis.legend,
  repast.simphony.gis.styleEditor,
  repast.simphony.gis.tools,
- repast.simphony.gis.ui,
- repast.simphony.gis.ui.probe,
  repast.simphony.gis.util,
  repast.simphony.gis.xml,
  repast.simphony.query.space.gis,
@@ -281,3 +279,4 @@ Bundle-ClassPath: lib/gt-api-9.0.jar,
  lib/jt-utils-1.3.0.jar,
  lib/jt-zonalstats-1.3.0.jar,
  lib/jts-1.13.jar
+Bundle-Vendor: %providerName

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.visualization.IDisplay;
 
@@ -44,9 +45,22 @@ public class DisplayProducer {
       return new DisplayCreatorOGL2D(context, displayDescriptor).createDisplay();
     else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
       return new DisplayCreator3D(context, displayDescriptor).createDisplay(); 
-    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS)
-      return new DisplayCreatorGIS(context, displayDescriptor).createDisplay();
-    else
-      return new DisplayCreator3DGIS(context, displayDescriptor).createDisplay();
+    
+    
+//    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS)
+//      return new DisplayCreatorGIS(context, displayDescriptor).createDisplay();
+//    else
+//      return new DisplayCreator3DGIS(context, displayDescriptor).createDisplay();
+    
+    else {
+    	
+    	for (VisualizationRegistryData data : VisualizationRegistry.getRegistryData()){
+  			
+    		// TODO Projections: get the data for the display type.
+    		
+  		}
+    	
+    }
+    
   }
 }

@@ -24,8 +24,6 @@ import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.DefaultContinuousSpace;
-import repast.simphony.space.gis.DefaultGeography;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.DirectedJungNetwork;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
@@ -66,7 +64,6 @@ public class RETest extends TestCase {
     grandchild1.addProjection(new DirectedJungNetwork("net2"));
     child2.addSubContext(grandchild1);
     
-    root.addProjection(new DefaultGeography("rootGeography"));
     root.addProjection(new DefaultGrid("rootGrid"));
     root.addProjection(new DefaultContinuousSpace("rootSpace"));
     
@@ -191,13 +188,6 @@ public class RETest extends TestCase {
     assertNotNull(space);
     assertEquals(root.getProjection("rootSpace"), space);
     assertEquals(space, RepastEssentials.FindContinuousSpace("rootSpace"));
-  }
-  
-  public void testFindGeography() {
-    Geography geog = RepastEssentials.FindGeography("/root/rootGeography");
-    assertNotNull(geog);
-    assertEquals(root.getProjection("rootGeography"), geog);
-    assertEquals(geog, RepastEssentials.FindGeography("rootGeography"));
   }
 
   public void testCreateContext() {

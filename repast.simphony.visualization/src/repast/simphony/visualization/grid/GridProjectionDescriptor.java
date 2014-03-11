@@ -1,7 +1,6 @@
 package repast.simphony.visualization.grid;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.visualization.engine.AbstractProjectionDescriptor;
 
 /**
@@ -14,7 +13,7 @@ public class GridProjectionDescriptor extends AbstractProjectionDescriptor {
 
   public GridProjectionDescriptor(ProjectionData proj) {
     super(proj);
-    if (proj.getType() != ProjectionType.GRID )
+    if (proj.getType() != ProjectionData.GRID_TYPE )
       throw new IllegalArgumentException("Projection is not a grid");
   }
 

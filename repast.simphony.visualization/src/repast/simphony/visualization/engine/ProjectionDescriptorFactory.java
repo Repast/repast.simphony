@@ -1,9 +1,7 @@
 package repast.simphony.visualization.engine;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.visualization.continuous.ContinuousProjectionDescriptor;
-import repast.simphony.visualization.gis.GisProjectionDescriptor;
 import repast.simphony.visualization.grid.GridProjectionDescriptor;
 
 /**
@@ -15,9 +13,9 @@ import repast.simphony.visualization.grid.GridProjectionDescriptor;
 public class ProjectionDescriptorFactory {
 
   public static ProjectionDescriptor createDescriptor(ProjectionData proj) {
-    if (proj.getType() == ProjectionType.GRID) {
+    if (proj.getType() == ProjectionData.GRID_TYPE) {
       return new GridProjectionDescriptor(proj);
-    } else if (proj.getType() == ProjectionType.CONTINUOUS_SPACE) {
+    } else if (proj.getType() == ProjectionData.CONTINUOUS_SPACE_TYPE) {
       return new ContinuousProjectionDescriptor(proj);
     } else if (proj.getType() == ProjectionType.GEOGRAPHY) {
       return new GisProjectionDescriptor(proj);

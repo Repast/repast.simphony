@@ -8,10 +8,8 @@
 	
 	<requires>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
-		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader" reverse-lookup="false"/>
-		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="true"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
 	</requires>
 	
@@ -49,23 +47,5 @@
 	<extension id="gis.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
     	<parameter id="creatorClass" value="repast.simphony.gis.engine.GISCompositeControllerActionCreator"/>
     </extension>
-	
-	<extension id="probe.location.provider.gis" plugin-id="repast.simphony.gui" point-id="probe.location.provider">
-        <parameter id="projectionClass" value="repast.simphony.space.gis.Geography"/>
-        <parameter id="providerClass" value="repast.simphony.gis.ui.probe.GeographyLocationProbeProvider"/>
-    </extension>
-	
-	<extension id="gis.ui.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
-		<parameter id="actionSpec">
-			<parameter id="actionID" value="repast.simphony.gis.ui.ShowExportDialog" />
-			<parameter id="label" value="&amp;Export Geography Layers" />
-			<parameter id="class" value="repast.simphony.gis.ui.ShowExportDialog" />
-			<parameter id="icon" value="nfs_mount.png" />
-			<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
-			<parameter id="groupID" value="runTools" />
-			<parameter id="tooltip" value="Export geography layers to a shapefile" />
-		</parameter>
-	</extension>
-	
 	
 </plugin>

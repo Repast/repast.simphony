@@ -11,8 +11,8 @@ import repast.simphony.scenario.AbstractDescriptor;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
-import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
-import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
+//import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
+//import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
 import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
 import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
@@ -29,8 +29,8 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   private static Class<?>[] styles2D = new Class<?>[] { DefaultStyleOGL2D.class };
 
   // TODO WWJ - handle multiple styles
-  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
-      DefaultSurfaceShapeStyle.class };
+//  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
+//      DefaultSurfaceShapeStyle.class };
 
   // //TODO ###################################################################
   // private static Class<?>[] editedStyles3D = new Class<?>[] { null };
@@ -409,9 +409,9 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return styles2D;
   }
 
-  public Class<?>[] getDefaultStylesGIS3D() {
-    return stylesGIS3D;
-  }
+//  public Class<?>[] getDefaultStylesGIS3D() {
+//    return stylesGIS3D;
+//  }
 
   public Class<?>[] getDefaultNetStyles3D() {
     return netStyles3D;

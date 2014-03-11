@@ -37,7 +37,6 @@ import org.jscience.physics.amount.Amount;
 import repast.simphony.scenario.data.Attribute;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData3D;
@@ -118,7 +117,7 @@ public class EditedEdgeStyleDialog extends JDialog {
 		this.netID = netID;
 		this.userStyleName = userStyleName;
 		for (ProjectionData proj: context.projections()) {
-			if (proj.getType() == ProjectionType.NETWORK) {
+			if (proj.getType() == ProjectionData.NETWORK_TYPE) {
 
 				for (Attribute attrib : proj.attributes()) {
 					findAttributes(attrib);
