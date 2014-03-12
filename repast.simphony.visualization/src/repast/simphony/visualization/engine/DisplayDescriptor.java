@@ -40,23 +40,23 @@ public interface DisplayDescriptor extends Descriptor {
    */
   void clearProjectionDescriptors();
 
-  enum DisplayType {
-    TWO_D("2D"), THREE_D("3D"), GIS("GIS"), GIS3D("GIS3D");
-
-    private String name;
-
-    DisplayType(String name) {
-      this.name = name;
-    }
-
-    public String toString() {
-      return name;
-    }
-  }
-
-  DisplayType getDisplayType();
-
-  void setDisplayType(DisplayType type);
+//  enum DisplayType {
+//    TWO_D("2D"), THREE_D("3D"), GIS("GIS"), GIS3D("GIS3D");
+//
+//    private String name;
+//
+//    DisplayType(String name) {
+//      this.name = name;
+//    }
+//
+//    public String toString() {
+//      return name;
+//    }
+//  }
+//
+  String getDisplayType();
+//
+//  void setDisplayType(DisplayType type);
 
   /**
    * Sets the display type of this descriptor. If reset is true, then the fields
@@ -68,7 +68,7 @@ public interface DisplayDescriptor extends Descriptor {
    *          if true, then the fields in the descriptor that depend on type
    *          info will be reset.
    */
-  void setDisplayType(DisplayType type, boolean reset);
+  void setDisplayType(String type, boolean reset);
 
   void addStyle(String objClassname, String styleClassName);
 

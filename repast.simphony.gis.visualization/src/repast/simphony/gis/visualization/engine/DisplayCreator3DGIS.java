@@ -1,14 +1,14 @@
-/**
- * 
- */
-package repast.simphony.visualization.engine;
+package repast.simphony.gis.visualization.engine;
 
 import repast.simphony.context.Context;
-import repast.simphony.space.graph.Network;
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.DefaultDisplayData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.NullLayout;
+import repast.simphony.visualization.engine.AbstractDisplayCreator;
+import repast.simphony.visualization.engine.DisplayCreationException;
+import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.StyleRegistrar.Registrar;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
@@ -28,9 +28,16 @@ public class DisplayCreator3DGIS extends AbstractDisplayCreator {
     super(context, descriptor);
   }
 
-  /* (non-Javadoc)
-   * @see repast.simphony.visualization.engine.DisplayCreator#createDisplay()
-   */
+  @SuppressWarnings("unchecked")
+  protected DefaultDisplayData<?> createDisplayData() {
+    DefaultDisplayData<?> data = new DefaultDisplayData(context);
+    for (ProjectionData pData : descriptor.getProjections()) {
+      data.addProjection(pData.getId());
+    }
+  
+    return data;
+  }
+  
   public IDisplay createDisplay() throws DisplayCreationException {
     try {
     DefaultDisplayData<?> data = createDisplayData();

@@ -1,7 +1,4 @@
-/**
- * 
- */
-package repast.simphony.visualization.engine;
+package repast.simphony.gis.visualization.engine;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +12,12 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryImpl;
 
 import repast.simphony.context.Context;
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.DefaultDisplayData;
 import repast.simphony.visualization.IDisplay;
+import repast.simphony.visualization.engine.AbstractDisplayCreator;
+import repast.simphony.visualization.engine.DisplayCreationException;
+import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 
 /**
@@ -28,6 +29,16 @@ public class DisplayCreatorGIS extends AbstractDisplayCreator {
 
   public DisplayCreatorGIS(Context<?> context, DisplayDescriptor descriptor) {
     super(context, descriptor);
+  }
+  
+  @SuppressWarnings("unchecked")
+  protected DefaultDisplayData<?> createDisplayData() {
+    DefaultDisplayData<?> data = new DefaultDisplayData(context);
+    for (ProjectionData pData : descriptor.getProjections()) {
+      data.addProjection(pData.getId());
+    }
+  
+    return data;
   }
 
   @SuppressWarnings("deprecation")

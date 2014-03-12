@@ -4,12 +4,15 @@ import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
+import repast.simphony.visualization.engine.VisualizationRegistry;
 
 public class GeographyVizProjectionController implements ControllerAction {
 	
 	public GeographyVizProjectionController(){
 		System.out.println("GeographyVizProjectionController()");
 		
+		VisualizationRegistry.addRegistryData(new GISVisualizationRegistryData());
+		VisualizationRegistry.addRegistryData(new GIS3DVisualizationRegistryData());
 	}
 	
 	@Override

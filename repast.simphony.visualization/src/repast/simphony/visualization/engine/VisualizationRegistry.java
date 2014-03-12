@@ -15,16 +15,16 @@ public class VisualizationRegistry {
 
 	public static void addRegistryData(VisualizationRegistryData data) {
 		
-		if (registryMap.get(data.getVisualizationName()) != null){
-			msg.warn("Duplicate visualization type" + data.getVisualizationName());
+		if (registryMap.get(data.getVisualizationType()) != null){
+			msg.warn("Duplicate visualization type" + data.getVisualizationType());
 		}
 		else{
-			registryMap.put(data.getVisualizationName(), data);
+			registryMap.put(data.getVisualizationType(), data);
 		}
 	}
 	
-	public static VisualizationRegistryData getDataFor(String visualizationeName){
-		return registryMap.get(visualizationeName);
+	public static VisualizationRegistryData getDataFor(String visualizationeType){
+		return registryMap.get(visualizationeType);
 	}
 	
 }

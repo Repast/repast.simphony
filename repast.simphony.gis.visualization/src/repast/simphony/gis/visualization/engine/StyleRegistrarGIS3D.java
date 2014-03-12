@@ -1,8 +1,9 @@
 /**
  * 
  */
-package repast.simphony.visualization.engine;
+package repast.simphony.gis.visualization.engine;
 
+import repast.simphony.visualization.engine.StyleRegistrar;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 /**

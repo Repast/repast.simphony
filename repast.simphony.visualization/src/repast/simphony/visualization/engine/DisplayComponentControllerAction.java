@@ -63,7 +63,7 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
   @Override
   public void runInitialize(RunState runState, Object contextId, Parameters params) {
     if (!runState.getRunInfo().isBatch()) {
-      if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+      if (descriptor.getDisplayType() == DisplayType.THREE_D) {
         // try to load a 3D class to make sure that the user has J3D installed
         try {
           Class.forName("com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom");
@@ -73,7 +73,7 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
           return;
         }
       }
-      else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D) {
+      else if (descriptor.getDisplayType() == DisplayType.GIS3D) {
         // try to load a JOGL class to make sure that the user has JOGL installed
         try {
           Class.forName("javax.media.opengl.glu.GLU");

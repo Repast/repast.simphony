@@ -24,7 +24,7 @@ import repast.simphony.visualizationOGL2D.ValueLayerStyleOGL;
  * 
  * @author Nick Collier
  */
-public class DisplayCreatorOGL2D extends AbstractDisplayCreator {
+public class DisplayCreatorOGL2D extends AbstractCartesianDisplayCreator {
 
   /**
    * @param context

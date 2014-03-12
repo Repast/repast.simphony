@@ -19,6 +19,8 @@ public class GeographyProjectionController implements ControllerAction {
 	public GeographyProjectionController(){
 		System.out.println("GeographyProjectionController()");
 		
+		// TODO Projections: put all of this into the data constructor like with
+		//       the viz and delete the setters from the interface.
 		GeographyProjectionRegistryData data = new GeographyProjectionRegistryData();
 		data.setProjectionDryer(new GeographyProjectionDryer());
 		data.setProjectionXMLConverter(new GeographyConverter());

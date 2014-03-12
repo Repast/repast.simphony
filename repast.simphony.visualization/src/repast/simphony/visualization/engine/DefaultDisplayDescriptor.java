@@ -47,7 +47,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   // private static Class<?>[] netStylesGIS3D = new Class<?>[] {
   // DefaultEdgeStyleGIS3D.class };
 
-  private DisplayType type = DisplayType.TWO_D;
+  private String type = DisplayType.TWO_D;
 
   private Map<String, String> styles = new HashMap<String, String>();
 
@@ -249,18 +249,18 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     setBackgroundColor(descriptor.getBackgroundColor());
   }
 
-  public DisplayType getDisplayType() {
+  public String getDisplayType() {
     return type;
   }
 
-  public void setDisplayType(DisplayType type) {
+  public void setDisplayType(String type) {
     if (this.type != type) {
       this.type = type;
       scs.fireScenarioChanged(this, "displayType");
     }
   }
 
-  public void setDisplayType(DisplayType type, boolean reset) {
+  public void setDisplayType(String type, boolean reset) {
     setDisplayType(type);
     if (reset) {
       styles.clear();
