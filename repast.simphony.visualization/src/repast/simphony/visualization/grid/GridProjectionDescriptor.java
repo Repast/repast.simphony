@@ -13,7 +13,7 @@ public class GridProjectionDescriptor extends AbstractProjectionDescriptor {
 
   public GridProjectionDescriptor(ProjectionData proj) {
     super(proj);
-    if (proj.getType() != ProjectionData.GRID_TYPE )
+    if (!proj.getType().equals(ProjectionData.GRID_TYPE ))
       throw new IllegalArgumentException("Projection is not a grid");
   }
 

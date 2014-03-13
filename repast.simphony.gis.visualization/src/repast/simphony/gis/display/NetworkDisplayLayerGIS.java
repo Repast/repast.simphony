@@ -1,4 +1,4 @@
-package repast.simphony.visualization.network;
+package repast.simphony.gis.display;
 
 import java.io.IOException;
 import java.util.ArrayList;

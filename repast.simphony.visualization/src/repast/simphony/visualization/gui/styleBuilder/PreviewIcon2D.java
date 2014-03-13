@@ -141,6 +141,7 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
     float ms = markSize == -1f ? 15.0f : markSize;
     if (this.mark != null) {
       //  TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
+    	//  TODO use ReLogo style SVGs?
     	shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
       		markFac.getMark(mark));
     } else {

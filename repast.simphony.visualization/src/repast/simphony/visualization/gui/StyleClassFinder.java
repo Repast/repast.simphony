@@ -22,6 +22,8 @@ import repast.simphony.visualizationOGL2D.ValueLayerStyleOGL;
  * wizard, this wont be a problem.
  * 
  * @author tatara
+ * 
+ * TODO Projections: Only need a single get_() method that also provides the style class.
  */
 public class StyleClassFinder {
 

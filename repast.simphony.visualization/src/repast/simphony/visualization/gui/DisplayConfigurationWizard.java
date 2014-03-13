@@ -10,9 +10,10 @@ import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.scenario.data.ContextData;
-import repast.simphony.scenario.data.ProjectionType;
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 
 /**
  * Wizard for building a display from scratch.
@@ -21,118 +22,132 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
  */
 public class DisplayConfigurationWizard {
 
-  private Wizard wizard;
+	private Wizard wizard;
 
-  private DisplayWizardModel model;
+	private DisplayWizardModel model;
 
-  // contextID is not necessarily that of the rootContext, but rather the
-  // context that display configuration is for.
-  public DisplayConfigurationWizard(Object contextID, DisplayDescriptor descriptor,
-      ContextData rootContext) {
+	// contextID is not necessarily that of the rootContext, but rather the
+	// context that display configuration is for.
+	public DisplayConfigurationWizard(Object contextID, DisplayDescriptor descriptor,
+			ContextData rootContext) {
 
-    model = new DisplayWizardModel(contextID, descriptor, rootContext);
-    model.setLastVisible(false);
+		model = new DisplayWizardModel(contextID, descriptor, rootContext);
+		model.setLastVisible(false);
 
-    addPaths();
+		addPaths();
 
-    wizard = new Wizard(model);
-    wizard.addWizardListener(model);
-    wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
-    wizard.setOverviewVisible(false);
-  }
+		wizard = new Wizard(model);
+		wizard.addWizardListener(model);
+		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
+		wizard.setOverviewVisible(false);
+	}
 
-  public Wizard getWizard() {
-    return wizard;
-  }
+	public Wizard getWizard() {
+		return wizard;
+	}
 
-  public DisplayWizardModel getModel() {
-    return model;
-  }
+	public DisplayWizardModel getModel() {
+		return model;
+	}
 
-  protected List<Pair<WizardStep, Condition>> getIntermediateSteps() {
-    ArrayList<Pair<WizardStep, Condition>> steps = new ArrayList<Pair<WizardStep, Condition>>();
-    
-    model.add(new AgentSelectionStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-        DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-        return model.getDescriptor().getProjectionCount() > 0
-            && !model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
-      }
-    });
+	protected List<Pair<WizardStep, Condition>> getIntermediateSteps() {
+		ArrayList<Pair<WizardStep, Condition>> steps = new ArrayList<Pair<WizardStep, Condition>>();
 
-    model.add(new StyleStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.getDescriptor().getProjectionCount() > 0
-	    && !model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
-      }
-    });
+		// TODO Projections: Get the wizard steps to add from the display registry
+		//
+		//   ...don't need the conditions if the provider class from the registry
+		//   can just provide the steps that are supported.
+		//
+		//		model.add(step);
 
-    steps.add(pair(new GridStyleStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.containsProjectionType(ProjectionType.GRID);
-      }
-    }));
+		model.add(new AgentSelectionStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 
-    steps.add(pair(new ContinuousStyleStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.containsProjectionType(ProjectionType.CONTINUOUS_SPACE);
-      }
-    }));
+				// TODO Projections: for GIS
+				return model.getDescriptor().getProjectionCount() > 0
+						&& !model.getDescriptor().getDisplayType().equals(DisplayType.GIS);
+			}
+		});
 
-    steps.add(pair(new GISStyleStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
-      }
-    }));
+		model.add(new StyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 
-    steps.add(pair(new NetLayoutStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.containsOnlyProjectionType(ProjectionType.NETWORK);
-      }
-    }));
+				// TODO Projections: for GIS
+				return model.getDescriptor().getProjectionCount() > 0
+						&& !model.getDescriptor().getDisplayType().equals(DisplayType.GIS);
+			}
+		});
 
-    steps.add(pair(new EdgeStyleStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.containsProjectionType(ProjectionType.NETWORK)
-	    && !model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.GIS);
-      }
-    }));
+		steps.add(pair(new GridStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				return model.containsProjectionType(ProjectionData.GRID_TYPE);
+			}
+		}));
 
-    return steps;
-  }
+		steps.add(pair(new ContinuousStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				return model.containsProjectionType(ProjectionData.CONTINUOUS_SPACE_TYPE);
+			}
+		}));
 
-  protected Pair<WizardStep, Condition> pair(WizardStep step, Condition condition) {
-    return new Pair<WizardStep, Condition>(step, condition);
-  }
+	// TODO Projections: for GIS
+		steps.add(pair(new GISStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				return model.getDescriptor().getDisplayType().equals(DisplayType.GIS);
+			}
+		}));
 
-  protected void addPaths() {
-    model.add(new GeneralStep());
+		steps.add(pair(new NetLayoutStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				return model.containsOnlyProjectionType(ProjectionData.NETWORK_TYPE);
+			}
+		}));
 
-    for (Pair<WizardStep, Condition> step : getIntermediateSteps()) {
-      model.add(step.getFirst(), step.getSecond());
-    }
+		steps.add(pair(new EdgeStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				
+			// TODO Projections: for GIS
+				return model.containsProjectionType(ProjectionData.NETWORK_TYPE)
+						&& !model.getDescriptor().getDisplayType().equals(DisplayType.GIS);
+			}
+		}));
 
-    model.add(new ValueLayerStep(), new Condition() {
-      public boolean evaluate(WizardModel wizardModel) {
-	DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-	return model.containsValueLayer();
-      }
-    });
+		return steps;
+	}
 
-    model.add(new ScheduleStep());
-  }
+	protected Pair<WizardStep, Condition> pair(WizardStep step, Condition condition) {
+		return new Pair<WizardStep, Condition>(step, condition);
+	}
 
-  public void showDialog(Component component) {
-    wizard.showInDialog("Display Configuration", component, true);
-  }
+	protected void addPaths() {
+		model.add(new GeneralStep());
 
-  public DisplayDescriptor getDescriptor() {
-    return model.getDescriptor();
-  }
+		for (Pair<WizardStep, Condition> step : getIntermediateSteps()) {
+			model.add(step.getFirst(), step.getSecond());
+		}
+
+		model.add(new ValueLayerStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				return model.containsValueLayer();
+			}
+		});
+
+		model.add(new ScheduleStep());
+	}
+
+	public void showDialog(Component component) {
+		wizard.showInDialog("Display Configuration", component, true);
+	}
+
+	public DisplayDescriptor getDescriptor() {
+		return model.getDescriptor();
+	}
 }

@@ -22,6 +22,7 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.gui.styleBuilder.EditedValueLayerStyleDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -91,8 +92,9 @@ public class ValueLayerStep extends PanelWizardStep {
 		List<String> style2DCache = null;
 		List<String> style3DCache = null;
 		
+		// TODO Projections: init with viz registry data entries
 		java.util.List<String> vals;
-		if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			if (style3DCache == null) 
 				style3DCache = StyleClassFinder.getAvailable3DValueLayerStyles(model.getContext());
 			
@@ -145,10 +147,12 @@ public class ValueLayerStep extends PanelWizardStep {
 					// Set the style class name based on display type
 					String styleClassName = null;
 
-					if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.TWO_D))
+					// TODO Projections: get the style class from viz registry data 
+					
+					if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
 						styleClassName = "repast.simphony.visualization.editedStyle.EditedValueLayerStyle2D";
 
-					else if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.THREE_D))
+					else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
 						styleClassName = "repast.simphony.visualization.editedStyle.EditedValueLayerStyle3D";
 
 					if (styleModel.getIndexOf(styleClassName) < 0) 

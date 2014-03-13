@@ -1,8 +1,6 @@
 package repast.simphony.gis.styleEditor;
 
 import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.renderer.style.WellKnownMarkFactory;
@@ -11,7 +9,8 @@ import org.opengis.filter.expression.Expression;
 import simphony.util.messages.MessageCenter;
 
 /**
- * MarkFactory that provides simple access to the WellKnownMarkFactory.
+ * MarkFactory that provides Styled Layer Descriptor (SLD) compatible shapes
+ *   based on the "well known name" element of the SLD schema.
  * 
  * @author Eric Tatara
  *

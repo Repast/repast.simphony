@@ -36,7 +36,9 @@ import com.vividsolutions.jts.geom.Geometry;
  * Wraps a POJO in a GIS feature. The POJO's properties become feature
  * attributes. The feature's geometry is derived from the POJO and a Geography.
  * 
- * TODO Geotools [minor] - if this class is used only for visualization, then move it.
+ * The FeatureAgent is primarily used by the GeoTools-based displays and the
+ *   shapefile writer utility that require SimpleFeature instances that
+ *   mirror the agent properties.
  * 
  * @author Nick Collier
  * @author Eric Tatara

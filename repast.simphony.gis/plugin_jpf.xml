@@ -10,6 +10,7 @@
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="libs.ext" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
 	</requires>
 	

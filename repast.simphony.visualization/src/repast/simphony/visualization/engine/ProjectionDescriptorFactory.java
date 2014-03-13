@@ -13,11 +13,11 @@ import repast.simphony.visualization.grid.GridProjectionDescriptor;
 public class ProjectionDescriptorFactory {
 
   public static ProjectionDescriptor createDescriptor(ProjectionData proj) {
-    if (proj.getType() == ProjectionData.GRID_TYPE) {
+    if (proj.getType().equals(ProjectionData.GRID_TYPE)) {
       return new GridProjectionDescriptor(proj);
-    } else if (proj.getType() == ProjectionData.CONTINUOUS_SPACE_TYPE) {
+    } else if (proj.getType().equals(ProjectionData.CONTINUOUS_SPACE_TYPE)) {
       return new ContinuousProjectionDescriptor(proj);
-    } else if (proj.getType() == ProjectionType.GEOGRAPHY) {
+    } else if (proj.getType().equals(ProjectionType.GEOGRAPHY)) {
       return new GisProjectionDescriptor(proj);
     } else {
       return new DefaultProjectionDescriptor(proj);

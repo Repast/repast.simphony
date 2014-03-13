@@ -220,7 +220,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
       for (Object name : descriptor.networkEditedStyleIDs())
         addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
 
-    if (type == DisplayType.TWO_D) {
+    if (type.equals(DisplayType.TWO_D)) {
       layerOrder.clear();
       if (descriptor.agentClassLayerOrders() != null) {
         for (String name : descriptor.agentClassLayerOrders()) {

@@ -90,6 +90,7 @@ public class EditedStyle2D implements Style2D<Object> {
 		else{
 			String wkt = innerStyle.getShapeWkt();
 			// TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
+			// TODO use SVGs a la ReLogo?
 			Shape shape = markFac.getMark(wkt);
 			path = new PPath(shape);
 //			path.transformBy(trans);

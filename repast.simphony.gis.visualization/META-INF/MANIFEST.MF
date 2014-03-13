@@ -5,12 +5,14 @@ Bundle-SymbolicName: repast.simphony.gis.visualization
 Bundle-Version: 2.1.0
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: saf.core.ui,
+Require-Bundle: libs.ext,
+ libs.piccolo,
+ saf.core.ui,
+ repast.simphony.runtime,
  repast.simphony.core,
  repast.simphony.scenario,
  repast.simphony.gui,
  repast.simphony.gis,
- repast.simphony.visualization,
- libs.ext
+ repast.simphony.visualization
 Bundle-ClassPath: lib/worldwind.jar,
  .

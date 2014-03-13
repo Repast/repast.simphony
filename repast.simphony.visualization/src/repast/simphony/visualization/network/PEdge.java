@@ -17,6 +17,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
 import edu.umd.cs.piccolox.util.PNodeLocator;
 
+@Deprecated
 public class PEdge extends PPath {
 
 	PNode source;

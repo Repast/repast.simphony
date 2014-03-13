@@ -1,10 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import static repast.simphony.visualization.engine.DisplayDescriptor.DisplayType.GIS;
-import static repast.simphony.visualization.engine.DisplayDescriptor.DisplayType.GIS3D;
-import static repast.simphony.visualization.engine.DisplayDescriptor.DisplayType.THREE_D;
-import static repast.simphony.visualization.engine.DisplayDescriptor.DisplayType.TWO_D;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,9 +16,9 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.ui.widget.ListSelector;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 
@@ -112,34 +107,39 @@ public class GeneralStep extends PanelWizardStep {
     int cartCount = 0; // # cartesian (grid,continuous) projections
     int valueCount = 0; // # value layers
 
+    // TODO Projections: Have the viz registry entries provide info on 
+    //        what projections they support.
     for (DisplayItem item : selector.getSelectedItems()) {
-
-      if (item.getProjectionData().getType() == ProjectionType.VALUE_LAYER)
+      if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE))
         valueCount++;
-      else if (item.getProjectionData().getType() == ProjectionType.GEOGRAPHY)
+      
+      // TODO Projections: GIS
+      else if (item.getProjectionData().getType().equals(ProjectionData.GEOGRAPHY_TYPE))
         geoCount++;
-      else if (item.getProjectionData().getType() == ProjectionType.NETWORK)
+      
+      else if (item.getProjectionData().getType().equals(ProjectionData.NETWORK_TYPE))
         netCount++;
+      
       else
         cartCount++;
     }
 
-    DisplayDescriptor.DisplayType displayType = (DisplayDescriptor.DisplayType) typeBox
-        .getSelectedItem();
+    String displayType = (String) typeBox.getSelectedItem();
 
+    // TODO Projections: move to GIS viz registry data
     // Validate GIS / Geography projection displays
     // Check if a geography projection is used with a non-GIS display type
     if (geoCount > 0
-        && (displayType == DisplayDescriptor.DisplayType.TWO_D || displayType == DisplayDescriptor.DisplayType.THREE_D)) {
+        && (displayType.equals(DisplayType.TWO_D) || displayType.equals(DisplayType.THREE_D))) {
       JOptionPane.showMessageDialog(selector,
           "Geography projections can only be used in a GIS display", "Display Error",
           JOptionPane.ERROR_MESSAGE);
       return false;
     }
+    
+    // TODO Projections: move to GIS viz registry data
     // Check if GIS displays contain a geography projection
-    else if (displayType == DisplayDescriptor.DisplayType.GIS
-        || displayType == DisplayDescriptor.DisplayType.GIS3D) {
-
+    else if (displayType.equals(DisplayType.GIS) || displayType.equals(DisplayType.GIS3D)) {
       if (geoCount != 1) {
         JOptionPane.showMessageDialog(selector, "A GIS display must contain a single Geography.",
             "Display Error", JOptionPane.ERROR_MESSAGE);
@@ -195,20 +195,25 @@ public class GeneralStep extends PanelWizardStep {
     super.prepare();
 
     ComboBoxModel cmbModel;
-    if (model.contextContainsOnlyProjectionType(ProjectionType.GEOGRAPHY)) {
-      cmbModel = new DefaultComboBoxModel(new DisplayDescriptor.DisplayType[] { GIS, GIS3D });
-    } else if (model.contextContainsProjectionType(ProjectionType.GEOGRAPHY)) {
-      cmbModel = new DefaultComboBoxModel(new DisplayDescriptor.DisplayType[] { TWO_D, THREE_D,
-          GIS, GIS3D });
-    } else {
-      cmbModel = new DefaultComboBoxModel(new DisplayDescriptor.DisplayType[] { TWO_D, THREE_D });
+    
+    // TODO Projections: init from viz registry data
+    
+    if (model.contextContainsOnlyProjectionType(ProjectionData.GEOGRAPHY_TYPE)) {
+      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.GIS, DisplayType.GIS3D });
+    } 
+    else if (model.contextContainsProjectionType(ProjectionData.GEOGRAPHY_TYPE)) {
+      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.TWO_D, DisplayType.THREE_D,
+      		DisplayType.GIS, DisplayType.GIS3D });
+    } 
+    else {
+      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.TWO_D, DisplayType.THREE_D });
     }
     typeBox.setModel(cmbModel);
 
     DisplayDescriptor descriptor = model.getDescriptor();
     nameFld.setText(descriptor.getName());
 
-    DisplayDescriptor.DisplayType displayType = descriptor.getDisplayType();
+    String displayType = descriptor.getDisplayType();
     typeBox.setSelectedItem(displayType);
 
     java.util.List<DisplayItem> source = new ArrayList<DisplayItem>();
@@ -240,9 +245,8 @@ public class GeneralStep extends PanelWizardStep {
 
     DisplayDescriptor descriptor = model.getDescriptor();
     descriptor.setName(nameFld.getText().trim());
-    DisplayDescriptor.DisplayType curType = descriptor.getDisplayType();
-    DisplayDescriptor.DisplayType newType = (DisplayDescriptor.DisplayType) typeBox
-        .getSelectedItem();
+    String curType = descriptor.getDisplayType();
+    String newType = (String) typeBox.getSelectedItem();
     if (curType != newType) {
       descriptor.setDisplayType(newType, true);
     }
@@ -252,7 +256,7 @@ public class GeneralStep extends PanelWizardStep {
 
     for (DisplayItem item : selector.getSelectedItems()) {
       if (item.proj != null) {
-        if (item.getProjectionData().getType() == ProjectionType.VALUE_LAYER) {
+        if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE)) {
           descriptor.addValueLayerName(item.displayName);
         } else {
           ProjectionDescriptor pd = ProjectionDescriptorFactory.createDescriptor(item.proj);

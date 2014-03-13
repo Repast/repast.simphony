@@ -40,10 +40,10 @@ public class DisplayProducer {
 
   public IDisplay createDisplay() throws IllegalAccessException, InvocationTargetException,
       InstantiationException, ClassNotFoundException, IOException, DisplayCreationException {
-    if (displayDescriptor.getDisplayType() == DisplayType.TWO_D)
+    if (displayDescriptor.getDisplayType().equals(DisplayType.TWO_D))
       //return new DisplayCreator2D(context, displayDescriptor).createDisplay();
       return new DisplayCreatorOGL2D(context, displayDescriptor).createDisplay();
-    else if (displayDescriptor.getDisplayType() == DisplayType.THREE_D)
+    else if (displayDescriptor.getDisplayType().equals(DisplayType.THREE_D))
       return new DisplayCreator3D(context, displayDescriptor).createDisplay(); 
     
     

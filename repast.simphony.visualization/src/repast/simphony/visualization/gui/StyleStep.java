@@ -2,7 +2,6 @@ package repast.simphony.visualization.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.gui.styleBuilder.EditedStyleDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -141,13 +141,15 @@ public class StyleStep extends PanelWizardStep {
 						// Set the style class name based on display type
 						String styleClassName;
 
-						if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.TWO_D))
+						// TODO Projections: get the style class name from the viz registry data
+						
+						if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle2D";
 
-						else if (model.getDescriptor().getDisplayType().equals(
-								DisplayDescriptor.DisplayType.THREE_D))
+						else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
 
+						// TODO Projections: GIS
 						else
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
 
@@ -252,35 +254,43 @@ public class StyleStep extends PanelWizardStep {
 
 		DisplayDescriptor descriptor = model.getDescriptor();
 
+		// TODO Projections: init from viz registry data.
+		
 		// TODO implement style editor for 3D GIS
-		if (descriptor.getDisplayType().equals(DisplayDescriptor.DisplayType.GIS3D)) {
+		if (descriptor.getDisplayType().equals(DisplayType.GIS3D)) {
 			buildStyleButton.setEnabled(false);
 		}
 
-		if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			defaultStyle = descriptor.getDefaultStyles3D()[0].getName();
 			setBackgroundColor(Color.BLACK);
 		}
-		 // TODO WWJ - handle multiple styles
-		else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
+		
+		// TODO Projections: GIS
+		// TODO WWJ - handle multiple styles
+		else if (descriptor.getDisplayType().equals(DisplayType.GIS3D))
 			defaultStyle = descriptor.getDefaultStylesGIS3D()[0].getName();
 
 		else {
 			defaultStyle = descriptor.getDefaultStyles2D()[0].getName();
 			setBackgroundColor(Color.WHITE);
 		}
+		
 		List<String> style2DCache = null;
 		List<String> style3DCache = null;
 		List<String> styleGIS3DCache = null;
 
+		// TODO Projections: init from viz registry data entries
+		//        The viz type should return a style interface from which 
+		//        implementing classes will be searched.
 		// Find all available style classes for the display type
 		java.util.List<String> vals;
-		if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			if (style3DCache == null)
 				style3DCache = StyleClassFinder.getAvailable3DStyles(model.getContext());
 
 			vals = style3DCache;
-		} else if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D) {
+		} else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
 			if (style2DCache == null)
 				style2DCache = StyleClassFinder.getAvailable2DStyles(model.getContext());
 

@@ -6,8 +6,8 @@ import org.pietschy.wizard.models.DynamicModel;
 
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 
 /**
@@ -42,9 +42,9 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
     return cancelled ? null : descriptor;
   }
 
-  public ProjectionDescriptor getTypeDescriptor(ProjectionType type) {
+  public ProjectionDescriptor getTypeDescriptor(String type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
-      if (type == proj.getType()) {
+      if (type.equals(proj.getType())) {
         return getDescriptor().getProjectionDescriptor(proj.getId());
       }
     }
@@ -52,15 +52,20 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   }
 
   public String getDefaultStyle() {
-    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
+  	
+  	// TODO Projections: get the default style for the display type from the viz registry.
+  	
+    if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
       return descriptor.getDefaultStyles3D()[0].getName();
-    
-    // TODO WWJ - handle multiple styles
-    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS3D)
-      return descriptor.getDefaultStylesGIS3D()[0].getName();
-    
-    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
+        
+    if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
       return descriptor.getDefaultStyles2D()[0].getName();
+    
+    // TODO Projections: GIS
+    // TODO WWJ - handle multiple styles
+    if (descriptor.getDisplayType().equals(DisplayType.GIS3D))
+      return descriptor.getDefaultStylesGIS3D()[0].getName();
+
     
     // return null for 2D GIS as there is no default style class for that
     return null;
@@ -73,9 +78,9 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
    * @return true if this contains only projections of the specified type
    *         otherwise false
    */
-  public boolean contextContainsOnlyProjectionType(ProjectionType type) {
+  public boolean contextContainsOnlyProjectionType(String type) {
     for (ProjectionData proj : context.projections()) {
-      if (type != proj.getType()) {
+      if (! type.equals(proj.getType())) {
         return false;
       }
     }
@@ -88,9 +93,9 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
    * @return true if the current list of projections contains the specified
    *         type.
    */
-  public boolean contextContainsProjectionType(ProjectionType type) {
+  public boolean contextContainsProjectionType(String type) {
     for (ProjectionData proj : context.projections()) {
-      if (type == proj.getType()) {
+      if (type.equals(proj.getType())) {
         return true;
       }
     }
@@ -104,9 +109,9 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
    * @return true if this contains only projections of the specified type
    *         otherwise false
    */
-  public boolean containsOnlyProjectionType(ProjectionType type) {
+  public boolean containsOnlyProjectionType(String type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
-      if (type != proj.getType()) {
+      if (! type.equals(proj.getType())) {
         return false;
       }
     }
@@ -119,9 +124,9 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
    * @return true if the current list of projections contains the specified
    *         type.
    */
-  public boolean containsProjectionType(ProjectionType type) {
+  public boolean containsProjectionType(String type) {
     for (ProjectionData proj : getDescriptor().getProjections()) {
-      if (type == proj.getType()) {
+      if (type.equals(proj.getType())) {
         return true;
       }
     }

@@ -44,6 +44,7 @@ import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.editedStyle.LineStyle;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.Borders;
@@ -116,7 +117,7 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     this.netID = netID;
     this.userStyleName = userStyleName;
     for (ProjectionData proj : context.projections()) {
-      if (proj.getType() == ProjectionData.NETWORK_TYPE) {
+      if (proj.getType().equals(ProjectionData.NETWORK_TYPE)) {
 
         for (Attribute attrib : proj.attributes()) {
           findAttributes(attrib);
@@ -126,10 +127,11 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     if (!methodList.contains("getWeight"))
       methodList.add("getWeight");
 
-    DisplayDescriptor.DisplayType displayType = descriptor.getDisplayType();
+    String displayType = descriptor.getDisplayType();
     userStyleData = EditedStyleUtils.getEdgeStyle(descriptor.getNetworkEditedStyleName(netID));
 
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+    // TODO Projections: init from viz registry data
+    if (displayType.equals(DisplayType.TWO_D)) {
       if (userStyleData == null)
         userStyleData = new DefaultEditedEdgeStyleData2D();
 
@@ -258,7 +260,7 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     }
   }
 
-  public void initMyComponents(DisplayDescriptor.DisplayType displayType) {
+  public void initMyComponents(String displayType) {
     CellConstraints cc = new CellConstraints();
 
     sizeComboBox.setModel(sizeModel);
@@ -279,7 +281,8 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     greenScaleComboBox.setModel(variableIconGreenColorScaleModel);
     blueScaleComboBox.setModel(variableIconBlueColorScaleModel);
 
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+    // TODO Projections: init from viz registry data entry
+    if (displayType.equals(DisplayType.TWO_D)) {
       this.setTitle("2D Edge Style Editor");
       preview = new PreviewEdge2D();
       previewPanel.add((PreviewEdge2D) preview, cc.xy(1, 1));

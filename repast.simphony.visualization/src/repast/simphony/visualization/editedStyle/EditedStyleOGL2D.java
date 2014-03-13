@@ -103,6 +103,7 @@ public class EditedStyleOGL2D implements StyleOGL2D<Object> {
       // these shapes are not closed, so we need to close them
       // to create filled polygons.
       // TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
+ 			// TODO use SVGs a la ReLogo?
       Shape shape = markFac.getMark(wkt);
       Rectangle2D bounds = shape.getBounds2D();
       // -1 means deafault size of 15.

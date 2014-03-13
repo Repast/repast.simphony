@@ -13,7 +13,7 @@ public class GisProjectionDescriptor extends AbstractProjectionDescriptor {
 
   public GisProjectionDescriptor(ProjectionData proj) {
     super(proj);
-    if (proj.getType() != ProjectionData.GEOGRAPHY_TYPE)
+    if (!proj.getType().equals(ProjectionData.GEOGRAPHY_TYPE))
       throw new IllegalArgumentException("Projection is not a geography");
   }
 
