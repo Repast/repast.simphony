@@ -352,6 +352,79 @@ public class StateChartTest2 {
     assertEquals(3, schedule.getTickCount(), 0.0001);
     assertEquals("three", a.st.getCurrentSimpleState().getId());
   }
+  
+  /**
+   * Statechart for composite state entry into branching state, to check that the self transition
+   * in the composite state is properly activated.
+   * 
+   * @author jozik
+   * 
+   */
+  private static class MyStateChart3d extends DefaultStateChart<MyAgent3d> {
+
+    public MyStateChart3d(MyAgent3d a) {
+      super(a);
+      BranchState<MyAgent3d> bs = new BranchStateBuilder<StateChartTest2.MyAgent3d>("branch").build();
+      
+      CompositeStateBuilder<MyAgent3d> csb = new CompositeStateBuilder<StateChartTest2.MyAgent3d>(
+          "cs", bs);
+      SimpleState<MyAgent3d> one = new SimpleStateBuilder<MyAgent3d>("one").build();
+//      SimpleState<MyAgent3c> two = new SimpleStateBuilder<MyAgent3c>("two").build();
+      csb.addChildState(one);
+      CompositeState<MyAgent3d> cs = csb.build();
+      registerEntryState(cs);
+
+      DefaultOutOfBranchTransitionBuilder<MyAgent3d> doobtb = new DefaultOutOfBranchTransitionBuilder<MyAgent3d>(
+              bs, one);
+      Transition<MyAgent3d> bt = doobtb.build();
+
+      addRegularTransition(bt);
+      
+      TransitionAction<MyAgent3d> onTransition = new TransitionAction<StateChartTest2.MyAgent3d>() {
+
+          @Override
+          public void action(MyAgent3d agent, Transition<MyAgent3d> transition, Parameters params)
+              throws Exception {
+            agent.value++;
+
+          }
+        };
+        SelfTransitionBuilder<MyAgent3d> stb = new SelfTransitionBuilder<StateChartTest2.MyAgent3d>(cs);
+        stb.addTrigger(new TimedTrigger<MyAgent3d>(1));
+        stb.registerOnTransition(onTransition);
+        addSelfTransition(stb.build());
+      
+    }
+  }
+
+  private static class MyAgent3d {
+
+    public StateChart<MyAgent3d> st;
+    int value;
+
+    @SuppressWarnings("unused")
+    public void setup() {
+      st = new MyStateChart3d(this);
+      st.begin(new Integrator());
+    }
+  }
+
+  @Test
+  public void myStateChart3dScenario1() {
+    MyAgent3d a = new MyAgent3d();
+    ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+    schedule.schedule(ScheduleParameters.createOneTime(1), a, "setup");
+    schedule.execute();
+    assertEquals(1, schedule.getTickCount(), 0.0001);
+    assertEquals("one", a.st.getCurrentSimpleState().getId());
+    assertEquals(0, a.value);
+    schedule.execute();
+    assertEquals(2, schedule.getTickCount(), 0.0001);
+    assertEquals(1, a.value);
+    schedule.execute();
+    assertEquals(3, schedule.getTickCount(), 0.0001);
+    assertEquals(2, a.value);
+  }
 
   /**
    * Statechart for history states.

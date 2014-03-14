@@ -127,6 +127,15 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
 		}
+		
+		// collect all relevant self transitions and initialize
+		for (Transition<T> st : selfTransitions) {
+			if (statesToEnter.contains(st.getSource())) {
+				activeSelfTransitions.add(st);
+				st.initialize(this);
+			}
+		}
+		
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
 		} else {
@@ -297,18 +306,6 @@ public class DefaultStateChart<T> implements StateChart<T> {
 					queue.poll();
 				}
 				makeRegularTransition(t);
-			}
-			// Otherwise set up the self transitions and initialize
-			// them
-			else {
-				// collect all relevant self transitions and initialize
-				for (Transition<T> st : selfTransitions) {
-					if (statesToEnter.contains(st.getSource())) {
-						activeSelfTransitions.add(st);
-						st.initialize(this);
-					}
-				}
-
 			}
 
 		}
