@@ -9,6 +9,8 @@ public class ProjectionRegistry {
 	
 	protected static HashMap<String,ProjectionRegistryData> registryMap = new HashMap<String,ProjectionRegistryData>();
 	
+	// TODO Projections: use a singleton.
+	
 	public static Iterable<ProjectionRegistryData> getRegistryData() {
 		return registryMap.values();
 	}

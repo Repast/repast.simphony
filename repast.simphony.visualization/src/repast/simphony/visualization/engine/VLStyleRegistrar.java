@@ -35,7 +35,7 @@ public abstract class VLStyleRegistrar<T> {
   public abstract T createEditedValueLayerStyle(String styleName);
   
   @SuppressWarnings("unchecked")
-  public void registerValueLayerStyle(Registrar<T> registrar, DisplayDescriptor descriptor,
+  public void registerValueLayerStyle(Registrar<T> registrar, CartesianDisplayDescriptor descriptor,
       Context<?> context)  throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     
     String vlStyleName = descriptor.getValueLayerStyleName();

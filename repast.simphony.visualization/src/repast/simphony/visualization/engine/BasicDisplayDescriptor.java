@@ -11,40 +11,22 @@ import repast.simphony.scenario.AbstractDescriptor;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
-import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
-import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
-import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
-import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 
 /**
+ * Basic Display descriptor implementation.
+ * 
+ * TODO Projections: also implement network descriptor?
+ * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
-@Deprecated
-public class DefaultDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
 
-  // default styles.
-  private static Class<?>[] styles3D = new Class<?>[] { DefaultStyle3D.class };
+public class BasicDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
 
-  private static Class<?>[] styles2D = new Class<?>[] { DefaultStyleOGL2D.class };
-
-  // TODO WWJ - handle multiple styles
-  private static Class<?>[] stylesGIS3D;// = new Class<?>[] { DefaultMarkStyle.class,
-//      DefaultSurfaceShapeStyle.class };
-
-  // //TODO ###################################################################
-  // private static Class<?>[] editedStyles3D = new Class<?>[] { null };
-  //
-  // private static Class<?>[] editedStyles2D = new Class<?>[] { null };
-  //
-  // // ###################################################################
-
-  private static Class<?>[] netStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
-
-  private static Class<?>[] netStyles2D = new Class<?>[] { DefaultEdgeStyleOGL2D.class };
-
-  // TODO WWJ network
-  // private static Class<?>[] netStylesGIS3D = new Class<?>[] {
-  // DefaultEdgeStyleGIS3D.class };
+	
+	// TODO Projections: all fields should be initialized by another class that might be located in the viz registry.
+  private static Class<?>[] defaultStyles; 
+  private static Class<?>[] defaultNetStyles;
 
   private String type = DisplayType.TWO_D;
 
@@ -87,12 +69,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 
   private Color backgroundColor = null;
 
-  public DefaultDisplayDescriptor(DisplayDescriptor descriptor) {
+  public BasicDisplayDescriptor(DisplayDescriptor descriptor) {
     super(descriptor.getName());
 //    set(descriptor);
   }
 
-  public DefaultDisplayDescriptor(String name) {
+  public BasicDisplayDescriptor(String name) {
     super(name);
   }
 
@@ -102,16 +84,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @return the data for all the projections for which this is the display
    *         info.
    */
+  @Override
   public Iterable<ProjectionData> getProjections() {
     return projections;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * repast.simphony.visualization.engine.DisplayDescriptor#getProjectionCount()
-   */
+
   @Override
   public int getProjectionCount() {
     return projections.size();
@@ -123,17 +101,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @param data
    * @param descriptor
    */
+  @Override
   public void addProjection(ProjectionData data, ProjectionDescriptor descriptor) {
     this.projections.add(data);
     this.projectionDescriptors.put(descriptor.getProjectionName(), descriptor);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * repast.simphony.visualization.engine.DisplayDescriptor#clearProjections()
-   */
   @Override
   public void clearProjections() {
     if (projections.size() > 0) {
@@ -142,30 +115,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * repast.simphony.visualization.engine.DisplayDescriptor#clearValueLayerNames
-   * ()
-   */
   @Override
   public void clearValueLayerNames() {
     if (valueLayers.size() > 0) {
       this.valueLayers.clear();
       scs.fireScenarioChanged(this, "valueLayers");
     }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * repast.simphony.visualization.engine.DisplayDescriptor#getValueLayerCount()
-   */
-
-  public int getValueLayerCount() {
-    return valueLayers.size();
   }
 
   /**
@@ -175,6 +130,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    *          the name of the projection whose descriptor we want
    * @return the ProjectionDescriptor for the named projection.
    */
+  @Override
   public ProjectionDescriptor getProjectionDescriptor(String name) {
     return projectionDescriptors.get(name);
   }
@@ -182,10 +138,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   /**
    * Removes any added projection descriptors.
    */
+  @Override
   public void clearProjectionDescriptors() {
     projectionDescriptors.clear();
   }
 
+  @Override
   public Iterable<ProjectionDescriptor> getProjectionDescriptors() {
     return projectionDescriptors.values();
   }
@@ -248,10 +206,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 //    setBackgroundColor(descriptor.getBackgroundColor());
 //  }
 
+  @Override
   public String getDisplayType() {
     return type;
   }
 
+  
   public void setDisplayType(String type) {
     if (this.type != type) {
       this.type = type;
@@ -259,6 +219,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public void setDisplayType(String type, boolean reset) {
     setDisplayType(type);
     if (reset) {
@@ -272,6 +233,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public void addStyle(String objClassName, String styleClassName) {
     if (!mapContains(styles, objClassName, styleClassName)) {
       styles.put(objClassName, styleClassName);
@@ -279,6 +241,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public void addEditedStyle(String objClassName, String userStyleName) {
     if (!mapContains(editedStyles, objClassName, userStyleName)) {
       editedStyles.put(objClassName, userStyleName);
@@ -291,6 +254,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return val != null && val.equals(value);
   }
 
+  @Override
   public void addNetworkStyle(Object networkID, String networkClassName) {
     String val = netStyles.get(networkID);
     if (val == null || !val.equals(networkClassName)) {
@@ -299,6 +263,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public void addNetworkEditedStyle(Object networkID, String networkClassName) {
     String val = editedNetStyles.get(networkID);
     if (val == null || !val.equals(networkClassName)) {
@@ -307,10 +272,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public String getStyleClassName(String objClassName) {
     return styles.get(objClassName);
   }
 
+  @Override
   public String getEditedStyleName(String objClassName) {
     if (editedStyles == null) // for backwards compatibility with older display
       // descriptors
@@ -318,10 +285,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return editedStyles.get(objClassName);
   }
 
+  @Override
   public String getNetworkStyleClassName(Object networkID) {
     return netStyles.get(networkID);
   }
 
+  @Override
   public String getNetworkEditedStyleName(Object networkID) {
     if (editedNetStyles == null) // for backwards compatibility with older
       // display descriptors
@@ -329,10 +298,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return editedNetStyles.get(networkID);
   }
 
+  @Override
   public Iterable<String> agentClassStyleNames() {
     return styles.keySet();
   }
 
+  @Override
   public Iterable<String> agentClassEditedStyleNames() {
     if (editedStyles == null) // for backwards compatibility with older display
       // descriptors
@@ -340,10 +311,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return editedStyles.keySet();
   }
 
+  @Override
   public Iterable<Object> networkStyleIDs() {
     return netStyles.keySet();
   }
 
+  @Override
   public Iterable<Object> networkEditedStyleIDs() {
     if (editedNetStyles == null) // for backwards compatibility with older
       // display descriptors
@@ -351,10 +324,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return editedNetStyles.keySet();
   }
 
+  @Override
   public IDisplay.LayoutFrequency getLayoutFrqeuency() {
     return frequency;
   }
 
+  @Override
   public void setLayoutFrequency(IDisplay.LayoutFrequency frequency) {
     if (this.frequency != frequency) {
       this.frequency = frequency;
@@ -362,10 +337,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public ScheduleParameters getScheduleParameters() {
     return schedParams;
   }
 
+  @Override
   public void setScheduleParameters(ScheduleParameters scheduleInfo) {
     if (!this.schedParams.equals(scheduleInfo)) {
       this.schedParams = scheduleInfo;
@@ -373,61 +350,43 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     }
   }
 
+  @Override
   public String getLayoutClassName() {
     return layoutClassName;
   }
 
+  @Override
   public void setLayoutClassName(String className) {
     this.layoutClassName = className;
     scs.fireScenarioChanged(this, "layoutClassName");
   }
 
+  @Override
   public String getLayoutProjection() {
     return layoutProjection;
   }
 
+  @Override
   public void setLayoutProjection(String layoutProjection) {
     this.layoutProjection = layoutProjection;
     scs.fireScenarioChanged(this, "layoutProjection");
   }
 
+  @Override
   public void setLayoutInterval(int interval) {
     this.layoutInterval = interval;
     scs.fireScenarioChanged(this, "layoutInterval");
   }
 
+  @Override
   public int getLayoutInterval() {
     return this.layoutInterval;
   }
 
-  public Class<?>[] getDefaultStyles3D() {
-    return styles3D;
-  }
-
-  public Class<?>[] getDefaultStyles2D() {
-    return styles2D;
-  }
-
-  public Class<?>[] getDefaultStylesGIS3D() {
-    return stylesGIS3D;
-  }
-
-  public Class<?>[] getDefaultNetStyles3D() {
-    return netStyles3D;
-  }
-
-  public Class<?>[] getDefaultNetStyles2D() {
-    return netStyles2D;
-  }
-
-  // TODO WWJ network
-  // public Class<?>[] getDefaultNetStylesGIS3D() {
-  // return netStylesGIS3D;
-  // }
-
   /**
    * @return hints for displaying a grid.
    */
+  @Override
   public VisualizationProperties getLayoutProperties() {
     return visualizationProperties;
   }
@@ -435,51 +394,10 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   /**
    * Sets the layout properties for this display.
    */
+  @Override
   public void setLayoutProperties(VisualizationProperties props) {
     visualizationProperties = props;
     scs.fireScenarioChanged(this, "layoutProperties");
-  }
-
-  /**
-   * Adds the named value layer to the list of value layers to display.
-   * 
-   * @param name
-   *          the name of the value layer to display.
-   */
-  public void addValueLayerName(String name) {
-    if (!valueLayers.contains(name)) {
-      valueLayers.add(name);
-      scs.fireScenarioChanged(this, "valueLayer");
-    }
-  }
-
-  /**
-   * Gets a List of all the names of the value layers to display.
-   * 
-   * @return a List of all the names of the value layers to display.
-   */
-  public Iterable<String> getValueLayerNames() {
-    return valueLayers;
-  }
-
-  /**
-   * Sets the value layer style name.
-   * 
-   * @param name
-   */
-  public void setValueLayerStyleName(String name) {
-    valueLayerStyleName = name;
-    scs.fireScenarioChanged(this, "valueLayerStyle");
-  }
-
-  /**
-   * Gets the name of the value layer style. Will return null if no value layer
-   * style has been selected.
-   * 
-   * @return the name of the value layer style.
-   */
-  public String getValueLayerStyleName() {
-    return valueLayerStyleName;
   }
 
   /**
@@ -488,6 +406,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * 
    * @return the BoundingBox
    */
+  @Override
   public BoundingBox getBoundingBox() {
     return boundingBox;
   }
@@ -499,11 +418,13 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @param boundingBox
    *          The BoundingBox
    */
+  @Override
   public void setBoundingBox(BoundingBox boundingBox) {
     this.boundingBox = boundingBox;
     scs.fireScenarioChanged(this, "boundingBox");
   }
 
+  @Override
   public Iterable<String> agentClassLayerOrders() {
     if (layerOrder == null) // for backwards compatibility with older display
       // descriptors
@@ -511,6 +432,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return layerOrder.keySet();
   }
 
+  @Override
   public Integer getLayerOrder(String objClassName) {
     if (layerOrder == null) // for backwards compatibility with older display
       // descriptors
@@ -519,6 +441,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return layerOrder.get(objClassName);
   }
 
+  @Override
   public void addLayerOrder(String objClassName, int order) {
     layerOrder.put(objClassName, order);
     scs.fireScenarioChanged(this, "layerOrder");
@@ -531,6 +454,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    *          the name of the property
    * @return the named property
    */
+  @Override
   public Object getProperty(String name) {
     return props.get(name);
   }
@@ -543,6 +467,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @param value
    *          the property's value
    */
+  @Override
   public void setProperty(String name, Object value) {
     props.put(name, value);
     scs.fireScenarioChanged(this, "property");
@@ -554,60 +479,44 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @return an iterable of names of the properties contained by this
    *         descriptor.
    */
+  @Override
   public Iterable<String> propertyNames() {
     return props.keySet();
   }
 
+  @Override
   public Map<String, String> getStyles() {
     return styles;
   }
 
-  /**
-   * Gets the name of the value layer edited style. Will return null if no value
-   * layer style has been selected.
-   * 
-   * @return the name of the value layer edited style.
-   */
-  public String getValueLayerEditedStyleName() {
-    return valueLayerEditedStyleName;
-  }
-
-  /**
-   * Sets the value layer edited style name.
-   * 
-   * @param name
-   */
-  public void setValueLayerEditedStyleName(String name) {
-    valueLayerEditedStyleName = name;
-    scs.fireScenarioChanged(this, "valueLayerEditedStyle");
-  }
-
+  @Override
   public Color getBackgroundColor() {
     return backgroundColor;
   }
 
+  @Override
   public void setBackgroundColor(Color color) {
     backgroundColor = color;
     scs.fireScenarioChanged(this, "backgroundColor");
   }
 
+  @Override
   public Map<String, Integer> getLayerOrders() {
     return layerOrder;
   }
 
+  @Override
   public Map<String, String> getEditedStyles() {
     return editedStyles;
   }
 
 	@Override
 	public Class<?>[] getDefaultStyles() {
-		// TODO Auto-generated method stub
-		return null;
+		return defaultStyles;
 	}
 
 	@Override
 	public Class<?>[] getDefaultNetStyles() {
-		// TODO Auto-generated method stub
-		return null;
+		return defaultNetStyles;
 	}
 }

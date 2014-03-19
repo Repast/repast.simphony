@@ -42,9 +42,10 @@ public class DisplayProducer {
       InstantiationException, ClassNotFoundException, IOException, DisplayCreationException {
     if (displayDescriptor.getDisplayType().equals(DisplayType.TWO_D))
       //return new DisplayCreator2D(context, displayDescriptor).createDisplay();
-      return new DisplayCreatorOGL2D(context, displayDescriptor).createDisplay();
+      return new DisplayCreatorOGL2D(context, (CartesianDisplayDescriptor)displayDescriptor).createDisplay();
+   
     else if (displayDescriptor.getDisplayType().equals(DisplayType.THREE_D))
-      return new DisplayCreator3D(context, displayDescriptor).createDisplay(); 
+      return new DisplayCreator3D(context, (CartesianDisplayDescriptor)displayDescriptor).createDisplay(); 
     
     
 //    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS)
@@ -58,12 +59,17 @@ public class DisplayProducer {
     else {
     	VisualizationRegistryData data = VisualizationRegistry.getDataFor(displayDescriptor.getDisplayType());
 
-    	try{
-    		DisplayCreatorFactory factory = data.getDisplayCreatorFactory();
-    		return factory.createDisplayCreator(context, displayDescriptor).createDisplay();
-    	} 
-    	catch (Exception ex) {
-    		msg.error("No display implementation found for " + displayDescriptor.getDisplayType(), ex);
+    	if (data != null){ 
+    		try{
+    			DisplayCreatorFactory factory = data.getDisplayCreatorFactory();
+    			return factory.createDisplayCreator(context, displayDescriptor).createDisplay();
+    		} 
+    		catch (Exception ex) {
+    			msg.error("Error creating display for " + displayDescriptor.getDisplayType(), ex);
+    		}
+    	}
+    	else{
+    		msg.error("No display implementation found for " + displayDescriptor.getDisplayType(), null);
     	}
     }
     

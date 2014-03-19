@@ -15,8 +15,8 @@ import repast.simphony.context.Context;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.DefaultDisplayData;
 import repast.simphony.visualization.IDisplay;
-import repast.simphony.visualization.engine.AbstractDisplayCreator;
 import repast.simphony.visualization.engine.DisplayCreationException;
+import repast.simphony.visualization.engine.DisplayCreator;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 
@@ -25,10 +25,13 @@ import repast.simphony.visualization.gis.DisplayGIS;
  * 
  * @author Nick Collier
  */
-public class DisplayCreatorGIS extends AbstractDisplayCreator {
-
+public class DisplayCreatorGIS implements DisplayCreator {
+	 protected Context<?> context;
+	 protected DisplayDescriptor descriptor; 
+	 
   public DisplayCreatorGIS(Context<?> context, DisplayDescriptor descriptor) {
-    super(context, descriptor);
+  	this.context = context;
+    this.descriptor = descriptor;
   }
   
   @SuppressWarnings("unchecked")

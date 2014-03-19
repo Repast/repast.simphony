@@ -17,6 +17,7 @@ import repast.simphony.dataLoader.engine.DFDataLoaderControllerActionIO;
 import repast.simphony.dataLoader.engine.DataLoaderCompositeActionCreator;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.ControllerRegistry;
+import repast.simphony.gis.engine.GISCompositeControllerActionCreator;
 import repast.simphony.plugin.CompositeControllerActionCreator;
 import repast.simphony.plugin.ControllerActionIOExtensions;
 import repast.simphony.plugin.MiscCompositeActionCreator;
@@ -38,6 +39,7 @@ public class BatchScenarioLoader extends ScenarioLoader {
 
   public BatchScenarioLoader(File scenarioDir) {
     super(scenarioDir, null);
+    
     parentActionCreators.add(new RandomCompositeActionCreator());
     parentActionCreators.add(new DataLoaderCompositeActionCreator());
     parentActionCreators.add(new ScheduledActionsCreator());
@@ -46,6 +48,11 @@ public class BatchScenarioLoader extends ScenarioLoader {
     parentActionCreators.add(new MiscCompositeActionCreator());
     parentActionCreators.add(new DataInitActionCreator());
 
+    // TODO Projections: This explicit dependency on GIS can only be removed if
+    //       the batch mechanism is changed to load ControllerActions via the
+    //       JPF plugin loader.
+    parentActionCreators.add(new GISCompositeControllerActionCreator());
+    
     ioExt.addControllerActionIO(new CNDataLoaderControllerActionIO());
     ioExt.addControllerActionIO(new DataSetControllerActionIO());
     ioExt.addControllerActionIO(new FileSinkControllerActionIO());

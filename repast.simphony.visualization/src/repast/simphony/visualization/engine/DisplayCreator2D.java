@@ -30,7 +30,7 @@ public class DisplayCreator2D extends AbstractCartesianDisplayCreator {
    * @param context
    * @param descriptor
    */
-  public DisplayCreator2D(Context<?> context, DisplayDescriptor descriptor) {
+  public DisplayCreator2D(Context<?> context, CartesianDisplayDescriptor descriptor) {
     super(context, descriptor);
   }
 

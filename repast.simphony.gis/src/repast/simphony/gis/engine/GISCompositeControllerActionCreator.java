@@ -1,15 +1,16 @@
 package repast.simphony.gis.engine;
 
-import repast.simphony.engine.controller.ControllerActionConstants;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.plugin.CompositeControllerActionCreator;
 
 public class GISCompositeControllerActionCreator implements
 		CompositeControllerActionCreator {
 
+	String ID = "repast.controller.action.gis";
+	
 	@Override
 	public String getID() {
-		return ControllerActionConstants.USER_PANEL_ROOT;
+		return ID;
 	}
 
 	@Override

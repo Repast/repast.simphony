@@ -12,10 +12,14 @@ import repast.simphony.visualization.Layout;
  * @author Nick Collier
  *
  */
-public abstract class AbstractCartesianDisplayCreator extends AbstractDisplayCreator{
+public abstract class AbstractCartesianDisplayCreator implements DisplayCreator{
 
-  public AbstractCartesianDisplayCreator(Context<?> context, DisplayDescriptor descriptor) {
-    super(context,descriptor);
+	 protected Context<?> context;
+	 protected CartesianDisplayDescriptor descriptor; 
+	
+  public AbstractCartesianDisplayCreator(Context<?> context, CartesianDisplayDescriptor descriptor) {
+  	this.context = context;
+    this.descriptor = descriptor;
   }
 
   @SuppressWarnings("unchecked")

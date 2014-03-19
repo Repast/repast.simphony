@@ -78,6 +78,8 @@ public class ProbeExtensionLoader {
     }
   }
 
+  // TODO Projections: Maybe move this functionality into the display registry
+  //       just to have it all in one place.
   protected void loadLocationProbeProviderxtensions() throws PluginDefinitionException{
     ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint(RSGUIConstants.GUI_PLUGIN_ID,
         RSGUIConstants.PROBE_LOCATION_PROVIDER_EXT_ID);

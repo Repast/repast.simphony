@@ -6,8 +6,8 @@ import repast.simphony.visualization.DefaultDisplayData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.NullLayout;
-import repast.simphony.visualization.engine.AbstractDisplayCreator;
 import repast.simphony.visualization.engine.DisplayCreationException;
+import repast.simphony.visualization.engine.DisplayCreator;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.StyleRegistrar.Registrar;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
@@ -18,14 +18,18 @@ import repast.simphony.visualization.gis3D.style.StyleGIS;
  * 
  * @author Nick Collier
  */
-public class DisplayCreator3DGIS extends AbstractDisplayCreator {
+public class DisplayCreator3DGIS implements DisplayCreator {
   
+	 protected Context<?> context;
+	 protected DisplayDescriptor descriptor; 
+	
   /**
    * @param context
    * @param descriptor
    */
   public DisplayCreator3DGIS(Context<?> context, DisplayDescriptor descriptor) {
-    super(context, descriptor);
+  	this.context = context;
+    this.descriptor = descriptor;
   }
 
   @SuppressWarnings("unchecked")

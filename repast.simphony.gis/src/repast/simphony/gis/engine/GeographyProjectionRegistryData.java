@@ -1,8 +1,16 @@
 package repast.simphony.gis.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import repast.simphony.dataLoader.engine.DataLoaderProjectionRegistryData;
 import repast.simphony.dataLoader.engine.ProjectionBuilderFactory;
 import repast.simphony.engine.environment.AbstractProjectionRegistryData;
+import repast.simphony.freezedry.FreezeDryer;
+import repast.simphony.gis.dataLoader.GeographyProjectionBuilder;
+import repast.simphony.gis.freezedry.GeographyProjectionDryer;
+import repast.simphony.gis.freezedry.GeometryFreezeDryer;
+import repast.simphony.gis.xml.GeographyConverter;
 import repast.simphony.space.gis.Geography;
 
 /**
@@ -21,6 +29,18 @@ public class GeographyProjectionRegistryData extends AbstractProjectionRegistryD
 	
 	public GeographyProjectionRegistryData(){
 		super(NAME,CLASS);
+		
+		// TODO Projections: remove setters from interface and set internally?
+		// TODO Projections: Test error handling in code that reference these classes
+		//        by disabling one at a time and running the appropriate runtime 
+		//        components.
+		setProjectionDryer(new GeographyProjectionDryer());
+		setProjectionXMLConverter(new GeographyConverter());
+		setProjectionBuilderFactory(new GeographyProjectionBuilder());
+		
+		List<FreezeDryer<?>> freezedryers = new ArrayList<FreezeDryer<?>>();
+		freezedryers.add(new GeometryFreezeDryer());
+		setFreezeDryers(freezedryers);
 	}
 	
 	@Override
