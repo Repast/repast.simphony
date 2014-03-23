@@ -9,6 +9,10 @@ import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
+import repast.simphony.visualization.engine.ValueLayerDescriptor;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
+import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 
 /**
  * Wizard model for configuring displays.
@@ -54,20 +58,23 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   public String getDefaultStyle() {
   	
   	// TODO Projections: get the default style for the display type from the viz registry.
-  	
-    if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
-      return descriptor.getDefaultStyles3D()[0].getName();
-        
-    if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
-      return descriptor.getDefaultStyles2D()[0].getName();
-    
-    // TODO Projections: GIS
-    // TODO WWJ - handle multiple styles
-    if (descriptor.getDisplayType().equals(DisplayType.GIS3D))
-      return descriptor.getDefaultStylesGIS3D()[0].getName();
+  	Class<?>[] styles3D = new Class<?>[] { DefaultStyle3D.class };
+  	Class<?>[] styles2D = new Class<?>[] { DefaultStyleOGL2D.class };
 
+  	if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
+      return styles3D[0].getName();
+        
+    else if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
+      return styles2D[0].getName();
     
-    // return null for 2D GIS as there is no default style class for that
+    else {
+      Class<?>[] styles = VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getDefaultStyles();
+    
+      if (styles != null){
+      	return styles[0].getName();
+      }
+    }
+    
     return null;
   }
 
@@ -134,13 +141,18 @@ public class DisplayWizardModel extends DynamicModel implements WizardListener {
   }
 
   public boolean containsValueLayer() {
-    return descriptor.getValueLayerCount() > 0;
+  	if (descriptor instanceof ValueLayerDescriptor){
+  	  if (((ValueLayerDescriptor)descriptor).getValueLayerCount() > 0)
+  	  	return true;
+  	}
+    return false;
   }
 
-  /**
-   * @return the context
-   */
   public ContextData getContext() {
     return context;
   }
+
+	public void setDescriptor(DisplayDescriptor descriptor) {
+		this.descriptor = descriptor;
+	}
 }

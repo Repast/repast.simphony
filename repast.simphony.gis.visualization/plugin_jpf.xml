@@ -12,6 +12,7 @@
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
         <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gis" reverse-lookup="false"/>
         <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.visualization" reverse-lookup="false"/>
+        <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
 	</requires>
 	
 	<runtime>

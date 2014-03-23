@@ -7,16 +7,31 @@ import repast.simphony.visualization.engine.DisplayComponentControllerAction;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
+ * Creates a wizard when adding a new display to the scenario tree. 
+ * 
  * @author Nick Collier
- * @version $Revision$ $Date$
+ * @author Eric Tatara
+ * 
  */
-public class DisplayConfigurator {
+public class DisplayWizardCreator {
 
   private DisplayConfigurationWizard wizard;
   private DisplayComponentControllerAction action;
 
-  public DisplayConfigurator(Object contextID, ContextData context, DisplayComponentControllerAction action) {
-    wizard = new DisplayConfigurationWizard(contextID, action.getDescriptor(), context);
+  public DisplayWizardCreator(Object contextID, ContextData context, DisplayComponentControllerAction action) {
+    
+  	
+//  	String displayType = action.getDescriptor().getDisplayType();
+  	
+  	// TODO Projections: new descriptors are null here from create display
+  	
+//  	DisplayConfigurationWizardFactory fac = 
+//  			new DisplayConfigurationWizardFactoryFinder().getFactoryFor(displayType);
+  	
+//  	wizard = fac.getConfigurationWizard(contextID, action.getDescriptor(), context);
+  	
+  	wizard = new DisplayConfigurationWizard(contextID, null, context);
+  	
     this.action = action;
   }
 

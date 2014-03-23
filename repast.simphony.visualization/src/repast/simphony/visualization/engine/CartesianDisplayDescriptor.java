@@ -2,8 +2,6 @@ package repast.simphony.visualization.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-//import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
-//import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
 
 /**
  * Display descriptor for Cartesian (2D,3D) displays with value layers.
@@ -16,15 +14,15 @@ import java.util.List;
 
 public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implements ValueLayerDescriptor {
 
-  private String valueLayerStyleName;
+	private String valueLayerStyleName;
 
   private String valueLayerEditedStyleName;
 
   private List<String> valueLayers = new ArrayList<String>();
 
-  public CartesianDisplayDescriptor(DisplayDescriptor descriptor) {
+  public CartesianDisplayDescriptor(CartesianDisplayDescriptor descriptor) {
     super(descriptor.getName());
-//    set(descriptor);
+    set(descriptor);
   }
 
   public CartesianDisplayDescriptor(String name) {
@@ -44,65 +42,21 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
     return valueLayers.size();
   }
 
-  
+  @Override
+  protected void set(DisplayDescriptor descriptor) {
+    super.set(descriptor);
 
-//  public void set(DisplayDescriptor descriptor) {
-//    setScheduleParameters(descriptor.getScheduleParameters());
-//    setName(descriptor.getName());
-//    setDisplayType(descriptor.getDisplayType());
-//    setLayoutClassName(descriptor.getLayoutClassName());
-//    setLayoutFrequency(descriptor.getLayoutFrqeuency());
-//    setLayoutInterval(descriptor.getLayoutInterval());
-//    setLayoutProjection(descriptor.getLayoutProjection());
-//    setLayoutProperties(descriptor.getLayoutProperties());
-//    styles.clear();
-//    for (String name : descriptor.agentClassStyleNames()) {
-//      addStyle(name, descriptor.getStyleClassName(name));
-//    }
-//    netStyles.clear();
-//    for (Object name : descriptor.networkStyleIDs()) {
-//      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
-//    }
-//    editedStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.agentClassEditedStyleNames() != null)
-//      for (String name : descriptor.agentClassEditedStyleNames())
-//        addEditedStyle(name, descriptor.getEditedStyleName(name));
-//
-//    editedNetStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.networkEditedStyleIDs() != null)
-//      for (Object name : descriptor.networkEditedStyleIDs())
-//        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
-//
-//    if (type.equals(DisplayType.TWO_D)) {
-//      layerOrder.clear();
-//      if (descriptor.agentClassLayerOrders() != null) {
-//        for (String name : descriptor.agentClassLayerOrders()) {
-//          addLayerOrder(name, descriptor.getLayerOrder(name));
-//        }
-//      }
-//    }
-//    for (ProjectionData proj : descriptor.getProjections()) {
-//      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
-//    }
-//
-//    for (String vlName : descriptor.getValueLayerNames()) {
-//      addValueLayerName(vlName);
-//    }
-//
-//    setValueLayerStyleName(descriptor.getValueLayerStyleName());
-//
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.getValueLayerEditedStyleName() != null)
-//      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
-//
-//    for (String name : descriptor.propertyNames()) {
-//      setProperty(name, descriptor.getProperty(name));
-//    }
-//
-//    setBackgroundColor(descriptor.getBackgroundColor());
-//  }
+    CartesianDisplayDescriptor cdd = (CartesianDisplayDescriptor)descriptor;
+    
+    for (String vlName : cdd.getValueLayerNames()) {
+      addValueLayerName(vlName);
+    }
+
+    setValueLayerStyleName(cdd.getValueLayerStyleName());
+
+    if (cdd.getValueLayerEditedStyleName() != null)
+      setValueLayerEditedStyleName(cdd.getValueLayerEditedStyleName());
+  }
 
   /**
    * Adds the named value layer to the list of value layers to display.
@@ -171,4 +125,9 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
     valueLayerEditedStyleName = name;
     scs.fireScenarioChanged(this, "valueLayerEditedStyle");
   }
+
+	@Override
+	public DisplayDescriptor makeCopy() {
+		return new CartesianDisplayDescriptor(this);
+	}
 }

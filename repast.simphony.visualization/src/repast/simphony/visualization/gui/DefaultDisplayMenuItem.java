@@ -44,9 +44,14 @@ public class DefaultDisplayMenuItem extends AbstractEditorMenuItem {
   }
 
   private DisplayComponentControllerAction createAction(Component parent, ScenarioTreeEvent evt) {
-    DisplayDescriptor descriptor = new DefaultDisplayDescriptor("A Display");
-    DisplayComponentControllerAction action = new DisplayComponentControllerAction(descriptor);
-
+    
+  	// TODO Projections: should be null for an empty desciptor since we don't know the type yet.
+//  	DisplayDescriptor descriptor = new DefaultDisplayDescriptor("A Display");
+  	
+  	// TODO Projections: make sure the descriptor is set for the action later once its created.
+  	//         ... might need need to since DisplayWizardCreator.getAction() does this...need to check
+    DisplayComponentControllerAction action = new DisplayComponentControllerAction(null);
+    
     ContextData context = null;
     List<ContextData> allContexts = evt.getScenario().getContext().getAllContexts();
 
@@ -57,10 +62,9 @@ public class DefaultDisplayMenuItem extends AbstractEditorMenuItem {
       }
     }
 
-    DisplayConfigurator config = new DisplayConfigurator(evt.getContextID(), context, action);
+    DisplayWizardCreator config = new DisplayWizardCreator(evt.getContextID(), context, action);
 
     config.showDialog(parent);
     return config.getAction();
-
   }
 }

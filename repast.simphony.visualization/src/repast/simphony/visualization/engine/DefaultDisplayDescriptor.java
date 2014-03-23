@@ -149,8 +149,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * repast.simphony.visualization.engine.DisplayDescriptor#clearValueLayerNames
    * ()
    */
-  @Override
-  public void clearValueLayerNames() {
+   public void clearValueLayerNames() {
     if (valueLayers.size() > 0) {
       this.valueLayers.clear();
       scs.fireScenarioChanged(this, "valueLayers");
@@ -607,6 +606,12 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 
 	@Override
 	public Class<?>[] getDefaultNetStyles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DisplayDescriptor makeCopy() {
 		// TODO Auto-generated method stub
 		return null;
 	}

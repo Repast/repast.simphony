@@ -1,5 +1,13 @@
 package repast.simphony.visualization.engine;
 
+import java.util.List;
+
+import org.pietschy.wizard.WizardStep;
+import org.pietschy.wizard.models.Condition;
+
+import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.gui.DisplayDescriptorFactory;
+
 
 /**
  * Visualization registry data stores information about the available visualization
@@ -29,4 +37,45 @@ public interface VisualizationRegistryData {
 	 */
 	public DisplayCreatorFactory getDisplayCreatorFactory();
 	
+	/**
+	 * The default style classes that are available in the display wizard.
+	 * 
+	 * @return the style classes.
+	 */
+	public Class<?>[] getDefaultStyles();
+	
+	/**
+	 * The default edge style classes that are available in the display wizard.
+	 * 
+	 * @return the edge style classes.
+	 */
+	public Class<?>[] getDefaultEdgeStyles();
+	
+	/**
+	 * The style interface associated with the display.
+	 * 
+	 * @return the style interface.
+	 */
+	public Class<?> getStyleInterface();
+	
+	/**
+	 * The edge style interface associated with the display.
+	 * 
+	 * @return the edge style interface.
+	 */
+	public Class<?> getEdgeStyleInterface();
+	
+	/**
+	 * Gets display wizard steps (style, etc) specific to this display type.
+	 * 
+	 * @return
+	 */
+	public List<Pair<WizardStep, Condition>> getDisplayWizardSteps();
+	
+	/**
+	 * Get a factory for creating display descriptors for this display type.
+	 * 
+	 * @return
+	 */
+	public DisplayDescriptorFactory getDescriptorFactory();
 }

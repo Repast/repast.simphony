@@ -21,9 +21,8 @@ import repast.simphony.visualization.VisualizationProperties;
  * @author Eric Tatara
  */
 
-public class BasicDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
+public abstract class BasicDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
 
-	
 	// TODO Projections: all fields should be initialized by another class that might be located in the viz registry.
   private static Class<?>[] defaultStyles; 
   private static Class<?>[] defaultNetStyles;
@@ -71,7 +70,6 @@ public class BasicDisplayDescriptor extends AbstractDescriptor implements Displa
 
   public BasicDisplayDescriptor(DisplayDescriptor descriptor) {
     super(descriptor.getName());
-//    set(descriptor);
   }
 
   public BasicDisplayDescriptor(String name) {
@@ -115,14 +113,6 @@ public class BasicDisplayDescriptor extends AbstractDescriptor implements Displa
     }
   }
 
-  @Override
-  public void clearValueLayerNames() {
-    if (valueLayers.size() > 0) {
-      this.valueLayers.clear();
-      scs.fireScenarioChanged(this, "valueLayers");
-    }
-  }
-
   /**
    * Gets the ProjectionDescriptor for the named projection.
    * 
@@ -148,63 +138,65 @@ public class BasicDisplayDescriptor extends AbstractDescriptor implements Displa
     return projectionDescriptors.values();
   }
 
-//  public void set(DisplayDescriptor descriptor) {
-//    setScheduleParameters(descriptor.getScheduleParameters());
-//    setName(descriptor.getName());
-//    setDisplayType(descriptor.getDisplayType());
-//    setLayoutClassName(descriptor.getLayoutClassName());
-//    setLayoutFrequency(descriptor.getLayoutFrqeuency());
-//    setLayoutInterval(descriptor.getLayoutInterval());
-//    setLayoutProjection(descriptor.getLayoutProjection());
-//    setLayoutProperties(descriptor.getLayoutProperties());
-//    styles.clear();
-//    for (String name : descriptor.agentClassStyleNames()) {
-//      addStyle(name, descriptor.getStyleClassName(name));
-//    }
-//    netStyles.clear();
-//    for (Object name : descriptor.networkStyleIDs()) {
-//      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
-//    }
-//    editedStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.agentClassEditedStyleNames() != null)
-//      for (String name : descriptor.agentClassEditedStyleNames())
-//        addEditedStyle(name, descriptor.getEditedStyleName(name));
-//
-//    editedNetStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.networkEditedStyleIDs() != null)
-//      for (Object name : descriptor.networkEditedStyleIDs())
-//        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
-//
-//    if (type.equals(DisplayType.TWO_D)) {
-//      layerOrder.clear();
-//      if (descriptor.agentClassLayerOrders() != null) {
-//        for (String name : descriptor.agentClassLayerOrders()) {
-//          addLayerOrder(name, descriptor.getLayerOrder(name));
-//        }
-//      }
-//    }
-//    for (ProjectionData proj : descriptor.getProjections()) {
-//      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
-//    }
-//
-//    for (String vlName : descriptor.getValueLayerNames()) {
-//      addValueLayerName(vlName);
-//    }
-//
-//    setValueLayerStyleName(descriptor.getValueLayerStyleName());
-//
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.getValueLayerEditedStyleName() != null)
-//      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
-//
-//    for (String name : descriptor.propertyNames()) {
-//      setProperty(name, descriptor.getProperty(name));
-//    }
-//
-//    setBackgroundColor(descriptor.getBackgroundColor());
-//  }
+  /**
+   * Sets the fields of this descriptor from another when making copies.
+   * 
+   * @param descriptor
+   */
+  protected void set(DisplayDescriptor descriptor) {
+  	
+  	// TODO Projections: minimize duplicates with subclasses.
+  	
+    setScheduleParameters(descriptor.getScheduleParameters());
+    setName(descriptor.getName());
+    setDisplayType(descriptor.getDisplayType());
+    setLayoutClassName(descriptor.getLayoutClassName());
+    setLayoutFrequency(descriptor.getLayoutFrqeuency());
+    setLayoutInterval(descriptor.getLayoutInterval());
+    setLayoutProjection(descriptor.getLayoutProjection());
+    setLayoutProperties(descriptor.getLayoutProperties());
+    styles.clear();
+    
+    for (String name : descriptor.agentClassStyleNames()) {
+      addStyle(name, descriptor.getStyleClassName(name));
+    }
+    
+    netStyles.clear();
+    for (Object name : descriptor.networkStyleIDs()) {
+      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
+    }
+    
+    editedStyles.clear();
+    // check for backwards compatibility with older display descriptors
+    if (descriptor.agentClassEditedStyleNames() != null)
+      for (String name : descriptor.agentClassEditedStyleNames())
+        addEditedStyle(name, descriptor.getEditedStyleName(name));
+
+    editedNetStyles.clear();
+    // check for backwards compatibility with older display descriptors
+    if (descriptor.networkEditedStyleIDs() != null)
+      for (Object name : descriptor.networkEditedStyleIDs())
+        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
+
+    if (type.equals(DisplayType.TWO_D)) {
+      layerOrder.clear();
+      if (descriptor.agentClassLayerOrders() != null) {
+        for (String name : descriptor.agentClassLayerOrders()) {
+          addLayerOrder(name, descriptor.getLayerOrder(name));
+        }
+      }
+    }
+    
+    for (ProjectionData proj : descriptor.getProjections()) {
+      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
+    }
+
+    for (String name : descriptor.propertyNames()) {
+      setProperty(name, descriptor.getProperty(name));
+    }
+
+    setBackgroundColor(descriptor.getBackgroundColor());
+  }
 
   @Override
   public String getDisplayType() {

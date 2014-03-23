@@ -1,6 +1,7 @@
 package repast.simphony.visualization.engine;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Map;
 
 import repast.simphony.engine.schedule.Descriptor;
@@ -14,10 +15,17 @@ import repast.simphony.visualization.VisualizationProperties;
  * Descriptor for a 2D / 3D display.
  * 
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/06 22:35:19 $
+ * @author Eric Tatara
  */
-public interface DisplayDescriptor extends Descriptor {
+public interface DisplayDescriptor extends Descriptor{
 
+	/**
+	 * Returns a deep copy of the descriptor.
+	 * 
+	 * @return
+	 */
+	DisplayDescriptor makeCopy();
+	
   void setLayoutInterval(int interval);
 
   int getLayoutInterval();
@@ -137,8 +145,6 @@ public interface DisplayDescriptor extends Descriptor {
   
   void clearProjections();
   
-  void clearValueLayerNames();
-
   Iterable<ProjectionDescriptor> getProjectionDescriptors();
 
   /**

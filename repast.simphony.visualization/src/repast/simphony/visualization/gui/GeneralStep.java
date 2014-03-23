@@ -17,10 +17,14 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.widget.ListSelector;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
+import repast.simphony.visualization.engine.ValueLayerDescriptor;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.engine.VisualizationRegistryData;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -32,6 +36,8 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 @SuppressWarnings("serial")
 public class GeneralStep extends PanelWizardStep {
+	
+	public static final String DEFAULT_DISPLAY_TITLE = "New Display";
 
   class DisplayItem {
     String displayName;
@@ -75,6 +81,7 @@ public class GeneralStep extends PanelWizardStep {
   public GeneralStep() {
     super("Display Details", "Please enter the name and type of the display as well the "
         + "projections the display should visualize");
+    
     this.setLayout(new BorderLayout());
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
@@ -196,7 +203,7 @@ public class GeneralStep extends PanelWizardStep {
 
     ComboBoxModel cmbModel;
     
-    // TODO Projections: init from viz registry data
+    // TODO Projections: init from viz registry data GIS
     
     if (model.contextContainsOnlyProjectionType(ProjectionData.GEOGRAPHY_TYPE)) {
       cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.GIS, DisplayType.GIS3D });
@@ -209,36 +216,82 @@ public class GeneralStep extends PanelWizardStep {
       cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.TWO_D, DisplayType.THREE_D });
     }
     typeBox.setModel(cmbModel);
+    
+    // TODO Projections: changing the type creates a descriptor to work with.
+    // TODO Projections: use Cartesian as the default descriptor
+    // TODO Projections: cache descriptors in case the user makes changes, then
+    //         selects a new display type, but goes back again...
+    typeBox.addActionListener(new ActionListener(){
 
-    DisplayDescriptor descriptor = model.getDescriptor();
-    nameFld.setText(descriptor.getName());
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String type = (String) typeBox.getSelectedItem();
 
-    String displayType = descriptor.getDisplayType();
-    typeBox.setSelectedItem(displayType);
+				if (DisplayType.TWO_D.equals(type) || DisplayType.THREE_D.equals(type)){
+					model.setDescriptor(new CartesianDisplayDescriptor(nameFld.getText().trim()));
+				}
+				else{
+				  VisualizationRegistryData data = VisualizationRegistry.getDataFor(type);
+				  
+				  if (data != null){
+				  model.setDescriptor(data.getDescriptorFactory().createDescriptor(nameFld.getText().trim()));
+				  }
+				  else{
+				  	JOptionPane.showMessageDialog(getParent(),
+				  	    "No descriptor found for type: " + type,
+				  	    "Display error", JOptionPane.ERROR_MESSAGE);
+				  }
+				}	
+			}
+    	
+    });
 
     java.util.List<DisplayItem> source = new ArrayList<DisplayItem>();
-
+    java.util.List<DisplayItem> target = new ArrayList<DisplayItem>();
     for (ProjectionData proj : model.getContext().projections()) {
       DisplayItem item = null;
       item = new DisplayItem(proj.getId(), proj);
       source.add(item);
     }
+    
+    DisplayDescriptor descriptor = model.getDescriptor();
 
-    java.util.List<DisplayItem> target = new ArrayList<DisplayItem>();
-    for (ProjectionData proj : descriptor.getProjections()) {
-      DisplayItem item = null;
-      item = new DisplayItem(proj.getId(), proj);
-      source.remove(item);
-      target.add(item);
+    // TODO Projections: maybe this is cause of not being able to add/remove 
+    //        projections from the display once it's created (has a descriptor).
+    // If the display is already defined, eg editing a display
+    if (descriptor != null){
+    	nameFld.setText(descriptor.getName());
+
+    	String displayType = descriptor.getDisplayType();
+    	typeBox.setSelectedItem(displayType);
+    	
+    	for (ProjectionData proj : descriptor.getProjections()) {
+    		DisplayItem item = null;
+    		item = new DisplayItem(proj.getId(), proj);
+    		source.remove(item);
+    		target.add(item);
+    	}
+    }
+    // Otherwise it's creating a new display - Cartesian is default
+    else{ 
+    	nameFld.setText(DEFAULT_DISPLAY_TITLE); 
+    	model.setDescriptor(new CartesianDisplayDescriptor(DEFAULT_DISPLAY_TITLE));
     }
 
     selector.setLists(source, target);
     setComplete(target.size() > 0);
   }
 
+  /*
+   * (non-Javadoc)
+   * @see org.pietschy.wizard.PanelWizardStep#applyState()
+   * 
+   * This method is called whenever the user presses next while this step is active.
+   */
   @Override
   public void applyState() throws InvalidStateException {
     super.applyState();
+    
     if (!doValidate()) {
       throw new InvalidStateException();
     }
@@ -251,18 +304,26 @@ public class GeneralStep extends PanelWizardStep {
       descriptor.setDisplayType(newType, true);
     }
     descriptor.clearProjections();
-    descriptor.clearValueLayerNames();
     descriptor.clearProjectionDescriptors();
 
+    if (descriptor instanceof ValueLayerDescriptor){
+    	((ValueLayerDescriptor)descriptor).clearValueLayerNames();
+    }
+    
     for (DisplayItem item : selector.getSelectedItems()) {
-      if (item.proj != null) {
-        if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE)) {
-          descriptor.addValueLayerName(item.displayName);
-        } else {
-          ProjectionDescriptor pd = ProjectionDescriptorFactory.createDescriptor(item.proj);
-          descriptor.addProjection(item.proj, pd);
-        }
-      }
+    	if (item.proj != null) {
+    		if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE)) {
+    			if (descriptor instanceof ValueLayerDescriptor){
+    				((ValueLayerDescriptor)descriptor).addValueLayerName(item.displayName);
+    			}
+    		} 
+    		else {
+    			
+    			// TODO Projections: put the proj desc factories in the viz registry
+    			ProjectionDescriptor pd = ProjectionDescriptorFactory.createDescriptor(item.proj);
+    			descriptor.addProjection(item.proj, pd);
+    		}
+    	}
     }
   }
 }

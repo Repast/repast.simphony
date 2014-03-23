@@ -3,9 +3,9 @@ package repast.simphony.visualization.gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -28,8 +28,15 @@ import org.pietschy.wizard.WizardModel;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gui.styleBuilder.EditedEdgeStyleDialog;
 import repast.simphony.visualization.gui.styleBuilder.SimpleEditedEdgeStyleDialog;
+import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
+import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
+import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
+import repast.simphony.visualizationOGL2D.EdgeStyleOGL2D;
+import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -41,7 +48,7 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class EdgeStyleStep extends PanelWizardStep {
 	private static final long serialVersionUID = 8604762391209707526L;
-
+	private static final MessageCenter msg = MessageCenter.getMessageCenter(EdgeStyleStep.class);
 	private DisplayWizardModel model;
 	private JList objList = new JList(new DefaultListModel());
 	private DefaultComboBoxModel styleModel = new DefaultComboBoxModel();
@@ -202,47 +209,79 @@ public class EdgeStyleStep extends PanelWizardStep {
 		DisplayDescriptor descriptor = model.getDescriptor();
 
 		// TODO Projections: get init from the viz registry
-		// TODO implement stylE editor for 3D GIS
+		Class<?>[] defaultEdgeStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
+		Class<?>[] defaultEdgeStyles2D = new Class<?>[] { DefaultEdgeStyleOGL2D.class };
+		
+		
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)){
+			defaultStyle = defaultEdgeStyles3D[0].getName();
+		}
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			defaultStyle = defaultEdgeStyles2D[0].getName();
+		}
+
+		// Get the default style for the display from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(descriptor.getDisplayType());
+
+			if (data != null){
+				Class<?>[] defaultStyleClasses =  data.getDefaultEdgeStyles();
+				
+				if (defaultStyleClasses != null){
+					defaultStyle = defaultStyleClasses[0].getName();
+				}
+			}
+			else{
+				msg.error("Error creating edge style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
+		
+		// TODO implement style editor for 3D GIS
+		// TODO Projections: the viz data should also contain an editor 
 		if (descriptor.getDisplayType().equals(DisplayType.GIS3D)) {
 			buildStyleButton.setEnabled(false);
 		}
+		
+		// Find all available style classes for the display type
 
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
-			defaultStyle = descriptor.getDefaultNetStyles3D()[0].getName();
+		// TODO Cache styles.  There was some unfinished code here for caching styles
+		//        found by the StyleClassFinder that might make the display wizards
+		//        slightly faster.  Removed during projections refactor.
+		java.util.List<String> vals = null;
+		
+		// TODO Projections: init from viz registry data entries
+		Class<?> edgeStyle3DInterface = EdgeStyle3D.class;
+		Class<?> edgeStyle2DInterface = EdgeStyleOGL2D.class;
 
-		else //if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
-			defaultStyle = descriptor.getDefaultNetStyles2D()[0].getName();
-
-		// TODO WWJ - networks
-		//    else
-		//      defaultStyle = descriptor.getDefaultNetStylesGIS3D()[0].getName();
-
-		List<String> style2DCache = null;
-		List<String> style3DCache = null;
-		List<String> style3DGISCache = null;
-
-		java.util.List<String> vals;
 		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			if (style3DCache == null)
-				style3DCache = StyleClassFinder.getAvailable3DEdgeStyles(model.getContext());
-
-			vals = style3DCache;
+			vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyle3DInterface);
 		} 
-		else {//if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D) {
-			if (style2DCache == null)
-				style2DCache = StyleClassFinder.getAvailable2DEdgeStyles(model.getContext());
-
-			vals = style2DCache;
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyle2DInterface);
 		} 
-		// TODO WWJ - network
-		//    else {
-		//      if (style3DGISCache == null)
-		//        style3DGISCache = StyleClassFinder.getAvailable3DGISEdgeStyles(model.getContext());
-		//
-		//      vals = style3DGISCache;
-		//    }
+		else{
+			Class<?> edgeStyleInterface = VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getEdgeStyleInterface();
 
-		vals.add(defaultStyle);
+			if (edgeStyleInterface != null){
+				vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyleInterface);
+			} 
+			else {
+			  msg.warn("No edge styles found that implement " + edgeStyleInterface.getName());	
+			}
+		}
+		
+		if (vals == null){
+			vals = new ArrayList<String>();
+		}
+
+		if (defaultStyle != null){
+			vals.add(defaultStyle);
+		}
+		else{
+			msg.warn("No default edge styles found for " + descriptor.getDisplayType());	
+		}
+		
 		Collections.sort(vals);
 		styleModel.removeAllElements();
 

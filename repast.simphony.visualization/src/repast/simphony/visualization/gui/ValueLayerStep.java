@@ -23,6 +23,7 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.gui.styleBuilder.EditedValueLayerStyleDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -81,8 +82,8 @@ public class ValueLayerStep extends PanelWizardStep {
 	@Override
 	public void applyState() throws InvalidStateException {
 		DisplayDescriptor descriptor = model.getDescriptor();
-		descriptor.setValueLayerStyleName(styleBox.getSelectedItem().toString());
-		descriptor.setValueLayerEditedStyleName(editedStyleName);
+		((ValueLayerDescriptor)descriptor).setValueLayerStyleName(styleBox.getSelectedItem().toString());
+		((ValueLayerDescriptor)descriptor).setValueLayerEditedStyleName(editedStyleName);
 	}
 
 	@Override
@@ -106,7 +107,7 @@ public class ValueLayerStep extends PanelWizardStep {
 			vals = style2DCache;
 		}
 
-		String styleName = descriptor.getValueLayerStyleName();
+		String styleName = ((ValueLayerDescriptor)descriptor).getValueLayerStyleName();
 		if (styleName != null && !vals.contains(styleName)) 
 			vals.add(styleName);
 		
@@ -119,7 +120,7 @@ public class ValueLayerStep extends PanelWizardStep {
 
 		DefaultListModel listModel = (DefaultListModel) objList.getModel();
 		listModel.removeAllElements();
-		for (String name : descriptor.getValueLayerNames()) 
+		for (String name : ((ValueLayerDescriptor)descriptor).getValueLayerNames()) 
 			listModel.addElement(name);
 
 		setComplete(true);
@@ -134,9 +135,9 @@ public class ValueLayerStep extends PanelWizardStep {
 				EditedValueLayerStyleDialog dialog = new EditedValueLayerStyleDialog((JDialog) 
 						SwingUtilities.getWindowAncestor(ValueLayerStep.this));
 
-				editedStyleName = descriptor.getValueLayerEditedStyleName();
+				editedStyleName = ((ValueLayerDescriptor)descriptor).getValueLayerEditedStyleName();
 
-				String layerName = descriptor.getValueLayerNames().iterator().next();
+				String layerName = ((ValueLayerDescriptor)descriptor).getValueLayerNames().iterator().next();
 				
 				dialog.init(layerName,editedStyleName,model.getDescriptor());
 				dialog.pack();

@@ -15,76 +15,27 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
 //      DefaultSurfaceShapeStyle.class };
+	
+	private static final long serialVersionUID = 8349240641245552328L;
 
-  
-  public GISDisplayDescriptor(DisplayDescriptor descriptor) {
+	public GISDisplayDescriptor(DisplayDescriptor descriptor) {
     super(descriptor.getName());
-//    set(descriptor);
+    set(descriptor);
   }
 
   public GISDisplayDescriptor(String name) {
     super(name);
   }
 
-  
+  @Override
+  public void set(DisplayDescriptor descriptor) {
+  	super.set(descriptor);
+  	
+  }
 
-//  public void set(DisplayDescriptor descriptor) {
-//    setScheduleParameters(descriptor.getScheduleParameters());
-//    setName(descriptor.getName());
-//    setDisplayType(descriptor.getDisplayType());
-//    setLayoutClassName(descriptor.getLayoutClassName());
-//    setLayoutFrequency(descriptor.getLayoutFrqeuency());
-//    setLayoutInterval(descriptor.getLayoutInterval());
-//    setLayoutProjection(descriptor.getLayoutProjection());
-//    setLayoutProperties(descriptor.getLayoutProperties());
-//    styles.clear();
-//    for (String name : descriptor.agentClassStyleNames()) {
-//      addStyle(name, descriptor.getStyleClassName(name));
-//    }
-//    netStyles.clear();
-//    for (Object name : descriptor.networkStyleIDs()) {
-//      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
-//    }
-//    editedStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.agentClassEditedStyleNames() != null)
-//      for (String name : descriptor.agentClassEditedStyleNames())
-//        addEditedStyle(name, descriptor.getEditedStyleName(name));
-//
-//    editedNetStyles.clear();
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.networkEditedStyleIDs() != null)
-//      for (Object name : descriptor.networkEditedStyleIDs())
-//        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
-//
-//    if (type.equals(DisplayType.TWO_D)) {
-//      layerOrder.clear();
-//      if (descriptor.agentClassLayerOrders() != null) {
-//        for (String name : descriptor.agentClassLayerOrders()) {
-//          addLayerOrder(name, descriptor.getLayerOrder(name));
-//        }
-//      }
-//    }
-//    for (ProjectionData proj : descriptor.getProjections()) {
-//      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
-//    }
-//
-//    for (String vlName : descriptor.getValueLayerNames()) {
-//      addValueLayerName(vlName);
-//    }
-//
-//    setValueLayerStyleName(descriptor.getValueLayerStyleName());
-//
-//    // check for backwards compatibility with older display descriptors
-//    if (descriptor.getValueLayerEditedStyleName() != null)
-//      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
-//
-//    for (String name : descriptor.propertyNames()) {
-//      setProperty(name, descriptor.getProperty(name));
-//    }
-//
-//    setBackgroundColor(descriptor.getBackgroundColor());
-//  }
-
+  @Override
+	public DisplayDescriptor makeCopy() {
+  	return new GISDisplayDescriptor(this);
+	}
  
 }

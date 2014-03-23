@@ -13,6 +13,7 @@ Require-Bundle: libs.ext,
  repast.simphony.scenario,
  repast.simphony.gui,
  repast.simphony.gis,
- repast.simphony.visualization
+ repast.simphony.visualization,
+ repast.simphony.plugin.util
 Bundle-ClassPath: lib/worldwind.jar,
  .

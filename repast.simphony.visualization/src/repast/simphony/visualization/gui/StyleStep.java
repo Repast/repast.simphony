@@ -31,7 +31,14 @@ import org.pietschy.wizard.WizardModel;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gui.styleBuilder.EditedStyleDialog;
+import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
+import repast.simphony.visualization.visualization3D.style.Style3D;
+import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
+import repast.simphony.visualizationOGL2D.StyleOGL2D;
+import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -43,7 +50,11 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class StyleStep extends PanelWizardStep {
 
+  private static final MessageCenter msg = MessageCenter.getMessageCenter(StyleStep.class);
+	
 	private static final long serialVersionUID = 1179847211916347928L;
+	
+	// TODO move to a viz constants class
 	public static final String UP_ICON = "agent_up.png";
 	public static final String DOWN_ICON = "agent_down.png";
 	public static final String EDIT_ICON = "edit.png";
@@ -255,60 +266,86 @@ public class StyleStep extends PanelWizardStep {
 		DisplayDescriptor descriptor = model.getDescriptor();
 
 		// TODO Projections: init from viz registry data.
+		Class<?>[] defaultStyles3D = new Class<?>[] { DefaultStyle3D.class };
+		Class<?>[] defaultStyles2D = new Class<?>[] { DefaultStyleOGL2D.class };
+
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
+			defaultStyle = defaultStyles3D[0].getName();
+			setBackgroundColor(Color.BLACK);
+		}
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			defaultStyle = defaultStyles2D[0].getName();
+			setBackgroundColor(Color.WHITE);
+		}
+
+		// Get the default style for the display from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(descriptor.getDisplayType());
+
+			if (data != null){
+				Class<?>[] defaultStyleClasses = data.getDefaultStyles();
+				
+				if (defaultStyleClasses != null){
+					defaultStyle = defaultStyleClasses[0].getName();
+				}
+			}
+			else{
+				msg.error("Error creating style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
 		
 		// TODO implement style editor for 3D GIS
+		// TODO Projections: the viz data should also contain an editor 
 		if (descriptor.getDisplayType().equals(DisplayType.GIS3D)) {
 			buildStyleButton.setEnabled(false);
 		}
-
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			defaultStyle = descriptor.getDefaultStyles3D()[0].getName();
-			setBackgroundColor(Color.BLACK);
-		}
+		// Find all available style classes for the display type
 		
-		// TODO Projections: GIS
-		// TODO WWJ - handle multiple styles
-		else if (descriptor.getDisplayType().equals(DisplayType.GIS3D))
-			defaultStyle = descriptor.getDefaultStylesGIS3D()[0].getName();
-
-		else {
-			defaultStyle = descriptor.getDefaultStyles2D()[0].getName();
-			setBackgroundColor(Color.WHITE);
-		}
-		
-		List<String> style2DCache = null;
-		List<String> style3DCache = null;
-		List<String> styleGIS3DCache = null;
+		// TODO Cache styles.  There was some unfinished code here for caching styles
+		//        found by the StyleClassFinder that might make the display wizards
+		//        slightly faster.  Removed during projections refactor.
+		java.util.List<String> vals = null;
 
 		// TODO Projections: init from viz registry data entries
-		//        The viz type should return a style interface from which 
-		//        implementing classes will be searched.
-		// Find all available style classes for the display type
-		java.util.List<String> vals;
+		Class<?> style3DInterface = Style3D.class;
+		Class<?> style2DInterface = StyleOGL2D.class;
+		
 		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			if (style3DCache == null)
-				style3DCache = StyleClassFinder.getAvailable3DStyles(model.getContext());
+			vals = StyleClassFinder.getAvailableStyles(model.getContext(), style3DInterface);
+		} 
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			vals = StyleClassFinder.getAvailableStyles(model.getContext(), style2DInterface);
+		} 
+		else{
+			Class<?> styleInterface = VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getStyleInterface();
 
-			vals = style3DCache;
-		} else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			if (style2DCache == null)
-				style2DCache = StyleClassFinder.getAvailable2DStyles(model.getContext());
-
-			vals = style2DCache;
-		} else {
-			if (styleGIS3DCache == null)
-				styleGIS3DCache = StyleClassFinder.getAvailableGIS3DStyles(model.getContext());
-
-			vals = styleGIS3DCache;
+			if (styleInterface != null){
+				vals = StyleClassFinder.getAvailableStyles(model.getContext(), styleInterface);
+			} 
+			else {
+			  msg.warn("No styles found that implement " + styleInterface.getName());	
+			}
+		}
+		
+		if (vals == null){
+			vals = new ArrayList<String>();
 		}
 
-		vals.add(defaultStyle);
+		if (defaultStyle != null){
+			vals.add(defaultStyle);
+		}
+		else{
+			msg.warn("No default styles found for " + descriptor.getDisplayType());	
+		}
+		
 		Collections.sort(vals);
 		styleModel.removeAllElements();
 
-		for (String val : vals)
+		for (String val : vals){
 			styleModel.addElement(val);
-
+		}
+		
 		// Get the list of available agent for display, sorted by order.
 		Map<String,Integer> layers = descriptor.getLayerOrders();
 		List<String> tempList = new ArrayList<String>();
