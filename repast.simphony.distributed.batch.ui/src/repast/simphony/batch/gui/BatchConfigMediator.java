@@ -392,6 +392,7 @@ public class BatchConfigMediator {
         batchParamFile.getPath(), unrolledParamFile.getPath()));
     pti.formatForInput(unrolledParamFile, batchMapFile);
     project.setProperty("unrolled.param.file", unrolledParamFile.getCanonicalPath());
+    project.setProperty("config.props.file", new File(model.getOutputDirectory(), "config.props").getCanonicalPath());
     project.setProperty("batch.param.file", batchParamFile.getCanonicalPath());
 
     File output = new File(model.getOutputDirectory());

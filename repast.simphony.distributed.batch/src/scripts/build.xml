@@ -67,6 +67,7 @@
 			</resources>
 			<fileset file="${message.center.props}" />
 			<fileset file="${unrolled.param.file}" />
+			<fileset file="${config.props.file}" />
 		</copy>
 
 		<copy todir="${working.dir}/bin">
