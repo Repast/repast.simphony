@@ -18,9 +18,12 @@ import repast.simphony.visualization.engine.VisualizationRegistry;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
 
 /**
- * Wizard for building a display from scratch.
+ * Wizard for building a display from scratch.  Wizard steps for the Cartesian
+ *   displays are included here.  Additional display plugin steps are optionally
+ *   loaded from the visualization registry.
  * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class DisplayConfigurationWizard {
 
@@ -100,7 +103,7 @@ public class DisplayConfigurationWizard {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();
-
+				
 				return descriptor.getProjectionCount() > 0 && isCartesian(descriptor);
 			}
 		}));

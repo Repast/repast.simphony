@@ -20,10 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
@@ -31,6 +27,7 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
@@ -38,15 +35,17 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.gis.display.CoverageStyleBuilder;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
 import repast.simphony.gis.display.RepastMapLayer;
-import repast.simphony.gis.display.RepastRasterLayer;
 import repast.simphony.gis.legend.MapLegend;
 import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.LocationSetter;
@@ -92,14 +91,32 @@ public class MapViewer {
 	
 	public MapViewer() {
 		context = new MapContent();
-		context.getViewport().setBounds(new ReferencedEnvelope(new Envelope(-90, -90, -90, 90), 
-				DefaultGeographicCRS.WGS84));		
+		
+		CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+		
+//		CRSAuthorityFactory  factory = CRS.getAuthorityFactory(true);
+//		try {
+//			crs = factory.createCoordinateReferenceSystem("EPSG:3005");
+//		} catch (NoSuchAuthorityCodeException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (FactoryException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//		context.getViewport().setCoordinateReferenceSystem(crs);
+	
+		
+		context.getViewport().setBounds(new ReferencedEnvelope(
+				new Envelope(-90, -90, -90, 90),	crs));		
+	
 		
 		mapPanel = new PiccoloMapPanel(context);
 
 		legend = new MapLegend(context, "legend");
 		
-		initTools();
+//		initTools();
 		
 		createLayers();  // create layers from shapefiles
 		
@@ -175,7 +192,7 @@ public class MapViewer {
 			//      but does after the map is moved/zoomed
 			//      See Geotools JMapPane for how to handle resize and transforms
 			// Test GridCoverage
-			File file = new File("sampleData/earthlights.jpg");
+			File file = new File("../repast.simphony.gis/sampleData/earthlights.jpg");
 			Style style;
 			
 //			GridFormatFinder.scanForPlugins();
@@ -189,8 +206,8 @@ public class MapViewer {
 //			addLayer(new RepastRasterLayer(coverage, style));
 			
 			
-			String dataFileName = "sampleData/countries.shp"; 
-			String styleFileName = "sampleData/countries.xml";
+			String dataFileName = "../repast.simphony.gis/sampleData/countries3005.shp"; 
+			String styleFileName = "../repast.simphony.gis/sampleData/countries.xml";
 			
 			URL shapefile = new File(dataFileName).toURL();
 			
@@ -235,7 +252,7 @@ public class MapViewer {
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom In");
 		toolParams.put(ToolManager.TOGGLE, true);
-		imageFile = PMarqueeZoomIn.class.getResource("MagnifyPlus.png");
+		imageFile = PMarqueeZoomIn.class.getResource("mActionZoomIn.png");
 		image = Toolkit.getDefaultToolkit().getImage(imageFile);
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put(Action.SHORT_DESCRIPTION, "Zoom In");
@@ -243,7 +260,7 @@ public class MapViewer {
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom Out");
 		toolParams.put(ToolManager.TOGGLE, true);
-		imageFile = PMarqueeZoomOut.class.getResource("MagnifyMinus.png");
+		imageFile = PMarqueeZoomOut.class.getResource("mActionZoomOut.png");
 		image = Toolkit.getDefaultToolkit().getImage(imageFile);
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put(Action.SHORT_DESCRIPTION, "Zoom Out");
@@ -252,7 +269,7 @@ public class MapViewer {
 		// toolParams.put(Action.NAME, "Pan");
 		toolParams.put(Action.SHORT_DESCRIPTION, "Pan the map");
 		toolParams.put(ToolManager.TOGGLE, true);
-		imageFile = PMarqueeZoomOut.class.getResource("Move.png");
+		imageFile = PMarqueeZoomOut.class.getResource("move.png");
 		image = Toolkit.getDefaultToolkit().getImage(imageFile);
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put("DEFAULT", new Boolean(true));
@@ -260,14 +277,14 @@ public class MapViewer {
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom To Previous");
 		toolParams.put(Action.SHORT_DESCRIPTION, "Zoom to the previous Extent");
-		imageFile = PMarqueeZoomOut.class.getResource("PreviousExtent.png");
+		imageFile = PMarqueeZoomOut.class.getResource("mActionZoomFullExtent.png");
 		image = Toolkit.getDefaultToolkit().getImage(imageFile);
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		// mapPanel.addButton(new PZoomToPreviousExtent(), toolParams);
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Distance");
 		toolParams.put(ToolManager.TOGGLE, true);
-		imageFile = DistanceTool.class.getResource("ruler-icon.png");
+		imageFile = DistanceTool.class.getResource("ruler.png");
 		image = Toolkit.getDefaultToolkit().getImage(imageFile);
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put(Action.SHORT_DESCRIPTION,

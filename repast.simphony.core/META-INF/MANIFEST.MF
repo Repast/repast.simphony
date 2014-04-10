@@ -9,7 +9,6 @@ Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/jgap.jar,
  lib/OpenForecast-0.4.0.jar,
  lib/collections-generic-4.01.jar,
- lib/jscience.jar,
  lib/joone-editor.jar,
  lib/joone-engine.jar,
  lib/jbullet.jar,
@@ -30,7 +29,8 @@ Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/poi-3.9-20121203.jar,
  lib/poi-ooxml-3.9-20121203.jar,
  lib/poi-ooxml-schemas-3.9-20121203.jar,
- lib/stax-api-1.0.1.jar
+ lib/stax-api-1.0.1.jar,
+ lib/jscience.jar
 Bundle-Localization: plugin
 Export-Package: .,
  EDU.oswego.cs.dl.util.concurrent,

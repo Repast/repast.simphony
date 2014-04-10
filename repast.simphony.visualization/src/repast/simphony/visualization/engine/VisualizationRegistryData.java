@@ -78,4 +78,30 @@ public interface VisualizationRegistryData {
 	 * @return
 	 */
 	public DisplayDescriptorFactory getDescriptorFactory();
+	
+	/**
+	 * Get a factory for creation projection discritprs used by displays.
+	 * 
+	 * @return
+	 */
+	public ProjectionDescriptorFactory getProjectionDescriptorFactory();
+	
+	/**
+	 * Return an optional (can be null or emptystring) name of a class that is 
+	 *   required for this visualization type to work propely.  This is useful if
+	 *   the visualization is dependent on a third party library like JOGL. The
+	 *   DisplayControllerAction will check if this required class name is on the
+	 *   classpath and will not try to create the display if it is missing.
+	 * 
+	 * @return
+	 */
+	public String getRequiredLibraryClassName();
+	
+	/**
+	 * Returns true if this visualization is able to handle the projection type.
+	 * 
+	 * @param projectionType
+	 * @return
+	 */
+	public boolean handlesProjectionType(String projectionType);
 }

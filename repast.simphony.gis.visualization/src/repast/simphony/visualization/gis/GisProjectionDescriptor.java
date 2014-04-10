@@ -13,10 +13,10 @@ public class GisProjectionDescriptor extends AbstractProjectionDescriptor {
 
   public GisProjectionDescriptor(ProjectionData proj) {
     super(proj);
-    if (!proj.getType().equals(ProjectionData.GEOGRAPHY_TYPE))
-      throw new IllegalArgumentException("Projection is not a geography");
   }
 
+  // TODO Projections: Refactor out the implied layoud stuff.
+  
   /**
    * Gets the implied 3d layout of the projection, if any.
    * 

@@ -48,6 +48,8 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
 
     addContent("General", null, gStep, wizard);
 
+    // TODO Projections: use the regular GeneralStep here to allow modifying projections in the wizard. 
+    //        If the GeneralSteps is used, then we don't need to loop through here.
     // we want to skip the first step, because we stick in the name only step
     while (model.isNextAvailable()) {
       model.nextStep();

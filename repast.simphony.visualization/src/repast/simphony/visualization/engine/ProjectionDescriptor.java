@@ -7,6 +7,10 @@ import repast.simphony.visualization.decorator.ProjectionDecorator3D;
 /**
  * Interface for classes that describe how a projection should be
  * visualized.
+ * 
+ * TODO Projections: We don't really need to have this interface provide the 
+ *   "implied" layout class since the DisplayDescritor has an essentially 
+ *   unused entry for the layout!
  *
  * @author Nick Collier
  * @version $Revision$ $Date$

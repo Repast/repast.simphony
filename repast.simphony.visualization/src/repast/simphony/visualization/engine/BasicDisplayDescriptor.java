@@ -42,11 +42,13 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
   private ScheduleParameters schedParams = ScheduleParameters.createRepeating(1, 1,
       Double.NEGATIVE_INFINITY);
 
+  // TODO Projections: refactor to use just this layout class name instead of
+  //       storing the "implicit" layout class in a ProjectionDescriptor!
   private String layoutClassName;
 
-  private String valueLayerStyleName;
+//  private String valueLayerStyleName;
 
-  private String valueLayerEditedStyleName;
+//  private String valueLayerEditedStyleName;
 
   private String layoutProjection;
 
@@ -56,7 +58,7 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
 
   private List<ProjectionData> projections = new ArrayList<ProjectionData>();
 
-  private List<String> valueLayers = new ArrayList<String>();
+//  private List<String> valueLayers = new ArrayList<String>();
 
   private VisualizationProperties visualizationProperties = null;
 

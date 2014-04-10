@@ -22,7 +22,7 @@ import repast.simphony.space.gis.Geography;
 public class GeographyProjectionRegistryData extends AbstractProjectionRegistryData<Geography<?>> 
 		implements DataLoaderProjectionRegistryData{
 
-	public static final String NAME = "GEOGRAPHY";
+	public static final String NAME = "geography";
 	public static final Class<?> CLASS = Geography.class;
 	
 	protected ProjectionBuilderFactory projectionBuilderFactory;

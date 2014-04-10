@@ -15,8 +15,6 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.engine.DisplayDescriptor;
-import repast.simphony.visualization.engine.DisplayType;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -65,20 +63,8 @@ public class NameOnlyGeneralStep extends PanelWizardStep {
     super.prepare();
     DisplayDescriptor descriptor = model.getDescriptor();
     nameFld.setText(descriptor.getName());
+    typeLbl.setText(descriptor.getDisplayType());
     
-    // TODO Projections: get the types from a viz registry entry
-    if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
-      typeLbl.setText("2D");
-
-    else if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
-      typeLbl.setText("3D");
-
-    // TODO Projections: GIS
-    else if (descriptor.getDisplayType().equals(DisplayType.GIS))
-      typeLbl.setText("GIS");
-    else
-      typeLbl.setText("GIS 3D");
-
     DefaultListModel model = (DefaultListModel) projections.getModel();
     model.clear();
     for (ProjectionData data : descriptor.getProjections()) {

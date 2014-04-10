@@ -20,16 +20,6 @@ public class DisplayWizardCreator {
 
   public DisplayWizardCreator(Object contextID, ContextData context, DisplayComponentControllerAction action) {
     
-  	
-//  	String displayType = action.getDescriptor().getDisplayType();
-  	
-  	// TODO Projections: new descriptors are null here from create display
-  	
-//  	DisplayConfigurationWizardFactory fac = 
-//  			new DisplayConfigurationWizardFactoryFinder().getFactoryFor(displayType);
-  	
-//  	wizard = fac.getConfigurationWizard(contextID, action.getDescriptor(), context);
-  	
   	wizard = new DisplayConfigurationWizard(contextID, null, context);
   	
     this.action = action;

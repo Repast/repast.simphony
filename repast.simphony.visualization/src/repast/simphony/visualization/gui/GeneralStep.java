@@ -4,8 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -15,16 +16,19 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.widget.ListSelector;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianProjectionDescritorFactory;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
-import repast.simphony.visualization.engine.ProjectionDescriptor;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.engine.VisualizationRegistry;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
+import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -37,6 +41,7 @@ import com.jgoodies.forms.layout.FormLayout;
 @SuppressWarnings("serial")
 public class GeneralStep extends PanelWizardStep {
 	
+	private static final MessageCenter msg = MessageCenter.getMessageCenter(GeneralStep.class);
 	public static final String DEFAULT_DISPLAY_TITLE = "New Display";
 
   class DisplayItem {
@@ -75,8 +80,15 @@ public class GeneralStep extends PanelWizardStep {
 
   private DisplayWizardModel model;
   private JTextField nameFld = new JTextField();
-  private JComboBox typeBox = new JComboBox();
+  private JComboBox<String> typeBox = new JComboBox();
   private ListSelector<DisplayItem> selector;
+  
+  /**
+   * The descriptor cache is handy in case the user changes the display type back
+   *   and forth during one wizard sessions, so that changes aren't lost between
+   *   switches.
+   */
+  private Map<String,DisplayDescriptor> descriptorCache = new HashMap<String,DisplayDescriptor>();
 
   public GeneralStep() {
     super("Display Details", "Please enter the name and type of the display as well the "
@@ -201,51 +213,53 @@ public class GeneralStep extends PanelWizardStep {
   public void prepare() {
     super.prepare();
 
-    ComboBoxModel cmbModel;
-    
-    // TODO Projections: init from viz registry data GIS
-    
-    if (model.contextContainsOnlyProjectionType(ProjectionData.GEOGRAPHY_TYPE)) {
-      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.GIS, DisplayType.GIS3D });
-    } 
-    else if (model.contextContainsProjectionType(ProjectionData.GEOGRAPHY_TYPE)) {
-      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.TWO_D, DisplayType.THREE_D,
-      		DisplayType.GIS, DisplayType.GIS3D });
-    } 
-    else {
-      cmbModel = new DefaultComboBoxModel(new String[] { DisplayType.TWO_D, DisplayType.THREE_D });
+    // Comboboxmodel is a list of available displays
+    DefaultComboBoxModel<String> cmbModel = new DefaultComboBoxModel<String>();
+     
+    // The default Repast projections are handled by the 2D/3D Cartesian displays.
+    if (model.contextContainsProjectionType(ProjectionData.CONTINUOUS_SPACE_TYPE) ||
+    		model.contextContainsProjectionType(ProjectionData.GRID_TYPE) ||
+    		model.contextContainsProjectionType(ProjectionData.NETWORK_TYPE) ||
+    		model.contextContainsProjectionType(ProjectionData.VALUE_LAYER_TYPE)){
+    	
+    	cmbModel.addElement(DisplayType.TWO_D);
+    	cmbModel.addElement(DisplayType.THREE_D);
     }
+    	
+    // Check the projection registry for additional projection types
+    for (ProjectionRegistryData<?> prd : ProjectionRegistry.getRegistryData()){
+    	
+    	String projectionType = prd.getTypeName();
+    	
+    	// If the model contains a projection type and a display supports the 
+    	//  projection type, then add the display type to the list of display types
+    	//  in the wizard.
+    	if (model.contextContainsProjectionType(projectionType)){
+    		for (VisualizationRegistryData vizData : VisualizationRegistry.getRegistryData()){	
+    			if (vizData.handlesProjectionType(projectionType)){
+    				cmbModel.addElement(vizData.getVisualizationType());
+    			}
+    		}
+    	}
+    }
+    
     typeBox.setModel(cmbModel);
     
-    // TODO Projections: changing the type creates a descriptor to work with.
-    // TODO Projections: use Cartesian as the default descriptor
-    // TODO Projections: cache descriptors in case the user makes changes, then
-    //         selects a new display type, but goes back again...
-    typeBox.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String type = (String) typeBox.getSelectedItem();
-
-				if (DisplayType.TWO_D.equals(type) || DisplayType.THREE_D.equals(type)){
-					model.setDescriptor(new CartesianDisplayDescriptor(nameFld.getText().trim()));
-				}
-				else{
-				  VisualizationRegistryData data = VisualizationRegistry.getDataFor(type);
-				  
-				  if (data != null){
-				  model.setDescriptor(data.getDescriptorFactory().createDescriptor(nameFld.getText().trim()));
-				  }
-				  else{
-				  	JOptionPane.showMessageDialog(getParent(),
-				  	    "No descriptor found for type: " + type,
-				  	    "Display error", JOptionPane.ERROR_MESSAGE);
-				  }
-				}	
-			}
-    	
-    });
-
+    // Build a cache of display descriptor types.
+    // Built in Cartesian descriptors
+    descriptorCache.put(DisplayType.TWO_D, 
+    		new CartesianDisplayDescriptor(nameFld.getText().trim()));
+    
+    descriptorCache.put(DisplayType.THREE_D, 
+    		new CartesianDisplayDescriptor(nameFld.getText().trim()));
+    
+    // Descriptors from registry
+    for (VisualizationRegistryData data : VisualizationRegistry.getRegistryData()){
+    	DisplayDescriptor newDesc = 
+    			data.getDescriptorFactory().createDescriptor(nameFld.getText().trim());
+    	descriptorCache.put(data.getVisualizationType(), newDesc);
+    }
+    
     java.util.List<DisplayItem> source = new ArrayList<DisplayItem>();
     java.util.List<DisplayItem> target = new ArrayList<DisplayItem>();
     for (ProjectionData proj : model.getContext().projections()) {
@@ -280,6 +294,21 @@ public class GeneralStep extends PanelWizardStep {
 
     selector.setLists(source, target);
     setComplete(target.size() > 0);
+
+    typeBox.addActionListener(new ActionListener(){
+
+    	@Override
+    	public void actionPerformed(ActionEvent e) {
+    		String type = (String) typeBox.getSelectedItem();
+
+    		// If there's no current descritor or if the current model descriptor 
+    		//  is different from what's selected, assign the selected descriptor
+    		//  type from the cache.
+    		if (model.getDescriptor() == null || !model.getDescriptor().getDisplayType().equals(type)){
+    			model.setDescriptor(descriptorCache.get(type));
+    		}					
+    	}
+    });
   }
 
   /*
@@ -300,6 +329,9 @@ public class GeneralStep extends PanelWizardStep {
     descriptor.setName(nameFld.getText().trim());
     String curType = descriptor.getDisplayType();
     String newType = (String) typeBox.getSelectedItem();
+    
+    
+    // TODO Projections: does this even get used now with the cache? ---V
     if (curType != newType) {
       descriptor.setDisplayType(newType, true);
     }
@@ -310,18 +342,33 @@ public class GeneralStep extends PanelWizardStep {
     	((ValueLayerDescriptor)descriptor).clearValueLayerNames();
     }
     
+    // -----------------------------------------------------------------^^
+    
     for (DisplayItem item : selector.getSelectedItems()) {
     	if (item.proj != null) {
+    		
     		if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE)) {
     			if (descriptor instanceof ValueLayerDescriptor){
     				((ValueLayerDescriptor)descriptor).addValueLayerName(item.displayName);
     			}
     		} 
     		else {
+    			ProjectionDescriptorFactory pdf = null;
     			
-    			// TODO Projections: put the proj desc factories in the viz registry
-    			ProjectionDescriptor pd = ProjectionDescriptorFactory.createDescriptor(item.proj);
-    			descriptor.addProjection(item.proj, pd);
+    			// TODO Projections: move 2D/3D to proj registry
+    			if (DisplayType.TWO_D.equals(curType) || DisplayType.THREE_D.equals(curType)){
+    				pdf = new CartesianProjectionDescritorFactory();
+    			}
+    			else{
+    				pdf = VisualizationRegistry.getDataFor(curType).getProjectionDescriptorFactory();
+    			}
+    			
+    			if (pdf != null){	
+    				descriptor.addProjection(item.proj, pdf.createDescriptor(item.proj));
+    			}
+    			else{
+    				msg.error("No ProjectionDescriptorFactory found for type: " + curType, null);
+    			}
     		}
     	}
     }

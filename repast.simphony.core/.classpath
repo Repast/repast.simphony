@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test_bin" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/jscience.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.9-20121203.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.9-20121203.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.1.jar"/>
@@ -17,7 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jbullet.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joone-editor.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joone-engine.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jscience.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/collections-generic-4.01.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgap.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/OpenForecast-0.4.0.jar"/>

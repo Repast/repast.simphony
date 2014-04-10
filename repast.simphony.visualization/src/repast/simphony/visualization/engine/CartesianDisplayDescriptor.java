@@ -18,7 +18,7 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
 
   private String valueLayerEditedStyleName;
 
-  private List<String> valueLayers = new ArrayList<String>();
+  public List<String> valueLayers = new ArrayList<String>();
 
   public CartesianDisplayDescriptor(CartesianDisplayDescriptor descriptor) {
     super(descriptor.getName());

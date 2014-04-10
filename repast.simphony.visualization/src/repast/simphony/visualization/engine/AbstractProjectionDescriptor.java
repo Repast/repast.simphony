@@ -72,6 +72,8 @@ public abstract class AbstractProjectionDescriptor implements ProjectionDescript
 		map.put(key, value);
 	}
 
+	// TODO Projections: can we refactor to use one decorator getter?
+	
 	/**
 	 * Gets an Iterable over the 2d projection decorators for the projection.
 	 *

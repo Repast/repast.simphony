@@ -46,13 +46,7 @@ public class DisplayProducer {
    
     else if (displayDescriptor.getDisplayType().equals(DisplayType.THREE_D))
       return new DisplayCreator3D(context, (CartesianDisplayDescriptor)displayDescriptor).createDisplay(); 
-    
-    
-//    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS)
-//      return new DisplayCreatorGIS(context, displayDescriptor).createDisplay();
-//    else
-//      return new DisplayCreator3DGIS(context, displayDescriptor).createDisplay();
-    
+        
     // TODO Projections: above code can be removed in favor of the registry approach
     //       if adopted for other displays.
     
