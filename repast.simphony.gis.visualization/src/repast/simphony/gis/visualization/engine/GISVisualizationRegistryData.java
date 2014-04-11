@@ -1,28 +1,34 @@
 package repast.simphony.gis.visualization.engine;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.pietschy.wizard.WizardModel;
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
-import repast.simphony.visualization.engine.AbstractVisualizationRegistryData;
-import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
+import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
-import repast.simphony.visualization.gui.DisplayWizardModel;
-import repast.simphony.visualization.gui.GISStyleStep;
 
-public class GISVisualizationRegistryData extends AbstractVisualizationRegistryData {
+public class GISVisualizationRegistryData implements VisualizationRegistryData {
 
 	public static final String TYPE = "GIS";
 	
 	public GISVisualizationRegistryData() {
-		super(TYPE, new DisplayCreatorFactoryGIS());
+
+	}
+	
+	@Override
+	public String getVisualizationType() {
+		return TYPE;
+	}
+
+	@Override
+	public DisplayCreatorFactory getDisplayCreatorFactory() {
+		return new DisplayCreatorFactoryGIS();
 	}
 
 	@Override

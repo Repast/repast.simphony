@@ -17,10 +17,4 @@ public interface DataLoaderProjectionRegistryData {
 	 */
 	public ProjectionBuilderFactory getProjectionBuilderFactory();
 	
-	/**
-	 * Set the projection builder factory.
-	 * 
-	 * @param projectionBuilderFactory
-	 */
-	public void setProjectionBuilderFactory(ProjectionBuilderFactory projectionBuilderFactory);
 }

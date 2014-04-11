@@ -20,8 +20,6 @@ import repast.simphony.visualization.gui.DisplayDescriptorFactory;
  * @param <T> 
  */
 public interface VisualizationRegistryData {
-
-	// TODO Projections: store the projections this viz can use.
 	
 	/**
 	 * The visualization type Name, e.g. "2D", "3D", etc

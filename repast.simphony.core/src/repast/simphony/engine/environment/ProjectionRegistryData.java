@@ -49,16 +49,7 @@ public interface ProjectionRegistryData<T extends Projection<?>> {
 	 */
 	public ProjectionDryer<T> getProjectionDryer();
 	
-	/**
-	 * Sets the optional projection drier.
-	 * 
-	 * @param projectionDryer the projection drier.
-	 */
-	public void setProjectionDryer(ProjectionDryer<T> projectionDryer);
-
 	public List<FreezeDryer<?>> getFreezeDryers();
-	
-	public void setFreezeDryers(List<FreezeDryer<?>> freezedryers);
 	
 	/**
 	 * Provides an optional converter for XML (de-)serialization. 
@@ -66,12 +57,5 @@ public interface ProjectionRegistryData<T extends Projection<?>> {
 	 * @return the XML converter.
 	 */
 	public AbstractConverter getProjectionXMLConverter();
-	
-	/**
-	 * Sets the optional converter for XML (de-)serialization.
-	 * 
-	 * @param projectionXMLConverter
-	 */
-	public void setProjectionXMLConverter(AbstractConverter projectionXMLConverter);
 	
 }

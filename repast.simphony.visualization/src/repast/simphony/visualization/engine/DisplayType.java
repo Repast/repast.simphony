@@ -11,10 +11,4 @@ public class DisplayType {
 
 	public static final String TWO_D = "2D";
 	public static final String THREE_D = "3D";
-	
-	@Deprecated
-	public static final String GIS = "GIS"; 
-	
-	@Deprecated
-	public static final String GIS3D = "GIS 3D";
 }
