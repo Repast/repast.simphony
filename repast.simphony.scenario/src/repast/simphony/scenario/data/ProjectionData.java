@@ -37,4 +37,8 @@ public class ProjectionData extends AttributeContainer {
   public String getType() {
     return type;
   }
+
+	public void setType(String type) {
+		this.type = type;
+	}  
 }

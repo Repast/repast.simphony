@@ -46,10 +46,6 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
   //       storing the "implicit" layout class in a ProjectionDescriptor!
   private String layoutClassName;
 
-//  private String valueLayerStyleName;
-
-//  private String valueLayerEditedStyleName;
-
   private String layoutProjection;
 
   private int layoutInterval = 0;
@@ -57,8 +53,6 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
   private Map<String, Integer> layerOrder = new HashMap<String, Integer>();;
 
   private List<ProjectionData> projections = new ArrayList<ProjectionData>();
-
-//  private List<String> valueLayers = new ArrayList<String>();
 
   private VisualizationProperties visualizationProperties = null;
 
@@ -145,7 +139,7 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
    * 
    * @param descriptor
    */
-  protected void set(DisplayDescriptor descriptor) {
+  public void set(DisplayDescriptor descriptor) {
   	
   	// TODO Projections: minimize duplicates with subclasses.
   	
@@ -179,15 +173,6 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
     if (descriptor.networkEditedStyleIDs() != null)
       for (Object name : descriptor.networkEditedStyleIDs())
         addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
-
-    if (type.equals(DisplayType.TWO_D)) {
-      layerOrder.clear();
-      if (descriptor.agentClassLayerOrders() != null) {
-        for (String name : descriptor.agentClassLayerOrders()) {
-          addLayerOrder(name, descriptor.getLayerOrder(name));
-        }
-      }
-    }
     
     for (ProjectionData proj : descriptor.getProjections()) {
       addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
@@ -206,7 +191,7 @@ public abstract class BasicDisplayDescriptor extends AbstractDescriptor implemen
   }
 
   
-  public void setDisplayType(String type) {
+  private void setDisplayType(String type) {
     if (this.type != type) {
       this.type = type;
       scs.fireScenarioChanged(this, "displayType");

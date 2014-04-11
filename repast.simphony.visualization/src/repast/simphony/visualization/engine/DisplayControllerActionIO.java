@@ -34,7 +34,11 @@ public class DisplayControllerActionIO extends
 
     @Override
     protected ControllerAction createAction(DisplayDescriptor descriptor, Scenario scenario) {
-      descriptor.addScenarioChangedListener(scenario);
+    	DisplayDescriptorValidator validator = new DisplayDescriptorValidator();
+    	
+    	descriptor = validator.validateDescriptor(descriptor);
+    	
+    	descriptor.addScenarioChangedListener(scenario);
       return new DisplayComponentControllerAction(descriptor);
     }
 

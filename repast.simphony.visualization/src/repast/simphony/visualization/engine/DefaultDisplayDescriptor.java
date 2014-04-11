@@ -182,7 +182,8 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return projectionDescriptors.values();
   }
 
-//  public void set(DisplayDescriptor descriptor) {
+  @Deprecated
+  public void set(DisplayDescriptor descriptor) {
 //    setScheduleParameters(descriptor.getScheduleParameters());
 //    setName(descriptor.getName());
 //    setDisplayType(descriptor.getDisplayType());
@@ -238,7 +239,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 //    }
 //
 //    setBackgroundColor(descriptor.getBackgroundColor());
-//  }
+  }
 
   public String getDisplayType() {
     return type;

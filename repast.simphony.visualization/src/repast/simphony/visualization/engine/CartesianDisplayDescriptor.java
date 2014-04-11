@@ -43,20 +43,39 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
   }
 
   @Override
-  protected void set(DisplayDescriptor descriptor) {
+  public void set(DisplayDescriptor descriptor) {
     super.set(descriptor);
 
-    CartesianDisplayDescriptor cdd = (CartesianDisplayDescriptor)descriptor;
+    if (getDisplayType().equals(DisplayType.TWO_D)) {
+    	getLayerOrders().clear();
+    	if (descriptor.agentClassLayerOrders() != null) {
+    		for (String name : descriptor.agentClassLayerOrders()) {
+    			addLayerOrder(name, descriptor.getLayerOrder(name));
+    		}
+    	}
+    }
     
-    for (String vlName : cdd.getValueLayerNames()) {
+   if (descriptor instanceof CartesianDisplayDescriptor){
+  	 set((CartesianDisplayDescriptor)descriptor);
+   }
+  }
+  
+  /**
+   * Keep the Cartesian descriptor separate from setting for DisplayDescriptor.
+   * 
+   * @param descriptor
+   */
+  private void set(CartesianDisplayDescriptor descriptor) {
+    for (String vlName : descriptor.getValueLayerNames()) {
       addValueLayerName(vlName);
     }
 
-    setValueLayerStyleName(cdd.getValueLayerStyleName());
+    setValueLayerStyleName(descriptor.getValueLayerStyleName());
 
-    if (cdd.getValueLayerEditedStyleName() != null)
-      setValueLayerEditedStyleName(cdd.getValueLayerEditedStyleName());
+    if (descriptor.getValueLayerEditedStyleName() != null)
+      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
   }
+
 
   /**
    * Adds the named value layer to the list of value layers to display.

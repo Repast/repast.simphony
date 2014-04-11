@@ -31,6 +31,13 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   public void set(DisplayDescriptor descriptor) {
   	super.set(descriptor);
   	
+  	getLayerOrders().clear();
+  	
+  	if (descriptor.agentClassLayerOrders() != null) {
+  		for (String name : descriptor.agentClassLayerOrders()) {
+  			addLayerOrder(name, descriptor.getLayerOrder(name));
+  		}
+  	}
   }
 
   @Override
