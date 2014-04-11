@@ -33,8 +33,6 @@ public class ContextFileReader {
 		contexts.clear();
 		containers.clear();
 
-		System.out.println("ContextFileReader.read(...)");
-
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLEventReader reader = factory.createXMLEventReader(new BufferedReader(new FileReader(file)));
 

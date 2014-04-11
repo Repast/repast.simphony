@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test_bin" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/hsqldb-2.2.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jscience.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.9-20121203.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.9-20121203.jar"/>
@@ -29,6 +30,5 @@
 	<classpathentry exported="true" kind="lib" path="lib/jung-api-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-graph-impl-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jung-io-2.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hsqldb-1.8.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

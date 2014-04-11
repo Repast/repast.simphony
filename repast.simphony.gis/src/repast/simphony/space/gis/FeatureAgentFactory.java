@@ -42,10 +42,14 @@ import com.vividsolutions.jts.geom.Geometry;
 public abstract class FeatureAgentFactory<T> {
 
 	/*
-	 * The default name for the geometry attribute - an arbitrary string.  Note
-	 *  that Feature attribute names may not contain spaces or periods. 
+	 * The default name for the geometry attribute.  By convention, this attribute
+	 * name is usually "the_geom".  The OpenGIS / Geotools 11 API suggests that this 
+	 * string can be arbitrary, but some of the Geotools code, such as for writing 
+	 * shape files doesn't consistently work otherwise. 
+	 * 
+	 * Note that Feature attribute names may not contain spaces or periods. 
 	 */
-	public static final String GEOM_ATTRIBUTE_NAME = "Location";
+	public static final String GEOM_ATTRIBUTE_NAME = "the_geom";
 	MessageCenter msg = MessageCenter.getMessageCenter(getClass());	
 	private Map<Class, SimpleFeatureType> types = new HashMap<Class, SimpleFeatureType>();
 	private Map<Class, Class> primitiveMap = new HashMap<Class, Class>();

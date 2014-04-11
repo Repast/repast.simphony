@@ -2,20 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-api-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-cql-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-data-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-main-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-metadata-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-render-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-9.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jt-utils-1.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jt-zonalstats-1.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-api-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-cql-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-data-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-main-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-metadata-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-render-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-11.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt-utils-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt-zonalstats-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
