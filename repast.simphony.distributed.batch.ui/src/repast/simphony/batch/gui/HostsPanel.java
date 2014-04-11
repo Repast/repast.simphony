@@ -265,12 +265,13 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
 
     selectedHost = (Host) hostList.getSelectedValue();
     if (selectedHost != null) {
+      enableForType(selectedHost.getType());
       userFld.setText(selectedHost.getUser());
       hostsFld.setText(selectedHost.getHost());
-      sshKeyFileFld.setText(selectedHost.getSSHKeyFile());
       typeBox.setSelectedItem(selectedHost.getType());
+      if (selectedHost.getType() == Type.REMOTE && selectedHost.getSSHKeyFile().trim().length() > 0)
+        sshKeyFileFld.setText(selectedHost.getSSHKeyFile());
       instancesSpn.setValue(new Integer(selectedHost.getInstances()));
-      enableForType(selectedHost.getType());
     } else {
       userFld.setText("");
       hostsFld.setText("");
