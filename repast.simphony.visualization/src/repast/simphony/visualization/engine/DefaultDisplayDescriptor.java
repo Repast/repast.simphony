@@ -29,14 +29,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 
   // TODO WWJ - handle multiple styles
   private static Class<?>[] stylesGIS3D;// = new Class<?>[] { DefaultMarkStyle.class,
-//      DefaultSurfaceShapeStyle.class };
 
-  // //TODO ###################################################################
-  // private static Class<?>[] editedStyles3D = new Class<?>[] { null };
-  //
-  // private static Class<?>[] editedStyles2D = new Class<?>[] { null };
-  //
-  // // ###################################################################
 
   private static Class<?>[] netStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
 

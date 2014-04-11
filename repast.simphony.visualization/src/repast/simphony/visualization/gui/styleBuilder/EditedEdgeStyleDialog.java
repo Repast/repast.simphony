@@ -43,7 +43,7 @@ import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.editedStyle.LineStyle;
-import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import simphony.util.messages.MessageCenter;
 
@@ -89,7 +89,7 @@ public class EditedEdgeStyleDialog extends JDialog {
 
 	private String netID;
 	private String userStyleName;
-	DisplayDescriptor descriptor;
+	CartesianDisplayDescriptor descriptor;
 
 	private PreviewEdge preview;
 
@@ -114,7 +114,7 @@ public class EditedEdgeStyleDialog extends JDialog {
 	}
 
 	public void init(ContextData context, String netID, String userStyleName,
-			DisplayDescriptor descriptor) {
+			CartesianDisplayDescriptor descriptor) {
 		this.netID = netID;
 		this.userStyleName = userStyleName;
 		for (ProjectionData proj: context.projections()) {

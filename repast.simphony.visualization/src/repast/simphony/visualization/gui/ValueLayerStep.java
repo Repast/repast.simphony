@@ -21,6 +21,7 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ValueLayerDescriptor;
@@ -139,7 +140,7 @@ public class ValueLayerStep extends PanelWizardStep {
 
 				String layerName = ((ValueLayerDescriptor)descriptor).getValueLayerNames().iterator().next();
 				
-				dialog.init(layerName,editedStyleName,model.getDescriptor());
+				dialog.init(layerName, editedStyleName, (CartesianDisplayDescriptor)model.getDescriptor());
 				dialog.pack();
 				dialog.setVisible(true);
 

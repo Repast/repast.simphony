@@ -3,8 +3,8 @@ package repast.simphony.visualization.engine;
 import repast.simphony.scenario.data.ProjectionData;
 
 /**
- * Interface for ProjectionDescriptorFactory implementations that create a 
- *   new ProjectionDescriptor from ProjectionData.
+ * ProjectionDescriptorFactory implementations create ProjectionDescriptor that
+ *   are valid for specific display types.
  * 
  * @author Nick Collier
  * @author Eric Tatara

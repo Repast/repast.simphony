@@ -8,6 +8,7 @@ import org.pietschy.wizard.models.Condition;
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.AbstractVisualizationRegistryData;
+import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
 import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
@@ -72,5 +73,10 @@ public class GIS3DVisualizationRegistryData extends AbstractVisualizationRegistr
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public DisplayValidator getDisplayValidator() {
+		return new GISDisplayValidator();
 	}
 }

@@ -18,8 +18,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import repast.simphony.gis.styleEditor.SimpleMarkFactory;
-
 public class PreviewIcon2D extends JLabel implements PreviewIcon {
 
   private GeneralPath polygonShape;
@@ -39,8 +37,6 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
   private Image image;
   private Font font = new Font("Arial", Font.PLAIN, 12);
   private Color fontColor = Color.BLACK;
-
-  private static SimpleMarkFactory markFac = new SimpleMarkFactory();
   
   public PreviewIcon2D() {
     image = new BufferedImage(200, 100, BufferedImage.TYPE_4BYTE_ABGR);
@@ -140,10 +136,9 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
   private void updateShape() {
     float ms = markSize == -1f ? 15.0f : markSize;
     if (this.mark != null) {
-      //  TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
     	//  TODO use ReLogo style SVGs?
     	shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
-      		markFac.getMark(mark));
+    			IconFactory2D.getShape(mark));
     } else {
       shape = AffineTransform.getScaleInstance(ms, ms).createTransformedShape(
           this.previewShape);

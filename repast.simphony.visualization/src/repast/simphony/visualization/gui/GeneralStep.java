@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -24,6 +25,7 @@ import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.CartesianProjectionDescritorFactory;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.engine.VisualizationRegistry;
@@ -121,86 +123,82 @@ public class GeneralStep extends PanelWizardStep {
   }
 
   private boolean doValidate() {
-    int geoCount = 0; // # geography projections
-    int netCount = 0; // # network projections
-    int cartCount = 0; // # cartesian (grid,continuous) projections
-    int valueCount = 0; // # value layers
-
-    // TODO Projections: Have the viz registry entries provide info on 
-    //        what projections they support.
+   
+  	// Compare the selected projection types with what types the selected
+  	//   display is able to handle.
+  	
+    boolean hasCart = false;    // Cartesian (grid,continuous) projections
+    boolean hasValue = false;   // Value layers
+    boolean hasNet = false;     // Networks
+    boolean hasOther = false;   // Any other type (eg user-defined)
+    int valCount = 0;					  // Number of selected value layers
+    
+    List<String> selectedProjectionTypes = new ArrayList<String>();
+    
     for (DisplayItem item : selector.getSelectedItems()) {
-      if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE))
-        valueCount++;
+    	selectedProjectionTypes.add(item.getProjectionData().getType());
+    	
+      if (item.getProjectionData().getType().equals(ProjectionData.VALUE_LAYER_TYPE)){
+      	hasValue = true;
+      	valCount++;
+      }
+       
+      else if (item.getProjectionData().getType().equals(ProjectionData.NETWORK_TYPE)){
+        hasNet = true;
+      }
       
-      // TODO Projections: GIS
-      else if (item.getProjectionData().getType().equals(ProjectionData.GEOGRAPHY_TYPE))
-        geoCount++;
+      else if (item.getProjectionData().getType().equals(ProjectionData.CONTINUOUS_SPACE_TYPE) || 
+      		     item.getProjectionData().getType().equals(ProjectionData.GRID_TYPE)){
+        hasCart = true;
+      }
       
-      else if (item.getProjectionData().getType().equals(ProjectionData.NETWORK_TYPE))
-        netCount++;
-      
-      else
-        cartCount++;
+      else {
+      	hasOther = true;
+      }
     }
 
     String displayType = (String) typeBox.getSelectedItem();
 
-    // TODO Projections: move to GIS viz registry data
-    // Validate GIS / Geography projection displays
-    // Check if a geography projection is used with a non-GIS display type
-    if (geoCount > 0
-        && (displayType.equals(DisplayType.TWO_D) || displayType.equals(DisplayType.THREE_D))) {
-      JOptionPane.showMessageDialog(selector,
-          "Geography projections can only be used in a GIS display", "Display Error",
-          JOptionPane.ERROR_MESSAGE);
-      return false;
+    // Validate 2D/3D Cartesian displays.
+    if (displayType.equals(DisplayType.TWO_D) || displayType.equals(DisplayType.THREE_D)) {
+    	// Assume that other (eg user-defined, or GIS) projections are not compatible
+    	//   with the built-in Cartesian displays.
+    	if (hasOther){
+    		JOptionPane.showMessageDialog(selector,
+    				"Only 2D, 3D, Network, and Value layer projections are supported by " + displayType, "Display Error",
+    				JOptionPane.ERROR_MESSAGE);
+    		
+    		return false;
+    	}
+ 	
+      // If the display contains value layers.
+      if (hasValue) {
+        // Check if there is at least one Cartesian projection
+        if (!hasCart) {
+          JOptionPane
+              .showMessageDialog(
+                  selector,
+                  "Displays containing Value Layers must also contain at least one Grid or Continuous projection.",
+                  "Display Error", JOptionPane.ERROR_MESSAGE);
+          return false;
+        }
+
+        // Check if there is no more than one value layer
+        if (valCount > 1) {
+          JOptionPane.showMessageDialog(selector, "Displays may only contain one Value Layer.",
+              "Display Error", JOptionPane.ERROR_MESSAGE);
+          return false;
+        }
+
+      }
+    }
+    // Validate displays defined in the viz registry
+    else {
+    	DisplayValidator validator = VisualizationRegistry.getDataFor(displayType).getDisplayValidator();
+    	
+    	return validator.validateDisplay(selectedProjectionTypes);
     }
     
-    // TODO Projections: move to GIS viz registry data
-    // Check if GIS displays contain a geography projection
-    else if (displayType.equals(DisplayType.GIS) || displayType.equals(DisplayType.GIS3D)) {
-      if (geoCount != 1) {
-        JOptionPane.showMessageDialog(selector, "A GIS display must contain a single Geography.",
-            "Display Error", JOptionPane.ERROR_MESSAGE);
-        return false;
-      }
-
-      else if (geoCount <= 1 && (cartCount > 0 || valueCount > 0)) {
-        JOptionPane.showMessageDialog(selector,
-            "GIS displays may only contain Geography and Network projections.", "Display Error",
-            JOptionPane.ERROR_MESSAGE);
-        return false;
-      }
-
-      else if (geoCount == 1 && netCount > 0) {
-        JOptionPane.showMessageDialog(selector,
-            "Note that network edges are styled as agents in GIS displays.", "Display Info",
-            JOptionPane.INFORMATION_MESSAGE);
-        return true;
-      }
-    }
-
-    // If the display contains value layers...
-    if (valueCount > 0) {
-
-      // Check if there is at least one layout projection
-      if (cartCount == 0) {
-        JOptionPane
-            .showMessageDialog(
-                selector,
-                "Displays containing Value Layers must also contain at least one Grid or Continuous projection.",
-                "Display Error", JOptionPane.ERROR_MESSAGE);
-        return false;
-      }
-
-      // Check if there is no more than one value layer
-      if (valueCount > 1) {
-        JOptionPane.showMessageDialog(selector, "Displays may only contain one Value Layer.",
-            "Display Error", JOptionPane.ERROR_MESSAGE);
-        return false;
-      }
-
-    }
     return true;
   }
 

@@ -29,6 +29,7 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.VisualizationRegistry;
@@ -143,14 +144,15 @@ public class StyleStep extends PanelWizardStep {
 
 					String editedStyleName = model.getDescriptor().getEditedStyleName(classFld.getText());
 
-					dialog.init(Class.forName(classFld.getText()), editedStyleName, model.getDescriptor());
+					dialog.init(Class.forName(classFld.getText()), editedStyleName, 
+							(CartesianDisplayDescriptor)model.getDescriptor());
 					dialog.pack();
 					dialog.setVisible(true);
 
 					if (dialog.doSave()) {
 
 						// Set the style class name based on display type
-						String styleClassName;
+						String styleClassName = null;
 
 						// TODO Projections: get the style class name from the viz registry data
 						
@@ -161,8 +163,8 @@ public class StyleStep extends PanelWizardStep {
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
 
 						// TODO Projections: GIS
-						else
-							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
+//						else
+//							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
 
 						if (styleModel.getIndexOf(styleClassName) < 0)
 							styleModel.addElement(styleClassName);
@@ -177,7 +179,7 @@ public class StyleStep extends PanelWizardStep {
 				}
 			}
 		});
-
+	
 		builder.addLabel("Display Background Color:", cc.xy(3, 11));
 		builder.add(bgcolorBtn, cc.xy(5, 11));
 		bgcolorBtn.setToolTipText("Click to change background color");
@@ -295,11 +297,14 @@ public class StyleStep extends PanelWizardStep {
 			}
 		}
 		
-		// TODO implement style editor for 3D GIS
-		// TODO Projections: the viz data should also contain an editor 
-		if (descriptor.getDisplayType().equals(DisplayType.GIS3D)) {
+		// TODO Projections: get the build style availability/editor from the viz registry.
+		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
+			buildStyleButton.setEnabled(true);
+		}
+		else {
 			buildStyleButton.setEnabled(false);
 		}
+		
 		// Find all available style classes for the display type
 		
 		// TODO Cache styles.  There was some unfinished code here for caching styles

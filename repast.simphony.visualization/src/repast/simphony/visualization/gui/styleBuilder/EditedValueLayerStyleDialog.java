@@ -29,7 +29,7 @@ import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleDat
 import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.editedStyle.EditedValueLayerStyleData;
-import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 
 import com.jgoodies.forms.factories.Borders;
@@ -63,7 +63,7 @@ public class EditedValueLayerStyleDialog extends JDialog {
   }
 
   public void init(String valueLayerName, String userStyleName,
-                   DisplayDescriptor descriptor) {
+                   CartesianDisplayDescriptor descriptor) {
     this.valueLayerName = valueLayerName;
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();

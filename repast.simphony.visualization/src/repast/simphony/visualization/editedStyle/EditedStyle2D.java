@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import repast.simphony.gis.styleEditor.SimpleMarkFactory;
+import repast.simphony.visualization.gui.styleBuilder.IconFactory2D;
 import repast.simphony.visualization.visualization2D.style.Style2D;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PImage;
@@ -31,9 +31,7 @@ public class EditedStyle2D implements Style2D<Object> {
 	EditedStyleData<Object> innerStyle;
 //	private BufferedImage image;
 	private Image image;
-//	String iconFile = null;
-	
-	private static SimpleMarkFactory markFac = new SimpleMarkFactory(); 
+//	String iconFile = null; 
 
 	public EditedStyle2D(String userStyleFile) {
 		innerStyle = EditedStyleUtils.getStyle(userStyleFile);
@@ -89,9 +87,8 @@ public class EditedStyle2D implements Style2D<Object> {
 		// get the shape from well-known text
 		else{
 			String wkt = innerStyle.getShapeWkt();
-			// TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
 			// TODO use SVGs a la ReLogo?
-			Shape shape = markFac.getMark(wkt);
+			Shape shape = IconFactory2D.getShape(wkt);
 			path = new PPath(shape);
 //			path.transformBy(trans);
 			path.setBounds(new Rectangle2D.Float(0, 0, size, size));

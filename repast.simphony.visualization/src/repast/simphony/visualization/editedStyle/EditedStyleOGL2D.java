@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import repast.simphony.gis.styleEditor.SimpleMarkFactory;
+import repast.simphony.visualization.gui.styleBuilder.IconFactory2D;
 import repast.simphony.visualizationOGL2D.ImageSpatialSource;
 import repast.simphony.visualizationOGL2D.StyleOGL2D;
 import saf.v3d.NamedShapeCreator;
@@ -31,8 +31,7 @@ public class EditedStyleOGL2D implements StyleOGL2D<Object> {
 
   private static int counter = 0;
   private static final MessageCenter msg = MessageCenter.getMessageCenter(EditedStyleOGL2D.class);
-  private static SimpleMarkFactory markFac = new SimpleMarkFactory();
-  
+    
   private EditedStyleData<Object> style;
   private String id = String.valueOf(++counter);
   private ShapeFactory2D factory;
@@ -102,9 +101,8 @@ public class EditedStyleOGL2D implements StyleOGL2D<Object> {
       String wkt = style.getShapeWkt();
       // these shapes are not closed, so we need to close them
       // to create filled polygons.
-      // TODO using SimpleMarkFactory here is really an unnecceary dependency on GIS
  			// TODO use SVGs a la ReLogo?
-      Shape shape = markFac.getMark(wkt);
+      Shape shape = IconFactory2D.getShape(wkt);
       Rectangle2D bounds = shape.getBounds2D();
       // -1 means deafault size of 15.
       float size = origSize == -1 ? 15f : origSize;

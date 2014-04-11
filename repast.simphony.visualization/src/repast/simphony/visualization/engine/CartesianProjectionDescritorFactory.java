@@ -5,7 +5,8 @@ import repast.simphony.visualization.continuous.ContinuousProjectionDescriptor;
 import repast.simphony.visualization.grid.GridProjectionDescriptor;
 
 /**
- * ProjectionDescritorFactory for Cartesian and network ProjectionData
+ * ProjectionDescritorFactory that creates ProjectionDescriptors for Cartesian
+ *   displays.
  * 
  * @author Eric Tatara
  *

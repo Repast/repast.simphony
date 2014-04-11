@@ -104,4 +104,11 @@ public interface VisualizationRegistryData {
 	 * @return
 	 */
 	public boolean handlesProjectionType(String projectionType);
+	
+	/**
+	 * Get a DisplayValidator instance associated with this display type.
+	 * 
+	 * @return
+	 */
+	public DisplayValidator getDisplayValidator();
 }

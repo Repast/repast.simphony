@@ -61,13 +61,10 @@ public class WWUtils {
 			return JTS.transform(geom, transform); 
 			
 		} catch (FactoryException e) {
-		  // TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MismatchedDimensionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TransformException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		

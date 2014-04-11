@@ -39,7 +39,7 @@ import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
-import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import saf.core.ui.util.FileChooserUtilities;
 
@@ -58,8 +58,6 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * @author Eric Tatara
  */
 public class EditedStyleDialog extends JDialog {
-  
-  private static final String ICON_SIZE = "Icon Size";
   
   private boolean save = false;
   private EditedStyleData userStyleData;
@@ -120,7 +118,7 @@ public class EditedStyleDialog extends JDialog {
   }
 
   public void init(Class agentClass, String userStyleName,
-                   DisplayDescriptor descriptor) {
+  		CartesianDisplayDescriptor descriptor) {
     this.agentClassName = agentClass.getCanonicalName();
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();
@@ -155,7 +153,7 @@ public class EditedStyleDialog extends JDialog {
         userStyleData = new DefaultEditedStyleData2D();
 
       // TODO Eliminate GIS plugin depedency.
-      shapeModel = new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List());
+      shapeModel = new DefaultComboBoxModel(IconFactory2D.Shape_List);
 
       shapeModel.setSelectedItem(userStyleData.getShapeWkt());
     } else {
@@ -191,7 +189,7 @@ public class EditedStyleDialog extends JDialog {
     variableIconGreenColorScaleModel = new DefaultComboBoxModel();
     variableIconBlueColorScaleModel = new DefaultComboBoxModel();
     
-    sizeModel.addElement(ICON_SIZE);
+//    sizeModel.addElement(ICON_SIZE);
 
     // Add available methods to appropriate combo box models
     for (String method : methodList) {
@@ -222,12 +220,8 @@ public class EditedStyleDialog extends JDialog {
     if (userStyleData.getSizeMethodName() != null)
       sizeModel.setSelectedItem(userStyleData.getSizeMethodName());
     else {
-      if (userStyleData.getSize() == -1) {
-        sizeModel.setSelectedItem(ICON_SIZE);
-      } else {
-        sizeModel.addElement(userStyleData.getSize());
-        sizeModel.setSelectedItem(userStyleData.getSize());
-      }
+    	sizeModel.addElement(userStyleData.getSize());
+    	sizeModel.setSelectedItem(userStyleData.getSize());
     }
     if (userStyleData.getSizeMinMethodName() != null)
       sizeMinModel.setSelectedItem(userStyleData.getSizeMinMethodName());
@@ -483,10 +477,6 @@ public class EditedStyleDialog extends JDialog {
     } else if (isUserTypedNumber(selection)) {
       userStyleData.setSize(new Float((String) selection));
       preview.setMarkSize(new Float((String) selection));
-      userStyleData.setSizeMethodName(null);
-    } else if (selection.equals(ICON_SIZE)) {
-      userStyleData.setSize(-1f);
-      preview.setMarkSize(-1f);
       userStyleData.setSizeMethodName(null);
     } else
       userStyleData.setSizeMethodName((String) selection);

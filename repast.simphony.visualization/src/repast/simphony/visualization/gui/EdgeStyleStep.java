@@ -26,6 +26,7 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.VisualizationRegistry;
@@ -147,7 +148,7 @@ public class EdgeStyleStep extends PanelWizardStep {
 								netNameFld.getText());
 
 						dialog.init(model.getContext(), netNameFld.getText(), userStyleName,
-								model.getDescriptor());
+								(CartesianDisplayDescriptor)model.getDescriptor());
 						dialog.pack();
 						dialog.setVisible(true);
 
@@ -237,9 +238,11 @@ public class EdgeStyleStep extends PanelWizardStep {
 			}
 		}
 		
-		// TODO implement style editor for 3D GIS
-		// TODO Projections: the viz data should also contain an editor 
-		if (descriptor.getDisplayType().equals(DisplayType.GIS3D)) {
+		// TODO Projections: get the build style availability/editor from the viz registry.
+		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
+			buildStyleButton.setEnabled(true);
+		}
+		else {
 			buildStyleButton.setEnabled(false);
 		}
 		

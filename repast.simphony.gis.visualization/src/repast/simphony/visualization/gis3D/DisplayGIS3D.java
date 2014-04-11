@@ -571,20 +571,15 @@ public class DisplayGIS3D extends AbstractDisplay {
 		try {
 			bar.add(new GazetteerPanel(worldWindow, null));
 		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
 	public void toggleInfoProbe() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Map<Class, AbstractRenderableLayer> getClassStyleMap() {

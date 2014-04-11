@@ -11,6 +11,7 @@ import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.AbstractVisualizationRegistryData;
 import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
 import repast.simphony.visualization.gui.DisplayWizardModel;
@@ -70,5 +71,10 @@ public class GISVisualizationRegistryData extends AbstractVisualizationRegistryD
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public DisplayValidator getDisplayValidator() {
+		return new GISDisplayValidator();
 	}
 }

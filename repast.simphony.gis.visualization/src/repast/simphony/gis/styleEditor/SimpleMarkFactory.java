@@ -15,7 +15,7 @@ import simphony.util.messages.MessageCenter;
  * @author Eric Tatara
  *
  */
-public class SimpleMarkFactory extends WellKnownMarkFactory {
+public class SimpleMarkFactory  {
 
 	private static WellKnownMarkFactory markFac = new WellKnownMarkFactory();
 	private static MessageCenter msg = MessageCenter.getMessageCenter(SimpleMarkFactory.class);
