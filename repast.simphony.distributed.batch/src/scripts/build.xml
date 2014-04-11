@@ -49,6 +49,7 @@
 	<property name="statecharts" location="${plugins.prefix}/repast.simphony.statecharts${plugins.suffix}" />
 	<property name="systemdynamics" location="${plugins.prefix}/repast.simphony.systemdynamics.generator${plugins.suffix}" />
 	<property name="sql" location="${plugins.prefix}/repast.simphony.sql${plugins.suffix}" />
+	<property name="matlab" location="${plugins.prefix}/repast.simphony.matlab${plugins.suffix}" />
 
 	<property name="saf.v3d" location="${plugins.prefix}/saf.core.ui${plugins.suffix}/saf.core.v3d.jar" />
 
@@ -133,6 +134,8 @@
 		<jar destfile="${working.lib}/repast.simphony.visualization.jar" basedir="${visualization}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.statecharts.jar" basedir="${statecharts}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.systemdynamics.jar" basedir="${systemdynamics}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.sql.jar" basedir="${sql}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.matlab.jar" basedir="${matlab}/bin" />
 
 		<!-- copy project's 3rd party libs to the  lib directory -->
 		<copy todir="${working.lib}">
@@ -150,6 +153,10 @@
 			</fileset>
 
 			<fileset dir="${sql}/lib">
+				<include name="*.jar" />
+			</fileset>
+
+			<fileset dir="${matlab}/lib">
 				<include name="*.jar" />
 			</fileset>
 
