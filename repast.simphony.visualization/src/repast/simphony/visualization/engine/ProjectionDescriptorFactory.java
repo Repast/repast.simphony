@@ -1,28 +1,17 @@
 package repast.simphony.visualization.engine;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
-import repast.simphony.visualization.continuous.ContinuousProjectionDescriptor;
-import repast.simphony.visualization.gis.GisProjectionDescriptor;
-import repast.simphony.visualization.grid.GridProjectionDescriptor;
 
 /**
- * Factory for creating ProjectionDescriptors based on ProjectionData.
+ * ProjectionDescriptorFactory implementations create ProjectionDescriptor that
+ *   are valid for specific display types.
  * 
  * @author Nick Collier
- * @version $Revision$ $Date$
+ * @author Eric Tatara
+ *
  */
-public class ProjectionDescriptorFactory {
+public interface ProjectionDescriptorFactory {
 
-  public static ProjectionDescriptor createDescriptor(ProjectionData proj) {
-    if (proj.getType() == ProjectionType.GRID) {
-      return new GridProjectionDescriptor(proj);
-    } else if (proj.getType() == ProjectionType.CONTINUOUS_SPACE) {
-      return new ContinuousProjectionDescriptor(proj);
-    } else if (proj.getType() == ProjectionType.GEOGRAPHY) {
-      return new GisProjectionDescriptor(proj);
-    } else {
-      return new DefaultProjectionDescriptor(proj);
-    }
-  }
+	public ProjectionDescriptor createDescriptor(ProjectionData proj);
+	
 }

@@ -24,13 +24,13 @@ import repast.simphony.visualization.visualization2D.style.ValueLayerStyle;
  * 
  * @author Nick Collier
  */
-public class DisplayCreator2D extends AbstractDisplayCreator {
+public class DisplayCreator2D extends AbstractCartesianDisplayCreator {
 
   /**
    * @param context
    * @param descriptor
    */
-  public DisplayCreator2D(Context<?> context, DisplayDescriptor descriptor) {
+  public DisplayCreator2D(Context<?> context, CartesianDisplayDescriptor descriptor) {
     super(context, descriptor);
   }
 

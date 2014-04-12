@@ -25,7 +25,6 @@ import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.StringConverter;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ClassUtilities;
 import repast.simphony.util.ContextUtils;
@@ -43,231 +42,232 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ProbePanelCreator {
 
-  private MessageCenter msgCenter = MessageCenter.getMessageCenter(ProbePanelCreator.class);
-  private List<PresentationModel<?>> models = new ArrayList<PresentationModel<?>>();
-  private Map<String, List> listContstraints = new HashMap<String, List>();
-  private ProbeableBeanInfo pbInfo;
-  private Object targetBean;
+	private MessageCenter msgCenter = MessageCenter.getMessageCenter(ProbePanelCreator.class);
+	private List<PresentationModel<?>> models = new ArrayList<PresentationModel<?>>();
+	private Map<String, List> listContstraints = new HashMap<String, List>();
+	private ProbeableBeanInfo pbInfo;
+	private Object targetBean;
 
-  public ProbePanelCreator(Parameters params) {
-    try {
-      pbInfo = new ParameterProbeBeanCreator().createProbeableBean(params);
-      models.add(new PresentationModel(pbInfo.getBean()));
+	public ProbePanelCreator(Parameters params) {
+		try {
+			pbInfo = new ParameterProbeBeanCreator().createProbeableBean(params);
+			models.add(new PresentationModel(pbInfo.getBean()));
 
-      for (String name : params.getSchema().parameterNames()) {
-	ParameterSchema details = params.getSchema().getDetails(name);
-	List list = details.getConstrainingList();
-	if (list != null) {
-	  if (needsConversion(details)) {
-	    List<String> strList = new ArrayList<String>();
-	    StringConverter conv = details.getConverter();
-	    for (Object obj : list) {
-	      strList.add(conv.toString(obj));
-	    }
-	    listContstraints.put(name, strList);
-	  } else
-	    listContstraints.put(name, list);
-	}
-      }
+			for (String name : params.getSchema().parameterNames()) {
+				ParameterSchema details = params.getSchema().getDetails(name);
+				List list = details.getConstrainingList();
+				if (list != null) {
+					if (needsConversion(details)) {
+						List<String> strList = new ArrayList<String>();
+						StringConverter conv = details.getConverter();
+						for (Object obj : list) {
+							strList.add(conv.toString(obj));
+						}
+						listContstraints.put(name, strList);
+					} else
+						listContstraints.put(name, list);
+				}
+			}
 
-    } catch (Exception ex) {
-      msgCenter.warn("Error creating probe panel.", ex);
-    }
-  }
-
-  private boolean needsConversion(ParameterSchema details) {
-    Class type = details.getType();
-    return details.getConverter() != null
-	&& !(ClassUtilities.isNumericType(type) || type.equals(boolean.class)
-	    || type.equals(Boolean.class) || type.equals(String.class));
-  }
-
-  private List<DefaultProbedPropertyUICreator> createProperties(BeanInfo info, OldProbeModel bean, boolean wrap) {
-    PropertyDescriptor[] pds = info.getPropertyDescriptors();
-    List<DefaultProbedPropertyUICreator> props = new ArrayList<DefaultProbedPropertyUICreator>();
-    for (PropertyDescriptor pd : pds) {
-      String name = pd.getName();
-      String displayName = pbInfo.getDisplayName(name);
-      if (displayName == null) {
-	// see if its one of those funny "A*" type parameter names
-	String propName = name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
-	displayName = pbInfo.getDisplayName(propName);
-      }
-      pd.setDisplayName(displayName);
-      List constraints = listContstraints.get(pd.getName());
-      DefaultProbedPropertyUICreator prop;
-      if (constraints == null)
-	prop = ProbedPropertyFactory.createProbedProperty(pd, wrap);
-      else
-	prop = ProbedPropertyFactory.createProbedProperty(pd, constraints, wrap);
-      if (prop != null)
-	props.add(prop);
-    }
-    return props;
-  }
-
-  private JPanel createPanel(List<DefaultProbedPropertyUICreator> props, String title, boolean buffered) {
-    Collections.sort(props, new Comparator<DefaultProbedPropertyUICreator>() {
-      public int compare(DefaultProbedPropertyUICreator o1, DefaultProbedPropertyUICreator o2) {
-	return o1.getDisplayName().compareTo(o2.getDisplayName());
-      }
-    });
-    FormLayout layout = new FormLayout("3dlu, right:pref, 6dlu, pref:grow", "");
-    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-    builder.setDefaultDialogBorder();
-    builder.appendSeparator(title);
-    builder.setLeadingColumnOffset(1);
-    builder.nextLine();
-    PresentationModel model = models.get(0);
-    for (DefaultProbedPropertyUICreator prop : props) {
-      JComponent component = prop.getComponent(model);
-      if (component instanceof JFormattedTextField) {
-	component.addFocusListener(tempFocusCommitter);
-      } else if (component instanceof JPanel) {
-	for (Component jcomponent : ((JPanel) component).getComponents()) {
-	  if (jcomponent instanceof JFormattedTextField) {
-	    jcomponent.addFocusListener(tempFocusCommitter);
-	  }
-	}
-      }
-      builder.append(prop.getDisplayName() + ":", component);
-      builder.nextLine();
-    }
-
-    if (targetBean != null) {
-      builder.appendSeparator("Locations");
-      addLocations(builder, buffered);
-    }
-
-    return builder.getPanel();
-  }
-
-  private void addLocations(DefaultFormBuilder builder, boolean buffered) {
-    // see if we can find the context for it and the projections
-    Context context = ContextUtils.getContext(targetBean);
-    try {
-      BeanInfo info;
-      if (context != null) {
-	info = Introspector.getBeanInfo(GridLocationProbe.class, Object.class);
-	for (Grid grid : (Iterable<Grid>) context.getProjections(Grid.class)) {
-	  GridLocationProbe probe = new GridLocationProbe(targetBean, grid);
-	  PresentationModel pModel = new PresentationModel(probe);
-	  models.add(pModel);
-	  StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
-
-	  JComponent component = prop.getComponent(pModel);
-	  builder.append(grid.getName() + ":", component);
-	  builder.nextLine();
+		} catch (Exception ex) {
+			msgCenter.warn("Error creating probe panel.", ex);
+		}
 	}
 
-	info = Introspector.getBeanInfo(SpaceLocationProbe.class, Object.class);
-	for (ContinuousSpace space : (Iterable<ContinuousSpace>) context
-	    .getProjections(ContinuousSpace.class)) {
-	  SpaceLocationProbe probe = new SpaceLocationProbe(targetBean, space);
-	  PresentationModel pModel = new PresentationModel(probe);
-	  models.add(pModel);
-	  StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
-
-	  JComponent component = prop.getComponent(pModel);
-	  builder.append(space.getName() + ":", component);
-	  builder.nextLine();
+	private boolean needsConversion(ParameterSchema details) {
+		Class type = details.getType();
+		return details.getConverter() != null
+				&& !(ClassUtilities.isNumericType(type) || type.equals(boolean.class)
+						|| type.equals(Boolean.class) || type.equals(String.class));
 	}
 
-	info = Introspector.getBeanInfo(GeographyLocationProbe.class, Object.class);
-	for (Geography space : (Iterable<Geography>) context.getProjections(Geography.class)) {
-	  GeographyLocationProbe probe = new GeographyLocationProbe(targetBean, space);
-	  PresentationModel pModel = new PresentationModel(probe);
-	  models.add(pModel);
-	  StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
-
-	  JComponent component = prop.getComponent(pModel);
-	  builder.append(space.getName() + ":", component);
-	  builder.nextLine();
-	}
-      }
-      info = Introspector.getBeanInfo(ValueLayerLocationProbe.class, Object.class);
-      if (targetBean instanceof ValueLayerProbeObject2D) {
-	ValueLayerLocationProbe probe = new ValueLayerLocationProbe(targetBean);
-	PresentationModel pModel = new PresentationModel(probe);
-	models.add(pModel);
-	StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
-
-	JComponent component = prop.getComponent(pModel);
-	builder.append("value layer:", component);
-	builder.nextLine();
-      }
-    } catch (IntrospectionException e) {
-      e.printStackTrace();
-    }
-  }
-
-  // we need this because moving focus from a one of the parameter
-  // or probed fields to a menu item does not normally cause the
-  // the field to commit an edit. If the menu item works with the
-  // field the menu item will then be working with the old field
-  // value not the new one
-  private FocusAdapter tempFocusCommitter = new FocusAdapter() {
-
-    @Override
-    public void focusLost(FocusEvent e) {
-      if (e.getSource() instanceof JFormattedTextField && e.isTemporary()) {
-	JFormattedTextField source = ((JFormattedTextField) e.getSource());
-	try {
-	  source.commitEdit();
-	  source.setValue(source.getValue());
-	} catch (ParseException e1) {
-	  source.setValue(source.getValue());
+	private List<DefaultProbedPropertyUICreator> createProperties(BeanInfo info, OldProbeModel bean, boolean wrap) {
+		PropertyDescriptor[] pds = info.getPropertyDescriptors();
+		List<DefaultProbedPropertyUICreator> props = new ArrayList<DefaultProbedPropertyUICreator>();
+		for (PropertyDescriptor pd : pds) {
+			String name = pd.getName();
+			String displayName = pbInfo.getDisplayName(name);
+			if (displayName == null) {
+				// see if its one of those funny "A*" type parameter names
+				String propName = name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
+				displayName = pbInfo.getDisplayName(propName);
+			}
+			pd.setDisplayName(displayName);
+			List constraints = listContstraints.get(pd.getName());
+			DefaultProbedPropertyUICreator prop;
+			if (constraints == null)
+				prop = ProbedPropertyFactory.createProbedProperty(pd, wrap);
+			else
+				prop = ProbedPropertyFactory.createProbedProperty(pd, constraints, wrap);
+			if (prop != null)
+				props.add(prop);
+		}
+		return props;
 	}
 
-      }
-    }
-  };
+	private JPanel createPanel(List<DefaultProbedPropertyUICreator> props, String title, boolean buffered) {
+		Collections.sort(props, new Comparator<DefaultProbedPropertyUICreator>() {
+			public int compare(DefaultProbedPropertyUICreator o1, DefaultProbedPropertyUICreator o2) {
+				return o1.getDisplayName().compareTo(o2.getDisplayName());
+			}
+		});
+		FormLayout layout = new FormLayout("3dlu, right:pref, 6dlu, pref:grow", "");
+		DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+		builder.setDefaultDialogBorder();
+		builder.appendSeparator(title);
+		builder.setLeadingColumnOffset(1);
+		builder.nextLine();
+		PresentationModel model = models.get(0);
+		for (DefaultProbedPropertyUICreator prop : props) {
+			JComponent component = prop.getComponent(model);
+			if (component instanceof JFormattedTextField) {
+				component.addFocusListener(tempFocusCommitter);
+			} else if (component instanceof JPanel) {
+				for (Component jcomponent : ((JPanel) component).getComponents()) {
+					if (jcomponent instanceof JFormattedTextField) {
+						jcomponent.addFocusListener(tempFocusCommitter);
+					}
+				}
+			}
+			builder.append(prop.getDisplayName() + ":", component);
+			builder.nextLine();
+		}
 
-  /**
-   * Creates a Map containing the names and values for properties in a probed
-   * object. This method may be referenced elsewhere for getting probe info on
-   * an object.
-   * 
-   * @return a Map containing the names and values for properties in a probed
-   *         object.
-   */
-  public Map<String, Object> getProbedProperties() {
-    Map<String, Object> valuesMap = new LinkedHashMap<String, Object>();
+		if (targetBean != null) {
+			builder.appendSeparator("Locations");
+			addLocations(builder, buffered);
+		}
 
-    try {
-      PresentationModel model = models.get(0);
-      BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-
-      List<DefaultProbedPropertyUICreator> props = createProperties(info, (OldProbeModel) model.getBean(), false);
-
-      Collections.sort(props, new Comparator<DefaultProbedPropertyUICreator>() {
-	public int compare(DefaultProbedPropertyUICreator o1, DefaultProbedPropertyUICreator o2) {
-	  return o1.getDisplayName().compareTo(o2.getDisplayName());
+		return builder.getPanel();
 	}
-      });
 
-      for (DefaultProbedPropertyUICreator prop : props) {
-	valuesMap.put(prop.getName(), model.getValue(prop.getName()));
-      }
+	private void addLocations(DefaultFormBuilder builder, boolean buffered) {
+		// see if we can find the context for it and the projections
+		Context context = ContextUtils.getContext(targetBean);
+		try {
+			BeanInfo info;
+			if (context != null) {
+				info = Introspector.getBeanInfo(GridLocationProbe.class, Object.class);
+				for (Grid grid : (Iterable<Grid>) context.getProjections(Grid.class)) {
+					GridLocationProbe probe = new GridLocationProbe(targetBean, grid);
+					PresentationModel pModel = new PresentationModel(probe);
+					models.add(pModel);
+					StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
 
-      return valuesMap;
+					JComponent component = prop.getComponent(pModel);
+					builder.append(grid.getName() + ":", component);
+					builder.nextLine();
+				}
 
-    } catch (IntrospectionException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+				info = Introspector.getBeanInfo(SpaceLocationProbe.class, Object.class);
+				for (ContinuousSpace space : (Iterable<ContinuousSpace>) context
+						.getProjections(ContinuousSpace.class)) {
+					SpaceLocationProbe probe = new SpaceLocationProbe(targetBean, space);
+					PresentationModel pModel = new PresentationModel(probe);
+					models.add(pModel);
+					StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
 
-  public Probe getProbe(String title, boolean wrap) {
-    try {
-      PresentationModel model = models.get(0);
-      BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
-      List<DefaultProbedPropertyUICreator> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
-      JPanel panel = createPanel(props, title, false);
-      return new Probe(models, panel, title);
-    } catch (IntrospectionException e) {
-      msgCenter.warn("Error creating probe.", e);
-    }
-    return null;
-  }
+					JComponent component = prop.getComponent(pModel);
+					builder.append(space.getName() + ":", component);
+					builder.nextLine();
+				}
+
+	      // TODO deprecated delete
+//				info = Introspector.getBeanInfo(GeographyLocationProbe.class, Object.class);
+//				for (Geography space : (Iterable<Geography>) context.getProjections(Geography.class)) {
+//					GeographyLocationProbe probe = new GeographyLocationProbe(targetBean, space);
+//					PresentationModel pModel = new PresentationModel(probe);
+//					models.add(pModel);
+//					StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
+//
+//					JComponent component = prop.getComponent(pModel);
+//					builder.append(space.getName() + ":", component);
+//					builder.nextLine();
+//				}
+			}
+			info = Introspector.getBeanInfo(ValueLayerLocationProbe.class, Object.class);
+			if (targetBean instanceof ValueLayerProbeObject2D) {
+				ValueLayerLocationProbe probe = new ValueLayerLocationProbe(targetBean);
+				PresentationModel pModel = new PresentationModel(probe);
+				models.add(pModel);
+				StringProbedProperty prop = new StringProbedProperty(info.getPropertyDescriptors()[0]);
+
+				JComponent component = prop.getComponent(pModel);
+				builder.append("value layer:", component);
+				builder.nextLine();
+			}
+		} catch (IntrospectionException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// we need this because moving focus from a one of the parameter
+	// or probed fields to a menu item does not normally cause the
+	// the field to commit an edit. If the menu item works with the
+	// field the menu item will then be working with the old field
+	// value not the new one
+	private FocusAdapter tempFocusCommitter = new FocusAdapter() {
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (e.getSource() instanceof JFormattedTextField && e.isTemporary()) {
+				JFormattedTextField source = ((JFormattedTextField) e.getSource());
+				try {
+					source.commitEdit();
+					source.setValue(source.getValue());
+				} catch (ParseException e1) {
+					source.setValue(source.getValue());
+				}
+
+			}
+		}
+	};
+
+	/**
+	 * Creates a Map containing the names and values for properties in a probed
+	 * object. This method may be referenced elsewhere for getting probe info on
+	 * an object.
+	 * 
+	 * @return a Map containing the names and values for properties in a probed
+	 *         object.
+	 */
+	public Map<String, Object> getProbedProperties() {
+		Map<String, Object> valuesMap = new LinkedHashMap<String, Object>();
+
+		try {
+			PresentationModel model = models.get(0);
+			BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
+
+			List<DefaultProbedPropertyUICreator> props = createProperties(info, (OldProbeModel) model.getBean(), false);
+
+			Collections.sort(props, new Comparator<DefaultProbedPropertyUICreator>() {
+				public int compare(DefaultProbedPropertyUICreator o1, DefaultProbedPropertyUICreator o2) {
+					return o1.getDisplayName().compareTo(o2.getDisplayName());
+				}
+			});
+
+			for (DefaultProbedPropertyUICreator prop : props) {
+				valuesMap.put(prop.getName(), model.getValue(prop.getName()));
+			}
+
+			return valuesMap;
+
+		} catch (IntrospectionException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Probe getProbe(String title, boolean wrap) {
+		try {
+			PresentationModel model = models.get(0);
+			BeanInfo info = Introspector.getBeanInfo(model.getBean().getClass(), Object.class);
+			List<DefaultProbedPropertyUICreator> props = createProperties(info, (OldProbeModel) model.getBean(), wrap);
+			JPanel panel = createPanel(props, title, false);
+			return new Probe(models, panel, title);
+		} catch (IntrospectionException e) {
+			msgCenter.warn("Error creating probe.", e);
+		}
+		return null;
+	}
 }

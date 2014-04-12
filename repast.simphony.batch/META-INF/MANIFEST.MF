@@ -12,7 +12,8 @@ Require-Bundle: libs.bsf,
  repast.simphony.scenario,
  repast.simphony.eclipse,
  org.eclipse.ui,
- org.eclipse.wst.xml.core
+ org.eclipse.wst.xml.core,
+ repast.simphony.gis
 Export-Package: repast.simphony.batch,
  repast.simphony.parameter,
  repast.simphony.parameter.bsf,

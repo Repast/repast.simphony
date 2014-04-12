@@ -11,52 +11,36 @@ import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
 
 /**
- * Descriptor for a 2D / 3D display.
+ * Descriptor for displays.
  * 
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/06 22:35:19 $
+ * @author Eric Tatara
  */
-public interface DisplayDescriptor extends Descriptor {
+public interface DisplayDescriptor extends Descriptor{
 
+	/**
+	 * Returns a deep copy of the descriptor.
+	 * 
+	 * @return
+	 */
+	DisplayDescriptor makeCopy();
+	
+	public void set(DisplayDescriptor descriptor);
+	
   void setLayoutInterval(int interval);
 
   int getLayoutInterval();
 
-  Class<?>[] getDefaultStyles3D();
+  Class<?>[] getDefaultStyles();
 
-  Class<?>[] getDefaultStyles2D();
-
-  Class<?>[] getDefaultStylesGIS3D();
-
-  Class<?>[] getDefaultNetStyles3D();
-
-  Class<?>[] getDefaultNetStyles2D();
-
-  // TODO WWJ - networks
-//  Class<?>[] getDefaultNetStylesGIS3D();
+  Class<?>[] getDefaultNetStyles();
 
   /**
    * Removes any added projection descriptors.
    */
   void clearProjectionDescriptors();
 
-  enum DisplayType {
-    TWO_D("2D"), THREE_D("3D"), GIS("GIS"), GIS3D("GIS3D");
-
-    private String name;
-
-    DisplayType(String name) {
-      this.name = name;
-    }
-
-    public String toString() {
-      return name;
-    }
-  }
-
-  DisplayType getDisplayType();
-
-  void setDisplayType(DisplayType type);
+  String getDisplayType();
 
   /**
    * Sets the display type of this descriptor. If reset is true, then the fields
@@ -68,7 +52,7 @@ public interface DisplayDescriptor extends Descriptor {
    *          if true, then the fields in the descriptor that depend on type
    *          info will be reset.
    */
-  void setDisplayType(DisplayType type, boolean reset);
+  void setDisplayType(String type, boolean reset);
 
   void addStyle(String objClassname, String styleClassName);
 
@@ -162,8 +146,6 @@ public interface DisplayDescriptor extends Descriptor {
   
   void clearProjections();
   
-  void clearValueLayerNames();
-
   Iterable<ProjectionDescriptor> getProjectionDescriptors();
 
   /**
@@ -187,50 +169,7 @@ public interface DisplayDescriptor extends Descriptor {
    */
   void setLayoutProperties(VisualizationProperties props);
 
-  /**
-   * Adds the named value layer to the list of value layers to display.
-   * 
-   * @param name
-   *          the name of the value layer to display.
-   */
-  void addValueLayerName(String name);
-
-  /**
-   * Gets a List of all the names of the value layers to display.
-   * 
-   * @return a List of all the names of the value layers to display.
-   */
-  Iterable<String> getValueLayerNames();
-
-  /**
-   * Gets the name of the value layer style. Will return null if no value layer
-   * style has been selected.
-   * 
-   * @return the name of the value layer style.
-   */
-  String getValueLayerStyleName();
-
-  /**
-   * Sets the value layer style name.
-   * 
-   * @param name
-   */
-  void setValueLayerStyleName(String name);
-
-  /**
-   * Gets the name of the edited value layer style. Will return null if no value
-   * layer style has been selected.
-   * 
-   * @return the name of the value layer style.
-   */
-  String getValueLayerEditedStyleName();
-
-  /**
-   * Sets the value layer edited style name.
-   * 
-   * @param name
-   */
-  void setValueLayerEditedStyleName(String name);
+ 
 
   /**
    * Gets the Bounding Box for the display. This defines the extents of the
@@ -300,10 +239,4 @@ public interface DisplayDescriptor extends Descriptor {
   
   void addScenarioChangedListener(ScenarioChangedListener listener);
 
-  /**
-   * Gets the number of Value Layers in this display descriptor.
-   * 
-   * @return
-   */
-  int getValueLayerCount();
 }

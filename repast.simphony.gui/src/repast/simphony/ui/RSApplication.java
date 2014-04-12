@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Level;
-import org.apache.velocity.exception.ParseErrorException;
 import org.java.plugin.PluginLifecycleException;
 
 import repast.simphony.engine.controller.Controller;
@@ -33,12 +32,10 @@ import repast.simphony.plugin.CompositeControllerActionCreator;
 import repast.simphony.plugin.ModelPluginLoader;
 import repast.simphony.render.Renderer;
 import repast.simphony.scenario.Scenario;
-import repast.simphony.scenario.ScenarioConstants;
 import repast.simphony.scenario.ScenarioLoader;
 import repast.simphony.scenario.ScenarioSaver;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.SpatialException;
-import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.ui.newscenario.NewScenarioWizard;
 import repast.simphony.ui.plugin.UIActionExtensions;
 import repast.simphony.ui.probe.Probe;
@@ -456,7 +453,6 @@ public class RSApplication implements TickListener, RunListener {
     paramsManager.reset();
     probeManager.reset();
     gui.reset();
-    FeatureAgentFactoryFinder.getInstance().clearAdapters();
   }
 
   /**

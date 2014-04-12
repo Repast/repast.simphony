@@ -21,7 +21,10 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.gui.styleBuilder.EditedValueLayerStyleDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -80,8 +83,8 @@ public class ValueLayerStep extends PanelWizardStep {
 	@Override
 	public void applyState() throws InvalidStateException {
 		DisplayDescriptor descriptor = model.getDescriptor();
-		descriptor.setValueLayerStyleName(styleBox.getSelectedItem().toString());
-		descriptor.setValueLayerEditedStyleName(editedStyleName);
+		((ValueLayerDescriptor)descriptor).setValueLayerStyleName(styleBox.getSelectedItem().toString());
+		((ValueLayerDescriptor)descriptor).setValueLayerEditedStyleName(editedStyleName);
 	}
 
 	@Override
@@ -91,8 +94,9 @@ public class ValueLayerStep extends PanelWizardStep {
 		List<String> style2DCache = null;
 		List<String> style3DCache = null;
 		
+		// TODO Projections: init with viz registry data entries
 		java.util.List<String> vals;
-		if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			if (style3DCache == null) 
 				style3DCache = StyleClassFinder.getAvailable3DValueLayerStyles(model.getContext());
 			
@@ -104,7 +108,7 @@ public class ValueLayerStep extends PanelWizardStep {
 			vals = style2DCache;
 		}
 
-		String styleName = descriptor.getValueLayerStyleName();
+		String styleName = ((ValueLayerDescriptor)descriptor).getValueLayerStyleName();
 		if (styleName != null && !vals.contains(styleName)) 
 			vals.add(styleName);
 		
@@ -117,7 +121,7 @@ public class ValueLayerStep extends PanelWizardStep {
 
 		DefaultListModel listModel = (DefaultListModel) objList.getModel();
 		listModel.removeAllElements();
-		for (String name : descriptor.getValueLayerNames()) 
+		for (String name : ((ValueLayerDescriptor)descriptor).getValueLayerNames()) 
 			listModel.addElement(name);
 
 		setComplete(true);
@@ -132,11 +136,11 @@ public class ValueLayerStep extends PanelWizardStep {
 				EditedValueLayerStyleDialog dialog = new EditedValueLayerStyleDialog((JDialog) 
 						SwingUtilities.getWindowAncestor(ValueLayerStep.this));
 
-				editedStyleName = descriptor.getValueLayerEditedStyleName();
+				editedStyleName = ((ValueLayerDescriptor)descriptor).getValueLayerEditedStyleName();
 
-				String layerName = descriptor.getValueLayerNames().iterator().next();
+				String layerName = ((ValueLayerDescriptor)descriptor).getValueLayerNames().iterator().next();
 				
-				dialog.init(layerName,editedStyleName,model.getDescriptor());
+				dialog.init(layerName, editedStyleName, (CartesianDisplayDescriptor)model.getDescriptor());
 				dialog.pack();
 				dialog.setVisible(true);
 
@@ -145,10 +149,12 @@ public class ValueLayerStep extends PanelWizardStep {
 					// Set the style class name based on display type
 					String styleClassName = null;
 
-					if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.TWO_D))
+					// TODO Projections: get the style class from viz registry data 
+					
+					if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
 						styleClassName = "repast.simphony.visualization.editedStyle.EditedValueLayerStyle2D";
 
-					else if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.THREE_D))
+					else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
 						styleClassName = "repast.simphony.visualization.editedStyle.EditedValueLayerStyle3D";
 
 					if (styleModel.getIndexOf(styleClassName) < 0) 

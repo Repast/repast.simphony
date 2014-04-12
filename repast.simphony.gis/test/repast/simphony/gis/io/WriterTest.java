@@ -16,6 +16,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.jscience.physics.amount.Amount;
 import org.junit.Before;
 import org.junit.Test;
+import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
@@ -104,7 +105,7 @@ public class WriterTest {
 
   @Test
   public void writeTest() throws IOException {
-    File file = new File("sampleData/my.shp");
+    File file = new File("test/testWrite.shp");
     ShapefileWriter writer = new ShapefileWriter(geog);
     writer.write(geog.getLayer(GisAgent.class).getName(), file.toURI().toURL());
 
@@ -118,7 +119,10 @@ public class WriterTest {
     assertEquals(10, collection.size());
 
     for (SimpleFeatureIterator iter = collection.features(); iter.hasNext();) {
-     assertTrue(set.remove(iter.next().getDefaultGeometry().toString()));
+     
+    	SimpleFeature feature = iter.next();
+    	
+    	assertTrue(set.remove(feature.getDefaultGeometry().toString()));
     }
 
     assertEquals(0, set.size());

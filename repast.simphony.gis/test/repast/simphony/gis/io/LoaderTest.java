@@ -32,11 +32,10 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Nick Collier
  */
 public class LoaderTest {
-
-
-  ShapefileLoader<TestAgent> loader;
   Geography geography;
-
+  Context context;
+  GeographyParameters<Object> params;
+  
   public static class TestAgent {
 
     private double area;
@@ -79,11 +78,9 @@ public class LoaderTest {
 
   @Before
   public void setUp() throws MalformedURLException {
-    Context context = new DefaultContext();
-    GeographyParameters<Object> params = new GeographyParameters<Object>();
+    context = new DefaultContext();
+    params = new GeographyParameters<Object>();
     geography = GeographyFactoryFinder.createGeographyFactory(null).createGeography("Geography", context, params);
-    File file = new File("./sampleData/states.shp");
-    loader = new ShapefileLoader<TestAgent>(TestAgent.class, file.toURL(), geography, context);
   }
 
   @Test
@@ -99,6 +96,8 @@ public class LoaderTest {
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
+    ShapefileLoader<TestAgent> loader = new ShapefileLoader<TestAgent>(TestAgent.class, file.toURL(), geography, context);
+    
     while (loader.hasNext()) {
       TestAgent agent = loader.next();
       SimpleFeature feature = fIterator.next();
@@ -126,6 +125,8 @@ public class LoaderTest {
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
+    
+    ShapefileLoader<TestAgent> loader = new ShapefileLoader<TestAgent>(TestAgent.class, file.toURL(), geography, context);
     int i = 0;
     while (loader.hasNext()) {
       TestAgent agent = loader.nextWithArgs(new Integer(i), String.valueOf(i));
@@ -157,6 +158,8 @@ public class LoaderTest {
     // this relies on the features coming out of the
     // collection in the same order that the agents were
     // created.
+    
+    ShapefileLoader<TestAgent> loader = new ShapefileLoader<TestAgent>(TestAgent.class, file.toURL(), geography, context);
     int i = 0;
     while (loader.hasNext()) {
       TestAgent agent = new TestAgent(new Integer(i), String.valueOf(i));

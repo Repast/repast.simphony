@@ -22,13 +22,13 @@ import javax.swing.JTextField;
 import org.pietschy.wizard.InvalidStateException;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.util.wizard.ModelAwarePanelStep;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.UnitSizeLayoutProperties;
 import repast.simphony.visualization.VisualizationProperties;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 import saf.core.ui.util.FloatDocument;
 
@@ -117,14 +117,16 @@ public class GridStyleStep extends ModelAwarePanelStep<DisplayWizardModel> {
 
   private void prepareDecoratorProps() {
     if (color == null) {
-      if (model.getDescriptor().getDisplayType().equals(DisplayDescriptor.DisplayType.TWO_D)) {
+    	
+    	// TODO Projections: set value based on viz registry data
+      if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D)) {
         color = Color.BLACK;
       } else {
         color = Color.WHITE;
       }
     }
     DisplayDescriptor descriptor = model.getDescriptor();
-    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionType.GRID);
+    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionData.GRID_TYPE);
     // get the grid props if there and set color etc.
     Boolean show = (Boolean) pd.getProperty(GRID_DECORATOR, SHOW_DECORATOR);
     if (show == null) {
@@ -145,7 +147,10 @@ public class GridStyleStep extends ModelAwarePanelStep<DisplayWizardModel> {
   @Override
   public void prepare() {
     super.prepare();
-    String name = model.getTypeDescriptor(ProjectionType.GRID).getProjectionName();
+    
+    // TODO Projections: The grid (and others) style step should be associated 
+    //       with a projection type in a viz registry data.
+    String name = model.getTypeDescriptor(ProjectionData.GRID_TYPE).getProjectionName();
     if (name != null) {
       nameLbl.setText(name);
     }
@@ -161,7 +166,9 @@ public class GridStyleStep extends ModelAwarePanelStep<DisplayWizardModel> {
 
   private void resetLayoutProperties(DisplayDescriptor descriptor) {
     descriptor.setLayoutProperties(new UnitSizeLayoutProperties());
-    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+    
+    // TODO Projections: set based on viz registry data
+    if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
       sizeFld.setText(".06");
     } else {
       sizeFld.setText("15");
@@ -179,7 +186,7 @@ public class GridStyleStep extends ModelAwarePanelStep<DisplayWizardModel> {
     float cellSize = Float.parseFloat(sizeFld.getText());
     props.setUnitSize(cellSize);
 
-    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionType.GRID);
+    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionData.GRID_TYPE);
     pd.setProperty(GRID_DECORATOR, COLOR, color.getRGB());
     pd.setProperty(GRID_DECORATOR, SHOW_DECORATOR,
             gridBox.isSelected());
@@ -187,7 +194,7 @@ public class GridStyleStep extends ModelAwarePanelStep<DisplayWizardModel> {
             cellSize);
 
     for (ProjectionData proj : descriptor.getProjections()) {
-      if (proj.getType() == ProjectionType.GRID) {
+      if (proj.getType().equals(ProjectionData.GRID_TYPE)) {
         descriptor.setLayoutProjection(proj.getId());
         descriptor.setLayoutFrequency(IDisplay.LayoutFrequency.ON_MOVE);
         // we need to set a fake class name here so that the

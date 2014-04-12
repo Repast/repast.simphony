@@ -45,19 +45,10 @@ public class ContextXMLBuilder implements ContextBuilder {
 
     for (ProjectionData proj : context.projections()) {
       ContextBuilder builder = fac.createBuilder(proj);
-      builders.add(builder);
+      
+      if (builder != null)
+        builders.add(builder);
     }
-
-    /*
-    for (SAgent agent : score.getAgents()) {
-      // don't do contexts as agents for now
-      if (!(agent instanceof SContext)) {
-        for (ContextBuilder builder : fac.createBuilder(agent)) {
-          builders.add(builder);
-        }
-      }
-    }
-    */
   }
 
   /**
@@ -84,6 +75,4 @@ public class ContextXMLBuilder implements ContextBuilder {
     }
     return context;
   }
-
-
 }

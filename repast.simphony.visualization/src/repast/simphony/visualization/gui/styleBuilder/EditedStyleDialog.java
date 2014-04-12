@@ -33,14 +33,14 @@ import javax.swing.border.TitledBorder;
 import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
-import repast.simphony.gis.styleEditor.SimpleMarkFactory;
 import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
-import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -58,8 +58,6 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * @author Eric Tatara
  */
 public class EditedStyleDialog extends JDialog {
-  
-  private static final String ICON_SIZE = "Icon Size";
   
   private boolean save = false;
   private EditedStyleData userStyleData;
@@ -92,7 +90,7 @@ public class EditedStyleDialog extends JDialog {
   private String agentClassName;
   private String userStyleName;
   //	private DisplayDescriptor descriptor;
-  private DisplayDescriptor.DisplayType displayType;
+  private String displayType;
 
   private PreviewIcon preview;
 
@@ -120,7 +118,7 @@ public class EditedStyleDialog extends JDialog {
   }
 
   public void init(Class agentClass, String userStyleName,
-                   DisplayDescriptor descriptor) {
+  		CartesianDisplayDescriptor descriptor) {
     this.agentClassName = agentClass.getCanonicalName();
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();
@@ -148,13 +146,14 @@ public class EditedStyleDialog extends JDialog {
     labelMethodList.remove("toString");
     labelMethodList.add("Name");
 
+ // TODO Projections: init from viz registry data entries
     // Set objects based on display type 2D/3D
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+    if (displayType.equals(DisplayType.TWO_D)) {
       if (userStyleData == null)
         userStyleData = new DefaultEditedStyleData2D();
 
       // TODO Eliminate GIS plugin depedency.
-      shapeModel = new DefaultComboBoxModel(SimpleMarkFactory.getWKT_List());
+      shapeModel = new DefaultComboBoxModel(IconFactory2D.Shape_List);
 
       shapeModel.setSelectedItem(userStyleData.getShapeWkt());
     } else {
@@ -190,7 +189,7 @@ public class EditedStyleDialog extends JDialog {
     variableIconGreenColorScaleModel = new DefaultComboBoxModel();
     variableIconBlueColorScaleModel = new DefaultComboBoxModel();
     
-    sizeModel.addElement(ICON_SIZE);
+//    sizeModel.addElement(ICON_SIZE);
 
     // Add available methods to appropriate combo box models
     for (String method : methodList) {
@@ -221,12 +220,8 @@ public class EditedStyleDialog extends JDialog {
     if (userStyleData.getSizeMethodName() != null)
       sizeModel.setSelectedItem(userStyleData.getSizeMethodName());
     else {
-      if (userStyleData.getSize() == -1) {
-        sizeModel.setSelectedItem(ICON_SIZE);
-      } else {
-        sizeModel.addElement(userStyleData.getSize());
-        sizeModel.setSelectedItem(userStyleData.getSize());
-      }
+    	sizeModel.addElement(userStyleData.getSize());
+    	sizeModel.setSelectedItem(userStyleData.getSize());
     }
     if (userStyleData.getSizeMinMethodName() != null)
       sizeMinModel.setSelectedItem(userStyleData.getSizeMinMethodName());
@@ -314,7 +309,7 @@ public class EditedStyleDialog extends JDialog {
     initMyComponents(displayType);
   }
 
-  public void initMyComponents(DisplayDescriptor.DisplayType displayType) {
+  public void initMyComponents(String displayType) {
     CellConstraints cc = new CellConstraints();
 
     shapeComboBox.setModel(shapeModel);
@@ -349,7 +344,8 @@ public class EditedStyleDialog extends JDialog {
     greenScaleComboBox.setModel(variableIconGreenColorScaleModel);
     blueScaleComboBox.setModel(variableIconBlueColorScaleModel);
 
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+ // TODO Projections: init from viz registry data entries
+    if (displayType.equals(DisplayType.TWO_D)) {
       this.setTitle("2D Shape Editor");
       preview = new PreviewIcon2D();
       previewPanel.add((PreviewIcon2D) preview, cc.xy(1, 1));
@@ -481,10 +477,6 @@ public class EditedStyleDialog extends JDialog {
     } else if (isUserTypedNumber(selection)) {
       userStyleData.setSize(new Float((String) selection));
       preview.setMarkSize(new Float((String) selection));
-      userStyleData.setSizeMethodName(null);
-    } else if (selection.equals(ICON_SIZE)) {
-      userStyleData.setSize(-1f);
-      preview.setMarkSize(-1f);
       userStyleData.setSizeMethodName(null);
     } else
       userStyleData.setSizeMethodName((String) selection);
@@ -726,7 +718,8 @@ public class EditedStyleDialog extends JDialog {
     iconColorbutton.setEnabled(false);
     File chosenFile;
 
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+ // TODO Projections: init from viz registry data entries
+    if (displayType.equals(DisplayType.TWO_D)) {
       chosenFile = FileChooserUtilities.getFile(this, "Model File", "Select", currentFile,
               new IconFile2DFilter());
 
@@ -784,7 +777,8 @@ public class EditedStyleDialog extends JDialog {
   private void clearFileButtonActionPerformed(ActionEvent e) {
     iconButton.setFont(iconButton.getFont().deriveFont(Font.PLAIN));
 
-    if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+ // TODO Projections: init from viz registry data entries
+    if (displayType.equals(DisplayType.TWO_D)) {
       userStyleData.setIconFile2D(null);
       iconButton.setText("Select Icon File");
       preview.setIconFile(null);

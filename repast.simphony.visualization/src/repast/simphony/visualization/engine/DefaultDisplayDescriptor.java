@@ -11,8 +11,6 @@ import repast.simphony.scenario.AbstractDescriptor;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.VisualizationProperties;
-import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
-import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
 import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
 import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
@@ -21,6 +19,7 @@ import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 /**
  * @author Nick Collier
  */
+@Deprecated
 public class DefaultDisplayDescriptor extends AbstractDescriptor implements DisplayDescriptor {
 
   // default styles.
@@ -29,15 +28,8 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   private static Class<?>[] styles2D = new Class<?>[] { DefaultStyleOGL2D.class };
 
   // TODO WWJ - handle multiple styles
-  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
-      DefaultSurfaceShapeStyle.class };
+  private static Class<?>[] stylesGIS3D;// = new Class<?>[] { DefaultMarkStyle.class,
 
-  // //TODO ###################################################################
-  // private static Class<?>[] editedStyles3D = new Class<?>[] { null };
-  //
-  // private static Class<?>[] editedStyles2D = new Class<?>[] { null };
-  //
-  // // ###################################################################
 
   private static Class<?>[] netStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
 
@@ -47,7 +39,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   // private static Class<?>[] netStylesGIS3D = new Class<?>[] {
   // DefaultEdgeStyleGIS3D.class };
 
-  private DisplayType type = DisplayType.TWO_D;
+  private String type = DisplayType.TWO_D;
 
   private Map<String, String> styles = new HashMap<String, String>();
 
@@ -90,7 +82,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
 
   public DefaultDisplayDescriptor(DisplayDescriptor descriptor) {
     super(descriptor.getName());
-    set(descriptor);
+//    set(descriptor);
   }
 
   public DefaultDisplayDescriptor(String name) {
@@ -150,8 +142,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * repast.simphony.visualization.engine.DisplayDescriptor#clearValueLayerNames
    * ()
    */
-  @Override
-  public void clearValueLayerNames() {
+   public void clearValueLayerNames() {
     if (valueLayers.size() > 0) {
       this.valueLayers.clear();
       scs.fireScenarioChanged(this, "valueLayers");
@@ -164,7 +155,7 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
    * @see
    * repast.simphony.visualization.engine.DisplayDescriptor#getValueLayerCount()
    */
-  @Override
+
   public int getValueLayerCount() {
     return valueLayers.size();
   }
@@ -191,76 +182,77 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
     return projectionDescriptors.values();
   }
 
+  @Deprecated
   public void set(DisplayDescriptor descriptor) {
-    setScheduleParameters(descriptor.getScheduleParameters());
-    setName(descriptor.getName());
-    setDisplayType(descriptor.getDisplayType());
-    setLayoutClassName(descriptor.getLayoutClassName());
-    setLayoutFrequency(descriptor.getLayoutFrqeuency());
-    setLayoutInterval(descriptor.getLayoutInterval());
-    setLayoutProjection(descriptor.getLayoutProjection());
-    setLayoutProperties(descriptor.getLayoutProperties());
-    styles.clear();
-    for (String name : descriptor.agentClassStyleNames()) {
-      addStyle(name, descriptor.getStyleClassName(name));
-    }
-    netStyles.clear();
-    for (Object name : descriptor.networkStyleIDs()) {
-      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
-    }
-    editedStyles.clear();
-    // check for backwards compatibility with older display descriptors
-    if (descriptor.agentClassEditedStyleNames() != null)
-      for (String name : descriptor.agentClassEditedStyleNames())
-        addEditedStyle(name, descriptor.getEditedStyleName(name));
-
-    editedNetStyles.clear();
-    // check for backwards compatibility with older display descriptors
-    if (descriptor.networkEditedStyleIDs() != null)
-      for (Object name : descriptor.networkEditedStyleIDs())
-        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
-
-    if (type == DisplayType.TWO_D) {
-      layerOrder.clear();
-      if (descriptor.agentClassLayerOrders() != null) {
-        for (String name : descriptor.agentClassLayerOrders()) {
-          addLayerOrder(name, descriptor.getLayerOrder(name));
-        }
-      }
-    }
-    for (ProjectionData proj : descriptor.getProjections()) {
-      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
-    }
-
-    for (String vlName : descriptor.getValueLayerNames()) {
-      addValueLayerName(vlName);
-    }
-
-    setValueLayerStyleName(descriptor.getValueLayerStyleName());
-
-    // check for backwards compatibility with older display descriptors
-    if (descriptor.getValueLayerEditedStyleName() != null)
-      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
-
-    for (String name : descriptor.propertyNames()) {
-      setProperty(name, descriptor.getProperty(name));
-    }
-
-    setBackgroundColor(descriptor.getBackgroundColor());
+//    setScheduleParameters(descriptor.getScheduleParameters());
+//    setName(descriptor.getName());
+//    setDisplayType(descriptor.getDisplayType());
+//    setLayoutClassName(descriptor.getLayoutClassName());
+//    setLayoutFrequency(descriptor.getLayoutFrqeuency());
+//    setLayoutInterval(descriptor.getLayoutInterval());
+//    setLayoutProjection(descriptor.getLayoutProjection());
+//    setLayoutProperties(descriptor.getLayoutProperties());
+//    styles.clear();
+//    for (String name : descriptor.agentClassStyleNames()) {
+//      addStyle(name, descriptor.getStyleClassName(name));
+//    }
+//    netStyles.clear();
+//    for (Object name : descriptor.networkStyleIDs()) {
+//      addNetworkStyle(name, descriptor.getNetworkStyleClassName(name));
+//    }
+//    editedStyles.clear();
+//    // check for backwards compatibility with older display descriptors
+//    if (descriptor.agentClassEditedStyleNames() != null)
+//      for (String name : descriptor.agentClassEditedStyleNames())
+//        addEditedStyle(name, descriptor.getEditedStyleName(name));
+//
+//    editedNetStyles.clear();
+//    // check for backwards compatibility with older display descriptors
+//    if (descriptor.networkEditedStyleIDs() != null)
+//      for (Object name : descriptor.networkEditedStyleIDs())
+//        addNetworkEditedStyle(name, descriptor.getNetworkEditedStyleName(name));
+//
+//    if (type.equals(DisplayType.TWO_D)) {
+//      layerOrder.clear();
+//      if (descriptor.agentClassLayerOrders() != null) {
+//        for (String name : descriptor.agentClassLayerOrders()) {
+//          addLayerOrder(name, descriptor.getLayerOrder(name));
+//        }
+//      }
+//    }
+//    for (ProjectionData proj : descriptor.getProjections()) {
+//      addProjection(proj, descriptor.getProjectionDescriptor(proj.getId()));
+//    }
+//
+//    for (String vlName : descriptor.getValueLayerNames()) {
+//      addValueLayerName(vlName);
+//    }
+//
+//    setValueLayerStyleName(descriptor.getValueLayerStyleName());
+//
+//    // check for backwards compatibility with older display descriptors
+//    if (descriptor.getValueLayerEditedStyleName() != null)
+//      setValueLayerEditedStyleName(descriptor.getValueLayerEditedStyleName());
+//
+//    for (String name : descriptor.propertyNames()) {
+//      setProperty(name, descriptor.getProperty(name));
+//    }
+//
+//    setBackgroundColor(descriptor.getBackgroundColor());
   }
 
-  public DisplayType getDisplayType() {
+  public String getDisplayType() {
     return type;
   }
 
-  public void setDisplayType(DisplayType type) {
+  public void setDisplayType(String type) {
     if (this.type != type) {
       this.type = type;
       scs.fireScenarioChanged(this, "displayType");
     }
   }
 
-  public void setDisplayType(DisplayType type, boolean reset) {
+  public void setDisplayType(String type, boolean reset) {
     setDisplayType(type);
     if (reset) {
       styles.clear();
@@ -599,4 +591,22 @@ public class DefaultDisplayDescriptor extends AbstractDescriptor implements Disp
   public Map<String, String> getEditedStyles() {
     return editedStyles;
   }
+
+	@Override
+	public Class<?>[] getDefaultStyles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class<?>[] getDefaultNetStyles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DisplayDescriptor makeCopy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
