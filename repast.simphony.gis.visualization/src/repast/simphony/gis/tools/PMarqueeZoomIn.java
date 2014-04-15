@@ -4,14 +4,13 @@ import java.awt.event.InputEvent;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventFilter;
+import org.piccolo2d.util.PBounds;
 
-import repast.simphony.gis.display.AbstractMarqueeZoomer;
 import repast.simphony.gis.display.PGISCanvas;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventFilter;
-import edu.umd.cs.piccolo.util.PBounds;
 
-public class PMarqueeZoomIn extends AbstractMarqueeZoomer {
+public class PMarqueeZoomIn extends AbstractMarqueeHandler {
 
 	MapContent context;
 

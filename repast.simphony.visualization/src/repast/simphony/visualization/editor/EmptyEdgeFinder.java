@@ -1,10 +1,11 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
-import repast.simphony.visualization.network.PEdge;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.piccolo2d.PNode;
+
+import repast.simphony.visualization.network.PEdge;
 
 /**
  * Implementation of EdgeFinder that always returns an empty list. This

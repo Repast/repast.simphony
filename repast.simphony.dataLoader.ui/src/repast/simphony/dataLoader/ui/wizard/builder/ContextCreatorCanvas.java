@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
 
 public class ContextCreatorCanvas extends PCanvas {
 	private Map<Class<?>, AgentLayer> agentLayerMap;

@@ -12,23 +12,22 @@ import javax.measure.unit.Unit;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.map.MapContent;
-import org.geotools.map.MapContext;
 import org.geotools.map.event.MapBoundsEvent;
 import org.geotools.map.event.MapBoundsListener;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.operation.TransformException;
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PPath;
 
 import repast.simphony.gis.display.PiccoloMapPanel;
 import simphony.util.messages.MessageCenter;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
 
 public class DistanceTool extends PBasicInputEventHandler implements MapTool, MapBoundsListener {
 
-  protected PPath path;
+  protected PPath.Double path;
 
   PLayer layer;
 
@@ -85,7 +84,7 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
     if (event.getClickCount() == 1 && event.isLeftMouseButton()) {
       totalDistance += curDistance;
       active = true;
-      path = new PPath();
+      path = new PPath.Double();
       path.setStrokePaint(Color.BLACK);
       path.setStroke(new BasicStroke(1));
       start = event.getPosition();

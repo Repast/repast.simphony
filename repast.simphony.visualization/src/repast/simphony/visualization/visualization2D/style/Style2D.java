@@ -4,8 +4,8 @@ import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PText;
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PText;
 
 /**
  *  @deprecated replaced by ogl 2D

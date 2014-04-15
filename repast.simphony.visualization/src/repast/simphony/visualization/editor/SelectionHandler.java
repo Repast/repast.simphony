@@ -1,16 +1,17 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.util.PNodeFilter;
-import edu.umd.cs.piccolo.util.PStack;
-import repast.simphony.visualization.network.NetworkDisplayLayer2D;
-import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.util.PNodeFilter;
+import org.piccolo2d.util.PStack;
+
+import repast.simphony.visualization.network.NetworkDisplayLayer2D;
+import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
 
 /**
  * Event handler for selecting nodes.

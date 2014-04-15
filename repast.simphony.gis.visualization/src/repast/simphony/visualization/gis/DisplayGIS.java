@@ -33,6 +33,8 @@ import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
 import org.geotools.styling.Style;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.piccolo2d.PCamera;
+import org.piccolo2d.util.PBounds;
 
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
@@ -44,6 +46,7 @@ import repast.simphony.gis.tools.PMarqueeZoomIn;
 import repast.simphony.gis.tools.PMarqueeZoomOut;
 import repast.simphony.gis.tools.PositionTool;
 import repast.simphony.gis.tools.ToolManager;
+import repast.simphony.gis.ui.probe.GISProbeHandler;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -64,9 +67,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.util.PBounds;
-
 /**
  * Standard GIS Display
  * 
@@ -76,6 +76,11 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
+	// The 2D GIS needs a slower frame rate since it can't update as fast as the
+	//   JOGL-based displays.
+	// ~10 frames a second
+	public static long GIS_FRAME_UPDATE_INTERVAL = 100;
+	
 	private final static String ICON_FORMAT = ".png";
   public static final String SHP_FILE_STYLE_PROP = DisplayGIS.class + ".SHP_FILE_STYLE_PROP";
   private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS.class);
@@ -100,6 +105,10 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 
   public DisplayGIS(DisplayData<?> data) {
     this.initData = data;
+    
+    // uncomment to print piccolo debug info to console
+//	PDebug.debugPaintCalls = true;
+//	PDebug.debugThreads = true;
   }
 
   /**
@@ -286,7 +295,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     long ts = System.currentTimeMillis();
     if (doRender && panel.getCanvas().isShowing()) {
       synchronized (lock) {
-        if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+        if (ts - lastRenderTS > GIS_FRAME_UPDATE_INTERVAL) {
         ThreadUtilities.runInEventThread(myRenderer);
         lastRenderTS = ts;
         }

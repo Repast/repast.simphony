@@ -11,13 +11,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEventFilter;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import edu.umd.cs.piccolo.util.PPaintContext;
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEventFilter;
+import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.util.PPaintContext;
 
 /**
  * 

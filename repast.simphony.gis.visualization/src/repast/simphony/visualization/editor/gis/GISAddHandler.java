@@ -1,20 +1,27 @@
 package repast.simphony.visualization.editor.gis;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import edu.umd.cs.piccolo.nodes.PPath;
-import static repast.simphony.gis.util.GeometryUtil.GeometryType.*;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.LINE;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POINT;
+import static repast.simphony.gis.util.GeometryUtil.GeometryType.POLYGON;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
+import org.piccolo2d.PCamera;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.nodes.PPath;
+
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import simphony.util.messages.MessageCenter;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * @author Nick Collier Date: Feb 26, 2008 11:17:47 AM
@@ -56,7 +63,7 @@ public class GISAddHandler extends PBasicInputEventHandler implements PEditorEve
 
   class LineEventListener extends BaseEventListener {
 
-    private PPath path;
+    private PPath.Double path;
     private Point2D startCanvas;
 
     protected GeometryUtil.GeometryType getGeomType() {
@@ -67,7 +74,7 @@ public class GISAddHandler extends PBasicInputEventHandler implements PEditorEve
       camera = event.getCamera();
       if (event.isLeftMouseButton()) {
         active = true;
-        path = new PPath();
+        path = new PPath.Double();
         path.setStrokePaint(Color.BLACK);
         path.setStroke(new BasicStroke(1));
         coords.add(createCoordinate(event));

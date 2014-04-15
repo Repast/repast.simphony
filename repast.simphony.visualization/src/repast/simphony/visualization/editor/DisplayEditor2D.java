@@ -1,6 +1,19 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
+import org.piccolo2d.PNode;
+
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.projection.Projection;
@@ -11,13 +24,6 @@ import repast.simphony.visualization.network.NetworkDisplayLayer2D;
 import repast.simphony.visualization.visualization2D.Display2D;
 import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
 import simphony.util.messages.MessageCenter;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * DisplayEditor for 2D displays.

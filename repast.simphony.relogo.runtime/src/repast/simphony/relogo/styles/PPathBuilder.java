@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.umd.cs.piccolo.nodes.PPath;
+import org.piccolo2d.nodes.PPath;
 
 public class PPathBuilder {
 	
@@ -32,9 +32,9 @@ public class PPathBuilder {
 	
 	public static PPath getPPathFromString(String ppathString){
 		List<Shape> list = shapeMap.get(ppathString);
-		PPath path = new PPath();
+		PPath path = new PPath.Double();
 		for (Shape shape : list){
-			path.addChild(new PPath(shape));
+			path.addChild(new PPath.Double(shape));
 		}
 		
 		return path;

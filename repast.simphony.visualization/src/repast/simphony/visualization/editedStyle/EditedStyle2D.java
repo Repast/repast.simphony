@@ -15,12 +15,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PImage;
+import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.nodes.PText;
+
 import repast.simphony.visualization.gui.styleBuilder.IconFactory2D;
 import repast.simphony.visualization.visualization2D.style.Style2D;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PImage;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
 
 /**
  * 
@@ -89,7 +90,7 @@ public class EditedStyle2D implements Style2D<Object> {
 			String wkt = innerStyle.getShapeWkt();
 			// TODO use SVGs a la ReLogo?
 			Shape shape = IconFactory2D.getShape(wkt);
-			path = new PPath(shape);
+			path = new PPath.Double(shape);
 //			path.transformBy(trans);
 			path.setBounds(new Rectangle2D.Float(0, 0, size, size));
 

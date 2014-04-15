@@ -1,6 +1,16 @@
 package repast.simphony.visualization.network;
 
-import edu.umd.cs.piccolo.PNode;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.piccolo2d.PNode;
+
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.space.projection.ProjectionEvent;
@@ -10,10 +20,6 @@ import repast.simphony.visualization.visualization2D.Display2D;
 import repast.simphony.visualization.visualization2D.DisplayLayer2D;
 import repast.simphony.visualization.visualization2D.RepastCanvas2D;
 import repast.simphony.visualization.visualization2D.style.EdgeStyle2D;
-
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class NetworkDisplayLayer2D extends DisplayLayer2D<RepastEdge, PEdge> implements
         ProjectionListener {

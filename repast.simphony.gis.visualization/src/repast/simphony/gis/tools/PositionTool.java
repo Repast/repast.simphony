@@ -1,8 +1,7 @@
 package repast.simphony.gis.tools;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
+import java.awt.Cursor;
+
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -11,10 +10,13 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+
 import repast.simphony.gis.display.PiccoloMapPanel;
 import simphony.util.messages.MessageCenter;
 
-import java.awt.*;
+import com.vividsolutions.jts.geom.Coordinate;
 
 public class PositionTool extends PBasicInputEventHandler implements MapTool {
 

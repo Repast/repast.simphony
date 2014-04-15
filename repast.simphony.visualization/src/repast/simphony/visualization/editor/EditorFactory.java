@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.piccolo2d.PCanvas;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
@@ -20,7 +22,6 @@ import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.DisplayEditorLifecycle;
 import repast.simphony.visualization.visualization2D.Display2D;
 import repast.simphony.visualization.visualization3D.Display3D;
-import edu.umd.cs.piccolo.PCanvas;
 
 /**
  * Singleton factory for creating display editors.

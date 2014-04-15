@@ -1,13 +1,20 @@
 package repast.simphony.visualization.editor.gis;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PPath;
+
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.RepastEdge;
@@ -15,13 +22,9 @@ import repast.simphony.visualization.editor.FloatingList;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import repast.simphony.visualization.gis.DisplayGIS;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Event handler for adding edges to gis.
@@ -34,7 +37,7 @@ public class GISNetAddEdgeHandler extends PBasicInputEventHandler implements PEd
   private GeometryFactory factory = new GeometryFactory();
   private PCanvas canvas;
   private DisplayGIS display;
-  private PPath path;
+  private PPath.Double path;
   private Point2D startCanvas;
   private DisplayEditorGIS editor;
   private java.util.List<Coordinate> coords = new ArrayList<Coordinate>();
@@ -78,7 +81,7 @@ public class GISNetAddEdgeHandler extends PBasicInputEventHandler implements PEd
   }
 
   private void startPath(PInputEvent event) {
-    path = new PPath();
+    path = new PPath.Double();
     path.setStrokePaint(Color.BLACK);
     path.setStroke(new BasicStroke(1));
     coords.add(createCoordinate(event));
@@ -91,7 +94,7 @@ public class GISNetAddEdgeHandler extends PBasicInputEventHandler implements PEd
   private void startPath(Object obj) {
     Geometry geom = display.getGeography().getGeometry(obj);
     Coordinate coord = new Coordinate(geom.getCentroid().getCoordinate());
-    path = new PPath();
+    path = new PPath.Double();
     path.setStrokePaint(Color.BLACK);
     path.setStroke(new BasicStroke(1));
     coords.add(coord);

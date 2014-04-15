@@ -2,7 +2,6 @@ package repast.simphony.gis.display;
 
 import java.awt.Cursor;
 import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -21,8 +20,17 @@ import org.geotools.map.event.MapLayerListListener;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.datum.DefaultEllipsoid;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.nodes.PText;
+import org.piccolo2d.util.PBounds;
+import org.piccolo2d.util.PPickPath;
 
 import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.MapTool;
@@ -30,18 +38,6 @@ import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
 
 import com.vividsolutions.jts.geom.Envelope;
-
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventFilter;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import edu.umd.cs.piccolo.nodes.PText;
-import edu.umd.cs.piccolo.util.PBounds;
-import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
  * This will show a MapContext and adds support for various tools.
@@ -53,6 +49,9 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
         PropertyChangeListener, MapBoundsListener {
   private static final long serialVersionUID = 2739102421248235987L;
 
+  protected static final int CANVAS_WIDTH = 800;
+  protected static final int CANVAS_HEIGHT = 800;
+  
   protected MessageCenter msg = MessageCenter.getMessageCenter(getClass());
 
   protected PInputEventListener currentListener;
@@ -121,7 +120,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
         tooltipNode.setOffset(p.getX() + 8, p.getY() - 8);
       }
     });
-    setBounds(0, 0, 800, 800);
+    setBounds(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     
     // Event handler to set cursor based on tool
     addInputEventListener(new PBasicInputEventHandler() {
@@ -180,40 +179,6 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   public void zoomToPreviousExtent() {
 
-  }
-
-  /**
-   * Probe event handler for clicks on the Piccolo GIS canvas.
-   * 
-   * ---- NOTE THAT THIS IS CURRENTLY NOT USED ----	
-   *    
-   *   Kept in case a mouse click handler is used in the future.
-   *
-   */
-  class ProbeEventHandler extends PBasicInputEventHandler {
-    ProbeHandler handler;
-
-    public ProbeEventHandler(ProbeHandler handler) {
-      setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
-      this.handler = handler;
-    }
-
-    public void mouseClicked(PInputEvent ev) {
-      PPickPath path = ev.getPath();
-      PNode node = ev.getPickedNode();
-      do {
-        SimpleFeature feature = (SimpleFeature) node.getAttribute(SimpleFeature.class);
-        if (feature != null) {
-          handler.handleFeatureProbe(feature, ev);
-          break;
-        }
-        node = path.nextPickedNode();
-      } while (node != null);
-    }
-  }
-
-  public void addProbeHander(ProbeHandler handler) {
-    getCamera().addInputEventListener(new ProbeEventHandler(handler));
   }
 
   private void init() {

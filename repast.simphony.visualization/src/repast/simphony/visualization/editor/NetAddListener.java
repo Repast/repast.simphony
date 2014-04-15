@@ -1,16 +1,17 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
+import java.awt.Cursor;
+import java.awt.geom.Point2D;
+
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.NullLayout;
 import repast.simphony.visualization.visualization2D.Display2D;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
 
 /**
  * Listener for adding to a network. This doesn't do

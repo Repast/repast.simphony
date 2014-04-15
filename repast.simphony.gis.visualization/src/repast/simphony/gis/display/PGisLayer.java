@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -19,13 +18,12 @@ import org.geotools.map.event.MapLayerEvent;
 import org.geotools.map.event.MapLayerListener;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.nodes.PImage;
 
 import simphony.util.messages.MessageCenter;
 
 import com.vividsolutions.jts.geom.Envelope;
-
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.nodes.PImage;
 
 /**
  * This represents a FeatureLayer as an image. Each layer is inserted as a node into
@@ -41,7 +39,7 @@ public class PGisLayer extends PLayer implements MapLayerListener {
   protected BufferedImage image;
   protected MapContent context;
   protected GTRenderer rend;
-  protected Rectangle rect = new Rectangle(800, 800);
+  protected Rectangle rect = new Rectangle(PGISCanvas.CANVAS_WIDTH, PGISCanvas.CANVAS_HEIGHT);
   protected boolean interacting = false;
   protected boolean drawn = false;
   protected AffineTransform transform;
@@ -112,7 +110,8 @@ public class PGisLayer extends PLayer implements MapLayerListener {
 //    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 //    rend.setJava2DHints(hints);
     
-    image = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
+    image = new BufferedImage(PGISCanvas.CANVAS_WIDTH, PGISCanvas.CANVAS_HEIGHT, 
+    		BufferedImage.TYPE_INT_ARGB);
     rend.paint((Graphics2D) image.getGraphics(), rect, transform);
     pImage = new PImage(image);
 

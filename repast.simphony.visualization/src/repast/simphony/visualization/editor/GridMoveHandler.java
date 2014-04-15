@@ -1,11 +1,18 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.util.PPickPath;
-import edu.umd.cs.piccolo.util.PStack;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PDragSequenceEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.util.PPickPath;
+import org.piccolo2d.util.PStack;
+
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridDimensions;
@@ -15,11 +22,6 @@ import repast.simphony.visualization.grid.Grid2DLayout;
 import repast.simphony.visualization.grid.GridShape;
 import repast.simphony.visualization.network.PEdge;
 import repast.simphony.visualization.visualization2D.Display2D;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Event handler for moving nodes in a grid.
@@ -77,7 +79,7 @@ public class GridMoveHandler extends PDragSequenceEventHandler implements PEdito
   protected void startDrag(PInputEvent event) {
     super.startDrag(event);
     List<PNode> selectedNodes = selector.getSelectedNodes();
-    selectedNodes.get(0).moveToFront();
+    selectedNodes.get(0).raiseToTop();
     nodesStartPosition = selectedNodes.get(0).getOffset();
     curEdges = edgeFinder.findEdges(selectedNodes.get(0));
   }

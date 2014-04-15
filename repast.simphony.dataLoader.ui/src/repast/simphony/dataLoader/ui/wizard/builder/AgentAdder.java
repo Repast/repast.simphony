@@ -9,11 +9,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+
 import repast.simphony.annotate.AgentAnnot;
 import repast.simphony.ui.plugin.editor.DefaultEditorDialog;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class AgentAdder extends PBasicInputEventHandler {
 	ContextDescriptor descriptor;

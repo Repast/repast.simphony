@@ -1,14 +1,15 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.piccolo2d.PNode;
+
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.visualization.network.PEdge;
 import repast.simphony.visualization.visualization2D.Display2D;
 import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Given a PNode, this will find any edges associated with it, if any.

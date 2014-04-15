@@ -11,10 +11,10 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import org.geotools.map.MapContent;
+import org.piccolo2d.event.PInputEventListener;
 
 import repast.simphony.gis.tools.MapTool;
 import repast.simphony.gis.tools.ToolManager;
-import edu.umd.cs.piccolo.event.PInputEventListener;
 
 /**
  * This is a very basic panel that holds a canvas and a toolbar.

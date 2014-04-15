@@ -1,12 +1,20 @@
 package repast.simphony.visualization.editor.gis;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.Polygon;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PDragSequenceEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PPath;
+
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.RepastEdge;
@@ -15,14 +23,14 @@ import repast.simphony.visualization.editor.FloatingList;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import repast.simphony.visualization.gis.DisplayGIS;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.GeometryFilter;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Event handler for moving gis objects.
@@ -110,7 +118,7 @@ public class GISMoveHandler extends PDragSequenceEventHandler implements PEditor
   }
 
   private PNode createNode() {
-    PPath path = new PPath();
+    PPath.Double path = new PPath.Double();
     Geometry geom = display.getGeography().getGeometry(selectedObject);
     Coordinate[] coords = geom.getCoordinates();
     if (geom instanceof Polygon || geom instanceof MultiPolygon || geom instanceof LineString ||
@@ -136,7 +144,7 @@ public class GISMoveHandler extends PDragSequenceEventHandler implements PEditor
       // the mark that represents it, so just make a square for now
       double val = GISEditorUtilities.calcPointPickBuffer(coords[0],
               display.getGeography().getCRS(), canvas.getScaleDenominator()) * 3;
-      path = new PPath(new Rectangle2D.Double(coords[0].x - val / 2, coords[0].y - val / 2, val, val));
+      path = new PPath.Double(new Rectangle2D.Double(coords[0].x - val / 2, coords[0].y - val / 2, val, val));
       path.setPaint(new Color(0, .9f, 0, .8f));
     }
 

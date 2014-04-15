@@ -1,11 +1,11 @@
 package repast.simphony.visualization.visualization2D;
 
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PInputEventListener;
 /**
  *  @deprecated replaced by ogl 2D
  */
