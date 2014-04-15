@@ -6,16 +6,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+
 import repast.simphony.ui.plugin.editor.DefaultEditorDialog;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class ProbeListener extends PBasicInputEventHandler {
 
 	@Override
 	public void mouseClicked(PInputEvent ev) {
-		Object o = ev.getPickedNode().getClientProperty(AgentLayer.AGENT_KEY);
+		Object o = ev.getPickedNode().getClientProperties().getAttribute(AgentLayer.AGENT_KEY);
 		if (o != null) {
 			AgentDescriptorFillerPanel fillerPanel = new AgentDescriptorFillerPanel(null, null, null,
 					(AgentDescriptor) o);

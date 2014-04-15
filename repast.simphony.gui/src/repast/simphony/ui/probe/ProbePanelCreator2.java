@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 
 import repast.simphony.context.Context;
 import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.ContextUtils;
 import simphony.util.messages.MessageCenter;
@@ -39,6 +38,8 @@ public class ProbePanelCreator2 {
   private List<ProbeModel> models = new ArrayList<ProbeModel>();
   private ProbeInfo pbInfo;
   private Object target;
+  private Map<Class<?>, LocationProbeProvider> locationProviderMap;
+  
   public ProbePanelCreator2(Object objectToProbe) {
     this.target = objectToProbe;
     try {
@@ -159,22 +160,7 @@ public class ProbePanelCreator2 {
           msgCenter.warn("Error while creating grid location probe.", ex);
         }
       }
-
-      for (Geography<?> space : context.getProjections(Geography.class)) {
-        GeographyLocationProbe probe = new GeographyLocationProbe(target, space);
-        // wrap in model to do the binding.
-        ProbeModel model = new ProbeModel(probe);
-        models.add(model);
-        try {
-          StringProbedProperty prop = new StringProbedProperty(probe.getLocationDescriptor());
-          JComponent component = prop.getComponent(model);
-          builder.append(space.getName() + ":", component);
-          builder.nextLine();
-        } catch (IntrospectionException ex) {
-          msgCenter.warn("Error while creating grid location probe.", ex);
-        }
-      }
-    }
+   }
 
     if (target instanceof ValueLayerProbeObject2D) {
       ValueLayerLocationProbe probe = new ValueLayerLocationProbe(target);
@@ -189,6 +175,27 @@ public class ProbePanelCreator2 {
       } catch (IntrospectionException ex) {
         msgCenter.warn("Error while creating grid location probe.", ex);
       }
+    }
+    
+    // Last look through any available LocationProbeProviders for the object's location 
+    for (LocationProbeProvider provider : locationProviderMap.values()){
+    	Map<String,LocationProbe> locationProbes = provider.getLocations(target);
+
+    	for (String projectionName : locationProbes.keySet()){
+    		LocationProbe probe = locationProbes.get(projectionName);
+    		ProbeModel model = new ProbeModel(probe);
+    		models.add(model);
+
+    		try {
+    			StringProbedProperty prop = new StringProbedProperty(probe.getLocationDescriptor());
+
+    			JComponent component = prop.getComponent(model);
+    			builder.append(projectionName + ":", component);
+    			builder.nextLine();
+    		} catch (IntrospectionException ex) {
+    			msgCenter.warn("Error while creating location probe for " + projectionName + ".", ex);
+    		}
+    	}
     }
   }
 
@@ -214,8 +221,10 @@ public class ProbePanelCreator2 {
     }
   };
 
-  public Probe getProbe(Map<Class<?>, PPUICreatorFactory> creatorMap, boolean wrap) {
+  public Probe getProbe(Map<Class<?>, PPUICreatorFactory> creatorMap, 
+  		Map<Class<?>, LocationProbeProvider> locationProviderMap, boolean wrap) {
     List<ProbedPropertyUICreator> props = createProperties(creatorMap, wrap);
+    this.locationProviderMap = locationProviderMap;
     try {
       String title;
       if ( pbInfo.getIDProperty() == null) {

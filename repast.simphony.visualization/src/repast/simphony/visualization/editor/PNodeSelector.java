@@ -1,18 +1,18 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.util.PStack;
-import edu.umd.cs.piccolox.handles.PHandle;
-import edu.umd.cs.piccolox.util.PBoundsLocator;
-import edu.umd.cs.piccolox.util.PNodeLocator;
-import repast.simphony.visualization.network.NetworkDisplayLayer2D;
-import repast.simphony.visualization.network.PEdge;
-import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
-
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.piccolo2d.PNode;
+import org.piccolo2d.extras.handles.PHandle;
+import org.piccolo2d.extras.util.PBoundsLocator;
+import org.piccolo2d.extras.util.PNodeLocator;
+import org.piccolo2d.util.PStack;
+
+import repast.simphony.visualization.network.NetworkDisplayLayer2D;
+import repast.simphony.visualization.network.PEdge;
+import repast.simphony.visualization.visualization2D.StyledDisplayLayer2D;
 
 /**
  * Selects PNodes representing agent etc., given a PStack.
@@ -24,9 +24,10 @@ public class PNodeSelector {
 
   private List<PNode> selectedNodes = new ArrayList<PNode>();
 
-  static {
-    PHandle.DEFAULT_HANDLE_SHAPE = new Ellipse2D.Float(0f, 0f, 2, 2);
-  }
+  // Not compatible with Piccolo 3.0
+//  static {
+//    PHandle.DEFAULT_HANDLE_SHAPE = new Ellipse2D.Float(0f, 0f, 2, 2);
+//  }
 
   /**
    * Gets a list of the currently selected nodes.

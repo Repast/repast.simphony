@@ -69,7 +69,6 @@
   
   <projection id="directedNet" type="network"><attribute id="directed" value="true" type="boolean"/></projection>
   <projection id="undirectedNet" type="network"><attribute id="directed" value="false" type="boolean"/></projection>
-  <projection id="geography" type="geography"/>
   
   <context id="sugarSpace">
     <projection id="grid" type="grid"/>

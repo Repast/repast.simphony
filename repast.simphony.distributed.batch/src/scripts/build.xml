@@ -37,6 +37,7 @@
 	<property name="distributed.batch" location="${plugins.prefix}/repast.simphony.distributed.batch${plugins.suffix}" />
 	<echo message="${distributed.batch}" />
 	<property name="core" location="${plugins.prefix}/repast.simphony.core${plugins.suffix}" />
+	<property name="gis" location="${plugins.prefix}/repast.simphony.gis${plugins.suffix}" />
 	<property name="runtime" location="${plugins.prefix}/repast.simphony.runtime${plugins.suffix}" />
 	<property name="data" location="${plugins.prefix}/repast.simphony.data${plugins.suffix}" />
 	<property name="data.loader" location="${plugins.prefix}/repast.simphony.dataLoader${plugins.suffix}" />
@@ -68,6 +69,7 @@
 			</resources>
 			<fileset file="${message.center.props}" />
 			<fileset file="${unrolled.param.file}" />
+			<fileset file="${config.props.file}" />
 		</copy>
 
 		<copy todir="${working.dir}/bin">
@@ -123,6 +125,7 @@
 		<jar destfile="${working.lib}/repast.simphony.batch.jar" basedir="${batch}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.distributed.batch.jar" basedir="${distributed.batch}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.core.jar" basedir="${core}/bin" />
+		<jar destfile="${working.lib}/repast.simphony.gis.jar" basedir="${gis}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.runtime.jar" basedir="${runtime}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.data.jar" basedir="${data}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.dataLoader.jar" basedir="${data.loader}/bin" />
@@ -153,6 +156,10 @@
 			</fileset>
 
 			<fileset dir="${sql}/lib">
+				<include name="*.jar" />
+			</fileset>
+			
+			<fileset dir="${gis}/lib">
 				<include name="*.jar" />
 			</fileset>
 

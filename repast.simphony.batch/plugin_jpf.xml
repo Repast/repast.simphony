@@ -9,6 +9,7 @@
 		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.runtime" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="false"/>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gis" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.scenario" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.dataloader" reverse-lookup="false"/>
     	<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.essentials" reverse-lookup="false"/>

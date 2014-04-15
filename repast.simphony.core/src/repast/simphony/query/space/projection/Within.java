@@ -1,15 +1,12 @@
 package repast.simphony.query.space.projection;
 
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotools.geometry.jts.JTS;
-import org.opengis.referencing.operation.TransformException;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.NdPoint;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.ShortestPath;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
+import repast.simphony.space.projection.Projection;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -89,28 +86,25 @@ public class Within extends SpatialPredicate {
 
 		return false;
 	}
+	
+	@Override
+	public boolean evaluate(Projection projection) {
+		return projection.evaluate(this);
+	}
 
-  /**
-   * Evaluates the Geography against this predicate comparing
-   * whether two objects are within a specified distance of each other.
-   * The distance is orthodromic and in meters. Note that
-   * for Polygons the distance is measured from the center
-   * and not from the nearest point.
-   *
-   * @param geography the geography to evaluate against.
-   * @return true if this predicate is true for the specified projection otherwise false.
-   */
-  @Override
-  public boolean evaluate(Geography geography) {
-    Geometry geom1 = geography.getGeometry(obj1);
-    Geometry geom2 = geography.getGeometry(obj2);
-    try {
-    return JTS.orthodromicDistance(geom1.getCentroid().getCoordinate(),
-            geom2.getCentroid().getCoordinate(), geography.getCRS()) <= distance;
-    } catch (TransformException e) {
-      msg.error("Error calculating orthodromic distance", e);
-    }
+	public Object getObj1() {
+		return obj1;
+	}
 
-    return false;
-  }
+	public Object getObj2() {
+		return obj2;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public double getDistanceSq() {
+		return distanceSq;
+	}
 }

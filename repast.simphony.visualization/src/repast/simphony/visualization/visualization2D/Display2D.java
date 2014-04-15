@@ -5,7 +5,6 @@ import static repast.simphony.ui.RSGUIConstants.VIZ_INFO_ICON;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
@@ -29,11 +28,18 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.util.PPickPath;
+
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.ui.probe.ProbeManager;
-import repast.simphony.ui.probe.ProbePanelCreator;
-import repast.simphony.ui.probe.ValueLayerProbeObject2D;
 import repast.simphony.valueLayer.ValueLayer;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.AddedRemovedLayoutUpdater;
@@ -54,15 +60,6 @@ import repast.simphony.visualization.visualization2D.style.EdgeStyle2D;
 import repast.simphony.visualization.visualization2D.style.Style2D;
 import repast.simphony.visualization.visualization2D.style.ValueLayerStyle;
 import simphony.util.ThreadUtilities;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
-import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
  * @deprecated replaced by ogl 2D
@@ -148,7 +145,7 @@ public class Display2D extends AbstractDisplay implements WindowListener {
   
   protected boolean showHoverProbes = false;
   
-  protected PPath hoverProbe = new PPath();
+  protected PPath hoverProbe = new PPath.Double();
  
   protected PPath hoverProbeBox; 
   

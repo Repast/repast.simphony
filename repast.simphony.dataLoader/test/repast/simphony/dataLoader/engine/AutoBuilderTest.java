@@ -31,7 +31,6 @@ import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.continuous.StickyBorders;
 import repast.simphony.space.continuous.StrictBorders;
 import repast.simphony.space.continuous.WrapAroundBorders;
-import repast.simphony.space.gis.Geography;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridDimensions;
@@ -42,7 +41,7 @@ import repast.simphony.space.projection.Projection;
  * @author Nick Collier
  */
 public class AutoBuilderTest {
-
+	
   private ContextData sContext;
   private Context context;
   private Parameters params;
@@ -136,6 +135,16 @@ public class AutoBuilderTest {
 
   @Before
   public void init() throws IOException, ParameterFormatException, XMLStreamException {
+      
+  	// TODO Projections: add the space inits here based on the commented geography
+  	//       lines below if the core projections are refactored similarly.
+//  	GeographyProjectionRegistryData data = new GeographyProjectionRegistryData();
+//		data.setProjectionDryer(new GeographyProjectionDryer());
+//		data.setProjectionXMLConverter(new GeographyConverter());
+//		data.setProjectionBuilderFactory(new GeographyProjectionBuilder());
+//		
+//		ProjectionRegistry.addRegistryData(data);
+  	
     // assumes working dir is repast.simphony.dataLoader
     sContext = new ContextFileReader().read(new File("./test/repast/simphony/dataLoader/engine/context.xml"),
         new Classpath());
@@ -149,25 +158,6 @@ public class AutoBuilderTest {
             type.getValue(attribute.getValue()), false);
       }
     }
-
-    /*
-    for (SAgent agent : sContext.getAllAgents()) {
-      for (SAttribute attribute : agent.getAttributes()) {
-        if (attribute.getID().equals("initialCount")) {
-          Class paramClass = ScoreToJavaMapping.classFor(attribute.getSType());
-          Object paramVal = ParameterUtils.parseDefaultValue(paramClass, attribute.getID(), attribute.getDefaultValue())[0];
-          creator.addParameter(agent.getID() + attribute.getID(), attribute.getLabel(), paramClass, paramVal, false);
-        }
-
-        if (attribute.getID().equals("shpFile")) {
-          //Class paramClass = ScoreToJavaMapping.classFor(attribute.getSType());
-          Object paramVal = ParameterUtils.parseDefaultValue(String.class, attribute.getID(), attribute.getDefaultValue())[0];
-          creator.addParameter(agent.getID() + attribute.getID(), attribute.getLabel(), String.class, paramVal, false);
-
-        }
-      }
-    }
-    */
 
     params = creator.createParameters();
     RunEnvironment.init(null, null, params, false);
@@ -253,30 +243,4 @@ public class AutoBuilderTest {
       //assertEquals(42, net.size());
     }
   }
-
-  @Test
-  public void geogCreation() {
-    ContextXMLBuilder builder = new ContextXMLBuilder(sContext);
-    builder.build(context);
-
-    Geography geog = (Geography) context.getProjection("geography");
-    assertTrue(geog != null);
-  }
-
-
-  /*
-  @Test
-  public void agentCreation() {
-    ScoreContextBuilder builder = new ScoreContextBuilder(sContext);
-    builder.build(context);
-    assertEquals(40, context.size());
-
-    Geography geog = (Geography) context.getProjection("Geography");
-    for (Object obj : context) {
-      assertTrue(geog.getGeometry(obj) != null);
-      assertTrue(((TestAgent)obj).getWealth() > -1);
-    }
-
-  }
-  */
 }

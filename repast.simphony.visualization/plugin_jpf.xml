@@ -9,10 +9,7 @@
 	<requires>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
-		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
-    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gis" reverse-lookup="false"/>
-
-		
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>	
 	</requires>
 
 	<runtime>
@@ -33,15 +30,11 @@
 		<library id="ms3dloader" path="lib/MS3DLoader-1.0.8.jar" type="code">
       <export prefix="*"/>
     </library>
-		<library id="phoebe" path="lib/phoebe.jar" type="code">
-      <export prefix="*"/>
-    </library>
+	
 		<library id="jung_vis" path="lib/jung-visualization-2.0.1.jar" type="code">
       <export prefix="*"/>
     </library>
-		<library id="worldwind" path="lib/worldwind.jar" type="code">
-      <export prefix="*"/>
-    </library>
+		
 	</runtime>
 
 	<extension-point extension-multiplicity="any" id="stylebuilder.wizard.options" parent-plugin-id="repast.simphony.plugin.util" parent-point-id="wizard.options">

@@ -29,7 +29,8 @@ import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleDat
 import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.editedStyle.EditedValueLayerStyleData;
-import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -51,7 +52,7 @@ public class EditedValueLayerStyleDialog extends JDialog {
 
   private String valueLayerName;
   private String userStyleName;
-  private DisplayDescriptor.DisplayType displayType;
+  private String displayType;
 
   public EditedValueLayerStyleDialog(Frame owner) {
     super(owner);
@@ -62,18 +63,19 @@ public class EditedValueLayerStyleDialog extends JDialog {
   }
 
   public void init(String valueLayerName, String userStyleName,
-                   DisplayDescriptor descriptor) {
+                   CartesianDisplayDescriptor descriptor) {
     this.valueLayerName = valueLayerName;
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();
 
     userStyleData = EditedStyleUtils.getValueLayerStyle(descriptor.getValueLayerEditedStyleName());
 
+    // TODO Projections: init from viz registry data entries
     // Set objects based on display type 2D/3D
     if (userStyleData == null){
-    	if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) 
+    	if (displayType.equals(DisplayType.TWO_D)) 
     		userStyleData = new DefaultEditedValueLayerStyleData2D();
-    	else if (displayType.equals(DisplayDescriptor.DisplayType.THREE_D))
+    	else if (displayType.equals(DisplayType.THREE_D))
     		userStyleData = new DefaultEditedValueLayerStyleData3D();
     }
 
@@ -81,7 +83,7 @@ public class EditedValueLayerStyleDialog extends JDialog {
     initMyComponents(displayType);
   }
 
-  private void initMyComponents(DisplayDescriptor.DisplayType displayType) {
+  private void initMyComponents(String displayType) {
   
   	// set initial data from userStyleData
   	float[] c = userStyleData.getColor();
@@ -113,7 +115,8 @@ public class EditedValueLayerStyleDialog extends JDialog {
   	
   	CellTextField.setText(Float.toString(userStyleData.getCellSize()));
 
-  	if (displayType.equals(DisplayDescriptor.DisplayType.TWO_D)) {
+    // TODO Projections: init from viz registry data entries
+  	if (displayType.equals(DisplayType.TWO_D)) {
   		this.setTitle("2D Value Layer Editor");
 
   		HeightTextField.setEnabled(false);
@@ -215,7 +218,8 @@ public class EditedValueLayerStyleDialog extends JDialog {
   		
   		userStyleData.setCellSize(Float.valueOf(CellTextField.getText()));
 
-  		if (displayType == DisplayDescriptor.DisplayType.THREE_D){
+  	// TODO Projections: init from viz registry data entries
+  		if (displayType.equals(DisplayType.THREE_D)){
   			userStyleData.setY(Float.valueOf(HeightTextField.getText()));
   			userStyleData.setYMin(Float.valueOf(HeightMinTextField.getText()));
   			userStyleData.setYMax(Float.valueOf(HeightMaxTextField.getText()));

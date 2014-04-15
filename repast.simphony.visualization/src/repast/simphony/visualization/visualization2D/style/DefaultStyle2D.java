@@ -8,9 +8,9 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.nodes.PText;
 /**
  *  @deprecated replaced by ogl 2D
  */
@@ -38,7 +38,7 @@ public class DefaultStyle2D implements Style2D<Object> {
 	}
 
 	public PNode getPNode(Object object, PNode node) {
-		PPath path = new PPath(s);
+		PPath path = new PPath.Double(s);
 		path.setBounds(rect);
 		return path;
 	}

@@ -5,14 +5,15 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PText;
+import org.piccolo2d.util.PPickPath;
+import org.piccolo2d.util.PStack;
+
 import repast.simphony.visualization.grid.GridShape;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PText;
-import edu.umd.cs.piccolo.util.PPickPath;
-import edu.umd.cs.piccolo.util.PStack;
 
 /**
  * Displays a tooltip specifying the current grid location.

@@ -1,8 +1,8 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
-
 import java.util.List;
+
+import org.piccolo2d.PNode;
 
 /**
  * Interface for classes that want to be notified of PNode selection.

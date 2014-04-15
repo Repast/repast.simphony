@@ -1,7 +1,7 @@
 package repast.simphony.dataLoader.ui.wizard.builder;
 
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
+import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEvent;
 
 public class RemoveListener extends PBasicInputEventHandler {
 
@@ -16,7 +16,8 @@ public class RemoveListener extends PBasicInputEventHandler {
 
 	@Override
 	public void mouseClicked(PInputEvent ev) {
-		Object o = ev.getPickedNode().getClientProperty(AgentLayer.AGENT_KEY);
+				
+		Object o = ev.getPickedNode().getClientProperties().getAttribute(AgentLayer.AGENT_KEY);
 		if (o != null) {
 			canvas.removeAgentDescriptor((AgentDescriptor) o);
 			contextDescriptor.removeAgentDescriptor((AgentDescriptor) o);

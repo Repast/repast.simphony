@@ -12,9 +12,7 @@ import repast.simphony.engine.environment.ControllerRegistry;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.ui.plugin.AbstractEditorMenuItem;
 import repast.simphony.ui.tree.ScenarioTreeEvent;
-import repast.simphony.visualization.engine.DefaultDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayComponentControllerAction;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
  * EditorMenuItem for creating displays. This is attached to a display composite action.
@@ -44,9 +42,11 @@ public class DefaultDisplayMenuItem extends AbstractEditorMenuItem {
   }
 
   private DisplayComponentControllerAction createAction(Component parent, ScenarioTreeEvent evt) {
-    DisplayDescriptor descriptor = new DefaultDisplayDescriptor("A Display");
-    DisplayComponentControllerAction action = new DisplayComponentControllerAction(descriptor);
-
+    
+  	// Note that the descriptor is assigned to the action below via DisplayWizardCreator.getAction()
+    
+  	DisplayComponentControllerAction action = new DisplayComponentControllerAction(null);
+    
     ContextData context = null;
     List<ContextData> allContexts = evt.getScenario().getContext().getAllContexts();
 
@@ -57,10 +57,9 @@ public class DefaultDisplayMenuItem extends AbstractEditorMenuItem {
       }
     }
 
-    DisplayConfigurator config = new DisplayConfigurator(evt.getContextID(), context, action);
+    DisplayWizardCreator config = new DisplayWizardCreator(evt.getContextID(), context, action);
 
     config.showDialog(parent);
     return config.getAction();
-
   }
 }

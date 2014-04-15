@@ -24,12 +24,12 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.ui.widget.SquareIcon;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.UnitSizeLayoutProperties;
 import repast.simphony.visualization.VisualizationProperties;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 import saf.core.ui.util.FloatDocument;
 
@@ -118,7 +118,8 @@ public class ContinuousStyleStep extends PanelWizardStep {
 
   private void resetLayoutProperties(DisplayDescriptor descriptor) {
     descriptor.setLayoutProperties(new UnitSizeLayoutProperties());
-    if (descriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D) {
+    // TODO Projections: instead of using DisplayType, get the properties from the descriptor
+    if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
       sizeFld.setText(".06");
     } else {
       sizeFld.setText("15");
@@ -129,7 +130,7 @@ public class ContinuousStyleStep extends PanelWizardStep {
 
   @Override
   public void prepare() {
-    String name = model.getTypeDescriptor(ProjectionType.CONTINUOUS_SPACE).getProjectionName();
+    String name = model.getTypeDescriptor(ProjectionData.CONTINUOUS_SPACE_TYPE).getProjectionName();
     if (name != null) {
       nameLbl.setText(name);
     }
@@ -142,7 +143,7 @@ public class ContinuousStyleStep extends PanelWizardStep {
 
   private void prepareDecoratorProps() {
     DisplayDescriptor descriptor = model.getDescriptor();
-    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionType.CONTINUOUS_SPACE);
+    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionData.CONTINUOUS_SPACE_TYPE);
     // get the grid  if there and set color etc.
     Boolean show = (Boolean) pd.getProperty(CONTINUOUS_DECORATOR, SHOW_DECORATOR);
     if (show == null) {
@@ -169,13 +170,13 @@ public class ContinuousStyleStep extends PanelWizardStep {
     float unitSize = Float.parseFloat(sizeFld.getText());
     hints.setUnitSize(unitSize);
 
-    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionType.CONTINUOUS_SPACE);
+    ProjectionDescriptor pd = model.getTypeDescriptor(ProjectionData.CONTINUOUS_SPACE_TYPE);
     pd.setProperty(CONTINUOUS_DECORATOR, COLOR, color.getRGB());
     pd.setProperty(CONTINUOUS_DECORATOR, SHOW_DECORATOR, boundingBox.isSelected());
     pd.setProperty(CONTINUOUS_DECORATOR, UNIT_SIZE, unitSize);
 
     for (ProjectionData proj : descriptor.getProjections()) {
-      if (proj.getType() == ProjectionType.CONTINUOUS_SPACE) {
+      if (proj.getType().equals(ProjectionData.CONTINUOUS_SPACE_TYPE)) {
         descriptor.setLayoutProjection(proj.getId());
         descriptor.setLayoutFrequency(IDisplay.LayoutFrequency.ON_MOVE);
         // we need to set a fake class name here so that the

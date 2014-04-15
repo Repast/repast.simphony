@@ -1,22 +1,28 @@
 package repast.simphony.visualization.visualization2D;
 
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
-import edu.umd.cs.piccolo.util.PBounds;
-import javolution.util.FastSet;
-import repast.simphony.visualization.Layout;
-import repast.simphony.visualization.LayoutUpdater;
-import repast.simphony.visualization.visualization2D.style.Style2D;
-
-import java.awt.*;
+import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javolution.util.FastSet;
+
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.nodes.PText;
+import org.piccolo2d.util.PBounds;
+
+import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.LayoutUpdater;
+import repast.simphony.visualization.visualization2D.style.Style2D;
 
 /**
  *  @deprecated replaced by ogl 2D

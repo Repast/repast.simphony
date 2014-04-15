@@ -1,23 +1,20 @@
 package repast.simphony.visualization.network;
 
 import java.awt.Paint;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
-import phoebe.util.PArrowIcon;
-import phoebe.util.PCircleIcon;
-import phoebe.util.PDeltaIcon;
-import phoebe.util.PDiamondIcon;
-import phoebe.util.PEdgeEndIcon;
-import phoebe.util.PNullIcon;
-import phoebe.util.PTIcon;
-import repast.simphony.visualization.visualization2D.style.EdgeStyle2D;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolox.util.PBoundsLocator;
-import edu.umd.cs.piccolox.util.PNodeLocator;
+import org.piccolo2d.PNode;
+import org.piccolo2d.extras.util.PBoundsLocator;
+import org.piccolo2d.extras.util.PNodeLocator;
+import org.piccolo2d.nodes.PPath;
 
-public class PEdge extends PPath {
+
+import repast.simphony.visualization.visualization2D.style.EdgeStyle2D;
+
+@Deprecated
+public class PEdge extends PPath.Double {
 
 	PNode source;
 	PNode target;
@@ -28,8 +25,15 @@ public class PEdge extends PPath {
 	Point2D targetPoint;
 	Paint sourceEndPaint;
 	Paint targetEndPaint;
-	PEdgeEndIcon targetEnd;
-	PEdgeEndIcon sourceEnd;
+	
+	// The end icon classes depend on the Phoebe library which itself has depedencies
+	//   on older version of Piccolo and is therefore not compatible with Piccolo 3+.
+	//   It appears that the Phoebe code may have been updated as part of the 
+	//   "hypergraphdb" project, but we have not updated it here since PEdge is
+	//   already deprecated.
+	
+//	PEdgeEndIcon targetEnd;
+//	PEdgeEndIcon sourceEnd;
 
 	public final static int STRAIGHT_LINES = 1;
 	public final static int CURVED_LINES = 2;
@@ -66,52 +70,56 @@ public class PEdge extends PPath {
 		if (source == target) {
 			float width = (float) ((PNode) target).getWidth();
 			float height = (float) ((PNode) target).getHeight();
-			setPathToEllipse((float) (sourcePoint.getX() - .25 * width),
-					(float) (sourcePoint.getY() - .25 * height), width * 2,
-					height * 2);
+			
+			this.reset();
+			this.append(new Ellipse2D.Double( (sourcePoint.getX() - .25 * width),
+					 (sourcePoint.getY() - .25 * height), width * 2,
+					height * 2), false);
+			
 			return;
 		}
 		updatePoint(sourcePoint, targetPoint, source);
 		updatePoint(targetPoint, sourcePoint, target);
 		line.setLine(sourcePoint, targetPoint);
-		if (targetEnd == null) {
-			targetEnd = createEndIcon(targetEndType);
-			addChild(targetEnd);
-		}
-		if (sourceEnd == null) {
-			sourceEnd = createEndIcon(sourceEndType);
-			addChild(sourceEnd);
-		}
-		updateEndPoints();
-		this.setPathTo(line);
+//		if (targetEnd == null) {
+//			targetEnd = createEndIcon(targetEndType);
+//			addChild(targetEnd);
+//		}
+//		if (sourceEnd == null) {
+//			sourceEnd = createEndIcon(sourceEndType);
+//			addChild(sourceEnd);
+//		}
+//		updateEndPoints();
+		this.reset();
+		this.append(line,false);
 	}
 
-	private PEdgeEndIcon createEndIcon(int type) {
-		switch (type) {
-		case EdgeStyle2D.ARROW_HEAD:
-			return new PArrowIcon(sourcePoint, targetPoint, 10);
-		case EdgeStyle2D.DIAMOND_HEAD:
-			return new PDiamondIcon(sourcePoint, targetPoint, 10);
-		case EdgeStyle2D.CIRCLE_HEAD:
-			return new PCircleIcon(sourcePoint, targetPoint, 10);
-		case EdgeStyle2D.DELTA_HEAD:
-			return new PDeltaIcon(sourcePoint, targetPoint, 10);
-		case EdgeStyle2D.T_HEAD:
-			return new PTIcon(sourcePoint, targetPoint, 10);
-		default:
-			return new PNullIcon(sourcePoint, targetPoint, 10);
-		}
-	}
+//	private PEdgeEndIcon createEndIcon(int type) {
+//		switch (type) {
+//		case EdgeStyle2D.ARROW_HEAD:
+//			return new PArrowIcon(sourcePoint, targetPoint, 10);
+//		case EdgeStyle2D.DIAMOND_HEAD:
+//			return new PDiamondIcon(sourcePoint, targetPoint, 10);
+//		case EdgeStyle2D.CIRCLE_HEAD:
+//			return new PCircleIcon(sourcePoint, targetPoint, 10);
+//		case EdgeStyle2D.DELTA_HEAD:
+//			return new PDeltaIcon(sourcePoint, targetPoint, 10);
+//		case EdgeStyle2D.T_HEAD:
+//			return new PTIcon(sourcePoint, targetPoint, 10);
+//		default:
+//			return new PNullIcon(sourcePoint, targetPoint, 10);
+//		}
+//	}
 
-	private void updateEndPoints() {
-		targetEnd.setPaint(targetEndPaint);
-		targetEnd.drawIcon(sourcePoint, targetPoint);
-		targetPoint.setLocation(targetEnd.getNewX(), targetEnd.getNewY());
-		
-		sourceEnd.setPaint(sourceEndPaint);
-		sourceEnd.drawIcon(targetPoint, sourcePoint);
-		sourcePoint.setLocation(sourceEnd.getNewX(), sourceEnd.getNewY());
-	}
+//	private void updateEndPoints() {
+//		targetEnd.setPaint(targetEndPaint);
+//		targetEnd.drawIcon(sourcePoint, targetPoint);
+//		targetPoint.setLocation(targetEnd.getNewX(), targetEnd.getNewY());
+//		
+//		sourceEnd.setPaint(sourceEndPaint);
+//		sourceEnd.drawIcon(targetPoint, sourcePoint);
+//		sourcePoint.setLocation(sourceEnd.getNewX(), sourceEnd.getNewY());
+//	}
 
 	public void setTargetEndType(int type) {
 		targetEndType = type;

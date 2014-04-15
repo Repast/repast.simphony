@@ -5,23 +5,23 @@
  */
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PCanvas;
-import repast.simphony.gis.display.PGISCanvas;
+import static repast.simphony.visualization.editor.DisplayEditor.Mode.ADD_EDGE;
+import static repast.simphony.visualization.editor.DisplayEditor.Mode.MOVE;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import org.piccolo2d.PCanvas;
+
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.DisplayEditorLifecycle;
-import static repast.simphony.visualization.editor.DisplayEditor.Mode.ADD_EDGE;
-import static repast.simphony.visualization.editor.DisplayEditor.Mode.MOVE;
-import repast.simphony.visualization.editor.gis.*;
-import repast.simphony.visualization.gis.DisplayGIS;
 import repast.simphony.visualization.visualization2D.Display2D;
 import repast.simphony.visualization.visualization3D.Display3D;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Singleton factory for creating display editors.
@@ -70,27 +70,28 @@ public class EditorFactory {
    * @param panel   a border laid out panel to which any editor components can be added
    * @return the created editor.
    */
-  public DisplayEditorLifecycle createGISEditor(DisplayGIS display, PGISCanvas canvas, JPanel panel) {
-    notifier.addDisplay(display);
-    DisplayEditorGIS editor = new DisplayEditorGIS(display, panel, notifier);
-    GISSelectionHandler selectionHandler = new GISSelectionHandler(display, canvas);
-    selectionHandler.addObjectSelectionListener(editor);
-    editor.addModalListener(DisplayEditor.Mode.SELECT, selectionHandler);
-    editor.addModalListener(MOVE, new GISMoveHandler(canvas, display, notifier));
-    editor.initAddListener(new GISAddListener(display,
-            new GISAddHandler(canvas, editor)));
-
-    List<Network> nets = new ArrayList<Network>();
-    for (Projection proj : (Iterable<Projection>) display.getInitData().getProjections()) {
-      if (proj instanceof Network) nets.add((Network) proj);
-    }
-
-    if (nets.size() > 0)
-      editor.addModalListener(ADD_EDGE, new GISNetAddEdgeHandler(editor, canvas, display));
-
-
-    return editor;
-  }
+  // TODO Projections: Reimplement elsewhere?
+//  public DisplayEditorLifecycle createGISEditor(DisplayGIS display, PGISCanvas canvas, JPanel panel) {
+//    notifier.addDisplay(display);
+//    DisplayEditorGIS editor = new DisplayEditorGIS(display, panel, notifier);
+//    GISSelectionHandler selectionHandler = new GISSelectionHandler(display, canvas);
+//    selectionHandler.addObjectSelectionListener(editor);
+//    editor.addModalListener(DisplayEditor.Mode.SELECT, selectionHandler);
+//    editor.addModalListener(MOVE, new GISMoveHandler(canvas, display, notifier));
+//    editor.initAddListener(new GISAddListener(display,
+//            new GISAddHandler(canvas, editor)));
+//
+//    List<Network> nets = new ArrayList<Network>();
+//    for (Projection proj : (Iterable<Projection>) display.getInitData().getProjections()) {
+//      if (proj instanceof Network) nets.add((Network) proj);
+//    }
+//
+//    if (nets.size() > 0)
+//      editor.addModalListener(ADD_EDGE, new GISNetAddEdgeHandler(editor, canvas, display));
+//
+//
+//    return editor;
+//  }
 
   /**
    * Creates an editor for editing a 2D display using the specified data, canvas,

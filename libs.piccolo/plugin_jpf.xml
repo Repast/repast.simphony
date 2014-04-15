@@ -6,10 +6,10 @@
      </attributes>
 	
 	<runtime>
-    	<library id="piccolo" path="lib/piccolo.jar" type="code">
+    	<library id="piccolo" path="lib/piccolo2d-core-3.0.jar" type="code">
     		<export prefix="*"/>
     	</library>
-		<library id="piccolox" path="lib/piccolox.jar" type="code">
+		<library id="piccolox" path="lib/piccolo2d-extras-3.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
   </runtime>

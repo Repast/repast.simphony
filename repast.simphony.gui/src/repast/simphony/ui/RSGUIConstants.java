@@ -15,6 +15,7 @@ public abstract class RSGUIConstants {
   
   public static String GUI_PLUGIN_ID = "repast.simphony.gui";
   public static String FIELD_PROBE_EXT_ID = "field.probe";
+  public static String PROBE_LOCATION_PROVIDER_EXT_ID = "probe.location.provider";
 
   // perspective
   public static String DEFAULT_PERSPECTIVE = "repast.simphony.ui.perspective.default";

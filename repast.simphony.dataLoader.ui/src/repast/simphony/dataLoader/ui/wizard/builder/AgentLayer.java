@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PPath;
 
 public class AgentLayer extends PLayer {
 
@@ -21,13 +21,13 @@ public class AgentLayer extends PLayer {
 	}
 
 	public PNode addObject(int index, AgentDescriptor desc, Point2D position) {
-		PPath path = new PPath(nodeShape);
+		PPath path = new PPath.Double(nodeShape);
 		path.setPaint(nodeColor);
 		path.setStrokePaint(Color.BLACK);
 		path.setBounds(0, 0, 10, 10);
 		path.setX(position.getX());
 		path.setY(position.getY());
-		path.addClientProperty(AGENT_KEY, desc);
+		path.getClientProperties().addAttribute(AGENT_KEY, desc);
 		this.addChild(path);
 		return path;
 	}

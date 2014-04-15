@@ -48,7 +48,7 @@ public class ContextFileWriter {
       writer.print("<projection id=\"");
       writer.print(proj.getId());
       writer.print("\" type=\"");
-      writer.print(proj.getType().getName());
+      writer.print(proj.getType());
       if (proj.getAttributeCount() == 0) writer.println("\" />");
       else writer.println("\" >");
       

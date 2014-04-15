@@ -23,13 +23,13 @@ import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
  * 
  * @author Nick Collier
  */
-public class DisplayCreator3D extends AbstractDisplayCreator {
+public class DisplayCreator3D extends AbstractCartesianDisplayCreator {
 
   /**
    * @param context
    * @param descriptor
    */
-  public DisplayCreator3D(Context<?> context, DisplayDescriptor descriptor) {
+  public DisplayCreator3D(Context<?> context, CartesianDisplayDescriptor descriptor) {
     super(context, descriptor);
   }
 

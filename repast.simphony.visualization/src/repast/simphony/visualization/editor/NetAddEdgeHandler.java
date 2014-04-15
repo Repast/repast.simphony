@@ -2,15 +2,16 @@ package repast.simphony.visualization.editor;
 
 import java.awt.geom.Point2D;
 
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PDragSequenceEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.util.PPickPath;
+import org.piccolo2d.util.PStack;
+
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.visualization.visualization2D.Display2D;
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.util.PPickPath;
-import edu.umd.cs.piccolo.util.PStack;
 
 /**
  * Event handler for adding edges.
@@ -62,10 +63,10 @@ public class NetAddEdgeHandler extends PDragSequenceEventHandler implements PEdi
   protected void startDrag(PInputEvent event) {
     super.startDrag(event);
     PNode selectedNode = selector.getSelectedNodes().get(0);
-    selectedNode.moveToFront();
+    selectedNode.raiseToTop();
     Point2D.Double bound1 = (Point2D.Double) selectedNode.getBounds().getCenter2D();
 
-    edge = new PPath();
+    edge = new PPath.Double();
     edge.moveTo((float) bound1.getX(), (float) bound1.getY());
     //edgeLayer.addChild(edge);
     canvas.getLayer().addChild(edge);
