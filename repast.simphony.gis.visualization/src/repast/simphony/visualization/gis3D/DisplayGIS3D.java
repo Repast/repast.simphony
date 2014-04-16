@@ -153,11 +153,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
 		asc.setStereoMode(this.displayMode);
-		                  
-		// TODO WWJ need to set the max cache size to prevent huge memory allocations with buffered images
-		long cacheSizeBytes = 100000000;
-		worldWindow.getGpuResourceCache().setCapacity(cacheSizeBytes);
-		worldWindow.getGpuResourceCache().setLowWater(cacheSizeBytes/2);
 
 		initListener();
 	}
@@ -344,15 +339,16 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		EditorFactory.getInstance().reset();
 
+		// TODO Seems to not be needed as of 4-15-2014
 		// TODO WWJ shutdown properly - currently WorldWind and WorldWindow.shutdown() 
 		//      doesn't work with jogl_981, so we can try to set = null.
 		//
 		//      There still seems to be a memory leak with multiple resets !!
-//		WorldWind.shutDown();
-//		worldWindow.shutdown();
-
-		shutdownWWJ();
+		WorldWind.shutDown();
 		worldWindow = null;
+
+//		shutdownWWJ();
+//		worldWindow = null;
 
 	}
 
