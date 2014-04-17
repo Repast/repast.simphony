@@ -31,15 +31,9 @@ public class ActionExtensions {
 
   private void loadCompositeActions(PluginManager manager) throws PluginLifecycleException, PluginDefinitionException {
     ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint("repast.simphony.core", "composite.action");
-    /*
-      <parameter id="creatorClass" value="foo" />
-      */
+    
     for (Iterator iter = extPoint.getConnectedExtensions().iterator(); iter.hasNext();) {
       Extension ext = (Extension) iter.next();
-//			System.out.println("core: " + ext.getExtendedPluginId());
-//			if (!ext.getExtendedPluginId().equals("repast.simphony.core")) {
-//				continue;
-//			}
       registerActionExt(manager, ext);
     }
   }
@@ -116,14 +110,9 @@ public class ActionExtensions {
 
   private void loadComponentActions(PluginManager manager) throws PluginLifecycleException, PluginDefinitionException {
     ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint("repast.simphony.core", "component.action");
-    /*
-      <parameter id="actionIO" value="foo" />
-      */
+   
     for (Iterator iter = extPoint.getConnectedExtensions().iterator(); iter.hasNext();) {
       Extension ext = (Extension) iter.next();
-//			if (!ext.getExtendedPluginId().equals("repast.simphony.core")) {
-//				continue;
-//			}
       registerIoExt(manager, ext);
     }
 
