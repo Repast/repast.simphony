@@ -6,7 +6,7 @@ import repast.simphony.engine.environment.DefaultControllerAction;
 
 /**
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/06 22:11:55 $
+ * 
  */
 public class ScheduledActionsCreator implements CompositeControllerActionCreator {
 
@@ -16,5 +16,10 @@ public class ScheduledActionsCreator implements CompositeControllerActionCreator
 
 	public ControllerAction createControllerAction() {
 		return new DefaultControllerAction();
+	}
+
+	@Override
+	public boolean isMasterOnly() {
+		return false;
 	}
 }

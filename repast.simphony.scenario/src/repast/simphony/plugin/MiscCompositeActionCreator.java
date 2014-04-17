@@ -15,4 +15,9 @@ public class MiscCompositeActionCreator implements CompositeControllerActionCrea
 		return new DefaultControllerAction();
 	}
 
+	@Override
+	public boolean isMasterOnly() {
+		return false;
+	}
+
 }

@@ -15,4 +15,8 @@ public class RandomCompositeActionCreator implements CompositeControllerActionCr
 		return new DefaultControllerAction();
 	}
 
+	@Override
+	public boolean isMasterOnly() {
+		return false;
+	}
 }

@@ -359,14 +359,13 @@ public class RSApplication implements TickListener, RunListener {
           // set up editor extensions
           ControllerRegistry reg = controller.getControllerRegistry();
           ContextData rootContext = scenario.getContext();
-          for (CompositeControllerActionCreator creator : actionExts.getActionExts()
-              .parentActionCreators()) {
+          for (CompositeControllerActionCreator creator : actionExts.getActionExts().parentActionCreators()) {
             for (ContextData node : rootContext.getAllContexts()) {
               ControllerAction action = reg.findAction(node.getId(), creator.getID());
               if (action != null) {
                 actionExts.getCompositeEditorExts().addUI(action, creator);
               }
-            }
+            }         
           }
 
           // for (ContextTreeNode node :

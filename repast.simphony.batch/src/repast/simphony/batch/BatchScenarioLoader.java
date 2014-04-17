@@ -66,9 +66,22 @@ public class BatchScenarioLoader extends ScenarioLoader {
   protected void addParentActions(ContextData contextData, ControllerRegistry registry) {
     String id = contextData.getId();
     for (CompositeControllerActionCreator creator : parentActionCreators) {
-      ControllerAction action = creator.createControllerAction();
-      registry.addAction(id, null, action);
-      registry.registerAction(id, creator.getID(), action);
+      
+  		if (creator.isMasterOnly()){
+				if (id.equals(registry.getMasterContextId())){
+					ControllerAction action = creator.createControllerAction();
+					registry.addAction(id, null, action);
+					registry.registerAction(id, creator.getID(), action);
+				}
+				else{
+					// do nothing.
+				}
+			}
+			else{
+				ControllerAction action = creator.createControllerAction();
+				registry.addAction(id, null, action);
+				registry.registerAction(id, creator.getID(), action);
+			}
     }
     
     for (ContextData child : contextData.subContexts()) {

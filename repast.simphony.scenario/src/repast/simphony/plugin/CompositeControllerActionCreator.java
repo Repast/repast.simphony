@@ -8,7 +8,6 @@ import repast.simphony.engine.environment.ControllerAction;
  * are one level below the root controller action.
  * 
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/06 22:11:55 $
  */
 public interface CompositeControllerActionCreator {
 
@@ -26,4 +25,11 @@ public interface CompositeControllerActionCreator {
 	 * @return the created ControllerAction.
 	 */
 	ControllerAction createControllerAction();
+	
+	/**
+	 * Return true if this action creator should only create a ControllerAction for the master context.
+	 * 
+	 * @return
+	 */
+	public boolean isMasterOnly();
 }

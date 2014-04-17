@@ -18,4 +18,9 @@ public class GISCompositeControllerActionCreator implements
 		return new GeographyProjectionController();
 	}
 
+	@Override
+	public boolean isMasterOnly() {
+		return true;
+	}
+
 }
