@@ -125,6 +125,7 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.essentials_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.freezedry_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.gis_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.gis.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.grass_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.groovy_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.gui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
