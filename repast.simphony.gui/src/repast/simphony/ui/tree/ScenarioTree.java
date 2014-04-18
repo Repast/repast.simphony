@@ -39,6 +39,8 @@ public class ScenarioTree extends JTree {
   public ScenarioTree(UIActionExtensions exts) {
     super(new DefaultTreeModel(new ScenarioNode(new DefaultActionUI("Empty Tree"), "")));
     this.exts = exts;
+    this.setRowHeight(17); 
+
     this.setCellRenderer(SCENARIO_TREE_CELL_RENDERER);
 
     addMouseListener(new MouseAdapter() {

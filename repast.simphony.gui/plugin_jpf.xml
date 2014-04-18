@@ -359,18 +359,4 @@
     </parameter>
   </extension>
 
-  <extension id="schedule.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.ScheduledActionsCreator"/>
-    <parameter id="label" value="Model Initialization"/>
-  </extension>
-
-  <extension id="random.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.RandomCompositeActionCreator"/>
-    <parameter id="label" value="Random Streams"/>
-  </extension>
-
-  <extension id="misc.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.MiscCompositeActionCreator"/>
-    <parameter id="label" value="Miscellaneous Actions"/>
-  </extension>
 </plugin>

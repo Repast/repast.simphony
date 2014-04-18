@@ -10,7 +10,6 @@ import org.java.plugin.registry.ExtensionPoint;
 
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.plugin.ActionExtensions;
-import repast.simphony.plugin.RandomCompositeActionCreator;
 import repast.simphony.scenario.ControllerActionIO;
 import saf.core.runtime.PluginDefinitionException;
 
@@ -26,7 +25,6 @@ public class UIActionExtensions extends ActionExtensions {
     super();
     compExts = new ComponentActionEditorExtensions();
     compositeEditorExts = new CompositeActionEditorExtensions();
-    compositeEditorExts.addLabel(RandomCompositeActionCreator.class.getName(), "Random Streams");
   }
 
   public void loadExtensions(PluginManager manager) throws PluginLifecycleException,

@@ -20,9 +20,6 @@ import repast.simphony.engine.environment.ControllerRegistry;
 import repast.simphony.gis.engine.GISCompositeControllerActionCreator;
 import repast.simphony.plugin.CompositeControllerActionCreator;
 import repast.simphony.plugin.ControllerActionIOExtensions;
-import repast.simphony.plugin.MiscCompositeActionCreator;
-import repast.simphony.plugin.RandomCompositeActionCreator;
-import repast.simphony.plugin.ScheduledActionsCreator;
 import repast.simphony.scenario.ScenarioLoader;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.UserPathData;
@@ -40,12 +37,9 @@ public class BatchScenarioLoader extends ScenarioLoader {
   public BatchScenarioLoader(File scenarioDir) {
     super(scenarioDir, null);
     
-    parentActionCreators.add(new RandomCompositeActionCreator());
     parentActionCreators.add(new DataLoaderCompositeActionCreator());
-    parentActionCreators.add(new ScheduledActionsCreator());
     parentActionCreators.add(new DataSetsActionCreator());
     parentActionCreators.add(new TextSinkActionCreator());
-    parentActionCreators.add(new MiscCompositeActionCreator());
     parentActionCreators.add(new DataInitActionCreator());
 
     // TODO Projections: This explicit dependency on GIS can only be removed if
