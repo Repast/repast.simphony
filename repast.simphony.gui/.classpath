@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common-1.6.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jgoodies-binding-2.9.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgoodies-binding-2.9.0.jar" sourcepath="/Users/nick/jars/jgoodies-binding-2.9.0/jgoodies-binding-2.9.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.4.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="bin/" sourcepath="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jmf.jar"/>

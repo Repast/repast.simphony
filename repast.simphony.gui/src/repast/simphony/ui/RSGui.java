@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,12 +48,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.xml.stream.XMLStreamException;
 
 import repast.simphony.engine.environment.GUIRegistry;
 import repast.simphony.engine.environment.GUIRegistryType;
 import repast.simphony.parameter.MutableParameters;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersValuesLoader;
+import repast.simphony.ui.parameters.ParametersUI;
 import repast.simphony.ui.plugin.TickCountFormatter;
 import repast.simphony.ui.probe.Probe;
 import repast.simphony.ui.probe.ProbeManager;
@@ -297,7 +300,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     displayViewMap.clear();
     for (DockableFrame view : parameterViews) {
       Probe probe = (Probe) view.getClientProperty(PROBE_KEY);
-      probe.update();
+      if (probe != null) probe.update();
     }
     setStatusBarText("");
     toolBarMap.clear();
@@ -408,43 +411,25 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   }
 
   @SuppressWarnings("serial")
-  private abstract class ModifyParameterAction extends ProbeAction {
+  private abstract class ModifyParameterAction extends AbstractAction {
     private MutableParameters params;
-    private ProbeAction[] probeActions;
+    private ParametersUI pui;
     private RSApplication rsApp;
 
-    public ModifyParameterAction(String name, MutableParameters params, Probe probe,
-        RSApplication rsApp) {
-      super(name, probe);
+    public ModifyParameterAction(MutableParameters params, ParametersUI pui, RSApplication rsApp) {
       this.params = params;
       this.rsApp = rsApp;
-    }
-
-    public void setProbeActions(ProbeAction[] probeActions) {
-      this.probeActions = probeActions;
+      this.pui = pui;
     }
 
     public void actionPerformed(ActionEvent e) {
-
       if (showParamModificationDialog(params)) {
-        Probe np = updateProbePanel(getProbe(), params);
-        if (np == null) {
-          JOptionPane.showMessageDialog(frame, "Error re-creating parameters view",
-              "Internal Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-          if (rsApp != null) {
-            rsApp.updateGuiParamsManager(params, np);
+          File paramFile = rsApp.saveCurrentParameters();
+          try {
+            pui.updatePanel(paramFile);
+          } catch (Exception ex) {
+            msg.error("Error while modifying parameters", ex);
           }
-          setProbe(np);
-          if (probeActions != null) {
-            for (ProbeAction pa : probeActions) {
-              pa.setProbe(np);
-            }
-          }
-
-          // save the parameters
-          rsApp.saveCurrentParameters();
-        }
       }
     }
 
@@ -473,8 +458,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   @SuppressWarnings("serial")
   private class AddParameter extends ModifyParameterAction {
 
-    public AddParameter(MutableParameters params, Probe probe, RSApplication rsApp) {
-      super("Add Parameter", params, probe, rsApp);
+    public AddParameter(MutableParameters params, ParametersUI pui, RSApplication rsApp) {
+      super(params, pui, rsApp);
     }
 
     @Override
@@ -491,8 +476,8 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
 
   @SuppressWarnings("serial")
   private class RemoveParameter extends ModifyParameterAction {
-    public RemoveParameter(MutableParameters params, Probe probe, RSApplication rsApp) {
-      super("Remove Parameters", params, probe, rsApp);
+    public RemoveParameter(MutableParameters params, ParametersUI pui, RSApplication rsApp) {
+      super(params, pui, rsApp);
     }
 
     @Override
@@ -552,17 +537,15 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     treeView.toFront();
   }
 
-  public Probe addParameterView(Parameters params, File currentDirectory, RSApplication rsApp) {
+  public ParametersUI addParameterView(Parameters params, File currentDirectory, RSApplication rsApp) throws FileNotFoundException, 
+    XMLStreamException {
     String id = "__gui__parameters__";
     this.paramDir = currentDirectory;
-    ProbePanelCreator creator = new ProbePanelCreator(params);
-    Probe probe = creator.getProbe("Simulation Parameters", false);
+    ParametersUI pui = new ParametersUI(params);
+    JPanel pPanel = pui.createPanel(new File(currentDirectory, RSGUIConstants.PARAMETERS_FILE_NAME));
     JPanel panel = new JPanel(new BorderLayout());
-    JScrollPane pane = new JScrollPane(probe.getPanel());
-    pane.getViewport().setBackground(panel.getBackground());
-    panel.add(pane, BorderLayout.CENTER);
+    panel.add(pPanel, BorderLayout.CENTER);
    
-    LoadParams lp = new LoadParams(params, probe);
     JToolBar tbar = new JToolBar();
     panel.add(tbar, BorderLayout.NORTH);
     tbar.setFloatable(false);
@@ -570,17 +553,12 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     // but we need this check for backward compatibility I think
     if (params instanceof MutableParameters) {
       
-      
-      AddParameter add = new AddParameter((MutableParameters) params, probe, rsApp);
-      RemoveParameter rem = new RemoveParameter((MutableParameters) params, probe, rsApp);
+      AddParameter add = new AddParameter((MutableParameters) params, pui, rsApp);
+      RemoveParameter rem = new RemoveParameter((MutableParameters) params, pui, rsApp);
 
-      add.setProbeActions(new ProbeAction[] { lp, rem });
-      rem.setProbeActions(new ProbeAction[] { lp, add });
-
-      JButton btn = (new JButton(add));
+      JButton btn = new JButton(add);
       btn.setIcon(IconUtils.loadIcon("add_exc.gif"));
       btn.setText("");
-      //btn.setBorder(null);
       btn.setToolTipText("Add Parameter");
       tbar.add(btn);
       
@@ -588,7 +566,6 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       btn.setToolTipText("Remove Parameters");
       btn.setText("");
       btn.setIcon(IconUtils.loadIcon("rem_co.gif"));
-      //btn.setBorder(null);
       tbar.add(btn);
     }
     
@@ -604,11 +581,10 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     DockableFrame view = dockingManager.createDockable(id, panel, MinimizeLocation.BOTTOM,
         DockingManager.FLOAT | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
     view.setTitle("Parameters");
-    view.putClientProperty(PROBE_KEY, probe);
     dockingManager.addDockableToGroup(DEFAULT_PERSPECTIVE, TREE_GROUP, view);
     treeView.toFront();
     parameterViews.add(view);
-    return probe;
+    return pui;
   }
 
   public void setGUIForStarted() {

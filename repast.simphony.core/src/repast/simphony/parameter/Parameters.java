@@ -1,14 +1,33 @@
 /*CopyrightHere*/
 package repast.simphony.parameter;
 
+import java.beans.PropertyChangeListener;
+
 /**
  * Encapsulates simulation time model parameters.
  * 
  * @author Nick Collier
  */
-public interface Parameters extends Cloneable{
+public interface Parameters extends Cloneable {
 
   static final Object NULL = new Object();
+  
+  /**
+   * Adds listener that will listen for parameter changes
+   * on this Parameters.
+   * 
+   * @param listener
+   */
+  void addPropertyChangeListener(PropertyChangeListener listener);
+  
+  
+  /**
+   * Removes the specified listener from the
+   * listeners listening to this Parameters object.
+   * 
+   * @param listener
+   */
+  void removePropertyChangeListener(PropertyChangeListener listener);
 
   /**
    * Gets the Schema for this Parameters object.

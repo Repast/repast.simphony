@@ -13,6 +13,8 @@ public abstract class RSGUIConstants {
 
   private static final MessageCenter LOG = MessageCenter.getMessageCenter(RSGUIConstants.class);
   
+  public static final String PARAMETERS_FILE_NAME = "parameters.xml";
+  
   public static String GUI_PLUGIN_ID = "repast.simphony.gui";
   public static String FIELD_PROBE_EXT_ID = "field.probe";
   public static String PROBE_LOCATION_PROVIDER_EXT_ID = "probe.location.provider";

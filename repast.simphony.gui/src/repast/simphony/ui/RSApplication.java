@@ -37,6 +37,7 @@ import repast.simphony.scenario.ScenarioSaver;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.SpatialException;
 import repast.simphony.ui.newscenario.NewScenarioWizard;
+import repast.simphony.ui.parameters.ParametersUI;
 import repast.simphony.ui.plugin.UIActionExtensions;
 import repast.simphony.ui.probe.Probe;
 import repast.simphony.ui.probe.ProbeExtensionLoader;
@@ -383,8 +384,9 @@ public class RSApplication implements TickListener, RunListener {
           scenarioTree.setControllerRegistry(scenario, controller.getControllerRegistry());
           gui.removeParameterViews();
           Parameters params = loader.getParameters();
-          Probe probe = gui.addParameterView(params, scenario.getScenarioDirectory(), this);
-          paramsManager = updateGuiParamsManager(params, probe);
+          //Probe probe = 
+          ParametersUI pui = gui.addParameterView(params, scenario.getScenarioDirectory(), this);
+          paramsManager = updateGuiParamsManager(params, pui);
           reg.addParameterSetter(paramsManager);
           gui.setStatusBarText(scenario.getModelData().getName() + " loaded");
           gui.setTitle(scenario.getModelData().getName() + " - Repast Simphony");
@@ -416,8 +418,8 @@ public class RSApplication implements TickListener, RunListener {
     }
   }
 
-  public GUIParametersManager updateGuiParamsManager(Parameters params, Probe probe) {
-    paramsManager = new GUIParametersManager(params, probe);
+  public GUIParametersManager updateGuiParamsManager(Parameters params, ParametersUI pui) {
+    paramsManager = new GUIParametersManager(params, pui);
     return paramsManager;
   }
 
@@ -473,22 +475,25 @@ public class RSApplication implements TickListener, RunListener {
    * Saves the current parameters to a parameters.xml file in the current
    * scenario directory.
    */
-  public void saveCurrentParameters() {
+  public File saveCurrentParameters() {
+    File paramFile = null;
     try {
       if (scenario != null) {
-        File paramFile = new File(scenario.getScenarioDirectory(), "parameters.xml");
+        paramFile = new File(scenario.getScenarioDirectory(), "parameters.xml");
         if (paramFile.exists()) {
           // make a backup of the old one
           FileUtils.copyFile(paramFile,
               new File(paramFile.getParentFile(), "parameters_backup.xml"));
         }
+        
         ParametersWriter pw = new ParametersWriter();
         pw.writeSpecificationToFile(paramsManager.getParameters(), paramFile);
-
+  
       }
     } catch (Exception ex) {
       msgCenter.error("Error while saving current scenario parameters.", ex);
     }
+    return paramFile;
   }
 
   /**
