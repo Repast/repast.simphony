@@ -24,9 +24,22 @@ public class ControllerActionExtensions {
 
 	public void addParentControllerActions(Object contextID, ControllerRegistry registry) {
 		for (CompositeControllerActionCreator composite : parents) {
-			ControllerAction action = composite.createControllerAction();
-			registry.addAction(contextID, null, action);
-			registry.registerAction(contextID, composite.getID(), action);
+
+			if (composite.isMasterOnly()){
+				if (contextID.equals(registry.getMasterContextId())){
+					ControllerAction action = composite.createControllerAction();
+					registry.addAction(contextID, null, action);
+					registry.registerAction(contextID, composite.getID(), action);
+				}
+				else{
+					// do nothing.
+				}
+			}
+			else{
+				ControllerAction action = composite.createControllerAction();
+				registry.addAction(contextID, null, action);
+				registry.registerAction(contextID, composite.getID(), action);
+			}
 		}
 	}
 

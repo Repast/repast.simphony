@@ -18,4 +18,8 @@ public class GISVizCompositeControllerActionCreator implements
 		return new GeographyVizProjectionController();
 	}
 
+	@Override
+	public boolean isMasterOnly() {
+		return true;
+	}
 }

@@ -220,6 +220,15 @@
 			<fileset dir="../repast.simphony.gis/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+					
+			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
+			<fileset dir="../repast.simphony.gis.visualization/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
 
 			<fileset dir="../repast.simphony.groovy/src" casesensitive="no">
 				<include name="**/*.java" />

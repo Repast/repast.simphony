@@ -17,4 +17,9 @@ public class TextSinkActionCreator implements CompositeControllerActionCreator {
 	public ControllerAction createControllerAction() {
 		return new DefaultControllerAction();
 	}
+
+	@Override
+	public boolean isMasterOnly() {
+		return false;
+	}
 }

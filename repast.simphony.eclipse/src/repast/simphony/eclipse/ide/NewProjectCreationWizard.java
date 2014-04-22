@@ -258,8 +258,6 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
           "installation_components.xml", variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
           "shortcuts_Windows.xml", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows_Registry.xml",
-          newFolder, "shortcuts_Windows_Registry.xml", variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
           "shortcuts_Xnix.xml", variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,

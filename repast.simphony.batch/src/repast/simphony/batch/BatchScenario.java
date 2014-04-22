@@ -11,6 +11,7 @@ import repast.simphony.data2.engine.TextSinkActionCreator;
 import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.dataLoader.engine.DataLoaderCompositeActionCreator;
 import repast.simphony.dataLoader.engine.DataLoaderControllerAction;
+import repast.simphony.engine.controller.ControllerActionConstants;
 import repast.simphony.engine.controller.DefaultControllerRegistry;
 import repast.simphony.engine.controller.ScheduledMethodControllerAction;
 import repast.simphony.engine.controller.WatcherControllerAction;
@@ -23,9 +24,6 @@ import repast.simphony.engine.watcher.WatcherTrigger;
 import repast.simphony.parameter.ParameterSetter;
 import repast.simphony.parameter.ParameterSweeper;
 import repast.simphony.plugin.CompositeControllerActionCreator;
-import repast.simphony.plugin.MiscCompositeActionCreator;
-import repast.simphony.plugin.RandomCompositeActionCreator;
-import repast.simphony.plugin.ScheduledActionsCreator;
 import repast.simphony.scenario.ModelInitializer;
 import repast.simphony.scenario.Scenario;
 import repast.simphony.scenario.data.Classpath;
@@ -224,12 +222,10 @@ public class BatchScenario extends Scenario {
   // adds the parent actions through the various composite action creators
   private void addParentActions(ControllerRegistry registry) {
     List<CompositeControllerActionCreator> parentActionCreators = new ArrayList<CompositeControllerActionCreator>();
-    parentActionCreators.add(new RandomCompositeActionCreator());
+ 
     parentActionCreators.add(new DataLoaderCompositeActionCreator());
-    parentActionCreators.add(new ScheduledActionsCreator()); 
     parentActionCreators.add(new DataSetsActionCreator());
     parentActionCreators.add(new TextSinkActionCreator());
-    parentActionCreators.add(new MiscCompositeActionCreator());
 
     for (CompositeControllerActionCreator creator : parentActionCreators) {
       ControllerAction action = creator.createControllerAction();
@@ -290,8 +286,7 @@ public class BatchScenario extends Scenario {
       }
     }
 
-    ControllerAction scheduleRoot = registry.findAction(masterID, new ScheduledActionsCreator()
-        .getID());
+    ControllerAction scheduleRoot = registry.findAction(masterID, ControllerActionConstants.SCHEDULE_ROOT);
     ControllerAction watcherAction = new WatcherControllerAction(watchAnnotationReader);
     registry.addAction(masterID, scheduleRoot, watcherAction);
     registry.addAction(masterID, scheduleRoot, scheduleAction);

@@ -99,6 +99,8 @@ public abstract class RSGUIConstants {
   public static Icon PERSONAL_ICON;
   public static Icon LEAF_ICON;
   public static Icon WARN_ICON;
+  public static Icon USER_PANEL_ICON;
+  public static Icon DATA_LOADER_ICON;
 
   static {
     START_ICON = loadIcon("player_play");
@@ -124,5 +126,7 @@ public abstract class RSGUIConstants {
     VIZ_EDIT_ICON = loadIcon("edit");
     VIZ_HOME_ICON = loadIcon("home");
     WARN_ICON = loadIcon("info");
+    USER_PANEL_ICON = loadIcon("view_sidetree");
+    DATA_LOADER_ICON = loadIcon("harddrive");
   }
 }

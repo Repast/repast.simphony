@@ -27,8 +27,6 @@ public class BatchInit {
 
   public void run(CommandLine line, String[] args) throws Exception {
 	  
-	  System.out.println("RepastInit.run()");
-
     BatchRunner runner;
     if (line.hasOption("interactive"))
       runner = new BatchRunner(true);

@@ -1,6 +1,7 @@
 package repast.simphony.dataLoader.ui;
 
 import repast.simphony.dataLoader.engine.MIContextXMLDataLoaderAction;
+import repast.simphony.ui.DefaultActionUI;
 import repast.simphony.ui.plugin.ActionEditorCreator;
 import repast.simphony.ui.plugin.ActionUI;
 
@@ -16,7 +17,7 @@ public class MIContextXMLLoaderActionEditorCreator implements ActionEditorCreato
 	 * @return an editor for the specified action.
 	 */
 	public ActionUI createEditor(MIContextXMLDataLoaderAction action) {
-		return null;
+		return new DefaultActionUI(action.toString());
 	}
 
 	public Class<?> getActionType() {
