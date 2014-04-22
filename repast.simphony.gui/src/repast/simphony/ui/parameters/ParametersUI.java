@@ -9,6 +9,8 @@ import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +118,14 @@ public class ParametersUI {
   }
 
   private JPanel createPanel(Parameters params, List<ParameterBinder> binders) {
+    
+    Collections.sort(binders, new Comparator<ParameterBinder>() {
+
+      @Override
+      public int compare(ParameterBinder o1, ParameterBinder o2) {
+        return o1.getLabel().compareTo(o2.getLabel());
+      }
+    });
 
     FormLayout layout = new FormLayout("6dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
