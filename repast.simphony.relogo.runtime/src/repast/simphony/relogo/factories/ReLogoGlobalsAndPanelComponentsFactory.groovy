@@ -208,10 +208,9 @@ public class ReLogoGlobalsAndPanelComponentsFactory{
 	}
 	
 	private static int multiplier(List list){
-		List tempList = new ArrayList(list)
 		int multiplier = 1
 		while(true){
-			tempList = tempList*.multiply(multiplier)
+			List tempList = list*.multiply(multiplier)
 			if (tempList.every({ (it as BigDecimal).remainder(1 as BigDecimal) == 0 })){
 				break;
 			}
