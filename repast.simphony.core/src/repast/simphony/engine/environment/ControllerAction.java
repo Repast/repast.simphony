@@ -1,8 +1,6 @@
 /*CopyrightHere*/
 package repast.simphony.engine.environment;
 
-import java.io.Serializable;
-
 import repast.simphony.parameter.Parameters;
 
 /**

@@ -87,4 +87,9 @@ public class DataInitActionCreator implements CompositeControllerActionCreator {
       }
     };
   }
+
+	@Override
+	public boolean isMasterOnly() {
+		return false;
+	}
 }

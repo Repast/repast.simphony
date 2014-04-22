@@ -19,4 +19,8 @@ public class UserPanelCompositeControllerActionCreator implements
 		return ControllerActionConstants.USER_PANEL_ROOT;
 	}
 
+	@Override
+	public boolean isMasterOnly() {
+		return true;
+	}
 }

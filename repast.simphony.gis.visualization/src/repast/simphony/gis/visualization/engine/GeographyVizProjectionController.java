@@ -9,8 +9,6 @@ import repast.simphony.visualization.engine.VisualizationRegistry;
 public class GeographyVizProjectionController implements ControllerAction {
 	
 	public GeographyVizProjectionController(){
-		System.out.println("GeographyVizProjectionController()");
-		
 		VisualizationRegistry.addRegistryData(new GISVisualizationRegistryData());
 		VisualizationRegistry.addRegistryData(new GIS3DVisualizationRegistryData());
 	}

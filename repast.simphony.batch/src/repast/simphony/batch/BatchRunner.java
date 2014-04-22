@@ -177,7 +177,6 @@ public class BatchRunner implements RunListener{
   }
 
   protected void run() {
-	  System.out.println("BatchRunner.run()");
     Parameters params = null;
     try {
       params = setupSweep();

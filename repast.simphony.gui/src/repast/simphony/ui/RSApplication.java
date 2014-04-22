@@ -356,29 +356,18 @@ public class RSApplication implements TickListener, RunListener {
         // settingsRegistry.setNext(modelSettingsRegistry);
 
         if (scenario != null) {
-          // set up editor extensions
+          // Create UI editor extensions (menus items) for ControllerActions that
+        	//  define a repast.simphony.gui plugin extension
           ControllerRegistry reg = controller.getControllerRegistry();
           ContextData rootContext = scenario.getContext();
-          for (CompositeControllerActionCreator creator : actionExts.getActionExts()
-              .parentActionCreators()) {
+          for (CompositeControllerActionCreator creator : actionExts.getActionExts().parentActionCreators()) {
             for (ContextData node : rootContext.getAllContexts()) {
               ControllerAction action = reg.findAction(node.getId(), creator.getID());
               if (action != null) {
                 actionExts.getCompositeEditorExts().addUI(action, creator);
               }
-            }
+            }         
           }
-
-          // for (ContextTreeNode node :
-          // modelSpecification.contextTreeNodes())
-          // {
-          // Object id = node.getData().getID();
-          // actionExts.getCompositeEditorExts().addUI(reg.findAction(id,
-          // ControllerActionConstants.SCHEDULE_ROOT),
-          // "Model Initialization");
-          // }
-          actionExts.addDefaultUI(WatcherControllerAction.class, "Watcher Initialization");
-          actionExts.addDefaultUI(ScheduledMethodControllerAction.class, "Schedule Initialization");
 
           scenarioTree.setControllerRegistry(scenario, controller.getControllerRegistry());
           gui.removeParameterViews();

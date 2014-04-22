@@ -64,6 +64,14 @@
 				<include name="**/*.jpg"/>
 			</fileset>
 		</jar>
+  	
+  	<jar destfile="${outputDirectory}/repastJars/repast.simphony.gis.visualization.jar" compress="true">
+  				<fileset dir="../repast.simphony.gis.visualization/bin" casesensitive="no">
+  					<include name="**/*.class"/>
+  					<include name="**/*.png"/>
+  					<include name="**/*.jpg"/>
+  				</fileset>
+  			</jar>
 
 		<jar destfile="${outputDirectory}/repastJars/repast.simphony.plugin.util.jar" compress="true">
 			<fileset dir="../repast.simphony.plugin.util/bin" casesensitive="no">
@@ -187,12 +195,18 @@
 			<fileset dir="../repast.simphony.gis/bin" casesensitive="no">
 				<include name="**/*.class"/>
 			</fileset>
-
-
-
-
-
-
+			
+			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
+				<include name="**/*.java"/>
+			<include name="**/*.groovy"/>
+			</fileset>
+			<fileset dir="../repast.simphony.gis.visualization/test" casesensitive="no">
+				<include name="**/*.java"/>
+				<include name="**/*.groovy"/>
+			</fileset>
+			<fileset dir="../repast.simphony.gis.visualization/bin" casesensitive="no">
+				<include name="**/*.class"/>
+			</fileset>
 
 			<fileset dir="../repast.simphony.plugin.util/src" casesensitive="no">
 				<include name="**/*.java"/>
@@ -335,6 +349,14 @@
 				<include name="**/*.jpg"/>
       </fileset>
 		</jar>
+  	
+  	<jar destfile="${outputDirectory}/repastJars/repast.simphony.gis.visualization.jar" compress="true">
+  		<fileset dir="../repast.simphony.gis.visualization/bin" casesensitive="no">
+  			<include name="**/*.class"/>
+  	    <include name="**/*.png"/>
+  			<include name="**/*.jpg"/>
+  	   </fileset>
+  	</jar>
 		
 		<jar destfile="${outputDirectory}/repastJars/repast.simphony.groovy.jar" compress="true">
 			<fileset dir="../repast.simphony.groovy/bin" casesensitive="no">
@@ -611,6 +633,18 @@
 				<include name="**/*.groovy"/>
 			</fileset>
 			<fileset dir="../repast.simphony.gis/bin" casesensitive="no">
+				<include name="**/*.class"/>
+			</fileset>
+			
+			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
+				<include name="**/*.java"/>
+				<include name="**/*.groovy"/>
+			</fileset>
+			<fileset dir="../repast.simphony.gis.visualization/test" casesensitive="no">
+				<include name="**/*.java"/>
+				<include name="**/*.groovy"/>
+			</fileset>
+			<fileset dir="../repast.simphony.gis.visualization/bin" casesensitive="no">
 				<include name="**/*.class"/>
 			</fileset>
 			

@@ -1,15 +1,17 @@
 package repast.simphony.visualization.gis3D.style;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.render.BasicWWTexture;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.render.PatternFactory;
+import gov.nasa.worldwind.render.WWTexture;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
+import repast.simphony.visualization.gis3D.BufferedImageTexture;
 import repast.simphony.visualization.gis3D.PlaceMark;
 
 /**
@@ -22,13 +24,7 @@ import repast.simphony.visualization.gis3D.PlaceMark;
 public class DefaultMarkStyle<T> implements MarkStyle<T>{
 	
 	@Override
-	public BasicWWTexture getTexture(T object, BasicWWTexture texture) {
-	
-//	URL localUrl = WorldWind.getDataFileStore().requestFile("icons/3d_smiley.png");
-//	if (localUrl != null)	{
-//		return new BasicWWTexture(localUrl, false);
-//	}
-//	return null;
+	public WWTexture getTexture(T object, WWTexture texture) {
 
 		if (texture != null)
 			return texture;
@@ -38,9 +34,8 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 		BufferedImage image = PatternFactory.createPattern(PatternFactory.PATTERN_SQUARE, 
 				new Dimension(10, 10), 0.7f,  color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));
 		
-		return new BasicWWTexture(image);	
+		return new BufferedImageTexture(image);	
 		
-//		return null;
 	}
 
 	@Override
@@ -83,5 +78,24 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 	@Override
 	public Offset getLabelOffset(T obj) {
 		return null;
+	}
+
+	@Override
+	public double getElevation(T obj) {
+		return 0;
+	}
+
+	@Override
+	public double getLineWidth(T obj) {
+		return 0;
+	}
+
+	@Override
+	public Material getLineMaterial(T obj, Material lineMaterial) {
+		if (lineMaterial == null){
+			lineMaterial = new Material(Color.RED);
+		}
+		
+		return lineMaterial;
 	}
 }

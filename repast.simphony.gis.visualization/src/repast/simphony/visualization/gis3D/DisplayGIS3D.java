@@ -4,7 +4,6 @@ import static repast.simphony.ui.RSGUIConstants.CAMERA_ICON;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.SceneController;
 import gov.nasa.worldwind.StereoOptionSceneController;
 import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
@@ -12,16 +11,15 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
-import gov.nasa.worldwind.cache.BasicMemoryCache;
-import gov.nasa.worldwind.cache.MemoryCache;
-import gov.nasa.worldwind.event.NoOpInputHandler;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
-import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
@@ -153,11 +151,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
 		asc.setStereoMode(this.displayMode);
-		                  
-		// TODO WWJ need to set the max cache size to prevent huge memory allocations with buffered images
-		long cacheSizeBytes = 100000000;
-		worldWindow.getGpuResourceCache().setCapacity(cacheSizeBytes);
-		worldWindow.getGpuResourceCache().setLowWater(cacheSizeBytes/2);
 
 		initListener();
 	}
@@ -309,6 +302,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return null;
 	}
 
+	@Override
 	public void init() {
 
 		for (Object obj : initData.objects()) {
@@ -331,8 +325,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		// TODO WWJ also loop through network and raster styles TBD
 
-		update();
-		render();
+		doUpdate();
+		doRender();
+		
+		resetHomeView();
 	}
 
 	public void destroy() {
@@ -344,51 +340,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		EditorFactory.getInstance().reset();
 
-		// TODO WWJ shutdown properly - currently WorldWind and WorldWindow.shutdown() 
-		//      doesn't work with jogl_981, so we can try to set = null.
-		//
-		//      There still seems to be a memory leak with multiple resets !!
-//		WorldWind.shutDown();
-//		worldWindow.shutdown();
-
-		shutdownWWJ();
+		WorldWind.shutDown();
 		worldWindow = null;
-
 	}
-
-	// TODO WWJ - This shutdown is copied from WorldWindowImpl and reused here because
-	//   the current daily build (5/8/2013) shutdown does not work with the latest JOGL
-	private void shutdownWWJ(){
-
-		if (worldWindow.getInputHandler() != null){
-			worldWindow.getInputHandler().dispose();
-			worldWindow.setInputHandler(new NoOpInputHandler());
-		}
-
-		// Clear the texture cache
-		if (worldWindow.getGpuResourceCache() != null)
-			worldWindow.getGpuResourceCache().clear();
-
-		// Dispose all the layers //  TODO: Need per-window dispose for layers
-		if (worldWindow.getModel() != null && worldWindow.getModel().getLayers() != null)	{
-			for (Layer layer : worldWindow.getModel().getLayers()){
-				try	{
-					layer.dispose();
-				}
-				catch (Exception e){
-					Logging.logger().log(java.util.logging.Level.SEVERE, Logging.getMessage(
-							"WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
-				}
-			}
-		}
-
-		SceneController sc = worldWindow.getSceneController();
-		if (sc != null)
-			if (sc.getGpuResourceCache() != null)
-				sc.getGpuResourceCache().clear();
-//			sc.dispose();
-	}
-
 
 	@Override
 	protected void addObject(Object o) {
@@ -446,51 +400,59 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see repast.simphony.visualization.IDisplay#update()
-	 */
+	@Override
 	public void update() {
 		if (isVisible()){
-			layoutUpdater.update();
-			try{
-				updateLock.lock();
-
-				for (AbstractRenderableLayer layer : classStyleMap.values())
-					layer.update(layoutUpdater);
-
-				// TODO WWJ also loop through network and raster styles TBD
-
-				doRender = true;
-			}
-			finally {
-				updateLock.unlock();
-			}
+			doUpdate();
+			doRender = true;
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see repast.simphony.render.Renderer#render()
+	
+	/**
+	 * Do an update without checking for display visibility
 	 */
+	private void doUpdate(){
+		layoutUpdater.update();
+		try{
+			updateLock.lock();
+
+			for (AbstractRenderableLayer layer : classStyleMap.values())
+				layer.update(layoutUpdater);
+
+			// TODO WWJ also loop through network and raster styles TBD
+
+			
+		}
+		finally {
+			updateLock.unlock();
+		}
+	}
+	
+	@Override
 	public void render() {
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
-				ThreadUtilities.runInEventThread(updater);
+				doRender();
 				lastRenderTS = ts;
 			}
 			doRender = false;
 		}
 	}
 
+	/**
+	 * Do a render without checking update interval or display visibility
+	 */
+	private void doRender(){
+		ThreadUtilities.runInEventThread(updater);
+	}
+	
+	@Override
 	public void setPause(boolean pause) {
 		if (pause) {
-			update();
-			render();
+			doUpdate();
+			doRender();
 		}
-		ThreadUtilities.runInEventThread(updater);
 	}
 
 	public Layout getLayout() {
@@ -505,20 +467,41 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return null;
 	}
 
-	public void resetHomeView() {
+	private Sector calculateBoundingSector(){
+		ArrayList<LatLon> points = new ArrayList<LatLon>(); 
+		for (Object o : geog.getAllObjects()){
+			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));
+		}
 
-		// BasicOrbitView homeView = (BasicOrbitView)
-		// WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME);
-		//
-		//
-		// wwglCanvas.getView().stopStateIterators();
-		// wwglCanvas.getView().setOrientation(homeView.getEyePosition(),
-		// homeView.getCenterPosition());
-
-		// wwglCanvas.getView().setEyePosition(homeView.getEyePosition());
-
+		return Sector.boundingSector(points);
 	}
 
+	@Override
+	public void resetHomeView() {
+		
+		zoomToSector(calculateBoundingSector());
+
+		doUpdate();
+		doRender();
+	}
+
+	private void zoomToSector(Sector sector) {
+		double dx = sector.getDeltaLonRadians();
+		double dy = sector.getDeltaLatRadians();
+
+		double d = Math.max(dx, dy) / 2;
+		
+		double distance = d * Earth.WGS84_EQUATORIAL_RADIUS;
+		
+		double scale = 1.2;  // make the view a little larger than the bounding sector
+		double altitude = scale * distance / Math.tan(worldWindow.getView().getFieldOfView().radians / 2);
+
+		LatLon latlon = sector.getCentroid();
+		Position pos = new Position(latlon, altitude);
+
+		worldWindow.getView().setEyePosition(pos);
+	}
+	
 	public void toggleAnaglyphStereo() {
 		if (displayMode == AVKey.STEREO_MODE_NONE)
 			displayMode = AVKey.STEREO_MODE_RED_BLUE;
@@ -590,21 +573,16 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return this.worldWindow;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see repast.simphony.visualization.IDisplay#deIconified()
-	 */
+
 	@Override
 	public void deIconified() {
 		iconified = false;
+		
+		doUpdate();
+		doRender();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see repast.simphony.visualization.IDisplay#iconified()
-	 */
+
 	@Override
 	public void iconified() {
 		iconified = true;

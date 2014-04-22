@@ -3,8 +3,8 @@ package repast.simphony.visualization.gis3D;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.BasicWWTexture;
 import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.WWTexture;
 
 import java.awt.Color;
 
@@ -28,17 +28,21 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
   	
   	PlaceMark mark = getVisualItem(obj);
   	
-  	BasicWWTexture texture = style.getTexture(obj, mark.getTexture());
+  	WWTexture texture = style.getTexture(obj, mark.getTexture());
     
   	if (texture != null){
   		mark.setTexture(texture);
   	}
+  	
+  	double elevation = style.getElevation(obj);
+  	double lineWidth = style.getLineWidth(obj);
         
   	// Update the center lat/lon if the shape has moved
     if (!(pt.getLatitude().degrees == mark.getPosition().getLatitude().degrees &&
-    		pt.getLongitude().degrees == mark.getPosition().getLongitude().degrees)){
+    		pt.getLongitude().degrees == mark.getPosition().getLongitude().degrees &&
+    		mark.getPosition().getElevation() == elevation)){
     
-      mark.setPosition(new Position(pt,0));
+      mark.setPosition(new Position(pt,elevation));
     }
     
     // Note that there is no performance gain here by checking if attributes have
@@ -57,7 +61,17 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
     	mark.getAttributes().setLabelMaterial(new Material (labelColor));
     }
     
-    mark.getAttributes().setLabelOffset(style.getLabelOffset(obj));        
+    mark.getAttributes().setLabelOffset(style.getLabelOffset(obj));     
+    
+    if (lineWidth > 0){
+    	mark.setLineEnabled(true);
+    	mark.getAttributes().setLineWidth(lineWidth);
+    	mark.getAttributes().setLineMaterial(style.getLineMaterial(obj, 
+    			mark.getAttributes().getLineMaterial()));
+    }
+    else{
+    	mark.setLineEnabled(false);
+    }
   }
   
   protected PlaceMark createVisualItem(Object o) {

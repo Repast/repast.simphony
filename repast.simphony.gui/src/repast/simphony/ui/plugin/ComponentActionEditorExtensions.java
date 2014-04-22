@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import repast.simphony.engine.environment.ControllerAction;
-import repast.simphony.ui.DefaultActionUI;
 
 /**
  * @author Nick Collier
@@ -39,9 +38,9 @@ public class ComponentActionEditorExtensions {
 		String name = action.getClass().getName();
 		ActionEditorCreator creator = creatorMap.get(name);
 		if (creator == null) {
-			String label = labelMap.get(name);
-			if (label == null) label = action.toString();
-			return new DefaultActionUI(label);
+			// If the creator is null, then the ControllerAction has not been registered
+			//   because it is not part of a r.s.gui extension plugin.
+			return null;
 		}
 
 		return creator.createEditor(action);

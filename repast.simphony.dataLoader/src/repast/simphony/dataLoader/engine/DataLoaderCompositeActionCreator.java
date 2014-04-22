@@ -7,7 +7,7 @@ import repast.simphony.plugin.CompositeControllerActionCreator;
 
 /**
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/06 22:24:11 $
+ * 
  */
 public class DataLoaderCompositeActionCreator implements CompositeControllerActionCreator {
 
@@ -17,5 +17,10 @@ public class DataLoaderCompositeActionCreator implements CompositeControllerActi
 
 	public ControllerAction createControllerAction() {
 		return new DefaultControllerAction();
+	}
+
+	@Override
+	public boolean isMasterOnly() {
+		return false;
 	}
 }

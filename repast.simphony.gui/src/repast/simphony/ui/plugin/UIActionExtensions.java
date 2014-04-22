@@ -10,7 +10,6 @@ import org.java.plugin.registry.ExtensionPoint;
 
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.plugin.ActionExtensions;
-import repast.simphony.plugin.RandomCompositeActionCreator;
 import repast.simphony.scenario.ControllerActionIO;
 import saf.core.runtime.PluginDefinitionException;
 
@@ -26,7 +25,6 @@ public class UIActionExtensions extends ActionExtensions {
     super();
     compExts = new ComponentActionEditorExtensions();
     compositeEditorExts = new CompositeActionEditorExtensions();
-    compositeEditorExts.addLabel(RandomCompositeActionCreator.class.getName(), "Random Streams");
   }
 
   public void loadExtensions(PluginManager manager) throws PluginLifecycleException,
@@ -47,6 +45,8 @@ public class UIActionExtensions extends ActionExtensions {
     try {
       Class clazz = Class.forName(className, true, pluginClassLoader);
       ActionEditorCreator creator = (ActionEditorCreator) clazz.newInstance();
+      // Add editor creator for ControllerActionIO even if they don't define a 
+      //   r.s.gui extension in their plugin.
       for (ControllerActionIO io : super.ioExts.controllerActionsIOs()) {
         if (io.getClass().getName().equals(ioName)) {
           compExts.addActionEditorCreator(io.getActionClass().getName(), creator);
@@ -84,18 +84,10 @@ public class UIActionExtensions extends ActionExtensions {
       PluginDefinitionException {
     ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint("repast.simphony.gui",
         "component.action");
-    /*
-     * <parameter id="actionIO"
-     * value="repast.simphony.scenario.DisplayControllerActionIO" /> <parameter
-     * id="editorCreator" value="foo" /> <parameter id="parentMenuItem"
-     * value="foo" /> <parameter id="parentID" value="foo" />
-     */
+    
     for (Iterator iter = extPoint.getConnectedExtensions().iterator(); iter.hasNext();) {
       Extension ext = (Extension) iter.next();
-      // System.out.println("gui:" + ext.getExtendedPluginId());
-      // if (!ext.getExtendedPluginId().equals("repast.simphony.gui")) {
-      // continue;
-      // }
+      
       registerIoExt(manager, ext);
 
       String pluginID = ext.getDeclaringPluginDescriptor().getId();
@@ -131,16 +123,10 @@ public class UIActionExtensions extends ActionExtensions {
       PluginDefinitionException {
     ExtensionPoint extPoint = manager.getRegistry().getExtensionPoint("repast.simphony.gui",
         "composite.action");
-    /*
-
-		*/
+    
     for (Iterator iter = extPoint.getConnectedExtensions().iterator(); iter.hasNext();) {
       Extension ext = (Extension) iter.next();
-      // System.out.println("gui" + ext.getExtendedPluginId());
-      // if (!ext.getExtendedPluginId().equals("repast.simphony.gui")) {
-      // continue;
-      // }
-
+    
       String className = ext.getParameter("creatorClass").valueAsString();
       String label = ext.getParameter("label").valueAsString();
 
@@ -156,9 +142,11 @@ public class UIActionExtensions extends ActionExtensions {
 
   public ActionUI getEditor(ControllerAction action) {
     ActionUI editor = compositeEditorExts.getUI(action);
+    
     if (editor == null) {
-      return compExts.getUI(action);
+      editor = compExts.getUI(action);
     }
+    
     return editor;
   }
 

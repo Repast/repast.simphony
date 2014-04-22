@@ -1252,6 +1252,7 @@ public class NetlogoWizardPageOne extends WizardPage {
 		"repast.simphony.essentials",
 		"repast.simphony.freezedry",
 		"repast.simphony.gis",
+		"repast.simphony.gis.visualization",
 		"repast.simphony.groovy",
 		"repast.simphony.gui",
 		"repast.simphony.integration",

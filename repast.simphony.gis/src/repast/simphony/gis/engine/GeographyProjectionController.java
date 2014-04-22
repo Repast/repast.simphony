@@ -9,8 +9,6 @@ import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 public class GeographyProjectionController implements ControllerAction {
 	
 	public GeographyProjectionController(){
-		System.out.println("GeographyProjectionController()");
-		
 		ProjectionRegistry.addRegistryData(new GeographyProjectionRegistryData());
 	}
 	
