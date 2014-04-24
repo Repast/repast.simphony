@@ -38,9 +38,8 @@ public class RangeParameterBinder extends AbstractParameterBinder {
   public JComponent getComponent(Parameters params) {
     this.params = params;
     if (slider == null) {
-      int val = ((Integer) params.getValue(name)).intValue();
       ParameterValueModel model = new ParameterValueModel(getName(), params);
-      slider = new JSlider(new BoundedRangeAdapter(model, val, min, max));
+      slider = new JSlider(new BoundedRangeAdapter(model, 0, min, max));
       slider.setPaintLabels(true);
       slider.setPaintTicks(true);
       slider.setMajorTickSpacing(spacing);
