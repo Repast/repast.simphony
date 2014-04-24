@@ -8,6 +8,8 @@
   <parameter name="A_string" displayName="Another String" type="string" defaultValue="Wow" />
   <parameter name="bool" displayName="A Boolean" type="boolean" defaultValue="true"/>
   <parameter name="range" displayName="A Range" type="int" defaultValue="3" range="0 10 1"/>
+  <parameter name="float_range" displayName="Float Range" type="float" defaultValue="3.14f" range="-1.1f 10.2 1.5"/>
+  <parameter name="double_range" displayName="Double Range" type="double" defaultValue="3.14" range="-1.1 10.2 1.5"/>
   <parameter name="size" displayName="Size" type="repast.simphony.ui.parameters.Size" defaultValue="BIG" 
     converter="repast.simphony.ui.parameters.SizeConverter"/>
 </parameters>

@@ -3,25 +3,30 @@
  */
 package repast.simphony.ui.parameters;
 
+import java.text.ParseException;
+
 import javax.swing.JComponent;
-import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 
 import repast.simphony.parameter.Parameters;
 
-import com.jgoodies.binding.adapter.BoundedRangeAdapter;
+import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
 
 /**
- * ParameterBinder for ranged parameters.
+ * ParameterBinder for floating point ranged parameters. The
+ * parameter can be edited with a number spinner.
  * 
  * @author Nick Collier
  */
-public class RangeParameterBinder extends AbstractParameterBinder {
+public class FPRangeParameterBinder extends AbstractParameterBinder {
 
-  private int min, max, spacing;
+  private double min, max, spacing;
 
-  private JSlider slider;
+  private JSpinner spinner;
 
-  public RangeParameterBinder(String name, String displayName, int min, int max, int spacing) {
+  public FPRangeParameterBinder(String name, String displayName, double min, double max, double spacing) {
     super(name, displayName);
     this.min = min;
     this.max = max;
@@ -37,15 +42,14 @@ public class RangeParameterBinder extends AbstractParameterBinder {
   @Override
   public JComponent getComponent(Parameters params) {
     this.params = params;
-    if (slider == null) {
+    if (spinner == null) {
+      double val = ((Number) params.getValue(name)).doubleValue();
       ParameterValueModel model = new ParameterValueModel(getName(), params);
-      slider = new JSlider(new BoundedRangeAdapter(model, 0, min, max));
-      slider.setPaintLabels(true);
-      slider.setPaintTicks(true);
-      slider.setMajorTickSpacing(spacing);
-      slider.setSnapToTicks(true);
+      SpinnerModel spinModel = new SpinnerNumberModel(val, min, max, spacing);
+      SpinnerAdapterFactory.connect(spinModel, model, val);
+      spinner = new JSpinner(spinModel);
     }
-    return slider;
+    return spinner;
   }
 
   /*
@@ -58,7 +62,7 @@ public class RangeParameterBinder extends AbstractParameterBinder {
   public void resetToDefault() {
     Object defaultValue = params.getSchema().getDetails(getName()).getDefaultValue();
     int val = ((Integer) defaultValue).intValue();
-    slider.setValue(val);
+    spinner.setValue(val);
   }
 
   /*
@@ -70,7 +74,11 @@ public class RangeParameterBinder extends AbstractParameterBinder {
    */
   @Override
   public void toParameter() {
-    params.setValue(name, slider.getValue());
+    try {
+      spinner.commitEdit();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
   }
 
   /*
@@ -81,7 +89,7 @@ public class RangeParameterBinder extends AbstractParameterBinder {
    */
   @Override
   public String toXML() {
-    return toXML(params, String.valueOf(slider.getValue()),
+    return toXML(params, String.valueOf(spinner.getValue()),
         String.format("range=\"%d %d %d\"", min, max, spacing));
   }
 }

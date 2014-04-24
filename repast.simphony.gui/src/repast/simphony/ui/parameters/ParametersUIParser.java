@@ -94,18 +94,31 @@ public class ParametersUIParser {
     } else if (name.equals(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME)) {
       creator.addBinder(group, new RandomSeedParameterBinder(name, displayName));
     } else if (range != null) {
-      if (!type.equals("int"))
-        throw new IllegalArgumentException("Ranged parameters must be of the int type");
+      if (!(type.equals("int") || type.equals("double") || type.equals("float")))
+        throw new IllegalArgumentException(
+            "Ranged parameters must be of the int, double, or float type");
       String[] vals = range.split(" ");
       if (vals.length != 3)
         throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
-      try {
-        int min = Integer.parseInt(vals[0]);
-        int max = Integer.parseInt(vals[1]);
-        int spacing = Integer.parseInt(vals[2]);
-        creator.addBinder(group, new RangeParameterBinder(name, displayName, min, max, spacing));
-      } catch (NumberFormatException ex) {
-        throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
+      if (type.equals("int")) {
+        try {
+          int min = Integer.parseInt(vals[0]);
+          int max = Integer.parseInt(vals[1]);
+          int spacing = Integer.parseInt(vals[2]);
+          creator.addBinder(group, new RangeParameterBinder(name, displayName, min, max, spacing));
+        } catch (NumberFormatException ex) {
+          throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
+        }
+      } else {
+        // type is double or float
+        try {
+          double min = Double.parseDouble(vals[0]);
+          double max = Double.parseDouble(vals[1]);
+          double spacing = Double.parseDouble(vals[2]);
+          creator.addBinder(group, new FPRangeParameterBinder(name, displayName, min, max, spacing));
+        } catch (NumberFormatException ex) {
+          throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
+        }
       }
     } else if (isList) {
       creator.addBinder(group, new ListParameterBinder(name, displayName));

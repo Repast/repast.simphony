@@ -34,7 +34,7 @@ import com.jgoodies.forms.layout.FormLayout;
 public class ParametersUI {
 
   public static final String DEFAULT_PARAM_GROUP = "Other";
-  private static final String NAME = "NAME";
+  public static final String NAME = "NAME";
 
   private Map<String, List<ParameterBinder>> bindersMap = new LinkedHashMap<String, List<ParameterBinder>>();
   // reference to the current set of parameters used duing a run.
