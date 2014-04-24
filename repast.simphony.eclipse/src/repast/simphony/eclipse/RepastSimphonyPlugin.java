@@ -36,7 +36,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
   public static final String REPAST_SIMPHONY_PLUGIN_ID = "repast.simphony.eclipse";
   public static final String REPAST_SIMPHONY_NATURE_ID = REPAST_SIMPHONY_PLUGIN_ID + ".repast_simphony_nature";
   
-  public static final String REPAST_SIMPHONY_PLUGIN_VERSION = "2.1.0";
+  public static final String REPAST_SIMPHONY_PLUGIN_VERSION = "2.2.0";
 
   public static final String JAR_FILE = "repast.simphony.bin_and_src.jar";
   public static final String JAR_PROJECT = "repast.simphony.bin_and_src_"

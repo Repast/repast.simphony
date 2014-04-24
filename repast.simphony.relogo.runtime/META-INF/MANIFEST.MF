@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ReLogo Runtime
 Bundle-SymbolicName: repast.simphony.relogo.runtime
-Bundle-Version: 2.1.0
+Bundle-Version: 2.2.0
 Export-Package: repast.simphony.relogo,
  repast.simphony.relogo.factories,
  repast.simphony.relogo.image,

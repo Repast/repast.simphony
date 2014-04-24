@@ -19,7 +19,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class StandAloneMain {
 
-	private static final String PLUGINS_VERSION = "2.1.0";
+	private static final String PLUGINS_VERSION = "2.2.0";
 	private static final String PLUGIN_DIR = "-plugin_dir";
 	private static final String MODEL_DIR = "-model_dir";
 

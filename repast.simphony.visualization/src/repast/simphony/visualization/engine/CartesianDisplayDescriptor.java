@@ -56,7 +56,7 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
     }
     
    if (descriptor instanceof CartesianDisplayDescriptor){
-  	 set((CartesianDisplayDescriptor)descriptor);
+  	 setValueLayers((CartesianDisplayDescriptor)descriptor);
    }
   }
   
@@ -65,7 +65,7 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
    * 
    * @param descriptor
    */
-  private void set(CartesianDisplayDescriptor descriptor) {
+  private void setValueLayers(CartesianDisplayDescriptor descriptor) {
     for (String vlName : descriptor.getValueLayerNames()) {
       addValueLayerName(vlName);
     }

@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.userpanel.ui" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.1.0"/>
+         <attribute id="simphony" value="2.2.0"/>
      </attributes>
 
 	<requires>
