@@ -16,10 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
@@ -66,6 +67,23 @@ private static class ComboSetter implements Setter {
     }
   }
 
+private static class RangeSetter implements Setter {
+  
+  private double val;
+  
+  public RangeSetter(double val) {
+    this.val = val;
+  }
+  
+  public void set(JComponent comp) {
+    if (comp instanceof JSlider) {
+      ((JSlider)comp).setValue((int)val);
+    } else {
+      ((JSpinner)comp).setValue(val);
+    }
+  }
+}
+
 private static class BoolSetter implements Setter {
   
   private boolean val;
@@ -96,6 +114,9 @@ private static class BoolSetter implements Setter {
     setterMap.put("A_string", new TextSetter("foo"));
     setterMap.put("bool", new BoolSetter(false));
     setterMap.put("size", new TextSetter("SMALL"));
+    setterMap.put("float_range", new RangeSetter(1.2f));
+    setterMap.put("double_range", new RangeSetter(1.2));
+    setterMap.put("range", new RangeSetter(4));
     
     expectedMap.put("int", Integer.valueOf(5));
     expectedMap.put("float", Float.valueOf(5.52f));
@@ -106,6 +127,9 @@ private static class BoolSetter implements Setter {
     expectedMap.put("A_string", "foo");
     expectedMap.put("bool", Boolean.FALSE);
     expectedMap.put("size", Size.SMALL);
+    expectedMap.put("float_range", Float.valueOf(1.2f));
+    expectedMap.put("double_range", Double.valueOf(1.2f));
+    expectedMap.put("range", Integer.valueOf(4));
   }
 
   private JButton getButton() {
@@ -133,11 +157,10 @@ private static class BoolSetter implements Setter {
 
     try {
       JScrollPane container = (JScrollPane) panel.getComponent(0);
-      //System.out.println(container);
       JPanel panel = (JPanel) container.getViewport().getView();
       for (int i = 0; i < panel.getComponentCount(); ++i) {
         JComponent comp = (JComponent) panel.getComponent(i);
-        Object name = comp.getClientProperty("name");
+        Object name = comp.getClientProperty(ParametersUI.NAME);
         if (name != null) {
           Setter setter = setterMap.get(name);
           if (setter != null) setter.set(comp);
