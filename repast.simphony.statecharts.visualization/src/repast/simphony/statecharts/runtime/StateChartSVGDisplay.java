@@ -471,6 +471,7 @@ public class StateChartSVGDisplay {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// For when the GUI is closed via keyboard shortcut
+				StateChartSVGDisplay.this.controller.removeAsStateChartListener();
 				timer.cancel();
 				frame.setVisible(false);
 				frame.dispose();
@@ -512,6 +513,8 @@ public class StateChartSVGDisplay {
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				// For when the GUI is closed via mouse click
+				controller.removeAsStateChartListener();
+				timer.cancel();
 				controller.notifyCloseListeners();
 			}
 		});
@@ -521,6 +524,7 @@ public class StateChartSVGDisplay {
 	}
 
 	protected void closeFrame() {
+		controller.removeAsStateChartListener();
 		timer.cancel();
 		frame.setVisible(false);
 		frame.dispose();
