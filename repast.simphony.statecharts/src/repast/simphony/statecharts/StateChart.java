@@ -72,6 +72,23 @@ public interface StateChart<T> {
 	 * 			the transition to follow
 	 */
 	void followTransition(Transition<T> transition);
+	
+	/**
+	 * Activates the state (identified by a potentially non-unique ID) if it exists.
+	 * @param stateID
+	 * 			the potentially non-unique ID of the state to activate
+	 */
+	void activateState(String stateID);
+	
+	
+	/**
+	 * Follow the transition (identified by a potentially non-unique ID) if valid.
+	 * @param transitionID
+	 * 			the potentially non-unique ID of the transition to follow
+	 */
+	void followTransition(String transitionID);
+	
+	
 
 	double getPriority();
 
