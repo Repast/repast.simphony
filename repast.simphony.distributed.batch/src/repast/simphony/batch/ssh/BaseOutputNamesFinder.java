@@ -25,18 +25,46 @@ import repast.simphony.data2.engine.FileSinkControllerActionIO;
  * @author Nick Collier
  */
 public class BaseOutputNamesFinder {
+  
+  public class FinderOutput {
+    private String fname;
+    private boolean ts;
+    
+    public FinderOutput(String fname, boolean ts) {
+      this.fname = fname;
+      this.ts = ts;
+    }
+    
+    public String getFileName() {
+      return fname;
+    }
+    
+    public boolean hasTimestamp() {
+      return ts;
+    }
+  }
 
   private static final QName FILENAME = new QName("fileName");
+  private static final QName TIME_STAMP = new QName("addTimeStamp");
 
-  public List<String> find(String scenarioDirectory) throws IOException, XMLStreamException {
-    List<String> names = new ArrayList<String>();
+  /**
+   * Finds file sinks descriptors in the specified directories and returns a FinderOutput results
+   * for each file sink.
+   * 
+   * @param scenarioDirectory
+   * @return
+   * @throws IOException
+   * @throws XMLStreamException
+   */
+  public List<FinderOutput> find(String scenarioDirectory) throws IOException, XMLStreamException {
+    List<FinderOutput> output = new ArrayList<FinderOutput>();
     for (File file : new File(scenarioDirectory).listFiles()) {
       if (file.getName().startsWith(FileSinkControllerActionIO.SERIALIZATION_ID)) {
-        names.add(process(new FileInputStream(file)));
+        output.add(process(new FileInputStream(file)));
       }
     }
 
-    return names;
+    return output;
   }
   
   /**
@@ -47,15 +75,16 @@ public class BaseOutputNamesFinder {
    * @throws IOException
    * @throws XMLStreamException
    */
-  public String find(InputStream fileSinkDescriptor) throws IOException, XMLStreamException {
+  public FinderOutput find(InputStream fileSinkDescriptor) throws IOException, XMLStreamException {
     return process(fileSinkDescriptor);
   }
 
-  private String process(InputStream in) throws IOException, XMLStreamException {
+  private FinderOutput process(InputStream in) throws IOException, XMLStreamException {
     XMLInputFactory factory = XMLInputFactory.newInstance();
     XMLEventReader reader = factory.createXMLEventReader(in);
 
     String name = null;
+    Boolean ts = null;
     try {
       while (reader.hasNext()) {
         XMLEvent evt = reader.nextEvent();
@@ -63,14 +92,20 @@ public class BaseOutputNamesFinder {
           StartElement elm = evt.asStartElement();
           if (elm.getName().equals(FILENAME)) {
             name = reader.nextEvent().asCharacters().getData();
-            break;
+          } else if (elm.getName().equals(TIME_STAMP)) {
+            String val = reader.nextEvent().asCharacters().getData();
+            ts = Boolean.valueOf(val);
           }
         }
+        
+        if (name != null && ts != null) break;
       }
     } finally {
       reader.close();
     }
+    
+    
 
-    return name;
+    return new FinderOutput(name, ts);
   }
 }

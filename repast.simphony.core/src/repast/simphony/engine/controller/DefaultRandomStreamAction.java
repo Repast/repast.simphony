@@ -18,6 +18,9 @@ import repast.simphony.random.RandomHelper;
 public class DefaultRandomStreamAction extends DefaultControllerAction {
 	@Override
 	public void runInitialize(RunState runState, Object contextId, Parameters params) {
+		
+		System.out.println("DefaultRandomStreamAction.runInitialize()");
+		
 		if (params == null) {
 			return;
 		}

@@ -52,6 +52,8 @@ public class DefaultController implements Controller {
       // make sure the random loader is first, followed by the data loader,
       // followed by data sets
 
+    	System.out.println(" >> DefaultController.compare: " + o1 + ", " + o2);
+    	
       // make sure the random stream creators are always first
       ControllerAction randomRoot = actionRegistry.findAction(contextID,
           ControllerActionConstants.RANDOM_LOADER_ROOT);
@@ -207,10 +209,16 @@ public class DefaultController implements Controller {
    */
   private void runInitialize(final RunState runState, final Object contextTypeId,
       final Object contextInstanceId, final Parameters runParams) {
-    Tree<ControllerAction> tree = actionRegistry.getActionTree(contextTypeId);
+    
+  	System.out.println(" ** DefaultController.runInitialize(A)");
+  	
+  	Tree<ControllerAction> tree = actionRegistry.getActionTree(contextTypeId);
     tree.sortChildren(new DefaultActionComparator(contextTypeId));
     tree.preOrderTraversal(new TreeVisitor<ControllerAction>() {
       public void visit(ControllerAction node) {
+      	
+      	System.out.println("> Initializing ControllerAction: " + node);
+      	
         node.runInitialize(runState, contextInstanceId, runParams);
       }
     });
@@ -225,6 +233,9 @@ public class DefaultController implements Controller {
    */
   private void runInitialize(final RunState runState, final Context context,
       final Parameters runParams) {
+  	
+  	System.out.println(" ** DefaultController.runInitialize(B)");
+  	
     Tree<ControllerAction> tree = actionRegistry.getActionTree(context.getTypeID());
     // if the tree == null and the context type id hasn't been explicitly set
     // then user probably didn't pass an id to the context when creating it.
@@ -241,7 +252,7 @@ public class DefaultController implements Controller {
       tree.sortChildren(new DefaultActionComparator(context.getTypeID()));
       tree.preOrderTraversal(new TreeVisitor<ControllerAction>() {
         public void visit(ControllerAction node) {
-          node.runInitialize(runState, context.getId(), runParams);
+        	node.runInitialize(runState, context.getId(), runParams);
         }
       });
     }
@@ -338,6 +349,9 @@ public class DefaultController implements Controller {
    * required to invalidate the RunState in prepartion for another set of runs.
    */
   public void batchInitialize() {
+  	
+  	System.out.println(" %% DefaultController.batchInitialise()");
+  	
     currentBatchNumber = nextBatchNumber;
     nextRunNumber = FIRST_RUN_NUMBER;
     prepare();
@@ -362,6 +376,9 @@ public class DefaultController implements Controller {
    * @return the current initialized RunState.
    */
   public RunState runInitialize(Parameters params) {
+  	
+  	System.out.println(" @ DefaultController.runInitialize(params)");
+  	
     if (nextRunNumber == FIRST_RUN_NUMBER && !prepare()) {
       runStateSetInBatch = false;
     }
@@ -392,6 +409,9 @@ public class DefaultController implements Controller {
   // makes sure that we have an action that will setup the default random
   // stream's seed
   protected void loadRandomLoader() {
+  	
+  	System.out.println(" $$ DefaultController.loadRandomLoader()");
+  	
     ControllerAction randomRoot = actionRegistry.findAction(actionRegistry.getMasterContextId(),
         ControllerActionConstants.RANDOM_LOADER_ROOT);
     if (randomRoot == null) {

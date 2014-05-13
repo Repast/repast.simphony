@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.log4j.PropertyConfigurator;
 
 import repast.simphony.batch.ssh.BaseOutputNamesFinder;
+import repast.simphony.batch.ssh.BaseOutputNamesFinder.FinderOutput;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
@@ -46,11 +47,10 @@ public class ClusterOutputCombiner {
 
 	private List<OutputPattern> createPatterns() throws IOException,
 			XMLStreamException {
-		List<String> baseNames = new BaseOutputNamesFinder().find("./scenario.rs");
+		List<FinderOutput> fsFound = new BaseOutputNamesFinder().find("./scenario.rs");
 		List<OutputPattern> patterns = new ArrayList<>();
-		for (String name : baseNames) {
-			DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(
-					name);
+		for (FinderOutput fs : fsFound) {
+			DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(fs.getFileName(), fs.hasTimestamp());
 			// this has to be first, otherwise the non param map pattern will catch
 			// it.
 			patterns.add(creator.getParamMapPattern());

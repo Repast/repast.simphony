@@ -53,7 +53,7 @@ public class Translator {
 	protected String packageName;
 	protected String supportName;
 	
-	private boolean initializeScenarioDirectory = true;
+	private boolean hybridCompatibility = true;
 
 	protected String unitsConsistencyCheckMdlFile = "";
 	protected String unitsConsistencyCheckResultsFile = "./UnitsConsistencyCheckResults.txt";
@@ -502,15 +502,16 @@ public class Translator {
 
 				String ScenarioDirectory = getScenarioDirectory();
 
-				if (this.isInitializeScenarioDirectory()) {
+				if (!this.isHybridCompatibility()) {
 					RepastSimphonyEnvironment.generateScenarioXml(Translator.openReport(ScenarioDirectory+"scenario.xml"), objectName);
 					RepastSimphonyEnvironment.generateUserPathXml(Translator.openReport(ScenarioDirectory+"user_path.xml"), objectName);
 					RepastSimphonyEnvironment.generateClassLoaderXml(Translator.openReport(ScenarioDirectory+"repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_1.xml"), objectName, this);
 					RepastSimphonyEnvironment.generateContextXml(Translator.openReport(ScenarioDirectory+"context.xml"), objectName);
+					RepastSimphonyEnvironment.generateContextBuilder(Translator.openReport(SourceDirectory+"ContextBuilder"+objectName+".java"), objectName, this);
 				}
 
 				InformationManagers.getInstance().getNativeDataTypeManager().generateMemoryJava(Translator.openReport(SourceDirectory+"Memory"+objectName+".java"), objectName, this);
-				RepastSimphonyEnvironment.generateContextBuilder(Translator.openReport(SourceDirectory+"ContextBuilder"+objectName+".java"), objectName, this);
+				
 
 			} else if (Translator.target.equals(ReaderConstants.JAVASCRIPT)) {
 
@@ -2366,11 +2367,11 @@ public class Translator {
 		return destinationDirectory +"/" + objectName + ".rs/";
 	}
 
-	public boolean isInitializeScenarioDirectory() {
-		return initializeScenarioDirectory;
+	public boolean isHybridCompatibility() {
+		return hybridCompatibility;
 	}
 
-	public void setInitializeScenarioDirectory(boolean initializeScenarioDirectory) {
-		this.initializeScenarioDirectory = initializeScenarioDirectory;
+	public void setHybridCompatibility(boolean hybridCompatibility) {
+		this.hybridCompatibility = hybridCompatibility;
 	}
 }

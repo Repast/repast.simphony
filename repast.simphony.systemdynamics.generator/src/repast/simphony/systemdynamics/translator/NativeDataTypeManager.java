@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 import repast.simphony.data2.AggregateOp;
 import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -336,25 +338,29 @@ public class NativeDataTypeManager {
 
 			bw.append("}\n\n");
 
-			generateDataSetGetters(objectName, translator);
+			if (translator.isHybridCompatibility()) {
+				generateMemoryGettersSetters(bw, objectName, translator);
+			} else {
+				generateDataSetGetters(objectName, translator);
+			}
 
 			// HERE!!! these three getters need to be customized to what variables are use!
 			
 			
-			bw.append("public double get_SAVEPER() {\n");
-			bw.append("return SAVEPER;\n");
+			bw.append("public double get_SAVEPER() {");
+			bw.append("return SAVEPER;");
 			bw.append("}\n");
 
-			bw.append("public double getINITIALTIME() {\n");
-			bw.append("return "+getInitialTimeVariable()+";\n");
+			bw.append("public double getINITIALTIME() {");
+			bw.append("return "+getInitialTimeVariable()+";");
 			bw.append("}\n");
 
-			bw.append("public double getFINALTIME() {\n");
-			bw.append("return "+getFinalTimeVariable()+";\n");
+			bw.append("public double getFINALTIME() {");
+			bw.append("return "+getFinalTimeVariable()+";");
 			bw.append("}\n");
 
-			bw.append("public double getTIMESTEP() {\n");
-			bw.append("return "+getTimeStepVariable()+";\n");
+			bw.append("public double getTIMESTEP() {");
+			bw.append("return "+getTimeStepVariable()+";");
 			bw.append("}\n");
 
 			// class tail
@@ -550,6 +556,165 @@ public class NativeDataTypeManager {
 		}
 
 	}
+	
+	public String generateMemoryGettersSettersConvenience(String objectName) {
+		StringBuffer bw = new StringBuffer();
+		List<String> al = new ArrayList<String>();
+		al.addAll(scalars);
+		Collections.sort(al);
+		for (String scalar : al) {
+			
+			String getter = "get"+StringUtils.capitalize(legal.get(scalar));
+			String setter = "set"+StringUtils.capitalize(legal.get(scalar));
+
+			bw.append("public double "+getter+"() {");
+			bw.append("return memory."+legal.get(scalar)+";");
+			bw.append("}\n");
+			
+			bw.append("public void   "+setter+"(double value) {");
+			bw.append("memory."+legal.get(scalar)+" = value;");
+			bw.append("}\n");
+		}
+		
+		return bw.toString();
+	}
+	
+	
+	private  void generateMemoryGettersSetters(BufferedWriter bw, String objectName, Translator translator) {
+		
+
+		// scalars
+		try {
+			List<String> al = new ArrayList<String>();
+			al.addAll(scalars);
+			Collections.sort(al);
+			for (String scalar : al) {
+				
+				String getter = "get"+StringUtils.capitalize(legal.get(scalar));
+				String setter = "set"+StringUtils.capitalize(legal.get(scalar));
+
+				bw.append("public double "+getter+"() {");
+				bw.append("return "+legal.get(scalar)+";");
+				bw.append("}\n");
+				
+				bw.append("public void   "+setter+"(double value) {");
+				bw.append(legal.get(scalar)+" = value;");
+				bw.append("}\n");
+			}
+
+			// arrays
+
+			// NOTE: we do not want to generate getters for any lookup tables
+
+			al = new ArrayList<String>();
+			al.addAll(arrays.keySet());
+			Collections.sort(al);
+			for (String array : al) {
+
+				if (EquationProcessor.lookups.contains(array)) {
+					continue;
+				}
+
+				Map<Integer, List<Integer>> indexValueMap = new HashMap<Integer, List<Integer>>();
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
+					indexValueMap.put(dimension, new ArrayList<Integer>());
+					for (int index = 0; index < InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dimension); index++) {
+						indexValueMap.get(dimension).add(index);
+					}
+				}
+
+				// total number of dimensions in the array
+				int numDimensions = InformationManagers.getInstance().getArrayManager().getNumDimensions(array);
+
+				List<StringBuffer> methodName = new ArrayList<StringBuffer>();
+				List<StringBuffer> bodySubscript = new ArrayList<StringBuffer>();
+
+				// compute the number of combinations of indicies
+				int numToGenerate = 1;
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
+					numToGenerate *= indexValueMap.get(dimension).size();
+				}
+				for (int i = 0; i < numToGenerate; i++) {
+					methodName.add(new StringBuffer());
+					bodySubscript.add(new StringBuffer());
+				}
+
+				// for each dimension compute 
+				for (int dimension = 0; dimension < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dimension++) {
+					int numPer = 1;
+					for (int dim = dimension+1; dim < InformationManagers.getInstance().getArrayManager().getNumDimensions(array); dim++) {
+						numPer *= indexValueMap.get(dim).size();
+					}
+					int ptr = 0;
+
+					while (ptr < numToGenerate) {
+
+						for (int subr = 0; subr < indexValueMap.get(dimension).size(); subr++) {
+							for (int j = 0; j < numPer; j++) {
+								StringBuffer sb = bodySubscript.get(ptr);
+								sb.append("["+subr+"]");
+								StringBuffer sb2 = methodName.get(ptr);
+								ptr++;
+								if (sb2.length() == 0) {
+									sb2.append("$__$");  // this represents "["
+								} else {
+									sb2.append("$_$");   // this represents ","
+								}
+								sb2.append(InformationManagers.getInstance().getArrayManager().getVensimSubscript(array, dimension, subr));
+							}
+						}
+					}
+
+				}
+
+
+
+
+				for (int i = 0; i < bodySubscript.size(); i++) {
+
+					String getter = "get"+StringUtils.capitalize(legal.get(array))+makeLegal(methodName.get(i).toString().trim());
+					String original = array;
+					String vensim = asVensim(original+makeLegal(methodName.get(i).toString().trim()));
+					
+
+					// Start
+					int dim = 0;
+					NativeArray na = arrays.get(array);
+					StringBuffer squareBrackets = new StringBuffer();
+
+					for (String subscript : na.getDimensionNames()) {
+						String numInd = Integer.toString(InformationManagers.getInstance().getArrayManager().getNumIndicies(array, dim));
+						if (numInd.equals("0"))
+							squareBrackets.append("[]");
+						dim++;
+					}
+					// End
+					if (squareBrackets.toString().length() > 0)
+						continue;
+					bw.append("public double"+squareBrackets.toString()+" "+getter+"() {\n");
+					bw.append("return memory."+legal.get(array)+bodySubscript.get(i).toString()+";\n");
+					bw.append("}\n");
+				}
+
+
+
+
+			}
+			//		 dsd.addMethodDataSource("ID", objectName+".Memory"+objectName, "getID");
+			//			dsd.setSourceType(objectName+".Memory"+objectName);
+			
+//			bw.append("}\n");
+//			bw.close();
+
+			
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 
 	private  void generateDataSetGetters(String objectName, Translator translator) {
 		

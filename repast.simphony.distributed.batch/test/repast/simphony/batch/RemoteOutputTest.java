@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import repast.simphony.batch.ssh.BaseOutputNamesFinder;
+import repast.simphony.batch.ssh.BaseOutputNamesFinder.FinderOutput;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.DefaultOutputPatternCreator;
 import repast.simphony.batch.ssh.LocalOutputFinder;
@@ -88,14 +89,14 @@ public class RemoteOutputTest {
   
   @Test
   public void testBaseNameFinder() throws IOException, XMLStreamException {
-    List<String> names = new BaseOutputNamesFinder().find("./test_data/test_scenario.rs");
-    assertEquals(2, names.size());
+    List<FinderOutput> fsFound = new BaseOutputNamesFinder().find("./test_data/test_scenario.rs");
+    assertEquals(2, fsFound.size());
     Set<String> expected = new HashSet<String>();
     expected.add("ModelOutput.txt");
     expected.add("ModelOutput2.txt");
     
-    for (String name : names) {
-      assertTrue(expected.remove(name));
+    for (FinderOutput fo : fsFound) {
+      assertTrue(expected.remove(fo.getFileName()));
     }
   }
   
@@ -104,7 +105,7 @@ public class RemoteOutputTest {
     
     // base output names.
     BaseOutputNamesFinder finder = new BaseOutputNamesFinder();
-    List<String> baseNames = new ArrayList<String>();
+    List<FinderOutput> baseNames = new ArrayList<>();
     ZipFile zip = new ZipFile("./test_data/test_scenario.rs/complete_model.zip");
     for (Enumeration<? extends ZipEntry> iter = zip.entries(); iter.hasMoreElements();) {
       ZipEntry entry = iter.nextElement();
@@ -183,11 +184,11 @@ public class RemoteOutputTest {
   public void testAggregator() throws IOException, XMLStreamException, StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
     
-    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("ModelOutput.txt");
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("ModelOutput.txt", true);
     finder.addPattern(creator.getParamMapPattern());
     finder.addPattern(creator.getFileSinkOutputPattern());
     
-    DefaultOutputPatternCreator creator2 = new DefaultOutputPatternCreator("ModelOutput2.txt");
+    DefaultOutputPatternCreator creator2 = new DefaultOutputPatternCreator("ModelOutput2.txt", true);
     finder.addPattern(creator2.getParamMapPattern());
     finder.addPattern(creator2.getFileSinkOutputPattern());
     

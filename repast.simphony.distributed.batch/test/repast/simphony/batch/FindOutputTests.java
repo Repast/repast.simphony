@@ -77,13 +77,13 @@ public class FindOutputTests {
   public void findViaBatchParam() throws StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
 
-    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one", true);
     OutputPattern onePattern = creator.getFileSinkOutputPattern();
     OutputPattern oneBPPattern = creator.getParamMapPattern();
     finder.addPattern(oneBPPattern);
     finder.addPattern(onePattern);
 
-    creator = new DefaultOutputPatternCreator("two.txt");
+    creator = new DefaultOutputPatternCreator("two.txt", true);
     OutputPattern twoPattern = creator.getFileSinkOutputPattern();
     OutputPattern twoBPPattern = creator.getParamMapPattern();
     finder.addPattern(twoBPPattern);
@@ -120,13 +120,13 @@ public class FindOutputTests {
   public void testPattern() throws StatusException {
     LocalOutputFinder finder = new LocalOutputFinder();
 
-    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one", true);
     OutputPattern onePattern = creator.getFileSinkOutputPattern();
     OutputPattern oneBPPattern = creator.getParamMapPattern();
     finder.addPattern(oneBPPattern);
     finder.addPattern(onePattern);
 
-    creator = new DefaultOutputPatternCreator("two.txt");
+    creator = new DefaultOutputPatternCreator("two.txt", true);
     OutputPattern twoPattern = creator.getFileSinkOutputPattern();
     OutputPattern twoBPPattern = creator.getParamMapPattern();
     finder.addPattern(twoBPPattern);
@@ -181,13 +181,13 @@ public class FindOutputTests {
     RemoteSession remote = (RemoteSession) getTestingRemote(config);
     RemoteOutputFinderCopier finder = new RemoteOutputFinderCopier();
     
-    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one");
+    DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator("one", true);
     OutputPattern onePattern = creator.getFileSinkOutputPattern();
     OutputPattern oneBPPattern = creator.getParamMapPattern();
     finder.addPattern(oneBPPattern);
     finder.addPattern(onePattern);
 
-    creator = new DefaultOutputPatternCreator("two.txt");
+    creator = new DefaultOutputPatternCreator("two.txt", true);
     OutputPattern twoPattern = creator.getFileSinkOutputPattern();
     OutputPattern twoBPPattern = creator.getParamMapPattern();
     finder.addPattern(twoBPPattern);

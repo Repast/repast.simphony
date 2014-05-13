@@ -23,7 +23,7 @@ public class DefaultOutputPatternCreator {
    * the specified basename. For example, a basename of ModelOutput would correspond
    * to instance output of ModelOutput.X.csv where X is a timestamp.
    */
-  public DefaultOutputPatternCreator(String basename) {
+  public DefaultOutputPatternCreator(String basename, boolean hasTimestamp) {
     int index = basename.lastIndexOf(".");
     if (index != -1) {
       name = basename.substring(0, index);
@@ -32,11 +32,14 @@ public class DefaultOutputPatternCreator {
       name = basename;
       extension = "";
     }
-    this.timestamp = new SimpleDateFormat("yyyy.MMM.dd.HH_mm_ss").format(new Date());
+    if (hasTimestamp) 
+      this.timestamp = "." + new SimpleDateFormat("yyyy.MMM.dd.HH_mm_ss").format(new Date());
+    else 
+      this.timestamp = "";
   }
   
   private String getFinalFileName() {
-    return name + "." + timestamp + (extension.length() > 0 ? "." + extension : "");
+    return name + timestamp + (extension.length() > 0 ? "." + extension : "");
   }
   
   /**
@@ -80,7 +83,7 @@ public class DefaultOutputPatternCreator {
   }
   
   private String getFinalParamMapFileName() {
-    return name + "." + timestamp + ".batch_param_map" + (extension.length() > 0 ? "." + extension : "");
+    return name + timestamp + ".batch_param_map" + (extension.length() > 0 ? "." + extension : "");
   }
   
   private String cleanMatchFile(String filename) {

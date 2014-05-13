@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import repast.simphony.batch.BatchConstants;
+import repast.simphony.batch.ssh.BaseOutputNamesFinder.FinderOutput;
 import repast.simphony.data2.engine.FileSinkControllerActionIO;
 
 /**
@@ -145,7 +146,7 @@ public class SessionsDriver {
   }
 
   private void concatenateOutput(String remoteDir) throws StatusException, SessionException {
-    List<String> baseNames = new ArrayList<String>();
+    List<BaseOutputNamesFinder.FinderOutput> foundFS = new ArrayList<BaseOutputNamesFinder.FinderOutput>();
 
     try (ZipFile zip = new ZipFile(config.getModelArchive())) {
       // look in the scenario directory in the zip file to find the
@@ -156,7 +157,7 @@ public class SessionsDriver {
         ZipEntry entry = iter.nextElement();
         if (entry.getName()
             .startsWith("scenario.rs/" + FileSinkControllerActionIO.SERIALIZATION_ID)) {
-          baseNames.add(finder.find(zip.getInputStream(entry)));
+          foundFS.add(finder.find(zip.getInputStream(entry)));
         }
       }
     } catch (IOException | XMLStreamException ex) {
@@ -164,8 +165,8 @@ public class SessionsDriver {
     }
     
     List<OutputPattern> patterns = new ArrayList<>();
-    for (String name : baseNames) {
-      DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(name);
+    for (FinderOutput fo : foundFS) {
+      DefaultOutputPatternCreator creator = new DefaultOutputPatternCreator(fo.getFileName(), fo.hasTimestamp());
       // this has to be first, otherwise the non param map pattern will catch it.
       patterns.add(creator.getParamMapPattern());
       patterns.add(creator.getFileSinkOutputPattern());
