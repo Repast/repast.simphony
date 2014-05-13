@@ -67,9 +67,7 @@ import com.jogamp.common.os.Platform;
 
 public class DisplayGIS3D extends AbstractDisplay {
 
-	public static final String BUFFERED_IMAGE_CACHE_SIZE = "gov.nasa.worldwind.avkey.BufferedImageCacheSize";
-	public static final String BUFFERED_IMAGE_CACHE_NAME = java.awt.image.BufferedImage.class.getName();
-	protected static final long DEFAULT_BUFFERED_IMAGE_CACHE_SIZE = 1000000;
+	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 500;  // meters
 
 	static {
 		// this seems to fix jogl canvas flicker issues on windows
@@ -495,7 +493,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 		
 		double scale = 1.2;  // make the view a little larger than the bounding sector
 		double altitude = scale * distance / Math.tan(worldWindow.getView().getFieldOfView().radians / 2);
-
+		
+		// don't allow the camera to zoom in super close in the case of features
+		//   that a very close together.
+		altitude = Math.max(altitude, MIN_DEFAULT_ZOOM_ALTITUDE);
+		
 		LatLon latlon = sector.getCentroid();
 		Position pos = new Position(latlon, altitude);
 

@@ -108,7 +108,19 @@ public class StateChartSVGDisplayController implements StateChartListener,
 	public void initializeModel(SVGDocument svgDoc) {
 		model = new StateChartSVGModel(svgDoc);
 		svgDisplay.setModel(model);
-		stateChart.registerStateChartListener(this);
+		addAsStateChartListener();
+	}
+	
+	public void addAsStateChartListener(){
+		if (stateChart != null){
+			stateChart.registerStateChartListener(this);
+		}
+	}
+	
+	public void removeAsStateChartListener(){
+		if (stateChart != null){
+			stateChart.removeStateChartListener(this);
+		}
 	}
 
 	private List<StatechartCloseListener> scls = new ArrayList<StatechartCloseListener>();

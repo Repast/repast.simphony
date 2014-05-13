@@ -56,12 +56,12 @@ public class Engine {
 		System.out.println("Engine created");
 	}
 	
-	public Engine(SystemModel systemModel, IProject project, IProgressMonitor progressMonitor, boolean reinitialize ) {
+	public Engine(SystemModel systemModel, IProject project, IProgressMonitor progressMonitor, boolean hybridCompatibility ) {
 		this();
 		this.project = project;
 		this.progressMonitor = progressMonitor;
 		translator = new TranslatorRepastSimphony(project, progressMonitor, this);
-		translator.setInitializeScenarioDirectory(reinitialize);
+		translator.setHybridCompatibility(hybridCompatibility);
 		InformationManagers.clear();
 		InformationManagers.getInstance().setSystemModel(systemModel);
 		Equation.initializeCounts();

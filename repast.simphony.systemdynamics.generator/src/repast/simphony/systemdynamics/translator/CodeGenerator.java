@@ -149,6 +149,11 @@ public class CodeGenerator {
 
 	    // generate the methods that are called repeatedly as time progresses
 	    repeated(sourceCode);
+	    
+	    convenienceGettersSetters(sourceCode);
+	    
+	    
+
 
 	    // update any time series values
 	    if (Translator.target.equals(ReaderConstants.JAVA)) {
@@ -164,6 +169,16 @@ public class CodeGenerator {
 
 	    closeFile();
 	}
+    }
+    
+    private void convenienceGettersSetters(BufferedWriter bw) {
+    	NativeDataTypeManager ndtm = InformationManagers.getInstance().getNativeDataTypeManager();
+    	try {
+			bw.append(ndtm.generateMemoryGettersSettersConvenience(objectName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     private void startObject(BufferedWriter bw) {
@@ -234,6 +249,8 @@ public class CodeGenerator {
 
 		    bw.append("memory = new Memory"+objectName+"();\n\n\n");
 		    bw.append("timeSeriesData.setNativeDataTypes(true);\n");
+		    
+		    bw.append("oneTime();\n");
 
 	    } else {
 	    	bw.append("sdFunctions = new SDFunctions(this);\n");
@@ -391,7 +408,7 @@ public class CodeGenerator {
 							tStep = forceDouble(bothSides[1]);
 
 						//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
-						if (Translator.target.equals(ReaderConstants.C)) {
+						if (Translator.target.equals(ReaderConstants.C) || !isInitializeScenarioDirectory()) {
 							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
 									"/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
 						} else {
@@ -522,9 +539,9 @@ public class CodeGenerator {
 
 
 		String ScenarioDirectory = translator.getScenarioDirectory();
-		//		if (isInitializeScenarioDirectory())
-		RepastSimphonyEnvironment.generateParametersXml(
-				Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
+		if (isInitializeScenarioDirectory())
+			RepastSimphonyEnvironment.generateParametersXml(
+					Translator.openReport(ScenarioDirectory+"parameters.xml"), objectName, translator, initialValues);
 
 
 	} catch (IOException e) {
@@ -542,106 +559,107 @@ public class CodeGenerator {
 	return Parser.forceDouble(rhs);
     }
     private void repeated(BufferedWriter bw) {
-	try {
+    	try {
 
-	    if (!Translator.target.equals(ReaderConstants.C)){ 
-		bw.append("@ScheduledMethod(");
-		bw.append("start = 1,");
-		bw.append("interval = 1,");
-		bw.append("shuffle = true)\n");
-		bw.append("public ");
-	    }
-	    bw.append("void step() {\n");
-	    if (!Translator.target.equals(ReaderConstants.C)){ 
-		bw.append("ISchedule schedule = repast.simphony.engine.environment.RunEnvironment\n");
-		bw.append(".getInstance().getCurrentSchedule();\n");
-	    }
-	    bw.append(scrub("double timeStep = memory.getTIMESTEP();\n"));
+    		// isInitializeScenarioDirectory() = true -> means this is standalone mode
+    		if (!Translator.target.equals(ReaderConstants.C) && isInitializeScenarioDirectory()){ 
+    			bw.append("@ScheduledMethod(");
+    			bw.append("start = 1,");
+    			bw.append("interval = 1,");
+    			bw.append("shuffle = true)\n");
+    			bw.append("public ");
+    		}
+    		bw.append("public void step() {\n");
+    		if (!Translator.target.equals(ReaderConstants.C)){ 
+    			bw.append("ISchedule schedule = repast.simphony.engine.environment.RunEnvironment\n");
+    			bw.append(".getInstance().getCurrentSchedule();\n");
+    		}
+    		bw.append(scrub("double timeStep = memory.getTIMESTEP();\n"));
 
-//	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
-//	    bw.append(scrub("memory.Time = time;\n"));
-//	    if (!Translator.target.equals(ReaderConstants.C))
-//		bw.append(scrub("currentTime = time;\n"));
-//	    bw.append(scrub("repeated(time, timeStep);\n"));
-//	    bw.append("}\n\n");
-	    
-	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0);\n"));
-	    
-	    bw.append(scrub("double nextTime = time + 1.0;\n"));
-	    		bw.append(scrub("while (time < nextTime) {\n"));
-			
-	    bw.append(scrub("memory.Time = time;\n"));
-	    if (!Translator.target.equals(ReaderConstants.C))
-	    	bw.append(scrub("currentTime = time;\n"));
-	    bw.append(scrub("repeated(time, timeStep);\n"));
-	    bw.append(scrub("time += timeStep;\n"));
-	    bw.append("}\n");
-	    bw.append("}\n\n");
+    		//	    bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0) * timeStep;\n"));
+    		//	    bw.append(scrub("memory.Time = time;\n"));
+    		//	    if (!Translator.target.equals(ReaderConstants.C))
+    		//		bw.append(scrub("currentTime = time;\n"));
+    		//	    bw.append(scrub("repeated(time, timeStep);\n"));
+    		//	    bw.append("}\n\n");
 
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("protected ");
-	    bw.append("void repeated0(double time, double timeStep) {\n\n");
+    		bw.append(scrub("double time = memory.getINITIALTIME() + (schedule.getTickCount() - 1.0);\n"));
 
-	    currentMethodNumber = 0;
+    		bw.append(scrub("double nextTime = time + 1.0;\n"));
+    		bw.append(scrub("while (time < nextTime) {\n"));
 
-	    for (String lhs : evaluationOrder) {
+    		bw.append(scrub("memory.Time = time;\n"));
+    		if (!Translator.target.equals(ReaderConstants.C))
+    			bw.append(scrub("currentTime = time;\n"));
+    		bw.append(scrub("repeated(time, timeStep);\n"));
+    		bw.append(scrub("time += timeStep;\n"));
+    		bw.append("}\n");
+    		bw.append("}\n\n");
 
-		Equation equation = equations.get(lhs);
-		if (equation.isRepeated()) {
+    		if (!Translator.target.equals(ReaderConstants.C))
+    			bw.append("protected ");
+    		bw.append("void repeated0(double time, double timeStep) {\n\n");
 
-		    currentEquationNumber++;
-		    if (currentEquationNumber > EQUATION_LIMIT) {
-			currentEquationNumber = 0;
-			currentMethodNumber++;
-			resetLimits();
-			bw.append("}\n\n");
-			if (!Translator.target.equals(ReaderConstants.C))
-			    bw.append("protected ");
-			bw.append("void repeated"+currentMethodNumber+"(double time, double timeStep) {\n\n");
-		    }
+    		currentMethodNumber = 0;
 
-		    if (equation.isVdmLookup()) {
-			bw.append("/*\n");
-			bw.append(" * This is automatically processed\n");
-			bw.append(" * Included for documentation purposes\n");
-		    }
-		    bw.append("{\n");
-		    resetCounters();
-		    generateCode(equation, bw);
-		    bw.append("}\n");
-		    if (equation.isVdmLookup()) {
-			bw.append("*/\n");
-		    }
+    		for (String lhs : evaluationOrder) {
 
-		}
-	    }
-	    // will always have an open method
-	    bw.append("}\n\n");
+    			Equation equation = equations.get(lhs);
+    			if (equation.isRepeated()) {
 
+    				currentEquationNumber++;
+    				if (currentEquationNumber > EQUATION_LIMIT) {
+    					currentEquationNumber = 0;
+    					currentMethodNumber++;
+    					resetLimits();
+    					bw.append("}\n\n");
+    					if (!Translator.target.equals(ReaderConstants.C))
+    						bw.append("protected ");
+    					bw.append("void repeated"+currentMethodNumber+"(double time, double timeStep) {\n\n");
+    				}
 
-	    if (!Translator.target.equals(ReaderConstants.C))
-		bw.append("protected ");
-	    bw.append("void repeated(double time, double timeStep) {\n\n");
-	    if (!Translator.target.equals(ReaderConstants.C)) {
-//		bw.append("  message.println(\"repeated: \"+time+\" \"+timeStep);\n");
-		bw.append("  data.setCurrentTime(time);\n");
-		bw.append("  setValue(\"Time\", time);\n");
-		bw.append("  timeSeriesData.advanceTime(data, time);\n");
-		    bw.append("  updateTimeSeriesReferences(time);\n");
-	    }
+    				if (equation.isVdmLookup()) {
+    					bw.append("/*\n");
+    					bw.append(" * This is automatically processed\n");
+    					bw.append(" * Included for documentation purposes\n");
+    				}
+    				bw.append("{\n");
+    				resetCounters();
+    				generateCode(equation, bw);
+    				bw.append("}\n");
+    				if (equation.isVdmLookup()) {
+    					bw.append("*/\n");
+    				}
 
-	    for (int i = 0; i <= currentMethodNumber; i++) {
-		bw.append("   repeated"+i+"(time, timeStep);\n");
-	    }
+    			}
+    		}
+    		// will always have an open method
+    		bw.append("}\n\n");
 
 
-	    bw.append("}\n\n");
-	    bw.flush();
+    		if (!Translator.target.equals(ReaderConstants.C))
+    			bw.append("protected ");
+    		bw.append("void repeated(double time, double timeStep) {\n\n");
+    		if (!Translator.target.equals(ReaderConstants.C)) {
+    			//		bw.append("  message.println(\"repeated: \"+time+\" \"+timeStep);\n");
+    			bw.append("  data.setCurrentTime(time);\n");
+    			bw.append("  setValue(\"Time\", time);\n");
+    			bw.append("  timeSeriesData.advanceTime(data, time);\n");
+    			bw.append("  updateTimeSeriesReferences(time);\n");
+    		}
 
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+    		for (int i = 0; i <= currentMethodNumber; i++) {
+    			bw.append("   repeated"+i+"(time, timeStep);\n");
+    		}
+    		
+    		
+    		bw.append("}\n\n");
+    		bw.flush();
+
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
 
     }
     
