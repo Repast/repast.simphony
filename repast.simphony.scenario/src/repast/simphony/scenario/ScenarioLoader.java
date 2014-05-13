@@ -272,7 +272,10 @@ public class ScenarioLoader {
   	if (type.equals(ProjectionData.NETWORK_TYPE) && attributeId.equals("directed")) return false;
     if (type.equals(ProjectionData.GRID_TYPE) && attributeId.equals("allows multi")) return false;
     if ((type.equals(ProjectionData.GRID_TYPE) || type.equals(ProjectionData.CONTINUOUS_SPACE_TYPE)) 
-        && attributeId.equals("border rule")) return false;
+        && (attributeId.equals("border rule") ||
+        		attributeId.equals("width") ||
+        		attributeId.equals("height")
+        		)) return false;
     
     // The projection registry holds data for additional projections such as GIS.
 	  ProjectionRegistryData data = ProjectionRegistry.getDataFor(type);
