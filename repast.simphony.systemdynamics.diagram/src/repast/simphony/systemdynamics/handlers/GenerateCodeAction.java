@@ -47,13 +47,12 @@ public class GenerateCodeAction extends AbstractToolbarAction  {
 	  IFile file = input.getFile();
 	  IProject project = file.getProject();
 	  
-	  boolean reinitialize = MessageDialog.openQuestion(null, "Overwrite scenario xml files", "Reinitialize Scenario Directory?");
-	  
-//	  int res = JOptionPane.showConfirmDialog(null,
-//				"Reinitialize Scenario Directory?", "Reinitialize Scenario Directory",
-//				JOptionPane.YES_NO_OPTION);
+	  boolean hybridCompatibility = MessageDialog.openQuestion(null, "System Dynamics/ABMS Hybrid Integration Compatibility", 
+			  "If you wish to maintain complete compatibility within a System Dynamics/ABMS hybrid environment, click \"Yes\"\n\n"+
+			  "If you wish to create a standalone System Dynamics model click \"No\"");
 
-	  Engine engine = new Engine(model, project, progressMonitor, reinitialize);
+
+	  Engine engine = new Engine(model, project, progressMonitor, hybridCompatibility);
 	  boolean success = engine.validateGenerateRSD(model, true);
 
 	  GenerateCodeDialog dialog = new GenerateCodeDialog(Display.getCurrent().getActiveShell(), success, "Code Generation:   ", engine.getMessages());

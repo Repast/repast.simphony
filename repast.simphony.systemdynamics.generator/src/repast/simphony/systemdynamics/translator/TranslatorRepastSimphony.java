@@ -591,51 +591,51 @@ public class TranslatorRepastSimphony extends Translator {
     			String dir = getSourceDirectory() + "/" + asDirectoryPath(packageName)+ "/";
     			new File(dir).mkdirs();
     			cg = new CodeGenerator(dir, evaluationOrder, equations, objectName, Translator.target, this);
-    			cg.setInitializeScenarioDirectory(isInitializeScenarioDirectory());
+    			cg.setInitializeScenarioDirectory(!isHybridCompatibility());
     			cg.generateCode();
     			
-    			// we currently do not support arrays in ODE compatible mode. Simply do not generate
-    			
-    			if (InformationManagers.getInstance().getArrayManager().areArraysUsed())
-    				return;
-    			
-    			
-    			// ################# ODE Stock Experiment
-    			ODECodeGenerator odecg = new ODECodeGenerator(equations, evaluationOrder, packageName+"ODE", objectName+"_ODESolverCompatible");
-    			
-    			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
-    			new File(dir).mkdirs();
-    			
-    			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
-    			odecg.generateDerivativeClass(bw);
-    			try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    			
-    			bw = Utilities.openFileForWriting(dir+"/"+objectName+"Runner_ODESolverCompatible.java");
-    			odecg.generateRunnerClass(bw, objectName+"Runner_ODESolverCompatible");
-    			try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    			
-    			bw = Utilities.openFileForWriting(dir+"/ContextBuilder"+objectName+"_ODESolverCompatible.java");
-    			odecg.generateContextBuilderClass(bw, "ContextBuilder"+objectName+"_ODESolverCompatible",
-    					objectName+"Runner_ODESolverCompatible");
-    			try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-   
-    			if (isInitializeScenarioDirectory())
-    				odecg.generateScenarioDirectoryFiles(this.getScenarioDirectory());
+//    			// we currently do not support arrays in ODE compatible mode. Simply do not generate
+//    			
+//    			if (InformationManagers.getInstance().getArrayManager().areArraysUsed())
+//    				return;
+//    			
+//    			
+//    			// ################# ODE Stock Experiment
+//    			ODECodeGenerator odecg = new ODECodeGenerator(equations, evaluationOrder, packageName+"ODE", objectName+"_ODESolverCompatible");
+//    			
+//    			dir = getSourceDirectory() + "/" + asDirectoryPath(packageName+"ODE")+ "/";
+//    			new File(dir).mkdirs();
+//    			
+//    			BufferedWriter bw = Utilities.openFileForWriting(dir+"/"+objectName+"_ODESolverCompatible.java");
+//    			odecg.generateDerivativeClass(bw);
+//    			try {
+//					bw.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//    			
+//    			bw = Utilities.openFileForWriting(dir+"/"+objectName+"Runner_ODESolverCompatible.java");
+//    			odecg.generateRunnerClass(bw, objectName+"Runner_ODESolverCompatible");
+//    			try {
+//					bw.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//    			
+//    			bw = Utilities.openFileForWriting(dir+"/ContextBuilder"+objectName+"_ODESolverCompatible.java");
+//    			odecg.generateContextBuilderClass(bw, "ContextBuilder"+objectName+"_ODESolverCompatible",
+//    					objectName+"Runner_ODESolverCompatible");
+//    			try {
+//					bw.close();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//   
+//    			if (isInitializeScenarioDirectory())
+//    				odecg.generateScenarioDirectoryFiles(this.getScenarioDirectory());
     		}
     		try {
     			project.refreshLocal(IResource.DEPTH_INFINITE, null);
