@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
+import repast.simphony.parameter.ParameterConstants;
+import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.ParameterSetter;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.ui.parameters.ParametersUI;
@@ -52,6 +54,20 @@ public class GUIParametersManager implements ParameterSetter {
    */
   public void reset(Parameters params) {
     pui.resetParameters();
+    for (String name : params.getSchema().parameterNames()) {
+      ParameterSchema schema = params.getSchema().getDetails(name);
+      Object defVal = schema.getDefaultValue();
+      if (name.equals(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME) && defVal.equals(Parameters.NULL)) {
+        int val = (int) System.currentTimeMillis();
+        // per JIRA 76 - "Use positive default random seeds"
+        if (val < 0) val = Math.abs(val);
+        params.setValue(ParameterConstants.DEFAULT_RANDOM_SEED_USAGE_NAME, val);
+      } else {
+        if (!defVal.equals(Parameters.NULL)) {
+          params.setValue(name, defVal);
+        }
+      }
+    }
   }
 
   /**

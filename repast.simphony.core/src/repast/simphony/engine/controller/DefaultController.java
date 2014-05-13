@@ -417,6 +417,8 @@ public class DefaultController implements Controller {
     if (randomRoot == null) {
       randomRoot = new DefaultControllerAction();
       actionRegistry.addAction(actionRegistry.getMasterContextId(), null, randomRoot);
+      actionRegistry.registerAction(actionRegistry.getMasterContextId(), ControllerActionConstants.RANDOM_LOADER_ROOT, 
+          randomRoot);
     }
 
     Tree<ControllerAction> tree = actionRegistry.getActionTree(actionRegistry.getMasterContextId());
