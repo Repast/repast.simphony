@@ -2080,7 +2080,7 @@ public class Equation {
 	    return al;
 	}
 	
-	public String generateArrayConstantsInitialization() {
+	public String generateArrayConstantsInitialization(boolean logit) {
 		StringBuffer sb = new StringBuffer();
 		String[] values = asArray(getRHStokens(tokens));
 
@@ -2155,13 +2155,15 @@ public class Equation {
 				sb.append(" = "+vArray+"["+integer+"];\n"); 
 				// log
 				sb.append("/* generateArrayConstantsInitialization 1 */\n");
-				sb.append("/* log7 */logit(stringConcat(\""+getEars().getLhsArrayReference().getArrayName()+"\"");
+				if (logit) {
+					sb.append("/* log7 */logit(stringConcat(\""+getEars().getLhsArrayReference().getArrayName()+"\"");
 
-				for (int i = 0; i < getEars().getOuterClosingCount(); i++) {
-					sb.append(",\"[\",intToString(outer"+i+"),\"]\"");
+					for (int i = 0; i < getEars().getOuterClosingCount(); i++) {
+						sb.append(",\"[\",intToString(outer"+i+"),\"]\"");
+					}
+					sb.append("),0.0,");
+					sb.append(vArray+"["+integer+"],memory.get_SAVEPER());\n");
 				}
-				sb.append("),0.0,");
-				sb.append(vArray+"["+integer+"],memory.get_SAVEPER());\n");
 				// inc pointer
 				if (needsIncrement)
 					sb.append(integer+"++;\n");
@@ -2222,12 +2224,14 @@ public class Equation {
 				sb.append(" = "+array+"["+integer+"];\n");
 				// log
 				sb.append("/* generateArrayConstantsInitialization 2 */\n");
-				sb.append("/* log8 */logit(\""+getEars().getLhsArrayReference().getArrayName()+"\"");
-				for (int i = 0; i < getEars().getOuterClosingCount(); i++) {
-					sb.append("+\"[\"+outer"+i+"+\"]\"");
+				if (logit) {
+					sb.append("/* log8 */logit(\""+getEars().getLhsArrayReference().getArrayName()+"\"");
+					for (int i = 0; i < getEars().getOuterClosingCount(); i++) {
+						sb.append("+\"[\"+outer"+i+"+\"]\"");
+					}
+					sb.append(",0.0,");
+					sb.append(array+"["+integer+"],memory.get_SAVEPER());\n");
 				}
-				sb.append(",0.0,");
-				sb.append(array+"["+integer+"],memory.get_SAVEPER());\n");
 				// inc pointer
 				sb.append(integer+"++;\n");
 				for (int i = 0; i < getEars().getOuterClosingCount(); i++)

@@ -145,7 +145,7 @@ public class CodeGenerator {
 
 
 	    // write the oneTime method that is used to initial the model components
-	    onetime(sourceCode);
+	    onetime(sourceCode, isInitializeScenarioDirectory());
 
 	    // generate the methods that are called repeatedly as time progresses
 	    repeated(sourceCode);
@@ -158,7 +158,7 @@ public class CodeGenerator {
 	    // update any time series values
 	    if (Translator.target.equals(ReaderConstants.JAVA)) {
 		
-		    timeSeriesReferences(sourceCode);
+		    timeSeriesReferences(sourceCode, isInitializeScenarioDirectory());
 	    }
 
 	    // finally close out the object
@@ -235,10 +235,12 @@ public class CodeGenerator {
 		bw.append("public class "+objectName+" extends SDModel {\n\n");
 	    }
 	    bw.append("public "+objectName+"(String name) {\n");
+	    // need to have an additional arg
 	    bw.append("this(name, null);\n");
 	    bw.append("}\n\n");
 	    bw.append("public "+objectName+"(String name, String[] args) {\n");
-	    bw.append("super(name, args);\n\n");
+	  
+	    bw.append("super(name,"+(this.isInitializeScenarioDirectory() ? "true" : "false")+", args);\n\n");
 
 	    // perform some initialization based on language
 
@@ -341,7 +343,7 @@ public class CodeGenerator {
 
 
 
-    private void onetime(BufferedWriter bw) {
+    private void onetime(BufferedWriter bw, boolean logit) {
 	
 	Map<String, String> initialValues = new HashMap<String, String>();
 	String indent = "    ";
@@ -398,7 +400,7 @@ public class CodeGenerator {
 						bw.append(eqn.getUnitsAndComment());
 						bw.append("{\n");
 						// generate tje code to initialize the array
-						bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization()));
+						bw.append(scrub(equations.get(lhs).generateArrayConstantsInitialization(isInitializeScenarioDirectory())));
 						bw.append("}\n");
 					} else {
 						// this is a scalar value
@@ -409,8 +411,10 @@ public class CodeGenerator {
 
 						//				 = (Double) params.getValue("THRESHHOLD_ADJUSTMENT");
 						if (Translator.target.equals(ReaderConstants.C) || !isInitializeScenarioDirectory()) {
-							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n" +
-									"/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
+							statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+" = "+forceDouble(bothSides[1])+"; // 2;\n";
+							if (logit) {
+							statement += "/* log2 */logit(\""+bothSides[0]+"\", 0.0,"+forceDouble(bothSides[1])+",memory.get_SAVEPER());\n"; // 2\n";
+							}
 						} else {
 
 							// we do not want to have NAREPLACEMENT and our time value appears as parameters
@@ -421,16 +425,20 @@ public class CodeGenerator {
 
 							if (legalVar.equals("Time") || legalVar.equals("NAREPLACEMENT") || equations.get(lhs).isGetXlsConstants()) {
 								statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
-										" = "+bothSides[1]+";\n" +
-										"logit(\""+bothSides[0]+"\", getINITIALTIME(), "+bothSides[1]+",memory.get_SAVEPER());\n";
+										" = "+bothSides[1]+";\n";
+								if (logit) {
+								statement +="logit(\""+bothSides[0]+"\", getINITIALTIME(), "+bothSides[1]+",memory.get_SAVEPER());\n";
+								}
 							} else {
 
 								// scalars will come from parameters rather than hardcoded (it is initialized to hardcoded value in parameters.xml
 								statement = indent+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0])+
 										" = (Double) params.getValue(\""+InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+
-										"\"); // 2;\n" +
-										"logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
+										"\"); // 2;\n";
+								if (logit) {
+								statement +="logit(\""+bothSides[0]+"\", getINITIALTIME(), (Double) params.getValue(\""+
 										InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(bothSides[0]).replace("memory.", "")+"\"),memory.get_SAVEPER());\n"; // 2\n";
+								}
 							}
 						}
 
@@ -662,7 +670,7 @@ public class CodeGenerator {
 
     }
     
-    private void timeSeriesReferences(BufferedWriter bw) {
+    private void timeSeriesReferences(BufferedWriter bw, boolean logit) {
 	try {
 
 	    bw.append("protected void updateTimeSeriesReferences(double time) {\n\n");
@@ -682,7 +690,8 @@ public class CodeGenerator {
 		    }
 		    bw.append(");\n");
 //		    bw.append("/* timeSeriesReferences */\n");
-		    bw.append("/* log4 */logit("+equation.getEars().getLHSassignmentName()+",time,"+equation.getEars().getLHSassignment()+",memory.get_SAVEPER());\n");
+		    if (logit)
+		    	bw.append("/* log4 */logit("+equation.getEars().getLHSassignmentName()+",time,"+equation.getEars().getLHSassignment()+",memory.get_SAVEPER());\n");
 		    
 		    
 		    for (int i = 0; i < equation.getEars().getOuterClosingCount(); i++) {
@@ -1206,7 +1215,7 @@ public class CodeGenerator {
 //	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
 //	equation.printTokensOneLine();
 	
-	generateLHScode(equation, ears);
+	generateLHScode(equation, ears, isInitializeScenarioDirectory());
 	generateRHScode(equation, ears);
 	
 
@@ -1250,7 +1259,7 @@ public class CodeGenerator {
     		//	System.out.println("GenerateCode: <"+equation.getVensimEquation()+">");
     		//	equation.printTokensOneLine();
 
-    		generateLHScode(equation, ears);
+    		generateLHScode(equation, ears, isInitializeScenarioDirectory());
     		generateRHScode(equation, ears);
 
 
@@ -1467,7 +1476,7 @@ public class CodeGenerator {
 	return zeroOffset;
     }
 
-    private void generateLHScode(Equation equation, EquationArrayReferenceStructure ears) {
+    private void generateLHScode(Equation equation, EquationArrayReferenceStructure ears, boolean logit) {
 	// generate the code for the LHS
 	// nodes will tell child nodes into which variable
 	// to place their result
@@ -1507,7 +1516,8 @@ public class CodeGenerator {
 	  
 		lhs.getGeneratedCodeTail().append(InformationManagers.getInstance().getNativeDataTypeManager().getLegalName(lhs.getToken())+" = "+resultsVariable+";\n");
 //		lhs.getGeneratedCodeTail().append("/* generateLHScode */\n");
-		lhs.getGeneratedCodeTail().append("/* log6 */logit(\""+lhs.getToken()+"\",time,"+resultsVariable+",memory.get_SAVEPER());\n");
+		if (logit)
+			lhs.getGeneratedCodeTail().append("/* log6 */logit(\""+lhs.getToken()+"\",time,"+resultsVariable+",memory.get_SAVEPER());\n");
 	   
 	} else {
 	    
@@ -1515,7 +1525,7 @@ public class CodeGenerator {
 		currentHasLhsArrayReference = true;
 		outerSubscripts.addAll(ar.getSubscripts());
 		lhs.getGeneratedCodeHead().append(ar.generateLHSHeader(resultsVariable));
-		lhs.getGeneratedCodeTail().append(ar.generateLHSFooter(resultsVariable));
+		lhs.getGeneratedCodeTail().append(ar.generateLHSFooter(resultsVariable, isInitializeScenarioDirectory()));
 	    }
 	
     }

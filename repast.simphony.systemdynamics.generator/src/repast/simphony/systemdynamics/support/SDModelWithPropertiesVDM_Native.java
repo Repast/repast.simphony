@@ -23,7 +23,7 @@ import java.util.Properties;
         
         protected VDM vdm = null;
         
-        public SDModelWithPropertiesVDM_Native(String name, String[] args) {
+        public SDModelWithPropertiesVDM_Native(String name, boolean logit, String[] args) {
     	super(name, args);
     	
     	if (args != null && args.length > 0)
@@ -33,8 +33,10 @@ import java.util.Properties;
     	OUTPUT_DIRECTORY = PROPERTIES.getProperty("outputDirectory");
     	DATA_DIRECTORY = PROPERTIES.getProperty("dataDirectory");
     	
-    	logger.setLogFile(name+"Log.tab");
-    	logger.log("Variable"+SEPARATOR+"Time"+SEPARATOR+"Value");
+    	if (logit) {
+    		logger.setLogFile(name+"Log.tab");
+    		logger.log("Variable"+SEPARATOR+"Time"+SEPARATOR+"Value");
+    	}
     	
         }
 

@@ -109,7 +109,7 @@ public class ArrayReferenceNative {
 	return false;
     }
     
-    public String generateLHSFooter(String valueVariable) {
+    public String generateLHSFooter(String valueVariable, boolean logit) {
 	StringBuffer code = new StringBuffer();
 
 	// Assignment
@@ -119,11 +119,13 @@ public class ArrayReferenceNative {
 	
 	// Logging
 //	code.append("/* generateLHSFooter */\n");
-	code.append("/* log1 */logit(");
-	code.append(ears.getLHSassignmentName());
-	code.append(",");
-	code.append("time,");
-	code.append(valueVariable+",memory.get_SAVEPER());\n");
+	if (logit) {
+		code.append("/* log1 */logit(");
+		code.append(ears.getLHSassignmentName());
+		code.append(",");
+		code.append("time,");
+		code.append(valueVariable+",memory.get_SAVEPER());\n");
+	}
 	
 	// closing braces
 	for (String sub : subscripts) {
