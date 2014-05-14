@@ -567,7 +567,6 @@ public class CodeGenerator {
     			bw.append("start = 1,");
     			bw.append("interval = 1,");
     			bw.append("shuffle = true)\n");
-    			bw.append("public ");
     		}
     		bw.append("public void step() {\n");
     		if (!Translator.target.equals(ReaderConstants.C)){ 
