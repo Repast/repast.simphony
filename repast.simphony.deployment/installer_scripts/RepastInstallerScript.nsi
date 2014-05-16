@@ -7,7 +7,7 @@
 ; user the modern UI
 !include "MUI.nsh"
 
-!define VERSION "2.1-beta-2"
+!define VERSION "2.1"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -81,22 +81,21 @@ Section "Start Menu Shortcuts"
   
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Batch Runner.lnk" "$INSTDIR\batch_runner.jar" "" "$INSTDIR\batch_runner.jar"
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
+
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Flow Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" "" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 0
-
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\?.html" "" "$INSTDIR\docs\RepastSimphonyAPI\?.html" 0
-
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony System Dynamics Getting Started.lnk" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" "" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Parameter Sweeps Getting Started.lnk" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" "" "$INSTDIR\docs\RepastParameterSweepsGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Upgrading From 2.0 to 2.1.lnk" "$INSTDIR\docs\Upgrading_From_2.0_to_2.1.txt" "" "$INSTDIR\docs\Upgrading_From_2.0_to_2.1.txt" 0  
   
 SectionEnd
 
@@ -115,8 +114,7 @@ Section "Uninstall"
   ; Remove program group dir
   RMDir /r "$SMPROGRAMS\RepastSimphony-${VERSION}"
   
-  ; Remove the install dir and the docs and eclipse sub-dirs so user 
-  ; won't accidentally delete workspace files
+  ; Remove the install dir and the docs and eclipse sub-dirs 
   DELETE $INSTDIR\*.*
   RMDir /r $INSTDIR\docs
   RMDir /r $INSTDIR\eclipse
