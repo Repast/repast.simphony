@@ -4,6 +4,7 @@
 package repast.simphony.chart2;
 
 import org.jfree.data.general.DatasetChangeEvent;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 /**
@@ -18,9 +19,14 @@ public class BatchUpdateXYSeries extends XYSeriesCollection {
   private static long UPDATE_INTERVAL = 17;
   
   private boolean update = true;
+  private int rangeLength = 0;
   private long lastUpdate = 0;
   
   private volatile boolean running = false;;
+  
+  public BatchUpdateXYSeries(int plotRangeLength) {
+    this.rangeLength = plotRangeLength;
+  }
   
   public void setUpdate(boolean update) {
     this.update = update;
@@ -61,4 +67,12 @@ public class BatchUpdateXYSeries extends XYSeriesCollection {
   public void setRunning(boolean running) {
     this.running = running;
   }
+
+  @Override
+  public void addSeries(XYSeries series) {
+    if (rangeLength > 0) series.setMaximumItemCount(rangeLength);
+    super.addSeries(series);
+  }
+  
+  
 }
