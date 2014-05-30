@@ -96,6 +96,11 @@ public class TemplateGenerator {
     preRun(project, state);
 
     String templatePath = "src::action_template::Main";
+    //System.out.println(Thread.currentThread().getContextClassLoader());
+    //System.out.println(getClass().getClassLoader());
+    if (Thread.currentThread().getContextClassLoader() == null) {
+      Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    }
     facade.evaluate(templatePath, state);
     // return the project relative path
     return new Path(CodeGeneratorConstants.SRC_GEN).append(pkgPath).
