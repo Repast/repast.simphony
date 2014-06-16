@@ -70,7 +70,7 @@ public class CGDLayout<T> extends AbstractNetworkLayout<T> implements Projection
 	}
 	
 	public void setProjection(Network projection) {
-		if(!(projection instanceof DirectedJungNetwork)){
+		if(projection != null && !projection.isDirected()){
 			MessageCenter.getMessageCenter(CGDLayout.class).error( 
 					"Network is not a tree type network",new Throwable());
 		}

@@ -2057,10 +2057,12 @@ public class Translator {
 							} else {
 								bw.append(" >>>> initializtion line missing for <"+rhs+"> try individuals\n");
 								missingProblem = false;
-								// if the rhs is an array reference to a "group"
+							// if the rhs is an array reference to a "group"
 								// see if the individual array refers have initialization lines
 								if (rhs.contains("!") || !ArrayReference.isArrayReference(lhs)) {
-
+									if (!ArrayReference.isArrayReference(rhs)) {
+										continue;
+									}
 
 									ArrayReference rhsArrayReference = new ArrayReference(rhs.replace("!",""));
 									
