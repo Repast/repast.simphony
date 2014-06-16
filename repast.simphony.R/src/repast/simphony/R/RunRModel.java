@@ -16,15 +16,15 @@ public class RunRModel extends AnalysisPluginRunner  {
 
   static {
     if (SystemUtils.IS_OS_MAC)
-    	path = "/Applications/R.app";
+    	path = "/Applications/RStudio.app";
     else if (SystemUtils.IS_OS_WINDOWS)
     	path = "C:\\R-3.0.0\\bin\\x64\\RGui.exe"; 
     else
-    	path = "/usr/bin/R";
+    	path = "/usr/bin/RStudio";
   }
 
   public RunRModel(){
-		super("R", path, "license.txt",new RWizard());
+		super("RStudio", path, "license.txt",new RWizard());
 		
 	}
 }
