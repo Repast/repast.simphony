@@ -5,7 +5,6 @@ Bundle-SymbolicName: repast.simphony.essentials
 Bundle-Version: 2.2.0
 Bundle-Localization: plugin
 Require-Bundle: repast.simphony.integration,
- repast.simphony.matlab,
  repast.simphony.sql,
  repast.simphony.core,
  repast.simphony.runtime

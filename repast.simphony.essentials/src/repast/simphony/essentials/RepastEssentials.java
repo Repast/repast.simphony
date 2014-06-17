@@ -47,7 +47,6 @@ import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.integration.DataFileReader;
 import repast.simphony.integration.DataFileWriter;
-import repast.simphony.matlab.link.LinkMatlab;
 import repast.simphony.query.OrQuery;
 import repast.simphony.query.Query;
 import repast.simphony.random.RandomHelper;
@@ -1215,24 +1214,6 @@ public class RepastEssentials {
 
 	}
 
-	public static String CallMATLAB(String command) {
-
-		return LinkMatlab.evaluateMatlabFunction(command);
-
-	}
-
-	public static double GetMATLABValue(String command) {
-
-		return LinkMatlab.getScalarValue(command);
-
-	}
-
-	public static void ResetMATLAB() {
-
-		LinkMatlab.closeMatlab();
-		LinkMatlab.openMatlab();
-
-	}
 
 	public static Query OrQuery(Query query1, Query query2) {
 		return new OrQuery(query1, query2);
