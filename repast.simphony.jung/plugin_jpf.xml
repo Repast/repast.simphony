@@ -26,7 +26,7 @@
 			<parameter id="icon" value="jung.PNG"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run JUNG"/>
+			<parameter id="tooltip" value="Run In-Place Network Analysis Using JUNG"/>
 		</parameter>
 	</extension>
 

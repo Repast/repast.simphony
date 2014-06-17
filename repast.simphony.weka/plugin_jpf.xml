@@ -26,7 +26,7 @@
 			<parameter id="icon" value="weka.png"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run Weka"/>
+			<parameter id="tooltip" value="Export Output into WEKA Data Mining Software"/>
 		</parameter>
 	</extension>
 
