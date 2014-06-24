@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,7 @@ public abstract class AbstractContext<T> extends AbstractCollection<T> implement
     this.subContexts = new LinkedHashMap<Object, Context<? extends T>>();
     this.projectionMap = new FastMap<String, Projection<?>>();
     this.valueLayerMap = new FastMap<String, ValueLayer>();
-    this.agentClasses = new HashSet<Class>();
+    this.agentClasses = new LinkedHashSet<Class>();
 
     this.id = SYN_CONTEXT_PREFIX + idNo;
     this.typeID = SYN_CONTEXT_PREFIX + "Type__" + idNo;
@@ -325,7 +326,7 @@ public abstract class AbstractContext<T> extends AbstractCollection<T> implement
   }
 
   public Iterable<Class> getAgentTypes() {
-    HashSet<Class> set = new HashSet<Class>();
+    HashSet<Class> set = new LinkedHashSet<Class>();
     set.addAll(agentClasses);
     for (Context<? extends T> sub : getSubContexts()) {
       for (Class c : sub.getAgentTypes()) {

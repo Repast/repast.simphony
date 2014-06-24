@@ -27,7 +27,7 @@
 			<parameter id="icon" value="journal.png"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run Spreadsheet"/>
+			<parameter id="tooltip" value="Export Output into a Spreadsheet Application"/>
 		</parameter>
 	</extension>
 

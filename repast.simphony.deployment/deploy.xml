@@ -257,15 +257,6 @@
 				<include name="**/*.class" />
 			</fileset>
 
-			<fileset dir="../repast.simphony.iReport/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.iReport/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
 			<fileset dir="../repast.simphony.jasperreports/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -289,15 +280,6 @@
 				<include name="**/*.groovy" />
 			</fileset>
 			<fileset dir="../repast.simphony.jung/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.matlab/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.matlab/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
 
@@ -418,16 +400,6 @@
 				<include name="**/*.groovy" />
 			</fileset>
 
-
-			<fileset dir="../repast.simphony.visad/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			
-			<fileset dir="../repast.simphony.visad/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
 			<fileset dir="../repast.simphony.visualization/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -442,14 +414,6 @@
 			</fileset>
 
 			<fileset dir="../repast.simphony.weka/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.terracotta/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.terracotta/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
 

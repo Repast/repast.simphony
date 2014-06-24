@@ -67,7 +67,7 @@ public class WekaWizard extends AnalysisPluginWizard {
     List<String> commands = new ArrayList<String>();
 
     commands.add("java");
-    commands.add("-Xmx400M");
+    commands.add("-Xmx512M");
     commands.add("-cp");
     commands.add(getExecutableLoc());
     commands.add("weka.gui.explorer.Explorer");

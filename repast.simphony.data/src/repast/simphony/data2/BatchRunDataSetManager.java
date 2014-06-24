@@ -39,7 +39,7 @@ public class BatchRunDataSetManager extends AbstractDataSetManager {
   public void runStarted(RunState runState, Object contextId, Parameters parameters) {
     super.runStarted(runState, contextId, parameters);
     for (ScheduledDataSet set : dataSets) {
-      set.execute();
+//      set.execute();
     }
   }
   

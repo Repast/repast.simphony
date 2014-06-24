@@ -25,7 +25,7 @@
 			<parameter id="icon" value="cakes.png"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run R"/>
+			<parameter id="tooltip" value="Export Output into the RStudio Statistical Computing Application"/>
 		</parameter>
 	</extension>
 

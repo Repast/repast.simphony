@@ -136,83 +136,78 @@ public class AnalysisPluginRunner extends AbstractAction implements
 					System.out.print(s + " ");
 				System.out.print("\n");
 
-				ProcessBuilder builder;
-				PluginOutputStream pos;
+				ProcessBuilder builder = new ProcessBuilder(command)
+						.redirectErrorStream(true);
+				System.out.println(envVars);
+				builder.environment().putAll(envVars);
+				System.out.println(builder.directory(new File(".")
+						.getAbsoluteFile()));
+				System.out.println(builder.directory());
+				process = builder.start();
 
-				if (SystemUtils.IS_OS_WINDOWS) {
-					process = Runtime.getRuntime().exec(command);
+				PluginOutputStream pos = new PluginOutputStream(
+						process.getInputStream());
+				pos.start();
 
-					pos = new PluginOutputStream(process.getInputStream());
-					pos.start();
-				} else {
-
-					builder = new ProcessBuilder(command)
-							.redirectErrorStream(true);
-					System.out.println(envVars);
-					builder.environment().putAll(envVars);
-					System.out.println(builder.directory(new File(".").getAbsoluteFile()));
-					System.out.println(builder.directory());
-					process = builder.start();
-
-					pos = new PluginOutputStream(process.getInputStream());
-					pos.start();
-				}
-
-				PluginOutputStream pos2 = new PluginOutputStream(process
-						.getErrorStream());
+				PluginOutputStream pos2 = new PluginOutputStream(
+						process.getErrorStream());
 				pos2.start();
 
 			}
 
 		} catch (Exception e) {
 
-			System.out.println(e);
-			
-//			LOG.error("Wizard.run: Error executing " + name
-//					+ ".  Command is: '" + arrayToString(command) + "'",
-//					e);
+			e.printStackTrace();
+
+			// LOG.error("Wizard.run: Error executing " + name
+			// + ".  Command is: '" + arrayToString(command) + "'",
+			// e);
 		}
 	}
 
-  public static String arrayToString(String[] input){
-  	StringBuffer buf = new StringBuffer();
-  	
-  	for (String s : input)
-  		buf.append(s);
+	public static String arrayToString(String[] input) {
+		StringBuffer buf = new StringBuffer();
 
-  	return buf.toString();
-  }
-  
-  public static void main (String [] args){
-  	String[] command = new String[2];
-  	
-//  	command[0] = "C:\\Program Files (x86)\\Microsoft Office\\OFFICE14\\Excel.exe";
-//  	command[1] = "C:\\Users\\tatara\\Repast-Simphony\\Schelling\\ModelOutput.2013.May.01.17_12_19.txt.csv ";
-  	
-//  	command[0] = "C:/R-3.0.0/bin/x64/RGui.exe";
-//  	command[1] = "--sdi";
-//  	command[2] = "HOME=C:/Users/eric/repast-simphony/Schelling/RHome";
-//  	command[3] = "LOG_FILE0=C:/Users/eric/repast-simphony/Schelling/ModelOutput.2013.May.02.17_35_41.txt.csv";
-//  	command[4] = "DELIMITER0=,";
-  	
-  	command[0] = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
-  	command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test7.xml";
-//  	command[1] = "test7.xml";
-  	
-//  	command[0] = "C:\\Program Files (x86)\\JasperSoft\\iReport-5.1.0\\bin\\ireport.exe";
-//  	command[1] = "C:\\Users\\eric\\Desktop\\ireport connection.xml";
-//  	command[1] = "--open file";
-//  	command[1] = "C:\\Users\\eric\\Desktop\\report1.jrxml";
-  	
-  	for (String s : command)
+		for (String s : input)
+			buf.append(s);
+
+		return buf.toString();
+	}
+
+	public static void main(String[] args) {
+		String[] command = new String[2];
+
+		// command[0] =
+		// "C:\\Program Files (x86)\\Microsoft Office\\OFFICE14\\Excel.exe";
+		// command[1] =
+		// "C:\\Users\\tatara\\Repast-Simphony\\Schelling\\ModelOutput.2013.May.01.17_12_19.txt.csv ";
+
+		// command[0] = "C:/R-3.0.0/bin/x64/RGui.exe";
+		// command[1] = "--sdi";
+		// command[2] = "HOME=C:/Users/eric/repast-simphony/Schelling/RHome";
+		// command[3] =
+		// "LOG_FILE0=C:/Users/eric/repast-simphony/Schelling/ModelOutput.2013.May.02.17_35_41.txt.csv";
+		// command[4] = "DELIMITER0=,";
+
+		command[0] = "C:\\Program Files\\ORA-NetScenes-cst-iw-64\\ORA-NetScenes-cst-iw-64.exe";
+		command[1] = "C:\\Users\\eric\\repast-simphony\\JZombies_Demo\\test7.xml";
+		// command[1] = "test7.xml";
+
+		// command[0] =
+		// "C:\\Program Files (x86)\\JasperSoft\\iReport-5.1.0\\bin\\ireport.exe";
+		// command[1] = "C:\\Users\\eric\\Desktop\\ireport connection.xml";
+		// command[1] = "--open file";
+		// command[1] = "C:\\Users\\eric\\Desktop\\report1.jrxml";
+
+		for (String s : command)
 			System.out.print(s + " ");
 		System.out.print("\n");
-  	
-  	try {
+
+		try {
 			Runtime.getRuntime().exec(command);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-  }
+	}
 }
