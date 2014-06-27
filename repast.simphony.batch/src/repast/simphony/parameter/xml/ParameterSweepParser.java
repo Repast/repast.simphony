@@ -44,6 +44,8 @@ public class ParameterSweepParser extends DefaultHandler2 {
   private ParameterTreeSweeper sweeper = new ParameterTreeSweeper();
   private Map<String, ParameterSetterCreator> creators = new HashMap<String, ParameterSetterCreator>();
   private Map<String, ParameterSetterCreator> constantCreators = new HashMap<String, ParameterSetterCreator>();
+  private ConstantObjectSetterCreator objCreator = new ConstantObjectSetterCreator();
+  private ObjectListSetterCreator objListCreator = new ObjectListSetterCreator();
   private ParametersCreator creator = new ParametersCreator();
 
   /**
@@ -55,15 +57,15 @@ public class ParameterSweepParser extends DefaultHandler2 {
     this.paramsURL = paramsURL;
     init();
   }
-  
+
   public ParameterSweepParser(InputStream in) {
     this.inputStream = in;
     init();
   }
-  
+
   private void init() {
     creators.put("number", new NumberSetterCreator());
-    creators.put("list", new ListSetterCreator());
+    creators.put(SetterConstants.LIST_PARAM_TYPE, new ListSetterCreator());
 
     // constantCreators.put("number", new ConstantNumberSetterCreator());
     constantCreators.put("string", new ConstantStringSetterCreator());
@@ -112,7 +114,7 @@ public class ParameterSweepParser extends DefaultHandler2 {
     if (this.inputStream == null) {
       inputStream = paramsURL.openStream();
     }
-    
+
     parser.parse(inputStream, this);
     inputStream.close();
     return new Pair<Parameters, ParameterTreeSweeper>(creator.createParameters(), sweeper);
@@ -199,6 +201,10 @@ public class ParameterSweepParser extends DefaultHandler2 {
     constantCreators.put(constantTypeID, creator);
   }
 
+  private void checkForCustomType(Attributes attributes) {
+
+  }
+
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes)
       throws SAXException {
@@ -218,13 +224,27 @@ public class ParameterSweepParser extends DefaultHandler2 {
           }
 
           setterCreator = constantCreators.get(cType);
-        } else {
-          setterCreator = creators.get(type);
-        }
 
-        if (setterCreator == null) {
-          throw new SAXException(new ParameterFormatException("Invalid parameter '"
-              + attributesToString(attributes) + "'"));
+          // if null then assume its a custom user type with a
+          // converter
+          if (setterCreator == null) {
+            setterCreator = objCreator;
+          }
+        } else {
+          if (type.equals(SetterConstants.LIST_PARAM_TYPE)
+              && attributes.getValue(SetterConstants.LIST_VALUE_TYPE_NAME) != null) {
+            String listType = attributes.getValue(SetterConstants.LIST_VALUE_TYPE_NAME);
+            // use the constantCreators key set as a set of
+            // primitive types + String
+            if (constantCreators.keySet().contains(listType)) {
+              setterCreator = creators.get(type);
+            } else {
+              setterCreator = objListCreator;
+            }
+
+          } else {
+            setterCreator = creators.get(type);
+          }
         }
 
         setterCreator.init(attributes);
@@ -239,7 +259,7 @@ public class ParameterSweepParser extends DefaultHandler2 {
         }
         stack.push(setter);
       } catch (ParameterFormatException ex) {
-        SAXException e = new SAXException(ex);
+        SAXException e = new SAXException(ex.getMessage(), ex);
         e.initCause(ex);
         throw e;
       }

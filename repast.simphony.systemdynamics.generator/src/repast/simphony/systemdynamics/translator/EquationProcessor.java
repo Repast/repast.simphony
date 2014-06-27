@@ -553,6 +553,8 @@ public class EquationProcessor {
     	} else {
     		if (!isDuplicate(equation.getLhs(), equations)) {
     			equations.put(equation.getLhs(), equation);
+    			
+    			System.out.println("WithLookup: "+equation.getVensimEquationOnly());
 
     			String screenName = SystemDynamicsObjectManager.getScreenName(equation.getLhs());
     			sdObjectManager.addEquation(screenName, equation);

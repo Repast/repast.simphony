@@ -21,6 +21,7 @@
 		<modifier key="filler3XGap" value="10"/>
     </guiprefs>
     <native type="izpack" name="ShellLink.dll"/>
+    <native type="izpack" name="ShellLink_x64.dll" /> 
     <variables>
     	<variable name="DesktopShortcutCheckboxEnabled" value="true"/>
     	<variable name="REPAST_VERSION" value="$REPAST_VERSION"/>
@@ -124,15 +125,13 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.essentials_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.freezedry_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.gis_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.grass_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+            <file src="$EclipsePluginsDirectory/repast.simphony.gis.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.groovy_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.gui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.integration_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.iReport_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.jasperreports_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.jdbcfreezedryer_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.jung_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.matlab_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.ora_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.pajek_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.plugin.util_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
@@ -149,11 +148,9 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.systemdynamics_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.systemdynamics.generator_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
-            <file src="$EclipsePluginsDirectory/repast.simphony.terracotta_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             
             <file src="$EclipsePluginsDirectory/repast.simphony.userpanel.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            
-            <file src="$EclipsePluginsDirectory/repast.simphony.visad_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
+           
             <file src="$EclipsePluginsDirectory/repast.simphony.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.weka_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/saf.core.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>

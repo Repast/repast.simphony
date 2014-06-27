@@ -3,8 +3,8 @@ package repast.simphony.visualization.visualization2D;
 
 import java.awt.Paint;
 
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolox.nodes.PLine;
+import org.piccolo2d.extras.nodes.PLine;
+import org.piccolo2d.nodes.PPath;
 
 /**
  *  @deprecated replaced by ogl 2D

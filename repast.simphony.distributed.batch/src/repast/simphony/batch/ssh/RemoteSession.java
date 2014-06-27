@@ -340,16 +340,22 @@ public class RemoteSession implements Session {
   }
 
   /**
-   * Copies the remote output to local temporary location and returns the
-   * location of the copied output.
+   * Finds the model output of that is the result of running this Session and returns that
+   * those files. In the case of remote output the output may be copied to local temporary location.
+   * The patterns used to identify output is specified in the filePatterns parameters.
    * 
-   * @return the location of the copied output.
-   * @throws StatusException
+   * @param patterns the patterns used to match potential output
+   * @return the location of the output in a list of MatchedFiles. Each MatchedFiles object
+   * holds one or more files for a specific match.
+   * 
+   * @throws StatusException 
    */
-  public List<File> findOutput() throws StatusException {
+   public List<MatchedFiles> findOutput(List<OutputPattern> patterns) 
+       throws StatusException {
     String tempDir = System.getProperty("java.io.tmpdir");
 
     RemoteOutputFinderCopier copier = new RemoteOutputFinderCopier();
+    copier.addPatterns(patterns);
     File outDir = new File(tempDir, getUser() + "_" + getHost());
     outDir.mkdir();
     logger.info(String.format("Finding and copying remote output from %s to %s", getUser() + "@"

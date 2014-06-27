@@ -2,6 +2,7 @@ package repast.simphony.context;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -18,8 +19,6 @@ import repast.simphony.util.collections.IndexedIterable;
 import repast.simphony.util.collections.IterableAdaptor;
 
 public class SmallDefaultContext<T> extends AbstractContext<T> {
-
-  private final Iterator<T> EMPTY_ITER = new ArrayList<T>().iterator();
 
   // to insure iteration order is repeatable.
   protected Map<Class, List<T>> objectMap = new LinkedHashMap<Class, List<T>>();
@@ -167,11 +166,11 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
    */
   public Iterable<T> getRandomObjects(Class<? extends T> clazz, long count) {
     IndexedIterable<T> iter = getObjects(clazz);
-    if (iter.size() == 0) return new IterableAdaptor<T>(EMPTY_ITER);
+    if (iter.size() == 0) return Collections.emptyList();
     if (count == 1) {
       T obj = iter.get(RandomHelper.nextIntFromTo(0, iter.size() - 1));
       if (obj == null) {
-        return new IterableAdaptor<T>(EMPTY_ITER);
+        return Collections.emptyList();
       }
       return new IterableAdaptor<T>(new SingletonIterator<T>(obj, false));
     }

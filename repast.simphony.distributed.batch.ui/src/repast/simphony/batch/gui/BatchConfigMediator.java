@@ -34,8 +34,9 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.xml.sax.SAXException;
 
-import repast.simphony.batch.BatchConstants;
 import repast.simphony.batch.parameter.ParametersToInput;
+import repast.simphony.batch.ssh.Configuration;
+import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.SSHSessionFactory;
 import repast.simphony.batch.ssh.SessionsDriver;
 
@@ -86,7 +87,7 @@ public class BatchConfigMediator {
     pModel.addPropertyChangeListener("buffering", new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent arg0) {
-        setDirty(true);
+        setDirty(arg0.getNewValue().equals(Boolean.TRUE));
       }
     });
 
@@ -108,8 +109,7 @@ public class BatchConfigMediator {
 
   private void setDirty(boolean dirty) {
     this.dirty = dirty;
-    // TODO query the panels to see if we can run
-
+    
   }
 
   public void onExit() {
@@ -136,13 +136,15 @@ public class BatchConfigMediator {
     tabs.addTab("Model", modelPanel);
     bpPanel = new BatchParamPanel(this, pModel);
     tabs.addTab("Batch Parameters", bpPanel);
-    hostsPanel = new HostsPanel();
+    hostsPanel = new HostsPanel(pModel);
     tabs.addTab("Hosts", hostsPanel);
     tabs.addTab("Console", console);
     hostsPanel.init(model);
 
     if (model.getModelDirectory().length() > 0) {
       updateFromModel();
+      // this should set dirty back to false
+      commitAll();
       dirty = false;
     }
     return tabs;
@@ -162,6 +164,7 @@ public class BatchConfigMediator {
   private void commitAll() {
     pModel.triggerCommit();
     hostsPanel.commit(model);
+    modelPanel.commit(model);
   }
 
   private void askSave() {
@@ -213,6 +216,7 @@ public class BatchConfigMediator {
       try {
         model.load(chooser.getSelectedFile());
         hostsPanel.init(model);
+        modelPanel.init(model);
         configFile = chooser.getSelectedFile();
         pModel.triggerFlush();
       } catch (IOException ex) {
@@ -286,18 +290,34 @@ public class BatchConfigMediator {
     try {
       configFile.getParentFile().mkdirs();
       writer = new BufferedWriter(new FileWriter(configFile));
-      writer.write("model.archive = "
-          + convertPath(new File(model.getOutputDirectory(), "complete_model.jar")
+      writer.write(Configuration.MA_KEY + " = "
+      + convertPath(new File(model.getOutputDirectory(), "complete_model.jar")
               .getCanonicalPath()) + "\n");
-      writer.write("batch.params.file = scenario.rs/batch_params.xml\n");
-      writer.write("ssh.key_dir = "
+      writer.write(Configuration.BATCH_PARAMS_KEY + " = scenario.rs/batch_params.xml\n");
+      writer.write(Configuration.SSH_DIR_KEY + " = "
           + convertPath(new File(model.getKeyDirectory()).getCanonicalPath()) + "\n");
       // stored in minutes, but config in seconds
-      writer.write("poll.frequency = " + model.getPollFrequency() * 60 + "\n");
-      writer.write("model.output = "
+      writer.write(Configuration.POLL_INTERVAL_KEY + " = " + model.getPollFrequency() * 60 + "\n");
+      writer.write(Configuration.OUT_DIR_KEY + " = "
           + convertPath(new File(model.getOutputDirectory()).getCanonicalPath()) + "\n\n");
-      writer.write("vm.arguments = " + model.getVMArguments() + "\n");
+      writer.write(Configuration.VM_ARGS_KEY + " = " + model.getVMArguments() + "\n");
       hostsPanel.writeHosts(writer);
+      
+      int i = 1;
+      for (OutputPattern pattern : model.getOutputPatterns()) {
+        writer.write(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.PATH + " = " + pattern.getPath());
+        writer.write("\n");
+        writer.write(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.PATTERN + " = " + pattern.getPattern());
+        writer.write("\n");
+        writer.write(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.CONCATENATE + " = " +
+            String.valueOf(pattern.isConcatenate()));
+        writer.write("\n");
+       writer.write(Configuration.PATTERN_PREFIX + "." + i + "." + Configuration.HEADER + " = " +
+            String.valueOf(pattern.isHeader()));
+       writer.write("\n");
+       i++;
+      }
+        
       logger.info("Writing batch run config file to: " + configFile.getAbsolutePath());
     } finally {
       if (writer != null)
@@ -372,6 +392,7 @@ public class BatchConfigMediator {
         batchParamFile.getPath(), unrolledParamFile.getPath()));
     pti.formatForInput(unrolledParamFile, batchMapFile);
     project.setProperty("unrolled.param.file", unrolledParamFile.getCanonicalPath());
+    project.setProperty("config.props.file", new File(model.getOutputDirectory(), "config.props").getCanonicalPath());
     project.setProperty("batch.param.file", batchParamFile.getCanonicalPath());
 
     File output = new File(model.getOutputDirectory());

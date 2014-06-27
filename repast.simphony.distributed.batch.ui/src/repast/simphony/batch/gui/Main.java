@@ -66,7 +66,7 @@ public class Main {
     else
       frame.add(new MainPanel(), BorderLayout.CENTER);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(650, 500);
+    frame.setSize(650, 550);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

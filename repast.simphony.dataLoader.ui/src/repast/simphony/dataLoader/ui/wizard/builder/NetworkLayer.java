@@ -6,9 +6,9 @@ import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.util.HashMap;
 
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PPath;
 
 public class NetworkLayer extends PLayer {
 	private BasicStroke stroke;
@@ -32,7 +32,7 @@ public class NetworkLayer extends PLayer {
 					.getBounds().getCenter2D().getY(), node2.getBounds()
 					.getCenter2D().getX(), node2.getBounds().getCenter2D()
 					.getY());
-			edge = new PPath(line);
+			edge = new PPath.Double(line);
 		}
 		edge.setStroke(stroke);
 		this.addChild(edge);

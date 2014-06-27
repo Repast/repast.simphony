@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.sql" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.1.0"/>
+         <attribute id="simphony" value="2.2.0"/>
      </attributes>
 
 	<requires>
@@ -32,7 +32,7 @@
 			<parameter id="icon" value="sql.PNG"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run SQL"/>
+			<parameter id="tooltip" value="Explore Agents using the JoSQL Library"/>
 		</parameter>
 	</extension>
 

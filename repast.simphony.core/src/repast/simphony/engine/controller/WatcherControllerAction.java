@@ -25,7 +25,7 @@ public class WatcherControllerAction implements ControllerAction {
   public WatcherControllerAction(WatchAnnotationReader reader) {
     this.reader = reader;
   }
-  
+
   /**
    * Gets the number of watches.
    * 
@@ -49,16 +49,19 @@ public class WatcherControllerAction implements ControllerAction {
     boolean doSetup = true;
     for (Object obj : context.getContextListeners()) {
       if (obj.equals(contextListener)) {
-	doSetup = false;
-	break;
+        doSetup = false;
+        break;
       }
     }
 
     if (context != null && doSetup) {
       context.addContextListener(contextListener);
       reader.processObjectAsWatcher(context, schedule, context);
-      for (Object obj : context) {
-	reader.processObjectAsWatcher(obj, schedule, context);
+      
+      for (Class<?> clazz : (Iterable<Class<?>>) context.getAgentTypes()) {
+        for (Object obj : context.getObjects(clazz)) {
+          reader.processObjectAsWatcher(obj, schedule, context);
+        }
       }
     }
   }

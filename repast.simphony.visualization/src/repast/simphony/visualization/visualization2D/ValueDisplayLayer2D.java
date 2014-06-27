@@ -7,10 +7,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import org.piccolo2d.PLayer;
+import org.piccolo2d.nodes.PImage;
+
 import repast.simphony.valueLayer.ValueLayer;
 import repast.simphony.visualization.visualization2D.style.ValueLayerStyle;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.nodes.PImage;
 
 /**
  * @author Eric Tatara

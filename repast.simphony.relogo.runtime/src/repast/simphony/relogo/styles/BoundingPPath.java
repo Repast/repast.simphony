@@ -5,11 +5,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ListIterator;
 
-import simphony.util.messages.MessageCenter;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
+import org.piccolo2d.PNode;
+import org.piccolo2d.nodes.PPath;
 
-public class BoundingPPath extends PPath {
+import simphony.util.messages.MessageCenter;
+
+public class BoundingPPath extends PPath.Double {
 
 	private static MessageCenter msgCenter = MessageCenter
 			.getMessageCenter(BoundingPPath.class);

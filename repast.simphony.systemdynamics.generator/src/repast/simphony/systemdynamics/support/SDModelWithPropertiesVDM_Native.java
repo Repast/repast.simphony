@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Properties;
 
 
@@ -12,12 +14,16 @@ import java.util.Properties;
         public static Properties PROPERTIES = new Properties();
         private static String DEFAULT_PROPERTIES = "DefaultRunner.properties";
         
-        LoggerJava logger = new LoggerJava();
+        protected LoggerJava logger = new LoggerJava();
+        
+        public static String SEPARATOR = "\t";
+        public static final boolean trace = false;
+        private String lastVar = "";
         
         
         protected VDM vdm = null;
         
-        public SDModelWithPropertiesVDM_Native(String name, String[] args) {
+        public SDModelWithPropertiesVDM_Native(String name, boolean logit, String[] args) {
     	super(name, args);
     	
     	if (args != null && args.length > 0)
@@ -27,13 +33,17 @@ import java.util.Properties;
     	OUTPUT_DIRECTORY = PROPERTIES.getProperty("outputDirectory");
     	DATA_DIRECTORY = PROPERTIES.getProperty("dataDirectory");
     	
-    	logger.setLogFile(name+"Log.csv");
-    	logger.log("Variable,Time,Value,Saveper");
+    	if (logit) {
+    		logger.setLogFile(name+"Log.tab");
+    		logger.log("Variable"+SEPARATOR+"Time"+SEPARATOR+"Value");
+    	}
     	
         }
 
         @Override
         public void execute() {
+        	
+        	System.out.println("SDModelWithPropertiesVDM_Native: execute()");
             
 //            logger.setLogFile(name+"Log.csv");
 
@@ -61,18 +71,59 @@ import java.util.Properties;
     	 	    vdm.advanceTime();
     	    }
 //    	    results.writeReport(RunnerConstants.OUTPUT_DIRECTORY+name+"_sdReport.csv", data);
+    	    System.out.println("SDModelWithPropertiesVDM_Native: logger.close()");
+    	    
     	    logger.close();
     	}
         
-        protected void logit(String var, double time, double value, double savper) {
-        	int t = (int) (time/savper);
-        	double remainder = (time - ((double) t * savper));
-//        	if ((time - ((double) t * savper)) == 0.0)
-        		logger.log(var.replace("memory.", "")+","+time+","+value+","+remainder);
+        public void finish() {
+        	System.out.println("SDModelWithPropertiesVDM_Native: logger.close()");
+    	    
+    	    logger.close();
         }
         
+//        protected void logit(String var, double time, double value) {
+//        	
+//        	BigDecimal bd = new BigDecimal(value);
+//        	bd = bd.round(new MathContext(6));
+//        	double d = bd.doubleValue();
+//        	logger.log(var+","+time+","+d);
+////            logger.log(var+","+time+","+value);
+//        }
+        
+       
+        
+        protected void logit(String var, double time, double value, double savper) {
+        	int t = (int) (time/savper);
+        	double remainder = (time - (((double) t) * savper));
+        	if (remainder == 0.0) {
+        		if (trace) {
+        			String v = var.split("\\[")[0];
+        			if (!v.equals(lastVar))
+        				System.out.println("log: "+var);
+        			lastVar = v;
+        		}
+        		if (Double.isNaN(value) || Double.isInfinite(value)) {
+        			logger.log(var.replace("memory.", "")+SEPARATOR+time+SEPARATOR+value);
+        		} else {
+        			BigDecimal bd = new BigDecimal(value);
+        			bd = bd.round(new MathContext(6));
+        			double d = bd.doubleValue();
+        			logger.log(var.replace("memory.", "")+SEPARATOR+time+SEPARATOR+d);
+        		}
+        	}
+        }
+        
+//        protected void logit(String var, double time, double value, double savper) {
+//        	int t = (int) (time/savper);
+//        	double remainder = (time - (((double) t) * savper));
+//        	if (remainder == 0.0) {
+//        		logger.log(var.replace("memory.", "")+","+time+","+value);
+//        	}
+//        }
+        
         protected void logitVector(String var, double time, int length, double[] value) {
-            logger.log(var+","+time+","+value);
+            logger.log(var+SEPARATOR+time+SEPARATOR+value);
         }
         
         public boolean loadProperties(String file) {

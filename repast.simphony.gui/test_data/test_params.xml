@@ -1,0 +1,15 @@
+<parameters>
+  <parameter name="int" displayName="An Int" type="int" defaultValue="3"/>
+  <parameter name="float" displayName="A Float" type="float" defaultValue="3.14f"/>
+  <parameter name="long"  displayName="A Long" type="long" defaultValue="334L"/>
+  <parameter name="double" displayName="A Double" type="double" defaultValue="3.2343"/>
+  <parameter name="c_double" displayName="Constrained Double" type="double" defaultValue="3.2343" values="3.2343 5.0 12 2.1"/>
+  <parameter name="string" displayName="A String" type="string" defaultValue="Cormac" values="'Cormac' 'George' 'Smith' 'Bob' 'Nick Collier'"/>
+  <parameter name="A_string" displayName="Another String" type="string" defaultValue="Wow" />
+  <parameter name="bool" displayName="A Boolean" type="boolean" defaultValue="true"/>
+  <parameter name="range" displayName="A Range" type="int" defaultValue="3" range="0 10 1"/>
+  <parameter name="float_range" displayName="Float Range" type="float" defaultValue="3.14f" range="-1.1f 10.2 1.5"/>
+  <parameter name="double_range" displayName="Double Range" type="double" defaultValue="3.14" range="-1.1 10.2 1.5"/>
+  <parameter name="size" displayName="Size" type="repast.simphony.ui.parameters.Size" defaultValue="BIG" 
+    converter="repast.simphony.ui.parameters.SizeConverter"/>
+</parameters>

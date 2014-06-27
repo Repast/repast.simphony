@@ -9,7 +9,7 @@ import java.util.Iterator;
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import edu.umd.cs.piccolo.PLayer;
+import org.piccolo2d.PLayer;
 
 /**
  * Tree node with a selected checkbox like quality.

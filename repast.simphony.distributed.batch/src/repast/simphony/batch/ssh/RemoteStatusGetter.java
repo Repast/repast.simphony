@@ -6,6 +6,8 @@ package repast.simphony.batch.ssh;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import repast.simphony.batch.BatchConstants;
@@ -23,14 +25,16 @@ public class RemoteStatusGetter {
 
   public void run(RemoteSession remote, String remoteDir) throws StatusException { 
 
-    File tempDir = new File(System.getProperty("java.io.tmpdir"));
+    //File tempDir = new File(System.getProperty("java.io.tmpdir"));
+    
     SSHSession session = null;
     File file = null;
     
     try {
+      Path tmp = Files.createTempDirectory(null);
       session = SSHSessionFactory.getInstance().create(remote);
-      file = session.copyFileFromRemote(tempDir.getPath().replace("\\", "/"),
-          new File(remoteDir + "/" + BatchConstants.STATUS_OUTPUT_FILE));
+      file = session.copyFileFromRemote(tmp.toFile().getPath().replace("\\", "/"),
+          new File(remoteDir + "/" + BatchConstants.STATUS_OUTPUT_FILE), false);
       Properties props = new Properties();
       props.load(new FileReader(file));
       for (String key : props.stringPropertyNames()) {

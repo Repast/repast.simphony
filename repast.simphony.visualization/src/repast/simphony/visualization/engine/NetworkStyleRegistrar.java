@@ -5,7 +5,6 @@ package repast.simphony.visualization.engine;
 
 import repast.simphony.context.Context;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.space.graph.Network;
 
 /**
@@ -32,7 +31,7 @@ public abstract class NetworkStyleRegistrar<T> {
   public void registerNetworkStyles(Registrar<T> registrar, DisplayDescriptor descriptor,
       Context<?> context)  throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     for (ProjectionData proj : descriptor.getProjections()) {
-      if (proj.getType() == ProjectionType.NETWORK) {
+      if (proj.getType().equals(ProjectionData.NETWORK_TYPE)) {
         String netStyleName = descriptor.getNetworkStyleClassName(proj.getId());
         String netEditedStyleName = descriptor.getNetworkEditedStyleName(proj.getId());
 

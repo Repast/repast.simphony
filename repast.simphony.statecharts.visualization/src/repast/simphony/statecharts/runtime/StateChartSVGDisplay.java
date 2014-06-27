@@ -1,7 +1,6 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +8,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.net.URI;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,11 +23,18 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.apache.batik.bridge.UpdateManager;
+import org.apache.batik.dom.svg.SVGContext;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SVGOMElement;
+import org.apache.batik.dom.svg.SVGOMRect;
+import org.apache.batik.dom.svg.SVGSVGContext;
 import org.apache.batik.dom.util.DOMUtilities;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.swing.gvt.GVTTreeRendererAdapter;
@@ -35,7 +45,25 @@ import org.apache.batik.util.RunnableQueue;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.svg.SVGCircleElement;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.SVGLineElement;
+import org.w3c.dom.svg.SVGPolygonElement;
+import org.w3c.dom.svg.SVGRect;
+import org.w3c.dom.svg.SVGRectElement;
+import org.w3c.dom.svg.SVGSVGElement;
+
+import repast.simphony.engine.environment.GUIRegistry;
+import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.environment.RunListener;
+import repast.simphony.engine.environment.RunState;
+import repast.simphony.statecharts.AbstractState;
+import repast.simphony.statecharts.StateChartScheduler;
+import repast.simphony.statecharts.Transition;
+import repast.simphony.ui.RSApplication;
+import repast.simphony.ui.probe.ProbeManager;
+import repast.simphony.visualization.IDisplay;
 
 public class StateChartSVGDisplay {
 
@@ -48,15 +76,15 @@ public class StateChartSVGDisplay {
 	AbstractAction frameCloseAction;
 
 	/**
-	 * Custom JSVGCanvas. This is needed to account for the IllegalStateException
-	 * thrown by RunnableQueue when updates related to mouse events or resizing
-	 * events collide with the dynamic SVG updates we make to the statechart
-	 * images.
+	 * Custom JSVGCanvas. This is needed to account for the
+	 * IllegalStateException thrown by RunnableQueue when updates related to
+	 * mouse events or resizing events collide with the dynamic SVG updates we
+	 * make to the statechart images.
 	 * 
 	 * @author jozik
 	 * 
 	 */
-	private static class CustomJSVGCanvas extends JSVGCanvas {
+	private class CustomJSVGCanvas extends JSVGCanvas {
 
 		/**
 		 * 
@@ -85,6 +113,247 @@ public class StateChartSVGDisplay {
 		 * To get rid of illegal state exception thrown by RunnableQueue.
 		 */
 		protected class CustomCanvasSVGListener extends CanvasSVGListener {
+
+			private static final int SELECTION_WIDTH = 6;
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if (SwingUtilities.isRightMouseButton(e)) {
+					// System.out.println("Mouse right clicked.");
+					// find enclosing uuid
+					SVGSVGElement svgSvgElement = CustomJSVGCanvas.this
+							.getSVGDocument().getRootElement();
+					if (svgSvgElement instanceof SVGOMElement) {
+						SVGOMElement svgOmElement = (SVGOMElement) svgSvgElement;
+						SVGContext sContext = svgOmElement.getSVGContext();
+						if (sContext instanceof SVGSVGContext) {
+							SVGSVGContext svgSContext = (SVGSVGContext) sContext;
+							AffineTransform at;
+							try {
+								at = CustomJSVGCanvas.this
+										.getViewBoxTransform().createInverse();
+
+								Point2D mousePoint = new Point2D.Float(
+										e.getX(), e.getY());
+								Point2D.Float transformedPoint = new Point2D.Float();
+								at.transform(mousePoint, transformedPoint);
+
+								SVGRect rect = new SVGOMRect(transformedPoint.x
+										- SELECTION_WIDTH / 2,
+										transformedPoint.y - SELECTION_WIDTH
+												/ 2, SELECTION_WIDTH,
+										SELECTION_WIDTH);// svgSvgElement.createSVGRect();
+
+								if (rect instanceof SVGRect) {
+									List intersectionList = svgSContext
+											.getIntersectionList(rect, null);
+									if (intersectionList.isEmpty()) {
+										JPopupMenu menu = new JPopupMenu();
+										JMenuItem item = new JMenuItem(
+												"Initialize Statechart");
+										item.addActionListener(new ActionListener() {
+
+											@Override
+											public void actionPerformed(
+													ActionEvent e) {
+												initializeStatechart();
+											}
+										});
+										menu.add(item);
+										menu.show(e.getComponent(), e.getX(),
+												e.getY());
+
+									} else {
+										String uuid = null;
+										// Find rects (simple and composite
+										// states)
+										// Find polygons (branching states and
+										// transition arrow heads)
+										// Find circles (final states)
+										for (Object o : intersectionList) {
+											// System.out.println(o);
+											if (o instanceof SVGRectElement
+													|| o instanceof SVGPolygonElement
+													|| o instanceof SVGCircleElement) {
+												SVGElement svgE = (SVGElement) o;
+												String tempUuid = svgE
+														.getAttribute("uuid");
+												if (!tempUuid.isEmpty())
+													uuid = tempUuid;
+											}
+										}
+
+										// Find lines (transitions) transitions
+										// override states
+										for (Object o : intersectionList) {
+											if (o instanceof SVGLineElement) {
+												SVGLineElement sle = (SVGLineElement) o;
+												String tempUuid = sle
+														.getAttribute("uuid");
+												if (!tempUuid.isEmpty())
+													uuid = tempUuid;
+											}
+										}
+
+										if (uuid != null) {
+											final AbstractState state = StateChartSVGDisplay.this.controller.stateChart
+													.getStateForUuid(uuid);
+											if (state != null) {
+
+												JPopupMenu menu = new JPopupMenu();
+												JMenuItem item = new JMenuItem(
+														"Activate "
+																+ state.getId());
+												item.addActionListener(new ActionListener() {
+
+													@Override
+													public void actionPerformed(
+															ActionEvent e) {
+														activateState(state);
+													}
+												});
+												menu.add(item);
+
+												menu.show(e.getComponent(),
+														e.getX(), e.getY());
+											} else {
+												final Transition transition = StateChartSVGDisplay.this.controller.stateChart
+														.getTransitionForUuid(uuid);
+												if (transition != null) {
+
+													JPopupMenu menu = new JPopupMenu();
+													JMenuItem item = new JMenuItem(
+															"Follow "
+																	+ transition
+																			.getId());
+													item.addActionListener(new ActionListener() {
+
+														@Override
+														public void actionPerformed(
+																ActionEvent e) {
+															followTransition(transition);
+														}
+													});
+													menu.add(item);
+													menu.show(e.getComponent(),
+															e.getX(), e.getY());
+												}
+											}
+										}
+									}
+								}
+							} catch (NoninvertibleTransformException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+
+			protected void activateState(final AbstractState state) {
+				doStatechartAction(new Runnable() {
+					@Override
+					public void run() {
+						controller.stateChart.activateState(state);
+
+					}
+
+				});
+			}
+
+			protected void followTransition(final Transition transition) {
+				doStatechartAction(new Runnable() {
+					@Override
+					public void run() {
+						controller.stateChart.followTransition(transition);
+					}
+				});
+			}
+
+			protected void initializeStatechart() {
+				doStatechartAction(new Runnable() {
+					@Override
+					public void run() {
+						StateChartScheduler.INSTANCE
+								.beginNowWithoutScheduling(controller.stateChart);
+					}
+				});
+			}
+
+			protected void doStatechartAction(final Runnable statechartAction) {
+				if (controller.isRunning()) {
+					RunListener listener = new RunListener() {
+
+						@Override
+						public void stopped() {
+							RunEnvironment.getInstance()
+									.removeRunListener(this);
+						}
+
+						@Override
+						public void paused() {
+							statechartAction.run();
+							RunEnvironment.getInstance()
+									.removeRunListener(this);
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									RunEnvironment.getInstance().resumeRun();
+								}
+							}).start();
+						}
+
+						@Override
+						public void started() {
+						}
+
+						@Override
+						public void restarted() {
+						}
+
+					};
+					RunEnvironment.getInstance().addRunListener(listener);
+					RunEnvironment.getInstance().pauseRun();
+				} else {
+					// Sim is paused so run action directly
+					statechartAction.run();
+					// Update probes and displays to reflect any changes
+					probesUpdate();
+					displaysUpdate();
+
+				}
+			}
+
+			/**
+			 * Updates all probes.
+			 */
+			private void probesUpdate() {
+				RSApplication rsApp = RSApplication.getRSApplicationInstance();
+				if (rsApp != null) {
+					ProbeManager probeManager = rsApp.getProbeManager();
+					if (probeManager != null) {
+						probeManager.update();
+					}
+				}
+			}
+
+			/**
+			 * Updates all displays.
+			 */
+			private void displaysUpdate() {
+				RunState rs = RunState.getInstance();
+				if (rs != null){
+					GUIRegistry registry = rs.getGUIRegistry();
+					if (registry != null){
+						for (IDisplay display : registry.getDisplays()){
+							display.update();
+							display.render();
+						}
+					}
+				}
+			}
 
 			@Override
 			protected void dispatchKeyTyped(KeyEvent e) {
@@ -192,7 +461,8 @@ public class StateChartSVGDisplay {
 		this.model = model;
 	}
 
-	public StateChartSVGDisplay(StateChartSVGDisplayController controller, String frameTitle, URI uri) {
+	public StateChartSVGDisplay(StateChartSVGDisplayController controller,
+			String frameTitle, URI uri) {
 		this.controller = controller;
 		frame = new JFrame(frameTitle);
 		frame.setAlwaysOnTop(true);
@@ -201,10 +471,11 @@ public class StateChartSVGDisplay {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// For when the GUI is closed via keyboard shortcut
+				StateChartSVGDisplay.this.controller.removeAsStateChartListener();
 				timer.cancel();
 				frame.setVisible(false);
 				frame.dispose();
-				
+
 				StateChartSVGDisplay.this.controller.notifyCloseListeners();
 			}
 		};
@@ -216,25 +487,24 @@ public class StateChartSVGDisplay {
 		JPanel panel = createComponents();
 
 		JMenuBar bar = new JMenuBar();
-		    JMenu menu = new JMenu("Options");
-		    menu.setMnemonic(KeyEvent.VK_O);
-		    JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
-		    item.setSelected(true);
-		    item.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent evt) {
-		       frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource()).isSelected());
-		      }
-		    });
-		    menu.add(item);
-		    bar.add(menu);
-		    panel.add(bar, BorderLayout.NORTH);
-		    
-		
+		JMenu menu = new JMenu("Options");
+		menu.setMnemonic(KeyEvent.VK_O);
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Always On Top");
+		item.setSelected(true);
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				frame.setAlwaysOnTop(((JCheckBoxMenuItem) evt.getSource())
+						.isSelected());
+			}
+		});
+		menu.add(item);
+		bar.add(menu);
+		panel.add(bar, BorderLayout.NORTH);
 
-
-		KeyStroke closeKey = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit()
-				.getMenuShortcutKeyMask());
-		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey, "closeWindow");
+		KeyStroke closeKey = KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit
+				.getDefaultToolkit().getMenuShortcutKeyMask());
+		panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeKey,
+				"closeWindow");
 		panel.getActionMap().put("closeWindow", frameCloseAction);
 
 		frame.getContentPane().add(panel);
@@ -243,6 +513,8 @@ public class StateChartSVGDisplay {
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				// For when the GUI is closed via mouse click
+				controller.removeAsStateChartListener();
+				timer.cancel();
 				controller.notifyCloseListeners();
 			}
 		});
@@ -252,6 +524,7 @@ public class StateChartSVGDisplay {
 	}
 
 	protected void closeFrame() {
+		controller.removeAsStateChartListener();
 		timer.cancel();
 		frame.setVisible(false);
 		frame.dispose();
@@ -281,7 +554,7 @@ public class StateChartSVGDisplay {
 
 			@Override
 			public void gvtRenderingCompleted(GVTTreeRendererEvent e) {
-				
+
 				isReadyForModification.set(true);
 				if (needsInitialUpdate.compareAndSet(true, false)) {
 					controller.update();
@@ -311,7 +584,7 @@ public class StateChartSVGDisplay {
 	 * document
 	 * 
 	 * @param doc
-	 *          The new document
+	 *            The new document
 	 * 
 	 * @author jozik
 	 * @author 
@@ -322,7 +595,7 @@ public class StateChartSVGDisplay {
 		long ts = System.currentTimeMillis();
 
 		// Throttling here.
-		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL /* true */) { 
+		if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL /* true */) {
 			if (isReadyForModification.compareAndSet(true, false)) {
 				controller.tryAnotherUpdate = false;
 				final SVGDocument doc = model.getCurrentSVGDocument();
@@ -339,8 +612,12 @@ public class StateChartSVGDisplay {
 
 									// Get the root tags of the documents
 									DOMImplementation impl;
-									impl = SVGDOMImplementation.getDOMImplementation();
-									Document d = DOMUtilities.deepCloneDocument(svgCanvas.getSVGDocument(), impl);
+									impl = SVGDOMImplementation
+											.getDOMImplementation();
+									Document d = DOMUtilities
+											.deepCloneDocument(
+													svgCanvas.getSVGDocument(),
+													impl);
 
 									Node oldRoot = d.getFirstChild();
 									Node newRoot = doc.getFirstChild();
@@ -363,19 +640,18 @@ public class StateChartSVGDisplay {
 			} else {// wasn't ready for update, wait for gvt notification
 				controller.tryAnotherUpdate = true;
 			}
-		}
-		else {
+		} else {
 			synchronized (this) {
-				if (!isTimerScheduled){
+				if (!isTimerScheduled) {
 					isTimerScheduled = true;
-					timer.schedule(new TimerTask(){
+					timer.schedule(new TimerTask() {
 
 						@Override
 						public void run() {
 							renewDocument();
 							isTimerScheduled = false;
 						}
-						
+
 					}, FRAME_UPDATE_INTERVAL);
 				}
 			}

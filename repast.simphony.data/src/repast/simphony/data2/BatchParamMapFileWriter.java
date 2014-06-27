@@ -185,7 +185,7 @@ public class BatchParamMapFileWriter implements DataSink {
    */
   @Override
   public synchronized void close() {
-    if (!closed) {
+    if (!closed && writer != null) {
       try {
         writer.flush();
       } catch (IOException ex) {

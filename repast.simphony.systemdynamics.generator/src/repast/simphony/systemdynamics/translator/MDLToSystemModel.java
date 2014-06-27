@@ -96,6 +96,10 @@ public class MDLToSystemModel {
 		
 	}
 	
+//	for (String key : equations.keySet()) {
+//		equations.get(key).printTokensOneLine();
+//	}
+	
     initModel(model, equations);
     
 //    sdObjectManager.print();
@@ -125,7 +129,7 @@ public class MDLToSystemModel {
     			if (name.startsWith("CLOUD")) {
     				Variable var = processEquations(name, eqs, model);
     				if (var != null) {
-    					System.out.println("MDL2RSD var type: "+var.getType().toString());
+//    					System.out.println("MDL2RSD var type: "+var.getType().toString());
     					if (var.getType().equals(VariableType.RATE)) {
     						rates.add((Rate)var);
     					}
@@ -250,6 +254,9 @@ public class MDLToSystemModel {
         var = SDModelFactory.eINSTANCE.createVariable();
         var.setType(VariableType.LOOKUP);
       }
+      
+      // last equation has units and comment
+      eq = eqs.get(eqs.size()-1);
 
       if (var != null) {
         var.setName(name);
@@ -315,18 +322,29 @@ public class MDLToSystemModel {
 				  if (eqnNum == 0) {
 					  var.setEquation(rhs.trim());
 				  } else {
-					  String multiEqn = "~~|" + lhs.trim() + "="+rhs.trim();
+					  String multiEqn;
+					  if (rhs.trim().length() > 0)
+						  multiEqn = "~~|" + lhs.trim() + "="+rhs.trim();
+					  else
+						  multiEqn = "~~|" + lhs.trim();
 					  var.setEquation(var.getEquation() + multiEqn);
 				  }
 			  }
 			  if (eqnNum == 0)
 				  var.setLhs(lhs.trim());
 		  } else {
+			  
+			  // This could be a lookup definition with multi-statments
+			  
+			  
+			  
+			  
+//			  System.out.println("parseEquation no =: "+equation);
 			  if (eqnNum == 0) {
 				  var.setEquation(equation.trim());
 			  } else {
-//				  System.out.println("NOT EXPECTING THIS! MDLToSystem");
-				  var.setEquation(equation.trim());
+				  String multiEqn = "~~|" + equation.trim();
+				  var.setEquation(var.getEquation()+multiEqn);
 			  }
 		  }
 	  }

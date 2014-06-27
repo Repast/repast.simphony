@@ -1,5 +1,9 @@
 package repast.simphony.statecharts.sheets;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -8,8 +12,6 @@ import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -18,14 +20,41 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import repast.simphony.statecharts.editor.EditorSupport;
+import repast.simphony.statecharts.editor.StatechartCodeEditor;
+import repast.simphony.statecharts.part.StatechartDiagramEditorPlugin;
+import repast.simphony.statecharts.scmodel.AbstractState;
+import repast.simphony.statecharts.scmodel.LanguageTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
 
 public class StateSheet extends FocusFixComposite implements BindableFocusableSheet {
 
+  private static String ON_ENTER_ID = "on.enter.id";
+  private static String ON_EXIT_ID = "on.exit.id";
+
   private Text idTxt;
-  private Text onEnterTxt;
-  private Text onExitTxt;
+  private EditorSupport edSupport = new EditorSupport();
+
   private LanguageButtonsGroup buttonGroup;
+  private LanguageTypes language;
+  private AbstractState state;
+
+  // we have to use the emf notification mechanism
+  // for listening to language changes because
+  // we use the state itself to determine the current language
+  // if we get notified via the button, that occurs before
+  // the state's language property has been updated
+  private Adapter langNotify = new AdapterImpl() {
+    @Override
+    public void notifyChanged(Notification msg) {
+      if (msg.getFeature() != null
+          && msg.getFeature().equals(StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE)) {
+        languageChanged();
+      }
+    }
+  };
+
+  private BindingSupport binding;
 
   public StateSheet(FormToolkit toolkit, Composite parent) {
     super(parent, SWT.NONE);
@@ -51,9 +80,8 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     new Label(this, SWT.NONE);
 
     Composite composite = new Composite(this, SWT.NONE);
-    GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1);
-    gd_composite.heightHint = 183;
-    composite.setLayoutData(gd_composite);
+    // gd_composite.heightHint = 183;
+    composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 3, 1));
     GridLayout gl_composite = new GridLayout(2, false);
     gl_composite.horizontalSpacing = 12;
     gl_composite.marginHeight = 0;
@@ -68,7 +96,7 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     gl_composite_1.marginHeight = 0;
     gl_composite_1.marginWidth = 0;
     composite_1.setLayout(gl_composite_1);
-    GridData gd_composite_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+    GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1);
     gd_composite_1.widthHint = 353;
     composite_1.setLayoutData(gd_composite_1);
     toolkit.adapt(composite_1);
@@ -83,14 +111,14 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     Button btnJava = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnJava, true, true);
     btnJava.setText("Java");
+    
+    Button btnGroovy = new Button(composite_1, SWT.RADIO);
+    toolkit.adapt(btnGroovy, true, true);
+    btnGroovy.setText("Groovy");
 
     Button btnRelogo = new Button(composite_1, SWT.RADIO);
     toolkit.adapt(btnRelogo, true, true);
     btnRelogo.setText("ReLogo");
-
-    Button btnGroovy = new Button(composite_1, SWT.RADIO);
-    toolkit.adapt(btnGroovy, true, true);
-    btnGroovy.setText("Groovy");
 
     buttonGroup = new LanguageButtonsGroup(btnJava, btnRelogo, btnGroovy);
 
@@ -102,39 +130,8 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     toolkit.adapt(lblOnExit, true, true);
     lblOnExit.setText("On Exit:");
 
-    onEnterTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    onEnterTxt.setText("");
-    focusableControls.add(onEnterTxt);
-    GridData data = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    data.heightHint = 120;
-    onEnterTxt.setLayoutData(data);
-    toolkit.adapt(onEnterTxt, true, true);
-
-    onExitTxt = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-    focusableControls.add(onExitTxt);
-    GridData gd_onExitTxt = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
-    gd_onExitTxt.heightHint = 120;
-    gd_onExitTxt.horizontalIndent = 1;
-    onExitTxt.setLayoutData(gd_onExitTxt);
-    toolkit.adapt(onExitTxt, true, true);
-
-    onExitTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
-
-    onEnterTxt.addTraverseListener(new TraverseListener() {
-      public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_RETURN) {
-          e.doit = false;
-          e.detail = SWT.TRAVERSE_NONE;
-        }
-      }
-    });
+    edSupport.createEntry(ON_ENTER_ID, composite);
+    edSupport.createEntry(ON_EXIT_ID, composite);
   }
 
   /*
@@ -147,23 +144,85 @@ public class StateSheet extends FocusFixComposite implements BindableFocusableSh
     idTxt.setFocus();
   }
 
+  private void languageChanged() {
+    LanguageTypes newLang = buttonGroup.getSelectedType();
+    // only switch if switching from Java to something else
+    // switching between Groovy and ReLogo doesn't require an editor switch
+    if (newLang != language && (newLang == LanguageTypes.JAVA || language == LanguageTypes.JAVA)) {
+
+      edSupport.resetStateOnEditor(ON_ENTER_ID, state);
+      edSupport.resetStateOnEditor(ON_EXIT_ID, state);
+
+      binding.removeBindings();
+      StatechartCodeEditor editor = edSupport.getEditor(ON_ENTER_ID);
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, editor.getCodeViewer());
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS,
+          editor.getImportViewer());
+
+      editor = edSupport.getEditor(ON_EXIT_ID);
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT, editor.getCodeViewer());
+      binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT_IMPORTS,
+          editor.getImportViewer());
+    }
+    language = newLang;
+  }
+
+  /**
+   * Disposes of the resources, editors, etc. used by this property sheet.
+   */
+  public void dispose() {
+    super.dispose();
+    state.eAdapters().remove(langNotify);
+    try {
+      edSupport.dispose();
+    } catch (CoreException ex) {
+      StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editor", ex);
+    }
+  }
+
   public void bindModel(EMFDataBindingContext context, EObject eObject) {
+    // this can happen if switch between elements of the same
+    // type -- the eObject is changed but the property sheet
+    // is not disposed
+    if (state != null && !eObject.equals(state)) {
+      state.eAdapters().remove(langNotify);
+      if (state.getLanguage() != ((AbstractState) eObject).getLanguage()) {
+        // if the language is different the dispose of the editors
+        // and start again.
+        try {
+          edSupport.disposeAllEditors();
+        } catch (CoreException e) {
+          StatechartDiagramEditorPlugin.getInstance().logError("Error while disposing of editors",
+              e);
+        }
+      }
+    }
+
+    state = (AbstractState) eObject;
+    language = state.getLanguage();
+
     IEMFValueProperty property = EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
         StatechartPackage.Literals.ABSTRACT_STATE__ID);
     ISWTObservableValue observe = WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(
         400, idTxt);
+
     context.bindValue(observe, property.observe(eObject));
-
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onEnterTxt),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER).observe(eObject));
-
-    context.bindValue(
-        WidgetProperties.text(new int[] { SWT.Modify }).observeDelayed(400, onExitTxt),
-        EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT).observe(eObject));
-
     buttonGroup.bindModel(context, eObject, StatechartPackage.Literals.ABSTRACT_STATE__LANGUAGE);
+
+    edSupport.initStateOnEditor(ON_ENTER_ID, state);
+    edSupport.initStateOnEditor(ON_EXIT_ID, state);
+
+    state.eAdapters().add(langNotify);
+
+    StatechartCodeEditor editor = edSupport.getEditor(ON_ENTER_ID);
+    binding = new BindingSupport(context, eObject);
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER, editor.getCodeViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_ENTER_IMPORTS,
+        editor.getImportViewer());
+
+    editor = edSupport.getEditor(ON_EXIT_ID);
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT, editor.getCodeViewer());
+    binding.bind(StatechartPackage.Literals.ABSTRACT_STATE__ON_EXIT_IMPORTS,
+        editor.getImportViewer());
   }
 }

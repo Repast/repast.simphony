@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.pajek" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.1.0"/>
+         <attribute id="simphony" value="2.2.0"/>
      </attributes>
 
 	<requires>
@@ -26,7 +26,7 @@
 			<parameter id="icon" value="pajek.PNG"/>
 			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
 			<parameter id="groupID" value="runTools"/>
-			<parameter id="tooltip" value="Run Pajek"/>
+			<parameter id="tooltip" value="Export Output into the Pajek Network Analysis Application"/>
 		</parameter>
 	</extension>
 

@@ -24,6 +24,7 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.AgentData;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 
 /**
  * @author Nick Collier
@@ -141,8 +142,8 @@ public class AgentSelectionStep extends PanelWizardStep {
     DisplayDescriptor descriptor = model.getDescriptor();
 
     // Disable layer ordering buttons for 3D since they don't apply.
-    if (descriptor.getDisplayType().equals(DisplayDescriptor.DisplayType.THREE_D)
-        || descriptor.getDisplayType().equals(DisplayDescriptor.DisplayType.GIS3D)) {
+    // TODO Projections: instead of DisplayType, check if descriptor is layerable?
+    if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
       panel.upBtn.setEnabled(false);
       panel.downBtn.setEnabled(false);
     }

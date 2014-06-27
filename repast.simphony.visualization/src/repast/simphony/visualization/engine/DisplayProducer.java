@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.visualization.IDisplay;
+import simphony.util.messages.MessageCenter;
 
 /**
  * Produces an IDisplay from a DisplayDescriptor.
@@ -15,7 +16,7 @@ import repast.simphony.visualization.IDisplay;
  */
 public class DisplayProducer {
 
-  //private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayProducer.class);
+  private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayProducer.class);
 
   private DisplayDescriptor displayDescriptor;
 
@@ -39,14 +40,33 @@ public class DisplayProducer {
 
   public IDisplay createDisplay() throws IllegalAccessException, InvocationTargetException,
       InstantiationException, ClassNotFoundException, IOException, DisplayCreationException {
-    if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.TWO_D)
+    if (displayDescriptor.getDisplayType().equals(DisplayType.TWO_D))
       //return new DisplayCreator2D(context, displayDescriptor).createDisplay();
-      return new DisplayCreatorOGL2D(context, displayDescriptor).createDisplay();
-    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.THREE_D)
-      return new DisplayCreator3D(context, displayDescriptor).createDisplay(); 
-    else if (displayDescriptor.getDisplayType() == DisplayDescriptor.DisplayType.GIS)
-      return new DisplayCreatorGIS(context, displayDescriptor).createDisplay();
-    else
-      return new DisplayCreator3DGIS(context, displayDescriptor).createDisplay();
+      return new DisplayCreatorOGL2D(context, (CartesianDisplayDescriptor)displayDescriptor).createDisplay();
+   
+    else if (displayDescriptor.getDisplayType().equals(DisplayType.THREE_D))
+      return new DisplayCreator3D(context, (CartesianDisplayDescriptor)displayDescriptor).createDisplay(); 
+        
+    // TODO Projections: above code can be removed in favor of the registry approach
+    //       if adopted for other displays.
+    
+    else {
+    	VisualizationRegistryData data = VisualizationRegistry.getDataFor(displayDescriptor.getDisplayType());
+
+    	if (data != null){ 
+    		try{
+    			DisplayCreatorFactory factory = data.getDisplayCreatorFactory();
+    			return factory.createDisplayCreator(context, displayDescriptor).createDisplay();
+    		} 
+    		catch (Exception ex) {
+    			msg.error("Error creating display for " + displayDescriptor.getDisplayType(), ex);
+    		}
+    	}
+    	else{
+    		msg.error("No display implementation found for " + displayDescriptor.getDisplayType(), null);
+    	}
+    }
+    
+    return null;
   }
 }

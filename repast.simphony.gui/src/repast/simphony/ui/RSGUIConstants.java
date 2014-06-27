@@ -13,8 +13,11 @@ public abstract class RSGUIConstants {
 
   private static final MessageCenter LOG = MessageCenter.getMessageCenter(RSGUIConstants.class);
   
+  public static final String PARAMETERS_FILE_NAME = "parameters.xml";
+  
   public static String GUI_PLUGIN_ID = "repast.simphony.gui";
   public static String FIELD_PROBE_EXT_ID = "field.probe";
+  public static String PROBE_LOCATION_PROVIDER_EXT_ID = "probe.location.provider";
 
   // perspective
   public static String DEFAULT_PERSPECTIVE = "repast.simphony.ui.perspective.default";
@@ -96,6 +99,8 @@ public abstract class RSGUIConstants {
   public static Icon PERSONAL_ICON;
   public static Icon LEAF_ICON;
   public static Icon WARN_ICON;
+  public static Icon USER_PANEL_ICON;
+  public static Icon DATA_LOADER_ICON;
 
   static {
     START_ICON = loadIcon("player_play");
@@ -121,5 +126,7 @@ public abstract class RSGUIConstants {
     VIZ_EDIT_ICON = loadIcon("edit");
     VIZ_HOME_ICON = loadIcon("home");
     WARN_ICON = loadIcon("info");
+    USER_PANEL_ICON = loadIcon("view_sidetree");
+    DATA_LOADER_ICON = loadIcon("harddrive");
   }
 }

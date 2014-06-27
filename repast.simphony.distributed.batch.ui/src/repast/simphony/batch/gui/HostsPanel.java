@@ -24,11 +24,16 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import repast.simphony.batch.gui.Host.Type;
+import repast.simphony.batch.ssh.Configuration;
 
+import com.jgoodies.binding.PresentationModel;
+import com.jgoodies.binding.value.BufferedValueModel;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -42,6 +47,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
   private JSplitPane splitPane;
   private JButton addBtn, deleteBtn, copyBtn;
   private JList hostList;
+  private BufferedValueModel hostsModel;
   private JComboBox typeBox;
   private JSpinner instancesSpn;
 
@@ -51,10 +57,11 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
    * Create the panel.
    * @param adapter 
    */
-  public HostsPanel() {
+  public HostsPanel(PresentationModel<BatchRunConfigBean> pModel) {
     setLayout(new BorderLayout(0, 0));
     addComponents();
     addListeners();
+    hostsModel = pModel.getBufferedModel("hosts");
   }
   
   private JButton createButton(String icon, String tooltip) {
@@ -135,6 +142,15 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     
     setPropsEnabled(false);
   }
+  
+  private void notifyHostsModel() {
+    List<Host> hosts = new ArrayList<Host>();
+    DefaultListModel listModel = (DefaultListModel) hostList.getModel();
+    for (int i = 0; i < listModel.getSize(); i++) {
+      hosts.add((Host) listModel.elementAt(i));
+    }
+    hostsModel.setValue(hosts);
+  }
 
   private void addListeners() {
     hostList.addListSelectionListener(new ListSelectionListener() {
@@ -159,18 +175,21 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     addBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         addHost();
+        notifyHostsModel();
       }
     });
 
     deleteBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         deleteHost();
+        notifyHostsModel();
       }
     });
 
     copyBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         copyHost();
+        notifyHostsModel();
       }
     });
   }
@@ -237,6 +256,7 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
       selectedHost.setHost(hostsFld.getText().trim());
       selectedHost.setInstances((Integer) instancesSpn.getValue());
       selectedHost.setSSHKeyFile(sshKeyFileFld.getText().trim());
+      notifyHostsModel();
     }
   }
 
@@ -245,12 +265,13 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
 
     selectedHost = (Host) hostList.getSelectedValue();
     if (selectedHost != null) {
+      enableForType(selectedHost.getType());
       userFld.setText(selectedHost.getUser());
       hostsFld.setText(selectedHost.getHost());
-      sshKeyFileFld.setText(selectedHost.getSSHKeyFile());
       typeBox.setSelectedItem(selectedHost.getType());
+      if (selectedHost.getType() == Type.REMOTE && selectedHost.getSSHKeyFile().trim().length() > 0)
+        sshKeyFileFld.setText(selectedHost.getSSHKeyFile());
       instancesSpn.setValue(new Integer(selectedHost.getInstances()));
-      enableForType(selectedHost.getType());
     } else {
       userFld.setText("");
       hostsFld.setText("");
@@ -323,17 +344,18 @@ public class HostsPanel extends JPanel implements BatchRunPanel {
     for (int i = 0; i < listModel.getSize(); i++) {
       Host host = (Host) listModel.elementAt(i);
       if (host.getType() == Type.LOCAL) {
-        writer.write("local." + i + ".instances = " + host.getInstances() + "\n");
+        writer.write(Configuration.LOCAL_PREFIX + "." + i + "." + Configuration.SESSION_INSTANCES + 
+            " = " + host.getInstances() + "\n");
 
-        writer.write("local." + i + ".working_directory = "
+        writer.write(Configuration.LOCAL_PREFIX + "." + i + ".working_directory = "
             + System.getProperty("java.io.tmpdir", "model_run").replace("\\", "/") + "\n");
 
       } else {
-        String prefix = "remote." + i + ".";
-        writer.write(prefix + "user = " + host.getUser() + "\n");
-        writer.write(prefix + "host = " + host.getHost() + "\n");
-        writer.write(prefix + "instances = " + host.getInstances() + "\n");
-        writer.write(prefix + "ssh_key_file = " + host.getSSHKeyFile().replace("\\", "/") + "\n");
+        String prefix = Configuration.REMOTE_PREFIX + "." + i + ".";
+        writer.write(prefix + Configuration.SESSION_USER + " = " + host.getUser() + "\n");
+        writer.write(prefix + Configuration.SESSION_HOST + " = " + host.getHost() + "\n");
+        writer.write(prefix + Configuration.SESSION_INSTANCES + " = " + host.getInstances() + "\n");
+        writer.write(prefix + Configuration.SESSION_KEY_FILE + " = " + host.getSSHKeyFile().replace("\\", "/") + "\n");
       }
     }
   }

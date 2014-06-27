@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Level;
-import org.apache.velocity.exception.ParseErrorException;
 import org.java.plugin.PluginLifecycleException;
 
 import repast.simphony.engine.controller.Controller;
@@ -33,13 +32,12 @@ import repast.simphony.plugin.CompositeControllerActionCreator;
 import repast.simphony.plugin.ModelPluginLoader;
 import repast.simphony.render.Renderer;
 import repast.simphony.scenario.Scenario;
-import repast.simphony.scenario.ScenarioConstants;
 import repast.simphony.scenario.ScenarioLoader;
 import repast.simphony.scenario.ScenarioSaver;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.space.SpatialException;
-import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.ui.newscenario.NewScenarioWizard;
+import repast.simphony.ui.parameters.ParametersUI;
 import repast.simphony.ui.plugin.UIActionExtensions;
 import repast.simphony.ui.probe.Probe;
 import repast.simphony.ui.probe.ProbeExtensionLoader;
@@ -359,35 +357,25 @@ public class RSApplication implements TickListener, RunListener {
         // settingsRegistry.setNext(modelSettingsRegistry);
 
         if (scenario != null) {
-          // set up editor extensions
+          // Create UI editor extensions (menus items) for ControllerActions that
+        	//  define a repast.simphony.gui plugin extension
           ControllerRegistry reg = controller.getControllerRegistry();
           ContextData rootContext = scenario.getContext();
-          for (CompositeControllerActionCreator creator : actionExts.getActionExts()
-              .parentActionCreators()) {
+          for (CompositeControllerActionCreator creator : actionExts.getActionExts().parentActionCreators()) {
             for (ContextData node : rootContext.getAllContexts()) {
               ControllerAction action = reg.findAction(node.getId(), creator.getID());
               if (action != null) {
                 actionExts.getCompositeEditorExts().addUI(action, creator);
               }
-            }
+            }         
           }
-
-          // for (ContextTreeNode node :
-          // modelSpecification.contextTreeNodes())
-          // {
-          // Object id = node.getData().getID();
-          // actionExts.getCompositeEditorExts().addUI(reg.findAction(id,
-          // ControllerActionConstants.SCHEDULE_ROOT),
-          // "Model Initialization");
-          // }
-          actionExts.addDefaultUI(WatcherControllerAction.class, "Watcher Initialization");
-          actionExts.addDefaultUI(ScheduledMethodControllerAction.class, "Schedule Initialization");
 
           scenarioTree.setControllerRegistry(scenario, controller.getControllerRegistry());
           gui.removeParameterViews();
           Parameters params = loader.getParameters();
-          Probe probe = gui.addParameterView(params, scenario.getScenarioDirectory(), this);
-          paramsManager = updateGuiParamsManager(params, probe);
+          //Probe probe = 
+          ParametersUI pui = gui.addParameterView(params, scenario.getScenarioDirectory(), this);
+          paramsManager = updateGuiParamsManager(params, pui);
           reg.addParameterSetter(paramsManager);
           gui.setStatusBarText(scenario.getModelData().getName() + " loaded");
           gui.setTitle(scenario.getModelData().getName() + " - Repast Simphony");
@@ -419,8 +407,8 @@ public class RSApplication implements TickListener, RunListener {
     }
   }
 
-  public GUIParametersManager updateGuiParamsManager(Parameters params, Probe probe) {
-    paramsManager = new GUIParametersManager(params, probe);
+  public GUIParametersManager updateGuiParamsManager(Parameters params, ParametersUI pui) {
+    paramsManager = new GUIParametersManager(params, pui);
     return paramsManager;
   }
 
@@ -456,7 +444,6 @@ public class RSApplication implements TickListener, RunListener {
     paramsManager.reset();
     probeManager.reset();
     gui.reset();
-    FeatureAgentFactoryFinder.getInstance().clearAdapters();
   }
 
   /**
@@ -477,22 +464,25 @@ public class RSApplication implements TickListener, RunListener {
    * Saves the current parameters to a parameters.xml file in the current
    * scenario directory.
    */
-  public void saveCurrentParameters() {
+  public File saveCurrentParameters() {
+    File paramFile = null;
     try {
       if (scenario != null) {
-        File paramFile = new File(scenario.getScenarioDirectory(), "parameters.xml");
+        paramFile = new File(scenario.getScenarioDirectory(), "parameters.xml");
         if (paramFile.exists()) {
           // make a backup of the old one
           FileUtils.copyFile(paramFile,
               new File(paramFile.getParentFile(), "parameters_backup.xml"));
         }
+        
         ParametersWriter pw = new ParametersWriter();
         pw.writeSpecificationToFile(paramsManager.getParameters(), paramFile);
-
+  
       }
     } catch (Exception ex) {
       msgCenter.error("Error while saving current scenario parameters.", ex);
     }
+    return paramFile;
   }
 
   /**

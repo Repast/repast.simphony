@@ -3,6 +3,9 @@
  */
 package repast.simphony.statecharts.validation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.validation.IValidationContext;
@@ -11,6 +14,7 @@ import repast.simphony.statecharts.scmodel.AbstractState;
 import repast.simphony.statecharts.scmodel.PseudoState;
 import repast.simphony.statecharts.scmodel.PseudoStateTypes;
 import repast.simphony.statecharts.scmodel.StatechartPackage;
+import repast.simphony.statecharts.scmodel.Transition;
 import repast.simphony.statecharts.util.StatechartsModelUtil;
 
 /**
@@ -19,6 +23,8 @@ import repast.simphony.statecharts.util.StatechartsModelUtil;
  * @author Nick Collier
  */
 public class Validator {
+  
+  private static Set<String> badCode = new HashSet<>();
   
   private static String getName(EObject obj) {
     if (obj.eClass().equals(StatechartPackage.Literals.COMPOSITE_STATE)) return "Composite State";
@@ -59,6 +65,34 @@ public class Validator {
       return  ((PseudoState)state).getType().equals(PseudoStateTypes.CHOICE);
     }
     return true;
+  }
+  
+  public static void addBadCodeUUID(String uuid) {
+    badCode.add(uuid);
+  }
+  
+  public static void removeBadCodeUUID(String uuid) {
+    badCode.remove(uuid);
+  }
+  
+  /**
+   * Checks if the specified state has been flagged as having bad onEnter / onExit
+   * code. Returns 
+   * @param ctx
+   * @param state
+   * @return
+   */
+  public static IStatus validateCode(IValidationContext ctx, AbstractState state) {
+    if (badCode.contains(state.getUuid())) return ctx.createFailureStatus(getName(state) + " has invalid onEnter or onExit code.");
+    return ctx.createSuccessStatus();
+  }
+  
+  public static boolean isCodeValid(AbstractState state) {
+    return !badCode.contains(state.getUuid());
+  }
+  
+  public static boolean isCodeValid(Transition trans) {
+    return !badCode.contains(trans.getUuid());
   }
   
   /**

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -226,6 +227,14 @@ public class ProbeIntrospector {
     PBI info = new PBI(clazz);
     findID(info);
     findProperties(info);
+    // iterate through the MethodPropertyDescriptors and remove
+    // any that are write only.
+    for (Iterator<MethodPropertyDescriptor> iter = info.pds.iterator(); iter.hasNext(); ) {
+      MethodPropertyDescriptor mpd = iter.next();
+      if (mpd.getReadMethod() == null && mpd.getWriteMethod() != null) {
+        iter.remove();
+      }
+    }
     findFieldProperties(info);
     return info;
   }

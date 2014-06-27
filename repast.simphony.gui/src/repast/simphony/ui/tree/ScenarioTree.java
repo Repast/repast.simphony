@@ -39,6 +39,8 @@ public class ScenarioTree extends JTree {
   public ScenarioTree(UIActionExtensions exts) {
     super(new DefaultTreeModel(new ScenarioNode(new DefaultActionUI("Empty Tree"), "")));
     this.exts = exts;
+    this.setRowHeight(17); 
+
     this.setCellRenderer(SCENARIO_TREE_CELL_RENDERER);
 
     addMouseListener(new MouseAdapter() {
@@ -181,7 +183,7 @@ public class ScenarioTree extends JTree {
   private JPopupMenu createDelPopupMenu() {
 
     JPopupMenu menu = new JPopupMenu();
-    menu.add((Action) new deleteAction());
+    menu.add((Action) new DeleteAction());
 
     return menu;
   }
@@ -192,9 +194,9 @@ public class ScenarioTree extends JTree {
    * @author tatara
    * 
    */
-  private class deleteAction extends AbstractAction {
+  private class DeleteAction extends AbstractAction {
 
-    public deleteAction() {
+    public DeleteAction() {
       super("Delete");
     }
 
@@ -281,15 +283,13 @@ public class ScenarioTree extends JTree {
   private void fillActions(ScenarioNode parent, ControllerAction action, ActionUI uiRep,
       Tree<ControllerAction> actionGraph, Object contextID) {
 
-    // don't want to show the root action
-    if (!action.equals(actionGraph.getRoot())) {
-      if (uiRep == null) {
-        uiRep = createUIRepresentation(action);
-      }
-      ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
-      nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
-      parent.add(actionNode);
-      parent = actionNode;
+		// If the ActionUI is null, then the ControllerAction has not been registered
+		//   because it is not part of a r.s.gui extension plugin.
+  	if (uiRep != null) {
+  		ScenarioNode actionNode = new ScenarioNode(uiRep, contextID);
+  		nodeMap.put(action, new Pair<Object, ScenarioNode>(contextID, actionNode));
+  		parent.add(actionNode);
+  		parent = actionNode;
     }
 
     // first build the action ui's so we can sort by them
@@ -298,8 +298,10 @@ public class ScenarioTree extends JTree {
     ArrayList<ActionUI> childUIActions = new ArrayList<ActionUI>();
     for (ControllerAction child : actionGraph.getChildren(action)) {
       ActionUI ui = createUIRepresentation(child);
-      actionMap.put(ui, child);
-      childUIActions.add(ui);
+      if (ui != null){
+      	actionMap.put(ui, child);
+      	childUIActions.add(ui);
+      }
     }
 
     // now sort them so they show up in the GUI in a reasonable order
@@ -319,9 +321,9 @@ public class ScenarioTree extends JTree {
   private ActionUI createUIRepresentation(ControllerAction action) {
     ActionUI uiRep = exts.getEditor(action);
 
-    if (uiRep == null) {
-      uiRep = new DefaultActionUI(action.toString());
-    }
+		// The ActionUI can be null if the ControllerAction has not been registered
+		//   because it is not part of a r.s.gui extension plugin.
+
     return uiRep;
   }
 

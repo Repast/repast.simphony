@@ -15,6 +15,7 @@ import repast.simphony.space.projection.ProjectionListener;
 
 public abstract class AbstractDisplay implements IDisplay, ProjectionListener {
   
+	// TODO Put the update interval into the display descriptor so the user can change it.
   // approx one sixitieth of a second in milliseconds
   // ~30 frames a second
   public static long FRAME_UPDATE_INTERVAL = 34;

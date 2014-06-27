@@ -3,6 +3,9 @@
  */
 package repast.simphony.statecharts.sheets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -28,6 +31,7 @@ public class LanguageButtonsGroup {
 
   private Button btnJava, btnRelogo, btnGroovy;
   private LanguageTypes selectedType;
+  private List<SelectionListener> listeners = new ArrayList<>();
 
   public LanguageButtonsGroup(Button btnJava, Button btnRelogo, Button btnGroovy) {
     this.btnGroovy = btnGroovy;
@@ -35,6 +39,14 @@ public class LanguageButtonsGroup {
     this.btnRelogo = btnRelogo;
     
     addListener();
+  }
+  
+  public void addListener(SelectionListener listener) {
+    listeners.add(listener);
+  }
+  
+  public LanguageTypes getSelectedType() {
+    return selectedType;
   }
   
   private void initLanguageButton() {
@@ -72,16 +84,29 @@ public class LanguageButtonsGroup {
 
   }
   
+  private void fireEvent(SelectionEvent evt) {
+    for (SelectionListener listener : listeners) {
+      listener.widgetSelected(evt);
+    }
+  }
+  
   private void addListener() {
     SelectionListener listener = new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
+        LanguageTypes type = selectedType;
         if (e.getSource().equals(btnJava))
           selectedType = LanguageTypes.JAVA;
         else if (e.getSource().equals(btnRelogo))
           selectedType = LanguageTypes.RELOGO;
         else if (e.getSource().equals(btnGroovy))
           selectedType = LanguageTypes.GROOVY;
+        
+        // only fire if the type changes -- the first selection
+        // is the "deselection" of the currently selected so
+        // we need this.
+        if (type != selectedType)
+        fireEvent(e);
       }
     };
 

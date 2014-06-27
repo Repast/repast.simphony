@@ -73,7 +73,7 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
     }
 
     // create a chart data sink to feed data from the dataset to the chart.
-    chartData = new BatchUpdateXYSeries();
+    chartData = new BatchUpdateXYSeries(descriptor.getPlotRangeLength());
     List<String> sourceIds = descriptor.getSeriesIds();
     if (builder.isAggregate()) {
       XYDataSinkSourceSeries sink = new XYDataSinkSourceSeries(chartData, sourceIds);

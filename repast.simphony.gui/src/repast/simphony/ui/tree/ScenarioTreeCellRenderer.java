@@ -10,6 +10,8 @@ import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.ui.plugin.ActionUI;
 
 /**
+ * Sets the appearance of nodes and leafs in the Scenario Tree.
+ * 
  * @author Eric Tatara
  */
 
@@ -56,6 +58,16 @@ public class ScenarioTreeCellRenderer extends DefaultTreeCellRenderer {
 					setIcon(RSGUIConstants.PERSONAL_ICON);
 				else
 					setDisabledIcon(RSGUIConstants.PERSONAL_ICON);
+			else if(((ActionUI)obj).getLabel().equals("Data Loaders"))
+				if (treeIsEnabled)
+					setIcon(RSGUIConstants.DATA_LOADER_ICON);
+				else
+					setDisabledIcon(RSGUIConstants.DATA_LOADER_ICON);
+			else if(((ActionUI)obj).getLabel().equals("User Panel"))
+				if (treeIsEnabled)
+					setIcon(RSGUIConstants.USER_PANEL_ICON);
+				else
+					setDisabledIcon(RSGUIConstants.USER_PANEL_ICON);
 			else if (isLeaf)
 				if (treeIsEnabled)
 					setIcon(RSGUIConstants.LEAF_ICON);

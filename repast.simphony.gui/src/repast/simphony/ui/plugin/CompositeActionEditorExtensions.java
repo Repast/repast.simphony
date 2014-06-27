@@ -10,7 +10,7 @@ import repast.simphony.plugin.CompositeControllerActionCreator;
 
 /**
  * @author Nick Collier
- * @version $Revision: 1.1 $ $Date: 2006/01/09 15:55:03 $
+ * 
  */
 public class CompositeActionEditorExtensions {
 
@@ -38,15 +38,18 @@ public class CompositeActionEditorExtensions {
 
 	public void addUI(ControllerAction action, CompositeControllerActionCreator creator) {
 		String label = extLabelMap.get(creator.getClass().getName());
-		if (label == null) label = action.toString();
-		ParentActionUI editor = new ParentActionUI(label);
-		List<EditorMenuItem> items = itemMap.get(creator.getID());
-		if (items != null) {
-			for (EditorMenuItem item : items) {
-				editor.addEditorMenuItem(item);
+		// If the label is null, then the ControllerAction has not been registered
+		//   because it is not part of a r.s.gui extension plugin.
+		if (label != null){ 
+			ParentActionUI editor = new ParentActionUI(label);
+			List<EditorMenuItem> items = itemMap.get(creator.getID());
+			if (items != null) {
+				for (EditorMenuItem item : items) {
+					editor.addEditorMenuItem(item);
+				}
 			}
+			editorMap.put(action, editor);
 		}
-		editorMap.put(action, editor);
 	}
 
 	public ParentActionUI getUI(ControllerAction action) {

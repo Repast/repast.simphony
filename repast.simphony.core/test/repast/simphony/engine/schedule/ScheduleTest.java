@@ -1053,6 +1053,69 @@ public class ScheduleTest extends TestCase {
     schedule.execute();
     assertEquals(-1.0, schedule.getTickCount());
   }
+  
+	/**
+	 * Tests that when an action ("action") schedules another action
+	 * ("firstAction") with a higher priority for the same tick count and if
+	 * there is a lower priority action ("lastAction") also scheduled separately
+	 * for that tick count, the sequence of execution will be
+	 * "action"->"firstAction"->"lastAction".
+	 */
+  public void testScheduleSameTickDifferentPriorities() {
+	  
+	class SequenceTester {
+		List<String> sequenceList = new ArrayList<String>();
+
+		public void addToSequence(String id) {
+			sequenceList.add(id);
+		}
+
+		public List<String> getSequenceList() {
+			return sequenceList;
+		}
+	}
+	
+	final SequenceTester st = new SequenceTester();
+	
+	final IAction firstAction = new IAction(){
+
+		@Override
+		public void execute() {
+			st.addToSequence("firstAction");
+		}
+    	
+    };
+    
+    IAction action = new IAction() {
+      public void execute() {
+    	st.addToSequence("action");
+        ScheduleParameters params = ScheduleParameters.createOneTime(schedule.getTickCount(),PriorityType.FIRST);
+        schedule.schedule(params, firstAction);
+      }
+    };
+    
+    IAction lastAction = new IAction(){
+
+		@Override
+		public void execute() {
+			st.addToSequence("lastAction");
+		}
+    };
+    
+    ScheduleParameters params = ScheduleParameters.createOneTime(1);
+    schedule.schedule(params, action);
+    params = ScheduleParameters.createOneTime(1,PriorityType.LAST);
+    schedule.schedule(params,lastAction);
+    assertEquals(-1.0, schedule.getTickCount());
+    schedule.execute();
+    assertEquals(1.0, schedule.getTickCount());
+    List<String> expected = new ArrayList<String>();
+    expected.add("action");
+    expected.add("firstAction");
+    expected.add("lastAction");
+    assertEquals(expected,st.getSequenceList());
+    
+  }
 
   public void testSameTickSchedule() {
     SameTickTestAction action1 = new SameTickTestAction(schedule);

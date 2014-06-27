@@ -1,9 +1,10 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PNode;
-import repast.simphony.visualization.network.PEdge;
-
 import java.util.List;
+
+import org.piccolo2d.PNode;
+
+import repast.simphony.visualization.network.PEdge;
 
 /**
  * Interface for classes that given a PNode, this will find any edges associated with it, if any.

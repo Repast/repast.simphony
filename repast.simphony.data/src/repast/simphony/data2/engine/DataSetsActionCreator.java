@@ -102,6 +102,11 @@ public class DataSetsActionCreator implements CompositeControllerActionCreator {
       }
     };
   }
+
+	@Override
+	public boolean isMasterOnly() {
+		return false;
+	}
 }
 
 class FlushAction implements IAction {

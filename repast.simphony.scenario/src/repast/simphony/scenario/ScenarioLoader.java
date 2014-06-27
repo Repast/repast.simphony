@@ -12,6 +12,8 @@ import repast.simphony.engine.controller.ScheduledMethodControllerAction;
 import repast.simphony.engine.controller.WatcherControllerAction;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.ControllerRegistry;
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.engine.environment.RunEnvironmentBuilder;
 import repast.simphony.engine.watcher.WatchAnnotationReader;
 import repast.simphony.parameter.ParameterConstants;
@@ -29,7 +31,6 @@ import repast.simphony.scenario.data.Classpath;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ContextFileReader;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.scenario.data.ProjectionType;
 import repast.simphony.scenario.data.UserPathData;
 import repast.simphony.scenario.data.UserPathFileReader;
 import repast.simphony.util.ClassPathEntry;
@@ -234,11 +235,21 @@ public class ScenarioLoader {
   }
 
   @SuppressWarnings("unchecked")
+  /**
+   * Note that this must be called after the projection registry is setup.
+   * @param creator
+   * @param context
+   * @throws ParameterFormatException
+   */
   private void processProjectionAttributes(ParametersCreator creator, ContextData context)
       throws ParameterFormatException {
+  	
     for (ProjectionData proj : context.projections()) {
-      for (Attribute attribute : proj.attributes()) {
-        if (isParameterAttribute(proj.getType(), attribute.getId())) {
+      
+    	for (Attribute attribute : proj.attributes()) {
+      	
+        if (!isProjectionAttribute(proj.getType(), attribute.getId())) {
+        	
           ParameterType type = AttributeFactory.toParameterType(attribute);
           Object paramVal = type.getValue(attribute.getValue());
           String name = proj.getId() + attribute.getId();
@@ -254,12 +265,22 @@ public class ScenarioLoader {
     }
   }
   
-  private boolean isParameterAttribute(ProjectionType type, String attributeId) {
-    if (type == ProjectionType.NETWORK && attributeId.equals("directed")) return false;
-    if (type == ProjectionType.GRID && attributeId.equals("allows multi")) return false;
-    if ((type == ProjectionType.GRID || type == ProjectionType.CONTINUOUS_SPACE) 
-        && attributeId.equals("border rule")) return false;
-    return true;
+  private boolean isProjectionAttribute(String type, String attributeId) {
+    
+  	// TODO Projections: Use the projection registry for other built in projections.
+  	
+  	if (type.equals(ProjectionData.NETWORK_TYPE) && attributeId.equals("directed")) return false;
+    if (type.equals(ProjectionData.GRID_TYPE) && attributeId.equals("allows multi")) return false;
+    if ((type.equals(ProjectionData.GRID_TYPE) || type.equals(ProjectionData.CONTINUOUS_SPACE_TYPE)) 
+        && (attributeId.equals("border rule") ||
+        		attributeId.equals("width") ||
+        		attributeId.equals("height")
+        		)) return false;
+    
+    // The projection registry holds data for additional projections such as GIS.
+	  ProjectionRegistryData data = ProjectionRegistry.getDataFor(type);
+  	
+  	return data.isProjectionAttribute(attributeId);
   }
 
   /*

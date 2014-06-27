@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
+<plugin id="repast.simphony.gis.visualization" version="">
+	
+	<attributes>
+         <attribute id="simphony" value="2.2.0"/>
+     </attributes>
+	
+	<requires>
+				<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
+				<import exported="false" match="compatible" optional="false" plugin-id="saf.core.ui" reverse-lookup="false"/>
+				<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
+        <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gis" reverse-lookup="false"/>
+        <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.visualization" reverse-lookup="false"/>
+        <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
+        <import exported="false" match="compatible" optional="false" plugin-id="libs.ext" reverse-lookup="false"/>
+				<import exported="false" match="compatible" optional="false" plugin-id="libs.piccolo" reverse-lookup="false"/>
+	</requires>
+	
+	<runtime>
+	    <library id="gis.visualization" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+		
+	    <library id="icons" path="icons/" type="resources"/>
+	    
+		<library id="worldwind" path="lib/worldwind-2.0.0.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+	</runtime>
+
+	<extension id="probe.location.provider.gis" plugin-id="repast.simphony.gui" point-id="probe.location.provider">
+        <parameter id="projectionClass" value="repast.simphony.space.gis.Geography"/>
+        <parameter id="providerClass" value="repast.simphony.gis.ui.probe.GeographyLocationProbeProvider"/>
+    </extension>
+	
+	<extension id="gis.viz.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
+    	<parameter id="creatorClass" value="repast.simphony.gis.visualization.engine.GISVizCompositeControllerActionCreator"/>
+    </extension>
+	
+	<extension id="gis.ui.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="repast.simphony.gis.ui.ShowExportDialog" />
+			<parameter id="label" value="&amp;Export Geography Layers" />
+			<parameter id="class" value="repast.simphony.gis.ui.ShowExportDialog" />
+			<parameter id="icon" value="nfs_mount.png" />
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
+			<parameter id="groupID" value="runTools" />
+			<parameter id="tooltip" value="Export geography layers to a shapefile" />
+		</parameter>
+	</extension>
+	
+	
+</plugin>

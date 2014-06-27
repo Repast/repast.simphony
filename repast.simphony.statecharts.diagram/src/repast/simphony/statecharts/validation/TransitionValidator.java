@@ -48,6 +48,10 @@ public class TransitionValidator {
         return ctx
             .createFailureStatus("Transition is missing required trigger exponential decay rate code");
       }
+      
+      if (!Validator.isCodeValid(trans)) {
+        return ctx.createFailureStatus("Transition contains invalid code");
+      }
 
       if (trans.getTriggerType().equals(TriggerTypes.MESSAGE)) {
         MessageCheckerTypes messageType = trans.getMessageCheckerType();

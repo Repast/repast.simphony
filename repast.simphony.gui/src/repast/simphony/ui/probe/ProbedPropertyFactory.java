@@ -9,10 +9,9 @@ import java.util.List;
  * Creates ProbedProperties for use in the ProbableBeanCreator.
  * 
  * @author Nick Collier
- * @version $Revision$ $Date$
  */
 public class ProbedPropertyFactory {
-
+  
   /**
    * Creates a ProbedProperty using the specified PropertyDescriptor.
    * 
@@ -25,9 +24,10 @@ public class ProbedPropertyFactory {
     Class<?> propType = desc.getPropertyType();
     if (ClassUtilities.isNumericType(propType))
       return new NumericProbedProperty(desc, wrap);
-    if (propType.equals(String.class))
+    else if (propType.equals(String.class) || 
+        (desc instanceof MethodPropertyDescriptor && ((MethodPropertyDescriptor)desc).getStringConverter() != null))
       return new StringProbedProperty(desc);
-    if (propType.equals(Boolean.class) || propType.equals(boolean.class))
+    else if (propType.equals(Boolean.class) || propType.equals(boolean.class))
       return new BooleanProbedProperty(desc);
 
     return null;
@@ -43,11 +43,12 @@ public class ProbedPropertyFactory {
    * @return the created ProbedProperty.
    */
   public static DefaultProbedPropertyUICreator createProbedProperty(PropertyDescriptor desc,
-      List<?> possibleValues, boolean wrap) {
+      List<Object> possibleValues, boolean wrap) {
     Class<?> propType = desc.getPropertyType();
     if (ClassUtilities.isNumericType(propType))
       return new NumericProbedProperty(desc, possibleValues, wrap);
-    if (propType.equals(String.class))
+    if (propType.equals(String.class) ||
+        (desc instanceof MethodPropertyDescriptor && ((MethodPropertyDescriptor)desc).getStringConverter() != null))
       return new StringProbedProperty(desc, possibleValues);
     if (propType.equals(Boolean.class) || propType.equals(boolean.class))
       return new BooleanProbedProperty(desc);

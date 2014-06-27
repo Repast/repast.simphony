@@ -40,5 +40,4 @@ public class PreviewIcon3D implements PreviewIcon {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

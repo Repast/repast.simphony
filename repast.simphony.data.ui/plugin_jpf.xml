@@ -3,13 +3,14 @@
 <plugin id="repast.simphony.data.ui" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.1.0"/>
+         <attribute id="simphony" value="2.2.0"/>
      </attributes>
 
 	<requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.gui" reverse-lookup="false"/>
 		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.plugin.util" reverse-lookup="false"/>
-    <import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="false"/>
+    	<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="false"/>
   </requires>
 
 	<runtime>
@@ -23,9 +24,9 @@
         <parameter id="label" value="Data Sets"/>
     </extension>
     
-    <extension id="data.init.ui.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-        <parameter id="creatorClass" value="repast.simphony.data2.engine.DataInitActionCreator"/>
-        <parameter id="label" value="Data Collection Initialization"/>
+    <!-- DataInitActionCreator has no UI component -->
+    <extension id="data.init.ui.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
+        <parameter id="creatorClass" value="repast.simphony.data2.engine.DataInitActionCreator"/>     
     </extension>
 
     <extension id="data.ui.component.action" plugin-id="repast.simphony.gui" point-id="component.action">

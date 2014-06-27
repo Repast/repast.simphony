@@ -1,6 +1,6 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.event.PInputEventListener;
+import org.piccolo2d.event.PInputEventListener;
 
 /**
  * Adds start, stop to PInputEventListener interface.

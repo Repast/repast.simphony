@@ -461,8 +461,6 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 					"installation_components.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
 					"shortcuts_Windows.xml", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows_Registry.xml",
-					newFolder, "shortcuts_Windows_Registry.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
 					"shortcuts_Xnix.xml", variableMap, subMonitor.newChild(1));
 			Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,

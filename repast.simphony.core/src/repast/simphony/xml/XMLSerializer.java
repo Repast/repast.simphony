@@ -1,5 +1,16 @@
 package repast.simphony.xml;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -7,10 +18,6 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Wraps an XStream instance and adds converters specialized
@@ -71,15 +78,21 @@ public class XMLSerializer {
    * Creates an XMLSerializer.
    */
   public XMLSerializer() {
+  	// TODO Projections: use the projection registry.
     xstream.registerConverter(new DefaultContextConverter());
     xstream.registerConverter(new NetworkConverter());
-    xstream.registerConverter(new GeographyConverter());
     xstream.registerConverter(new GridConverter());
     xstream.registerConverter(new SpaceConverter());
     xstream.registerConverter(new RootConverter());
     xstream.registerConverter(new AmountConverter());
     xstream.registerConverter(new GridValueLayerConverter());
     xstream.registerConverter(new ContinuousValueLayerConverter());
+    
+    // Add additional converters from the projection registry.
+    for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
+    	xstream.registerConverter(data.getProjectionXMLConverter());
+    }
+    
     xstream.alias("root", Root.class);
     //xstream.registerConverter(new FastMethodConvertor(xstream));
     xstream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);

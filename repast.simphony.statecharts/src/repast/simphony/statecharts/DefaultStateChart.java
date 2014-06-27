@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
@@ -68,6 +69,17 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		stateUuidMap.put(state, uuid);
 	}
 
+	private Map<Transition<T>, String> transitionUuidMap;
+
+	protected void setTransitionUuidMap(
+			Map<Transition<T>, String> transitionUuidMap) {
+		this.transitionUuidMap = transitionUuidMap;
+	}
+
+	protected void putTransitionUuid(Transition<T> transition, String uuid) {
+		transitionUuidMap.put(transition, uuid);
+	}
+
 	protected void registerEntryState(AbstractState<T> state) {
 		entryState = state;
 		addState(state);
@@ -83,8 +95,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 		if (integrator.integrate(this)) {
 			clearTransitions(null);
-			List<AbstractState<T>> statesToEnter = getStatesToEnter(null,
-					entryState);
+			List<AbstractState<T>> statesToEnter = getStatesToEnter(null, entryState);
 			stateInit(statesToEnter);
 		}
 	}
@@ -97,8 +108,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	private void partitionQueueConsuming(List<Transition<T>> transitions,
-			List<Transition<T>> queueConsuming,
-			List<Transition<T>> nonQueueConsuming) {
+			List<Transition<T>> queueConsuming, List<Transition<T>> nonQueueConsuming) {
 		for (Transition<T> t : transitions) {
 			if (t.isTriggerQueueConsuming())
 				queueConsuming.add(t);
@@ -116,6 +126,15 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		for (AbstractState<T> as : statesToEnter) {
 			as.onEnter();
 		}
+
+		// collect all relevant self transitions and initialize
+		for (Transition<T> st : selfTransitions) {
+			if (statesToEnter.contains(st.getSource())) {
+				activeSelfTransitions.add(st);
+				st.initialize(this);
+			}
+		}
+
 		if (currentSimpleState instanceof FinalState) {
 			clearTransitions(null);
 		} else {
@@ -247,8 +266,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 				// or if there are queue consuming new transitions then
 				// consume queue
 				if (foundIsResolveNow
-						|| !newTransitionsToActivateZeroTimeQueueConsuming
-								.isEmpty()) {
+						|| !newTransitionsToActivateZeroTimeQueueConsuming.isEmpty()) {
 
 					// Find queue consuming candidate transitions
 					while (true) {
@@ -286,18 +304,6 @@ public class DefaultStateChart<T> implements StateChart<T> {
 					queue.poll();
 				}
 				makeRegularTransition(t);
-			}
-			// Otherwise set up the self transitions and initialize
-			// them
-			else {
-				// collect all relevant self transitions and initialize
-				for (Transition<T> st : selfTransitions) {
-					if (statesToEnter.contains(st.getSource())) {
-						activeSelfTransitions.add(st);
-						st.initialize(this);
-					}
-				}
-
 			}
 
 		}
@@ -359,8 +365,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	}
 
 	/**
-	 * Returns a list of states to exit, in the order that they should be
-	 * exited.
+	 * Returns a list of states to exit, in the order that they should be exited.
 	 * 
 	 * @param lca
 	 * @return
@@ -456,7 +461,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return triggeredTransitions;
 	}
 
-	protected void resolve() {
+	public void resolve() {
 		// Partition active self transitions into queue consuming and non queue
 		// consuming
 		List<Transition<T>> queueConsumingActiveSelfTransitions = new ArrayList<Transition<T>>();
@@ -483,9 +488,9 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 		List<Transition<T>> queueConsumingRegularCandidates = new ArrayList<Transition<T>>();
 
-		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils
-				.union(queueConsumingActiveSelfTransitions,
-						queueConsumingActiveRegularTransitions);
+		List<Transition<T>> allQueueConsumingActiveTransitions = ListUtils.union(
+				queueConsumingActiveSelfTransitions,
+				queueConsumingActiveRegularTransitions);
 
 		// This is for the corner case when there is a self transition
 		// and a regular transition that both are valid based on the same
@@ -531,8 +536,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		}
 		// Concatenate queue and non queue consuming candidates and choose one
 		Transition<T> t = chooseOneTransition(ListUtils.union(
-				nonQueueConsumingRegularCandidates,
-				queueConsumingRegularCandidates));
+				nonQueueConsumingRegularCandidates, queueConsumingRegularCandidates));
 
 		// reschedule selfTransitions
 		rescheduleTransitions(activeSelfTransitions, false);
@@ -540,8 +544,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		// If a zero time transition was found, make that transition
 		if (t != null) {
 			// if chosen one is queue consuming
-			if (t.isTriggerQueueConsuming()
-					|| queueConsumingSelfTransitionFollowed) {
+			if (t.isTriggerQueueConsuming() || queueConsumingSelfTransitionFollowed) {
 				queue.poll();
 			}
 			makeRegularTransition(t);
@@ -633,7 +636,7 @@ public class DefaultStateChart<T> implements StateChart<T> {
 
 	private double priority = 0;
 
-	protected double getPriority() {
+	public double getPriority() {
 		return priority;
 	}
 
@@ -692,6 +695,26 @@ public class DefaultStateChart<T> implements StateChart<T> {
 		return result;
 	}
 
+	@Override
+	public AbstractState<T> getStateForUuid(String uuid) {
+		for (Entry<AbstractState<T>, String> entry : stateUuidMap.entrySet()) {
+			if (entry.getValue().equals(uuid)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Transition<T> getTransitionForUuid(String uuid) {
+		for (Entry<Transition<T>, String> entry : transitionUuidMap.entrySet()) {
+			if (entry.getValue().equals(uuid)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+
 	private Set<StateChartListener> stateChartListeners = new LinkedHashSet<StateChartListener>();
 
 	@Override
@@ -707,6 +730,81 @@ public class DefaultStateChart<T> implements StateChart<T> {
 	private void notifyChangeListeners() {
 		for (StateChartListener scl : stateChartListeners) {
 			scl.update();
+		}
+
+	}
+
+	@Override
+	public void activateState(AbstractState<T> state) {
+		SimpleState<T> simpleState = getCurrentSimpleState();
+		// Check that there exists a current active simple state
+		if (simpleState != null) {
+			AbstractState<T> lca = null;
+			// Being in a final state is like being in no state
+			if (simpleState instanceof FinalState) {
+				currentSimpleState = null;
+			} else {
+				lca = simpleState.calculateLowestCommonAncestor(state);
+				List<AbstractState<T>> statesToExit = getStatesToExit(lca);
+				currentSimpleState = null;
+				for (AbstractState<T> as : statesToExit) {
+					clearTransitions(as);
+					as.onExit();
+				}
+			}
+
+			List<AbstractState<T>> statesToEnter = getStatesToEnter(lca, state);
+
+			stateInit(statesToEnter);
+		}
+		// TODO: consider activating the statechart if it's not active
+	}
+
+	@Override
+	public void activateState(String stateID) {
+		AbstractState<T> target = null;
+		for (AbstractState<T> s : stateUuidMap.keySet()) {
+			if (s != null) {
+				String id = s.getId();
+				if (id != null && id.equals(stateID)) {
+					target = s;
+					break;
+				}
+			}
+		}
+		if (target != null) {
+			activateState(target);
+		}
+	}
+
+	@Override
+	public void followTransition(String transitionID) {
+		Transition<T> target = null;
+		for (Transition<T> t : transitionUuidMap.keySet()) {
+			if (t != null) {
+				String id = t.getId();
+				if (id != null && id.equals(transitionID)) {
+					target = t;
+					break;
+				}
+			}
+		}
+		if (target != null) {
+			followTransition(target);
+		}
+	}
+
+	@Override
+	public void followTransition(Transition<T> transition) {
+		List<AbstractState<T>> currentStates = getCurrentStates();
+		if (!currentStates.isEmpty()) {
+			if (currentStates.contains(transition.getSource())) {
+				if (transition instanceof SelfTransition) {
+					transition.onTransition();
+				} else {
+					makeRegularTransition(transition);
+				}
+			}
 		}
 
 	}

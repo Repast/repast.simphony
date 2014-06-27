@@ -3,8 +3,7 @@
 .First <- function() {
 
   # make sure to load libraries before doing evaluations below.
-  library(grDevices)
-  library(Rcmdr)
+  library(utils)
 
   # Load in the Repast outputer files that are specified in the runtime wizard
   fileNumber <- 0;

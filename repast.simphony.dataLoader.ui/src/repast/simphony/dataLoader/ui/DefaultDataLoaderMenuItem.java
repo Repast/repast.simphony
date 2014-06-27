@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import org.java.plugin.PluginManager;
 
+import repast.simphony.dataLoader.engine.DataLoaderControllerAction;
 import repast.simphony.dataLoader.ui.wizard.DataLoaderWizardModel;
 import repast.simphony.dataLoader.ui.wizard.DataLoaderWizardPluginUtil;
 import repast.simphony.engine.controller.ControllerActionConstants;
@@ -29,7 +30,8 @@ public class DefaultDataLoaderMenuItem extends AbstractEditorMenuItem {
 		ControllerRegistry registry = evt.getRegistry();
 		DynamicWizard wizard = DataLoaderWizardPluginUtil.create(evt.getScenario(), contextID);
 		wizard.showDialog(SwingUtilities.getWindowAncestor(evt.getTree()), "");
-		ControllerAction action = ((DataLoaderWizardModel) wizard.getModel()).getAction();
+		DataLoaderControllerAction action = ((DataLoaderWizardModel) wizard.getModel()).getAction();
+		
 		if (action != null) {
 			ControllerAction parent = registry.findAction(contextID, ControllerActionConstants.DATA_LOADER_ROOT);
 			for (ControllerAction child : registry.getActionTree(contextID).getChildren(parent)) {

@@ -26,9 +26,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.piccolo2d.PLayer;
+import org.piccolo2d.event.PInputEventListener;
+
 import repast.simphony.annotate.AgentAnnot;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.event.PInputEventListener;
 
 public class AdderPanel extends JPanel {
 	ContextDescriptor descriptor;

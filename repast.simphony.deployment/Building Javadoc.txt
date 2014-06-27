@@ -1,0 +1,14 @@
+Building Repast Javadoc
+
+1. Select (only core projects, no ide or plugins stuff) to export javadoc.  An
+     ant build script for javadoc doesn't work on Windows, so use the export method.
+
+2. Export javadoc for selected projects.  If javadoc reports errors, perhaps 
+    some non-core projects were selected.
+
+3. Copy the generated javadoc folder to RepastSimphonyAPI in the distriubution /docs folder with the installer script. 
+
+4. Run the buildGroovydocs ant script in r.s.relogo.runtime as described in the
+    r.s.relogo.runtime/docs/Readme.txt.  Groovydocs requires downloading a full Groovy binary distribution.
+
+5.  Merge the results of the Groovydoc as described in 4.

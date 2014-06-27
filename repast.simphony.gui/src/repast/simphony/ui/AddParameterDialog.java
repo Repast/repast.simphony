@@ -71,7 +71,8 @@ public class AddParameterDialog extends JDialog {
 		      }
 		    });
 		  }
-	  private boolean applyParameter() {
+
+  private boolean applyParameter() {
 		  boolean requiresConverter = false;
     	  String name = getNameField().getText();
     	  String type = getTypeField().getText();

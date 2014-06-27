@@ -27,4 +27,9 @@ public interface BindableFocusableSheet {
    * @param obj
    */
   void bindModel(EMFDataBindingContext context, EObject obj);
+  
+  /**
+   * Disposes of any resources used by this sheet.
+   */
+  void dispose();
 }

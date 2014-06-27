@@ -8,7 +8,7 @@ public interface StateChart<T> {
 	/**
 	 * Receive a message into the statechart queue.
 	 */
-	public void receiveMessage(Object message);
+	void receiveMessage(Object message);
 	
 	/**
 	 * Gets the agent associated with this StateChart.
@@ -20,27 +20,78 @@ public interface StateChart<T> {
 	/**
 	 * Begin state chart.
 	 */
-	public void begin(StateChartSimIntegrator integrator);
+	void begin(StateChartSimIntegrator integrator);
 	
 	/**
 	 * Stops the state chart.
 	 */
-	public void stop();
+	void stop();
 	
 	/**
 	 * Retrieve current state.
 	 * @return
 	 */
-	public AbstractState<T> getCurrentSimpleState();
+	AbstractState<T> getCurrentSimpleState();
 	
-	public boolean withinState(String id);
+	boolean withinState(String id);
 	
-	public List<AbstractState<T>> getCurrentStates();
+	List<AbstractState<T>> getCurrentStates();
 	
-	public String getUuidForState(AbstractState<T> state);
+	String getUuidForState(AbstractState<T> state);
 	
-	public void registerStateChartListener(StateChartListener scl);
+	/**
+	 * Returns the state associated with the uuid or
+	 * null if not found.
+	 * @param uuid
+	 * @return
+	 */
+	AbstractState<T> getStateForUuid(String uuid);
 	
-	public void removeStateChartListener(StateChartListener scl);
+	void registerStateChartListener(StateChartListener scl);
+	
+	void removeStateChartListener(StateChartListener scl);
+
+	/**
+	 * Returns the transition associated with the uuid or
+	 * null if not found.
+	 * @param uuid
+	 * @return
+	 */
+	Transition<T> getTransitionForUuid(String uuid);
+	
+	/**
+	 * Activates the state if it exists. Should be called when simulation is paused.
+	 * @param state
+	 * 			the state to activate
+	 */
+	void activateState(AbstractState<T> state);
+	
+	/**
+	 * Follow the transition if valid. Should be called when simulation is paused.
+	 * @param transition
+	 * 			the transition to follow
+	 */
+	void followTransition(Transition<T> transition);
+	
+	/**
+	 * Activates the state (identified by a potentially non-unique ID) if it exists.
+	 * @param stateID
+	 * 			the potentially non-unique ID of the state to activate
+	 */
+	void activateState(String stateID);
+	
+	
+	/**
+	 * Follow the transition (identified by a potentially non-unique ID) if valid.
+	 * @param transitionID
+	 * 			the potentially non-unique ID of the transition to follow
+	 */
+	void followTransition(String transitionID);
+	
+	
+
+	double getPriority();
+
+	void resolve();
 
 }

@@ -58,7 +58,8 @@ public class ValueLayerDisplayLayer {
     shape = new VGridShape(grid, AbstractDisplayLayerOGL2D.MODEL_OBJECT_KEY);
     shape.putProperty(VALUE_LAYER_KEY, this);
     // offset half cell size so that object can appear in center of value layer cell
-    shape.translate(-style.getCellSize() / 2f, -style.getCellSize() / 2f, 0);
+ // Commented this out to fix value layer display offset.
+//    shape.translate(-style.getCellSize() / 2f, -style.getCellSize() / 2f, 0); 
     layer.addChild(shape);
   }
   

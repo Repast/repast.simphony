@@ -4,10 +4,12 @@
 package repast.simphony.batch;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,12 @@ import java.util.concurrent.Future;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.SAXException;
 
 import repast.simphony.batch.parameter.ParametersToInput;
+import repast.simphony.util.FileUtils;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -84,6 +88,12 @@ public class LocalDriver {
     toInput.formatForInput(input, new File(workingDir, "parameters_for_run.csv"));
     return input;
   }
+  
+  private void writeInput(String input, File file) throws IOException {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+      writer.write(input);
+    }
+  }
 
   public void run(String propsFile) throws IOException {
     // load the message center log4j properties.
@@ -131,14 +141,19 @@ public class LocalDriver {
         int id = i + 1;
         File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + id).getCanonicalFile();
         subwd.mkdirs();
-        if (mkSymLink)
+        if (mkSymLink && SystemUtils.IS_OS_WINDOWS_XP) {
+          // windows xp doesn't allow sim links so we copy the data
+          FileUtils.copyDirs(new File(subwd.getParentFile(), "data"), new File(subwd, "data"));
+        } else if (mkSymLink) {
           makeSymLink(subwd);
+        }
         instances.add(new Instance(id, subwd));
-        String inputArg = inputs.get(i);
-        runInstance(vmArgs, inputArg, libDir, batchParamFile, scenario, subwd, String.valueOf(id));
+        String input = inputs.get(i);
+        File inputFile = new File(subwd, "param_input.txt");
+        writeInput(input, inputFile);
+        runInstance(vmArgs, inputFile.getCanonicalPath(), libDir, batchParamFile, scenario, subwd, String.valueOf(id));
       }
 
-      int counter = 0;
       for (Future<Void> future : futures) {
         try {
           future.get();
@@ -166,15 +181,16 @@ public class LocalDriver {
       builder.redirectErrorStream(true);
 
       // try mklink first,
-      builder.command("cmd", "/c", "mklink", "/D", "/J", "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"",
-          "\"" + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
+      builder.command("cmd", "/c", "mklink", "/D", "/J",
+          "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"", "\""
+              + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
 
       Process p = builder.start();
       exitCode = p.waitFor();
 
     } catch (InterruptedException ex) {
     } catch (IOException ex) {
-      // catch this with no error -- assumed tried on non-windows machine 
+      // catch this with no error -- assumed tried on non-windows machine
     }
 
     if (exitCode != 0) {
@@ -188,9 +204,10 @@ public class LocalDriver {
 
         Process p = builder.start();
         exitCode = p.waitFor();
-        
+
         if (exitCode != 0) {
-          msg.error("Error while creating symlinks to data directory. Error = " + exitCode, new RuntimeException());
+          msg.error("Error while creating symlinks to data directory. Error = " + exitCode,
+              new RuntimeException());
         }
 
       } catch (InterruptedException ex) {
@@ -247,11 +264,12 @@ public class LocalDriver {
 
   private List<String> createParameterStrings(File input) throws IOException {
     List<String> list = new ArrayList<String>();
-    BufferedReader reader = new BufferedReader(new FileReader(input));
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      if (line.trim().length() > 0)
-        list.add(line);
+    try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (line.trim().length() > 0)
+          list.add(line);
+      }
     }
 
     return list;
@@ -264,12 +282,18 @@ public class LocalDriver {
 
     if (vmArgs.length() > 0)
       builder.command("java", vmArgs, "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
-          scenarioFile.getCanonicalPath(), inputArg, id);
+          "repast.simphony.batch.InstanceRunner", 
+          "-pxml", batchParamFile.getCanonicalPath(),
+          "-scenario", scenarioFile.getCanonicalPath(), 
+          "-pinput", inputArg, 
+          "-id", id);
     else
       builder.command("java", "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", batchParamFile.getCanonicalPath(),
-          scenarioFile.getCanonicalPath(), inputArg, id);
+          "repast.simphony.batch.InstanceRunner", 
+          "-pxml", batchParamFile.getCanonicalPath(),
+          "-scenario", scenarioFile.getCanonicalPath(), 
+          "-pinput", inputArg, 
+          "-id", id);
 
     builder.redirectErrorStream(true);
     ProcessRunner runner = new ProcessRunner(builder, new File(workingDirectory, "instance.log"));

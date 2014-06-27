@@ -3,7 +3,7 @@
 <plugin class="repast.simphony.ui.RSUIPlugin" id="repast.simphony.gui" version="">
 
 	<attributes>
-         <attribute id="simphony" value="2.1.0"/>
+         <attribute id="simphony" value="2.2.0"/>
      </attributes>
 	
   <requires>
@@ -68,6 +68,12 @@
   <extension-point extension-multiplicity="any" id="field.probe">
     <parameter-def id="probedObjectClass" multiplicity="one" type="string"/>
     <parameter-def id="creatorClass" multiplicity="one" type="string"/>
+  </extension-point>
+  
+  <!-- Extension point for adding a custom projection location provider to the probe panel-->
+  <extension-point extension-multiplicity="any" id="probe.location.provider">
+    <parameter-def id="projectionClass" multiplicity="one" type="string"/>
+    <parameter-def id="providerClass" multiplicity="one" type="string"/>
   </extension-point>
 
   <!-- Extension point for child / component actions. Parameters:
@@ -294,16 +300,6 @@
     </parameter>
 
     <parameter id="actionSpec">
-      <parameter id="actionID" value="repast.simphony.ui.gis.ShowExportDialog"/>
-      <parameter id="label" value="&amp;Export Geography Layers"/>
-      <parameter id="class" value="repast.simphony.ui.gis.ShowExportDialog"/>
-      <parameter id="icon" value="nfs_mount.png"/>
-      <parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
-      <parameter id="groupID" value="runTools"/>
-      <parameter id="tooltip" value="Export geography layers to a shapefile"/>
-    </parameter>
-
-    <parameter id="actionSpec">
       <parameter id="actionID" value="repast.simphony.ui.action.ErrorLogAction"/>
       <parameter id="label" value="Show &amp;Error Log"/>
       <parameter id="class" value="repast.simphony.ui.action.ErrorLogAction"/>
@@ -343,6 +339,18 @@
       <parameter id="menuID" value="repast.simphony.ui.window_menu"/>
     </parameter>
     -->
+    
+    
+   
+        <parameter id="actionSpec">
+            <parameter id="actionID" value="repast.simphony.gui.ShowNetworkExportDialog" />
+            <parameter id="label" value="&amp;Export Network Projections" />
+            <parameter id="class" value="repast.simphony.ui.action.ExportNetworks" />
+            <parameter id="icon" value="fileexport.png" />
+            <parameter id="menuID" value="repast.simphony.ui.tools_menu" />
+            <parameter id="groupID" value="runTools" />
+            <parameter id="tooltip" value="Export Network Projections" />
+        </parameter>
 
   </extension>
 
@@ -363,18 +371,4 @@
     </parameter>
   </extension>
 
-  <extension id="schedule.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.ScheduledActionsCreator"/>
-    <parameter id="label" value="Model Initialization"/>
-  </extension>
-
-  <extension id="random.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.RandomCompositeActionCreator"/>
-    <parameter id="label" value="Random Streams"/>
-  </extension>
-
-  <extension id="misc.composite.action" plugin-id="repast.simphony.gui" point-id="composite.action">
-    <parameter id="creatorClass" value="repast.simphony.plugin.MiscCompositeActionCreator"/>
-    <parameter id="label" value="Miscellaneous Actions"/>
-  </extension>
 </plugin>

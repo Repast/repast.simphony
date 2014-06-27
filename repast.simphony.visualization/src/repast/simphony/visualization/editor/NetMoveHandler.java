@@ -1,18 +1,19 @@
 package repast.simphony.visualization.editor;
 
-import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolox.handles.PHandle;
-import repast.simphony.space.graph.Network;
-import repast.simphony.visualization.network.PEdge;
-import repast.simphony.visualization.visualization2D.Display2D;
-
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.piccolo2d.PCanvas;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PDragSequenceEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.extras.handles.PHandle;
+
+import repast.simphony.space.graph.Network;
+import repast.simphony.visualization.network.PEdge;
+import repast.simphony.visualization.visualization2D.Display2D;
 
 /**
  * Event handler for moving nodes in a grid.
@@ -28,9 +29,10 @@ public class NetMoveHandler extends PDragSequenceEventHandler implements PEditor
   private EdgeFinder edgeFinder;
   private List<PEdge> curEdges = new ArrayList<PEdge>();
 
-  static {
-    PHandle.DEFAULT_HANDLE_SHAPE = new Ellipse2D.Float(0f, 0f, 2, 2);
-  }
+  // Not compatible with Piccolo 3.0
+//  static {
+//    PHandle.DEFAULT_HANDLE_SHAPE = new Ellipse2D.Float(0f, 0f, 2, 2);
+//  }
 
   public NetMoveHandler(PCanvas canvas, Display2D display, List<Network> nets) {
     this.canvas = canvas;
@@ -64,7 +66,7 @@ public class NetMoveHandler extends PDragSequenceEventHandler implements PEditor
   protected void startDrag(PInputEvent event) {
     super.startDrag(event);
     PNode selectedNode = selector.getSelectedNodes().get(0);
-    selectedNode.moveToFront();
+    selectedNode.raiseToTop();
     nodesStartPosition = selectedNode.getOffset();
     curEdges = edgeFinder.findEdges(selectedNode);
   }

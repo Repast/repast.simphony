@@ -1,19 +1,21 @@
 The ReLogo API docs are generated in the following steps:
-1. Look at the buildGroovyDocs.xml file and follow the instructions for running via command line.
+
+1. Look at the buildGroovyDocs.xml file and follow the instructions for running 
+   via command line or Eclipse launch config.
 2. Run the repast.simphony.relogo.util.ReLogoReferenceCreator class.
 
-Further details on merging with Repast Simphony API here:
-Creating the ReLogoPrimitives.html and the ReLogo Groovydocs: (as of Feb 6, 2012)
+Merging with Repast Simphony API here:
+Creating the ReLogoPrimitives.html and the ReLogo Groovydocs:
 
 The buildGroovyDocs.xml ant build file is used to create the Groovydoc API document.
 
 This is merged this with the main Repast Simphony API by:
-0. Use RepastJavaAPI.zip from r.s.docs repository.
-1. including the groovy.ico and inherit.gif files to the base directory.
-2. replacing the existing repast/simphony/relogo directory with the groovydoc generated directory.
-3. executed the command:
+0. Use fresh generated Repast API or RepastJavaAPI.zip from r.s.docs repository.
+1. Copy the groovy.ico and inherit.gif files to the RepastJavaAPI base directory.
+2. Replacing the existing repast/simphony/relogo directory with the groovydoc generated directory.
+3. Optionally executed the command to remove all the .DS_Store files:
 	find . -name '*.DS_Store' -type f -delete 
-to remove all the .DS_Store files
+
 4. zip up and replace old version: zip -r RepastJavaAPI api
 
 

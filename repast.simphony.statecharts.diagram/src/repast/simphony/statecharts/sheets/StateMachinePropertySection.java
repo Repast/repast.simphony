@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 
 
 /**
- * Property sheet for a History state.
+ * Property sheet for the StateMachine.
  * 
  * @author Nick Collier
  */

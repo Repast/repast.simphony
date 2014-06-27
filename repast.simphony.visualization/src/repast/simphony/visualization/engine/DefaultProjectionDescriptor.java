@@ -9,6 +9,7 @@ import repast.simphony.scenario.data.ProjectionData;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
+@Deprecated
 public class DefaultProjectionDescriptor extends AbstractProjectionDescriptor {
 
   public DefaultProjectionDescriptor(ProjectionData proj) {

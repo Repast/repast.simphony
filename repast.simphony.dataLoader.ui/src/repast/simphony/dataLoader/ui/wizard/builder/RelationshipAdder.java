@@ -10,13 +10,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.piccolo2d.PCamera;
+import org.piccolo2d.PLayer;
+import org.piccolo2d.PNode;
+import org.piccolo2d.event.PDragSequenceEventHandler;
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.nodes.PPath;
+
 import repast.simphony.ui.plugin.editor.DefaultEditorDialog;
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
 
 public class RelationshipAdder extends PDragSequenceEventHandler {
 	PPath linePath;
@@ -39,7 +40,7 @@ public class RelationshipAdder extends PDragSequenceEventHandler {
 
 	public RelationshipAdder(ContextCreatorCanvas canvas,
 			ContextDescriptor descriptor) {
-		linePath = new PPath();
+		linePath = new PPath.Double();
 		line = new Line2D.Float();
 		this.canvas = canvas;
 		this.descriptor = descriptor;
@@ -71,14 +72,15 @@ public class RelationshipAdder extends PDragSequenceEventHandler {
 		super.drag(arg0);
 		if (isDragging()) {
 			line.setLine(start, arg0.getPosition());
-			linePath.setPathTo(line);
+			linePath.reset();
+			linePath.append(line,false);
 		}
 	}
 
 	@Override
 	public void mouseReleased(PInputEvent arg0) {
 		PNode picked = arg0.getInputManager().getMouseOver().getPickedNode();
-		if (picked.getClientProperty(AgentLayer.AGENT_KEY) == null) {
+		if (picked.getClientProperties().getAttribute(AgentLayer.AGENT_KEY) == null) {
 			if (sourceDesc != null)
 				canvas.getLayer().removeChild(linePath);
 			return;
@@ -89,7 +91,7 @@ public class RelationshipAdder extends PDragSequenceEventHandler {
 		}
 		this.setIsDragging(false);
 		targetDesc = (AgentDescriptor) arg0.getInputManager().getMouseOver()
-				.getPickedNode().getClientProperty(AgentLayer.AGENT_KEY);
+				.getPickedNode().getClientProperties().getAttribute(AgentLayer.AGENT_KEY);
 
 	}
 
@@ -102,13 +104,14 @@ public class RelationshipAdder extends PDragSequenceEventHandler {
 			setIsDragging(false);
 			return;
 		}
-		sourceDesc = (AgentDescriptor) arg0.getPickedNode().getClientProperty(
+		sourceDesc = (AgentDescriptor) arg0.getPickedNode().getClientProperties().getAttribute(
 				AgentLayer.AGENT_KEY);
 		setIsDragging(true);
 		start = arg0.getPosition();
 
 		line.setLine(start, start);
-		linePath.setPathTo(line);
+		linePath.reset();
+		linePath.append(line, false);
 		canvas.getLayer().addChild(linePath);
 	}
 
