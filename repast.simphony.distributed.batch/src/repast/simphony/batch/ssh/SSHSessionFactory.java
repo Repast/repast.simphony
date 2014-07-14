@@ -67,6 +67,7 @@ public class SSHSessionFactory {
     else jsch.addIdentity(sshKeyDir + "/" + remote.getKeyFile());
     jsch.setKnownHosts(sshKeyDir + "/known_hosts");
     Session session = jsch.getSession(remote.getUser(), remote.getHost());
+    session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
     UserInfo uInfo = null;
     if (userInfo == null) uInfo = new ConsoleUserInfo();
     else uInfo = userInfo;
