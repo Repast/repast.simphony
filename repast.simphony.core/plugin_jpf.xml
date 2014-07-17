@@ -43,7 +43,7 @@
 		<library id="OpenForecast-0.4.0" path="./lib/OpenForecast-0.4.0.jar" type="code"/>
 		<library id="poi-3.9-20121203" path="./lib/poi-3.9-20121203.jar" type="code"/>
 		<library id="poi-ooxml-3.9-20121203" path="./lib/poi-ooxml-3.9-20121203.jar" type="code"/>
-		<library id="poi-ooxml-schemas-3.9-20121203" path="./lib/poi-ooxml-schemas-3.9-20121203.jar" type="code"/>
+		<library id="ooxml-schemas-1.1" path="./lib/ooxml-schemas-1.1.jar" type="code"/>
 		<library id="stax-api-1.0.1" path="./lib/stax-api-1.0.1.jar" type="code"/>
 		<library id="velocity-1.4" path="./lib/velocity-1.4.jar" type="code"/>
 		<library id="xmlbeans-2.3.0" path="./lib/xmlbeans-2.3.0.jar" type="code"/>

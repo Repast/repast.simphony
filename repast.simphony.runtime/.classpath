@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="testlib/junit-addons-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xmlpull-1.1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javassist-3.17.1-GA.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="testlib/jmock-cglib-1.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="testlib/junit-3.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="testlib/junit-addons-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saf.core.runtime.jar" sourcepath="/Users/nick/Documents/repos/simphony.app.framework/runtime/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf.jar" sourcepath="/Users/nick/jars/jpf-source/jpf/source"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf-boot.jar" sourcepath="/Users/nick/jars/jpf-source/jpf/source-boot"/>
