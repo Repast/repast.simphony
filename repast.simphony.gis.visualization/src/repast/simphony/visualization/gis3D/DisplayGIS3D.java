@@ -575,6 +575,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return this.worldWindow;
 	}
 
+	public LayerPanel getLayerPanel() {
+		return layerPanel;
+	}
 
 	@Override
 	public void deIconified() {
