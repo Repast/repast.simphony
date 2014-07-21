@@ -3,7 +3,11 @@
  */
 package repast.simphony.relogo.ide.handlers;
 
+import groovy.util.slurpersupport.GPathResult;
+
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -64,6 +68,7 @@ import org.stringtemplate.v4.STGroupFile;
 
 import repast.simphony.eclipse.util.DirectoryCleaner;
 import repast.simphony.relogo.builder.Activator;
+import repast.simphony.relogo.ide.handlers.ContextAndDisplayUtils.DefDisplayReturner;
 
 /**
  * @author Nick Collier
@@ -745,12 +750,14 @@ public class ReLogoBuilder extends IncrementalProjectBuilder {
 		private void checkContextAndDisplayFiles(IType type) {
 
 			try {
-				ContextAndDisplayUtilsGroovy.checkToModifyContextFile(project,
+				ContextAndDisplayUtils.checkToModifyContextFile(project,
 						type, monitor);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+
+		
 
 		private List<PatchTypeFieldNameFieldTypeInformation> getPatchFieldTypes(
 				IType type) throws JavaModelException {

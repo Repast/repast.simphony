@@ -23,6 +23,7 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.freezedry,
  saf.core.ui,
  repast.simphony.runtime,
- repast.simphony.dataLoader.ui
+ repast.simphony.dataLoader.ui,
+ org.junit;bundle-version="4.11.0"
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
