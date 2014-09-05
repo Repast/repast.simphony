@@ -53,36 +53,36 @@ public class LayerPanel extends JPanel
         westPanel.add(scrollPane);
         this.add(westPanel, BorderLayout.CENTER);
 
-        Timer statusTimer = new Timer(500, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                updateStatus();
-            }
-        });
-        statusTimer.start();
+//        Timer statusTimer = new Timer(500, new ActionListener()
+//        {
+//            public void actionPerformed(ActionEvent actionEvent)
+//            {
+//                updateStatus();
+//            }
+//        });
+//        statusTimer.start();
     }
 
     private Font defaultFont;
     private Font atMaxFont;
 
-    private void updateStatus()
-    {
-        for (Component layerItem : this.layersPanel.getComponents())
-        {
-            if (!(layerItem instanceof JCheckBox))
-                continue;
-
-            LayerAction action = (LayerAction) ((JCheckBox) layerItem).getAction();
-            if (!(action.layer.isMultiResolution()))
-                continue;
-
-            if ((action.layer).isAtMaxResolution())
-                layerItem.setFont(this.atMaxFont);
-            else
-                layerItem.setFont(this.defaultFont);
-        }
-    }
+//    private void updateStatus()
+//    {
+//        for (Component layerItem : this.layersPanel.getComponents())
+//        {
+//            if (!(layerItem instanceof JCheckBox))
+//                continue;
+//
+//            LayerAction action = (LayerAction) ((JCheckBox) layerItem).getAction();
+//            if (!(action.layer.isMultiResolution()))
+//                continue;
+//
+//            if ((action.layer).isAtMaxResolution())
+//                layerItem.setFont(this.atMaxFont);
+//            else
+//                layerItem.setFont(this.defaultFont);
+//        }
+//    }
 
     private void fill(WorldWindow wwd)
     {

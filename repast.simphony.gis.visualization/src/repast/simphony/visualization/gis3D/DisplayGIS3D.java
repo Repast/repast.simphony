@@ -9,8 +9,6 @@ import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.LatLon;
@@ -18,9 +16,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import java.awt.BorderLayout;
@@ -74,7 +70,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
-	private Runnable updater = new Runnable() {
+	protected Runnable updater = new Runnable() {
 		public void run() {
 			// Performance improvement. Null pick point skips the doPick() method on
 			// the RenderableLayer. Set pick point to null for our rendering
@@ -94,25 +90,28 @@ public class DisplayGIS3D extends AbstractDisplay {
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
 	private static final String WMS_ICON = "wms2.png";
 
-	private Lock updateLock = new ReentrantLock();
+	protected Lock updateLock = new ReentrantLock();
 	protected JPanel panel;
-	private Layout layout;
-	private LayoutUpdater layoutUpdater;
+	protected Layout layout;
+	protected LayoutUpdater layoutUpdater;
 	protected DisplayData<?> initData;
 
-	private Geography geog;
-	private Model model;
+	protected Geography geog;
+	protected Model model;
 
-	private Map<Class, AbstractRenderableLayer> classStyleMap;
+	protected Map<Class, AbstractRenderableLayer> classStyleMap;
 
-	private WorldWindow worldWindow;
-	private String displayMode = AVKey.STEREO_MODE_NONE;
-	private LayerPanel layerPanel;
+	protected WorldWindow worldWindow;
+	protected String displayMode = AVKey.STEREO_MODE_NONE;
+	protected LayerPanel layerPanel;
 
-	private boolean doRender = true;
-	private boolean iconified = false;
-	private JTabbedPane tabParent = null;
-	private Component tabChild = null;
+	protected boolean doRender = true;
+	protected boolean iconified = false;
+	protected JTabbedPane tabParent = null;
+	protected Component tabChild = null;
+	
+	protected RepastViewControlsSelectListener viewControlsSelectListener = null;
+	protected RepastStatusBar statusBar = null;
 
 	public DisplayGIS3D(DisplayData<?> data, Layout layout) {
 		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
@@ -130,14 +129,14 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// FlatOrbitView.class.getName());
 
 		model = new BasicModel();
-		// model.getLayers().add(new WorldBordersMetacartaLayer());
+
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on
 			// OSX with jogl 2.0 under Java7
 
-			worldWindow = new WorldWindowGLJPanel();
+			worldWindow = new RepastWorldWindowGLJPanel();
 		} else {
-			worldWindow = new WorldWindowGLCanvas();
+			worldWindow = new RepastWorldWindowGLCanvas();
 		}
 		worldWindow.setModel(model);
 
@@ -145,7 +144,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// it with the World Window.
 		ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
 		WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
-		worldWindow.addSelectListener(new ViewControlsSelectListener(worldWindow, viewControlsLayer));
+		viewControlsSelectListener = new RepastViewControlsSelectListener(worldWindow, viewControlsLayer);
+		worldWindow.addSelectListener(viewControlsSelectListener);
 
 		StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
 		asc.setStereoMode(this.displayMode);
@@ -181,8 +181,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public void probe(Renderable pickedShape) {
 		Object obj = findObjForItem(pickedShape);
 
-		List objList = new ArrayList() {
-		};
+		List objList = new ArrayList() {};
 		objList.add(obj);
 
 		if (obj != null)
@@ -224,7 +223,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		panel.add(wwPanel, BorderLayout.CENTER);
 
-		StatusBar statusBar = new StatusBar();
+		statusBar = new RepastStatusBar();
 		statusBar.setEventSource(worldWindow);
 		panel.add(statusBar, BorderLayout.PAGE_END);
 
@@ -329,6 +328,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		resetHomeView();
 	}
 
+	/**
+	 * !!! Destroy needs to properly dispose and shutdown of WorldWind objects 
+	 *     to prevent memory leaks !!!!
+	 */
 	public void destroy() {
 		super.destroy();
 		for (Projection proj : initData.getProjections()) {
@@ -338,6 +341,14 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		EditorFactory.getInstance().reset();
 
+		// The following lines call modified customized dispose() methods since 
+		//   the default WWJ classes don't dispose properly.
+		worldWindow.removeSelectListener(viewControlsSelectListener);
+		viewControlsSelectListener.dispose();
+		statusBar.setEventSource(null);
+		statusBar.dispose();
+		
+		worldWindow.shutdown();
 		WorldWind.shutDown();
 		worldWindow = null;
 	}
