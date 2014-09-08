@@ -345,9 +345,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		//   the default WWJ classes don't dispose properly.
 		worldWindow.removeSelectListener(viewControlsSelectListener);
 		viewControlsSelectListener.dispose();
-		statusBar.setEventSource(null);
 		statusBar.dispose();
-		
+		layerPanel.dispose();
 		worldWindow.shutdown();
 		WorldWind.shutDown();
 		worldWindow = null;
