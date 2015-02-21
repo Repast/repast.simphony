@@ -124,20 +124,13 @@ public class Updater {
       agentMap.put(obj, fa);
       
       Set<FeatureAgent> featureAgentsToAdd = featuresToAddMap.get(clazz);
-      Set<FeatureAgent> featureAgentsToRemove = featuresToAddMap.get(clazz);
       
       if (featureAgentsToAdd == null){
       	featureAgentsToAdd = new HashSet<FeatureAgent>();
       	featuresToAddMap.put(clazz, featureAgentsToAdd);
-      	
-      	// add an entry for the to-remove set since it will be needed later anyway.
-      	featureAgentsToRemove = new HashSet<FeatureAgent>();
-      	featuresToRemoveMap.put(clazz, featureAgentsToRemove);
       }
       
       featureAgentsToAdd.add(fa);
-//      if (fa.getDefaultGeometry() == null)
-//      origGeomMap.put(obj, fa.getDefaultGeometry());
     }
     agentsToAdd.clear();
   }
@@ -150,7 +143,6 @@ public class Updater {
         // FeatureCollection of FeatureAgents for this agent class
         DefaultFeatureCollection agentCollection = featureMap.get(clazz);
         Set<FeatureAgent> featureAgentsToAdd = featuresToAddMap.get(clazz);
-        Set<FeatureAgent> featureAgentsToRemove = featuresToRemoveMap.get(clazz);
         
         // If there is a new agent type, then create a new layer for the type
         if (agentCollection == null) {  
@@ -170,16 +162,29 @@ public class Updater {
         else { // otherwise just add the agents to the layer
         	updateLock.lock();
           agentCollection.addAll(featureAgentsToAdd);
-          agentCollection.removeAll(featureAgentsToRemove);
           updateLock.unlock();
         }  
        
-        featureAgentsToAdd.clear();
-        featureAgentsToRemove.clear();
+        if (featureAgentsToAdd != null)
+        	featureAgentsToAdd.clear();
       }
-
       renderMap.clear();
       addRender = false;
+    }
+    
+    // Remove FeatureAgents for agents that have been removed
+    for (Class clazz : featuresToRemoveMap.keySet()){
+    	Set<FeatureAgent> featureAgentsToRemove = featuresToRemoveMap.get(clazz);
+
+    	if (featureAgentsToRemove != null){
+    		DefaultFeatureCollection agentCollection = featureMap.get(clazz);
+
+    		updateLock.lock();
+    		agentCollection.removeAll(featureAgentsToRemove);
+    		updateLock.unlock();
+
+    		featureAgentsToRemove.clear();
+    	}
     }
 
     if (reorder)
@@ -227,9 +232,8 @@ public class Updater {
         
         if (featureAgentsToRemove == null){
         	featureAgentsToRemove = new HashSet<FeatureAgent>();
-        	featuresToAddMap.put(obj.getClass(), featureAgentsToRemove);
+        	featuresToRemoveMap.put(obj.getClass(), featureAgentsToRemove);
         }
-        
         featureAgentsToRemove.add(fa);
       }
       agentsToRemove.clear();
