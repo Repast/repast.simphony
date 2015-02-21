@@ -977,7 +977,7 @@ public abstract class AbstractTurtle implements Turtle {
 			NdPoint oldLocation = new NdPoint(getTurtleLocation().toDoubleArray(null));
 
 			getMyObserver().getSpace().moveTo(this, point);
-			this.loc = new NdPoint(point);
+			this.loc = getMyObserver().getSpace().getLocation(this);
 			getMyObserver().getGrid().moveTo(this, Utility.ndPointToIntArray(getTurtleLocation()));
 
 			if (!fixedLeaves.isEmpty() || !freeLeaves.isEmpty()) {
