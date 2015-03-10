@@ -21,13 +21,14 @@ if [ "$begin" -le "$totr" ]
         end=$totr
     fi
     echo "Running lines $begin to $end"
-    inputArg=`sed -n "$begin","$end"p "$param_file"`
+    sed -n "$begin","$end"p "$paramFile" > localParamFile.txt
     mkdir $instanceDir
     cd $instanceDir
+    ln -s "../data" data
     # echo $inputArg
     java -Xmx512m -cp "../lib/*" repast.simphony.batch.InstanceRunner \
         -pxml ../scenario.rs/batch_params.xml \
         -scenario ../scenario.rs \
         -id $instance \
-        "$inputArg"
+        -pinput localParamFile.txt
 fi

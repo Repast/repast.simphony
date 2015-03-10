@@ -9,18 +9,20 @@ import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.EarthFlat;
+import gov.nasa.worldwind.globes.FlatGlobe;
+import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
+import gov.nasa.worldwind.view.orbit.FlatOrbitView;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import java.awt.BorderLayout;
@@ -38,11 +40,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import repast.simphony.space.gis.Geography;
@@ -74,7 +78,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
-	private Runnable updater = new Runnable() {
+	protected Runnable updater = new Runnable() {
 		public void run() {
 			// Performance improvement. Null pick point skips the doPick() method on
 			// the RenderableLayer. Set pick point to null for our rendering
@@ -92,27 +96,35 @@ public class DisplayGIS3D extends AbstractDisplay {
 	};
 
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
+	private static final String GLOBE_ICON = "browser.png";
 	private static final String WMS_ICON = "wms2.png";
 
-	private Lock updateLock = new ReentrantLock();
+	protected Lock updateLock = new ReentrantLock();
 	protected JPanel panel;
-	private Layout layout;
-	private LayoutUpdater layoutUpdater;
+	protected Layout layout;
+	protected LayoutUpdater layoutUpdater;
 	protected DisplayData<?> initData;
 
-	private Geography geog;
-	private Model model;
+	protected Geography geog;
+	protected Model model;
 
-	private Map<Class, AbstractRenderableLayer> classStyleMap;
+	protected Map<Class, AbstractRenderableLayer> classStyleMap;
 
-	private WorldWindow worldWindow;
-	private String displayMode = AVKey.STEREO_MODE_NONE;
-	private LayerPanel layerPanel;
+	protected WorldWindow worldWindow;
+	protected String displayMode = AVKey.STEREO_MODE_NONE;
+	protected LayerPanel layerPanel;
 
-	private boolean doRender = true;
-	private boolean iconified = false;
-	private JTabbedPane tabParent = null;
-	private Component tabChild = null;
+	protected boolean doRender = true;
+	protected boolean iconified = false;
+	protected JTabbedPane tabParent = null;
+	protected Component tabChild = null;
+	
+	protected RepastViewControlsSelectListener viewControlsSelectListener = null;
+	protected RepastStatusBar statusBar = null;
+	
+	protected Globe roundGlobe;
+	protected FlatGlobe flatGlobe;
+
 
 	public DisplayGIS3D(DisplayData<?> data, Layout layout) {
 		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
@@ -123,21 +135,20 @@ public class DisplayGIS3D extends AbstractDisplay {
 		Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
 				StereoOptionSceneController.class.getName());
 
-		// TODO explore "flat world"
-		// Configuration.setValue(AVKey.GLOBE_CLASS_NAME,
-		// EarthFlat.class.getName());
-		// Configuration.setValue(AVKey.VIEW_CLASS_NAME,
-		// FlatOrbitView.class.getName());
-
+		// TODO GIS set based on DisplayDescriptor property
+	  // Set the Flat view by default
+		Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
+		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
+		
 		model = new BasicModel();
-		// model.getLayers().add(new WorldBordersMetacartaLayer());
+
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on
 			// OSX with jogl 2.0 under Java7
 
-			worldWindow = new WorldWindowGLJPanel();
+			worldWindow = new RepastWorldWindowGLJPanel();
 		} else {
-			worldWindow = new WorldWindowGLCanvas();
+			worldWindow = new RepastWorldWindowGLCanvas();
 		}
 		worldWindow.setModel(model);
 
@@ -145,11 +156,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// it with the World Window.
 		ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
 		WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
-		worldWindow.addSelectListener(new ViewControlsSelectListener(worldWindow, viewControlsLayer));
+		viewControlsSelectListener = new RepastViewControlsSelectListener(worldWindow, viewControlsLayer);
+		worldWindow.addSelectListener(viewControlsSelectListener);
 
 		StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
 		asc.setStereoMode(this.displayMode);
 
+		initGlobes();
 		initListener();
 	}
 
@@ -181,8 +194,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public void probe(Renderable pickedShape) {
 		Object obj = findObjForItem(pickedShape);
 
-		List objList = new ArrayList() {
-		};
+		List objList = new ArrayList() {};
 		objList.add(obj);
 
 		if (obj != null)
@@ -224,7 +236,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		panel.add(wwPanel, BorderLayout.CENTER);
 
-		StatusBar statusBar = new StatusBar();
+		statusBar = new RepastStatusBar();
 		statusBar.setEventSource(worldWindow);
 		panel.add(statusBar, BorderLayout.PAGE_END);
 
@@ -329,6 +341,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		resetHomeView();
 	}
 
+	/**
+	 * !!! Destroy needs to properly dispose and shutdown of WorldWind objects 
+	 *     to prevent memory leaks !!!!
+	 */
 	public void destroy() {
 		super.destroy();
 		for (Projection proj : initData.getProjections()) {
@@ -338,6 +354,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		EditorFactory.getInstance().reset();
 
+		// The following lines call modified customized dispose() methods since 
+		//   the default WWJ classes don't dispose properly.
+		worldWindow.removeSelectListener(viewControlsSelectListener);
+		viewControlsSelectListener.dispose();
+		statusBar.dispose();
+		layerPanel.dispose();
+		worldWindow.shutdown();
 		WorldWind.shutDown();
 		worldWindow = null;
 	}
@@ -528,8 +551,20 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		bar.addSeparator();
 
+		// Add the glob/flat toggle button
+		JToggleButton projectionButton = new JToggleButton(new AbstractAction(){
+			public void actionPerformed(ActionEvent event){
+				AbstractButton abstractButton = (AbstractButton) event.getSource();
+				boolean selected = abstractButton.getModel().isSelected();
+				enableRoundGlobe(selected);
+			}
+		});
+		projectionButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(GLOBE_ICON)));
+		projectionButton.setToolTipText("Toggle Globe / Flat Earth");
+    bar.add(projectionButton);
+		
 		// Add the Anaglyph stereo button
-		JButton anaglyphButton = new JButton(new AbstractAction() {
+    JToggleButton anaglyphButton = new JToggleButton(new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				toggleAnaglyphStereo();
 			}
@@ -551,7 +586,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		wmsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(WMS_ICON)));
 		wmsButton.setToolTipText("WMS");
 		bar.add(wmsButton);
-
+		
 		// Add a Gazetter
 		try {
 			bar.add(new GazetteerPanel(worldWindow, null));
@@ -564,6 +599,68 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 	}
 
+	public void initGlobes(){
+
+		if (isFlatGlobe()){
+			flatGlobe = (FlatGlobe)model.getGlobe();
+			roundGlobe = new Earth();
+			setFlatGlobeViewControls();
+		}
+		else{
+			flatGlobe = new EarthFlat();
+			roundGlobe = model.getGlobe();
+		}
+	}
+
+	public boolean isFlatGlobe(){
+		return model.getGlobe() instanceof FlatGlobe;
+	}
+
+	/**
+	 * Set View controls for flat world
+	 */
+	private void setFlatGlobeViewControls(){
+		BasicOrbitView orbitView = (BasicOrbitView)worldWindow.getView();
+		FlatOrbitView flatOrbitView = new FlatOrbitView();
+		flatOrbitView.setCenterPosition(orbitView.getCenterPosition());
+		flatOrbitView.setZoom(orbitView.getZoom( ));
+
+		// lock the pitch and heading controls (allows zoom only)
+		flatOrbitView.setHeading(Angle.ZERO);
+		flatOrbitView.setPitch(Angle.ZERO);
+	
+		flatOrbitView.getViewPropertyLimits().setPitchLimits(Angle.ZERO, Angle.ZERO);
+		flatOrbitView.getViewPropertyLimits().setHeadingLimits(Angle.ZERO, Angle.ZERO);
+		worldWindow.setView(flatOrbitView);
+	}
+	
+	public void enableRoundGlobe(boolean round){
+
+		if(isFlatGlobe() != round)
+			return;
+
+		if(round){
+			// Switch to round globe
+			model.setGlobe(roundGlobe) ;
+			// Switch to orbit view and update with current position
+			FlatOrbitView flatOrbitView = (FlatOrbitView)worldWindow.getView();
+			BasicOrbitView orbitView = new BasicOrbitView();
+			orbitView.setCenterPosition(flatOrbitView.getCenterPosition());
+			orbitView.setZoom(flatOrbitView.getZoom( ));
+			orbitView.setHeading(flatOrbitView.getHeading());
+			orbitView.setPitch(flatOrbitView.getPitch());
+			worldWindow.setView(orbitView);
+		}
+		else{
+			// Switch to flat globe
+			model.setGlobe(flatGlobe);
+			flatGlobe.setProjection(FlatGlobe.PROJECTION_MERCATOR);
+			// Switch to flat view and update with current position
+			setFlatGlobeViewControls();
+		}
+		render();
+	}
+	
 	public void toggleInfoProbe() {
 	}
 
@@ -575,6 +672,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return this.worldWindow;
 	}
 
+	public LayerPanel getLayerPanel() {
+		return layerPanel;
+	}
 
 	@Override
 	public void deIconified() {
