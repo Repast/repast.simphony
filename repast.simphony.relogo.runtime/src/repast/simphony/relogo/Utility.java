@@ -2262,8 +2262,8 @@ public class Utility {
 	 * @return largest number in collection
 	 */
 	public static Number max(Collection c) {
-		return Collections.max(c, new Comparator() {
-			public int compare(Object o1, Object o2) {
+		return Collections.max(c, new Comparator<Number>() {
+			public int compare(Number o1, Number o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {
 					return 0;
 				}
@@ -2290,8 +2290,8 @@ public class Utility {
 	 * @return smallest number in collection
 	 */
 	public static Number min(Collection c) {
-		return Collections.min(c, new Comparator() {
-			public int compare(Object o1, Object o2) {
+		return  Collections.min(c, new Comparator<Number>() {
+			public int compare(Number o1, Number o2) {
 				if (!(o1 instanceof Number && o2 instanceof Number)) {
 					return 0;
 				}
