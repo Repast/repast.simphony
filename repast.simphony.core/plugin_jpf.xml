@@ -34,7 +34,7 @@
 		<library id="jgap" path="./lib/jgap.jar" type="code"/>
 		<library id="joone-editor" path="./lib/joone-editor.jar" type="code"/>
 		<library id="joone-engine" path="./lib/joone-engine.jar" type="code"/>
-		<library id="jscience" path="./lib/jscience.jar" type="code"/>
+		<library id="jscience" path="./lib/jscience-4.3.1.jar" type="code"/>
 		<library id="jung-algorithms-2.0.1" path="./lib/jung-algorithms-2.0.1.jar" type="code"/>
 		<library id="jung-api-2.0.1" path="./lib/jung-api-2.0.1.jar" type="code"/>
 		<library id="jung-graph-impl-2.0.1" path="./lib/jung-graph-impl-2.0.1.jar" type="code"/>
