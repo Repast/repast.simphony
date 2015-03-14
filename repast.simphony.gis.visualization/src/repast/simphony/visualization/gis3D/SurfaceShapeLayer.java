@@ -11,6 +11,8 @@ import gov.nasa.worldwind.render.SurfaceShape;
 
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
 
@@ -27,6 +29,9 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
   }
 
   protected void applyUpdatesToShape(Object obj) {
+  	Geometry geom = geography.getGeometry(obj);
+  	if (geom == null) return;
+  	
   	SurfaceShape shape = getVisualItem(obj);
 
     // TODO WWJ Test for code hot spots here
@@ -38,7 +43,7 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
     // TODO WWJ [blocker] do a check on points and only update when new
     if (shape instanceof SurfacePolygon){
     	SurfacePolygon polygon = (SurfacePolygon)shape;
-    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
     	
     	if (!polygon.getLocations().equals(pts)){
     	  polygon.setLocations(pts);
@@ -47,7 +52,7 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
     }
     else if (shape instanceof SurfacePolyline){
     	SurfacePolyline line = (SurfacePolyline)shape;
-    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinates());
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
     	
     	if (!line.getLocations().equals(pts)){
     	  line.setLocations(pts);
@@ -75,17 +80,20 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
   }
 
   protected SurfaceShape createVisualItem(Object o) {
+  	Geometry geom = geography.getGeometry(o);
+  	if (geom == null) return null;
+  	
   	SurfaceShape shape = style.getSurfaceShape(o,null);
   	 
   	// TODO WWJ - any need to refactor this further to separate polygon and line layers?
     if (shape instanceof SurfacePolyline) {
     	SurfacePolyline line = (SurfacePolyline)shape;
-    	List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
+    	List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
       line.setLocations(pts);
     } 
     else if (shape instanceof SurfacePolygon){
     	SurfacePolygon polygon = (SurfacePolygon)shape;
-      List<LatLon> pts = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinates());
+      List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
     	polygon.setLocations(pts);
     } else {
       // TODO WWJ - Do we need a special NULL object for this case?
@@ -119,6 +127,9 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
   protected void processAddedObjects() {
     for (Object o : addedObjects) {
     	SurfaceShape shape = createVisualItem(o);
+    	
+    	if (shape == null) return;
+    	
     	renderableToObjectMap.put(shape, o);
     	addRenderable(shape);
     }

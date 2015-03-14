@@ -382,6 +382,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	protected void moveObject(Object o) {
+		
+		// TODO GIS - Move object in GIS3D.  It would be useful to call a 
+		//      layer.moveObject(...) in cases where the geometry is null and set 
+		//      later.
+		
 		layoutUpdater.addTriggerCondition(LayoutUpdater.Condition.MOVED);
 	}
 

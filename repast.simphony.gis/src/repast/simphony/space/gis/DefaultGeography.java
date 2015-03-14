@@ -173,7 +173,10 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
     if (geom == null) {
       layer.getAgentSet().remove(object);
       GeomData data = geomMap.remove(object);
-      index.remove(data.envelope, object);
+      
+      if (data != null){
+        index.remove(data.envelope, object);
+      }
       return;
     }
 
@@ -388,12 +391,16 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    * @return the geometric location the object was moved to
    */
   public Geometry moveByVector(T object, double distance, double angleInRadians) {
-    GeomData gd = geomMap.get(object);
-    if (gd == null) {
-      throw new IllegalArgumentException("Object to move does not exist in this projection");
+  	Geometry geom = getGeometry(object);
+    if (geom == null) {
+    	 msg.error("Error moving object by vector", 
+    			 new IllegalArgumentException(object.toString() 
+    					 + " does not have an assigned geometry.  Initialize the geometry "
+    					 + "using Geography.move(object, geom)"));
+    	 
+    	 return null;
     }
 
-    Geometry geom = gd.geom;
     if (angleInRadians > 2 * Math.PI || angleInRadians < 0) {
       throw new IllegalArgumentException("Direction cannot be > PI (360) or less than 0");
     }
@@ -470,7 +477,17 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    * @return the new geometry of the object
    */
   public Geometry moveByDisplacement(T object, double lonShift, double latShift) {
-    Geometry geom = geomMap.get(object).geom;
+    Geometry geom = getGeometry(object);
+    
+    if (geom == null) {
+    	msg.error("Error moving object by displacement", 
+   			 new IllegalArgumentException(object.toString() 
+  					 + " does not have an assigned geometry.  Initialize the geometry "
+  					 + "using Geography.move(object, geom)"));
+   	 
+   	 return null;
+    }
+    
     AffineTransform transform = AffineTransform.getTranslateInstance(lonShift, latShift);
     try {
       MathTransform mt = mtFactory.createAffineTransform(new GeneralMatrix(transform));

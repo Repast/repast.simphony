@@ -1,12 +1,15 @@
 package repast.simphony.query.space.gis;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import org.apache.commons.collections15.Predicate;
+
 import repast.simphony.query.Query;
 import repast.simphony.query.QueryUtils;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.util.collections.FilteredIterator;
+import simphony.util.messages.MessageCenter;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract implementation of geometry based queries. This can be used
@@ -19,6 +22,8 @@ public abstract class AbstractGeometryQuery<T> implements Query<T> {
   protected Geometry geom;
   protected Predicate<T> predicate;
   protected T sourceObject;
+  
+  private static final MessageCenter msg = MessageCenter.getMessageCenter(AbstractGeometryQuery.class);
 	
   public AbstractGeometryQuery(Geography<T> geography, T sourceObject) {
     this(geography, geography.getGeometry(sourceObject));
@@ -27,7 +32,13 @@ public abstract class AbstractGeometryQuery<T> implements Query<T> {
   }
 
   public AbstractGeometryQuery(Geography<T> geography, Geometry geom) {
-		this.geography = geography;
+		
+  	if (geom == null) {
+  		msg.error("Error creating geography query", 
+  				new IllegalArgumentException("Null geometry argument."));
+		}
+  	
+  	this.geography = geography;
 		this.geom = geom;
     this.predicate = createPredicate();
   }
@@ -63,6 +74,8 @@ public abstract class AbstractGeometryQuery<T> implements Query<T> {
 	 * @return an iterable over the objects that are the result of the query.
 	 */
   public Iterable<T> query() {
+  	if (geom == null) return null;
+  	
 		Envelope envelope = geom.getEnvelopeInternal();
 		Iterable<T> potential = geography.queryInexact(envelope);
     return new FilteredIterator<T>(potential.iterator(), predicate);

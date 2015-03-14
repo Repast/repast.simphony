@@ -11,6 +11,8 @@ import java.awt.Color;
 import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 /**
  * Styled display layer for WorldWind display layers.
  * 
@@ -24,7 +26,10 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
   }
 
   protected void applyUpdatesToShape(Object obj) {
-  	LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(obj).getCoordinate());
+  	Geometry geom = geography.getGeometry(obj);
+  	if (geom == null) return;
+  	
+  	LatLon pt = WWUtils.CoordToLatLon(geom.getCoordinate());
   	
   	PlaceMark mark = getVisualItem(obj);
   	
@@ -75,7 +80,10 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
   }
   
   protected PlaceMark createVisualItem(Object o) {
-  	LatLon pt = WWUtils.CoordToLatLon(geography.getGeometry(o).getCoordinate());
+  	Geometry geom = geography.getGeometry(o);
+  	if (geom == null) return null;
+  	
+  	LatLon pt = WWUtils.CoordToLatLon(geom.getCoordinate());
   	PlaceMark mark = style.getPlaceMark(o, null);  	 
   	
   	visualItemMap.put(o, mark);
@@ -92,8 +100,11 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
   protected void processAddedObjects() {
     for (Object o : addedObjects) {
     	PlaceMark mark  = createVisualItem(o);
-    	renderableToObjectMap.put(mark, o);
-    	addRenderable(mark);
+    	
+    	if (mark != null){
+    		renderableToObjectMap.put(mark, o);
+    		addRenderable(mark);
+    	}
     }
     addedObjects.clear();
   }
