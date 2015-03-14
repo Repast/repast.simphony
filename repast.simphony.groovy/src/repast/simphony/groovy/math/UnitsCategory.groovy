@@ -313,7 +313,7 @@ class UnitsCategory {
 	
 	// Define the cubic meters creator.
 	static Amount getCubic_meters(java.math.BigDecimal amount) {
-		Amount x = Amount.valueOf(amount, SI.CUBIC_METER)
+		Amount x = Amount.valueOf(amount, SI.CUBIC_METRE)
         return x
     }
 	
@@ -433,13 +433,13 @@ class UnitsCategory {
 	
 	// Define the meter per second creator.
 	static Amount getMeter_per_second(java.math.BigDecimal amount) {
-		Amount x = Amount.valueOf(amount, SI.METER_PER_SECOND)
+		Amount x = Amount.valueOf(amount, SI.METERS_PER_SECOND)
         return x
     }
 	
 	//	 Define the meter per square second creator.
 	static Amount getMeter_per_square_second(java.math.BigDecimal amount) {
-		Amount x = Amount.valueOf(amount, SI.METER_PER_SQUARE_SECOND)
+		Amount x = Amount.valueOf(amount, SI.METERS_PER_SQUARE_SECOND)
         return x
     }
 	
@@ -529,7 +529,7 @@ class UnitsCategory {
 	
 	// Define the square meters creator.
 	static Amount getSquare_meters(java.math.BigDecimal amount) {
-		Amount x = Amount.valueOf(amount, SI.MICRO(SI.SQUARE_METER))
+		Amount x = Amount.valueOf(amount, SI.MICRO(SI.SQUARE_METRE))
 		return x
 	}
 	
@@ -1207,7 +1207,7 @@ class UnitsCategory {
 	
 	// Define the cubic meters creator.
 	static Amount getCubic_meters(Integer amount) {
-		Amount x = Amount.valueOf(amount, SI.CUBIC_METER)
+		Amount x = Amount.valueOf(amount, SI.CUBIC_METRE)
         return x
     }
 	
@@ -1423,7 +1423,7 @@ class UnitsCategory {
 	
 	// Define the square meters creator.
 	static Amount getSquare_meters(Integer amount) {
-		Amount x = Amount.valueOf(amount, SI.MICRO(SI.SQUARE_METER))
+		Amount x = Amount.valueOf(amount, SI.MICRO(SI.SQUARE_METRE))
 		return x
 	}
 	

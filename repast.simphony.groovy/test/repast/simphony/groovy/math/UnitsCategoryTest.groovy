@@ -11,6 +11,10 @@ import org.jscience.mathematics.number.*
 
 class UnitsCategoryTest extends GroovyTestCase {
 
+	public UnitsCategoryTest(){
+		RepastMathEMC.initAll();
+	}
+	
 	void testCreation() {
 
 		use(UnitsCategory) {

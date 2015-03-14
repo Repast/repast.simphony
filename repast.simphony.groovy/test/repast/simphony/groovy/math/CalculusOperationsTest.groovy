@@ -14,6 +14,10 @@ import junit.framework.TestCase
 
 class CalculusOperationsTest extends TestCase {
 
+	public CalculusOperationsTest(){
+		RepastMathEMC.initAll();
+	}
+	
 	void testDerivatives() {
 		
     use (MathOperations.mathCategories()) {
@@ -26,13 +30,13 @@ class CalculusOperationsTest extends TestCase {
 
 			
 			result = derivative({ 2.meters / 1.0.seconds * it - 3.meters }, 4.1.seconds,  0.0001.seconds)
-			assertEquals(SI.METER_PER_SECOND, result.getUnit())
-			assertEquals((2.0.meters / 1.0.seconds).doubleValue(SI.METER_PER_SECOND), result.doubleValue(SI.METER_PER_SECOND), 0.0000001)
+			assertEquals(SI.METERS_PER_SECOND, result.getUnit())
+			assertEquals((2.0.meters / 1.0.seconds).doubleValue(SI.METERS_PER_SECOND), result.doubleValue(SI.METERS_PER_SECOND), 0.0000001)
 
-			assertEquals(SI.METER_PER_SECOND, result.getUnit())
+			assertEquals(SI.METERS_PER_SECOND, result.getUnit())
 			result = derivative({ 2.meters / 1.0.seconds * it - 3.meters }, 4.1.seconds)
-			assertEquals(SI.METER_PER_SECOND, result.getUnit())
-			assertEquals((2.0.meters / 1.0.seconds).doubleValue(SI.METER_PER_SECOND), result.doubleValue(SI.METER_PER_SECOND), 0.0000001)
+			assertEquals(SI.METERS_PER_SECOND, result.getUnit())
+			assertEquals((2.0.meters / 1.0.seconds).doubleValue(SI.METERS_PER_SECOND), result.doubleValue(SI.METERS_PER_SECOND), 0.0000001)
 		}
 
 	}

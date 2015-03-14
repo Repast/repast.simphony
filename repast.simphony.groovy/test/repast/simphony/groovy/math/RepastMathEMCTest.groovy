@@ -7,44 +7,49 @@ import org.jscience.mathematics.vector.*
 
 class RepastMathEMCTest extends GroovyTestCase {
 	
+	public RepastMathEMCTest(){
+		RepastMathEMC.initAll()
+	}
+	
 	void testSimple() {
-		
-		RepastMathEMC.initUnits()
-		def x = 2.3.meters + 1.2.kilometers
-		println x
-		assertEquals (x, 1202.3.meters)
-		
+		use (MathOperations.mathCategories()) {
+			def x = 2.3.meters + 1.2.kilometers
+			println x
+			assertEquals (x, 1202.3.meters)
+
+			def y = 2.5.kilograms
+		}
 	}
 	
 	void testMatrix(){
-		
-		RepastMathEMC.initMatrix()
-		def c = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].denseMatrix
-		println("Creation Dense Matrix of Kilograms: " + c + " " + c.getClass())
+		use (MathOperations.mathCategories()) {
+			def c = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].denseMatrix
+			println("Creation Dense Matrix of Kilograms: " + c + " " + c.getClass())
 
-		def d = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].sparseMatrix(0.0.kilograms)
-		println("Creation Sprase Matrix of Kilograms: " + d + " " + d.getClass())
+			def d = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].sparseMatrix(0.0.kilograms)
+			println("Creation Sprase Matrix of Kilograms: " + d + " " + d.getClass())
 
-		def e = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].matrix
-		println("Creation Default (Dense) Matrix of Kilograms: " + e + " " + e.getClass())
-		
-		println( c.pow(3) )
-		
-		println( c + e )
+			def e = [ [ 2.5.kilograms, 4.3.kilograms], [ 9.6.kilograms, 5.7.kilograms] ].matrix
+			println("Creation Default (Dense) Matrix of Kilograms: " + e + " " + e.getClass())
 
-		println( c - e )
+			println( c.pow(3) )
 
-		println( c * e )
-		
-		println( 0.5.kilograms * e )
+			println( c + e )
 
-		println( e * 0.5.kilograms )
+			println( c - e )
 
-		println( e * 0.5 )
-		
-		println( 0.5 * e )
+			println( c * e )
 
-		println( e ** 2 )
+			println( 0.5.kilograms * e )
+
+			println( e * 0.5.kilograms )
+
+			println( e * 0.5 )
+
+			println( 0.5 * e )
+
+			println( e ** 2 )
+		}
 	}
 	
 	
