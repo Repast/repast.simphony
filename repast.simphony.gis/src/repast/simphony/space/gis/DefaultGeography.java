@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +15,6 @@ import java.util.Set;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
-import javolution.util.FastMap;
-import javolution.util.FastSet;
 
 import org.apache.commons.collections15.Predicate;
 import org.geotools.geometry.jts.JTS;
@@ -67,17 +66,17 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
 
   }
 
-  private Map<T, GeomData> geomMap = new FastMap<T, GeomData>();
+  private Map<T, GeomData> geomMap = new HashMap<T, GeomData>();
 
   private SpatialIndex index = new Quadtree();
 
   private CoordinateReferenceSystem crs;
 
-  private Map<String, Layer<T>> layerMap = new FastMap<String, Layer<T>>();
+  private Map<String, Layer<T>> layerMap = new HashMap<String, Layer<T>>();
 
   protected GISAdder<T> adder;
 
-  private Set<T> addedObjects = new FastSet<T>();
+  private Set<T> addedObjects = new HashSet<T>();
 
   private GeodeticCalculator calc;
 

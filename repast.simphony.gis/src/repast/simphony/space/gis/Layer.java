@@ -1,9 +1,9 @@
 package repast.simphony.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
-import javolution.util.FastSet;
-
+import java.util.HashSet;
 import java.util.Set;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 
 /**
@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class Layer<T> {
 
-	private Set<T> agentSet = new FastSet<T>();
+	private Set<T> agentSet = new HashSet<T>();
 	private Class<? extends T> agentType;
 	private Class<? extends Geometry> geomType;
   private String name;

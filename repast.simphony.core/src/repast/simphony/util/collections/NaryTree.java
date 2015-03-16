@@ -1,8 +1,13 @@
 package repast.simphony.util.collections;
 
-import javolution.util.FastMap;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A rooted tree where each node can have n number of children.
@@ -118,7 +123,7 @@ public class NaryTree<T> implements Tree<T> {
 	}
 
 	private Node<T> root;
-	private FastMap<T, Node<T>> objNodeMap = new FastMap<T, Node<T>>();
+	private Map<T, Node<T>> objNodeMap = new HashMap<T, Node<T>>();
 
 	/**
 	 * Creates a NaryTree with the specified object as the root

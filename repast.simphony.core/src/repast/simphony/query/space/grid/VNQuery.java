@@ -1,14 +1,14 @@
 package repast.simphony.query.space.grid;
 
-import javolution.util.FastSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.util.collections.Contains;
 import repast.simphony.util.collections.FilteredIterator;
 import repast.simphony.util.collections.IterableAdaptor;
 import repast.simphony.util.collections.IteratorOverIterables;
-
-import java.util.Set;
 
 
 /**
@@ -138,7 +138,7 @@ public class VNQuery<T> extends AbstractGridQuery<T> {
 	 */
 	public Iterable<T> query(Iterable<T> iter) {
 		if (point == null) return emptyList;
-		Set<T> set = new FastSet<T>();
+		Set<T> set = new HashSet<T>();
 		for (T item : iter) {
 			set.add(item);
 		}

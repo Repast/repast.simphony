@@ -1,7 +1,6 @@
 package repast.simphony.space.grid;
 
-import javolution.util.FastMap;
-
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -85,6 +84,6 @@ public class DefaultGrid<T> extends AbstractGrid<T, Map<GridPoint, Object>> {
 
 	@Override
 	protected Map<GridPoint, Object> createLocationStorage() {
-		return new FastMap<GridPoint, Object>();
+		return new HashMap<GridPoint, Object>();
 	}
 }

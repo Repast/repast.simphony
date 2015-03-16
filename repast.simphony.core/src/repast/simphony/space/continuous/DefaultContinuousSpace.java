@@ -1,8 +1,7 @@
 /*CopyrightHere*/
 package repast.simphony.space.continuous;
 
-import javolution.util.FastMap;
-
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -80,6 +79,6 @@ public class DefaultContinuousSpace<T> extends AbstractContinuousSpace<T, Map<Nd
 
 	@Override
 	protected Map<NdPoint, Object> createLocationStorage() {
-		return new FastMap<NdPoint, Object>();
+		return new HashMap<NdPoint, Object>();
 	}
 }

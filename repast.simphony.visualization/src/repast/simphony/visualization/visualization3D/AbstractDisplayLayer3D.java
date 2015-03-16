@@ -1,17 +1,18 @@
 package repast.simphony.visualization.visualization3D;
 
-import javolution.util.FastSet;
-import repast.simphony.visualization.Layout;
-import repast.simphony.visualization.LayoutUpdater;
-import repast.simphony.visualization.visualization3D.style.Style3D;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 import javax.media.j3d.Shape3D;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+
+import repast.simphony.visualization.Layout;
+import repast.simphony.visualization.LayoutUpdater;
+import repast.simphony.visualization.visualization3D.style.Style3D;
 
 /**
  * @author Nick Collier
@@ -22,9 +23,9 @@ public abstract class AbstractDisplayLayer3D implements IDisplayLayer3D {
 
   protected BranchGroup parentGroup;
 
-  protected Set<Object> objsToAdd = new FastSet<Object>();
+  protected Set<Object> objsToAdd = new HashSet<Object>();
 
-  protected Set<Object> objsToRemove = new FastSet<Object>();
+  protected Set<Object> objsToRemove = new HashSet<Object>();
 
   protected VisualItem3DAdderRemover adder = new VisualItem3DAdderRemover();
 

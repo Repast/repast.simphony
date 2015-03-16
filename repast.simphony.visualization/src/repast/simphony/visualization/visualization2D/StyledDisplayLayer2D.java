@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javolution.util.FastSet;
-
 import org.piccolo2d.PNode;
 import org.piccolo2d.nodes.PPath;
 import org.piccolo2d.nodes.PText;
@@ -58,8 +56,8 @@ public class StyledDisplayLayer2D extends DisplayLayer2D<Object, PNode> {
     this.style = s;
     this.canvas = canvas;
     canvas.addLayer(this);
-    addedObjects = new FastSet<Object>();
-    removedObjects = new FastSet<Object>();
+    addedObjects = new HashSet<Object>();
+    removedObjects = new HashSet<Object>();
     addedNodes = new ArrayList<PNode>();
     removedNodes = new ArrayList<PNode>();
   }

@@ -1,9 +1,9 @@
 package repast.simphony.query;
 
-import javolution.util.FastSet;
-import repast.simphony.util.collections.Contains;
-
+import java.util.HashSet;
 import java.util.Set;
+
+import repast.simphony.util.collections.Contains;
 
 /**
  * Utility functions for working with queries.
@@ -25,7 +25,7 @@ public class QueryUtils {
 		if (iterable instanceof Set) {
 			set = (Set<T>) iterable;
 		} else {
-			set = new FastSet<T>();
+			set = new HashSet<T>();
 			for (T item : iterable) {
 				set.add(item);
 			}

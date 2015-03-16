@@ -3,6 +3,7 @@ package repast.simphony.context;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -11,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javolution.util.FastMap;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.PredicateUtils;
@@ -50,8 +49,8 @@ public abstract class AbstractContext<T> extends AbstractCollection<T> implement
   public AbstractContext() {
     this.listeners = new CopyOnWriteArrayList<ContextListener<T>>();
     this.subContexts = new LinkedHashMap<Object, Context<? extends T>>();
-    this.projectionMap = new FastMap<String, Projection<?>>();
-    this.valueLayerMap = new FastMap<String, ValueLayer>();
+    this.projectionMap = new HashMap<String, Projection<?>>();
+    this.valueLayerMap = new HashMap<String, ValueLayer>();
     this.agentClasses = new LinkedHashSet<Class>();
 
     this.id = SYN_CONTEXT_PREFIX + idNo;

@@ -1,9 +1,9 @@
 /*CopyrightHere*/
 package repast.simphony.space.continuous;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import javolution.util.FastMap;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.SpatialMath;
@@ -70,7 +70,7 @@ public abstract class AbstractContinuousSpace<T, U> extends DefaultProjection<T>
 		}
 		this.dimensions = new Dimensions(aSize);
 
-		this.agentLocationMap = new FastMap<T, PointHolder>();
+		this.agentLocationMap = new HashMap<T, PointHolder>();
 		this.locationStorage = createLocationStorage();
 		this.translator.init(dimensions);
 	}
@@ -96,7 +96,7 @@ public abstract class AbstractContinuousSpace<T, U> extends DefaultProjection<T>
 
 		this.dimensions = new Dimensions(size, origin);
 
-		this.agentLocationMap = new FastMap<T, PointHolder>();
+		this.agentLocationMap = new HashMap<T, PointHolder>();
 		this.locationStorage = createLocationStorage();
 		this.translator.init(dimensions);
 	}

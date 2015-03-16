@@ -1,14 +1,26 @@
 package repast.simphony.freezedry;
 
-import javolution.util.FastComparator;
-import javolution.util.FastMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.ProjectionRegistry;
 import repast.simphony.engine.environment.ProjectionRegistryData;
-import repast.simphony.freezedry.freezedryers.*;
+import repast.simphony.freezedry.freezedryers.AmountFreezeDryer;
+import repast.simphony.freezedry.freezedryers.ArrayFreezeDryer;
+import repast.simphony.freezedry.freezedryers.BigDecimalFreezeDryer;
+import repast.simphony.freezedry.freezedryers.ClassFreezeDryer;
+import repast.simphony.freezedry.freezedryers.CollectionFreezeDryer;
+import repast.simphony.freezedry.freezedryers.ContextFreezeDryer;
+import repast.simphony.freezedry.freezedryers.DefaultFreezeDryer;
+import repast.simphony.freezedry.freezedryers.MapFreezeDryer;
+import repast.simphony.freezedry.freezedryers.PrimitiveFreezeDryer;
 import simphony.util.messages.MessageCenter;
-
-import java.util.*;
 
 public class FreezeDryedRegistry {
 	private static final MessageCenter LOG = MessageCenter
@@ -34,9 +46,7 @@ public class FreezeDryedRegistry {
 
 	public FreezeDryedRegistry() {
 		keyCache = new HashMap<String, Object>();
-		objectCache = new FastMap<Object, String>();
-		((FastMap) objectCache).setKeyComparator(FastComparator.IDENTITY);
-//		writers = new ArrayList<FreezeDryedDataSource>();
+		objectCache = new HashMap<Object, String>();
 
 		defaultDryer = new DefaultFreezeDryer(this);
 		freezerMap = new HashMap<Class<?>, FreezeDryer<?>>();

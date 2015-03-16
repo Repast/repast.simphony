@@ -4,11 +4,11 @@
 package repast.simphony.visualizationOGL2D;
 
 import java.awt.Font;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javolution.util.FastMap;
 import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
 import saf.v3d.scene.VLabelLayer;
@@ -31,9 +31,9 @@ public abstract class AbstractDisplayLayerOGL2D<S> implements IDisplayLayer<VSpa
   protected VLayer layer;
   protected Set<Object> toBeAdded = new HashSet<Object>();
   protected Set<Object> toBeRemoved = new HashSet<Object>();
-  protected Map<Object, VSpatial> objMap = new FastMap<Object, VSpatial>();
+  protected Map<Object, VSpatial> objMap = new HashMap<Object, VSpatial>();
   
-  protected Map<Font, VLabelLayer> labelLayers = new FastMap<Font, VLabelLayer>();
+  protected Map<Font, VLabelLayer> labelLayers = new HashMap<Font, VLabelLayer>();
   
 
   public AbstractDisplayLayerOGL2D(S style, VLayer layer) {

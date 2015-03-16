@@ -5,10 +5,10 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javolution.util.FastSet;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
@@ -36,8 +36,8 @@ public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer imple
   	setName(name);
   	this.style = style;
   	
-  	addedObjects = new FastSet<Object>();
-  	removeObjects = new FastSet<Object>();
+  	addedObjects = new HashSet<Object>();
+  	removeObjects = new HashSet<Object>();
   	visualItemMap = new HashMap<Object, T>();
   	renderableToObjectMap = new HashMap<Renderable, Object>();
 

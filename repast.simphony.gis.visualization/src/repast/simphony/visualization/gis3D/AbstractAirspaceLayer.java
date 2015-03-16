@@ -5,10 +5,10 @@ import gov.nasa.worldwind.layers.AirspaceLayer;
 import gov.nasa.worldwind.render.airspaces.Airspace;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javolution.util.FastSet;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
@@ -35,8 +35,8 @@ public abstract class AbstractAirspaceLayer<S,T> extends AirspaceLayer implement
 	public AbstractAirspaceLayer(String name, S style){
 		setName(name);
 		this.style = style;
-		addedObjects  = new FastSet<Object>();
-		removeObjects = new FastSet<Object>();
+		addedObjects  = new HashSet<Object>();
+		removeObjects = new HashSet<Object>();
 		visualItemMap = new HashMap<Object, T>();
 		airspaceToObjectMap = new HashMap<Airspace,Object>();
 

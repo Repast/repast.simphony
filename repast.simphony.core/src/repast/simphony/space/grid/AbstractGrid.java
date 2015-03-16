@@ -1,16 +1,16 @@
 /*CopyrightHere*/
 package repast.simphony.space.grid;
 
-import javolution.util.FastMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import repast.simphony.space.SpatialException;
 import repast.simphony.space.SpatialMath;
 import repast.simphony.space.projection.DefaultProjection;
 import repast.simphony.space.projection.ProjectionEvent;
 import repast.simphony.space.projection.ProjectionPredicate;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Default implementation of an n-dimensional grid.
@@ -71,7 +71,7 @@ public abstract class AbstractGrid<T, U> extends DefaultProjection<T> implements
     this.dimensions = new GridDimensions(aSize);
     vectorTmp = new double[this.dimensions.size()];
 
-    this.agentLocationMap = new FastMap<T, PointHolder>();
+    this.agentLocationMap = new HashMap<T, PointHolder>();
     this.locationStorage = createLocationStorage();
     this.translator.init(dimensions);
   }
@@ -101,7 +101,7 @@ public abstract class AbstractGrid<T, U> extends DefaultProjection<T> implements
     this.dimensions = new GridDimensions(aSize, origin);
     vectorTmp = new double[this.dimensions.size()];
 
-    this.agentLocationMap = new FastMap<T, PointHolder>();
+    this.agentLocationMap = new HashMap<T, PointHolder>();
     this.locationStorage = createLocationStorage();
     this.translator.init(dimensions);
   }

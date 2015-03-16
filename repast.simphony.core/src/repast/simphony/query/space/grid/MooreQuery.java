@@ -1,10 +1,10 @@
 package repast.simphony.query.space.grid;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javolution.util.FastSet;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.util.collections.Contains;
 import repast.simphony.util.collections.FilteredIterator;
@@ -224,7 +224,7 @@ public class MooreQuery<T> extends AbstractGridQuery<T> {
   public Iterable<T> query(Iterable<T> iter) {
     if (point == null)
       return emptyList;
-    Set<T> set = new FastSet<T>();
+    Set<T> set = new HashSet<T>();
     for (T item : iter) {
       set.add(item);
     }
