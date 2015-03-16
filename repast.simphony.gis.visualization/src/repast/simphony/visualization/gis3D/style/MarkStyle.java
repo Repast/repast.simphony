@@ -42,6 +42,27 @@ public interface MarkStyle<T> extends StyleGIS<T> {
 	public PlaceMark getPlaceMark(T object, PlaceMark mark);
 
 	/**
+	 * 
+	 * Return an Offset that determines the icon position relative to the mark 
+	 * position.  @see gov.nasa.worldwind.render.Offset
+	 * 
+	 *
+	 * The gov.nasa.worldwind.render.Offset is used to position the icon from 
+	 *   the mark point location.  If no offset is provided, the lower left corner
+	 *   of the icon is located at the point (lat lon) position.  Using values of
+	 *   (0.5,0.5) will position the icon center over the lat lon location.
+	 *   The first two arguments in the Offset constructor are the x and y 
+	 *   offset values.  The third and fourth arguments are the x and y units 
+	 *   for the offset. AVKey.FRACTION represents units of the image texture 
+	 *   size, with 1.0 being one image width/height.  AVKey.PIXELS can be used 
+	 *   to specify the offset in pixels. 
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public Offset getIconOffset(T obj);
+	
+	/**
 	 * Get the mark elevation in meters.  The elevation is used to visually offset 
 	 *   the mark from the surface and is not an inherent property of the agent's 
 	 *   location in the geography.

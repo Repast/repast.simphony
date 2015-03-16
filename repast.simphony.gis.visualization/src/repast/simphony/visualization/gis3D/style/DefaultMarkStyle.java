@@ -98,4 +98,9 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 		
 		return lineMaterial;
 	}
+
+	@Override
+	public Offset getIconOffset(T obj) {
+		return null;
+	}
 }
