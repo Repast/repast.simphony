@@ -75,13 +75,16 @@ public class Updater {
 //  private CoordinateUpdater coordUpdater = new CoordinateUpdater();
 
   public Updater(MapContent mapContext, Geography geog, Styler styler,
-      List<FeatureSource> featureSources, Map<Integer, Object> layerOrder) {
+      List<FeatureSource> featureSources, List<Class> registeredClasses,
+      Map<Integer, Object> layerOrder) {
     this.geog = geog;
     this.styler = styler;
     factoryMap = new HashMap<Class, DefaultFeatureAgentFactory>();
     renderMap = new HashMap<Class, DefaultFeatureAgentFactory>();
     this.layerOrder = layerOrder;
 
+//    initMapLayers(registeredClasses, styler);
+    
     for (Object obj : geog.getAllObjects()) {
       agentsToAdd.add(obj);
     }
@@ -95,6 +98,20 @@ public class Updater {
     }
   }
 
+  private void initMapLayers(List<Class> registeredClasses, Styler styler){
+  	for (Class clazz : registeredClasses){
+
+  		DefaultFeatureCollection agentCollection = new DefaultFeatureCollection(null,null);
+  		featureMap.put(clazz, agentCollection);
+
+  		RepastMapLayer layer = new RepastMapLayer(agentCollection, 
+  				styler.getStyle(clazz.getName()));
+
+  		layerMap.put(clazz.getName(), layer);         
+  	}
+  	reorder = true;
+  }
+  
   private void addBackgrounds(List<FeatureSource> sources) throws IOException {
     for (FeatureSource source : sources) {
       Layer layer = new FeatureLayer(source, styler.getStyle(source));
@@ -143,7 +160,7 @@ public class Updater {
         // FeatureCollection of FeatureAgents for this agent class
         DefaultFeatureCollection agentCollection = featureMap.get(clazz);
         Set<FeatureAgent> featureAgentsToAdd = featuresToAddMap.get(clazz);
-        
+
         // If there is a new agent type, then create a new layer for the type
         if (agentCollection == null) {  
         	agentCollection = new DefaultFeatureCollection(null,null);
@@ -152,19 +169,20 @@ public class Updater {
           featureMap.put(clazz, agentCollection);
 
           Class geomClass = fac.getFeatureType().getGeometryDescriptor().getType().getBinding();
-          
+
           RepastMapLayer layer = new RepastMapLayer(agentCollection, 
           		styler.getStyle(clazz.getName(), geomClass));
-          
+
           layerMap.put(clazz.getName(), layer);          
           reorder = true;
+
         } 
         else { // otherwise just add the agents to the layer
         	updateLock.lock();
           agentCollection.addAll(featureAgentsToAdd);
           updateLock.unlock();
         }  
-       
+
         if (featureAgentsToAdd != null)
         	featureAgentsToAdd.clear();
       }
@@ -311,25 +329,31 @@ public class Updater {
       List<Integer> indices = new ArrayList<Integer>(layerOrder.keySet());
       Collections.sort(indices);
       Collections.reverse(indices);
-      List<Layer> layers = mapContent.layers();
-      for (Layer layer : layers) {
-      	mapContent.removeLayer(layer);
-      }
+//      List<Layer> layers = mapContent.layers();
+//      for (Layer layer : layers) {
+//      	mapContent.removeLayer(layer);
+//      }
 
-      for (Integer val : indices) {
-        Object obj = layerOrder.get(val);
-        Layer layer = featureLayerMap.get(obj);
-        if (layer != null)
-        	mapContent.addLayer(layer);
-        else {
-          RepastMapLayer mapLayer = layerMap.get(obj);
-          // layers may be null because agents of that type
-          // might not have been added to the geography yet
-          if (mapLayer != null){
-          	mapContent.addLayer(mapLayer);           
-          }
-        }
+      for (Layer layer : layerMap.values()){
+      	if (!mapContent.layers().contains(layer)){
+      		mapContent.addLayer(layer);
+      	}
       }
+      
+//      for (Integer val : indices) {
+//        Object obj = layerOrder.get(val);
+//        Layer layer = featureLayerMap.get(obj);
+//        if (layer != null)
+//        	mapContent.addLayer(layer);
+//        else {
+//          RepastMapLayer mapLayer = layerMap.get(obj);
+//          // layers may be null because agents of that type
+//          // might not have been added to the geography yet
+//          if (mapLayer != null){
+//          	mapContent.addLayer(mapLayer);           
+//          }
+//        }
+//      }
     }
   }
 

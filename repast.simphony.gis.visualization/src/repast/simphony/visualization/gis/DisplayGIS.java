@@ -257,7 +257,8 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       decorator.initClass(clazz);
     }
     
-    updater = new Updater(mapContext, geog, styler, featureSources, layerOrder);
+    updater = new Updater(mapContext, geog, styler, featureSources, 
+    		getRegisteredClasses(), layerOrder);
     
     myRenderer = new MyRenderer();
     myUpdater = new MyUpdater();

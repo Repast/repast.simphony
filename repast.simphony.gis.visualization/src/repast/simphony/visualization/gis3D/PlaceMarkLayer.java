@@ -67,7 +67,6 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
     }
     
     mark.getAttributes().setLabelOffset(style.getLabelOffset(obj));     
-    mark.getAttributes().setImageOffset(style.getIconOffset(obj));
     
     if (lineWidth > 0){
     	mark.setLineEnabled(true);
