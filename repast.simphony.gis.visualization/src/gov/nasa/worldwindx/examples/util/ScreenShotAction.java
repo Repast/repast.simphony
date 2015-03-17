@@ -13,14 +13,18 @@ import gov.nasa.worldwind.event.RenderingListener;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
 /**
  * @author tag
@@ -105,8 +109,9 @@ public class ScreenShotAction extends AbstractAction implements RenderingListene
                 GLAutoDrawable glad = (GLAutoDrawable) event.getSource();
                 int[] viewport = new int[4];
                 glad.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-                com.jogamp.opengl.util.awt.Screenshot.writeToFile(this.snapFile, viewport[2] + 10, viewport[3], false);
-                glad.getGL().glViewport(0, 0, glad.getWidth(), glad.getHeight());
+                AWTGLReadBufferUtil util = new AWTGLReadBufferUtil(glad.getGLProfile(), true);
+                BufferedImage img = util.readPixelsToBufferedImage(glad.getContext().getGL(), 0, 0, viewport[2] + 10, viewport[3], false);
+                ImageIO.write(img, "png", this.snapFile);
                 System.out.printf("Image saved to file %s\n", this.snapFile.getPath());
             }
             catch (IOException e)
