@@ -232,6 +232,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   /**
    * Initializes the display. Called once before the display is made visible.
    */
+  @Override
   public void init() {
     for (Projection proj : initData.getProjections()) {
       if (proj instanceof Geography)

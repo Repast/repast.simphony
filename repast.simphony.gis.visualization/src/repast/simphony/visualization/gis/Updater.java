@@ -83,12 +83,14 @@ public class Updater {
     renderMap = new HashMap<Class, DefaultFeatureAgentFactory>();
     this.layerOrder = layerOrder;
 
-//    initMapLayers(registeredClasses, styler);
+//    initMapLayers(mapContext, registeredClasses, styler);
     
     for (Object obj : geog.getAllObjects()) {
       agentsToAdd.add(obj);
     }
 
+//    addAgents();
+//    render(mapContext);
     try {
       addAgents();
       addBackgrounds(featureSources);
@@ -98,18 +100,22 @@ public class Updater {
     }
   }
 
-  private void initMapLayers(List<Class> registeredClasses, Styler styler){
+  private void initMapLayers(MapContent mapContext, List<Class> registeredClasses, 
+  		Styler styler){
   	for (Class clazz : registeredClasses){
 
-  		DefaultFeatureCollection agentCollection = new DefaultFeatureCollection(null,null);
+  		DefaultFeatureCollection agentCollection = new DefaultFeatureCollection();
   		featureMap.put(clazz, agentCollection);
 
   		RepastMapLayer layer = new RepastMapLayer(agentCollection, 
   				styler.getStyle(clazz.getName()));
 
-  		layerMap.put(clazz.getName(), layer);         
+  		layerMap.put(clazz.getName(), layer);
+  		
+  		mapContext.addLayer(layer);
   	}
-  	reorder = true;
+//  	reorder = true;
+
   }
   
   private void addBackgrounds(List<FeatureSource> sources) throws IOException {
@@ -329,31 +335,31 @@ public class Updater {
       List<Integer> indices = new ArrayList<Integer>(layerOrder.keySet());
       Collections.sort(indices);
       Collections.reverse(indices);
-//      List<Layer> layers = mapContent.layers();
-//      for (Layer layer : layers) {
-//      	mapContent.removeLayer(layer);
-//      }
-
-      for (Layer layer : layerMap.values()){
-      	if (!mapContent.layers().contains(layer)){
-      		mapContent.addLayer(layer);
-      	}
+      List<Layer> layers = mapContent.layers();
+      for (Layer layer : layers) {
+      	mapContent.removeLayer(layer);
       }
-      
-//      for (Integer val : indices) {
-//        Object obj = layerOrder.get(val);
-//        Layer layer = featureLayerMap.get(obj);
-//        if (layer != null)
-//        	mapContent.addLayer(layer);
-//        else {
-//          RepastMapLayer mapLayer = layerMap.get(obj);
-//          // layers may be null because agents of that type
-//          // might not have been added to the geography yet
-//          if (mapLayer != null){
-//          	mapContent.addLayer(mapLayer);           
-//          }
-//        }
+
+//      for (Layer layer : layerMap.values()){
+//      	if (!mapContent.layers().contains(layer)){
+//      		mapContent.addLayer(layer);
+//      	}
 //      }
+            
+      for (Integer val : indices) {
+        Object obj = layerOrder.get(val);
+        Layer layer = featureLayerMap.get(obj);
+        if (layer != null)
+        	mapContent.addLayer(layer);
+        else {
+          RepastMapLayer mapLayer = layerMap.get(obj);
+          // layers may be null because agents of that type
+          // might not have been added to the geography yet
+          if (mapLayer != null){
+          	mapContent.addLayer(mapLayer);           
+          }
+        }
+      }
     }
   }
 

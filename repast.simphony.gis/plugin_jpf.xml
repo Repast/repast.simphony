@@ -13,33 +13,31 @@
 	</requires>
 	
 	<runtime>
-	    
 		<library id="gis.bin" path="bin/" type="code">
 			<export prefix="*"/>
 		</library>
 		
-		<library id="gt-api-11" path="./lib/gt-api-11.0.jar" type="code"/>
-		<library id="gt-brewer-11" path="./lib/gt-brewer-11.0.jar" type="code"/>
-		<library id="gt-coverage-11" path="./lib/gt-coverage-11.0.jar" type="code"/>
-		<library id="gt-cql-11" path="./lib/gt-cql-11.0.jar" type="code"/>
-		<library id="gt-data-11" path="./lib/gt-data-11.0.jar" type="code"/>
-		<library id="gt-epsg-hsql-11" path="./lib/gt-epsg-hsql-11.0.jar" type="code"/>
-		<library id="gt-main-11" path="./lib/gt-main-11.0.jar" type="code"/>
-		<library id="gt-metadata-11" path="./lib/gt-metadata-11.0.jar" type="code"/>
-		<library id="gt-opengis-11" path="./lib/gt-opengis-11.0.jar" type="code"/>
-		<library id="gt-referencing-11" path="./lib/gt-referencing-11.0.jar" type="code"/>
-		<library id="gt-render-11" path="./lib/gt-render-11.0.jar" type="code"/>
-		<library id="gt-shapefile-11" path="./lib/gt-shapefile-11.0.jar" type="code"/>
+		<library id="gt-api" path="./lib/gt-api-13-RC1.jar" type="code"/>
+		<library id="gt-coverage" path="./lib/gt-coverage-13-RC1.jar" type="code"/>
+		<library id="gt-cql" path="./lib/gt-cql-13-RC1.jar" type="code"/>
+		<library id="gt-data" path="./lib/gt-data-13-RC1.jar" type="code"/>
+		<library id="gt-epsg-hsql" path="./lib/gt-epsg-hsql-13-RC1.jar" type="code"/>
+		<library id="gt-main" path="./lib/gt-main-13-RC1.jar" type="code"/>
+		<library id="gt-metadata" path="./lib/gt-metadata-13-RC1.jar" type="code"/>
+		<library id="gt-opengis" path="./lib/gt-opengis-13-RC1.jar" type="code"/>
+		<library id="gt-referencing" path="./lib/gt-referencing-13-RC1.jar" type="code"/>
+		<library id="gt-shapefile" path="./lib/gt-shapefile-13-RC1.jar" type="code"/>
 		<library id="jts-1.13" path="./lib/jts-1.13.jar" type="code"/>
 		
 		<!-- JAI Tools libraries (jt-*) are required by Geotools at runtime. -->
-		<library id="jt-zonalstats-1.3.1" path="lib/jt-zonalstats-1.3.1.jar" type="code">
+		<library id="jt-zonalstats" path="lib/jt-zonalstats-1.3.1.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
-		<library id="jt-utils-1.3.1" path="lib/jt-utils-1.3.1.jar" type="code">
+		<library id="jt-utils" path="lib/jt-utils-1.3.1.jar" type="code">
 			<export prefix="*"/>
 		</library>
+		
 	</runtime>
 	
 	<extension id="gis.composite.action" plugin-id="repast.simphony.core" point-id="composite.action">
