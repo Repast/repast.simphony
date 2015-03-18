@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test_bin" path="test"/>
 	<classpathentry kind="src" path="test_watcher"/>
-	<classpathentry exported="true" kind="lib" path="lib/jscience-4.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jscience-4.3.1-no_ogis.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/hsqldb-2.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.9-20121203.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.1.jar"/>

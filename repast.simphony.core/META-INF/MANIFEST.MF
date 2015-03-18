@@ -30,7 +30,7 @@ Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/ooxml-schemas-1.1.jar,
  lib/stax-api-1.0.1.jar,
  lib/hsqldb-2.3.2.jar,
- lib/jscience-4.3.1.jar
+ lib/jscience-4.3.1-no_ogis.jar
 Bundle-Localization: plugin
 Export-Package: .,
  EDU.oswego.cs.dl.util.concurrent,
