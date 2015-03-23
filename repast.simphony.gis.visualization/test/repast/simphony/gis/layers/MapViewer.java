@@ -7,10 +7,13 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,11 +26,11 @@ import javax.swing.UIManager;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
@@ -35,9 +38,6 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import repast.simphony.context.Context;
@@ -68,26 +68,16 @@ import com.vividsolutions.jts.geom.Point;
 public class MapViewer {
 
 	private JFrame frame;
-
 	private PiccoloMapPanel mapPanel;
-
 	private MapLegend legend;
-
 	private MapContent context;
-
 	private JMenuBar bar = new JMenuBar();
-
 	private StyleBuilder builder = new StyleBuilder();
-
 	private StatusBar statusBar = new StatusBar();
-
 	private Properties props;
-	
 	List<SimpleFeature> features;
-	
-	List<SimpleFeature> newAgents;
-	
-	
+	List<SimpleFeature> newAgents = new ArrayList<SimpleFeature>();
+	List<Layer> layerList = new ArrayList<Layer>();
 	
 	public MapViewer() {
 		context = new MapContent();
@@ -111,19 +101,21 @@ public class MapViewer {
 		context.getViewport().setBounds(new ReferencedEnvelope(
 				new Envelope(-90, -90, -90, 90),	crs));		
 	
-		
 		mapPanel = new PiccoloMapPanel(context);
-
 		legend = new MapLegend(context, "legend");
 		
 //		initTools();
 		
 		createLayers();  // create layers from shapefiles
 		
-//		createLayersFromAgents();  // create layers using agent factories
-		
+		createLayersFromAgents();  // create layers using agent factories
 		
 		System.out.println("Done creating layers.");
+		
+    show();
+		
+    Timer timer = new Timer();
+    timer.schedule(new TimedTask(), 2000);
 	}
 	
 	 private static SimpleFeatureType createFeatureType() {
@@ -160,11 +152,6 @@ public class MapViewer {
 		DefaultFeatureAgentFactory agentFac = 
 					finder.getFeatureAgentFactory(Boid.class, Point.class, geography.getCRS());
 
-		int ats = agentFac.getFeatureType().getAttributeCount();
-		
-		for (int i=0; i<ats; i++){
-			System.out.println(" lol " + agentFac.getFeatureType().getType(i));
-		}
 
 		for (int i = 0; i < 10; i++) {
 			Boid agent = new Boid("Boid-" + i);
@@ -176,15 +163,21 @@ public class MapViewer {
 			SimpleFeature f = agentFac.getFeature(agent, geography);
 			newAgents.add(f);
 		} 
-
-		
+	
 		FeatureSource source = DataUtilities.createFeatureSource(newAgents);
 		
 		Style style = builder.createStyle(builder.createPointSymbolizer(
 				builder.createGraphic(null,	builder.createMark("square", Color.RED), null)));
 
-		addLayer(new RepastMapLayer(source, style));
+		Layer layer = new RepastMapLayer(source, style);
+		layerList.add(layer);
+
+		featureSourceStyleMap.put(source, style);
+		
+		addLayer(layer);
 	}
+	
+	private Map<FeatureSource, Style> featureSourceStyleMap = new HashMap<FeatureSource, Style>();
 	
 	private void createLayers() {
 		try {
@@ -192,7 +185,7 @@ public class MapViewer {
 			//      but does after the map is moved/zoomed
 			//      See Geotools JMapPane for how to handle resize and transforms
 			// Test GridCoverage
-			File file = new File("../repast.simphony.gis/sampleData/earthlights.jpg");
+//			File file = new File("../repast.simphony.gis/sampleData/earthlights.jpg");
 			Style style;
 			
 //			GridFormatFinder.scanForPlugins();
@@ -206,7 +199,7 @@ public class MapViewer {
 //			addLayer(new RepastRasterLayer(coverage, style));
 			
 			
-			String dataFileName = "../repast.simphony.gis/sampleData/countries3005.shp"; 
+			String dataFileName = "../repast.simphony.gis/sampleData/countries.shp"; 
 			String styleFileName = "../repast.simphony.gis/sampleData/countries.xml";
 			
 			URL shapefile = new File(dataFileName).toURL();
@@ -219,7 +212,11 @@ public class MapViewer {
 			SLDParser parser = new SLDParser(fac, styleFile);
 			style = parser.readXML()[0];
 			
-			addLayer(new RepastMapLayer(source, style));
+			FeatureCollection collection = source.getFeatures();
+			
+			System.out.println("FC ID: " + collection.getSchema().getName());
+			
+			addLayer(new RepastMapLayer(collection, style));
 
 //			dataFileName = "sampleData/archsites.shp"; 
 //			styleFileName = "sampleData/archsi.xml"; 
@@ -344,6 +341,32 @@ public class MapViewer {
 		
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		MapViewer viewer = new MapViewer();
-		viewer.show();
+	}
+	
+	class TimedTask extends TimerTask{
+
+		 public TimedTask() {
+			
+		}
+		
+		@Override
+		public void run() {
+			for (Layer layer : layerList){
+				context.removeLayer(layer);
+			}
+			
+			System.out.println("All layers removed.");
+			
+			for (FeatureSource source : featureSourceStyleMap.keySet()){
+				addLayer(new RepastMapLayer(source, featureSourceStyleMap.get(source)));
+			}
+			
+			
+//			for (Layer layer : layerList){
+//				context.addLayer(layer);
+//				
+//			}
+
+		}	
 	}
 }

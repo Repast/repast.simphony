@@ -1,85 +1,64 @@
 package repast.simphony.visualization.gis;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.Point;
-import org.geotools.data.FeatureSource;
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.geotools.styling.Graphic;
 import org.geotools.styling.Mark;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Produces styles for agent layers in a gis display.
  *
  * @author Nick Collier
+ * @author Eric Tatara
+ * 
  */
 public class Styler {
 
-  private Map<Object, Style> styleMap = new HashMap<Object, Style>();
+  private Map<String, Style> styleMap = new HashMap<String, Style>();
 
   /**
-   * Registers a style for the specified agent.
+   * Registers a style for the specified layerName.
    *
-   * @param agentClassName the name of the agent
+   * @param layerName the name of the layer
    * @param style          the style
    */
-  public void registerStyle(String agentClassName, Style style) {
-    styleMap.put(agentClassName, style);
+  public void registerStyle(String layerName, Style style) {
+    styleMap.put(layerName, style);
   }
 
   /**
-   * Registers a style for a feature source
-   *
-   * @param source the feature source
-   * @param style  the style
-   */
-  public void registerStyle(FeatureSource source, Style style) {
-    if (style == null) {
-      style = getDefaultStyle(
-      		source.getSchema().getGeometryDescriptor().getType().getBinding());
-    }
-    styleMap.put(source, style);
-  }
-
-
-  /**
-   * Gets a style for the specified agent. If no style has been registered
+   * Gets a style for the specified layerName. If no style has been registered
    * then a default one will be returned.
    *
-   * @param className the name of the agent
+   * @param layerName the name of the layer
    * @param geomType  the agents geometry type
    * @return a style for the agent
    */
-  public Style getStyle(String className, Class<? extends Geometry> geomType) {
-    Style style = styleMap.get(className);
+  public Style getStyle(String layerName, Class<? extends Geometry> geomType) {
+    Style style = styleMap.get(layerName);
     return style == null ? getDefaultStyle(geomType) : style;
   }
 
   /**
-   * Gets a style for the specified agent. If no
+   * Gets a style for the specified layerName. If no
    * style has been registered then return null.
    *
-   * @param className the name of the agent
+   * @param layerName the name of the layer
    * @return a style for the agent or null if no style has been registered.
    */
-  public Style getStyle(String className) {
-    return styleMap.get(className);
+  public Style getStyle(String layerName) {
+    return styleMap.get(layerName);
   }
-
-  /**
-   * Gets a style for the specified feature source.
-   *
-   * @param source the feature source
-   * @return a style for the feature source
-   */
-  public Style getStyle(FeatureSource source) {
-    return styleMap.get(source);
-  }
-
 
   private Style getDefaultStyle(Class geomType) {
     StyleBuilder builder = new StyleBuilder();

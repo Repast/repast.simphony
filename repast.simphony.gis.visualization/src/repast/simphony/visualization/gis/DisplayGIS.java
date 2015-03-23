@@ -12,6 +12,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.geotools.data.FeatureSource;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
@@ -81,6 +83,9 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
 	// ~10 frames a second
 	public static long GIS_FRAME_UPDATE_INTERVAL = 100;
 	
+	// Used to help differentiate background shapefile layers from agent layers
+	public static final String BACKGROUND_LAYER_PREFIX = "backgroud.layer.";
+	
 	private final static String ICON_FORMAT = ".png";
   public static final String SHP_FILE_STYLE_PROP = DisplayGIS.class + ".SHP_FILE_STYLE_PROP";
   private static final MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS.class);
@@ -93,10 +98,16 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   private MapContent mapContext;
   private Updater updater;
   private Styler styler = new Styler();
-  private java.util.List<FeatureSource> featureSources = new ArrayList<FeatureSource>();
+  
+  // Static map feature collections such as background map layers
+  private Map<String,FeatureCollection> staticMapFeatures = 
+  		new HashMap<String,FeatureCollection>();
+  
+  // The ordering of map layers
+  private Map<Integer, String> layerOrder = new HashMap<Integer, String>();
+  
   private java.util.List<String> classNames = new ArrayList<String>();
   private Geography geog;
-  private Map<Integer, Object> layerOrder = new HashMap<Integer, Object>();
   private boolean doRender = true;
   private Runnable myRenderer;
   private Runnable myUpdater;
@@ -183,19 +194,28 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   }
 
   /**
-   * Registers a style for the specified feature source.
+   * Registers a style for the specified feature source.  Used for adding 
+   *   static background layers from a shapefile.
    * 
-   * @param source
-   *          the feature source
-   * @param style
-   *          the style
-   * @param order
-   *          the layer order
+   * @param source the feature source
+   * @param style the style
+   * @param order the layer order
    */
   public void registerFeatureSource(FeatureSource source, Style style, Integer order) {
-  	featureSources.add(source);
-    styler.registerStyle(source, style);
-    layerOrder.put(order, source);
+  	FeatureCollection collection = null;
+		try {
+			collection = source.getFeatures();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+  	
+		String layerName = BACKGROUND_LAYER_PREFIX + source.getName().toString();
+		
+		if (collection != null){
+			staticMapFeatures.put(layerName,collection);
+			styler.registerStyle(layerName, style);
+			layerOrder.put(order, layerName);	
+		}
   }
 
   @Override
@@ -258,7 +278,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
       decorator.initClass(clazz);
     }
     
-    updater = new Updater(mapContext, geog, styler, featureSources, 
+    updater = new Updater(mapContext, geog, styler, staticMapFeatures, 
     		getRegisteredClasses(), layerOrder);
     
     myRenderer = new MyRenderer();
