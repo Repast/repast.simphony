@@ -18,8 +18,8 @@ Require-Bundle: libs.ext,
  org.junit;bundle-version="4.11.0"
 Bundle-ClassPath: .,
  lib/worldwind-2.0.0.jar,
- lib/gt-render-13-RC1.jar,
- lib/gt-brewer-13-RC1.jar
+ lib/gt-brewer-13.0.jar,
+ lib/gt-render-13.0.jar
 Export-Package: com.zebraimaging,
  gov.nasa.worldwind,
  gov.nasa.worldwind.animation,

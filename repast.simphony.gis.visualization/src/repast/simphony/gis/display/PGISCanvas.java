@@ -392,13 +392,4 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 	@Override
 	public void layerPreDispose(MapLayerListEvent event) {
 	}
-	
-	/**
-	 * Executes when simulation is paused.
-	 */
-	public void setPause(boolean pause) {
-		for (PGisLayer layer : layers.values()){
-			layer.setPause(pause);
-		}
-	}
 }

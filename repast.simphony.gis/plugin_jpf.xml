@@ -17,16 +17,16 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="gt-api" path="./lib/gt-api-13-RC1.jar" type="code"/>
-		<library id="gt-coverage" path="./lib/gt-coverage-13-RC1.jar" type="code"/>
-		<library id="gt-cql" path="./lib/gt-cql-13-RC1.jar" type="code"/>
-		<library id="gt-data" path="./lib/gt-data-13-RC1.jar" type="code"/>
-		<library id="gt-epsg-hsql" path="./lib/gt-epsg-hsql-13-RC1.jar" type="code"/>
-		<library id="gt-main" path="./lib/gt-main-13-RC1.jar" type="code"/>
-		<library id="gt-metadata" path="./lib/gt-metadata-13-RC1.jar" type="code"/>
-		<library id="gt-opengis" path="./lib/gt-opengis-13-RC1.jar" type="code"/>
-		<library id="gt-referencing" path="./lib/gt-referencing-13-RC1.jar" type="code"/>
-		<library id="gt-shapefile" path="./lib/gt-shapefile-13-RC1.jar" type="code"/>
+		<library id="gt-api" path="./lib/gt-api-13.0.jar" type="code"/>
+		<library id="gt-coverage" path="./lib/gt-coverage-13.0.jar" type="code"/>
+		<library id="gt-cql" path="./lib/gt-cql-13.0.jar" type="code"/>
+		<library id="gt-data" path="./lib/gt-data-13.0.jar" type="code"/>
+		<library id="gt-epsg-hsql" path="./lib/gt-epsg-hsql-13.0.jar" type="code"/>
+		<library id="gt-main" path="./lib/gt-main-13.0.jar" type="code"/>
+		<library id="gt-metadata" path="./lib/gt-metadata-13.0.jar" type="code"/>
+		<library id="gt-opengis" path="./lib/gt-opengis-13.0.jar" type="code"/>
+		<library id="gt-referencing" path="./lib/gt-referencing-13.0.jar" type="code"/>
+		<library id="gt-shapefile" path="./lib/gt-shapefile-13.0.jar" type="code"/>
 		<library id="jts-1.13" path="./lib/jts-1.13.jar" type="code"/>
 		
 		<!-- JAI Tools libraries (jt-*) are required by Geotools at runtime. -->

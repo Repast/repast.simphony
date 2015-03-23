@@ -29,8 +29,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -45,7 +45,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
@@ -78,23 +77,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
-	protected Runnable updater = new Runnable() {
-		public void run() {
-			// Performance improvement. Null pick point skips the doPick() method on
-			// the RenderableLayer. Set pick point to null for our rendering
-			// since worldwind will update it on mouse input anyway.
-			worldWindow.getSceneController().setPickPoint(null);
-
-			try {
-				updateLock.lock();
-				worldWindow.redraw();
-			} 
-			finally {
-				updateLock.unlock();
-			}
-		}
-	};
-
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
 	private static final String GLOBE_ICON = "browser.png";
 	private static final String WMS_ICON = "wms2.png";
@@ -115,16 +97,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected LayerPanel layerPanel;
 
 	protected boolean doRender = true;
-	protected boolean iconified = false;
-	protected JTabbedPane tabParent = null;
-	protected Component tabChild = null;
+	protected boolean visible;
 	
 	protected RepastViewControlsSelectListener viewControlsSelectListener = null;
 	protected RepastStatusBar statusBar = null;
 	
 	protected Globe roundGlobe;
 	protected FlatGlobe flatGlobe;
-
 
 	public DisplayGIS3D(DisplayData<?> data, Layout layout) {
 		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
@@ -246,30 +225,25 @@ public class DisplayGIS3D extends AbstractDisplay {
 		leftPanel.add(layerPanel, BorderLayout.WEST);
 
 		panel.add(leftPanel, BorderLayout.WEST);
-
-
-		panel.addPropertyChangeListener("ancestor", new PropertyChangeListener() {
+		
+		// This HierarchyListener forces an update/render when the panel changes 
+		//   "visibility" from events that show the panel when it was previously
+		//   not shown, e.g. changing tabs or other docking operations.  This 
+		//   listener is necessary because the WorldWindow may not render when
+		//   the panel is not shown.
+		panel.addHierarchyListener(new HierarchyListener() {
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				Component child = panel;
-				Component parent = child.getParent();
-				while (parent != null) {
-					if (parent instanceof JTabbedPane) {
-						// if (tabParent != null)
-						// tabParent.removeChangeListener(DisplayOGL2D.this);
-						tabParent = (JTabbedPane) parent;
-						// tabParent.addChangeListener(DisplayOGL2D.this);
-						tabChild = child;
-						return;
+			public void hierarchyChanged(HierarchyEvent e) {
+				if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+					if (e.getComponent().isShowing()) {
+						visible = true;
+						doUpdate();
+						doRender();
+					} 
+					else{
+						visible = false;
 					}
-					child = parent;
-					parent = parent.getParent();
 				}
-
-				// if (tabParent != null)
-				// tabParent.removeChangeListener(DisplayOGL2D.this);
-				tabParent = null;
-				tabChild = null;
 			}
 		});
 	}
@@ -281,14 +255,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return panel;
 	}
 
-	private boolean isVisible() {
-		if (iconified || !((Component) worldWindow).isVisible())
-			return false;
-
-		if (tabParent != null)
-			return tabParent.getSelectedComponent().equals(tabChild);
-
-		return true;
+	protected boolean isVisible() {
+		return visible;
 	}
 
 	/**
@@ -447,7 +415,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 			// TODO WWJ also loop through network and raster styles TBD
 
-			
 		}
 		finally {
 			updateLock.unlock();
@@ -455,7 +422,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 	
 	@Override
-	public void render() {
+	public void render() {		
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
@@ -682,22 +649,31 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	@Override
-	public void deIconified() {
-		iconified = false;
-		
-		doUpdate();
-		doRender();
+	public void deIconified() {		
 	}
-
 
 	@Override
 	public void iconified() {
-		iconified = true;
 	}
 
 	@Override
 	public void closed() {
-		// TODO Auto-generated method stub
-
 	}
+	
+	protected Runnable updater = new Runnable() {
+		public void run() {
+			// Performance improvement. Null pick point skips the doPick() method on
+			// the RenderableLayer. Set pick point to null for our rendering
+			// since worldwind will update it on mouse input anyway.
+			worldWindow.getSceneController().setPickPoint(null);
+
+			try {
+				updateLock.lock();
+				worldWindow.redraw();
+			} 
+			finally {
+				updateLock.unlock();
+			}
+		}
+	};
 }

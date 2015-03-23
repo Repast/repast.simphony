@@ -302,7 +302,6 @@ public class RepastStatusBar extends JPanel implements PositionListener, Renderi
 	public void dispose(){
 		setShowNetworkStatus(false);
 		downloadTimer.stop();
-		System.out.println("disposing StatusBar");
 		setEventSource(null);
 		WorldWind.getNetworkStatus().removePropertyChangeListener(NetworkStatus.HOST_UNAVAILABLE,listenerUnavaliable);
 		WorldWind.getNetworkStatus().removePropertyChangeListener(NetworkStatus.HOST_AVAILABLE,listenerAvaliable);

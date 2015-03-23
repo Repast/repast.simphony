@@ -102,14 +102,7 @@ public class PGisLayer extends PLayer implements MapLayerListener {
     //   good description of exactly how this works in Geotools.
     rendererParams.put("renderingBuffer", 10);
     rend.setRendererHints(rendererParams);
-   
-    // TODO Geotools [minor] - AA looks smoother, but also blurry compared to AA OFF.
-    //      Make sure to update setPause().
-    // Initially rendering using anti-aliasing.
-//    RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-//    hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-//    rend.setJava2DHints(hints);
-    
+       
     image = new BufferedImage(PGISCanvas.CANVAS_WIDTH, PGISCanvas.CANVAS_HEIGHT, 
     		BufferedImage.TYPE_INT_ARGB);
     rend.paint((Graphics2D) image.getGraphics(), rect, transform);
@@ -209,21 +202,4 @@ public class PGisLayer extends PLayer implements MapLayerListener {
 	@Override
 	public void layerSelected(MapLayerEvent arg0) {
 	}
-	
-	/**
-   * Executes when simulation is paused.
-   */
-  public void setPause(boolean pause) {
-//  	// Enable Anti-alising only when paused to improve rendering speed.
-//  	if (pause){
-//  	  rend.getJava2DHints().put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//  	  rend.getJava2DHints().put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-//  	  
-//  	  localContext.getViewport().setBounds(context.getViewport().getBounds());
-//  	}
-//  	else{
-//  		rend.getJava2DHints().put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-//  		rend.getJava2DHints().put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-//  	}
-  }
 }
