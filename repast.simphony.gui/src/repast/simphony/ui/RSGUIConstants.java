@@ -101,6 +101,7 @@ public abstract class RSGUIConstants {
   public static Icon WARN_ICON;
   public static Icon USER_PANEL_ICON;
   public static Icon DATA_LOADER_ICON;
+  public static Icon DELETE_ICON;
 
   static {
     START_ICON = loadIcon("player_play");
@@ -128,5 +129,6 @@ public abstract class RSGUIConstants {
     WARN_ICON = loadIcon("info");
     USER_PANEL_ICON = loadIcon("view_sidetree");
     DATA_LOADER_ICON = loadIcon("harddrive");
+    DELETE_ICON = loadIcon("button_cancel");
   }
 }

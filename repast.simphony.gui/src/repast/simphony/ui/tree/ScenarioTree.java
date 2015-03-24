@@ -4,6 +4,7 @@ import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.ControllerRegistry;
 import repast.simphony.scenario.Scenario;
 import repast.simphony.ui.DefaultActionUI;
+import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.ui.plugin.ActionUI;
 import repast.simphony.ui.plugin.UIActionExtensions;
 import repast.simphony.ui.plugin.editor.Editor;
@@ -14,6 +15,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -161,7 +163,7 @@ public class ScenarioTree extends JTree {
       if (menu != null) {
         menu.show(this, evt.getX(), evt.getY());
       } else if (!node.equals(root) && !node.getParent().equals(root) && node.isLeaf()) {
-        menu = createDelPopupMenu();
+        menu = createPopupMenu(evt);
         menu.show(this, evt.getX(), evt.getY());
       }
 
@@ -176,15 +178,16 @@ public class ScenarioTree extends JTree {
   }
 
   /**
-   * A simple popup menu for node deletion
+   * Create pop up menus for Editable tree nodes.
    * 
-   * @return
+   * @return the menu
    */
-  private JPopupMenu createDelPopupMenu() {
+  private JPopupMenu createPopupMenu(MouseEvent evt) {
 
     JPopupMenu menu = new JPopupMenu();
+    menu.add((Action) new EditAction(evt));
     menu.add((Action) new DeleteAction());
-
+    
     return menu;
   }
 
@@ -197,11 +200,29 @@ public class ScenarioTree extends JTree {
   private class DeleteAction extends AbstractAction {
 
     public DeleteAction() {
-      super("Delete");
+      super("Delete", RSGUIConstants.DELETE_ICON);
     }
 
     public void actionPerformed(ActionEvent e) {
       deleteNodes();
+    }
+  }
+  
+  /**
+   * Action for node edit menu item
+   * 
+   * @author tatara
+   * 
+   */
+  private class EditAction extends AbstractAction {
+  	MouseEvent evt;
+    public EditAction(MouseEvent evt) {
+      super("Edit", RSGUIConstants.VIZ_EDIT_ICON);
+      this.evt = evt;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+    	 showDialog(evt.getPoint());
     }
   }
 
@@ -233,7 +254,7 @@ public class ScenarioTree extends JTree {
         }
       }
     }
-  }
+  }  
 
   public void setControllerRegistry(Scenario scenario, ControllerRegistry registry) {
     this.registry = registry;
