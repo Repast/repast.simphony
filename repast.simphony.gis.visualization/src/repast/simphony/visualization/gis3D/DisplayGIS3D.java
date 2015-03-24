@@ -234,11 +234,12 @@ public class DisplayGIS3D extends AbstractDisplay {
 		panel.addHierarchyListener(new HierarchyListener() {
 			@Override
 			public void hierarchyChanged(HierarchyEvent e) {
-				if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+				if (e.getChangeFlags() == HierarchyEvent.SHOWING_CHANGED ||
+						e.getChangeFlags() == HierarchyEvent.SHOWING_CHANGED + HierarchyEvent.DISPLAYABILITY_CHANGED) {
 					if (e.getComponent().isShowing()) {
 						visible = true;
-						doUpdate();
-						doRender();
+						update();
+						render();
 					} 
 					else{
 						visible = false;
@@ -662,6 +663,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 	
 	protected Runnable updater = new Runnable() {
 		public void run() {
+			
+			// Need to check if the WorldWindow is null, which can happen here if the
+			//   HierarchyListener calls for an update after the display is disposed.
+			if (worldWindow == null) return;
+			
 			// Performance improvement. Null pick point skips the doPick() method on
 			// the RenderableLayer. Set pick point to null for our rendering
 			// since worldwind will update it on mouse input anyway.
