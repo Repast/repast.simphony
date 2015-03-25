@@ -17,7 +17,6 @@ import repast.simphony.visualization.DefaultDisplayData;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.engine.DisplayCreationException;
 import repast.simphony.visualization.engine.DisplayCreator;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis.DisplayGIS;
 
 /**
@@ -27,9 +26,9 @@ import repast.simphony.visualization.gis.DisplayGIS;
  */
 public class DisplayCreatorGIS implements DisplayCreator {
 	 protected Context<?> context;
-	 protected DisplayDescriptor descriptor; 
+	 protected GISDisplayDescriptor descriptor; 
 	 
-  public DisplayCreatorGIS(Context<?> context, DisplayDescriptor descriptor) {
+  public DisplayCreatorGIS(Context<?> context, GISDisplayDescriptor descriptor) {
   	this.context = context;
     this.descriptor = descriptor;
   }

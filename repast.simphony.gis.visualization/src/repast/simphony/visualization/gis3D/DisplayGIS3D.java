@@ -48,6 +48,8 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+import repast.simphony.gis.visualization.engine.GISDisplayData;
+import repast.simphony.gis.visualization.engine.GISDisplayDescriptor.VIEW_TYPE;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
@@ -70,7 +72,7 @@ import com.jogamp.common.os.Platform;
 
 public class DisplayGIS3D extends AbstractDisplay {
 
-	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 500;  // meters
+	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 5000;  // meters
 
 	static {
 		// this seems to fix jogl canvas flicker issues on windows
@@ -104,21 +106,22 @@ public class DisplayGIS3D extends AbstractDisplay {
 	
 	protected Globe roundGlobe;
 	protected FlatGlobe flatGlobe;
+	protected boolean trackAgents; // keeps all agents in view even if moving
+	protected Sector boundingSector;
 
-	public DisplayGIS3D(DisplayData<?> data, Layout layout) {
+	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
 		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
 		initData = data;
 		this.layout = layout;
-		this.layoutUpdater = new UpdateLayoutUpdater(layout);
+		layoutUpdater = new UpdateLayoutUpdater(layout);
+		trackAgents = data.getTrackAgents();
 
 		Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
 				StereoOptionSceneController.class.getName());
-
-		// TODO GIS set based on DisplayDescriptor property
-	  // Set the Flat view by default
+		
 		Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
 		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
-		
+
 		model = new BasicModel();
 
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
@@ -141,7 +144,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		StereoSceneController asc = (StereoSceneController) worldWindow.getSceneController();
 		asc.setStereoMode(this.displayMode);
 
-		initGlobes();
+		initGlobes(data.getViewType());
 		initListener();
 	}
 
@@ -304,6 +307,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		// TODO WWJ also loop through network and raster styles TBD
 
+		boundingSector = calculateBoundingSector();
 		doUpdate();
 		doRender();
 		
@@ -466,14 +470,15 @@ public class DisplayGIS3D extends AbstractDisplay {
 		for (Object o : geog.getAllObjects()){
 			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));
 		}
-
+ 
 		return Sector.boundingSector(points);
 	}
 
 	@Override
 	public void resetHomeView() {
 		
-		zoomToSector(calculateBoundingSector());
+		boundingSector = calculateBoundingSector();
+		zoomToSector(boundingSector);
 
 		doUpdate();
 		doRender();
@@ -534,6 +539,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		});
 		projectionButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(GLOBE_ICON)));
 		projectionButton.setToolTipText("Toggle Globe / Flat Earth");
+		if (!isFlatGlobe())
+			projectionButton.setSelected(true);
     bar.add(projectionButton);
 		
 		// Add the Anaglyph stereo button
@@ -572,16 +579,22 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 	}
 
-	public void initGlobes(){
-
-		if (isFlatGlobe()){
-			flatGlobe = (FlatGlobe)model.getGlobe();
-			roundGlobe = new Earth();
-			setFlatGlobeViewControls();
+	/**
+	 * Initialize the WWJ globe (flat/globe)
+	 * 
+	 * @param viewType the view type (flat/globe)
+	 */
+	protected void initGlobes(VIEW_TYPE viewType){
+		flatGlobe = new EarthFlat();
+		roundGlobe = new Earth();
+		
+		if (viewType.equals(VIEW_TYPE.GLOBE)){
+			enableRoundGlobe(true);
 		}
-		else{
-			flatGlobe = new EarthFlat();
-			roundGlobe = model.getGlobe();
+		else {
+			model.setGlobe(flatGlobe);
+			flatGlobe.setProjection(FlatGlobe.PROJECTION_MERCATOR);
+			setFlatGlobeViewControls();
 		}
 	}
 
@@ -608,7 +621,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 	
 	public void enableRoundGlobe(boolean round){
-
 		if(isFlatGlobe() != round)
 			return;
 
@@ -627,11 +639,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		else{
 			// Switch to flat globe
 			model.setGlobe(flatGlobe);
-			flatGlobe.setProjection(FlatGlobe.PROJECTION_MERCATOR);
 			// Switch to flat view and update with current position
 			setFlatGlobeViewControls();
 		}
-		render();
+		doRender();
 	}
 	
 	public void toggleInfoProbe() {
@@ -673,6 +684,17 @@ public class DisplayGIS3D extends AbstractDisplay {
 			// since worldwind will update it on mouse input anyway.
 			worldWindow.getSceneController().setPickPoint(null);
 
+			// TODO GIS Agent tracking is very inconsistent
+//			if (trackAgents && worldWindow.getView().getEyePosition() != null){
+//				boundingSector = calculateBoundingSector();
+//				
+//				Sector visibleSector = worldWindow.getSceneController().getDrawContext().getVisibleSector();
+//				
+//				if (!visibleSector.contains(boundingSector)){
+//					zoomToSector(boundingSector);
+//				}				
+//			}
+			
 			try {
 				updateLock.lock();
 				worldWindow.redraw();

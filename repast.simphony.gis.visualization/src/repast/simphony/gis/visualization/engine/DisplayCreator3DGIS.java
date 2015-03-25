@@ -8,7 +8,6 @@ import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.NullLayout;
 import repast.simphony.visualization.engine.DisplayCreationException;
 import repast.simphony.visualization.engine.DisplayCreator;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.StyleRegistrar.Registrar;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
@@ -21,30 +20,32 @@ import repast.simphony.visualization.gis3D.style.StyleGIS;
 public class DisplayCreator3DGIS implements DisplayCreator {
   
 	 protected Context<?> context;
-	 protected DisplayDescriptor descriptor; 
+	 protected GISDisplayDescriptor descriptor; 
 	
   /**
    * @param context
    * @param descriptor
    */
-  public DisplayCreator3DGIS(Context<?> context, DisplayDescriptor descriptor) {
+  public DisplayCreator3DGIS(Context<?> context, GISDisplayDescriptor descriptor) {
   	this.context = context;
     this.descriptor = descriptor;
   }
 
   @SuppressWarnings("unchecked")
-  protected DefaultDisplayData<?> createDisplayData() {
-    DefaultDisplayData<?> data = new DefaultDisplayData(context);
+  protected GISDisplayData<?> createDisplayData() {
+    GISDisplayData<?> data = new GISDisplayData(context);
     for (ProjectionData pData : descriptor.getProjections()) {
       data.addProjection(pData.getId());
     }
   
+    data.setViewType(descriptor.getViewType());
+    data.setTrackAgents(descriptor.getTrackAgents());
     return data;
   }
   
   public IDisplay createDisplay() throws DisplayCreationException {
     try {
-    DefaultDisplayData<?> data = createDisplayData();
+    GISDisplayData<?> data = createDisplayData();
     Layout<?, ?> layout = new NullLayout();
 
     final DisplayGIS3D display = new DisplayGIS3D(data, layout);

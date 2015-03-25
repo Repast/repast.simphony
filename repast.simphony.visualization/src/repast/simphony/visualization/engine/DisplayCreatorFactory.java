@@ -2,8 +2,8 @@ package repast.simphony.visualization.engine;
 
 import repast.simphony.context.Context;
 
-public interface DisplayCreatorFactory {
+public interface DisplayCreatorFactory<T> {
 	
-	public DisplayCreator createDisplayCreator(Context<?> context, DisplayDescriptor descriptor);
+	public DisplayCreator createDisplayCreator(Context<?> context, T descriptor);
 
 }

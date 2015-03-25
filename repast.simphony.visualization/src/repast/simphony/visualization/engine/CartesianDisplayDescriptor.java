@@ -46,6 +46,10 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
   public void set(DisplayDescriptor descriptor) {
     super.set(descriptor);
 
+    if (!(descriptor instanceof CartesianDisplayDescriptor)) {
+			throw new IllegalArgumentException("Descriptor must be an instance of CartesianDisplayDescriptor.");
+		}
+    
     if (getDisplayType().equals(DisplayType.TWO_D)) {
     	getLayerOrders().clear();
     	if (descriptor.agentClassLayerOrders() != null) {
@@ -55,9 +59,7 @@ public class CartesianDisplayDescriptor extends BasicDisplayDescriptor implement
     	}
     }
     
-   if (descriptor instanceof CartesianDisplayDescriptor){
-  	 setValueLayers((CartesianDisplayDescriptor)descriptor);
-   }
+    setValueLayers((CartesianDisplayDescriptor)descriptor);
   }
   
   /**

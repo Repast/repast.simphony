@@ -12,15 +12,42 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
  */
 public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 
+	public static enum VIEW_TYPE {FLAT("Flat"), GLOBE("Globe");
+		String name;
+
+		VIEW_TYPE(String name){
+			this.name = name;
+		}
+		
+		public String getName(){
+			return name;
+		}
+		
+		@Override
+		public String toString(){
+			return name;
+		}
+	}
+
+	/**
+	 * The view type determines how the map is displayed, eg flat or round globe.
+	 */
+	private VIEW_TYPE viewType;
+	
+	/**
+	 * If true, the display will zoom extent to always keep all agents in view.
+	 */
+	private boolean trackAgents = false;
+
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
 //      DefaultSurfaceShapeStyle.class };
 	
 	private static final long serialVersionUID = 8349240641245552328L;
-
+	
 	public GISDisplayDescriptor(DisplayDescriptor descriptor) {
     super(descriptor.getName());
-    set(descriptor);
+    set(descriptor);    
   }
 
   public GISDisplayDescriptor(String name) {
@@ -31,6 +58,10 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   public void set(DisplayDescriptor descriptor) {
   	super.set(descriptor);
   	
+  	 if (!(descriptor instanceof GISDisplayDescriptor)) {
+ 			throw new IllegalArgumentException("Descriptor must be an instance of GISDisplayDescriptor.");
+ 		}
+  	
   	getLayerOrders().clear();
   	
   	if (descriptor.agentClassLayerOrders() != null) {
@@ -38,11 +69,35 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   			addLayerOrder(name, descriptor.getLayerOrder(name));
   		}
   	}
+  	setViewType(((GISDisplayDescriptor)descriptor).getViewType());
+  	setTrackAgents(((GISDisplayDescriptor)descriptor).getTrackAgents());
   }
 
   @Override
 	public DisplayDescriptor makeCopy() {
   	return new GISDisplayDescriptor(this);
 	}
- 
+  
+	public VIEW_TYPE getViewType() {
+		if (viewType == null)  // for backwards compatibility with older display descriptors
+			return VIEW_TYPE.FLAT;
+		
+		else return viewType;
+	}
+
+	public void setViewType(VIEW_TYPE viewType) {
+		this.viewType = viewType;
+	}
+
+	public boolean getTrackAgents() {
+		return trackAgents;
+	}
+
+	public void setTrackAgents(boolean trackAgents) {
+		this.trackAgents = trackAgents;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }
