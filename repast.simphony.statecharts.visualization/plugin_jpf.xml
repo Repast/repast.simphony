@@ -18,20 +18,6 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="batik-gvt" path="lib/batik-gvt.jar" type="code"/>
-		<library id="batik-swing" path="lib/batik-swing.jar" type="code"/>
-		<library id="batik-bridge" path="lib/batik-bridge.jar" type="code"/>
-		<library id="batik-css" path="lib/batik-css.jar" type="code"/>
-		<library id="batik-dom" path="lib/batik-dom.jar" type="code"/>
-		<library id="batik-ext" path="lib/batik-ext.jar" type="code"/>
-		<library id="batik-parser" path="lib/batik-parser.jar" type="code"/>
-		<library id="batik-svggen" path="lib/batik-svggen.jar" type="code"/>
-		<library id="batik-util" path="lib/batik-util.jar" type="code"/>
-		<library id="batik-xml" path="lib/batik-xml.jar" type="code"/>
-		<library id="batik-svg-dom" path="lib/batik-svg-dom.jar" type="code"/>
-		<library id="batik-awt-util" path="lib/batik-awt-util.jar" type="code"/>
-		<library id="batik-codec" path="lib/batik-codec.jar" type="code"/>
-		<library id="js" path="lib/js.jar" type="code"/>
 	</runtime>
 
 	<extension id="statechart.probe" plugin-id="repast.simphony.gui" point-id="field.probe">
