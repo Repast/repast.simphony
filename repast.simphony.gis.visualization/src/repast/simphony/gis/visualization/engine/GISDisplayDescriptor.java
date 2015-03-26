@@ -1,6 +1,7 @@
 package repast.simphony.gis.visualization.engine;
 
 import repast.simphony.visualization.engine.BasicDisplayDescriptor;
+import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
@@ -58,10 +59,6 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   public void set(DisplayDescriptor descriptor) {
   	super.set(descriptor);
   	
-  	 if (!(descriptor instanceof GISDisplayDescriptor)) {
- 			throw new IllegalArgumentException("Descriptor must be an instance of GISDisplayDescriptor.");
- 		}
-  	
   	getLayerOrders().clear();
   	
   	if (descriptor.agentClassLayerOrders() != null) {
@@ -69,8 +66,13 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   			addLayerOrder(name, descriptor.getLayerOrder(name));
   		}
   	}
-  	setViewType(((GISDisplayDescriptor)descriptor).getViewType());
-  	setTrackAgents(((GISDisplayDescriptor)descriptor).getTrackAgents());
+  	
+     // For backwards compatibility with DefaultDisplayDescriptor, check if setting
+    //  new GIS specific settings is appropriate.
+    if (descriptor instanceof GISDisplayDescriptor){
+    	setViewType(((GISDisplayDescriptor)descriptor).getViewType());
+    	setTrackAgents(((GISDisplayDescriptor)descriptor).getTrackAgents());
+    }
   }
 
   @Override

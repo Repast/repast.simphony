@@ -6,7 +6,8 @@ import java.util.Map;
 import repast.simphony.scenario.data.ProjectionData;
 
 /**
- * Convert the Repast Simphony ver 2.1 DefaultDisplayDescriptor
+ * Utility for convertinh the Repast Simphony ver 2.1 DefaultDisplayDescriptor to
+ *   the new display specific descriptors.
  * 
  * @author Eric Tatara
  *
