@@ -13,12 +13,12 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.engine.HistogramChartDescriptor;
@@ -27,6 +27,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor.DataSetType;
 import repast.simphony.data2.engine.MethodDataSourceDefinition;
 import repast.simphony.data2.util.AggregateFilter;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -42,15 +43,15 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class HistogramDataStep extends PanelWizardStep {
+public class HistogramDataStep extends PluginWizardStep {
 
   private static MessageCenter msgCenter = MessageCenter.getMessageCenter(HistogramDataStep.class);
 
   private HistogramWizardModel model;
 
-  private JTextField idField = new JTextField();
-  private JComboBox dataSetBox = new JComboBox(new DefaultComboBoxModel());
-  private JComboBox dataSourceBox = new JComboBox(new DefaultComboBoxModel());
+  private JTextField idField ;
+  private JComboBox dataSetBox ;
+  private JComboBox dataSourceBox ;
   private JLabel dataSetLabel, dataLabel;
 
   private Map<String, List<String>> dataSources = new HashMap<String, List<String>>();
@@ -60,7 +61,13 @@ public class HistogramDataStep extends PanelWizardStep {
 
   public HistogramDataStep() {
     super("Data Settings", "Please enter a chart name and select the data to histogram");
-    this.setLayout(new BorderLayout());
+  }
+  
+  @Override
+ 	protected JPanel getContentPanel(){
+  	idField = new JTextField();
+    dataSetBox = new JComboBox(new DefaultComboBoxModel());
+    dataSourceBox = new JComboBox(new DefaultComboBoxModel());
 
     FormLayout layout = new FormLayout("left:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
@@ -72,9 +79,10 @@ public class HistogramDataStep extends PanelWizardStep {
 
     builder.nextLine();
     dataLabel = builder.append("Data To Histogram:", dataSourceBox);
-    add(builder.getPanel(), BorderLayout.CENTER);
 
     addListeners();
+    
+    return builder.getPanel();
   }
   
   public void disableDataSelection() {

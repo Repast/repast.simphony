@@ -1,6 +1,5 @@
 package repast.simphony.chart2.wizard;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,15 +8,16 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.engine.TimeSeriesChartDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.ui.plugin.editor.SquareIcon;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -31,23 +31,35 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class ChartPropertiesStep extends PanelWizardStep  {
+public class ChartPropertiesStep extends PluginWizardStep  {
 
   private TimeSeriesWizardModel model;
-  private JTextField titleFld = new JTextField();
-  private JTextField xFld = new JTextField();
-  private JTextField yFld = new JTextField();
-  private JButton bkColorBtn = new JButton();
-  private JButton gridColorBtn = new JButton();
-  private JCheckBox showGridChk = new JCheckBox();
-  private JCheckBox showLegendChk = new JCheckBox();
-  private JSpinner rangeSpn = new JSpinner();
+  private JTextField titleFld;
+  private JTextField xFld;
+  private JTextField yFld;
+  private JButton bkColorBtn;
+  private JButton gridColorBtn;
+  private JCheckBox showGridChk;
+  private JCheckBox showLegendChk;
+  private JSpinner rangeSpn;
   private JLabel gridLineLabel;
 
   public ChartPropertiesStep() {
     super("Configure Chart Properites", "Please configure the chart's display properties.");
-    this.setLayout(new BorderLayout());
-    FormLayout layout = new FormLayout("4dlu, pref, 3dlu, pref, pref:grow", 
+  }
+  
+  @Override
+ 	protected JPanel getContentPanel(){
+    titleFld = new JTextField();
+    xFld = new JTextField();
+    yFld = new JTextField();
+    bkColorBtn = new JButton();
+    gridColorBtn = new JButton();
+    showGridChk = new JCheckBox();
+    showLegendChk = new JCheckBox();
+    rangeSpn = new JSpinner();
+  	
+  	FormLayout layout = new FormLayout("4dlu, pref, 3dlu, pref, pref:grow", 
         "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, " +
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
@@ -78,9 +90,9 @@ public class ChartPropertiesStep extends PanelWizardStep  {
     builder.addLabel("Show Legend:", cc.xy(2, 19));
     builder.add(showLegendChk, cc.xy(4, 19));
     
-    
-    add(builder.getPanel(), BorderLayout.CENTER);
     addListeners();
+    
+    return builder.getPanel();
   }
   
   private void addListeners() {

@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
@@ -14,10 +15,10 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.engine.TimeSeriesChartDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 
 /**
@@ -26,17 +27,23 @@ import repast.simphony.chart2.engine.TimeSeriesChartDescriptor;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class AggregateChartStep extends PanelWizardStep implements TableModelListener {
+public class AggregateChartStep extends PluginWizardStep implements TableModelListener {
 
   private TimeSeriesWizardModel model;
-  private JTable table = new JTable();
+  private JTable table;
   private SeriesConfigTableModel tableModel;
 
   public AggregateChartStep() {
     super("Configure Chart Data Properites", "Please configure the data to be displayed by the chart.");
-    this.setLayout(new BorderLayout());
-    this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+  }
+  
+  @Override
+	protected JPanel getContentPanel(){
+  	JPanel panel = new JPanel();
+  	panel.setLayout(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     
+    table = new JTable();
     table.setPreferredScrollableViewportSize(new Dimension(450, 100));
     table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     table.setRowHeight(table.getRowHeight() + 4);
@@ -47,7 +54,9 @@ public class AggregateChartStep extends PanelWizardStep implements TableModelLis
     ((DefaultCellEditor)table.getDefaultEditor(String.class)).setClickCountToStart(2);
 
     JScrollPane scrollPane = new JScrollPane(table);
-    add(scrollPane, BorderLayout.CENTER);
+   
+    panel.add(scrollPane);
+    return panel;
   }
 
   public void init(WizardModel wizardModel) {

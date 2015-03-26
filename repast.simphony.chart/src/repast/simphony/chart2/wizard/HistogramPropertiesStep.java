@@ -1,24 +1,24 @@
 package repast.simphony.chart2.wizard;
 
-import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.OutOfRangeHandling;
 import repast.simphony.chart2.engine.HistogramChartDescriptor;
 import repast.simphony.chart2.engine.HistogramChartDescriptor.HistogramType;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -35,21 +35,30 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class HistogramPropertiesStep extends PanelWizardStep {
+public class HistogramPropertiesStep extends PluginWizardStep {
 
   private HistogramWizardModel model;
-  private JSpinner binCountSpn = new JSpinner(new SpinnerNumberModel(10, 1, 9999, 1));
-  private JSpinner minSpn = new JSpinner(new SpinnerNumberModel(0, -10000000000000000.0,
-      10000000000000000.0, 1));
-  private JSpinner maxSpn = new JSpinner(new SpinnerNumberModel(0, -10000000000000000.0,
-      10000000000000000.0, 1));
-  private JComboBox typeBox = new JComboBox(HistogramType.values());
-  private JComboBox outBox = new JComboBox(OutOfRangeHandling.values());
+  private JSpinner binCountSpn ;
+  private JSpinner minSpn ;
+  private JSpinner maxSpn ;
+  private JComboBox typeBox ;
+  private JComboBox outBox ;
   private JLabel minLbl, maxLbl, ourLbl;
 
   public HistogramPropertiesStep() {
     super("Histogram Properites", "Please enter the histogram properties.");
-    this.setLayout(new BorderLayout());
+  };
+    
+  @Override
+	protected JPanel getContentPanel(){
+  	binCountSpn = new JSpinner(new SpinnerNumberModel(10, 1, 9999, 1));
+  	minSpn = new JSpinner(new SpinnerNumberModel(0, -10000000000000000.0,
+  			10000000000000000.0, 1));
+  	maxSpn = new JSpinner(new SpinnerNumberModel(0, -10000000000000000.0,
+  			10000000000000000.0, 1));
+  	typeBox = new JComboBox(HistogramType.values());
+  	outBox = new JComboBox(OutOfRangeHandling.values());
+  	  
     FormLayout layout = new FormLayout("left:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
     formBuilder.append("Bin Count:", binCountSpn);
@@ -69,8 +78,8 @@ public class HistogramPropertiesStep extends PanelWizardStep {
     ourLbl = builder.addLabel("Out of Range Handling:", cc.xy(2, 7));
     builder.add(outBox, cc.xy(4, 7));
 
-    add(builder.getPanel(), BorderLayout.CENTER);
     addListeners();
+    return builder.getPanel();
   }
 
   public void checkComplete() {

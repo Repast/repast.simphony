@@ -19,6 +19,7 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -32,7 +33,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  * @author Eric Tatara
  */
-public abstract class StyleStep extends PanelWizardStep {	
+public abstract class StyleStep extends PluginWizardStep {	
 	private static final long serialVersionUID = 1179847211916347928L;
 	
 	// TODO move to a viz constants class
@@ -86,9 +87,11 @@ public abstract class StyleStep extends PanelWizardStep {
 	}
 
 	public StyleStep(String name, String description) {
-		super(name,description);
-		setLayout(new BorderLayout());
-		
+		super(name,description);		
+	}
+	
+	@Override
+	protected JPanel getContentPanel(){
 		// Columns: Agent List | gap | Style panel
 		FormLayout layout = new FormLayout(
 				"pref:grow, 6dlu, pref:grow",  // columns
@@ -99,11 +102,11 @@ public abstract class StyleStep extends PanelWizardStep {
 		agentListModel = new DefaultListModel<AgentTypeElement>();
 		agentList = new JList<AgentTypeElement>(agentListModel);
 		agentList.setToolTipText("This is the list of agents currently defined for" + " this display");
-		
+
 		classFld = new JTextField();
 		classFld.setEditable(false);
 		classFld.setToolTipText("This is the class name for the selected agent");
-		
+
 		CellConstraints cc = new CellConstraints();
 
 		builder.addSeparator("Agents", cc.xyw(1, 1, 1));
@@ -114,9 +117,9 @@ public abstract class StyleStep extends PanelWizardStep {
 		// and add buttons.
 		builder.addLabel("Agent Class:", cc.xy(3, 3));
 		builder.add(classFld, cc.xy(3, 5));
-				
+
 		builder.add(getStylePanel(), cc.xy(3, 7));
-		
+
 		agentList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 
@@ -137,7 +140,7 @@ public abstract class StyleStep extends PanelWizardStep {
 			}
 		});
 
-		add(builder.getPanel(), BorderLayout.CENTER);
+		return builder.getPanel();
 	}
 
 	/**

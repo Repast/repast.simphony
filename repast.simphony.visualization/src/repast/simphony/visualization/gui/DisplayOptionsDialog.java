@@ -36,21 +36,19 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
     // Make a copy of the existing DisplayDescriptor for the Wizard to work with.
     DisplayDescriptor descriptor = action.getDescriptor().makeCopy();
     
-    // TODO Projections: use the regular GeneralStep here to allow modifying projections in the wizard. 
-//    NameOnlyGeneralStep gStep = new NameOnlyGeneralStep();
-//    SimplePath path = new SimplePath();
-//    path.addStep(gStep);
-    
-  	DisplayConfigurationWizard displayWizard = new DisplayConfigurationWizard(contextId, descriptor, rootContext);
+    DisplayConfigurationWizard displayWizard = new DisplayConfigurationWizard(contextId, descriptor, rootContext);
   	
     model = displayWizard.getModel();
     Wizard wizard = displayWizard.getWizard();
-
-//    addContent("General", null, gStep, wizard);
-
+    
     // TODO Projections: use the regular GeneralStep here to allow modifying projections in the wizard. 
-    //        If the GeneralSteps is used, then we don't need to loop through here.
-    // we want to skip the first step, because we stick in the name only step
+    NameOnlyGeneralStep gStep = new NameOnlyGeneralStep();  
+    addContent("General", null, gStep, wizard);  
+    
+    // Skip the normal General step.
+    model.nextStep(); 
+    
+    // Add remaining step.
     while (model.isNextAvailable()) {	
     	System.out.println(model.getActiveStep().getName());
 
@@ -71,19 +69,5 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
 //    ((DefaultDisplayDescriptor)action.getDescriptor()).set(descriptor);
     
     action.setDescriptor(descriptor);
-  }
-
-  /**
-   * Initializes the dialog for display. This sets the layout, packs() it and so
-   * forth.
-   * 
-   * @param parent
-   */
-  @Override
-  protected void displayInit(Component parent) {
-    super.displayInit(parent);
-    // reset the size and location.
-    dialog.setSize(new Dimension(650, 450));
-    dialog.setLocationRelativeTo(parent);
   }
 }

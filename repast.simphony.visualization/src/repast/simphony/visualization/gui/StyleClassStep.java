@@ -66,6 +66,7 @@ public class StyleClassStep extends StyleStep {
 		super("Agent Style", "Please provide a style for each agent type in the model");
 	}
 	
+	@Override
 	protected JPanel getStylePanel(){
 		
 		// Columns: Style class | | | edit button

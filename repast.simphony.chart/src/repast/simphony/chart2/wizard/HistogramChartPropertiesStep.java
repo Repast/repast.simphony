@@ -1,6 +1,5 @@
 package repast.simphony.chart2.wizard;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,13 +8,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.engine.HistogramChartDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.ui.plugin.editor.SquareIcon;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -29,22 +29,33 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class HistogramChartPropertiesStep extends PanelWizardStep  {
+public class HistogramChartPropertiesStep extends PluginWizardStep  {
 
   private HistogramWizardModel model;
   
-  private JTextField titleFld = new JTextField();
-  private JTextField xFld = new JTextField();
-  private JTextField yFld = new JTextField();
-  private JButton bkColorBtn = new JButton();
-  private JButton gridColorBtn = new JButton();
-  private JButton barColorBtn = new JButton();
-  private JCheckBox showGridChk = new JCheckBox();
+  private JTextField titleFld ;
+  private JTextField xFld ;
+  private JTextField yFld ;
+  private JButton bkColorBtn ;
+  private JButton gridColorBtn ;
+  private JButton barColorBtn ;
+  private JCheckBox showGridChk ;
   private JLabel gridLineLabel;
 
   public HistogramChartPropertiesStep() {
     super("Configure Chart Properites", "Please configure the chart's display properties.");
-    this.setLayout(new BorderLayout());
+  }
+  
+  @Override
+ 	protected JPanel getContentPanel(){
+  	titleFld = new JTextField();
+  	xFld = new JTextField();
+  	yFld = new JTextField();
+  	bkColorBtn = new JButton();
+  	gridColorBtn = new JButton();
+  	barColorBtn = new JButton();
+  	showGridChk = new JCheckBox();
+
     FormLayout layout = new FormLayout("4dlu, pref, 3dlu, pref:grow(0.1), pref:grow(0.9)", 
         "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, " +
         "pref, 3dlu, pref, 3dlu, pref");
@@ -73,8 +84,8 @@ public class HistogramChartPropertiesStep extends PanelWizardStep  {
     gridColorBtn.setToolTipText("Click to change color");
     builder.add(gridColorBtn, cc.xy(4, 17));
     
-    add(builder.getPanel(), BorderLayout.CENTER);
     addListeners();
+    return builder.getPanel();
   }
   
   private void addListeners() {

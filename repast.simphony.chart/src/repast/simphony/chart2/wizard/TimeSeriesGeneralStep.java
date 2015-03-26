@@ -1,6 +1,5 @@
 package repast.simphony.chart2.wizard;
 
-import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -9,17 +8,18 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.chart2.engine.TimeSeriesChartDescriptor;
 import repast.simphony.data2.TickCountDataSource;
 import repast.simphony.data2.engine.DataSetDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -34,19 +34,24 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class TimeSeriesGeneralStep extends PanelWizardStep {
+public class TimeSeriesGeneralStep extends PluginWizardStep {
 
   private TimeSeriesWizardModel model;
 
-  private JTextField idField = new JTextField();
-  private JComboBox dataSetBox = new JComboBox(new DefaultComboBoxModel());
+  private JTextField idField;
+  private JComboBox dataSetBox ;
   private JLabel dataSetLabel;
 
   public TimeSeriesGeneralStep() {
     super("General Settings",
         "Please enter a chart name and the data set to provide the chart's data");
-    this.setLayout(new BorderLayout());
-
+  }
+  
+  @Override
+	protected JPanel getContentPanel(){
+  	idField = new JTextField();
+  	dataSetBox = new JComboBox(new DefaultComboBoxModel());
+  	
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
@@ -55,9 +60,9 @@ public class TimeSeriesGeneralStep extends PanelWizardStep {
 
     dataSetBox.setRenderer(new DataSetRenderer());
     dataSetLabel = builder.append("Data Set:", dataSetBox);
-    add(builder.getPanel(), BorderLayout.CENTER);
-
+    
     addListeners();
+    return builder.getPanel();
   }
   
   public void disableDataSelection() {

@@ -35,9 +35,13 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 public class OptionsDialog extends JPanel implements ChangeListener {
-  
   private static final long serialVersionUID = 8778748428311162266L;
-
+  
+  // The standard screen dimensions of the dialogs.  Note these are a bit larger
+  //  than the dimensions for the PluginWizardStep to account for the tabs.
+	public static int DIALOG_WIDTH = 650;
+	public static int DIALOG_HEIGHT = 450;
+  
   private static MessageCenter msgCenter = MessageCenter.getMessageCenter(OptionsDialog.class);
 
   private static final String CONTENT = "content";
@@ -227,6 +231,7 @@ public class OptionsDialog extends JPanel implements ChangeListener {
    */
   protected void displayInit(Component parent) {
     dialog.setLayout(new BorderLayout());
+    dialog.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
     dialog.add(this, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
