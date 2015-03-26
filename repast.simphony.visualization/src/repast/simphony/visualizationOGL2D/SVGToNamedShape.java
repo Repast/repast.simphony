@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SVGOMDocument;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.SVGCircleElementBridge;
@@ -24,8 +26,6 @@ import org.apache.batik.bridge.SVGRectElementBridge;
 import org.apache.batik.bridge.SVGShapeElementBridge;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.bridge.svg12.SVG12BridgeContext;
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.dom.svg.SVGOMDocument;
 import org.apache.batik.gvt.CompositeShapePainter;
 import org.apache.batik.gvt.FillShapePainter;
 import org.apache.batik.gvt.GraphicsNode;

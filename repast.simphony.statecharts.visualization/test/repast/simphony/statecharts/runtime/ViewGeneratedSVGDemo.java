@@ -5,10 +5,9 @@ import java.awt.geom.*;
 
 import javax.swing.*;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.swing.*;
 import org.apache.batik.svggen.*;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-
 import org.w3c.dom.*;
 import org.w3c.dom.svg.*;
 

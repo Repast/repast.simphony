@@ -21,7 +21,8 @@ Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  saf.core.ui;bundle-version="2.0.0",
  repast.simphony.data;bundle-version="2.0.1",
  org.apache.ant;bundle-version="1.7.0",
- repast.simphony.statecharts
+ repast.simphony.statecharts,
+ libs.ext;bundle-version="2.2.0"
 Bundle-ClassPath: lib/asm-3.2.jar,
  bin/
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

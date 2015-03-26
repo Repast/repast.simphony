@@ -29,10 +29,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SVGOMElement;
 import org.apache.batik.bridge.UpdateManager;
 import org.apache.batik.dom.svg.SVGContext;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.svg.SVGOMElement;
 import org.apache.batik.dom.svg.SVGOMRect;
 import org.apache.batik.dom.svg.SVGSVGContext;
 import org.apache.batik.dom.util.DOMUtilities;

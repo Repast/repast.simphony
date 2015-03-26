@@ -19,13 +19,6 @@
 			<export prefix="*"/>
     </library>
     
-   <library id="batik" path="lib/batik.jar" type="code">
-			<export prefix="*"/>
-    </library>
-    
-    <library id="xml-apis" path="lib/xml-apis-ext.jar" type="code">
-			<export prefix="*"/>
-    </library>
 
 		<library id="ms3dloader" path="lib/MS3DLoader-1.0.8.jar" type="code">
       <export prefix="*"/>
