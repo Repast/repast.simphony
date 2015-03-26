@@ -1,26 +1,17 @@
 package repast.simphony.visualization.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,31 +19,20 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
-import repast.simphony.ui.widget.SquareIcon;
-import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
-import repast.simphony.visualization.engine.DisplayType;
-import repast.simphony.visualization.engine.VisualizationRegistry;
-import repast.simphony.visualization.engine.VisualizationRegistryData;
-import repast.simphony.visualization.gui.styleBuilder.EditedStyleDialog;
-import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
-import repast.simphony.visualization.visualization3D.style.Style3D;
-import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
-import repast.simphony.visualizationOGL2D.StyleOGL2D;
-import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Abstract style step for display wizards that provides basic agent selection.
+ *   Implementing subclasses should provide a style editing panel.
+ * 
  * @author Nick Collier
  * @author Eric Tatara
  */
-public class StyleStep extends PanelWizardStep {
-
-  private static final MessageCenter msg = MessageCenter.getMessageCenter(StyleStep.class);
-	
+public abstract class StyleStep extends PanelWizardStep {	
 	private static final long serialVersionUID = 1179847211916347928L;
 	
 	// TODO move to a viz constants class
@@ -62,136 +42,81 @@ public class StyleStep extends PanelWizardStep {
 	public static final String ADD_ICON = "edit_add.png";
 	public static final String REMOVE_ICON = "edit_remove.png";
 
-	private DisplayWizardModel model;
+	protected DisplayWizardModel model;
 
-	private JList agentList;
-	private DefaultListModel listModel;
-	private boolean reordering = false;
+	protected JList<AgentTypeElement> agentList;
+	protected DefaultListModel<AgentTypeElement> agentListModel;
+	protected boolean reordering = false;
+	protected int currentIndex = -1;
+	protected JTextField classFld;
+	
+	/**
+	 * Stores agent name, class and style attributes in the list entries
+	 */
+	protected static class AgentTypeElement {
+		private String agentName;
+		private String agentClassName;
+		
+		private Map<String,Object> values = new HashMap<String,Object>();
 
-	private DefaultComboBoxModel styleModel = new DefaultComboBoxModel();
-	private JButton buildStyleButton = new JButton();
-	private JButton bgcolorBtn = new JButton();
-	private int currentIndex = -1;
-	private JComboBox styleBox;
-	private Map<String, String> editedStyleFileMap = new HashMap<String, String>();
-	private String defaultStyle;
-	private Color backgroundColor;
-
-	static class AgentTypeElement {
-		String agentName;
-		String agentClassName;
-		String styleClassName;
-		String editedStyleName;
-
-		public AgentTypeElement(String agentName, String agentClassName, String styleClassName,
-				String editedStyleName) {
-
+		public AgentTypeElement(String agentName, String agentClassName) {
 			this.agentName = agentName;
 			this.agentClassName = agentClassName;
-			this.styleClassName = styleClassName;
-			this.editedStyleName = editedStyleName;
 		}
 
 		public String toString() {
 			return agentName;
 		}
+		
+		public Object getValue(String key){
+			return values.get(key);
+		}
+		
+		public void setValue(String key, Object value){
+			values.put(key, value);
+		}
+
+		public String getAgentName() {
+			return agentName;
+		}
+
+		public String getAgentClassName() {
+			return agentClassName;
+		}
 	}
 
-	public StyleStep() {
-		super("Agent Style", "Please provide a style for each agent type in the model");
-		this.setLayout(new BorderLayout());
-		FormLayout layout = new FormLayout("pref, 6dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref",
-		"pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, fill:pref:grow");
+	public StyleStep(String name, String description) {
+		super(name,description);
+		setLayout(new BorderLayout());
+		
+		// Columns: Agent List | gap | Style panel
+		FormLayout layout = new FormLayout(
+				"pref:grow, 6dlu, pref:grow",  // columns
+				"pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow"); //rows
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 
-		listModel = new DefaultListModel();
-		agentList = new JList(listModel);
+		agentListModel = new DefaultListModel<AgentTypeElement>();
+		agentList = new JList<AgentTypeElement>(agentListModel);
 		agentList.setToolTipText("This is the list of agents currently defined for" + " this display");
-
-		final JTextField classFld = new JTextField();
+		
+		classFld = new JTextField();
 		classFld.setEditable(false);
 		classFld.setToolTipText("This is the class name for the selected agent");
-		styleBox = new JComboBox(styleModel);
-		styleBox.setToolTipText("This is the style class for the selected agent. "
-				+ "Select a style from this box or use the editor to create a new style");
-		styleBox.setEditable(true);
 		
 		CellConstraints cc = new CellConstraints();
 
 		builder.addSeparator("Agents", cc.xyw(1, 1, 1));
-		//builder.add(new JLabel("Foreground"), cc.xyw(1, 5, 3));
-		builder.add(new JScrollPane(agentList), cc.xywh(1, 3, 1, 12));
+		builder.add(new JScrollPane(agentList), cc.xywh(1, 3, 1, 5));
 		agentList.setVisibleRowCount(14);
-		//builder.add(new JLabel("Background"), cc.xyw(1, 17, 3));
 
 		// The right side has the agent and style class names and the edit, remove,
 		// and add buttons.
-		builder.addLabel("Agent Class:", cc.xyw(3, 3, 7));
-		builder.add(classFld, cc.xyw(3, 5, 7));
-		builder.addLabel("Style Class:", cc.xyw(3, 7, 7));
-		builder.add(styleBox, cc.xyw(3, 9, 5));
-
-		builder.add(buildStyleButton, cc.xy(9, 9));
-
-		buildStyleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(EDIT_ICON)));
-		buildStyleButton.setToolTipText("Edit the style of the selected agent type");
-		buildStyleButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					EditedStyleDialog dialog = new EditedStyleDialog((JDialog) SwingUtilities
-							.getWindowAncestor(StyleStep.this));
-
-					String editedStyleName = model.getDescriptor().getEditedStyleName(classFld.getText());
-
-					dialog.init(Class.forName(classFld.getText()), editedStyleName, 
-							(CartesianDisplayDescriptor)model.getDescriptor());
-					dialog.pack();
-					dialog.setVisible(true);
-
-					if (dialog.doSave()) {
-
-						// Set the style class name based on display type
-						String styleClassName = null;
-
-						// TODO Projections: get the style class name from the viz registry data
-						
-						if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
-							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle2D";
-
-						else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
-							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
-
-						// TODO Projections: GIS
-//						else
-//							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
-
-						if (styleModel.getIndexOf(styleClassName) < 0)
-							styleModel.addElement(styleClassName);
-
-						styleBox.setSelectedItem(styleClassName);
-
-						editedStyleFileMap.put(classFld.getText(), dialog.getUserStyleName());
-					}
-
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
-	
-		builder.addLabel("Display Background Color:", cc.xy(3, 11));
-		builder.add(bgcolorBtn, cc.xy(5, 11));
-		bgcolorBtn.setToolTipText("Click to change background color");
-		bgcolorBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				Color c = JColorChooser.showDialog(StyleStep.this, "Select Display Background Color",
-						backgroundColor);
-				if (c != null)
-					setBackgroundColor(c);
-			}
-		});
-
+		builder.addLabel("Agent Class:", cc.xy(3, 3));
+		builder.add(classFld, cc.xy(3, 5));
+				
+		builder.add(getStylePanel(), cc.xy(3, 7));
+		
 		agentList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 
@@ -201,10 +126,11 @@ public class StyleStep extends PanelWizardStep {
 
 					if (agentList.getSelectedValue() == null) {
 						classFld.setText("");
-					} else {
+					} 
+					else {
 						AgentTypeElement element = (AgentTypeElement) agentList.getSelectedValue();
 						classFld.setText(element.agentClassName);
-						styleBox.setSelectedItem(element.styleClassName);
+						agentListChanged(element);
 					}
 				}
 				reordering = false;
@@ -214,28 +140,34 @@ public class StyleStep extends PanelWizardStep {
 		add(builder.getPanel(), BorderLayout.CENTER);
 	}
 
-	private void setCurrentElementValues() {
-		if (currentIndex != -1 && !(currentIndex >= listModel.size())) {
-			AgentTypeElement element = (AgentTypeElement) listModel.get(currentIndex);
-
-			Object selectedItem = styleBox.getSelectedItem();
-			if (selectedItem != null) {
-				element.styleClassName = selectedItem.toString();
-
-				if ("repast.simphony.visualization.editedStyle.EditedStyle2D"
-						.equals(element.styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyle3D"
-						.equals(element.styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyleGIS3D"
-						.equals(element.styleClassName))
-
-					element.editedStyleName = editedStyleFileMap.get(element.agentClassName);
-				else
-					element.editedStyleName = null;
-			}
-		}
-	}
-
+	/**
+	 * Provide a JPanel with style editing capabilities.
+	 * 
+	 * @return the style editor panel
+	 */
+	protected abstract JPanel getStylePanel();
+	
+	/**
+	 * Set the values of the current element in the agent list when another element
+	 *   in the list is selected.
+	 */
+	protected abstract void setCurrentElementValues();
+	
+	/**
+	 * Do something whenever the agent list changes to a new value through selection.
+	 */
+	protected abstract void agentListChanged(AgentTypeElement element);
+	
+	/**
+	 * Apply the editor changes to the DisplayDescriptor.
+	 */
+	protected abstract void applyChanges();
+	
+	/**
+	 * Initialize sub classes.
+	 */
+	protected abstract void initialize();
+	
 	@Override
 	public void init(WizardModel wizardModel) {
 		this.model = (DisplayWizardModel) wizardModel;
@@ -243,113 +175,15 @@ public class StyleStep extends PanelWizardStep {
 
 	@Override
 	public void applyState() throws InvalidStateException {
-		setCurrentElementValues();
-		DisplayDescriptor descriptor = model.getDescriptor();
-
-		descriptor.getStyles().clear();
-		descriptor.getEditedStyles().clear();
-		
-		for (int i = 0; i < listModel.size(); i++) {
-			AgentTypeElement element = (AgentTypeElement) listModel.get(i);
-			descriptor.addStyle(element.agentClassName, element.styleClassName);
-			descriptor.addEditedStyle(element.agentClassName, element.editedStyleName);
-		}
-		
-		descriptor.setBackgroundColor(backgroundColor);
+		applyChanges();
 	}
 
 	@Override
 	public void prepare() {
 		currentIndex = -1;
-		listModel.clear();
-		editedStyleFileMap.clear();
-		defaultStyle = null;
+		agentListModel.clear();
 
 		DisplayDescriptor descriptor = model.getDescriptor();
-
-		// TODO Projections: init from viz registry data.
-		Class<?>[] defaultStyles3D = new Class<?>[] { DefaultStyle3D.class };
-		Class<?>[] defaultStyles2D = new Class<?>[] { DefaultStyleOGL2D.class };
-
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			defaultStyle = defaultStyles3D[0].getName();
-			setBackgroundColor(Color.BLACK);
-		}
-		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			defaultStyle = defaultStyles2D[0].getName();
-			setBackgroundColor(Color.WHITE);
-		}
-
-		// Get the default style for the display from the viz registry.
-		else{
-			VisualizationRegistryData data = VisualizationRegistry.getDataFor(descriptor.getDisplayType());
-
-			if (data != null){
-				Class<?>[] defaultStyleClasses = data.getDefaultStyles();
-				
-				if (defaultStyleClasses != null){
-					defaultStyle = defaultStyleClasses[0].getName();
-				}
-			}
-			else{
-				msg.error("Error creating style step for " + descriptor.getDisplayType() 
-						+ ". No visualization registry data found.", null);
-			}
-		}
-		
-		// TODO Projections: get the build style availability/editor from the viz registry.
-		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
-			buildStyleButton.setEnabled(true);
-		}
-		else {
-			buildStyleButton.setEnabled(false);
-		}
-		
-		// Find all available style classes for the display type
-		
-		// TODO Cache styles.  There was some unfinished code here for caching styles
-		//        found by the StyleClassFinder that might make the display wizards
-		//        slightly faster.  Removed during projections refactor.
-		java.util.List<String> vals = null;
-
-		// TODO Projections: init from viz registry data entries
-		Class<?> style3DInterface = Style3D.class;
-		Class<?> style2DInterface = StyleOGL2D.class;
-		
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			vals = StyleClassFinder.getAvailableStyles(model.getContext(), style3DInterface);
-		} 
-		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			vals = StyleClassFinder.getAvailableStyles(model.getContext(), style2DInterface);
-		} 
-		else{
-			Class<?> styleInterface = VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getStyleInterface();
-
-			if (styleInterface != null){
-				vals = StyleClassFinder.getAvailableStyles(model.getContext(), styleInterface);
-			} 
-			else {
-			  msg.warn("No styles found that implement " + styleInterface.getName());	
-			}
-		}
-		
-		if (vals == null){
-			vals = new ArrayList<String>();
-		}
-
-		if (defaultStyle != null){
-			vals.add(defaultStyle);
-		}
-		else{
-			msg.warn("No default styles found for " + descriptor.getDisplayType());	
-		}
-		
-		Collections.sort(vals);
-		styleModel.removeAllElements();
-
-		for (String val : vals){
-			styleModel.addElement(val);
-		}
 		
 		// Get the list of available agent for display, sorted by order.
 		Map<String,Integer> layers = descriptor.getLayerOrders();
@@ -373,29 +207,14 @@ public class StyleStep extends PanelWizardStep {
 		Collections.reverse(tempList);
 	  for (String className : tempList){
 			String agentLabel = getShortName(className);
-			String style = descriptor.getStyleClassName(className);
-			String editedStyle = descriptor.getEditedStyleName(className);
 			
-			if (style == null)
-				style = defaultStyle;
-			
-			listModel.addElement(new AgentTypeElement(agentLabel,
-					className, style, editedStyle));
-			
-			editedStyleFileMap.put(className, editedStyle);
+			agentListModel.addElement(new AgentTypeElement(agentLabel,className));
 		}
-
-		agentList.setSelectedIndex(0);
-
-		if (descriptor.getBackgroundColor() != null)
-			setBackgroundColor(descriptor.getBackgroundColor());
-
+	  
+		initialize();
+		agentList.setSelectedIndex(0);	 // Setting syncs any listeners 
+		
 		setComplete(true);
-	}
-
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-		bgcolorBtn.setIcon(new SquareIcon(14, 14, backgroundColor));
 	}
 	
 	 private String getShortName(String className) {

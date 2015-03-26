@@ -12,8 +12,14 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.AgentSelectionStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.GIS3DOptionStep;
-import repast.simphony.visualization.gui.StyleStep;
+import repast.simphony.visualization.gui.StyleClassStep;
 
+/**
+ * Adds wizard step panels to the Display editor for GIS3D displays.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class GIS3DDisplayWizardStepCreator {
 
 	/**
@@ -39,7 +45,7 @@ public class GIS3DDisplayWizardStepCreator {
 		}));
 
 		// Use the built-in Repast Style step
-		steps.add(new Pair<WizardStep, Condition>(new StyleStep(), new Condition() {
+		steps.add(new Pair<WizardStep, Condition>(new StyleClassStep(), new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();

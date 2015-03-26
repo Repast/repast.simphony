@@ -99,7 +99,7 @@ public class DisplayConfigurationWizard {
 			}
 		}));
 
-		steps.add(pair(new StyleStep(), new Condition() {
+		steps.add(pair(new StyleClassStep(), new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();

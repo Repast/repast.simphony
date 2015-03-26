@@ -12,6 +12,12 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.GISStyleStep;
 
+/**
+ * Adds wizard step panels to the Display editor for GIS displays.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class GISDisplayWizardStepCreator {
 
 	/**
