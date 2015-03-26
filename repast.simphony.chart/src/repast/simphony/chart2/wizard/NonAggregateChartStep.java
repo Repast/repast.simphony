@@ -18,7 +18,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.MethodDataSourceDefinition;
 import repast.simphony.data2.util.AggregateFilter;
 import repast.simphony.data2.util.DataUtilities;
-import repast.simphony.ui.widget.ListSelector;
+import repast.simphony.ui.plugin.editor.ListSelector;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;

@@ -13,3 +13,4 @@ Require-Bundle: repast.simphony.runtime,
  repast.simphony.core
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: repast.simphony.ui.plugin.editor

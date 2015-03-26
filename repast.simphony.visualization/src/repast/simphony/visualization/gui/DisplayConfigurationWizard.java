@@ -11,6 +11,7 @@ import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -40,7 +41,7 @@ public class DisplayConfigurationWizard {
 
 		addPaths();
 
-		wizard = new Wizard(model);
+		wizard = new PluginWizard(model);
 		wizard.addWizardListener(model);
 		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
 		wizard.setOverviewVisible(false);

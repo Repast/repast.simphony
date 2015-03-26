@@ -1,4 +1,4 @@
-package repast.simphony.ui.widget;
+package repast.simphony.ui.plugin.editor;
 
 import javax.swing.JPanel;
 

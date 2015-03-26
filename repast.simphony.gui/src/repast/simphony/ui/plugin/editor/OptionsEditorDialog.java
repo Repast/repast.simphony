@@ -13,11 +13,8 @@ import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.WizardModel;
 import org.pietschy.wizard.models.Path;
 
-import repast.simphony.ui.widget.OptionsContentWizardStepAdapter;
-import repast.simphony.ui.widget.OptionsDialog;
-
 /**
- * An extension of {@link repast.simphony.ui.widget.OptionsDialog} that adapts it to a
+ * An extension of {@link repast.simphony.ui.plugin.editor.OptionsDialog} that adapts it to a
  * {@link repast.simphony.ui.plugin.editor.Editor} and adds some helper methods for using wizard steps in the
  * editor.
  * 
@@ -137,7 +134,7 @@ public class OptionsEditorDialog extends OptionsDialog implements Editor {
 	 * @return a new editor dialog
 	 */
 	public static OptionsEditorDialog create(WizardModel model, Path steps, String title) {
-		Wizard wizard = new Wizard(model);
+		Wizard wizard = new PluginWizard(model);
 
 		OptionsEditorDialog dialog = new OptionsEditorDialog(title);
 

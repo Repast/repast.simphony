@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import org.pietschy.wizard.InvalidStateException;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.util.wizard.ModelAwarePanelStep;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.UnitSizeLayoutProperties;

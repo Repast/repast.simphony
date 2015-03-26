@@ -20,7 +20,7 @@ import org.pietschy.wizard.WizardModel;
 import repast.simphony.engine.environment.ProjectionRegistry;
 import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.ui.widget.ListSelector;
+import repast.simphony.ui.plugin.editor.ListSelector;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.CartesianProjectionDescritorFactory;
 import repast.simphony.visualization.engine.DisplayDescriptor;

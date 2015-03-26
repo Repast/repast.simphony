@@ -24,7 +24,7 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.UnitSizeLayoutProperties;
 import repast.simphony.visualization.VisualizationProperties;

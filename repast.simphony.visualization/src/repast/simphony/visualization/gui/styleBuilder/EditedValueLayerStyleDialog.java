@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedValueLayerStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;

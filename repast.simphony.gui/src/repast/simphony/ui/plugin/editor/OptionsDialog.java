@@ -1,4 +1,4 @@
-package repast.simphony.ui.widget;
+package repast.simphony.ui.plugin.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -88,10 +88,6 @@ public class OptionsDialog extends JPanel implements ChangeListener {
     contentTabs.addChangeListener(this);
     List<OptionsDialogContent> list = (List<OptionsDialogContent>) contentTabs.getClientProperty(CONTENT);
     list.add(content);
-    if (contentTabs.getTabCount() == 1) {
-      content.selected();
-      this.content = content;
-    }
   }
 
   /**
@@ -235,6 +231,11 @@ public class OptionsDialog extends JPanel implements ChangeListener {
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     contentTabs.setSelectedIndex(0);
+   
+    // Initialize the first OptionsDialogContent so it displays properly 
+    List<OptionsDialogContent> list = (List<OptionsDialogContent>) contentTabs.getClientProperty(CONTENT);
+    list.get(0).selected();
+    content = list.get(0);
   }
 
   public void showDialog(JFrame parent, String title) {

@@ -13,6 +13,7 @@ import repast.simphony.data2.gui.FileChooserStep;
 import repast.simphony.data2.gui.NetworkChooserStep;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.space.graph.Network;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 import repast.simphony.util.Settings;
 import simphony.util.messages.MessageCenter;
 
@@ -200,7 +201,7 @@ public class NetworkAnalysisPluginWizard extends AnalysisPluginWizard {
 	 * @return if the wizard was was completed (true) or canceled (false).
 	 */
 	public boolean showDialogModal() {
-		Wizard wizard = new Wizard(wizardModel);
+		Wizard wizard = new PluginWizard(wizardModel);
 		wizard.setOverviewVisible(false);
 		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
 

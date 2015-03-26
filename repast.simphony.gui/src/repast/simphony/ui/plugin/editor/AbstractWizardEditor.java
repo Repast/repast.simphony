@@ -125,7 +125,7 @@ public abstract class AbstractWizardEditor<T extends ControllerAction> extends O
 		SimplePath path = getPath();
 
 		WizardModel wizardModel = getWizardModel(path, scenario, contextId);
-		wizard = new Wizard(wizardModel);
+		wizard = new PluginWizard(wizardModel);
 		if (wizardModel instanceof WizardListener) {
 			wizard.addWizardListener((WizardListener) wizardModel);			
 		}

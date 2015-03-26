@@ -11,6 +11,8 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.WizardStep;
 
+import repast.simphony.ui.plugin.editor.PluginWizard;
+
 public class UserPanelEditorWizard {
 	protected UserPanelWizardModel model;
 
@@ -36,7 +38,7 @@ public class UserPanelEditorWizard {
 			model = new UserPanelWizardModel(clazzes);
 		}
 		buildPath();
-		wizard = new Wizard(model);
+		wizard = new PluginWizard(model);
 		wizard.setOverviewVisible(false);
 		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
 		model.setLastVisible(false);

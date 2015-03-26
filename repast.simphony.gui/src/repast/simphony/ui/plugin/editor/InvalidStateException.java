@@ -1,4 +1,4 @@
-package repast.simphony.ui.widget;
+package repast.simphony.ui.plugin.editor;
 
 /**
  * Thrown by an OptionsDialogContent when we attempt to "apply" the gui values to the content and an

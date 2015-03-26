@@ -10,6 +10,7 @@ import org.pietschy.wizard.Wizard;
 
 import repast.simphony.chart2.engine.HistogramChartDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 
 /**
  */
@@ -30,7 +31,7 @@ public class HistogramEditorWizard {
     }
 
     buildPath(descriptor == null);
-    wizard = new Wizard(model);
+    wizard = new PluginWizard(model);
     wizard.setOverviewVisible(false);
     wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
     model.setLastVisible(false);

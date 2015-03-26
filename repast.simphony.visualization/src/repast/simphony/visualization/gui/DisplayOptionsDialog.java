@@ -37,26 +37,28 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
     DisplayDescriptor descriptor = action.getDescriptor().makeCopy();
     
     // TODO Projections: use the regular GeneralStep here to allow modifying projections in the wizard. 
-    NameOnlyGeneralStep gStep = new NameOnlyGeneralStep();
-    SimplePath path = new SimplePath();
-    path.addStep(gStep);
+//    NameOnlyGeneralStep gStep = new NameOnlyGeneralStep();
+//    SimplePath path = new SimplePath();
+//    path.addStep(gStep);
     
   	DisplayConfigurationWizard displayWizard = new DisplayConfigurationWizard(contextId, descriptor, rootContext);
   	
     model = displayWizard.getModel();
     Wizard wizard = displayWizard.getWizard();
 
-    addContent("General", null, gStep, wizard);
+//    addContent("General", null, gStep, wizard);
 
     // TODO Projections: use the regular GeneralStep here to allow modifying projections in the wizard. 
     //        If the GeneralSteps is used, then we don't need to loop through here.
     // we want to skip the first step, because we stick in the name only step
-    while (model.isNextAvailable()) {
-      model.nextStep();
+    while (model.isNextAvailable()) {	
+    	System.out.println(model.getActiveStep().getName());
 
-      addContent(model.getActiveStep().getName(), null, (PanelWizardStep) model.getActiveStep(),
-	  wizard);
+      addContent(model.getActiveStep().getName(), null, (PanelWizardStep) model.getActiveStep(), wizard);
+    	model.nextStep();
     }
+    // Last step
+    addContent(model.getActiveStep().getName(), null, (PanelWizardStep) model.getActiveStep(), wizard);
   }
   
   @Override

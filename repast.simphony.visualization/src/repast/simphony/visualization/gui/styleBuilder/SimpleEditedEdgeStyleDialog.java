@@ -37,7 +37,7 @@ import org.jscience.physics.amount.Amount;
 import repast.simphony.scenario.data.Attribute;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
