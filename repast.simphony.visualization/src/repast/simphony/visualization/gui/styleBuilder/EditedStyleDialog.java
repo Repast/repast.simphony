@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
 
 import repast.simphony.scenario.ScenarioUtils;
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData3D;
 import repast.simphony.visualization.editedStyle.EditedStyleData;

@@ -8,6 +8,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.pietschy.wizard.Wizard;
 
 import repast.simphony.scenario.ScenarioCreator;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 
 /**
  * Wizard for creating a scenario file. The user selects a modelspec.xml and a
@@ -27,7 +28,7 @@ public class NewScenarioWizard {
 		model.add(new ScenarioSelectionPanel());
 		model.add(new NewScenarioFinalPanel());
 		model.setLastVisible(false);
-		wizard = new Wizard(model);
+		wizard = new PluginWizard(model);
 		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
 		wizard.setOverviewVisible(false);
 	}

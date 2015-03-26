@@ -5,7 +5,9 @@ import org.pietschy.wizard.*;
 import org.pietschy.wizard.models.BranchingPath;
 import org.pietschy.wizard.models.Condition;
 import org.pietschy.wizard.models.SimplePath;
+
 import repast.simphony.scenario.Scenario;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 import simphony.util.messages.MessageCenter;
 
 import java.awt.*;
@@ -37,7 +39,7 @@ public class DynamicWizard implements WizardListener {
 
     BranchingPath firstPath = createPaths(firstStepTitle, firstStepPrompt, firstSteps);
     model = modelFactory.create(firstPath, scenario, contextID);
-    wizard = new Wizard(model);
+    wizard = new PluginWizard(model);
     wizard.addWizardListener(model);
     wizard.addWizardListener(this);
     wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);

@@ -13,6 +13,7 @@ import repast.simphony.data2.DataSetRegistry;
 import repast.simphony.data2.FileDataSink;
 import repast.simphony.data2.FormatType;
 import repast.simphony.data2.gui.FileSinkChooserStep;
+import repast.simphony.ui.plugin.editor.PluginWizard;
 import repast.simphony.util.Settings;
 import simphony.util.messages.MessageCenter;
 
@@ -147,7 +148,7 @@ public abstract class AnalysisPluginWizard {
    * @return if the wizard was was completed (true) or canceled (false).
    */
   public boolean showDialogModal() {
-    Wizard wizard = new Wizard(wizardModel);
+    Wizard wizard = new PluginWizard(wizardModel);
     wizard.setOverviewVisible(false);
     wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
 

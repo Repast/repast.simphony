@@ -23,7 +23,7 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.engine.AbstractTextSinkDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor;
-import repast.simphony.ui.widget.ListSelector;
+import repast.simphony.ui.plugin.editor.ListSelector;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;

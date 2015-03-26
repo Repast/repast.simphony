@@ -19,7 +19,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import repast.simphony.ui.widget.SquareIcon;
+import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -41,6 +41,9 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Nick Collier
  * @author Eric Tatara
+ * 
+ * TODO Add a slider on the agent list
+ * 
  */
 public class StyleClassStep extends StyleStep {
 	private static final long serialVersionUID = -8619245538953523657L;
@@ -103,8 +106,6 @@ public class StyleClassStep extends StyleStep {
 
 						// Set the style class name based on display type
 						String styleClassName = null;
-
-						// TODO Projections: get the style class name from the viz registry data
 						
 						if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle2D";
@@ -112,7 +113,7 @@ public class StyleClassStep extends StyleStep {
 						else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
 							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
 
-						// TODO Projections: GIS
+						// TODO GIS get from registry
 //						else
 //							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
 
@@ -202,7 +203,7 @@ public class StyleClassStep extends StyleStep {
 
 		String defaultStyle = getDefaultStyle(descriptor);
 		
-		// TODO Projections: get the build style availability/editor from the viz registry.
+		// TODO GIS get the build style availability/editor from the viz registry.
 		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
 			buildStyleButton.setEnabled(true);
 		}

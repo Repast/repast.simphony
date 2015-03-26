@@ -9,6 +9,7 @@ import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.gui.AgentSelectionStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.GISStyleStep;
 
@@ -34,14 +35,14 @@ public class GISDisplayWizardStepCreator {
 		ArrayList<Pair<WizardStep, Condition>> steps = new ArrayList<Pair<WizardStep, Condition>>();
 
 		// TODO GIS: need an agent selection step?
-//		steps.add(new Pair<WizardStep, Condition>(new AgentSelectionStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return descriptor.getProjectionCount() > 0 && isGIS(descriptor);
-//			}
-//		}));
+		steps.add(new Pair<WizardStep, Condition>(new AgentSelectionStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+
+				return descriptor.getProjectionCount() > 0 && isGIS(descriptor);
+			}
+		}));
 
 		steps.add(new Pair<WizardStep, Condition>(new GISStyleStep(), new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {

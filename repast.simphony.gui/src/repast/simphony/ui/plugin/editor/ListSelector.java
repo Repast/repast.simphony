@@ -1,4 +1,4 @@
-package repast.simphony.ui.widget;
+package repast.simphony.ui.plugin.editor;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;

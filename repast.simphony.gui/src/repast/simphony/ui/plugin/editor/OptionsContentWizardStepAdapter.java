@@ -1,10 +1,9 @@
-package repast.simphony.ui.widget;
+package repast.simphony.ui.plugin.editor;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
-import org.pietschy.wizard.DefaultTitleComponent;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.Wizard;
 
@@ -19,23 +18,8 @@ public class OptionsContentWizardStepAdapter implements OptionsDialogContent {
 
 	private PanelWizardStep step;
 	private JPanel panel = new JPanel(new BorderLayout());
-	//private TitleComponent title;
-
-	private static class TitleComponent extends DefaultTitleComponent {
-		public TitleComponent(Wizard wizard) {
-			super(wizard);
-		}
-
-		public void setTitle(String text) {
-			super.title.setText(text);
-		}
-
-		public void setSummary(String summary) {
-			super.summary.setText(summary);
-		}
-	}
-
-
+	private TitleComponent title;
+	
 	/**
 	 * Creates an OptionsContentWizardStepAdapter for the specified wizard step.
 	 * @param step
@@ -43,8 +27,8 @@ public class OptionsContentWizardStepAdapter implements OptionsDialogContent {
 	public OptionsContentWizardStepAdapter(Wizard wizard, PanelWizardStep step) {
 		this.step = step;
 		panel.add(step, BorderLayout.CENTER);
-		//title = new TitleComponent(wizard);
-		//panel.add(title, BorderLayout.NORTH);
+		title = new TitleComponent(wizard);
+		panel.add(title, BorderLayout.NORTH);
 	}
 
 	/**
@@ -54,7 +38,7 @@ public class OptionsContentWizardStepAdapter implements OptionsDialogContent {
 		try {
 			step.applyState();
 		} catch (org.pietschy.wizard.InvalidStateException e) {
-			throw new repast.simphony.ui.widget.InvalidStateException(e);
+			throw new repast.simphony.ui.plugin.editor.InvalidStateException(e);
 		}
 	}
 
@@ -81,7 +65,7 @@ public class OptionsContentWizardStepAdapter implements OptionsDialogContent {
 		try {
 			step.applyState();
 		} catch (org.pietschy.wizard.InvalidStateException e) {
-			throw new repast.simphony.ui.widget.InvalidStateException(e);
+			throw new repast.simphony.ui.plugin.editor.InvalidStateException(e);
 		}
 
 	}
@@ -91,7 +75,7 @@ public class OptionsContentWizardStepAdapter implements OptionsDialogContent {
 	 */
 	public void selected() {
 		step.prepare();
-		//title.setTitle(step.getName());
-		//title.setSummary(step.getSummary());
+		title.setTitle(step.getName());
+		title.setSummary(step.getSummary());
 	}
 }
