@@ -43,7 +43,7 @@ public class HistogramChartPropertiesStep extends PluginWizardStep  {
   private JLabel gridLineLabel;
 
   public HistogramChartPropertiesStep() {
-    super("Configure Chart Properites", "Please configure the chart's display properties.");
+    super("Chart Properites", "Please configure the chart's display properties.");
   }
   
   @Override

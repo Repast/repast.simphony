@@ -1,18 +1,26 @@
 package repast.simphony.data.analysis;
 
-import org.pietschy.wizard.PanelWizardStep;
-import repast.simphony.util.SystemConstants;
-import saf.core.ui.util.FileChooserUtilities;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class BrowseForHomeStep extends PanelWizardStep {
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-	private String installHome;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
+import saf.core.ui.util.FileChooserUtilities;
+
+/**
+ * Wizard step that provides the location of the data analysis plugin executable.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class BrowseForHomeStep extends PluginWizardStep {
+
 	private String defaultLocation;
 	
 	public JTextField homeDirField;
@@ -21,19 +29,23 @@ public class BrowseForHomeStep extends PanelWizardStep {
 		super(name + " home", "<HTML>Please select " + name + "'s executable file.  " +
 				"The default installation location for " + name+ " is " + defaultLocation + ".");
 
-		this.installHome = installHome;
 		this.defaultLocation = defaultLocation;
 		
-		setupPanel();
-	}
-
-	private void setupPanel() {
 		if (installHome == null)
 		  installHome = defaultLocation;
+		
+		homeDirField.setText(installHome);
+		
+		setComplete(true);
+	}
+
+	@Override
+	protected JPanel getContentPanel(){
+		JPanel panel = new JPanel(new FlowLayout());
 			
-		homeDirField = new JTextField(installHome);
+		homeDirField = new JTextField();
 		homeDirField.setPreferredSize(new Dimension(400, 20));
-		add(homeDirField);
+		panel.add(homeDirField);
 
 		JButton browseButton = new JButton("Browse");
 		browseButton.setMnemonic('b');
@@ -43,10 +55,11 @@ public class BrowseForHomeStep extends PanelWizardStep {
 			}
 		});
 
-		add(browseButton);
+		panel.add(browseButton);
 
-		setComplete(true);
+		return panel;
 	}
+	
 	private String browseForExecutable() {
 		File home = FileChooserUtilities.getOpenFile(new File(defaultLocation));
 

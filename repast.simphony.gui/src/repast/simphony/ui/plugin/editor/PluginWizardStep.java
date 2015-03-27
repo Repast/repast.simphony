@@ -17,7 +17,7 @@ import org.pietschy.wizard.PanelWizardStep;
 public abstract class PluginWizardStep extends PanelWizardStep {
 
 	// The standard screen dimensions of the wizard steps content panels
-	public static int CONTENT_PANEL_WIDTH = 500;
+	public static int CONTENT_PANEL_WIDTH = 625;
 	public static int CONTENT_PANEL_HEIGHT = 300;
 	
 	public PluginWizardStep(String name, String description){

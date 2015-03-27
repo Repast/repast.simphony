@@ -1,40 +1,39 @@
-/*CopyrightHere*/
 package repast.simphony.data2.gui;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.pietschy.wizard.PanelWizardStep;
-
 import repast.simphony.space.graph.Network;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
-public class NetworkChooserStep extends PanelWizardStep {
-	private static final long serialVersionUID = 1L;
-
+/**
+ * Wizard step for selecting network entries that are passed to data analysis plugins.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class NetworkChooserStep extends PluginWizardStep {
 	private List<Network> networks;
-
 	private JList networkList;
 
 	public List<Network> getNetworks() {
 		return networks;
 	}
 
-	private boolean multiSelect;
-
 	@SuppressWarnings("unchecked")
 	public NetworkChooserStep(Iterable<Network> networks, boolean multiSelect,
 			String title, String message) {
 		super(title, message);
 
-		this.multiSelect = multiSelect;
 		if (networks instanceof List) {
 			this.networks = (List<Network>) networks;
 		} else {
@@ -45,23 +44,33 @@ public class NetworkChooserStep extends PanelWizardStep {
 				tmpHandle.add(network);
 			}
 		}
-
-		setupPanel();
-	}
-
-	private void setupPanel() {
+		
 		Vector<String> names = new Vector<String>();
 
 		for (Network network : networks) {
 			names.add(network.getName());
 		}
+		networkList.setListData(names);
 
-		networkList = new JList(names);
+		if (!multiSelect) {
+			networkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		} else {
+			networkList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		}
+		if (this.networks.size() > 0) {
+			networkList.setSelectedIndex(0);
+		}
+	}
+
+	@Override
+	protected JPanel getContentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		
+		networkList = new JList();
 		networkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		JScrollPane scrollPane = new JScrollPane(networkList);
-		scrollPane.setPreferredSize(new Dimension(400, 200));
-		add(scrollPane);
+		panel.add(scrollPane);
 
 		networkList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -72,14 +81,8 @@ public class NetworkChooserStep extends PanelWizardStep {
 				}
 			}
 		});
-		if (!multiSelect) {
-			networkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		} else {
-			networkList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		}
-		if (networks.size() > 0) {
-			networkList.setSelectedIndex(0);
-		}
+		
+		return panel;
 	}
 
 	public ArrayList<Network> getChosenNetworks() {

@@ -6,36 +6,48 @@ import java.awt.Font;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Display wizard step for read-only general info used in editor dialogs on an
+ *   existing display.
+ * 
  * @author Nick Collier
- * @version $Revision$ $Date$
+ * 
  */
 @SuppressWarnings("serial")
-public class NameOnlyGeneralStep extends PanelWizardStep {
+public class NameOnlyGeneralStep extends PluginWizardStep {
 
   private DisplayWizardModel model;
-  private JTextField nameFld = new JTextField();
-  private JLabel typeLbl = new JLabel();
-  private JList projections = new JList(new DefaultListModel());
+  private JTextField nameFld;
+  private JLabel typeLbl;
+  private JList projections;
 
   public NameOnlyGeneralStep() {
     super("Display Details", "Enter the name of the display");
-    this.setLayout(new BorderLayout());
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
-	"pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, 60dlu");
+  }
+  
+  @Override
+  protected  JPanel getContentPanel(){ 
+  	nameFld = new JTextField();
+  	typeLbl = new JLabel();
+  	projections = new JList(new DefaultListModel());
+  	
+  	FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
+  			"pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, 60dlu");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     typeLbl.setFont(typeLbl.getFont().deriveFont(Font.BOLD));
@@ -50,7 +62,7 @@ public class NameOnlyGeneralStep extends PanelWizardStep {
     builder.addSeparator("Projections", cc.xyw(1, 7, 3));
     builder.add(new JScrollPane(projections), cc.xyw(1, 9, 3));
 
-    add(builder.getPanel(), BorderLayout.CENTER);
+    return builder.getPanel();
   }
 
   @Override

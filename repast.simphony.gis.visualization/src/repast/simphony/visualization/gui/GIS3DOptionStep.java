@@ -1,28 +1,33 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
+import javax.swing.JPanel;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 /**
- * Wizard step for setting GIS 3D options
+ * Display wizard step for setting GIS 3D options
  * 
  * @author Eric Tatara
  */
-public class GIS3DOptionStep extends PanelWizardStep {
+public class GIS3DOptionStep extends PluginWizardStep {
 
   private DisplayWizardModel model;
-  private GIS3DOptionsPanel panel = new GIS3DOptionsPanel();
+  private GIS3DOptionsPanel panel;
 
   public GIS3DOptionStep() {
     super("GIS Options", "Set GIS options.");
-    setLayout(new BorderLayout());
-    add(panel, BorderLayout.CENTER);
+    
     setComplete(true);
+  }
+  
+  @Override
+	protected  JPanel getContentPanel(){
+  	panel = new GIS3DOptionsPanel();
+  	return panel;
   }
 
   @Override

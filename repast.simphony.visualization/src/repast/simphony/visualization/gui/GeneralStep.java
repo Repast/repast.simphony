@@ -1,6 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,16 +10,17 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.engine.environment.ProjectionRegistry;
 import repast.simphony.engine.environment.ProjectionRegistryData;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.plugin.editor.ListSelector;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.CartesianProjectionDescritorFactory;
 import repast.simphony.visualization.engine.DisplayDescriptor;
@@ -37,11 +37,13 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Display wizard first step for selecting display type and projections.
+ * 
  * @author Nick Collier
- * @version $Revision$ $Date$
+ * 
  */
 @SuppressWarnings("serial")
-public class GeneralStep extends PanelWizardStep {
+public class GeneralStep extends PluginWizardStep {
 	
 	private static final MessageCenter msg = MessageCenter.getMessageCenter(GeneralStep.class);
 	public static final String DEFAULT_DISPLAY_TITLE = "New Display";
@@ -81,8 +83,8 @@ public class GeneralStep extends PanelWizardStep {
   }
 
   private DisplayWizardModel model;
-  private JTextField nameFld = new JTextField();
-  private JComboBox<String> typeBox = new JComboBox();
+  private JTextField nameFld;
+  private JComboBox<String> typeBox;
   private ListSelector<DisplayItem> selector;
   
   /**
@@ -95,8 +97,13 @@ public class GeneralStep extends PanelWizardStep {
   public GeneralStep() {
     super("Display Details", "Please enter the name and type of the display as well the "
         + "projections the display should visualize");
+  }
+  
+  @Override
+ 	protected  JPanel getContentPanel(){ 
+  	nameFld = new JTextField();
+    typeBox = new JComboBox();
     
-    this.setLayout(new BorderLayout());
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
@@ -114,12 +121,13 @@ public class GeneralStep extends PanelWizardStep {
     builder.addSeparator("Projections and Value Layers", cc.xyw(1, 7, 3));
     builder.add(selector.getPanel(), cc.xyw(1, 9, 3));
 
-    add(builder.getPanel(), BorderLayout.CENTER);
     selector.addActionListeners(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setComplete(selector.getSelectedItems().size() > 0 && nameFld.getText().length() > 0);
       }
     });
+    
+    return builder.getPanel();
   }
 
   private boolean doValidate() {

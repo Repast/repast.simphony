@@ -45,7 +45,7 @@ public class NonAggregateChartStep extends PluginWizardStep {
   private AggregateFilter filter;
 
   public NonAggregateChartStep() {
-    super("Configure Chart Data Properites", "Please select the data to be displayed by the chart.");
+    super("Chart Data", "Please select the data to be displayed by the chart.");
   
     filter = new AggregateFilter();
   }

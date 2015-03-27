@@ -1,6 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -22,10 +22,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -44,18 +44,21 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Display wizard step for network edge styles.
+ * 
  * @author Nick Collier
  * @author Eric Tatara
  */
-public class EdgeStyleStep extends PanelWizardStep {
+public class EdgeStyleStep extends PluginWizardStep {
 	private static final long serialVersionUID = 8604762391209707526L;
 	private static final MessageCenter msg = MessageCenter.getMessageCenter(EdgeStyleStep.class);
+	
 	private DisplayWizardModel model;
-	private JList objList = new JList(new DefaultListModel());
-	private DefaultComboBoxModel styleModel = new DefaultComboBoxModel();
-	private int currentIndex = -1;
+	private JList objList;
+	private DefaultComboBoxModel styleModel;
+	private int currentIndex;
 	private JComboBox styleBox;
-	private Map<String, String> editedStyleFileMap = new HashMap<String, String>();
+	private Map<String, String> editedStyleFileMap;
 	private JButton buildStyleButton = new JButton();
 	private String defaultStyle;
 
@@ -77,7 +80,16 @@ public class EdgeStyleStep extends PanelWizardStep {
 
 	public EdgeStyleStep() {
 		super("Edge Style", "Please provide an edge style for each network in the display");
-		this.setLayout(new BorderLayout());
+	}
+	
+	@Override
+	protected  JPanel getContentPanel(){ 
+		objList = new JList(new DefaultListModel());
+		styleModel = new DefaultComboBoxModel();
+		currentIndex = -1;
+		editedStyleFileMap = new HashMap<String, String>();
+		buildStyleButton = new JButton();
+		
 		FormLayout layout = new FormLayout(
 				"pref, 6dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref",
 				"pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, fill:pref:grow");
@@ -197,8 +209,7 @@ public class EdgeStyleStep extends PanelWizardStep {
 			}
 		});
 
-		add(builder.getPanel(), BorderLayout.CENTER);
-
+		return builder.getPanel();
 	}
 
 	@Override

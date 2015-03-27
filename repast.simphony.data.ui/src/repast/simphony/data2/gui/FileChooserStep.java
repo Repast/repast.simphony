@@ -1,4 +1,3 @@
-/*CopyrightHere*/
 package repast.simphony.data2.gui;
 
 import java.awt.event.ActionEvent;
@@ -14,8 +13,9 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
+
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -27,36 +27,29 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
+ * Wizard step for choosing a file to pass to a data analysis plugin.
+ * 
  * @author Jerry Vos
+ * @author Eric Tatara
  */
-public class FileChooserStep extends PanelWizardStep {
+public class FileChooserStep extends PluginWizardStep {
 	private static final long serialVersionUID = 2818149899413910157L;
 
-	public String getFileName() {
-		if (this.fileNameField.getText().endsWith(
-				this.getDefaultFileExtension())) {
-			return this.fileNameField.getText();
-		} else {
-			return this.fileNameField.getText()
-					+ this.getDefaultFileExtension();
-		}
-	}
-
+	private JComponent separator1;
+	private JLabel label1;
+	private JTextField fileNameField;
+	private JButton browseBtn;
+	private JPanel panel1;
+	private JLabel warningLabel;
+	
 	public String defaultFileExtension = "";
-
-	public String getDefaultFileExtension() {
-		return defaultFileExtension;
-	}
-
-	public void setDefaultFileExtension(String defaultExtension) {
-		this.defaultFileExtension = defaultExtension;
-	}
 
 	public FileChooserStep(String title, String subTitle,
 			String defaultFileExtension) {
 		super(title, subTitle);
+		
 		this.defaultFileExtension = defaultFileExtension;
-		initComponents();
+		
 		browseBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				File f = new File(fileNameField.getText());
@@ -81,12 +74,10 @@ public class FileChooserStep extends PanelWizardStep {
 		});
 	}
 
-	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
-		DefaultComponentFactory compFactory = DefaultComponentFactory
-				.getInstance();
+	@Override
+	protected  JPanel getContentPanel(){
+		JPanel panel = new JPanel();
+		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
 		separator1 = compFactory.createSeparator("Output File Properties");
 		label1 = new JLabel();
 		fileNameField = new JTextField();
@@ -94,9 +85,8 @@ public class FileChooserStep extends PanelWizardStep {
 		panel1 = new JPanel();
 		warningLabel = new JLabel();
 		CellConstraints cc = new CellConstraints();
-
-		// ======== this ========
-		setLayout(new FormLayout(new ColumnSpec[] {
+	
+		panel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
 				new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT,
@@ -109,31 +99,25 @@ public class FileChooserStep extends PanelWizardStep {
 				FormSpecs.DEFAULT_ROWSPEC, FormSpecs.UNRELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC, FormSpecs.LINE_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC }));
-		add(separator1, cc.xywh(1, 1, 5, 1));
+		panel.add(separator1, cc.xywh(1, 1, 5, 1));
 
-		// ---- label1 ----
 		label1.setText("Main File Name:");
-		add(label1, cc.xy(1, 3));
+		panel.add(label1, cc.xy(1, 3));
 
-		// ---- fileNameField ----
 		fileNameField.setText(" ");
-		add(fileNameField, cc.xy(3, 3));
+		panel.add(fileNameField, cc.xy(3, 3));
 
-		// ---- browseBtn ----
 		browseBtn.setText("Browse");
-		add(browseBtn, cc.xy(5, 3));
+		panel.add(browseBtn, cc.xy(5, 3));
 
-		// ======== panel1 ========
-		{
-			panel1.setLayout(new FormLayout("default:grow, default:grow",
+		
+		panel1.setLayout(new FormLayout("default:grow, default:grow",
 					"fill:default:grow, fill:default:grow"));
-		}
-		add(panel1, cc.xywh(1, 5, 5, 1));
+		panel.add(panel1, cc.xywh(1, 5, 5, 1));
 
-		// ---- warningLabel ----
 		warningLabel.setText(" ");
-		add(warningLabel, cc.xywh(1, 7, 3, 1));
-		// //GEN-END:initComponents
+		panel.add(warningLabel, cc.xywh(1, 7, 3, 1));
+		
 
 		fileNameField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -149,24 +133,12 @@ public class FileChooserStep extends PanelWizardStep {
 			}
 		});
 
+		return panel;
 	}
-
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
-	private JComponent separator1;
-	private JLabel label1;
-	private JTextField fileNameField;
-	private JButton browseBtn;
-	private JPanel panel1;
-	private JLabel warningLabel;
-
-	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	@Override
 	public void init(WizardModel wizardModel) {
 		super.init(wizardModel);
-
 	}
 
 	@Override
@@ -177,5 +149,23 @@ public class FileChooserStep extends PanelWizardStep {
 
 	protected void updateComplete() {
 		setComplete(!fileNameField.getText().equals(""));
+	}
+	
+	public String getFileName() {
+		if (this.fileNameField.getText().endsWith(
+				this.getDefaultFileExtension())) {
+			return this.fileNameField.getText();
+		} else {
+			return this.fileNameField.getText()
+					+ this.getDefaultFileExtension();
+		}
+	}
+	
+	public String getDefaultFileExtension() {
+		return defaultFileExtension;
+	}
+
+	public void setDefaultFileExtension(String defaultExtension) {
+		this.defaultFileExtension = defaultExtension;
 	}
 }

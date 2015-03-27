@@ -5,7 +5,6 @@ import static repast.simphony.visualization.decorator.DecoratorConstants.COLOR;
 import static repast.simphony.visualization.decorator.DecoratorConstants.SHOW_DECORATOR;
 import static repast.simphony.visualization.decorator.DecoratorConstants.UNIT_SIZE;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -17,13 +16,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.UnitSizeLayoutProperties;
@@ -38,23 +38,35 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Display wizard step for continuous space options.
+ * 
  * @author Nick Collier
  */
-public class ContinuousStyleStep extends PanelWizardStep {
+public class ContinuousStyleStep extends PluginWizardStep {
   private static final long serialVersionUID = 7952844028233688422L;
 
   private DisplayWizardModel model;
-  private JTextField sizeFld = new JTextField();
-  private JLabel nameLbl = new JLabel();
-  private JCheckBox boundingBox = new JCheckBox();
-  private JButton colorBtn = new JButton();
-  private Color color = Color.WHITE;
+  private JTextField sizeFld ;
+  private JLabel nameLbl ;
+  private JCheckBox boundingBox ;
+  private JButton colorBtn ;
+  private Color color ;
   private boolean prepared, applied;
-
 
   public ContinuousStyleStep() {
     super("Continuous Space Style", "Please enter the continuous space details");
-    this.setLayout(new BorderLayout());
+    
+    setComplete(true);
+  }
+  
+  @Override
+	protected  JPanel getContentPanel(){ 
+  	sizeFld = new JTextField();
+  	nameLbl = new JLabel();
+  	boundingBox = new JCheckBox();
+  	colorBtn = new JButton();
+  	color = Color.WHITE;
+
     sizeFld.setDocument(new FloatDocument());
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref, pref:grow",
             "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
@@ -71,7 +83,6 @@ public class ContinuousStyleStep extends PanelWizardStep {
     builder.add(boundingBox, cc.xyw(3, 5, 2));
     final JLabel boxColorLabel = builder.addLabel("Bounding Box:", cc.xy(1, 7));
     builder.add(colorBtn, cc.xy(3, 7));
-    add(builder.getPanel(), BorderLayout.CENTER);
 
     boundingBox.setSelected(true);
     boundingBox.addItemListener(new ItemListener() {
@@ -92,7 +103,7 @@ public class ContinuousStyleStep extends PanelWizardStep {
       }
     });
 
-    setComplete(true);
+    return builder.getPanel();
   }
 
   @Override

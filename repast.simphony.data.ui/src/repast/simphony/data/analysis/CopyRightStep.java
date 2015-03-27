@@ -1,5 +1,6 @@
 package repast.simphony.data.analysis;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -7,11 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.pietschy.wizard.PanelWizardStep;
-
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -22,44 +24,41 @@ import simphony.util.messages.MessageCenter;
  * @author Jerry Vos
  */
 
-public class CopyRightStep extends PanelWizardStep {
+public class CopyRightStep extends PluginWizardStep {
 	protected static final MessageCenter LOG	= MessageCenter.getMessageCenter(AnalysisPluginWizard.class);
 
-	protected InputStream stream;
-
+  protected JTextArea license;
+	
 	public CopyRightStep(String name, InputStream stream) {
 		super(name + "'s license", name + " is a tool external to Repast and is " +
 		"under a different license which is shown below.");
-
-		this.stream = stream;
-
-		setupPanel();
-	}
-
-	private void setupPanel() {
-		JTextArea license = buildLicenseArea();
-
-		JScrollPane scrollPane = new JScrollPane(license);
-		scrollPane.setPreferredSize(new Dimension(560, 200));
-
-		add(scrollPane);
-
+		
+		buildLicenseArea(stream);
+		
 		setComplete(true);
 	}
 
-	private JTextArea buildLicenseArea() {
-		JTextArea licenseArea = new JTextArea();
-		licenseArea.setEditable(false);
+	@Override
+	protected  JPanel getContentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+		license = new JTextArea();
 
-		licenseArea.setText(getLicenseText());
-		licenseArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		JScrollPane scrollPane = new JScrollPane(license);
+		panel.add(scrollPane);
 
-		licenseArea.setCaretPosition(0);
-
-		return licenseArea;
+		return panel;
 	}
 
-	private String getLicenseText() {
+	private void buildLicenseArea(InputStream stream) {
+		license.setEditable(false);
+
+		license.setText(getLicenseText(stream));
+		license.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
+		license.setCaretPosition(0);
+	}
+
+	private String getLicenseText(InputStream stream) {
 		StringBuffer buffer = new StringBuffer(18000);
 
 		if (stream != null){

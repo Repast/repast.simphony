@@ -1,36 +1,37 @@
-/*CopyrightHere*/
 package repast.simphony.data2.gui;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.pietschy.wizard.PanelWizardStep;
-
 import repast.simphony.data2.FileDataSink;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
-public class FileSinkChooserStep extends PanelWizardStep {
+/**
+ * Wizard step for selecting file sink entries that are passed to data analysis plugins.
+ * 
+ * @author Eric Tatara
+ *
+ */
+public class FileSinkChooserStep extends PluginWizardStep {
   private static final long serialVersionUID = 1L;
 
   private List<FileDataSink> sinks;
-
   private JList outputterList;
-
-  private boolean multiSelect;
 
   @SuppressWarnings("unchecked")
   public FileSinkChooserStep(Iterable<FileDataSink> sinks, boolean multiSelect,
       String title, String message) {
     super(title, message);
 
-    this.multiSelect = multiSelect;
     if (sinks instanceof List) {
       this.sinks = (List<FileDataSink>) sinks;
     } else {
@@ -42,22 +43,31 @@ public class FileSinkChooserStep extends PanelWizardStep {
       }
     }
 
-    setupPanel();
-  }
-
-  private void setupPanel() {
     Vector<String> names = new Vector<String>();
 
     for (FileDataSink fs : sinks) {
       names.add(fs.getName());
     }
+    
+    outputterList.setListData(names);
+    if (!multiSelect) {
+      outputterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    } else {
+      outputterList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    }
+    if (this.sinks.size() > 0) {
+      outputterList.setSelectedIndex(0);
+    }
+  }
 
-    outputterList = new JList(names);
+  @Override
+	protected JPanel getContentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
+    outputterList = new JList();
     outputterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
     JScrollPane scrollPane = new JScrollPane(outputterList);
-    scrollPane.setPreferredSize(new Dimension(400, 200));
-    add(scrollPane);
+    panel.add(scrollPane);
 
     outputterList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -68,14 +78,8 @@ public class FileSinkChooserStep extends PanelWizardStep {
         }
       }
     });
-    if (!multiSelect) {
-      outputterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    } else {
-      outputterList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    }
-    if (sinks.size() > 0) {
-      outputterList.setSelectedIndex(0);
-    }
+    
+    return panel;
   }
 
   public ArrayList<FileDataSink> getChosenOutputters() {

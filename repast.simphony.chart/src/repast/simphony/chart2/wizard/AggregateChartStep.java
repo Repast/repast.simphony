@@ -34,13 +34,12 @@ public class AggregateChartStep extends PluginWizardStep implements TableModelLi
   private SeriesConfigTableModel tableModel;
 
   public AggregateChartStep() {
-    super("Configure Chart Data Properites", "Please configure the data to be displayed by the chart.");
+    super("Chart Data", "Please configure the data to be displayed by the chart.");
   }
   
   @Override
 	protected JPanel getContentPanel(){
-  	JPanel panel = new JPanel();
-  	panel.setLayout(new BorderLayout());
+  	JPanel panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     
     table = new JTable();

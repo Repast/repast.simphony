@@ -1,9 +1,5 @@
-/**
- * 
- */
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,23 +10,28 @@ import java.util.Map;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.AgentData;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 
 /**
+ * Display wizard step for selecting agents to style.
+ * 
  * @author Nick Collier
+ * @author Eric Tatara
+ * 
  */
 @SuppressWarnings("serial")
-public class AgentSelectionStep extends PanelWizardStep {
+public class AgentSelectionStep extends PluginWizardStep {
 
   private static class AgentDataRenderer extends DefaultListCellRenderer {
     @Override
@@ -81,13 +82,18 @@ public class AgentSelectionStep extends PanelWizardStep {
   public AgentSelectionStep() {
     super("Agent Selection", "Please select the agent types to display and the "
         + "order in which the layers (2D) will appear");
-    this.setLayout(new BorderLayout());
-    panel = new AgentSelectionPanel();
-    this.add(panel, BorderLayout.CENTER);
+    
     this.setComplete(false);
-
+  }
+  
+  @Override
+ 	protected  JPanel getContentPanel(){ 
+    panel = new AgentSelectionPanel();
+    
     panel.source.setCellRenderer(new AgentDataRenderer());
     panel.target.setCellRenderer(new AgentDataRenderer());
+    
+    return panel;
   }
 
   @Override
