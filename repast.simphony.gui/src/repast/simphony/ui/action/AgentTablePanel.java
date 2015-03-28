@@ -36,7 +36,7 @@ public class AgentTablePanel extends JPanel {
 		for (Object agentType : context.getAgentTypes()){
 			Class agentClass = (Class)agentType;
 
-			JPanel agentPanel = AgentTableFactory.createTablePanel(context.getAgentLayer(agentClass));
+			JPanel agentPanel = AgentTableFactory.createAgentTablePanel(context.getAgentLayer(agentClass));
 
 			tabbedPane.addTab(agentClass.getSimpleName(), agentPanel);
 		

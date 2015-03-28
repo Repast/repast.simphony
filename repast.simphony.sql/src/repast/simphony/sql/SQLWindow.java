@@ -1,7 +1,3 @@
-/*
- * Created by JFormDesigner on Fri Aug 29 16:59:22 CDT 2008
- */
-
 package repast.simphony.sql;
 
 import java.awt.Font;
@@ -43,7 +39,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.ui.filters.FileExtensionFilter;
 import repast.simphony.ui.sparkline.SparklineJComponent;
-import repast.simphony.ui.table.SortedJTable;
+import repast.simphony.ui.table.TablePanel;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -54,7 +50,10 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
 /**
- * @author User #5
+ * Panel for executing and displaying SQL results.
+ * 
+ * @author Michael North
+ * @author Eric Tatara
  */
 public class SQLWindow extends JPanel {
 
@@ -67,7 +66,7 @@ public class SQLWindow extends JPanel {
 
 		this.sparklineJComponent.setLineGraph(true);
 
-		this.resultsTable.getTableHeader().addMouseListener(new MouseAdapter() {
+		this.tablePanel.getTable().getTableHeader().addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				redrawSparkline();
 			}
@@ -84,24 +83,21 @@ public class SQLWindow extends JPanel {
 		}
 
 		queryTextArea
-				.setText("/* Queries use JoSQL (http://josql.sourceforge.net/index.html) "
-						+ System.getProperty("line.separator")
-						+ " for execution. Please see their web site for instructions. */"
-						+ System.getProperty("line.separator")
-						+ "SELECT toString Name, class.name Class, propertyNames(:_currobj) Properties, "
-						+ "propertyValues(:_currobj) Values"
-						+ System.getProperty("line.separator")
-						+ "FROM java.lang.Object");
-
+		.setText("/* Queries use JoSQL (http://josql.sourceforge.net/index.html) "
+				+ System.getProperty("line.separator")
+				+ " for execution. Please see their web site for instructions. */"
+				+ System.getProperty("line.separator")
+				+ "SELECT toString Name, class.name Class, propertyNames(:_currobj) Properties, "
+				+ "propertyValues(:_currobj) Values"
+				+ System.getProperty("line.separator")
+				+ "FROM java.lang.Object");
 	}
 
 	public void findSources() {
-
 		Context mainContext = RunState.getInstance().getMasterContext();
 		String pathName = mainContext.getId().toString();
 		this.sourceMap.put("Context (Main): " + pathName, mainContext);
 		this.findSources(pathName + "/", mainContext);
-
 	}
 
 	public void findSources(String pathName, Context context) {
@@ -123,39 +119,10 @@ public class SQLWindow extends JPanel {
 				this.sourceMap.put("Network: " + childPathName, childNetwork);
 			}
 		}
-
 	}
 
 	private void executeButtonActionPerformed(ActionEvent e) {
-
 		try {
-
-			// Example queries for the predator prey demo:
-			//
-			// SELECT toString Name, X x, Y y FROM
-			// repast.simphony.demo.predatorprey.Sheep
-			//
-			// SELECT toString Name, X x, Y y, Energy energy FROM
-			// repast.simphony.demo.predatorprey.Sheep
-			//
-			// SELECT toString Name, Energy energy FROM
-			// repast.simphony.demo.agentEditor.sheepnetwork.Sheep
-			//
-			// SELECT toString Name, X x, Y y, avg (:_allobjs, length) FROM
-			// repast.simphony.demo.predatorprey.Sheep
-			// SELECT toString name, X x, Y y, avg (:_allobjs, length) FROM
-			// repast.simphony.demo.predatorprey.Sheep WHERE x > 0 AND y > 0
-			//
-			// SELECT toString Name, X x, Y y FROM
-			// repast.simphony.demo.predatorprey.Sheep
-			//
-			// SELECT toString Name, X x, Y y FROM
-			// repast.simphony.demo.predatorprey.Sheep EXECUTE ON RESULTS avg
-			// (:_allobjs, x) avgX
-			//
-			// SELECT toString Name, happiness Happiness, HappyAmount ah FROM
-			// repast.simphony.demo.simple.SimpleHappyAgent
-
 			this.messageTextArea.setText("");
 
 			JoSQLSwingTableModel model = new JoSQLSwingTableModel();
@@ -170,8 +137,8 @@ public class SQLWindow extends JPanel {
 					Class functionHandlerClass = Class
 							.forName(functionHandlerClassName);
 					model
-							.addFunctionHandler(functionHandlerClass
-									.newInstance());
+					.addFunctionHandler(functionHandlerClass
+							.newInstance());
 				} catch (Exception eFH) {
 					this.messageTextArea.setText(this.messageTextArea.getText()
 							+ "Could not load function handler: "
@@ -210,7 +177,7 @@ public class SQLWindow extends JPanel {
 
 			QueryResults results = model.execute(list);
 
-			resultsTable.setModel(model);
+			tablePanel.getTable().setModel(model);
 
 			Map saveValue = results.getSaveValues();
 			if ((saveValue != null) && (saveValue.size() > 0)) {
@@ -242,66 +209,50 @@ public class SQLWindow extends JPanel {
 			messageTextArea.setText(this.messageTextArea.getText() + " "
 					+ e3.getMessage());
 		}
-
 	}
 
 	private void exportButtonActionPerformed(ActionEvent e) {
-
 		JFileChooser chooser = new JFileChooser(new File("results.csv"));
 		FileFilter filter = new FileExtensionFilter("CSV",
 				new String[] { "csv" });
 		chooser.setFileFilter(filter);
 		if (chooser.showSaveDialog(this.getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
-
 			try {
-
 				PrintWriter writer = new PrintWriter(chooser.getSelectedFile());
-
-				TableModel model = resultsTable.getModel();
+				TableModel model = tablePanel.getTable().getModel();
 
 				for (int col = 0; col < model.getColumnCount(); col++) {
-
 					writer.print(model.getColumnName(col));
 					if (col < model.getColumnCount() - 1) {
 						writer.print(", ");
 					} else {
 						writer.println();
 					}
-
 				}
 				for (int row = 0; row < model.getRowCount(); row++) {
-
 					for (int col = 0; col < model.getColumnCount(); col++) {
-
 						writer.print(model.getValueAt(row, col));
 						if (col < model.getColumnCount() - 1) {
 							writer.print(", ");
 						} else {
 							writer.println();
 						}
-
 					}
-
 				}
-
 				writer.close();
 
 			} catch (FileNotFoundException e1) {
 				JOptionPane.showMessageDialog(null, "Error" + e1.getMessage());
 			}
-
 		}
-
 	}
 
 	private void sourceComboBoxActionPerformed(ActionEvent e) {
-
 		String selectedItem = (String) this.sourceComboBox.getSelectedItem();
 		if ((selectedItem != null)
 				&& (!selectedItem.equals(this.currentSource))) {
 			this.currentSource = selectedItem;
 		}
-
 	}
 
 	private void sparklineComboBoxActionPerformed(ActionEvent e) {
@@ -309,9 +260,8 @@ public class SQLWindow extends JPanel {
 	}
 
 	public void redrawSparkline() {
-
 		int col = this.sparklineComboBox.getSelectedIndex() - 1;
-		TableModel model = this.resultsTable.getModel();
+		TableModel model = this.tablePanel.getTable().getModel();
 		if ((col >= 0) && (model.getRowCount() > 0)) {
 			Number newData[] = new Number[model.getRowCount()];
 			for (int row = 0; row < model.getRowCount(); row++) {
@@ -334,13 +284,9 @@ public class SQLWindow extends JPanel {
 		} else {
 			this.sparklineJComponent.clearData();
 		}
-
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		label1 = new JLabel();
 		sourceComboBox = new JComboBox();
 		label2 = new JLabel();
@@ -356,39 +302,35 @@ public class SQLWindow extends JPanel {
 		functionHandlerTextField = new JTextField();
 		sparklineComboBox = new JComboBox();
 		sparklineJComponent = new SparklineJComponent();
-		scrollPane4 = new JScrollPane();
-		resultsTable = new SortedJTable();
+		tablePanel = new TablePanel(null);
 		CellConstraints cc = new CellConstraints();
 
-		//======== this ========
 		setLayout(new FormLayout(
-			new ColumnSpec[] {
-				FormSpecs.DEFAULT_COLSPEC,
-				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-				new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-				FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
-				new ColumnSpec(ColumnSpec.CENTER, Sizes.DEFAULT, FormSpec.NO_GROW)
-			},
-			new RowSpec[] {
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.LINE_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.LINE_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.LINE_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.LINE_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.LINE_GAP_ROWSPEC,
-				new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
-			}));
+				new ColumnSpec[] {
+						FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
+						FormSpecs.LABEL_COMPONENT_GAP_COLSPEC,
+						new ColumnSpec(ColumnSpec.CENTER, Sizes.DEFAULT, FormSpec.NO_GROW)
+				},
+				new RowSpec[] {
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.LINE_GAP_ROWSPEC,
+						new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, FormSpec.DEFAULT_GROW)
+				}));
 
-		//---- label1 ----
 		label1.setText("Source Container:");
 		label1.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label1, cc.xy(1, 1));
 
-		//---- sourceComboBox ----
 		sourceComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				sourceComboBoxActionPerformed(e);
@@ -396,19 +338,15 @@ public class SQLWindow extends JPanel {
 		});
 		add(sourceComboBox, cc.xywh(3, 1, 3, 1));
 
-		//---- label2 ----
 		label2.setText("Query");
 		label2.setHorizontalAlignment(SwingConstants.CENTER);
 		add(label2, cc.xy(3, 3));
 
-		//---- label3 ----
 		label3.setText("Message");
 		label3.setHorizontalAlignment(SwingConstants.CENTER);
 		add(label3, cc.xy(5, 3));
 
-		//======== panel1 ========
-		{
-			panel1.setLayout(new FormLayout(
+		panel1.setLayout(new FormLayout(
 				ColumnSpec.decodeSpecs("default"),
 				new RowSpec[] {
 					FormSpecs.DEFAULT_ROWSPEC,
@@ -416,57 +354,47 @@ public class SQLWindow extends JPanel {
 					FormSpecs.DEFAULT_ROWSPEC
 				}));
 
-			//---- executeButton ----
-			executeButton.setText("Execute Query");
-			executeButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					executeButtonActionPerformed(e);
-				}
-			});
-			panel1.add(executeButton, cc.xy(1, 1));
+		//---- executeButton ----
+		executeButton.setText("Execute Query");
+		executeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				executeButtonActionPerformed(e);
+			}
+		});
+		panel1.add(executeButton, cc.xy(1, 1));
 
-			//---- exportButton ----
-			exportButton.setText("Export to CSV");
-			exportButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					exportButtonActionPerformed(e);
-				}
-			});
-			panel1.add(exportButton, cc.xy(1, 3));
-		}
+		//---- exportButton ----
+		exportButton.setText("Export to CSV");
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportButtonActionPerformed(e);
+			}
+		});
+		panel1.add(exportButton, cc.xy(1, 3));
+
 		add(panel1, cc.xy(1, 5));
 
-		//======== scrollPane2 ========
-		{
+		queryTextArea.setColumns(75);
+		queryTextArea.setRows(10);
+		queryTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		queryTextArea.setLineWrap(true);
+		scrollPane2.setViewportView(queryTextArea);
 
-			//---- queryTextArea ----
-			queryTextArea.setColumns(75);
-			queryTextArea.setRows(10);
-			queryTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			queryTextArea.setLineWrap(true);
-			scrollPane2.setViewportView(queryTextArea);
-		}
 		add(scrollPane2, cc.xy(3, 5));
 
-		//======== scrollPane3 ========
-		{
+		messageTextArea.setEditable(false);
+		messageTextArea.setColumns(50);
+		messageTextArea.setRows(10);
+		messageTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		messageTextArea.setLineWrap(true);
+		scrollPane3.setViewportView(messageTextArea);
 
-			//---- messageTextArea ----
-			messageTextArea.setEditable(false);
-			messageTextArea.setColumns(50);
-			messageTextArea.setRows(10);
-			messageTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
-			messageTextArea.setLineWrap(true);
-			scrollPane3.setViewportView(messageTextArea);
-		}
 		add(scrollPane3, cc.xy(5, 5));
 
-		//---- label4 ----
 		label4.setText("Function Handler:");
 		add(label4, cc.xywh(1, 7, 1, 1, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 		add(functionHandlerTextField, cc.xywh(3, 7, 3, 1));
 
-		//---- sparklineComboBox ----
 		sparklineComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				sparklineComboBoxActionPerformed(e);
@@ -475,17 +403,10 @@ public class SQLWindow extends JPanel {
 		add(sparklineComboBox, cc.xy(1, 9));
 		add(sparklineJComponent, cc.xywh(3, 9, 3, 1, CellConstraints.FILL, CellConstraints.FILL));
 
-		//======== scrollPane4 ========
-		{
-			scrollPane4.setViewportView(resultsTable);
-		}
-		add(scrollPane4, cc.xywh(1, 11, 5, 1));
-		// //GEN-END:initComponents
+
+		add(tablePanel, cc.xywh(1, 11, 5, 1));
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JLabel label1;
 	private JComboBox sourceComboBox;
 	private JLabel label2;
@@ -501,7 +422,5 @@ public class SQLWindow extends JPanel {
 	private JTextField functionHandlerTextField;
 	private JComboBox sparklineComboBox;
 	private SparklineJComponent sparklineJComponent;
-	private JScrollPane scrollPane4;
-	private SortedJTable resultsTable;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
+	private TablePanel tablePanel;
 }

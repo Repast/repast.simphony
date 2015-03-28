@@ -151,7 +151,8 @@ Export-Package: .,
  jmapps.rtp,
  jmapps.ui,
  jmapps.util,
- repast.simphony.ui.plugin.editor
+ repast.simphony.ui.plugin.editor,
+ repast.simphony.ui.table
 Require-Bundle: repast.simphony.core,
  repast.simphony.scenario,
  saf.core.ui,
