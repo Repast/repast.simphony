@@ -6,29 +6,34 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
+
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class FileSelectionPanel extends PanelWizardStep {
+public class FileSelectionPanel extends PluginWizardStep {
 
 	private JFileChooser chooser;
 	private NewWizardModel model;
 
 	public FileSelectionPanel() {
 		super("Model Specification Selection", "Select your model.score file");
-		this.setLayout(new BorderLayout());
+	}
+
+	@Override
+	protected JPanel getContentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
 		chooser = new JFileChooser();
 		chooser.setControlButtonsAreShown(false);
-		this.add(chooser, BorderLayout.CENTER);
+		panel.add(chooser, BorderLayout.CENTER);
+		
 		chooser.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String prop = evt.getPropertyName();
@@ -48,10 +53,11 @@ public class FileSelectionPanel extends PanelWizardStep {
 				return "Model Specification .score file";
 			}
 		});
-		
+
+		return panel;
 	}
 
-
+	@Override
 	public void init(WizardModel model) {
 		this.model = (NewWizardModel) model;
 	}
@@ -68,19 +74,4 @@ public class FileSelectionPanel extends PanelWizardStep {
 		model.setSpecPath(chooser.getSelectedFile());
 		model.setScorePath(chooser.getSelectedFile().getParentFile());
 	}
-
-
-	public static void main(String[] args) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setControlButtonsAreShown(false);
-		JPanel p = new JPanel(new BorderLayout());
-		p.add(chooser, BorderLayout.CENTER);
-		JFrame f = new JFrame();
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.add(p);
-		f.pack();
-		f.setVisible(true);
-	}
-
-
 }

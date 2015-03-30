@@ -2,17 +2,14 @@ package repast.simphony.data2.wizard;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.engine.DataSetDescriptor;
-
-/**
- * 
- */
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 /**
  * General Step for creating data sets.
@@ -20,8 +17,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class AggregateSourceStep extends PanelWizardStep implements CompletableStep {
-
+public class AggregateSourceStep extends PluginWizardStep implements CompletableStep {
 
   private DataSetWizardModel model;
   private CommonSourcePanel cSourcePanel;
@@ -32,37 +28,39 @@ public class AggregateSourceStep extends PanelWizardStep implements CompletableS
   public AggregateSourceStep() {
     super("Select Data Sources",
         "Please choose the data sources to add to this data set.");
-    this.setLayout(new BorderLayout());
+  }
+
+  @Override
+ 	protected JPanel getContentPanel(){ 
+  	JPanel panel = new JPanel(new BorderLayout());
     
     JTabbedPane tabs = new JTabbedPane();
-    add(tabs, BorderLayout.CENTER);
+    panel.add(tabs, BorderLayout.CENTER);
     cSourcePanel = new CommonSourcePanel();
     tabs.add("Standard Sources", cSourcePanel);
     mSourcePanel = new AggMethodSourcePanel();
     tabs.add("Method Data Sources", mSourcePanel);
     customSourcePanel = new CustomDataSourcePanel();
     tabs.add("Custom Data Sources", customSourcePanel);
-
-    addListeners();
-  }
-  
-  private void addListeners() {
-    
+   
+    return panel;
   }
 
+  @Override
   public void init(WizardModel wizardModel) {
     this.model = (DataSetWizardModel) wizardModel;
   }
 
+  @Override
   public void prepare() {
     super.prepare();
     DataSetDescriptor descriptor = model.getDescriptor();
     cSourcePanel.init(descriptor);
     customSourcePanel.init(this, descriptor);
-    mSourcePanel.init(this, model);
-    
+    mSourcePanel.init(this, model); 
   }
   
+  @Override
   public void applyState() throws InvalidStateException {
     super.applyState();
     DataSetDescriptor descriptor = model.getDescriptor();

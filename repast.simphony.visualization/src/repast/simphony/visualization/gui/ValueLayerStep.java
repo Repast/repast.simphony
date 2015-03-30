@@ -1,6 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -13,14 +12,15 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -34,20 +34,27 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * @author Nick Collier
  */
-public class ValueLayerStep extends PanelWizardStep {
+public class ValueLayerStep extends PluginWizardStep {
 	private static final long serialVersionUID = -60523735303617830L;
 	private static final String EDIT_ICON = "edit.png";
 	private DisplayWizardModel model;
-	private JList objList = new JList(new DefaultListModel());
-	private DefaultComboBoxModel styleModel = new DefaultComboBoxModel();
+	private JList objList;
+	private DefaultComboBoxModel styleModel;
 	private JComboBox styleBox;
-	private JButton buildStyleButton = new JButton();
+	private JButton buildStyleButton;
 	private String editedStyleName;
 
 	public ValueLayerStep() {
 		super("Value Layer Details", "Please provide a style for the value layers below. " +
 		"These value layers will be passed to the selected style.");
-		this.setLayout(new BorderLayout());
+	}
+
+	@Override
+	protected JPanel getContentPanel(){
+		objList = new JList(new DefaultListModel());
+		styleModel = new DefaultComboBoxModel();
+		buildStyleButton = new JButton();
+		
 		FormLayout layout = new FormLayout("50, 3dlu, 50, 3dlu, 50, pref:grow",
 		"6dlu, pref, 3dlu, pref, 3dlu, pref, pref:grow");
 		PanelBuilder builder = new PanelBuilder(layout);
@@ -72,7 +79,7 @@ public class ValueLayerStep extends PanelWizardStep {
 		styleBox.setPrototypeDisplayValue("repast.simphony.visualization.visualization3D.style.DefaultStyle3D");
 		objList.setPrototypeCellValue("SimpleHappyAgent");
 
-		add(builder.getPanel(), BorderLayout.CENTER);
+		return builder.getPanel();
 	}
 
 	@Override

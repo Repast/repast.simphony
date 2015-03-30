@@ -73,13 +73,14 @@ public class AggMethodSourcePanel extends JPanel implements TableModelListener {
 
   public AggMethodSourcePanel() {
     super(new BorderLayout());
-
-    FormLayout layout = new FormLayout("6dlu, pref:grow, 6dlu", "pref:grow, pref:grow, 6dlu");
+    FormLayout layout = new FormLayout(
+    		"3dlu, pref:grow, 3dlu", 
+    		"3dlu, pref, pref, 3dlu");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
 
     table = new JTable();
-    table.setPreferredScrollableViewportSize(new Dimension(450, 100));
+    table.setPreferredScrollableViewportSize(new Dimension(450, 200));
     table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     table.setRowHeight(table.getRowHeight() + 4);
 
@@ -90,7 +91,7 @@ public class AggMethodSourcePanel extends JPanel implements TableModelListener {
     table.setDefaultEditor(AggregateOp.class, cellEditor);
 
     JScrollPane scrollPane = new JScrollPane(table);
-    builder.add(scrollPane, cc.xy(2, 1));
+    builder.add(scrollPane, cc.xy(2, 2));
     builder.nextLine();
 
     JPanel panel = new JPanel(new FlowLayout());
@@ -98,7 +99,7 @@ public class AggMethodSourcePanel extends JPanel implements TableModelListener {
     removeButton = new JButton("Remove");
     panel.add(addButton);
     panel.add(removeButton);
-    builder.add(panel, cc.xy(2, 2));
+    builder.add(panel, cc.xy(2, 3));
 
     add(builder.getPanel(), BorderLayout.CENTER);
 

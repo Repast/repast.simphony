@@ -1,4 +1,3 @@
-/*CopyrightHere*/
 package repast.simphony.util.wizard;
 
 import java.awt.Component;
@@ -7,57 +6,57 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
+ * Wizard step used for selecting from a list of options, usually used as the 
+ *   first step in a wizard.
+ * 
  * @author Jerry Vos
+ * @author Eric Tatara
  */
-public class ChooseOptionStep extends PanelWizardStep {
+public class ChooseOptionStep extends PluginWizardStep {
   private static final long serialVersionUID = 4474067862691565825L;
 
+  private JScrollPane scrollPane1;
+  private JList optionList;
+  private DynamicWizardModel model;
   protected DefaultListModel listModel;
-
-  public ChooseOptionStep() {
-    initComponents();
-  }
 
   public ChooseOptionStep(String firstStepTitle, String firstStepPrompt) {
     super(firstStepTitle, firstStepPrompt);
-    initComponents();
   }
 
-  @SuppressWarnings("serial")
-  private void initComponents() {
-    // JFormDesigner - Component initialization - DO NOT MODIFY
-    // //GEN-BEGIN:initComponents
-    // Generated using JFormDesigner non-commercial license
+  @Override
+ 	protected JPanel getContentPanel(){
     scrollPane1 = new JScrollPane();
     optionList = new JList();
     CellConstraints cc = new CellConstraints();
+    
+    FormLayout layout = new FormLayout("default:grow", "fill:default:grow");
+    DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+    builder.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    
+    scrollPane1.setViewportView(optionList);
+    builder.add(scrollPane1, cc.xy(1, 1));
 
-    // ======== this ========
-    setLayout(new FormLayout("default:grow", "fill:default:grow"));
-
-    // ======== scrollPane1 ========
-    {
-      scrollPane1.setViewportView(optionList);
-    }
-    add(scrollPane1, cc.xy(1, 1));
-    // JFormDesigner - End of component initialization //GEN-END:initComponents
-
-    this.listModel = new DefaultListModel();
+    listModel = new DefaultListModel();
 
     optionList.setModel(listModel);
 
@@ -78,17 +77,10 @@ public class ChooseOptionStep extends PanelWizardStep {
           setComplete(true);
         }
       }
-
     });
+    
+    return builder.getPanel();
   }
-
-  // JFormDesigner - Variables declaration - DO NOT MODIFY //GEN-BEGIN:variables
-  // Generated using JFormDesigner non-commercial license
-  private JScrollPane scrollPane1;
-  private JList optionList;
-  // JFormDesigner - End of variables declaration //GEN-END:variables
-
-  private DynamicWizardModel model;
 
   public void setOptions(Iterable<WizardOption> options) {
     listModel.clear();

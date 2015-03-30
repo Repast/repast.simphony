@@ -1,10 +1,8 @@
-/**
- * 
- */
 package repast.simphony.data2.wizard;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -50,8 +48,9 @@ public class CustomDataSourcePanel extends JPanel {
 
   public CustomDataSourcePanel() {
     super(new BorderLayout());
-    FormLayout layout = new FormLayout("6dlu, pref:grow, 3dlu, pref, 6dlu",
-        "3dlu, pref, 3dlu, pref:grow, 6dlu");
+    FormLayout layout = new FormLayout(
+    		"3dlu, pref:grow, 3dlu, pref, 3dlu",
+        "3dlu, pref, 3dlu, pref, 3dlu");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
     builder.add(classFld, cc.xy(2, 2));
@@ -60,6 +59,7 @@ public class CustomDataSourcePanel extends JPanel {
     list = new JList(new DefaultListModel());
     list.setCellRenderer(new CustomDSRenderer());
     JScrollPane sp = new JScrollPane(list);
+    sp.setPreferredSize(new Dimension(450, 200));
     builder.add(sp, cc.xyw(2, 4, 3));
     add(builder.getPanel(), BorderLayout.CENTER);
 

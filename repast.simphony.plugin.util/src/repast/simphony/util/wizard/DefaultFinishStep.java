@@ -1,8 +1,9 @@
 package repast.simphony.util.wizard;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import org.pietschy.wizard.PanelWizardStep;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 /**
  * This is just a simple step that displays a set of messages. This is intended
@@ -14,10 +15,12 @@ import org.pietschy.wizard.PanelWizardStep;
  * 
  * @author Vos
  */
-public class DefaultFinishStep extends PanelWizardStep {
+public class DefaultFinishStep extends PluginWizardStep {
 
 	private static final long serialVersionUID = 5578377917258860531L;
 
+	private JLabel label;
+	
 	/**
 	 * Constructs this step with the specified text to show as its title, in its
 	 * caption bar, and optionally in a label centered in its panel. If the
@@ -32,11 +35,22 @@ public class DefaultFinishStep extends PanelWizardStep {
 	 */
 	public DefaultFinishStep(String title, String caption, String labelText) {
 		super("Finished", caption);
-		if (labelText != null) {
-			add(new JLabel(labelText));
-		}
-
+		
 		setComplete(true);
+	}
+
+	private void setLabel(String labelText){
+		if (labelText != null)
+			label.setText(labelText);
+	}
+	
+	@Override
+	protected JPanel getContentPanel(){
+		label = new JLabel();
+		JPanel panel = new JPanel();
+		panel.add(label);
+
+		return panel;
 	}
 
 	/**

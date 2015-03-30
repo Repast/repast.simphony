@@ -3,10 +3,12 @@ package repast.simphony.ui.newscenario;
 import java.awt.BorderLayout;
 
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
+
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -16,19 +18,28 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class ModelInitPanel extends PanelWizardStep {
+public class ModelInitPanel extends PluginWizardStep {
 
-	private JTextField initFld = new JTextField();
-	private JCheckBox chkPlugin = new JCheckBox();
+	private JTextField initFld;
+	private JCheckBox chkPlugin;
 	private NewWizardModel model;
 
 	public ModelInitPanel() {
 		super("Optional Model Initializer & Model Plugin", "Specify the fully qualified name of a Model Initializer class " +
 						"that implements the ModelInitializer interface, and whether or not the scenario uses a model plugin file. " +
 						"Note that these are optional.");
-		this.setLayout(new BorderLayout());
+		
+		setComplete(true);
+	}
 
-		FormLayout layout = new FormLayout("pref, 4dlu, pref:grow", "pref, 4dlu, pref 4dlu, pref");
+	@Override
+	protected JPanel getContentPanel(){
+		initFld = new JTextField();
+		chkPlugin = new JCheckBox();
+		
+		FormLayout layout = new FormLayout(
+				"pref, 4dlu, pref:grow", 
+				"pref, 4dlu, pref, 4dlu, pref");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setDefaultDialogBorder();
 		CellConstraints cc = new CellConstraints();
@@ -36,10 +47,10 @@ public class ModelInitPanel extends PanelWizardStep {
 		builder.add(initFld, cc.xyw(1, 3, 3));
 		builder.addLabel("Use Model Plugin: ", cc.xy(1, 5));
 		builder.add(chkPlugin, cc.xy(3, 5));
-		this.add(builder.getPanel(), BorderLayout.CENTER);
-		setComplete(true);
+		return builder.getPanel();
 	}
 
+	@Override
 	public void init(WizardModel model) {
 		this.model = (NewWizardModel) model;
 	}

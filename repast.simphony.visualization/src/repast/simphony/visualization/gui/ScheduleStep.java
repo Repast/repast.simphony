@@ -1,19 +1,19 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
+import javax.swing.JPanel;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.ui.plugin.editor.ScheduleParamsPanel;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
  * @author Nick Collier
  */
-public class ScheduleStep extends PanelWizardStep {
+public class ScheduleStep extends PluginWizardStep {
 	private static final long serialVersionUID = 3551311107446307848L;
 	
 	private DisplayWizardModel model;
@@ -22,11 +22,16 @@ public class ScheduleStep extends PanelWizardStep {
 	public ScheduleStep() {
 		super("Schedule Details", "Please enter the update schedule start time, priority, frequency and interval " +
 						"for this display");
-		setLayout(new BorderLayout());
+		
+		setComplete(true);
+	}
+
+	@Override
+	protected JPanel getContentPanel(){
 		spPanel = new ScheduleParamsPanel(ScheduleParameters.createRepeating(1, 1, ScheduleParameters.LAST_PRIORITY),
 						false);
-		add(spPanel, BorderLayout.CENTER);
-		setComplete(true);
+
+		return spPanel;
 	}
 
 	@Override

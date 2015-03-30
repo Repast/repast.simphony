@@ -1,6 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -8,13 +7,14 @@ import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.cgd.CGDLayout;
 import repast.simphony.visualization.engine.DisplayDescriptor;
@@ -37,29 +37,48 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * @author Nick Collier
  */
-public class NetLayoutStep extends PanelWizardStep {
+public class NetLayoutStep extends PluginWizardStep {
 	private static final long serialVersionUID = -1853984603197206862L;
 
 	private DisplayWizardModel model;
-	private JComboBox frequencyBox = new JComboBox(new Object[] { IDisplay.LayoutFrequency.ON_NEW,
-			IDisplay.LayoutFrequency.AT_UPDATE, IDisplay.LayoutFrequency.AT_INTERVAL });
-	private JTextField intervalFld = new JTextField();
-	private JComboBox layoutClassNameBox = new JComboBox();
-	private JComboBox layoutNetworkBox = new JComboBox();
-
-	private ComboBoxModel model2DLayout = new DefaultComboBoxModel(new String[] {
-			Random2DLayout.class.getName(), CircleLayout2D.class.getName(), FRLayout2D.class.getName(),
-			KKLayout2D.class.getName(), ISOMLayout2D.class.getName(), CGDLayout.class.getName() });
-	private ComboBoxModel model3DLayout = new DefaultComboBoxModel(new String[] {
-			GEM3DLayout.class.getName(), FR3DLayout.class.getName(), SphericalLayout.class.getName(),
-			Random3DLayout.class.getName() });
+	private JComboBox frequencyBox ;
+	private JTextField intervalFld ;
+	private JComboBox layoutClassNameBox;
+	private JComboBox layoutNetworkBox;
+	private ComboBoxModel model2DLayout;
+	private ComboBoxModel model3DLayout;
 
 	public NetLayoutStep() {
-		super(
-				"Layout Details",
+		super("Layout Details",
 				"Please select a network layout and the "
 						+ "frequency at which the layout will be updated, and the network that determines the layout");
-		setLayout(new BorderLayout());
+		
+		setComplete(true);
+	}
+	
+	@Override
+	protected JPanel getContentPanel(){
+		frequencyBox = new JComboBox(new Object[] { 
+				IDisplay.LayoutFrequency.ON_NEW,
+				IDisplay.LayoutFrequency.AT_UPDATE, 
+				IDisplay.LayoutFrequency.AT_INTERVAL });
+		intervalFld = new JTextField();
+		layoutClassNameBox = new JComboBox();
+		layoutNetworkBox = new JComboBox();
+
+		model2DLayout = new DefaultComboBoxModel(new String[] {
+				Random2DLayout.class.getName(), 
+				CircleLayout2D.class.getName(), 
+				FRLayout2D.class.getName(),
+				KKLayout2D.class.getName(), 
+				ISOMLayout2D.class.getName(), 
+				CGDLayout.class.getName() });
+		model3DLayout = new DefaultComboBoxModel(new String[] {
+				GEM3DLayout.class.getName(), 
+				FR3DLayout.class.getName(), 
+				SphericalLayout.class.getName(),
+				Random3DLayout.class.getName() });
+
 		intervalFld.setDocument(new IntegerDocument());
 		intervalFld.setText("1");
 
@@ -85,9 +104,7 @@ public class NetLayoutStep extends PanelWizardStep {
 			}
 		});
 
-		add(builder.getPanel(), BorderLayout.CENTER);
-		setComplete(true);
-
+		return builder.getPanel();
 	}
 
 	@Override

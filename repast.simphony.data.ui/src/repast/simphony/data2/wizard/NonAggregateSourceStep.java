@@ -2,13 +2,14 @@ package repast.simphony.data2.wizard;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.engine.DataSetDescriptor;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 /**
  * 
@@ -20,7 +21,7 @@ import repast.simphony.data2.engine.DataSetDescriptor;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class NonAggregateSourceStep extends PanelWizardStep implements CompletableStep {
+public class NonAggregateSourceStep extends PluginWizardStep implements CompletableStep {
 
   private DataSetWizardModel model;
   private CommonSourcePanel cSourcePanel;
@@ -30,16 +31,21 @@ public class NonAggregateSourceStep extends PanelWizardStep implements Completab
 
   public NonAggregateSourceStep() {
     super("Select Data Sources", "Please choose the data sources to add to this data set.");
-    this.setLayout(new BorderLayout());
-
-    JTabbedPane tabs = new JTabbedPane();
-    add(tabs, BorderLayout.CENTER);
+  }
+  
+  @Override
+	protected JPanel getContentPanel(){
+    JPanel panel = new JPanel(new BorderLayout());
+  	JTabbedPane tabs = new JTabbedPane();
+    panel.add(tabs, BorderLayout.CENTER);
     cSourcePanel = new CommonSourcePanel();
     tabs.add("Standard Sources", cSourcePanel);
     mSourcePanel = new MethodSourcePanel();
     tabs.add("Method Data Sources", mSourcePanel);
     customSourcePanel = new CustomDataSourcePanel();
     tabs.add("Custom Data Sources", customSourcePanel);
+    
+    return panel;
   }
 
   public void init(WizardModel wizardModel) {

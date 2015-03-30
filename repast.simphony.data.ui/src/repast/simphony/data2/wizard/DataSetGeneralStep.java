@@ -6,23 +6,20 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor.DataSetType;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
-
-/**
- * 
- */
 
 /**
  * General Step for creating data sets.
@@ -30,22 +27,26 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class DataSetGeneralStep extends PanelWizardStep {
+public class DataSetGeneralStep extends PluginWizardStep {
 
   private static final String NON_AGGREGATE = "Non-Aggregate";
   private static final String AGGREGATE = "Aggregate";
 
   private DataSetWizardModel model;
 
-  private JTextField idField = new JTextField();
+  private JTextField idField ;
   private JComboBox typeBox;
   private JLabel typeLabel;
 
   public DataSetGeneralStep() {
     super("General Settings",
         "Please enter a unique id for that data set and select the data set type.");
-    this.setLayout(new BorderLayout());
-
+  }
+  
+  @Override
+	protected JPanel getContentPanel(){
+  	idField = new JTextField();
+  	
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setBorder(WizardUtils.createDefaultEmptyBorder());
@@ -54,9 +55,9 @@ public class DataSetGeneralStep extends PanelWizardStep {
 
     typeBox = new JComboBox(new String[] { AGGREGATE, NON_AGGREGATE });
     typeLabel = builder.append("Data Set Type:", typeBox);
-    add(builder.getPanel(), BorderLayout.CENTER);
 
     addListeners();
+    return builder.getPanel();
   }
   
   public void disableTypeSelection() {

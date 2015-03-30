@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import repast.simphony.data2.engine.DataSetDescriptor;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
@@ -27,15 +28,20 @@ public class CommonSourcePanel extends JPanel {
   public CommonSourcePanel() {
     super(new BorderLayout());
     
-    FormLayout layout = new FormLayout("pref:grow, 3dlu, pref:grow", "");
+    FormLayout layout = new FormLayout(
+    		"3dlu, pref:grow, 3dlu, pref:grow", 
+    		"3dlu, pref, 3dlu, pref, 3dlu, pref");
+    CellConstraints cc = new CellConstraints();
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+   
     tickBox = new JCheckBox("Tick Count");
-    builder.append(tickBox);
+    builder.add(tickBox, cc.xy(2, 2));
+   
     seedBox = new JCheckBox("Random Seed");
-    builder.append(seedBox);
-    builder.nextLine();
+    builder.add(seedBox, cc.xy(2, 4));
+   
     runBox = new JCheckBox("Run Number");
-    builder.append(runBox);
+    builder.add(runBox, cc.xy(2, 6));
     
     add(builder.getPanel(), BorderLayout.CENTER);
   }

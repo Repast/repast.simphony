@@ -20,11 +20,18 @@ public abstract class PluginWizardStep extends PanelWizardStep {
 	public static int CONTENT_PANEL_WIDTH = 625;
 	public static int CONTENT_PANEL_HEIGHT = 300;
 	
+	public PluginWizardStep(){
+		super();
+		
+		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(CONTENT_PANEL_WIDTH, CONTENT_PANEL_HEIGHT));
+		add(getContentPanel(), BorderLayout.CENTER);
+	}
+	
 	public PluginWizardStep(String name, String description){
 		super(name,description);
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(CONTENT_PANEL_WIDTH, CONTENT_PANEL_HEIGHT));
-		
 		add(getContentPanel(), BorderLayout.CENTER);
 	}
 	

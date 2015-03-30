@@ -6,28 +6,34 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import saf.core.ui.util.DirectoryChooser;
 
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class ScenarioSelectionPanel extends PanelWizardStep {
+public class ScenarioSelectionPanel extends PluginWizardStep {
 
 	private DirectoryChooser chooser;
 	private NewWizardModel model;
 
+	
 	public ScenarioSelectionPanel() {
 		super("Scenario Directory", "Select a scenario directory. The model specification file" +
-						" will be copied into this directory and a scenario created.");
-		this.setLayout(new BorderLayout());
+						" will be copied into this directory and a scenario created.");}
+	
+	@Override
+	protected JPanel getContentPanel(){
+		JPanel panel = new JPanel(new BorderLayout());
 		chooser = new DirectoryChooser(".");
 		chooser.setControlButtonsAreShown(false);
-		this.add(chooser.getPanel(), BorderLayout.NORTH);
+		panel.add(chooser.getPanel(), BorderLayout.NORTH);
+		
 		chooser.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String prop = evt.getPropertyName();
@@ -37,8 +43,11 @@ public class ScenarioSelectionPanel extends PanelWizardStep {
 				}
 			}
 		});
+		
+		return panel;
 	}
 
+	@Override
 	public void init(WizardModel model) {
 		this.model = (NewWizardModel) model;
 	}

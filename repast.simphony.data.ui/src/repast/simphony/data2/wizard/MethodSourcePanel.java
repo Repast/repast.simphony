@@ -90,28 +90,31 @@ public class MethodSourcePanel extends JPanel {
 
   public MethodSourcePanel() {
     super(new BorderLayout());
-    FormLayout layout = new FormLayout("6dlu, pref, 3dlu, pref:grow, 6dlu",
-        "pref, 3dlu, pref, 3dlu, pref:grow, 3dlu, pref, 6dlu");
+    FormLayout layout = new FormLayout(
+    		"3dlu, pref, 3dlu, pref:grow, 3dlu", 
+    		"3dlu, pref, 3dlu, pref, 3dlu, pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
-    sourceTypeBox = new JComboBox(new DefaultComboBoxModel());
-    builder.addLabel("Source Class:", cc.xy(2, 3));
-    builder.add(sourceTypeBox, cc.xy(4, 3));
-
+   
     table = new JTable();
-    table.setPreferredScrollableViewportSize(new Dimension(450, 100));
+    table.setPreferredScrollableViewportSize(new Dimension(450, 175));
     table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     table.setRowHeight(table.getRowHeight() + 4);
+    
+    sourceTypeBox = new JComboBox(new DefaultComboBoxModel());
+    builder.addLabel("Source Class:", cc.xy(2, 2));
+    builder.add(sourceTypeBox, cc.xy(4, 2));
 
     JScrollPane scrollPane = new JScrollPane(table);
-    builder.add(scrollPane, cc.xyw(2, 5, 3));
+    builder.add(scrollPane, cc.xyw(2, 4, 3));
+    builder.nextLine();
 
     JPanel panel = new JPanel(new FlowLayout());
     addButton = new JButton("Add");
     removeButton = new JButton("Remove");
     panel.add(addButton);
     panel.add(removeButton);
-    builder.add(panel, cc.xyw(2, 7, 3));
+    builder.add(panel, cc.xyw(2, 6, 3));
 
     add(builder.getPanel(), BorderLayout.CENTER);
 

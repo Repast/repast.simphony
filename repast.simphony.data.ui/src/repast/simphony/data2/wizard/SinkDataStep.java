@@ -11,6 +11,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -18,12 +19,12 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.engine.AbstractTextSinkDescriptor;
 import repast.simphony.data2.engine.DataSetDescriptor;
 import repast.simphony.ui.plugin.editor.ListSelector;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -31,32 +32,39 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * 
- */
-
-/**
  * Data configure step for creating sinks.
  * 
  * @author Nick Collier
  */
 @SuppressWarnings("serial")
-public class SinkDataStep<D extends AbstractTextSinkDescriptor, T extends DataSetModel<D>> extends PanelWizardStep {
+public class SinkDataStep<D extends AbstractTextSinkDescriptor, 
+		T extends DataSetModel<D>> extends PluginWizardStep {
 
   private T model;
   
-  private JTextField nameFld = new JTextField();
-  private JComboBox dataSetBox = new JComboBox(new DefaultComboBoxModel());
-  private ListSelector<String> dsList = new ListSelector<String>();
+  private JTextField nameFld ;
+  private JComboBox dataSetBox ;
+  private ListSelector<String> dsList;
 
   public SinkDataStep(String title, String summary) {
     super(title, summary);
-    this.setLayout(new BorderLayout());
-    
-    FormLayout layout = new FormLayout("left:pref, 3dlu, pref:grow", "");
+  }
+  
+  @Override
+	protected JPanel getContentPanel(){ 
+  	nameFld = new JTextField();
+  	dataSetBox = new JComboBox(new DefaultComboBoxModel());
+  	dsList = new ListSelector<String>();
+  	
+    FormLayout layout = new FormLayout(
+    		"left:pref, 3dlu, pref:grow", 
+    		"");
     DefaultFormBuilder fBuilder = new DefaultFormBuilder(layout);
     fBuilder.append("Name:", nameFld);
 
-    layout = new FormLayout("4dlu, left:pref, 3dlu, pref:grow", "pref, 5dlu, pref, 3dlu, pref, 4dlu, top:pref:grow");
+    layout = new FormLayout(
+    		"4dlu, left:pref, 3dlu, pref:grow", 
+    		"pref, 5dlu, pref, 3dlu, pref, 4dlu, top:pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
     builder.add(fBuilder.getPanel(), cc.xyw(1, 1, 4));
@@ -64,11 +72,11 @@ public class SinkDataStep<D extends AbstractTextSinkDescriptor, T extends DataSe
     builder.addLabel("Data Set ID:", cc.xy(2, 5));
     builder.add(dataSetBox, cc.xy(4, 5));
     builder.add(dsList, cc.xyw(2, 7, 3));
-    
-    add(builder.getPanel(), BorderLayout.CENTER);
-
+ 
     dataSetBox.setRenderer(new DataSetRenderer());
     addListeners();
+    
+    return builder.getPanel();
   }
 
   private void addListeners() {

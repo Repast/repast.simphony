@@ -1,6 +1,5 @@
 package repast.simphony.dataLoader.ui.wizard;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,10 +12,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.ClassUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
@@ -25,34 +24,31 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * @author Nick Collier
  */
-public class ClassBuilderStep extends PanelWizardStep {
+public class ClassBuilderStep extends PluginWizardStep {
 
   private JComboBox classBox;
   private DataLoaderWizardModel model;
-  private DefaultComboBoxModel comboModel = new DefaultComboBoxModel();
+  private DefaultComboBoxModel comboModel;
 
   public ClassBuilderStep() {
     super("Class Name", "<HTML>Please provide the name of the context creator class</HTML>");
-    setupPanel();
   }
-
-  private void setupPanel() {
+  
+  @Override
+	protected JPanel getContentPanel(){
+  	comboModel = new DefaultComboBoxModel();
+  	
     FormLayout layout = new FormLayout("3dlu, pref:grow", "");
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
     builder.setDefaultDialogBorder();
-    builder.appendSeparator("Class Name");
     builder.setLeadingColumnOffset(1);
+    builder.appendSeparator("Class Name");
     builder.nextLine();
     classBox = new JComboBox(comboModel);
     classBox.setRenderer(new ClassRenderer());
     builder.append(classBox);
 
-    JPanel panel = builder.getPanel();
-    // need to add it so we can set the layout for the parent
-    add(panel);
-    panel.getParent().setLayout(new BorderLayout());
-    panel.getParent().remove(panel);
-    add(panel, BorderLayout.NORTH);
+    return builder.getPanel();
   }
 
   public void init(WizardModel wizardModel) {
