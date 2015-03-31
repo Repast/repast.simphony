@@ -345,6 +345,14 @@ public class ScenarioTree extends JTree {
 		// The ActionUI can be null if the ControllerAction has not been registered
 		//   because it is not part of a r.s.gui extension plugin.
 
+    // TODO Fix how r.s.dataloader are loaded with respect to parentMenuItem
+    //       and parentID.  This is a temporary workaround to create ActionUI
+    //       for dataloader controller actions.
+    if (action.getClass().getName().contains("repast.simphony.dataLoader") 
+    		&& uiRep == null) {
+      
+    	uiRep = new DefaultActionUI(action.toString());
+    }
     return uiRep;
   }
 
