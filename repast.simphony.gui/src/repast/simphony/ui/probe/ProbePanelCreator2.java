@@ -226,16 +226,7 @@ public class ProbePanelCreator2 {
     List<ProbedPropertyUICreator> props = createProperties(creatorMap, wrap);
     this.locationProviderMap = locationProviderMap;
     try {
-      String title;
-      if ( pbInfo.getIDProperty() == null) {
-        title = target.toString();
-        if (title.lastIndexOf('.') > 0) {
-          title = title.substring(title.lastIndexOf(".") + 1, title.length());
-        }
-      } else {
-        title = (String) pbInfo
-            .getIDProperty().getReadMethod().invoke(target, new Object[0]);
-      }
+      String title = ProbedPropertyFactory.createProbedTitle(pbInfo, target);
       JPanel panel = createPanel(props, title);
       return new Probe(models, panel, title);
     } catch (IllegalArgumentException e) {

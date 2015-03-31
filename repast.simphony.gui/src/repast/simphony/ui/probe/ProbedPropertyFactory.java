@@ -3,6 +3,7 @@ package repast.simphony.ui.probe;
 import repast.simphony.util.ClassUtilities;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -55,4 +56,31 @@ public class ProbedPropertyFactory {
 
     return null;
   }
+  
+  /**
+   * Creates a title for the specified target using ProbeInof.getIDProperty().
+   * 
+   * @param pbInfo
+   * @param target
+   * @return
+   * @throws IllegalAccessException
+   * @throws IllegalArgumentException
+   * @throws InvocationTargetException
+   */
+  public static String createProbedTitle(ProbeInfo pbInfo, Object target) throws IllegalAccessException, IllegalArgumentException, 
+  InvocationTargetException {
+  
+  String title;
+  if ( pbInfo.getIDProperty() == null) {
+    title = target.toString();
+    if (title.lastIndexOf('.') > 0) {
+      title = title.substring(title.lastIndexOf(".") + 1, title.length());
+    }
+  } else {
+    title = (String) pbInfo
+        .getIDProperty().getReadMethod().invoke(target, new Object[0]);
+  }
+  return title;
+}
+
 }

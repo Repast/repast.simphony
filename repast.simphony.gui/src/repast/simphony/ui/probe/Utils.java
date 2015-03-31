@@ -1,5 +1,6 @@
 package repast.simphony.ui.probe;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 
 /**
@@ -10,17 +11,16 @@ import java.text.NumberFormat;
  */
 public class Utils {
 
-	protected static NumberFormat numberFormat = NumberFormat.getInstance();
-	static {
-		numberFormat.setMaximumFractionDigits(5);
-	}
+  protected static NumberFormat numberFormat = NumberFormat.getInstance();
+  static {
+    numberFormat.setMaximumFractionDigits(5);
+  }
 
-	public static NumberFormat getNumberFormatInstance() {
-		return numberFormat;
-	}
+  public static NumberFormat getNumberFormatInstance() {
+    return numberFormat;
+  }
 
-	public static void setNumberFormatInstance(NumberFormat newNumberFormat) {
-		numberFormat = newNumberFormat;
-	}
-	
+  public static void setNumberFormatInstance(NumberFormat newNumberFormat) {
+    numberFormat = newNumberFormat;
+  }
 }

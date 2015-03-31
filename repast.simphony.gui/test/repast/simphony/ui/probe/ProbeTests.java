@@ -5,16 +5,20 @@ package repast.simphony.ui.probe;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import javax.swing.JLabel;
 
 import org.junit.Test;
 
 import repast.simphony.parameter.StringConverterFactory;
+import repast.simphony.ui.probe.ProbedPropertiesFinder.Property;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.ValueModel;
@@ -23,6 +27,58 @@ import com.jgoodies.binding.value.ValueModel;
  * @author Nick Collier
  */
 public class ProbeTests {
+  
+  @Test
+  public void testPropertyFinder() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    SampleObject obj = new SampleObject();
+    obj.setCode("some code");
+    ProbedPropertiesFinder finder = new ProbedPropertiesFinder();
+    List<ProbedPropertiesFinder.Property> props = finder.findProperties(obj);
+    assertEquals(3, props.size());
+    
+    // name one should be first
+    ProbedPropertiesFinder.Property prop = props.get(0);
+    assertEquals(ProbedPropertiesFinder.NAME_KEY, prop.getName());
+    assertEquals("ID", prop.getDisplayName());
+    assertEquals("My Object", prop.getValue());
+    assertNull(prop.getConverter());
+    
+    prop = props.get(1);
+    if (prop.getName().equals("intVal")) {
+      assertEquals("Integer Value", prop.getDisplayName());
+      assertEquals(new Integer(3), prop.getValue());
+      assertEquals(repast.simphony.parameter.StringConverterFactory.IntConverter.class, prop.getConverter().getClass());
+      
+      prop = props.get(2);
+      assertEquals("code", prop.getName());
+      assertEquals("Code", prop.getDisplayName());
+      assertEquals("some code", prop.getValue());
+      
+    } else {
+      assertEquals("code", prop.getName());
+      assertEquals("Code", prop.getDisplayName());
+      assertEquals("some code", prop.getValue());
+      
+      prop = props.get(2);
+      assertEquals("intVal", prop.getName());
+      assertEquals("Integer Value", prop.getDisplayName());
+      assertEquals(new Integer(3), prop.getValue());
+      assertEquals(repast.simphony.parameter.StringConverterFactory.IntConverter.class, prop.getConverter().getClass());
+    }
+    
+    props = finder.findProperties(new SampleObject2());
+    prop = null;
+    for (ProbedPropertiesFinder.Property p : props) {
+      if (p.getName().equals("foo")) {
+        prop = p;
+        break;
+      }
+    }
+    
+    assertNotNull(prop);
+    assertEquals("My Foo", prop.getDisplayName());
+    assertEquals(new Long(3), prop.getValue());
+  }
   
   @Test
   public void testPresentationModel() {
