@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -27,7 +28,6 @@ import repast.simphony.data2.gui.FileSinkChooserStep;
 import repast.simphony.ui.plugin.editor.PluginWizard;
 import repast.simphony.util.Settings;
 import repast.simphony.util.SystemConstants;
-import saf.core.ui.util.FileChooserUtilities;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -167,12 +167,14 @@ public class MatlabWizard {
 		 * @return a string of the path for the matlab directory
 		 */
 		public String browseForMatLabDirectory() {
-			File rHome = FileChooserUtilities.getOpenDirectory(new File(DEFAULT_LOCATION));
-
-
+			JFileChooser chooser = new JFileChooser(new File(DEFAULT_LOCATION));	
+			chooser.showOpenDialog(this);
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+			File homeDir = chooser.getSelectedFile();
+			
 			String directory;
-			if (rHome != null) {
-				directory = rHome.getAbsolutePath();
+			if (homeDir != null) {
+				directory = homeDir.getAbsolutePath();
 			} else {
 				directory = homeDirField.getText();
 			}

@@ -122,12 +122,11 @@ public class ListSelector<T> extends JPanel {
     int listBase = (title == null ? 1 : 3);
 
     JScrollPane pane = new JScrollPane(source);
-    int height = pane.getPreferredSize().height + 10;
-    pane.setPreferredSize(new Dimension(100, height));
+    pane.setPreferredSize(new Dimension(100, 200));
     builder.add(pane, cc.xywh(1, listBase, 1, 5));
 
     pane = new JScrollPane(target);
-    pane.setPreferredSize(new Dimension(100, height));
+    pane.setPreferredSize(new Dimension(100, 200));
     builder.add(pane, cc.xywh(5, listBase, 1, 5));
 
     createButtons();

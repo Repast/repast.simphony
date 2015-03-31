@@ -20,6 +20,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,8 +35,8 @@ import javax.swing.filechooser.FileFilter;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.ui.Imageable;
 import repast.simphony.ui.ImageableJComponentAdapter;
+import repast.simphony.ui.RSApplication;
 import saf.core.ui.util.DoubleDocument;
-import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -121,7 +122,11 @@ public class MovieMakerDialog extends JDialog {
   }
 
   private void getFile() {
-    File aFile = FileChooserUtilities.getSaveFile(file, new FileFilter() {
+  	if (file == null){
+  		file = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory().getParentFile();
+  	};
+    JFileChooser chooser = new JFileChooser(file);		
+	  chooser.setFileFilter(new FileFilter() {
       public boolean accept(File f) {
         return f.isDirectory() || f.getName().endsWith(".mov");
       }
@@ -130,14 +135,17 @@ public class MovieMakerDialog extends JDialog {
         return "Quicktime movie (*.mov)";
       }
     });
+	  
+	  chooser.showSaveDialog(this);	
+	  File aFile = chooser.getSelectedFile();
 
-    if (aFile != null) {
-      if (!aFile.getName().endsWith(".mov")) {
-        aFile = new File(aFile.getParentFile(), aFile.getName() + ".mov");
-      }
-      fileFld.setText(aFile.getAbsolutePath());
-      file = aFile;
-    }
+	  if (aFile != null) {
+	  	if (!aFile.getName().endsWith(".mov")) {
+	  		aFile = new File(aFile.getParentFile(), aFile.getName() + ".mov");
+	  	}
+	  	fileFld.setText(aFile.getAbsolutePath());
+	  	file = aFile;
+	  }
 
     okButton.setEnabled(file != null);
   }

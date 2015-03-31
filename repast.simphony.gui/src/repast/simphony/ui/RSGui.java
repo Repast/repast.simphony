@@ -40,6 +40,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -78,7 +79,6 @@ import saf.core.ui.dock.DockingManager.MinimizeLocation;
 import saf.core.ui.dock.Perspective;
 import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
-import saf.core.ui.util.FileChooserUtilities;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -363,7 +363,10 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-      File file = FileChooserUtilities.getOpenFile(frame, paramDir);
+      JFileChooser chooser = new JFileChooser(paramDir);
+      chooser.showOpenDialog(frame);	
+  	  File file = chooser.getSelectedFile();
+      
       if (file != null) {
         try {
           ParametersValuesLoader loader = new ParametersValuesLoader(file);

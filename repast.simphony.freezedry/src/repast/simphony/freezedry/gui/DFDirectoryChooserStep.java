@@ -16,6 +16,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -31,9 +32,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import repast.simphony.freezedry.datasource.DFClassLister;
+import repast.simphony.ui.RSApplication;
 import repast.simphony.util.wizard.DynamicWizardModel;
 import repast.simphony.util.wizard.ModelAwarePanelStep;
-import saf.core.ui.util.FileChooserUtilities;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -72,18 +73,35 @@ public class DFDirectoryChooserStep<T extends DynamicWizardModel> extends ModelA
   }
 
   private void browseButtonActionPerformed(ActionEvent e) {
-    File dir = FileChooserUtilities.getFile("Choose FreezeDry zip", "Choose", new File(""),
-            new FileFilter() {
-              public boolean accept(File f) {
-                return f.isDirectory() || f.getName().endsWith(".zip");
-              }
+  	String fileName = dirNameField.getText().trim();
+  	
+		File file = null;
+		if (fileName.length() > 0) {
+			file = new File(fileName).getParentFile();
+			if (file == null || !file.exists()){
+				file = null;
+			}
+		}
+		if (file == null){
+			file = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory().getParentFile();
+		}
+  	
+  	JFileChooser chooser = new JFileChooser(file);		
+	 	
+	  chooser.setFileFilter(new FileFilter() {
+	  	public boolean accept(File f) {
+	  		return f.isDirectory() || f.getName().endsWith(".zip");
+	  	}
 
-              public String getDescription() {
-                return "Zip Archive (.zip)";
-              }
-            });
-    if (dir != null) {
-      dirNameField.setText(dir.getAbsolutePath());
+	  	public String getDescription() {
+	  		return "Zip Archive (.zip)";
+	  	}
+	  });
+	  
+	  chooser.showOpenDialog(this);
+	  file = chooser.getSelectedFile();
+	  if (file != null) {
+      dirNameField.setText(file.getAbsolutePath());
     }
   }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -19,7 +20,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import repast.simphony.data2.FileDataSink;
-import saf.core.ui.util.FileChooserUtilities;
 
 public class JRTools {
 	private static ArrayList<DataSourceFinder> finders;
@@ -67,7 +67,9 @@ public class JRTools {
 	}
 
 	public static File browseForJasperReportDef(String defaultFileName, JComponent parent) {
-		File file = FileChooserUtilities.getOpenFile(new File(defaultFileName), new FileFilter() {
+	  JFileChooser chooser = new JFileChooser(new File(defaultFileName));
+	  
+	  chooser.setFileFilter(new FileFilter() {
 			public boolean accept(File f) {
 				if (f.getName().toLowerCase().endsWith(".jrxml") 
 						|| f.getName().toLowerCase().endsWith(".xml")
@@ -80,8 +82,9 @@ public class JRTools {
 				return "JasperReports XML (*.xml, *.jrxml)";
 			}
 		});
-
-		return file;
+		chooser.showOpenDialog(parent);
+ 
+		return chooser.getSelectedFile();
 	}
 
 	public static void outputReport(JasperPrint report, String destFileName, JROutputType outputType) throws JRException {

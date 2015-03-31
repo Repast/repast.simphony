@@ -7,11 +7,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
-import saf.core.ui.util.FileChooserUtilities;
 
 /**
  * Wizard step that provides the location of the data analysis plugin executable.
@@ -61,8 +61,11 @@ public class BrowseForHomeStep extends PluginWizardStep {
 	}
 	
 	private String browseForExecutable() {
-		File home = FileChooserUtilities.getOpenFile(new File(defaultLocation));
-
+		JFileChooser chooser = new JFileChooser();		
+		chooser.showOpenDialog(this);
+	
+		File home = chooser.getSelectedFile();
+		
 		String directory;
 		if (home != null) {
 			directory = home.getAbsolutePath();

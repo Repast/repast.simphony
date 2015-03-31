@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -21,9 +22,9 @@ import javax.swing.filechooser.FileFilter;
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.WizardModel;
 
+import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.ClassUtilities;
-import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -126,10 +127,16 @@ public class XMLFileChooserStep extends PluginWizardStep {
 		File file = null;
 		if (fileText.length() > 0) {
 			file = new File(fileText).getParentFile();
-			if (file == null || !file.exists())
+			if (file == null || !file.exists()){
 				file = null;
+			}
 		}
-		file = FileChooserUtilities.getOpenFile(file, new FileFilter() {
+		if (file == null){
+			file = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory().getParentFile();
+		}
+		
+	  JFileChooser chooser = new JFileChooser(file);		
+	  chooser.setFileFilter(new FileFilter() {
 
 			public boolean accept(File f) {
 				String name = f.getName();
@@ -140,8 +147,13 @@ public class XMLFileChooserStep extends PluginWizardStep {
 				return "XML or zipped xml file (*.xml, *.zip)";
 			}
 		});
-		if (file != null)
+	  
+	  chooser.showOpenDialog(this);	
+	  file = chooser.getSelectedFile();
+	  
+		if (file != null){
 			fileFld.setText(file.getAbsolutePath());
+		}
 	}
 
 	@Override

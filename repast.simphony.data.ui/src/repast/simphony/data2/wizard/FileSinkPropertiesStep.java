@@ -8,6 +8,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -18,7 +19,6 @@ import org.pietschy.wizard.WizardModel;
 
 import repast.simphony.data2.FormatType;
 import repast.simphony.data2.engine.FileSinkDescriptor;
-import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -110,7 +110,10 @@ public class FileSinkPropertiesStep extends PanelWizardStep{
       dir = new File(fnameFld.getText()).getParentFile();
     }
     
-    File file = FileChooserUtilities.getSaveFile(this, dir);
+    JFileChooser chooser = new JFileChooser(dir);		
+		chooser.showSaveDialog(this);	
+		File file = chooser.getSelectedFile();
+
     if (file != null) {
       fnameFld.setText(file.getAbsolutePath());
     }  

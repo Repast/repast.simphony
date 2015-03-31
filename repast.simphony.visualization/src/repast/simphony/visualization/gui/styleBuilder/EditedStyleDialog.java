@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -41,7 +42,6 @@ import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
-import saf.core.ui.util.FileChooserUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -718,11 +718,14 @@ public class EditedStyleDialog extends JDialog {
     iconColorbutton.setEnabled(false);
     File chosenFile;
 
+  	JFileChooser chooser = new JFileChooser(currentFile);		
+    
  // TODO Projections: init from viz registry data entries
     if (displayType.equals(DisplayType.TWO_D)) {
-      chosenFile = FileChooserUtilities.getFile(this, "Model File", "Select", currentFile,
-              new IconFile2DFilter());
-
+    	chooser.setFileFilter(new IconFile2DFilter());
+    	chooser.showOpenDialog(this);
+    	chosenFile = chooser.getSelectedFile();
+ 
       if (chosenFile != null) {
         iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
         userStyleData.setIconFile2D(makeRelativePath(chosenFile.getAbsolutePath()));
@@ -731,9 +734,10 @@ public class EditedStyleDialog extends JDialog {
         disableColorButtons();
       }
     } else {
-      chosenFile = FileChooserUtilities.getFile(this, "Model File", "Select", currentFile,
-              new ModelFile3DFilter());
-
+    	chooser.setFileFilter(new ModelFile3DFilter());
+    	chooser.showOpenDialog(this);
+    	chosenFile = chooser.getSelectedFile();
+    	
       if (chosenFile != null) {
         iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
         userStyleData.setModelFile3D(makeRelativePath(chosenFile.getAbsolutePath()));
@@ -802,9 +806,11 @@ public class EditedStyleDialog extends JDialog {
     if (!currentFile.exists())
       currentFile = currentFile.getParentFile();
 
-    File chosenFile = FileChooserUtilities.getFile(this, "Model File", "Select", currentFile,
-            new IconFile2DFilter());
-
+    JFileChooser chooser = new JFileChooser(currentFile);		
+  	chooser.setFileFilter(new IconFile2DFilter());
+  	chooser.showOpenDialog(this);
+  	File chosenFile = chooser.getSelectedFile();
+   
     if (chosenFile != null) {
       userStyleData.setTextureFile3D(chosenFile.getAbsolutePath());
       textureButton.setFont(textureButton.getFont().deriveFont(Font.BOLD));

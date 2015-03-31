@@ -8,6 +8,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -17,9 +18,7 @@ import org.java.plugin.PluginLifecycleException;
 
 import repast.simphony.engine.controller.Controller;
 import repast.simphony.engine.controller.DefaultController;
-import repast.simphony.engine.controller.ScheduledMethodControllerAction;
 import repast.simphony.engine.controller.TickListener;
-import repast.simphony.engine.controller.WatcherControllerAction;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.ControllerRegistry;
 import repast.simphony.engine.environment.DefaultRunEnvironmentBuilder;
@@ -39,7 +38,6 @@ import repast.simphony.space.SpatialException;
 import repast.simphony.ui.newscenario.NewScenarioWizard;
 import repast.simphony.ui.parameters.ParametersUI;
 import repast.simphony.ui.plugin.UIActionExtensions;
-import repast.simphony.ui.probe.Probe;
 import repast.simphony.ui.probe.ProbeExtensionLoader;
 import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.tree.ScenarioTree;
@@ -48,7 +46,6 @@ import repast.simphony.util.FileUtils;
 import repast.simphony.util.Settings;
 import saf.core.runtime.PluginDefinitionException;
 import saf.core.ui.dock.DockingManager;
-import saf.core.ui.util.FileChooserUtilities;
 import simphony.settings.SettingsRegistry;
 import simphony.util.messages.MessageCenter;
 import simphony.util.messages.MessageEvent;
@@ -265,7 +262,9 @@ public class RSApplication implements TickListener, RunListener {
       dir = scenario.getScenarioDirectory();
     }
 
-    File file = FileChooserUtilities.getSaveFile(dir);
+    JFileChooser chooser = new JFileChooser(dir);		
+    chooser.showSaveDialog(gui.getFrame());	
+	  File file = chooser.getSelectedFile();
     if (file != null) {
       gui.saveLayout(file);
     }
@@ -294,7 +293,10 @@ public class RSApplication implements TickListener, RunListener {
       dir = scenario.getScenarioDirectory();
     }
 
-    File file = FileChooserUtilities.getOpenFile(dir);
+    JFileChooser chooser = new JFileChooser(dir);		
+    chooser.showOpenDialog(gui.getFrame());	
+	  File file = chooser.getSelectedFile();
+	  
     if (file != null && file.exists()) {
       try {
         gui.resetLayout(new FileInputStream(file));
@@ -332,7 +334,11 @@ public class RSApplication implements TickListener, RunListener {
     if (settingsRegistry.get(LAST_LOADED_SCENARIO_KEY) != null) {
       dir = settingsRegistry.get(LAST_LOADED_SCENARIO_KEY).toString();
     }
-    File f = FileChooserUtilities.getOpenDirectory(new File(dir));
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    chooser.showOpenDialog(gui.getFrame());	
+	  File f = chooser.getSelectedFile();
+    
     if (f != null) {
       if (!initRequired)
         reset();
@@ -454,7 +460,12 @@ public class RSApplication implements TickListener, RunListener {
     String dir = ".";
     if (scenario != null)
       dir = scenario.getScenarioDirectory().getAbsolutePath();
-    File f = FileChooserUtilities.getSaveDirectory(new File(dir));
+    
+    JFileChooser chooser = new JFileChooser(dir);
+    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    chooser.showSaveDialog(gui.getFrame());	
+	  File f = chooser.getSelectedFile();
+    
     if (f != null) {
       doSave(f);
     }

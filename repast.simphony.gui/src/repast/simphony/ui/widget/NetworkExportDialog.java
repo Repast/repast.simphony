@@ -21,6 +21,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 
@@ -28,7 +29,7 @@ import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
-import saf.core.ui.util.FileChooserUtilities;
+import repast.simphony.ui.RSApplication;
 import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -111,7 +112,11 @@ public class NetworkExportDialog extends JDialog {
 
   @SuppressWarnings("unchecked")
   private void save() {
-    File f = FileChooserUtilities.getSaveFile(new File("."));
+    File f = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory().getParentFile();
+    JFileChooser chooser = new JFileChooser(f);		
+    chooser.showSaveDialog(this);	
+	  f = chooser.getSelectedFile();
+    
     if (f != null) {
       Graph<Object, RepastEdge<Object>> graph = 
           ((ContextJungNetwork<Object>)(Network<Object>)cmbNet.getSelectedItem()).getGraph();
