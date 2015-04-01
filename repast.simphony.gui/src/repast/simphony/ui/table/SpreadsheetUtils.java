@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.table.TableModel;
 
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -117,6 +117,9 @@ public class SpreadsheetUtils {
 				}
 				else if (val instanceof Date){
 					cell.setCellValue((Date)val);
+				}
+				else if (val instanceof JComponent){
+					// don't output any GUI controls in the cell
 				}
 				else{
 					cell.setCellValue(val.toString());

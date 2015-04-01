@@ -1,23 +1,18 @@
 package repast.simphony.ui.table;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 import java.beans.IntrospectionException;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableRowSorter;
 
-import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
 
 /**
@@ -53,52 +48,31 @@ public class AgentTableFactory {
 			}
 		}
 		
-		ProbePropertyTableModel model = new ProbePropertyTableModel(agentPropList);
-		TablePanel tablePanel = new TablePanel(model, tableName);
-		initToolBar(tablePanel);
-		tablePanel.insertRowLabels();
-	
-		// Automatically sort the first column of Agent IDs
-		List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-		int columnIndexToSort = 0;
-		sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
-		
-		TableRowSorter sorter = (TableRowSorter)tablePanel.getTable().getRowSorter();
+		if (agentPropList.size() > 0){
+			ProbePropertyTableModel model = new ProbePropertyTableModel(agentPropList);
+			TablePanel tablePanel = new TablePanel(model, tableName);
+			tablePanel.insertRowLabels();
 
-		sorter.setSortKeys(sortKeys);
-		sorter.sort();
-		
-		// TODO add filtering
-//		 sorter.setRowFilter(RowFilter.regexFilter(".*foo.*"));
-	
-		return tablePanel;
-	}
-	
-	protected static void initToolBar(TablePanel tablePanel){
-		JToolBar toolbar = new JToolBar();
-		tablePanel.addToolBar(toolbar);
-		
-		// Export table to Excel button
-		JButton excelButton = new JButton(RSGUIConstants.SM_SAVE_ICON);
-		excelButton.setToolTipText("Export table to Excel");
-		excelButton.addActionListener(new ActionListener(){
+			// Automatically sort the first column of Agent IDs
+			List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+			int columnIndexToSort = 0;
+			sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
 
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileNameExtensionFilter("Excel File","xlsx"));
-				fc.setCurrentDirectory(new File("."));
-				fc.setMultiSelectionEnabled(true);
-				int returnVal = fc.showSaveDialog(tablePanel);
+			TableRowSorter sorter = (TableRowSorter)tablePanel.getTable().getRowSorter();
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					SpreadsheetUtils.saveSingleTableAsExcel(
-							tablePanel.getTable().getModel(), tablePanel.getName(), file);
-				}
-			}
-		});
-		
-		toolbar.add(excelButton);
+			sorter.setSortKeys(sortKeys);
+			sorter.sort();
+
+			// TODO add filtering
+			//		 sorter.setRowFilter(RowFilter.regexFilter(".*foo.*"));
+
+			return tablePanel;
+		}
+		else{
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.setBorder(new EmptyBorder(10, 20, 10, 10));
+			panel.add(new JLabel("No instances currently exist in simulation."), BorderLayout.NORTH);
+			return panel;
+		}
 	}
 }

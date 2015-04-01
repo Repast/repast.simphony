@@ -9,6 +9,7 @@ import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
+import simphony.util.messages.MessageCenter;
 
 /**
  * TableModel for Agent tables
@@ -18,6 +19,8 @@ import repast.simphony.ui.probe.ProbedPropertiesFinder;
  */
 public class ProbePropertyTableModel extends DefaultTableModel {
 
+	private MessageCenter msgCenter = MessageCenter.getMessageCenter(ProbePropertyTableModel.class);
+	
 	// Map of column (property) names and column index
 	protected Map<String,Integer> columnMap = new HashMap<String,Integer>();
 	
@@ -53,12 +56,10 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 					else
 						colClassMap.put(col, value.getClass());
 				}
-				
 			}
 			else {
 				// TODO handle duplicate probe names?
 			}
-			
 		}
 		
 		Object [][] tableData = new Object[agentPropList.size()][tableHeaders.size()];
@@ -71,9 +72,14 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 				String probeID = probe.getName();
 				Integer col = columnMap.get(probeID);
 				
-				Object value;
+				Object value = null;
 				if (probe.getUiCreator() != null){
-					value = probe.getUiCreator().getComponent(null);
+					try {
+						value = probe.getUiCreator().getComponent(null);
+					}
+					catch(Exception e){
+						msgCenter.warn("Error creating probe for " + probeID, e);
+					}
 				}
 				else
 					value = probe.getValue();

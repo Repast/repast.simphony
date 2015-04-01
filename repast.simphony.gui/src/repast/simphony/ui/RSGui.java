@@ -757,6 +757,10 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
     return frame;
   }
+  
+  public JToolBar getToolBar(JComponent comp){
+  	return toolBarMap.get(comp);
+  }
 
   // view listener implementation
 

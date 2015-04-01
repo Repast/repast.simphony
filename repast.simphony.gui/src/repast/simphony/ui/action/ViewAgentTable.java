@@ -2,9 +2,13 @@ package repast.simphony.ui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JComponent;
+import javax.swing.JToolBar;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.RSGui;
+import repast.simphony.ui.table.AgentTablePanel;
 import saf.core.ui.actions.AbstractSAFAction;
 import saf.core.ui.dock.DockableFrame;
 
@@ -12,7 +16,6 @@ import saf.core.ui.dock.DockableFrame;
  * Action that creates a table of agents and their probe-able properties
  * 
  * @author Eric Tatara
- * @author Nick Collier
  */
 @SuppressWarnings("serial")
 public class ViewAgentTable extends AbstractSAFAction<RSApplication> {
@@ -24,8 +27,16 @@ public class ViewAgentTable extends AbstractSAFAction<RSApplication> {
 		RSGui gui = workspace.getApplicationMediator().getGui();
 		double tick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
-		AgentTablePanel panel = new AgentTablePanel(workspace);
+		String displayName = DISPLAY_NAME + " @ tick " + tick;
 		
-		DockableFrame dockable = gui.addVizualization(DISPLAY_NAME + " | tick: " + tick,	panel);
-		dockable.toFront();}
+		AgentTablePanel panel = new AgentTablePanel(workspace, displayName);	
+		DockableFrame dockable = gui.addVizualization(displayName,	panel);
+		JToolBar toolBar = gui.getToolBar(panel);
+		
+		for (JComponent comp : panel.getToolbarItems()){
+			toolBar.add(comp);	
+		}
+		
+		dockable.toFront();
+	}
 }

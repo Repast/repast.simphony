@@ -8,7 +8,6 @@ import java.util.Map;
 
 import repast.simphony.parameter.StringConverter;
 import repast.simphony.ui.RSApplication;
-import simphony.util.messages.MessageCenter;
 
 /**
  * Finds the probed properties for an object instance. 
@@ -57,7 +56,6 @@ public class ProbedPropertiesFinder {
   
   // convoluted to create a key that won't be an agent property name
   public final static String NAME_KEY = ProbedPropertiesFinder.class.getCanonicalName() + ".NAME_KEY";
-  
   
   public List<ProbedPropertiesFinder.Property> findProperties(Object obj) throws 
   IntrospectionException, IllegalAccessException, IllegalArgumentException, 
