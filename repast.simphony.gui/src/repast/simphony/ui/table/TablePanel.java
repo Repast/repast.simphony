@@ -23,11 +23,12 @@ public class TablePanel extends JPanel {
 	protected JToolBar toolbar;
 	
 	public TablePanel(){
-		this(null);
+		this(null, null);
 	}
 	
-	public TablePanel(TableModel model){
+	public TablePanel(TableModel model, String tableName){
 		super(new BorderLayout());
+		setName(tableName);
 		setOpaque(true);
 
 		if (model == null)
@@ -71,6 +72,4 @@ public class TablePanel extends JPanel {
 	public JTable getTable() {
 		return table;
 	}
-	
-	
 }

@@ -8,7 +8,6 @@ import javax.swing.JTabbedPane;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.ui.RSApplication;
-import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.table.AgentTableFactory;
 import saf.core.ui.Workspace;
 
@@ -28,18 +27,18 @@ public class AgentTablePanel extends JPanel {
 
 		// TODO add support toolbar / buttons on top.
 
-		ProbeManager probeManager = workspace.getApplicationMediator().getProbeManager();
-
-		RunState currentRunState = workspace.getApplicationMediator().getController().getCurrentRunState();
+		RunState currentRunState = 
+				workspace.getApplicationMediator().getController().getCurrentRunState();
 		Context context = currentRunState.getMasterContext();
 		
+		// Create a tab panel for each agent layer
 		for (Object agentType : context.getAgentTypes()){
 			Class agentClass = (Class)agentType;
 
-			JPanel agentPanel = AgentTableFactory.createAgentTablePanel(context.getAgentLayer(agentClass));
+			JPanel agentPanel = AgentTableFactory.createAgentTablePanel(
+					context.getAgentLayer(agentClass), agentClass.getSimpleName());
 
 			tabbedPane.addTab(agentClass.getSimpleName(), agentPanel);
-		
 		}
 	}
 }

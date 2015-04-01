@@ -302,7 +302,7 @@ public class SQLWindow extends JPanel {
 		functionHandlerTextField = new JTextField();
 		sparklineComboBox = new JComboBox();
 		sparklineJComponent = new SparklineJComponent();
-		tablePanel = new TablePanel(null);
+		tablePanel = new TablePanel();
 		CellConstraints cc = new CellConstraints();
 
 		setLayout(new FormLayout(
