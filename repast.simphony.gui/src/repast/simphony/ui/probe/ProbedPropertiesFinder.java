@@ -4,8 +4,11 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import repast.simphony.parameter.StringConverter;
+import repast.simphony.ui.RSApplication;
+import simphony.util.messages.MessageCenter;
 
 /**
  * Finds the probed properties for an object instance. 
@@ -13,11 +16,12 @@ import repast.simphony.parameter.StringConverter;
  * @author Nick Collier
  */
 public class ProbedPropertiesFinder {
-  
+	
   public static class Property {
     String name, displayName;
     Object value;
     StringConverter<?> converter;
+    ProbedPropertyUICreator uiCreator;
     
     Property(String name, String displayName, Object val, StringConverter<?> converter) {
       this.name = name;
@@ -41,13 +45,22 @@ public class ProbedPropertiesFinder {
     public StringConverter<?> getConverter() {
       return converter;
     }
+
+		public ProbedPropertyUICreator getUiCreator() {
+			return uiCreator;
+		}
+
+		public void setUiCreator(ProbedPropertyUICreator uiCreator) {
+			this.uiCreator = uiCreator;
+		}
   }
   
   // convoluted to create a key that won't be an agent property name
   public final static String NAME_KEY = ProbedPropertiesFinder.class.getCanonicalName() + ".NAME_KEY";
   
   
-  public List<ProbedPropertiesFinder.Property> findProperties(Object obj) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, 
+  public List<ProbedPropertiesFinder.Property> findProperties(Object obj) throws 
+  IntrospectionException, IllegalAccessException, IllegalArgumentException, 
   InvocationTargetException {
     
     List<Property> props = new ArrayList<>();
@@ -63,13 +76,42 @@ public class ProbedPropertiesFinder {
       }
     }
     
-    for (FieldPropertyDescriptor fpd : pbInfo.fieldPropertyDescriptor()) {
-      Object val = fpd.getField().get(obj);
-      prop = new Property(fpd.getName(), fpd.getDisplayName(), val, fpd.getStringConverter());
-      props.add(prop);
-    }
-    
+    createFieldProperties(pbInfo, obj, props);
+        
     return props;
   }
+  
+  private void createFieldProperties(ProbeInfo pbInfo, Object obj, 
+  		List<Property> props) throws IllegalAccessException {
+    
+  	ProbeManager probeManager = RSApplication.getRSApplicationInstance().getProbeManager();
+  	Map<Class<?>, PPUICreatorFactory> creatorMap = probeManager.getUiCreatorMap();
 
+  	for (FieldPropertyDescriptor fpd : pbInfo.fieldPropertyDescriptor()) {
+  		Object val = fpd.getField().get(obj);
+  		Property prop = new Property(fpd.getName(), fpd.getDisplayName(), val, 
+  				fpd.getStringConverter());
+  		props.add(prop);
+
+  		Class<?> clazz = fpd.getField().getType();
+  		PPUICreatorFactory fac  = null;
+
+  		// try to find exact match
+  		for (Class<?> key : creatorMap.keySet()) {
+  			if (clazz.equals(key)) fac = creatorMap.get(key);
+  		}
+
+  		// get assignable
+  		if (fac == null) {
+  			// try to find exact match
+  			for (Class<?> key : creatorMap.keySet()) {
+  				if (key.isAssignableFrom(clazz)) fac = creatorMap.get(key);
+  			}
+  		}
+
+  		if (fac != null) {
+  			prop.setUiCreator(fac.createUICreator(obj, fpd));
+  		}
+  	}
+  }
 }

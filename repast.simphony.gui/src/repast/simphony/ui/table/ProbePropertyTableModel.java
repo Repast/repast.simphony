@@ -5,10 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
 
+/**
+ * TableModel for Agent tables
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class ProbePropertyTableModel extends DefaultTableModel {
 
 	// Map of column (property) names and column index
@@ -17,10 +24,12 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 	// Map of column index and column class
 	protected Map<Integer, Class<?>> colClassMap = new HashMap<Integer,Class<?>>();
 	
+	// Map of booleans that determine if a colum is editable
+	protected Map<Integer,Boolean> columEditable = new HashMap<Integer, Boolean>();
+	
 	public ProbePropertyTableModel(List<List<ProbedPropertiesFinder.Property>> agentPropList) {
 		
-		// Setup columns
-		// Use the first entry to create column names
+		// Setup columns - use the first entry to create column names
 		List<ProbedPropertiesFinder.Property> propListFirst = agentPropList.get(0);
 		List<String> tableHeaders = new ArrayList<String>();
 		
@@ -29,11 +38,22 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 			Integer col = columnMap.get(probeID);
 			
 			if (col == null){
-				addColumn(probe.getDisplayName());
-				tableHeaders.add(probe.getDisplayName());
-				col = getColumnCount() - 1;  // note zero first index
-				columnMap.put(probeID, col);  
-				colClassMap.put(col, probe.getValue().getClass());
+				Object value = probe.getValue();
+				
+				if (value != null){
+					addColumn(probe.getDisplayName());
+					tableHeaders.add(probe.getDisplayName());
+					col = getColumnCount() - 1;  // note zero first index
+					columnMap.put(probeID, col);
+					
+					if (probe.getUiCreator() != null){
+						colClassMap.put(col, JComponent.class);
+						columEditable.put(col,true);
+					}
+					else
+						colClassMap.put(col, value.getClass());
+				}
+				
 			}
 			else {
 				// TODO handle duplicate probe names?
@@ -51,7 +71,15 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 				String probeID = probe.getName();
 				Integer col = columnMap.get(probeID);
 				
-				setValueAt(probe.getValue(), row, col);
+				Object value;
+				if (probe.getUiCreator() != null){
+					value = probe.getUiCreator().getComponent(null);
+				}
+				else
+					value = probe.getValue();
+				
+				if (value != null)
+					setValueAt(value, row, col);
 			}
 			row++;
 		}
@@ -64,6 +92,11 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
+		
+		// Currently allows column-based editing
+		if (columEditable.get(col) != null && columEditable.get(col) == true)
+			return true;
+		
 		return false;
 	}
 }

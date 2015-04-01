@@ -2,6 +2,7 @@ package repast.simphony.ui.table;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -38,6 +39,8 @@ public class TablePanel extends JPanel {
 
 		// Set Table behaviors and styles
 		
+		table.setDefaultRenderer(JComponent.class, new ComponentTableCellEditorRenderer());
+		table.setDefaultEditor(JComponent.class, new ComponentTableCellEditorRenderer());
 		table.setCellSelectionEnabled(true);
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(true);

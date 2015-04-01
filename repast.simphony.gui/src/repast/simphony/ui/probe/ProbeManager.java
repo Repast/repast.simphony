@@ -199,4 +199,8 @@ public class ProbeManager extends DockableFrameAdapter implements ProbeListener 
   public boolean hasLocationProbeProvider(Class<?> projectionClass){
   	return locationProviderMap.containsKey(projectionClass);
   }
+
+	public Map<Class<?>, PPUICreatorFactory> getUiCreatorMap() {
+		return uiCreatorMap;
+	}
 }

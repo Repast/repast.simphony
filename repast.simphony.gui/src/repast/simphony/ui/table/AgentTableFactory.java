@@ -21,15 +21,21 @@ import repast.simphony.ui.RSGUIConstants;
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
 
 /**
- * Creates a Table of agents and their properties
+ * Factory for creating tables of agents and their properties
  * 
  * @author Eric Tatara
  *
  */
 public class AgentTableFactory {
 	
-	
-	
+	/**
+	 * Create an TablePanel with agent properties such that each agent is a row
+	 *   in the table, and each column is an agent property.
+	 *   
+	 * @param agents the Iterable of agents to add to the table
+	 * @param tableName
+	 * @return the table panel
+	 */
 	public static JPanel createAgentTablePanel(Iterable agents, String tableName){
 			
 		List<List<ProbedPropertiesFinder.Property>> agentPropList = 
@@ -48,10 +54,8 @@ public class AgentTableFactory {
 		}
 		
 		ProbePropertyTableModel model = new ProbePropertyTableModel(agentPropList);
-		
 		TablePanel tablePanel = new TablePanel(model, tableName);
 		initToolBar(tablePanel);
-		
 		tablePanel.insertRowLabels();
 	
 		// Automatically sort the first column of Agent IDs
@@ -74,6 +78,7 @@ public class AgentTableFactory {
 		JToolBar toolbar = new JToolBar();
 		tablePanel.addToolBar(toolbar);
 		
+		// Export table to Excel button
 		JButton excelButton = new JButton(RSGUIConstants.SM_SAVE_ICON);
 		excelButton.setToolTipText("Export table to Excel");
 		excelButton.addActionListener(new ActionListener(){
