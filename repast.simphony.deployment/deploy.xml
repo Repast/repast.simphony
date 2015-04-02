@@ -101,6 +101,10 @@
 			<exclude name="**/repast.simphony.distributed.batch/**" />
 			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
 			<exclude name="**/repast.simphony.statecharts.diagram/**" />
+			
+			<!-- Exclude deprecated plugins-->
+			<exclude name="**/repast.simphony.ora/**" />
+			<exclude name="**/repast.simphony.matlab/**" />
 		</fileset>
 
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
@@ -283,14 +287,6 @@
 				<include name="**/*.class" />
 			</fileset>
 
-			<fileset dir="../repast.simphony.ora/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-			<fileset dir="../repast.simphony.ora/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
 			<fileset dir="../repast.simphony.pajek/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -334,7 +330,6 @@
 				<include name="**/*.class" />
 			</fileset>
 
-
 			<fileset dir="../repast.simphony.eclipse/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -352,8 +347,6 @@
 			<fileset dir="../repast.simphony.runtime/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-
-
 
 			<fileset dir="../repast.simphony.scenario/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -381,7 +374,6 @@
 				<include name="**/*.groovy" />
 			</fileset>
 
-
 			<fileset dir="../repast.simphony.systemdynamics.generator/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -390,7 +382,6 @@
 			<fileset dir="../repast.simphony.systemdynamics.generator/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-
 
 			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
 				<include name="**/*.class" />
@@ -432,7 +423,6 @@
 			<fileset dir="../repast.simphony.statecharts.visualization/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-
 
 		</jar>
 	</target>
