@@ -3,16 +3,19 @@
  */
 package repast.simphony.statecharts.runtime;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import repast.simphony.statecharts.DefaultStateChart;
+import repast.simphony.statecharts.StateChart;
 import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.RSGui;
 import repast.simphony.ui.probe.FieldPropertyDescriptor;
@@ -33,6 +36,8 @@ import com.jgoodies.binding.PresentationModel;
  */
 public class UICreatorFactory implements PPUICreatorFactory {
 
+	public static Map<StateChart, StateChartSVGDisplayController> windowRegistry;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -41,6 +46,9 @@ public class UICreatorFactory implements PPUICreatorFactory {
 	 */
 	@Override
 	public void init(RSApplication app) {
+		
+		windowRegistry = new HashMap<StateChart, StateChartSVGDisplayController>();
+		
 	}
 
 	/*
@@ -87,18 +95,32 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		public JComponent getComponent(PresentationModel<Object> model) {
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+			
 			button = new JButton("Display");
+			
 			if (statechart == null) {
 				button.setEnabled(false);
-			} else {
+			} 
+			else {
 				button.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						Object source = e.getSource();
+						
 						if (source instanceof JButton) {
-							((JButton) source).setEnabled(false);
+//							((JButton) source).setEnabled(false);
+							
+							((JButton) source).setBackground(Color.GREEN);
 						}
+						
+						// Just show the window if it exists already
+						scsdc = windowRegistry.get(statechart);
+						if (scsdc != null){
+							scsdc.focus();
+							return;
+						}
+						
 						scsdc = new StateChartSVGDisplayController(obj, statechart);
 						scsdc.registerCloseListener(PPUICreator.this);
 						RSApplication rsApp = RSApplication.getRSApplicationInstance();
@@ -107,8 +129,8 @@ public class UICreatorFactory implements PPUICreatorFactory {
 							if (rsGui != null) {
 								rsGui.addViewListener(PPUICreator.this);
 							}
-
 						}
+						windowRegistry.put(statechart, scsdc);
 						scsdc.createAndShowDisplay();
 					}
 				});
@@ -119,7 +141,9 @@ public class UICreatorFactory implements PPUICreatorFactory {
 
 		@Override
 		public void statechartClosed() {
-			button.setEnabled(true);
+			windowRegistry.remove(statechart);
+//			button.setEnabled(true);
+			button.setBackground(null);
 		}
 
 		@Override
@@ -127,10 +151,12 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			DockableFrame view = evt.getDockable();
 			Object closingObject = view.getClientProperty(ProbeManager.PROBED_OBJ_KEY);
 			if (closingObject == obj) {
-				if (scsdc != null)
+				if (scsdc != null){
+//					windowRegistry.remove(statechart);
+					statechartClosed();
 					scsdc.closeDisplayWithoutNotification();
+				}
 			}
-
 		}
 	}
 }

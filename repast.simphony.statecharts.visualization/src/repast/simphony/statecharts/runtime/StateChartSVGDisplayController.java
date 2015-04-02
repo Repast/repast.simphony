@@ -1,5 +1,6 @@
 package repast.simphony.statecharts.runtime;
 
+import java.awt.Frame;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -13,7 +14,6 @@ import org.w3c.dom.svg.SVGDocument;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunListener;
 import repast.simphony.statecharts.AbstractState;
-
 import repast.simphony.statecharts.StateChart;
 import repast.simphony.statecharts.StateChartListener;
 import repast.simphony.ui.probe.ProbeIntrospector;
@@ -79,6 +79,11 @@ public class StateChartSVGDisplayController implements StateChartListener,
 	private void initializeDisplay(String frameTitle, URI uri) {
 		svgDisplay = new StateChartSVGDisplay(this, frameTitle, uri);
 		svgDisplay.initialize();
+	}
+	
+	public void focus(){
+		svgDisplay.frame.toFront();
+		svgDisplay.frame.setState(Frame.NORMAL);
 	}
 
 	/**
