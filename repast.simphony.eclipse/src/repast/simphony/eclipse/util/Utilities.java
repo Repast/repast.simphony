@@ -139,4 +139,25 @@ public class Utilities {
       IFolder destinationFolder, IProgressMonitor monitor) {
     copyFileFromPluginInstallation(sourceFileName, destinationFolder, sourceFileName, monitor);
   }
+  
+  public static void createModelInstallerFiles(IFolder srcFolder, 
+  		IProgressMonitor monitor, String[][] variableMap) throws CoreException{
+    IFolder newFolder = srcFolder.getFolder("../installer");
+    if (!newFolder.exists())
+      newFolder.create(true, false, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
+        "installation_components.xml", variableMap, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
+        "shortcuts_Windows.xml", variableMap, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
+        "shortcuts_Xnix.xml", variableMap, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
+        "splash_screen.png", monitor);
+    Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
+        "start_model.bat", variableMap, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
+        "start_model.command", variableMap, monitor);
+    Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
+        "installation_coordinator.xml", variableMap, monitor);
+  }
 }

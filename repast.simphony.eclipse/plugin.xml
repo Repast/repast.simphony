@@ -97,32 +97,6 @@
 <!-- =================================================================================== -->
    <extension
          point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            adaptable="true"
-            id="repast.simphony.agents.rs_modelContribution_main">
-         <menu
-               label="Repast Simphony"
-               path="additions"
-               id="rs_model">
-            <separator
-                  name="modelGroup">
-            </separator>
-         </menu>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
-            adaptable="true"
-            id="repast.simphony.agents.rs_projectContribution_main">
-         <menu
-               label="Repast Simphony"
-               path="additions"
-               id="rs_main">
-            <separator
-                  name="natureGroup">
-            </separator>
-         </menu>
-      </objectContribution>
       
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
@@ -140,7 +114,7 @@
          <action
                label="Add Repast Simphony Nature"
                class="repast.simphony.eclipse.ide.AddSimphony"
-               menubarPath="rs_main/natureGroup"
+               menubarPath="rs.main.menu/rs.natureGroup"
                id="addAction">
          </action>
       </objectContribution>
@@ -166,7 +140,7 @@
          <action
                label="Update Repast Simphony Nature"
                class="repast.simphony.eclipse.ide.UpdateSimphony"
-               menubarPath="rs_main/natureGroup"
+               menubarPath="rs.main.menu/rs.natureGroup"
                id="addAction">
          </action>
       </objectContribution>
@@ -182,7 +156,7 @@
          <action
                label="Remove Repast Simphony Nature"
                class="repast.simphony.eclipse.ide.RemoveSimphony"
-               menubarPath="rs_main/natureGroup"
+               menubarPath="rs.main.menu/rs.natureGroup"
                id="removeAction">
          </action>
       </objectContribution>
@@ -277,6 +251,64 @@
          <classpathVariableInitializer                                          
       variable="STAND_ALONE_BATCH_CLASSPATH"                                                        
       class="repast.simphony.eclipse.StandAloneBatchCPInit"/>     
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
+         <menu
+               id="rs.main.menu"
+               label="Repast Simphony">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <iterate
+                        ifEmpty="false">
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                           
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            <separator
+                  name="rs.natureGroup"
+                  visible="false">
+            </separator>
+            <command
+                  commandId="repast.simphony.eclipse.installer_updater"
+                  label="Update model installer files"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="false">
+                        <adapt
+                              type="org.eclipse.core.resources.IProject">
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="repast.simphony.eclipse.repast_simphony_nature">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+               
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="repast.simphony.eclipse.ide.UpdateInstallerFilesHandler"
+            id="repast.simphony.eclipse.installer_updater"
+            name="Repast Model Installer Updater">
+      </command>
    </extension>
    
    

@@ -250,25 +250,9 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
           variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("icons/model.bmp", newFolder, "model.bmp",
           variableMap, monitor);
-
-      newFolder = srcFolder.getFolder("../installer");
-      if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
-          "installation_components.xml", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,
-          "shortcuts_Windows.xml", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/shortcuts_Xnix.xml", newFolder,
-          "shortcuts_Xnix.xml", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
-          "splash_screen.png", monitor);
-      Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
-          "start_model.bat", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
-          "start_model.command", variableMap, monitor);
-      Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
-          "installation_coordinator.xml", variableMap, monitor);
-
+      
+      Utilities.createModelInstallerFiles(srcFolder, monitor, variableMap);
+      
       newFolder = srcFolder.getFolder("../repast-licenses");
       if (!newFolder.exists())
         newFolder.create(true, false, monitor);
@@ -436,7 +420,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
 
     monitor.done();
   }
-
+  
   /**
    * <!-- begin-user-doc --> <!-- end-user-doc -->
    */
