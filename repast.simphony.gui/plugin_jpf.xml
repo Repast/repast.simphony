@@ -188,13 +188,14 @@
 
   <extension id="rs.ctions" plugin-id="saf.core.ui" point-id="ui.Actions">
 
+<!--  New scenario is disabled since this is a remnant of the .score system
     <parameter id="actionSpec">
       <parameter id="actionID" value="repast.simphony.ui.action.NewScenario"/>
       <parameter id="label" value="&amp;New"/>
       <parameter id="class" value="repast.simphony.ui.action.NewScenario"/>
       <parameter id="menuID" value="repast.simphony.ui.file_menu"/>
     </parameter>
-
+-->
     <parameter id="actionSpec">
       <parameter id="actionID" value="repast.simphony.ui.action.open"/>
       <parameter id="label" value="&amp;Open"/>
