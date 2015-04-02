@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: repast.simphony.runtime
-Bundle-Version: 2.2.0
+Bundle-Version: 2.3.0
 Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  testlib/jmock-cglib-1.0.1.jar,
  lib/saf.core.runtime.jar,

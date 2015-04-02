@@ -72,7 +72,7 @@ public class BundleTests {
     BundleData bd = reader.reader(new FileInputStream("./test_data/MANIFEST.MF"));
 
     assertEquals("repast.simphony.distributed.batch", bd.getName());
-    assertEquals("2.2.0", bd.getVersion());
+    assertEquals("2.3.0", bd.getVersion());
 
     List<BundleData> data = new ArrayList<BundleData>();
     for (BundleData rbd : bd.requiredBundles()) {
@@ -81,19 +81,19 @@ public class BundleTests {
     assertEquals(6, data.size());
 
     assertEquals("repast.simphony.batch", data.get(0).getName());
-    assertEquals("2.2.0", data.get(0).getVersion());
+    assertEquals("2.3.0", data.get(0).getVersion());
 
     assertEquals("repast.simphony.core", data.get(1).getName());
-    assertEquals("2.2.0", data.get(1).getVersion());
+    assertEquals("2.3.0", data.get(1).getVersion());
 
     assertEquals("repast.simphony.data", data.get(2).getName());
-    assertEquals("2.2.0", data.get(2).getVersion());
+    assertEquals("2.3.0", data.get(2).getVersion());
 
     assertEquals("repast.simphony.scenario", data.get(3).getName());
-    assertEquals("2.2.0", data.get(3).getVersion());
+    assertEquals("2.3.0", data.get(3).getVersion());
 
     assertEquals("repast.simphony.runtime", data.get(4).getName());
-    assertEquals("2.2.0", data.get(4).getVersion());
+    assertEquals("2.3.0", data.get(4).getVersion());
 
     assertEquals("org.junit", data.get(5).getName());
     assertEquals("", data.get(5).getVersion());

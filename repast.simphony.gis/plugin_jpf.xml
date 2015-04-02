@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.gis" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.2.0"/>
+         <attribute id="simphony" value="2.3.0"/>
      </attributes>
 	
 	<requires>

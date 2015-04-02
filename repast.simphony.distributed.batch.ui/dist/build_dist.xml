@@ -22,7 +22,7 @@
 		<delete file="${release.dir}/${app.name}-1.0.app" failonerror="false" />
 
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
-			<classpath path="./distlib/jarbundler-2.2.0.jar" />
+			<classpath path="./distlib/jarbundler-2.3.0.jar" />
 		</taskdef>
 
 		<jarbundler dir="${batch_runner.dir}" name="${app.name}-1.0" 

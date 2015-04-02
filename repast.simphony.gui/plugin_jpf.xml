@@ -3,7 +3,7 @@
 <plugin class="repast.simphony.ui.RSUIPlugin" id="repast.simphony.gui" version="">
 
 	<attributes>
-         <attribute id="simphony" value="2.2.0"/>
+         <attribute id="simphony" value="2.3.0"/>
      </attributes>
 	
   <requires>
@@ -342,23 +342,23 @@
 
 
 	<parameter id="actionSpec">
-		<parameter id="actionID" value="repast.simphony.gui.ShowNetworkExportDialog" />
-		<parameter id="label" value="&amp;Export Network Projections" />
-		<parameter id="class" value="repast.simphony.ui.action.ExportNetworks" />
-		<parameter id="icon" value="fileexport.png" />
-		<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
-		<parameter id="groupID" value="runTools" />
-		<parameter id="tooltip" value="Export Network Projections" />
+		<parameter id="actionID" value="repast.simphony.gui.ShowNetworkExportDialog"/>
+		<parameter id="label" value="&amp;Export Network Projections"/>
+		<parameter id="class" value="repast.simphony.ui.action.ExportNetworks"/>
+		<parameter id="icon" value="fileexport.png"/>
+		<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+		<parameter id="groupID" value="runTools"/>
+		<parameter id="tooltip" value="Export Network Projections"/>
 	</parameter>
 
 	<parameter id="actionSpec">
-		<parameter id="actionID" value="repast.simphony.gui.ShowAgentTable" />
-		<parameter id="label" value="&amp;View Agent Table" />
-		<parameter id="class" value="repast.simphony.ui.action.ViewAgentTable" />
-		<parameter id="icon" value="table.png" />
-		<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
-		<parameter id="groupID" value="runTools" />
-		<parameter id="tooltip" value="View a table of all agents in the simulation" />
+		<parameter id="actionID" value="repast.simphony.gui.ShowAgentTable"/>
+		<parameter id="label" value="&amp;View Agent Table"/>
+		<parameter id="class" value="repast.simphony.ui.action.ViewAgentTable"/>
+		<parameter id="icon" value="table.png"/>
+		<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+		<parameter id="groupID" value="runTools"/>
+		<parameter id="tooltip" value="View a table of all agents in the simulation"/>
 	</parameter>
 
   </extension>

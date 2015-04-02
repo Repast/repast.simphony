@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.gis.visualization" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.2.0"/>
+         <attribute id="simphony" value="2.3.0"/>
      </attributes>
 	
 	<requires>
@@ -44,13 +44,13 @@
 	
 	<extension id="gis.ui.actions" plugin-id="saf.core.ui" point-id="ui.Actions">
 		<parameter id="actionSpec">
-			<parameter id="actionID" value="repast.simphony.gis.ui.ShowExportDialog" />
-			<parameter id="label" value="&amp;Export Geography Layers" />
-			<parameter id="class" value="repast.simphony.gis.ui.ShowExportDialog" />
-			<parameter id="icon" value="nfs_mount.png" />
-			<parameter id="menuID" value="repast.simphony.ui.tools_menu" />
-			<parameter id="groupID" value="runTools" />
-			<parameter id="tooltip" value="Export geography layers to a shapefile" />
+			<parameter id="actionID" value="repast.simphony.gis.ui.ShowExportDialog"/>
+			<parameter id="label" value="&amp;Export Geography Layers"/>
+			<parameter id="class" value="repast.simphony.gis.ui.ShowExportDialog"/>
+			<parameter id="icon" value="nfs_mount.png"/>
+			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
+			<parameter id="groupID" value="runTools"/>
+			<parameter id="tooltip" value="Export geography layers to a shapefile"/>
 		</parameter>
 	</extension>
 	
