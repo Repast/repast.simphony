@@ -72,6 +72,9 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 				String probeID = probe.getName();
 				Integer col = columnMap.get(probeID);
 				
+				// If no column found, then skip this probe
+				if (col == null) continue;  
+				
 				Object value = null;
 				if (probe.getUiCreator() != null){
 					try {

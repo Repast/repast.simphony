@@ -6,7 +6,9 @@ package repast.simphony.statecharts.runtime;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -36,7 +38,9 @@ import com.jgoodies.binding.PresentationModel;
  */
 public class UICreatorFactory implements PPUICreatorFactory {
 
-	public static Map<StateChart, StateChartSVGDisplayController> windowRegistry;
+//	public static Map<StateChart, StateChartSVGDisplayController> windowRegistry;
+//	public static Map<StateChart, List<JButton>> buttonRegistry;
+//	public static Color BUTTON_HIGLIGHT_COLOR = Color.GREEN;
 	
 	/*
 	 * (non-Javadoc)
@@ -47,7 +51,10 @@ public class UICreatorFactory implements PPUICreatorFactory {
 	@Override
 	public void init(RSApplication app) {
 		
-		windowRegistry = new HashMap<StateChart, StateChartSVGDisplayController>();
+//		windowRegistry = new HashMap<StateChart, StateChartSVGDisplayController>();
+//		buttonRegistry = new HashMap<StateChart, List<JButton>>();
+		
+		new WindowRegistry();
 		
 	}
 
@@ -65,8 +72,100 @@ public class UICreatorFactory implements PPUICreatorFactory {
 				fpd.getDisplayName());
 	}
 
+	public static class WindowRegistry{
+		protected Map<StateChart, StateChartSVGDisplayController> windowRegistry;
+		protected Map<StateChart, List<StateChartButton>> buttonRegistry;
+		
+		protected static WindowRegistry instance;
+	
+		public static WindowRegistry getInstance(){
+			return instance;
+		}
+	
+		public WindowRegistry(){
+			instance = this;
+			
+			windowRegistry = new HashMap<StateChart, StateChartSVGDisplayController>();
+			buttonRegistry = new HashMap<StateChart, List<StateChartButton>>();
+		}
+		
+		public void addWindow(StateChart statechart, 
+				StateChartSVGDisplayController controller){
+			
+			windowRegistry.put(statechart, controller);
+			
+			// Highlight any existing buttons
+			List<StateChartButton> buttons = buttonRegistry.get(statechart);
+			if (buttons != null){
+				for (StateChartButton button : buttons){
+					button.highlight();
+				}
+			}
+		}
+		
+		public void removeWindow(StateChart statechart){
+			windowRegistry.remove(statechart);
+			List<StateChartButton> buttons = buttonRegistry.get(statechart);
+			
+			if (buttons != null){
+				for (StateChartButton button : buttons){
+					button.unHighlight();
+				}
+			}
+		}
+		
+		public void addButton(StateChart statechart, StateChartButton button){
+			List<StateChartButton> buttons = buttonRegistry.get(statechart);
+			if (buttons == null){
+				buttons = new ArrayList<StateChartButton>();
+				buttonRegistry.put(statechart, buttons);
+			}
+			buttons.add(button);
+			button.registerList(buttons);
+			
+			// If the window is currently open, highlight button
+			if (windowRegistry.get(statechart) != null){
+				button.highlight();
+			}
+		}
+		
+		public StateChartSVGDisplayController getController(StateChart statechart){
+			return windowRegistry.get(statechart);
+		}
+	}
+		
+	public static class StateChartButton extends JButton{	
+		private List<StateChartButton> myList;
+		
+		public StateChartButton(String label){
+			super(label);
+		}
+		
+		public void highlight(){
+			this.setBackground(Color.GREEN);
+			this.setText("Show");
+		}
+		
+		public void unHighlight(){
+			this.setBackground(null);
+			this.setText("Display");
+		}
+		
+		public void registerList(List<StateChartButton> list){
+			myList = list;
+		}
+		
+		@Override
+		public void removeNotify() {
+			super.removeNotify();
+
+			if (myList != null)
+				myList.remove(this);
+		}
+	}
+	
 	private static class PPUICreator extends DockableFrameAdapter implements ProbedPropertyUICreator,
-			StatechartCloseListener, DockableFrameListener {
+			StatechartCloseListener, DockableFrameListener{
 
 		private DefaultStateChart<?> statechart;
 		private String name;
@@ -89,33 +188,44 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			return name;
 		}
 
-		JButton button;
+		StateChartButton button;
 
 		@Override
 		public JComponent getComponent(PresentationModel<Object> model) {
+			button = new StateChartButton("Display");
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-			
-			button = new JButton("Display");
 			
 			if (statechart == null) {
 				button.setEnabled(false);
 			} 
 			else {
+//				List<JButton> buttons = buttonRegistry.get(statechart);
+//				if (buttons == null){
+//					buttons = new ArrayList<JButton>();
+//					buttonRegistry.put(statechart, buttons);
+//				}
+//				buttons.add(button);
+//				
+//				if (windowRegistry.get(statechart) != null){
+//					button.setBackground(BUTTON_HIGLIGHT_COLOR);
+//				}
+				WindowRegistry.getInstance().addButton(statechart, button);
+				
 				button.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						Object source = e.getSource();
 						
-						if (source instanceof JButton) {
-//							((JButton) source).setEnabled(false);
-							
-							((JButton) source).setBackground(Color.GREEN);
-						}
+//						if (source instanceof JButton) {
+////							((JButton) source).setEnabled(false);
+//							
+//							((JButton) source).setBackground(BUTTON_HIGLIGHT_COLOR);
+//						}
 						
 						// Just show the window if it exists already
-						scsdc = windowRegistry.get(statechart);
+						scsdc = WindowRegistry.getInstance().getController(statechart);
 						if (scsdc != null){
 							scsdc.focus();
 							return;
@@ -130,7 +240,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 								rsGui.addViewListener(PPUICreator.this);
 							}
 						}
-						windowRegistry.put(statechart, scsdc);
+						WindowRegistry.getInstance().addWindow(statechart, scsdc);
 						scsdc.createAndShowDisplay();
 					}
 				});
@@ -141,9 +251,10 @@ public class UICreatorFactory implements PPUICreatorFactory {
 
 		@Override
 		public void statechartClosed() {
-			windowRegistry.remove(statechart);
+			WindowRegistry.getInstance().removeWindow(statechart);
+//			windowRegistry.remove(statechart);
 //			button.setEnabled(true);
-			button.setBackground(null);
+//			button.setBackground(null);
 		}
 
 		@Override
@@ -158,5 +269,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 				}
 			}
 		}
+
+
 	}
 }
