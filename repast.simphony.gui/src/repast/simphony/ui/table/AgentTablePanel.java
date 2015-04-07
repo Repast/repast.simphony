@@ -22,6 +22,9 @@ import repast.simphony.engine.environment.RunState;
 import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.RSGUIConstants;
 import saf.core.ui.Workspace;
+import saf.core.ui.dock.DockableFrame;
+import saf.core.ui.event.DockableFrameEvent;
+import saf.core.ui.event.DockableFrameListener;
 
 /**
  * Panel than holds the agent table and other GUI elements.
@@ -29,11 +32,15 @@ import saf.core.ui.Workspace;
  * @author Eric Tatara
  *
  */
-public class AgentTablePanel extends JPanel {
+public class AgentTablePanel extends JPanel implements DockableFrameListener{
 	private static final long serialVersionUID = 1904514116491789302L;
 
+	public static final String TABLE_OBJ_KEY = "repast.simphony.ui.table.TABLE_OBJ_KEY";
+	
 	// List of toolbar contents that will be added to the parent dockable toolbar
 	protected List<JComponent> toolbarItems = new ArrayList<JComponent>();
+	
+	protected List<AgentTableListener> listeners = new ArrayList<AgentTableListener>();
 	
 	public AgentTablePanel(Workspace<RSApplication> workspace, 	String displayName){
 		super(new BorderLayout());
@@ -59,8 +66,13 @@ public class AgentTablePanel extends JPanel {
 			tabbedPane.addTab(agentClass.getSimpleName(), agentPanel);
 			
 			if (agentPanel instanceof TablePanel){
-				models.put(agentClass.getSimpleName(), 
-						((TablePanel)agentPanel).getTable().getModel());
+				TableModel model = ((TablePanel)agentPanel).getTable().getModel();
+				models.put(agentClass.getSimpleName(), model);
+				
+				// Initialize the table listeners from the model
+				if (model instanceof ProbePropertyTableModel){
+					listeners.addAll(((ProbePropertyTableModel)model).getListeners());
+				}
 			}
 		}
 		
@@ -94,5 +106,61 @@ public class AgentTablePanel extends JPanel {
 
 	public List<JComponent> getToolbarItems() {
 		return toolbarItems;
+	}
+	
+	public void addAgentTableListener(AgentTableListener listener){
+		listeners.add(listener);
+	}
+	
+	public boolean removeAgentTableListener(AgentTableListener listener){
+		return listeners.remove(listener);
+	}
+
+	@Override
+	public void dockableClosed(DockableFrameEvent evt) {
+		DockableFrame view = evt.getDockable();
+		
+		// If this table panel caused the dock closed event
+		if (this == view.getClientProperty(TABLE_OBJ_KEY)){
+			for (AgentTableListener listener : listeners){
+				listener.tableClosed();
+			}
+		}
+	}
+
+	@Override
+	public void dockableClosing(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableFloated(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableFloating(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableMaximized(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableMaximizing(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableMinimized(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableMinimizing(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableRestored(DockableFrameEvent arg0) {
+	}
+
+	@Override
+	public void dockableRestoring(DockableFrameEvent arg0) {
 	}
 }

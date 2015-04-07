@@ -31,6 +31,11 @@ public class ViewAgentTable extends AbstractSAFAction<RSApplication> {
 		
 		AgentTablePanel panel = new AgentTablePanel(workspace, displayName);	
 		DockableFrame dockable = gui.addVizualization(displayName,	panel);
+		gui.addViewListener(panel);
+		
+		// Used to check which table fires a DockableFrameEvent
+		dockable.putClientProperty(AgentTablePanel.TABLE_OBJ_KEY, panel);
+		
 		JToolBar toolBar = gui.getToolBar(panel);
 		
 		for (JComponent comp : panel.getToolbarItems()){

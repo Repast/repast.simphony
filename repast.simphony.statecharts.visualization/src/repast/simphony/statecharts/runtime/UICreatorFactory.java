@@ -4,6 +4,7 @@
 package repast.simphony.statecharts.runtime;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import repast.simphony.ui.probe.FieldPropertyDescriptor;
 import repast.simphony.ui.probe.PPUICreatorFactory;
 import repast.simphony.ui.probe.ProbeManager;
 import repast.simphony.ui.probe.ProbedPropertyUICreator;
+import repast.simphony.ui.table.AgentTableListener;
 import saf.core.ui.dock.DockableFrame;
 import saf.core.ui.event.DockableFrameAdapter;
 import saf.core.ui.event.DockableFrameEvent;
@@ -35,36 +37,15 @@ import com.jgoodies.binding.PresentationModel;
  * PPUICreatorFactory for creating the UI probe component for a statechart.
  * 
  * @author Nick Collier
+ * @author Eric Tatara
  */
 public class UICreatorFactory implements PPUICreatorFactory {
-
-//	public static Map<StateChart, StateChartSVGDisplayController> windowRegistry;
-//	public static Map<StateChart, List<JButton>> buttonRegistry;
-//	public static Color BUTTON_HIGLIGHT_COLOR = Color.GREEN;
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see repast.simphony.ui.probe.PPUICreatorFactory#init(repast.simphony.ui.
-	 * RSApplication)
-	 */
 	@Override
-	public void init(RSApplication app) {
-		
-//		windowRegistry = new HashMap<StateChart, StateChartSVGDisplayController>();
-//		buttonRegistry = new HashMap<StateChart, List<JButton>>();
-		
+	public void init(RSApplication app) {		
 		new WindowRegistry();
-		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * repast.simphony.ui.probe.PPUICreatorFactory#createUICreator(java.lang.Object
-	 * , repast.simphony.ui.probe.FieldPropertyDescriptor)
-	 */
 	@Override
 	public ProbedPropertyUICreator createUICreator(Object obj, FieldPropertyDescriptor fpd)
 			throws IllegalAccessException, IllegalArgumentException {
@@ -96,6 +77,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			
 			// Highlight any existing buttons
 			List<StateChartButton> buttons = buttonRegistry.get(statechart);
+			
 			if (buttons != null){
 				for (StateChartButton button : buttons){
 					button.highlight();
@@ -116,6 +98,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		
 		public void addButton(StateChart statechart, StateChartButton button){
 			List<StateChartButton> buttons = buttonRegistry.get(statechart);
+			
 			if (buttons == null){
 				buttons = new ArrayList<StateChartButton>();
 				buttonRegistry.put(statechart, buttons);
@@ -134,7 +117,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		}
 	}
 		
-	public static class StateChartButton extends JButton{	
+	public static class StateChartButton extends JButton implements AgentTableListener{	
 		private List<StateChartButton> myList;
 		
 		public StateChartButton(String label){
@@ -156,9 +139,8 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		}
 		
 		@Override
-		public void removeNotify() {
-			super.removeNotify();
-
+		public void tableClosed() {
+			// When the table is closed (destroyed) remove this button from the registry.
 			if (myList != null)
 				myList.remove(this);
 		}
@@ -178,11 +160,6 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			this.name = name;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see repast.simphony.ui.probe.ProbedPropertyUICreator#getDisplayName()
-		 */
 		@Override
 		public String getDisplayName() {
 			return name;
@@ -195,35 +172,19 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			button = new StateChartButton("Display");
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+			panel.add(button);
 			
 			if (statechart == null) {
 				button.setEnabled(false);
 			} 
 			else {
-//				List<JButton> buttons = buttonRegistry.get(statechart);
-//				if (buttons == null){
-//					buttons = new ArrayList<JButton>();
-//					buttonRegistry.put(statechart, buttons);
-//				}
-//				buttons.add(button);
-//				
-//				if (windowRegistry.get(statechart) != null){
-//					button.setBackground(BUTTON_HIGLIGHT_COLOR);
-//				}
 				WindowRegistry.getInstance().addButton(statechart, button);
 				
 				button.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Object source = e.getSource();
-						
-//						if (source instanceof JButton) {
-////							((JButton) source).setEnabled(false);
-//							
-//							((JButton) source).setBackground(BUTTON_HIGLIGHT_COLOR);
-//						}
-						
+
 						// Just show the window if it exists already
 						scsdc = WindowRegistry.getInstance().getController(statechart);
 						if (scsdc != null){
@@ -245,31 +206,32 @@ public class UICreatorFactory implements PPUICreatorFactory {
 					}
 				});
 			}
-			panel.add(button);
 			return panel;
 		}
 
 		@Override
 		public void statechartClosed() {
 			WindowRegistry.getInstance().removeWindow(statechart);
-//			windowRegistry.remove(statechart);
-//			button.setEnabled(true);
-//			button.setBackground(null);
 		}
 
 		@Override
-		public void dockableClosing(DockableFrameEvent evt) {
+		public void dockableClosed(DockableFrameEvent evt) {
 			DockableFrame view = evt.getDockable();
 			Object closingObject = view.getClientProperty(ProbeManager.PROBED_OBJ_KEY);
 			if (closingObject == obj) {
-				if (scsdc != null){
-//					windowRegistry.remove(statechart);
-					statechartClosed();
-					scsdc.closeDisplayWithoutNotification();
+			
+				System.out.println("Probe dockable closed.");
+
+				for (Component comp : view.getContentPane().getComponents()){
+					if (comp instanceof AgentTableListener){
+						((AgentTableListener)comp).tableClosed();
+
+						// TODO figure out why this doesnt work 
+						
+						System.out.println("\t " + comp.getClass().getName());
+					}
 				}
 			}
 		}
-
-
 	}
 }

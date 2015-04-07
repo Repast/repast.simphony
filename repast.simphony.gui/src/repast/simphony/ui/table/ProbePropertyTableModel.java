@@ -1,10 +1,16 @@
 package repast.simphony.ui.table;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,6 +35,9 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 	
 	// Map of booleans that determine if a colum is editable
 	protected Map<Integer,Boolean> columEditable = new HashMap<Integer, Boolean>();
+	
+	protected List<AgentTableListener> listeners = new ArrayList<AgentTableListener>();
+	
 	
 	public ProbePropertyTableModel(List<List<ProbedPropertiesFinder.Property>> agentPropList) {
 		
@@ -67,7 +76,8 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		
 		// Now that the TableModel has been setup, set the actual values.
 		int row = 0;
-		for (List<ProbedPropertiesFinder.Property> propList : agentPropList){		
+		for (List<ProbedPropertiesFinder.Property> propList : agentPropList){
+			Integer myrow = row;
 			for (ProbedPropertiesFinder.Property probe : propList){
 				String probeID = probe.getName();
 				Integer col = columnMap.get(probeID);
@@ -87,13 +97,40 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 				else
 					value = probe.getValue();
 				
-				if (value != null)
-					setValueAt(value, row, col);
+				if (value != null){
+					setValueAt(value, row, col);}
+				
+				// For JComponents, setup listeners to sync with table / component events
+				if (value instanceof JComponent){
+					JComponent comp = (JComponent)value;
+					
+					for (Component child : comp.getComponents()){
+						// Agent table listeners respond to table events
+						if (child instanceof AgentTableListener){
+							listeners.add((AgentTableListener)child);
+						}
+						// Some Jbuttons might be colored or changed text, so when this happens,
+						//  we need to let the table know so that it can repaint.
+						if (child instanceof JButton){
+							((JButton)child).addPropertyChangeListener(new PropertyChangeListener() {
+								
+								@Override
+								public void propertyChange(PropertyChangeEvent evt) {
+									String propName = evt.getPropertyName();
+									
+									if (propName.equals("background") || propName.equals("text")){
+										fireTableCellUpdated(myrow, col);
+									}
+								}
+							});
+						}
+					}
+				}
 			}
 			row++;
 		}
 	}
-	
+		
 	@Override
 	public Class<?> getColumnClass(int col) {
 		return colClassMap.get(col);
@@ -107,5 +144,9 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 			return true;
 		
 		return false;
+	}
+
+	public List<AgentTableListener> getListeners() {
+		return listeners;
 	}
 }
