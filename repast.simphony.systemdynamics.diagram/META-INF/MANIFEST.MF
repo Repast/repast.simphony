@@ -7,6 +7,7 @@ Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin
 Bundle-Vendor: Argonne National Laboratory
+Bundle-Localization: plugin
 Export-Package: repast.simphony.systemdynamics.diagram.edit.parts,
  repast.simphony.systemdynamics.diagram.part,
  repast.simphony.systemdynamics.diagram.providers

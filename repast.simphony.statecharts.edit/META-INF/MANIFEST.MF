@@ -6,6 +6,7 @@ Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.statecharts.scmodel.provider.StatechartEditPlugin$Implementation
 Bundle-Vendor: Argonne National Laboratory
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: repast.simphony.statecharts.scmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
