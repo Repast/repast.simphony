@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast batch
 Bundle-SymbolicName: repast.simphony.batch;singleton:=true
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: libs.bsf,
  repast.simphony.dataLoader,
  repast.simphony.data,
@@ -20,8 +19,8 @@ Export-Package: repast.simphony.batch,
  repast.simphony.parameter.groovy,
  repast.simphony.parameter.optimizer,
  repast.simphony.parameter.xml
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Bundle-ClassPath: lib/batch_groovy.jar,
  bin/
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast ora
 Bundle-SymbolicName: repast.simphony.ora
 Bundle-Version: 2.3.0
 Bundle-Localization: plugin
@@ -10,6 +10,6 @@ Require-Bundle: repast.simphony.gui,
  saf.core.ui,
  repast.simphony.runtime,
  repast.simphony.data.ui
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.ora
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

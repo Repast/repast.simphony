@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Builder
+Bundle-Name: Repast relogo builder
 Bundle-SymbolicName: repast.simphony.relogo.builder;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-Activator: repast.simphony.relogo.builder.Activator
@@ -25,4 +25,5 @@ Bundle-ClassPath: lib/commons-io-1.4.jar,
  bin/
 Export-Package: repast.simphony.relogo.ide.handlers,
  templates
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

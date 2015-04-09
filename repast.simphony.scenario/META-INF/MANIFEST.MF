@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast scenario
 Bundle-SymbolicName: repast.simphony.scenario;singleton:=true
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.core,
  org.junit,
@@ -20,6 +19,6 @@ Export-Package: repast.simphony.annotate;uses:="simphony.util.messages",
  repast.simphony.scenario.data;uses:="junit.framework",
  repast.simphony.scenario.eclipse,
  repast.simphony.score
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Bundle-ClassPath: bin/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

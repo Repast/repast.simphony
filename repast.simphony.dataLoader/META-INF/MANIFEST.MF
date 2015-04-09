@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast dataloader
 Bundle-SymbolicName: repast.simphony.dataLoader
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.core,
  repast.simphony.plugin.util,
  repast.simphony.scenario,
@@ -12,5 +11,5 @@ Require-Bundle: repast.simphony.core,
 Export-Package: repast.simphony.dataLoader,
  repast.simphony.dataLoader.engine,
  repast.simphony.dataLoader.util
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

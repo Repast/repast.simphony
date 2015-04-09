@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast statecharts edit
 Bundle-SymbolicName: repast.simphony.statecharts.edit;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.statecharts.scmodel.provider.StatechartEditPlugin$Implementation
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: repast.simphony.statecharts.scmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.statecharts.model;visibility:=reexport,

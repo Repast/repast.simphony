@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast integration
 Bundle-SymbolicName: repast.simphony.integration;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/,
@@ -9,8 +9,7 @@ Bundle-ClassPath: bin/,
  lib/jaxen-1.1.6.jar,
  lib/commons-jxpath-1.3.jar,
  lib/jdom-1.1.3.jar
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.integration
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.core;resolution:=optional,
@@ -19,4 +18,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.wst.xml.core
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

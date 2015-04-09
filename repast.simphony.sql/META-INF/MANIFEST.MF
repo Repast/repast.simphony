@@ -1,16 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast sql
 Bundle-SymbolicName: repast.simphony.sql
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
  repast.simphony.data.ui
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: com.gentlyweb.utils,
  org.josql,
  org.josql.events,
@@ -25,4 +24,4 @@ Export-Package: com.gentlyweb.utils,
  repast.simphony.sql
 Bundle-ClassPath: lib/JoSQL-2.2.jar,
  lib/gentlyWEB-utils-1.1.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

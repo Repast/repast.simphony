@@ -1,8 +1,6 @@
 package repast.simphony.ui.table;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -38,9 +36,18 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 	
 	protected List<AgentTableListener> listeners = new ArrayList<AgentTableListener>();
 	
-	
 	public ProbePropertyTableModel(List<List<ProbedPropertiesFinder.Property>> agentPropList) {
-		
+	
+		initColumns(agentPropList);
+		initColumnData(agentPropList);
+	}
+	
+	/**
+	 * Configure the columns from data in the agent properties list.
+	 * 
+	 * @param agentPropList
+	 */
+	protected void initColumns(List<List<ProbedPropertiesFinder.Property>> agentPropList){
 		// Setup columns - use the first entry to create column names
 		List<ProbedPropertiesFinder.Property> propListFirst = agentPropList.get(0);
 		List<String> tableHeaders = new ArrayList<String>();
@@ -50,12 +57,9 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 			Integer col = columnMap.get(probeID);
 			
 			if (col == null){
-				Object value = probe.getValue();
-				
-				if (value != null){
 					addColumn(probe.getDisplayName());
 					tableHeaders.add(probe.getDisplayName());
-					col = getColumnCount() - 1;  // note zero first index
+					col = getColumnCount() - 1; 
 					columnMap.put(probeID, col);
 					
 					if (probe.getUiCreator() != null){
@@ -63,8 +67,7 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 						columEditable.put(col,true);
 					}
 					else
-						colClassMap.put(col, value.getClass());
-				}
+						colClassMap.put(col, probe.getType());
 			}
 			else {
 				// TODO handle duplicate probe names?
@@ -73,8 +76,14 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		
 		Object [][] tableData = new Object[agentPropList.size()][tableHeaders.size()];
 		setDataVector(tableData, tableHeaders.toArray());
+	}
 		
-		// Now that the TableModel has been setup, set the actual values.
+	/**
+	 * Sets the cell values in each row, column from data in the agent properties list.
+	 * 
+	 * @param agentPropList
+	 */
+	protected void initColumnData(List<List<ProbedPropertiesFinder.Property>> agentPropList){
 		int row = 0;
 		for (List<ProbedPropertiesFinder.Property> propList : agentPropList){
 			Integer myrow = row;
@@ -136,6 +145,11 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		return colClassMap.get(col);
 	}
 
+//	@Override
+//	public int getColumnCount() {
+//	   return colClassMap.size();
+//	}
+	
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		

@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast statecharts diagram
 Bundle-SymbolicName: repast.simphony.statecharts.diagram; singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.statecharts.part.StatechartDiagramEditorPlugin
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.statecharts.edit.parts,
  repast.simphony.statecharts.part,
  repast.simphony.statecharts.providers
@@ -66,6 +65,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.launching;bundle-version="3.7.0",
  org.apache.batik.util;bundle-version="1.7.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: junit.framework,
  org.codehaus.groovy.eclipse.core

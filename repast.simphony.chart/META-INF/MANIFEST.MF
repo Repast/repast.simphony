@@ -1,11 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast chart
 Bundle-SymbolicName: repast.simphony.chart
 Bundle-Version: 2.3.0
 Bundle-ClassPath: lib/jcommon-1.0.16.jar,
  lib/jfreechart-1.0.13.jar
-Bundle-Localization: plugin
 Export-Package: com.keypoint,
  org.jfree,
  org.jfree.base,
@@ -70,5 +69,5 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.data,
  repast.simphony.runtime,
  saf.core.ui
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -1,15 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast jung
 Bundle-SymbolicName: repast.simphony.jung
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
  repast.simphony.data.ui
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.jung
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

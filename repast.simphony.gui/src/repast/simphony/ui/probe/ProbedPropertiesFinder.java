@@ -21,12 +21,15 @@ public class ProbedPropertiesFinder {
     Object value;
     StringConverter<?> converter;
     ProbedPropertyUICreator uiCreator;
+    Class<?> type;
     
-    Property(String name, String displayName, Object val, StringConverter<?> converter) {
+    Property(String name, String displayName, Object val, 
+    		StringConverter<?> converter, Class<?> type) {
       this.name = name;
       this.displayName = displayName;
       this.value = val;
       this.converter = converter;
+      this.type = type;
     }
     
     public String getName() {
@@ -44,6 +47,10 @@ public class ProbedPropertiesFinder {
     public StringConverter<?> getConverter() {
       return converter;
     }
+
+		public Class<?> getType() {
+			return type;
+		}
 
 		public ProbedPropertyUICreator getUiCreator() {
 			return uiCreator;
@@ -63,13 +70,15 @@ public class ProbedPropertiesFinder {
     
     List<Property> props = new ArrayList<>();
     ProbeInfo pbInfo = ProbeIntrospector.getInstance().getProbeInfo(obj.getClass());
-    Property prop = new Property(NAME_KEY, "ID", ProbedPropertyFactory.createProbedTitle(pbInfo, obj), null);
+    Property prop = new Property(NAME_KEY, "ID", 
+    		ProbedPropertyFactory.createProbedTitle(pbInfo, obj), null, String.class);
     props.add(prop);
     
     for (MethodPropertyDescriptor mpd : pbInfo.methodPropertyDescriptors()) {
       if (mpd.getReadMethod() != null) {
         Object val = mpd.getReadMethod().invoke(obj, new Object[0]);
-        prop = new Property(mpd.getName(), mpd.getDisplayName(), val, mpd.getStringConverter());
+        prop = new Property(mpd.getName(), mpd.getDisplayName(), val, 
+        		mpd.getStringConverter(), mpd.getPropertyType());
         props.add(prop);
       }
     }
@@ -87,11 +96,11 @@ public class ProbedPropertiesFinder {
 
   	for (FieldPropertyDescriptor fpd : pbInfo.fieldPropertyDescriptor()) {
   		Object val = fpd.getField().get(obj);
-  		Property prop = new Property(fpd.getName(), fpd.getDisplayName(), val, 
-  				fpd.getStringConverter());
-  		props.add(prop);
-
   		Class<?> clazz = fpd.getField().getType();
+  		Property prop = new Property(fpd.getName(), fpd.getDisplayName(), val, 
+  				fpd.getStringConverter(), clazz);
+  		props.add(prop);
+  		
   		PPUICreatorFactory fac  = null;
 
   		// try to find exact match

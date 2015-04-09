@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast statecharts model
 Bundle-SymbolicName: repast.simphony.statecharts.model;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: repast.simphony.statecharts.scmodel,
  repast.simphony.statecharts.scmodel.impl,
  repast.simphony.statecharts.scmodel.util,

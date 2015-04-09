@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui
+Bundle-Name: Saf core ui
 Bundle-SymbolicName: saf.core.ui
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Export-Package: 
  bibliothek.extension.gui.dock,
  bibliothek.extension.gui.dock.preference,
@@ -65,4 +64,5 @@ Bundle-ClassPath: saf.core.ui.jar,
  lib/TableLayout.jar,
  lib/wizard-0.1.12.jar
 Require-Bundle: libs.ext
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

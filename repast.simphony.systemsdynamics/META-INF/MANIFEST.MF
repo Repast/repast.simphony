@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast system dynamics
 Bundle-SymbolicName: repast.simphony.systemdynamics
 Bundle-Version: 2.3.0
 Bundle-Localization: plugin
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.systemsdynamics
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

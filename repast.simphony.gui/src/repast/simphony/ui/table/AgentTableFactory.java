@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.RowSorter;
@@ -62,7 +63,19 @@ public class AgentTableFactory {
 
 			sorter.setSortKeys(sortKeys);
 			sorter.sort();
+			
+			// Enlarge the Agent ID column
+			tablePanel.getTable().getColumnModel().getColumn(0).setPreferredWidth(150);
 
+//			tablePanel.getTable().setRowHeight(20);
+			
+			// Enlarge columns with JButtons, eg for statechart buttons
+			for (int col=1; col<model.getColumnCount(); col++){
+				if (JButton.class.equals(model.getColumnClass(col))){
+					tablePanel.getTable().getColumnModel().getColumn(col).setPreferredWidth(200);
+				}
+			}
+			
 			// TODO add filtering
 			//		 sorter.setRowFilter(RowFilter.regexFilter(".*foo.*"));
 

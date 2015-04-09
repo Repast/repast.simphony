@@ -45,6 +45,7 @@ public class TablePanel extends JPanel {
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(true);
 		table.setAutoCreateRowSorter(true);
+//		table.setRowSorter(new TableSorter<TableModel>());
 		table.setFillsViewportHeight(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ReLogo Runtime
+Bundle-Name: Repast relogo runtime
 Bundle-SymbolicName: repast.simphony.relogo.runtime
 Bundle-Version: 2.3.0
 Export-Package: repast.simphony.relogo,
@@ -25,4 +25,5 @@ Require-Bundle: repast.simphony.visualization;bundle-version="2.0.0",
  libs.ext;bundle-version="2.3.0"
 Bundle-ClassPath: lib/asm-3.2.jar,
  bin/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

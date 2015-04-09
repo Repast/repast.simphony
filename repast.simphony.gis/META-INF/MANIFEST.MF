@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast gis
 Bundle-SymbolicName: repast.simphony.gis
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: libs.ext,
  repast.simphony.runtime,
  repast.simphony.core,
@@ -253,7 +252,7 @@ Export-Package: com.vividsolutions.jts,
  repast.simphony.gis.xml,
  repast.simphony.query.space.gis,
  repast.simphony.space.gis
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: lib/gt-api-13.0.jar,
  lib/gt-coverage-13.0.jar,
  lib/gt-cql-13.0.jar,
@@ -267,4 +266,4 @@ Bundle-ClassPath: lib/gt-api-13.0.jar,
  lib/jt-utils-1.3.1.jar,
  lib/jt-zonalstats-1.3.1.jar,
  lib/jts-1.13.jar
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory

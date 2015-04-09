@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: libs.ext
+Bundle-Name: Repast libs ext
 Bundle-SymbolicName: libs.ext
 Bundle-Version: 2.3.0
 Bundle-ClassPath: lib/clibwrapper_jiio.jar,
@@ -386,4 +386,5 @@ Export-Package: com.jogamp.common,
  org.w3c.dom.traversal,
  org.w3c.dom.views,
  org.w3c.dom.xpath
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

@@ -1,16 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast plugin ui
 Bundle-SymbolicName: repast.simphony.plugin.util
 Bundle-Version: 2.3.0
 Bundle-ClassPath: .
-Bundle-Localization: plugin
 Export-Package: org.jdesktop.swingx.autocomplete,
  repast.simphony.util.wizard
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.scenario,
  saf.core.ui,
  repast.simphony.core
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: repast.simphony.ui.plugin.editor

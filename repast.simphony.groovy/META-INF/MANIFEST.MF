@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Repast-Groovy
+Bundle-Name: Repast groovy
 Bundle-SymbolicName: repast.simphony.groovy
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Export-Package: repast.simphony.groovy.math
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

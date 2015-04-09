@@ -5,6 +5,7 @@ package repast.simphony.statecharts.runtime;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -12,10 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import repast.simphony.statecharts.DefaultStateChart;
 import repast.simphony.statecharts.StateChart;
@@ -32,6 +31,9 @@ import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
 
 import com.jgoodies.binding.PresentationModel;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * PPUICreatorFactory for creating the UI probe component for a statechart.
@@ -122,6 +124,9 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		
 		public StateChartButton(String label){
 			super(label);
+			
+			setMaximumSize(new Dimension(100,100));
+			setMinimumSize(new Dimension(1,1));
 		}
 		
 		public void highlight(){
@@ -170,9 +175,21 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		@Override
 		public JComponent getComponent(PresentationModel<Object> model) {
 			button = new StateChartButton("Display");
-			JPanel panel = new JPanel();
-			panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-			panel.add(button);
+//			JPanel panel = new JPanel();
+//			panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+//		panel.add(button);
+			
+			FormLayout layout = new FormLayout(
+//					"pref:grow",  // columns
+//					"pref:grow"); //rows
+					"45dlu",  // columns
+					"10dlu"); //rows
+			PanelBuilder builder = new PanelBuilder(layout);
+//			builder.setDefaultDialogBorder();
+			CellConstraints cc = new CellConstraints();
+			
+			builder.add(button, cc.xy(1, 1));
+	
 			
 			if (statechart == null) {
 				button.setEnabled(false);
@@ -206,7 +223,8 @@ public class UICreatorFactory implements PPUICreatorFactory {
 					}
 				});
 			}
-			return panel;
+//			return panel;
+			return builder.getPanel();
 		}
 
 		@Override

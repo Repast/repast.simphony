@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast system dynamics diagram
 Bundle-SymbolicName: repast.simphony.systemdynamics.diagram; singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.systemdynamics.diagram.part.SystemdynamicsDiagramEditorPlugin
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.systemdynamics.diagram.edit.parts,
  repast.simphony.systemdynamics.diagram.part,
  repast.simphony.systemdynamics.diagram.providers
@@ -48,4 +47,4 @@ Require-Bundle: repast.simphony.systemdynamics.generator,
  org.eclipse.jdt.core;bundle-version="3.8.2",
  repast.simphony.eclipse
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

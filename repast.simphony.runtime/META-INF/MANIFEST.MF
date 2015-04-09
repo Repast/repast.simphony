@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast runtime
 Bundle-SymbolicName: repast.simphony.runtime
 Bundle-Version: 2.3.0
 Bundle-ClassPath: testlib/jmock-1.0.1.jar,
@@ -17,7 +17,6 @@ Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  lib/xpp3_min-1.1.4c.jar,
  lib/xstream-1.4.7.jar,
  testlib/junit-addons-1.4.jar
-Bundle-Localization: plugin
 Export-Package: 
  com.thoughtworks.xstream,
  com.thoughtworks.xstream.annotations,
@@ -111,5 +110,5 @@ Export-Package:
  simphony.util,
  simphony.util.error,
  simphony.util.messages
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

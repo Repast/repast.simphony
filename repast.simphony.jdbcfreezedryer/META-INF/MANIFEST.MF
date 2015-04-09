@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast jdbc freezedryer
 Bundle-SymbolicName: repast.simphony.jdbcfreezedryer
 Bundle-Version: 2.3.0
 Bundle-ClassPath: .,
  lib/commons-dbcp-1.4.jar,
  lib/commons-pool-1.6.jar
-Bundle-Localization: plugin
 Export-Package: .,
  repast.simphony.dataLoader.engine,
  repast.simphony.dataLoader.gui,
@@ -25,5 +24,5 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.runtime,
  repast.simphony.dataLoader.ui,
  org.junit;bundle-version="4.11.0"
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -1,9 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast R
 Bundle-SymbolicName: repast.simphony.R
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
@@ -11,5 +10,5 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.runtime,
  repast.simphony.plugin.util,
  repast.simphony.data.ui
-Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Argonne National Laboratory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

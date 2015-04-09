@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Bin_and_src Plug-in
+Bundle-Name: Repast bin and src
 Bundle-SymbolicName: repast.simphony.bin_and_src
 Bundle-Version: 2.3.0
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

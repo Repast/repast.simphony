@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: repast.simphony.flowchart
+Bundle-Name: Repast flowchart
 Bundle-SymbolicName: repast.simphony.flowchart;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.agents.designer.core.AgentBuilderPlugin
-Bundle-Vendor: Provider
 Require-Bundle: org.eclipse.ui.workbench.texteditor;bundle-version="3.8.0",
  org.eclipse.ui,
  org.eclipse.ui.views;bundle-version="3.6.100",
@@ -71,4 +70,5 @@ Export-Package: repast.simphony.agents,
  repast.simphony.agents.model.codegen,
  repast.simphony.agents.tools.ant
 Plugin-Class: repast.simphony.agents.designer.core.AgentBuilderPlugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory

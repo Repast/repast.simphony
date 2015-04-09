@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast core
 Bundle-SymbolicName: repast.simphony.core
 Bundle-Version: 2.3.0
 Bundle-ClassPath: lib/jsr108-0.01.jar,
@@ -542,6 +542,6 @@ Export-Package: .,
 Require-Bundle: repast.simphony.runtime,
  org.junit,
  libs.ext
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Eclipse-LazyStart: false
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

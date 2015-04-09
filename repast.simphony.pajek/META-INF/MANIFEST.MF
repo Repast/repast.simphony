@@ -1,15 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: Repast pajek
 Bundle-SymbolicName: repast.simphony.pajek
 Bundle-Version: 2.3.0
-Bundle-Localization: plugin
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
  saf.core.ui,
  repast.simphony.runtime,
  repast.simphony.data.ui
-Bundle-Vendor: %providerName
+Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.pajek
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

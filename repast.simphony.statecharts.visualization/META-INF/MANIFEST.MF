@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Runtime
+Bundle-Name: Repast statecharts visualization
 Bundle-SymbolicName: repast.simphony.statecharts.visualization
 Bundle-Version: 2.3.0
 Bundle-ClassPath: runtime.jar
@@ -13,4 +13,5 @@ Require-Bundle: org.w3c.dom.svg;bundle-version="1.1.0",
  org.w3c.dom.smil;bundle-version="1.0.0",
  org.w3c.css.sac;bundle-version="1.3.1",
  libs.ext;bundle-version="2.3.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Argonne National Laboratory
