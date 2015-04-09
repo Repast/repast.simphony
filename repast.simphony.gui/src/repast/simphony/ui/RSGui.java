@@ -222,6 +222,16 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
   public void addViewListener(DockableFrameListener listener) {
     dockingManager.addDockableListener(listener);
   }
+  
+  /**
+   * Removes the specified listener as a listener for view events. View events are
+   * such things as view closed, iconified, etc.
+   * 
+   * @param listener the listener to remove
+   */
+  public void removeViewListener(DockableFrameListener listener) {
+    dockingManager.removeDockableListener(listener);
+  }
 
   public void addViewsFromRegistry(final GUIRegistry registry, ProbeManager probeManager) {
     List<Pair<GUIRegistryType, List<JComponent>>> comps = new ArrayList<Pair<GUIRegistryType, List<JComponent>>>();

@@ -16,7 +16,7 @@ import repast.simphony.ui.RSApplication;
  */
 public class ProbedPropertiesFinder {
 	
-  public static class Property {
+  public static class Property implements Comparable<Property>{
     String name, displayName;
     Object value;
     StringConverter<?> converter;
@@ -58,6 +58,11 @@ public class ProbedPropertiesFinder {
 
 		public void setUiCreator(ProbedPropertyUICreator uiCreator) {
 			this.uiCreator = uiCreator;
+		}
+
+		@Override
+		public int compareTo(Property other) {
+		   return name.compareTo(other.getName());
 		}
   }
   

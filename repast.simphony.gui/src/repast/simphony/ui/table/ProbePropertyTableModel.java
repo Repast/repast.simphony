@@ -1,9 +1,11 @@
 package repast.simphony.ui.table;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,10 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		List<ProbedPropertiesFinder.Property> propListFirst = agentPropList.get(0);
 		List<String> tableHeaders = new ArrayList<String>();
 		
+		ProbedPropertiesFinder.Property agentIDProp = propListFirst.remove(0);
+		Collections.sort(propListFirst);
+		propListFirst.add(0, agentIDProp);
+		
 		for (ProbedPropertiesFinder.Property probe : propListFirst){
 			String probeID = probe.getName();
 			Integer col = columnMap.get(probeID);
@@ -74,6 +80,30 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 			}
 		}
 		
+//		// Create a sorted map of property names, so columns appear alphabetically
+//		Map<String,ProbedPropertiesFinder.Property> probeIDMap = 
+//				new TreeMap<String,ProbedPropertiesFinder.Property>();
+//		
+//		for (ProbedPropertiesFinder.Property probe : propListFirst){
+//			probeIDMap.put(probe.getName(), probe);
+//		}
+//		
+//		for (String probeID : probeIDMap.keySet()){
+//			ProbedPropertiesFinder.Property probe = probeIDMap.get(probeID);
+//
+//			addColumn(probe.getDisplayName());
+//			tableHeaders.add(probe.getDisplayName());
+//			int col = getColumnCount() - 1; 
+//			columnMap.put(probeID, col);
+//
+//			if (probe.getUiCreator() != null){
+//				colClassMap.put(col, JComponent.class);
+//				columEditable.put(col,true);
+//			}
+//			else
+//				colClassMap.put(col, probe.getType());
+//		}
+//		
 		Object [][] tableData = new Object[agentPropList.size()][tableHeaders.size()];
 		setDataVector(tableData, tableHeaders.toArray());
 	}
@@ -113,7 +143,9 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 				if (value instanceof JComponent){
 					JComponent comp = (JComponent)value;
 					
-					for (Component child : comp.getComponents()){
+					List<Component> components = getAllComponents(comp);
+					
+					for (Component child : components){
 						// Agent table listeners respond to table events
 						if (child instanceof AgentTableListener){
 							listeners.add((AgentTableListener)child);
@@ -145,10 +177,22 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		return colClassMap.get(col);
 	}
 
-//	@Override
-//	public int getColumnCount() {
-//	   return colClassMap.size();
-//	}
+	/**
+	 * Recursively find all Components in the provided container.
+	 * 
+	 * @param c the container
+	 * @return a list of components in the container
+	 */
+	public static List<Component> getAllComponents(final Container c) {
+		Component[] comps = c.getComponents();
+		List<Component> compList = new ArrayList<Component>();
+		for (Component comp : comps) {
+			compList.add(comp);
+			if (comp instanceof Container)
+				compList.addAll(getAllComponents((Container) comp));
+		}
+		return compList;
+	}
 	
 	@Override
 	public boolean isCellEditable(int row, int col) {

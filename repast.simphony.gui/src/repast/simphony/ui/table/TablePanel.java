@@ -1,13 +1,17 @@
 package repast.simphony.ui.table;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -75,5 +79,29 @@ public class TablePanel extends JPanel {
 
 	public JTable getTable() {
 		return table;
+	}
+	
+	/**
+	 * Automatically resizes column widths to fit header and contents
+	 */
+	public void autoResizeColumnWidth() {
+		final TableColumnModel columnModel = table.getColumnModel();
+		for (int column = 0; column < table.getColumnCount(); column++) {
+			int width = 50; // Min width
+			
+			// Check header size by using a mock jbutton
+			JButton button = new JButton(table.getColumnName(column));
+			width = button.getPreferredSize().width;
+			
+			// Check each row contents and use the largest found width for the column
+			for (int row = 0; row < table.getRowCount(); row++) {
+				TableCellRenderer renderer = table.getCellRenderer(row, column);
+				Component comp = table.prepareRenderer(renderer, row, column);
+				width = Math.max(comp.getPreferredSize().width, width);
+			}
+			int pad = 5;  // sometimes the found size is just a hair too narrow
+			
+			columnModel.getColumn(column).setPreferredWidth(width+pad);
+		}
 	}
 }
