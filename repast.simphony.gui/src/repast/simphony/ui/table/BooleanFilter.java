@@ -2,16 +2,16 @@ package repast.simphony.ui.table;
 
 
 /**
- * Row filter for objects other than string or numeric
+ * Row filter for boolean values
  * 
  * @author Eric Tatara
  *
  * @param <M>
  * @param <I>
  */
-public class ObjectFilter<M,I> extends NamedRowFilter<M, I, String> {
+public class BooleanFilter<M,I> extends NamedRowFilter<M, I, Boolean> {
 
-	public ObjectFilter(String columnName, int colIndex, String filterValue,
+	public BooleanFilter(String columnName, int colIndex, Boolean filterValue,
 			Operator operator) {
 		super(columnName, colIndex, filterValue, operator);
 	}
@@ -21,8 +21,8 @@ public class ObjectFilter<M,I> extends NamedRowFilter<M, I, String> {
 
 		if (entry.getValue(colIndex) == null) return false;
 		
-		String value = entry.getValue(colIndex).toString();
-		String filt = filterValue;
+		Boolean value = (Boolean)entry.getValue(colIndex);
+		Boolean filt = filterValue;
 		
 		return value.equals(filt);
 	}

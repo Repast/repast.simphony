@@ -10,7 +10,7 @@ import javax.swing.RowFilter;
  * @param <M>
  * @param <I>
  */
-public abstract class NamedRowFilter<M,I> extends RowFilter<M,I> {
+public abstract class NamedRowFilter<M,I,T> extends RowFilter<M,I> {
 
 	public static enum Operator{
 		LESS_THAN("<"), 
@@ -34,10 +34,10 @@ public abstract class NamedRowFilter<M,I> extends RowFilter<M,I> {
 	
 	protected String name;
 	protected int colIndex;
-	protected Object filterValue;
+	protected T filterValue;
   protected Operator operator;
 	
-	public NamedRowFilter(String columnName, int colIndex, Object filterValue, 
+	public NamedRowFilter(String columnName, int colIndex, T filterValue, 
 			Operator operator) {
 		this.colIndex = colIndex;
 		this.filterValue = filterValue;

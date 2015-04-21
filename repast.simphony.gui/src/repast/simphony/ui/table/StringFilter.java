@@ -8,7 +8,7 @@ package repast.simphony.ui.table;
  * @param <M>
  * @param <I>
  */
-public class StringFilter<M,I> extends NamedRowFilter<M, I> {
+public class StringFilter<M,I> extends NamedRowFilter<M, I, String> {
 
 	public StringFilter(String columnName, int colIndex, String filterValue, 
 			Operator operator) {
@@ -21,7 +21,7 @@ public class StringFilter<M,I> extends NamedRowFilter<M, I> {
 		if (entry.getValue(colIndex) == null) return false;
 		
 		String value = (String)entry.getValue(colIndex);
-		String filt = (String) filterValue;
+		String filt = filterValue;
 		
 		return value.equals(filt);
 	}

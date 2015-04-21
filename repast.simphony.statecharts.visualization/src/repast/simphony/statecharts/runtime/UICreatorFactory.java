@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import repast.simphony.statecharts.DefaultStateChart;
 import repast.simphony.statecharts.StateChart;
@@ -57,6 +58,11 @@ public class UICreatorFactory implements PPUICreatorFactory {
 				fpd.getDisplayName());
 	}
 
+	/**
+	 * The WindowRegistry keeps track of open statechart displays and buttons to
+	 *   coordinate button label and color highlighting.
+	 *
+	 */
 	public static class WindowRegistry{
 		protected Map<StateChart, StateChartSVGDisplayController> windowRegistry;
 		protected Map<StateChart, List<StateChartButton>> buttonRegistry;
@@ -126,9 +132,14 @@ public class UICreatorFactory implements PPUICreatorFactory {
 
 		public static String SHOW_LABEL = "Show";
 		public static String DISPLAY_LABEL = "Display";
-
-		public StateChartButton(String label){
-			super(label);
+		
+		// May not be the actual parent container, but is the Component that is 
+		//  returned to the GUI.  Need to track this since the returned Component
+		//  can be used in tables, and a name property is needed for sorting and filtering.
+		private JPanel parentPanel;
+		
+		public StateChartButton(){
+			super(DISPLAY_LABEL);
 
 			setMaximumSize(new Dimension(100,100));
 			setMinimumSize(new Dimension(1,1));
@@ -137,13 +148,13 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		public void highlight(){
 			setBackground(Color.GREEN);
 			setText(SHOW_LABEL);
-			getParent().setName(SHOW_LABEL);  // used for sorting in table
+			parentPanel.setName(SHOW_LABEL);  // used for sorting in table
 		}
 
 		public void unHighlight(){
 			setBackground(null);
 			setText(DISPLAY_LABEL);
-			getParent().setName(DISPLAY_LABEL);  // used for sorting in table
+			parentPanel.setName(DISPLAY_LABEL);  // used for sorting in table
 		}
 
 		public void registerList(List<StateChartButton> list){
@@ -155,6 +166,11 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			// When the table is closed (destroyed) remove this button from the registry.
 			if (myList != null)
 				myList.remove(this);
+		}
+
+		public void setParentPanel(JPanel parentPanel) {
+			this.parentPanel = parentPanel;
+			parentPanel.setName(getText());
 		}
 	}
 
@@ -190,7 +206,7 @@ public class UICreatorFactory implements PPUICreatorFactory {
 
 		@Override
 		public JComponent getComponent(PresentationModel<Object> model) {
-			button = new StateChartButton("Display");
+			button = new StateChartButton();
 
 			FormLayout layout = new FormLayout(
 					"pref:grow,45dlu,pref:grow",  // columns
@@ -225,7 +241,10 @@ public class UICreatorFactory implements PPUICreatorFactory {
 					}
 				});
 			}
-			return builder.getPanel();
+			
+			JPanel panel = builder.getPanel();
+			button.setParentPanel(panel);
+			return panel;
 		}
 
 		@Override

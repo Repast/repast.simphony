@@ -1,17 +1,19 @@
 package repast.simphony.ui.table;
 
+import java.awt.Component;
+
 
 /**
- * Row filter for objects other than string or numeric
+ * Row filter for Components
  * 
  * @author Eric Tatara
  *
  * @param <M>
  * @param <I>
  */
-public class ObjectFilter<M,I> extends NamedRowFilter<M, I, String> {
+public class ComponentFilter<M,I> extends NamedRowFilter<M, I, String> {
 
-	public ObjectFilter(String columnName, int colIndex, String filterValue,
+	public ComponentFilter(String columnName, int colIndex, String filterValue,
 			Operator operator) {
 		super(columnName, colIndex, filterValue, operator);
 	}
@@ -21,7 +23,12 @@ public class ObjectFilter<M,I> extends NamedRowFilter<M, I, String> {
 
 		if (entry.getValue(colIndex) == null) return false;
 		
-		String value = entry.getValue(colIndex).toString();
+		Component comp = (Component)entry.getValue(colIndex);
+		
+		String value = comp.getName();
+		
+		if (value == null) return false;
+		
 		String filt = filterValue;
 		
 		return value.equals(filt);

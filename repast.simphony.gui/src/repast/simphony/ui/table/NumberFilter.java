@@ -1,6 +1,5 @@
 package repast.simphony.ui.table;
 
-import repast.simphony.ui.table.NamedRowFilter.Operator;
 
 /**
  * Row filter for numeric values;
@@ -10,7 +9,7 @@ import repast.simphony.ui.table.NamedRowFilter.Operator;
  * @param <M>
  * @param <I>
  */
-public class NumberFilter<M,I> extends NamedRowFilter<M, I> {
+public class NumberFilter<M,I> extends NamedRowFilter<M, I, Number> {
 
 	public NumberFilter(String columnName, int colIndex, Number filterValue,
 			Operator operator) {
@@ -23,7 +22,7 @@ public class NumberFilter<M,I> extends NamedRowFilter<M, I> {
 		if (entry.getValue(colIndex) == null) return false;
 		
 		Number value = (Number)entry.getValue(colIndex);
-		Number filt = (Number) filterValue;
+		Number filt = filterValue;
 		
 		switch(operator){
 			case LESS_THAN: return (value.doubleValue() < filt.doubleValue());

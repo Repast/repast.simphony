@@ -53,31 +53,16 @@ public class TablePanel extends JPanel {
 		
 		table.setDefaultRenderer(JComponent.class, new ComponentTableCellEditorRenderer());
 		table.setDefaultEditor(JComponent.class, new ComponentTableCellEditorRenderer());
+		table.setDefaultRenderer(Double.class, new DoubleTableCellRenderer(5));
 		table.setCellSelectionEnabled(true);
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(true);
 		table.setAutoCreateRowSorter(true);
-//		table.setRowSorter(new TableSorter<TableModel>());
 		table.setFillsViewportHeight(true);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		scrollPane = new JScrollPane(table);
 		add(scrollPane, BorderLayout.CENTER);
-		
-		
-		
-		
-
-		if (getName().startsWith("Wolf")){
-
-			Set testFilterSet = new HashSet<RowFilter<Object,Object>>();
-			RowFilter<Object, Object> filter = new NumberFilter<Object, Object>("Foo", 1, 10, Operator.GREATER_THAN); 
-
-			testFilterSet.add(filter);
-
-			setRowFilters(testFilterSet);
-
-		}
 	}
 	
 	public void addToolBar(JToolBar toolbar){

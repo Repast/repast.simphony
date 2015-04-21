@@ -60,17 +60,6 @@ public class AgentTableFactory {
 			configureSort(model, tablePanel);
 			tablePanel.autoResizeColumnWidth();
 			
-			// TODO add filtering
-			//		 sorter.setRowFilter(RowFilter.regexFilter(".*foo.*"));
-//			RowFilter.numberFilter(ComparisonType.AFTER, 10);
-
-//			RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
-//	      public boolean include(Entry entry) {
-//	        Integer population = (Integer) entry.getValue(1);
-//	        return population.intValue() > 3;
-//	      }
-//	    };
-			
 			return tablePanel;
 		}
 		else{
@@ -103,7 +92,7 @@ public class AgentTableFactory {
 		//  JComponent name
 		for (int col=0; col<model.getColumnCount(); col++){
 			if (model.getColumnClass(col) != null && 
-					model.getColumnClass(col).isAssignableFrom(JComponent.class)){
+					JComponent.class.isAssignableFrom(model.getColumnClass(col))){
 
 				sorter.setComparator(col, new Comparator<JComponent>(){
 					@Override
