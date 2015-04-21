@@ -2,6 +2,8 @@ package repast.simphony.ui.table;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -9,10 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+import repast.simphony.ui.table.NamedRowFilter.Operator;
 
 /**
  * Basic table panel with some customization over standard JTable. 
@@ -26,6 +32,7 @@ public class TablePanel extends JPanel {
 	protected JTable table; 
 	protected JScrollPane scrollPane;
 	protected JToolBar toolbar;
+	protected Set<RowFilter<Object,Object>> rowFilterSet;
 	
 	public TablePanel(){
 		this(null, null);
@@ -35,7 +42,8 @@ public class TablePanel extends JPanel {
 		super(new BorderLayout());
 		setName(tableName);
 		setOpaque(true);
-
+		rowFilterSet = new HashSet<RowFilter<Object,Object>>();
+		
 		if (model == null)
 			model = new DefaultTableModel();
 
@@ -55,6 +63,21 @@ public class TablePanel extends JPanel {
 		
 		scrollPane = new JScrollPane(table);
 		add(scrollPane, BorderLayout.CENTER);
+		
+		
+		
+		
+
+		if (getName().startsWith("Wolf")){
+
+			Set testFilterSet = new HashSet<RowFilter<Object,Object>>();
+			RowFilter<Object, Object> filter = new NumberFilter<Object, Object>("Foo", 1, 10, Operator.GREATER_THAN); 
+
+			testFilterSet.add(filter);
+
+			setRowFilters(testFilterSet);
+
+		}
 	}
 	
 	public void addToolBar(JToolBar toolbar){
@@ -104,4 +127,28 @@ public class TablePanel extends JPanel {
 			columnModel.getColumn(column).setPreferredWidth(width+pad);
 		}
 	}
+	
+	public void clearRowFilters(){
+		rowFilterSet.clear();
+		setRowFilters(rowFilterSet);
+	}
+	
+	protected void addRowFilter(RowFilter<Object,Object> filter){
+		rowFilterSet.add(filter);
+		setRowFilters(rowFilterSet);
+	}
+	
+	protected void setRowFilters(Set<RowFilter<Object,Object>> filterList){
+		RowFilter<Object,Object> filter = RowFilter.andFilter(filterList);
+		
+		((TableRowSorter)table.getRowSorter()).setRowFilter(filter);
+		
+		rowFilterSet.clear();
+		rowFilterSet.addAll(filterList);
+	}
+
+	public Set<RowFilter<Object, Object>> getRowFilterList() {
+		return rowFilterSet;
+	}
+	
 }

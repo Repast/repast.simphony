@@ -1,6 +1,8 @@
 package repast.simphony.ui.table;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -8,12 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.RowFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
 
@@ -39,13 +43,13 @@ public class AgentTablePanel extends JPanel implements DockableFrameListener{
 	
 	// List of toolbar contents that will be added to the parent dockable toolbar
 	protected List<JComponent> toolbarItems = new ArrayList<JComponent>();
-	
 	protected List<AgentTableListener> listeners = new ArrayList<AgentTableListener>();
+	protected JTabbedPane tabbedPane;
 	
 	public AgentTablePanel(Workspace<RSApplication> workspace, 	String displayName){
 		super(new BorderLayout());
 		setName(displayName);
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		add(tabbedPane);
 
 		// TODO add support toolbar / buttons on top.
@@ -85,7 +89,6 @@ public class AgentTablePanel extends JPanel implements DockableFrameListener{
 		JButton excelButton = new JButton(RSGUIConstants.SM_SAVE_ICON);
 		excelButton.setToolTipText("Export table to Excel");
 		excelButton.addActionListener(new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JFileChooser fc = new JFileChooser();
@@ -102,6 +105,28 @@ public class AgentTablePanel extends JPanel implements DockableFrameListener{
 			}
 		});
 		toolbarItems.add(excelButton);
+			
+		// Row filter dialog button
+		JButton filterButton = new JButton(RSGUIConstants.SM_FILTER_ICON);
+		filterButton.setToolTipText("Filter table");
+		filterButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Component panel = tabbedPane.getSelectedComponent();
+				Frame frame = RSApplication.getRSApplicationInstance().getGui().getFrame();
+				if (panel instanceof TablePanel){
+					TableFilterDialog dialog = new TableFilterDialog((TablePanel)panel, frame);
+					dialog.setVisible(true);
+					
+					if (!dialog.wasCanceled()){
+						Set<RowFilter<Object, Object>> rowFilters = dialog.getRowFilterSet();
+						((TablePanel)panel).setRowFilters(rowFilters);
+					}
+				}
+				
+			}
+		});
+		toolbarItems.add(filterButton);
 	}
 
 	public List<JComponent> getToolbarItems() {

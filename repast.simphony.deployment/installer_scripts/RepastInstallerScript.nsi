@@ -11,7 +11,7 @@
 
  ${StrTok} # Supportable for Install Sections and Functions
 
-!define VERSION "2.2"
+!define VERSION "2.3"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -25,7 +25,7 @@ OutFile "Repast-Simphony-${VERSION}-win32.exe"
 InstallDir C:\RepastSimphony-${VERSION}
 
 ; The required Java version to run Repast
-!define JRE_VERSION "1.7"
+!define JRE_VERSION "1.8"
 
 ; Request Administrator level application privileges when copying files
 RequestExecutionLevel admin

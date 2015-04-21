@@ -1,23 +1,20 @@
 package repast.simphony.ui.table;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
+import javax.swing.RowFilter;
+import javax.swing.RowFilter.ComparisonType;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
@@ -63,20 +60,17 @@ public class AgentTableFactory {
 			configureSort(model, tablePanel);
 			tablePanel.autoResizeColumnWidth();
 			
-			// Enlarge the Agent ID column
-//			tablePanel.getTable().getColumnModel().getColumn(0).setPreferredWidth(150);
-//
-//			// Enlarge columns with JButtons, eg for statechart buttons
-//			for (int col=1; col<model.getColumnCount(); col++){
-//				if (model.getColumnClass(col) != null && 
-//						model.getColumnClass(col).isAssignableFrom(JComponent.class)){
-//					tablePanel.getTable().getColumnModel().getColumn(col).setPreferredWidth(150);
-//				}
-//			}
-
 			// TODO add filtering
 			//		 sorter.setRowFilter(RowFilter.regexFilter(".*foo.*"));
+//			RowFilter.numberFilter(ComparisonType.AFTER, 10);
 
+//			RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+//	      public boolean include(Entry entry) {
+//	        Integer population = (Integer) entry.getValue(1);
+//	        return population.intValue() > 3;
+//	      }
+//	    };
+			
 			return tablePanel;
 		}
 		else{

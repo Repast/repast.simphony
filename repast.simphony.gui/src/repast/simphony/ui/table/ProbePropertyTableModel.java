@@ -14,6 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import repast.simphony.ui.probe.ProbedPropertiesFinder;
 import simphony.util.messages.MessageCenter;
 
@@ -54,56 +56,44 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 		List<ProbedPropertiesFinder.Property> propListFirst = agentPropList.get(0);
 		List<String> tableHeaders = new ArrayList<String>();
 		
+		// Create a sorted map of property names, so columns appear alphabetically
 		ProbedPropertiesFinder.Property agentIDProp = propListFirst.remove(0);
 		Collections.sort(propListFirst);
-		propListFirst.add(0, agentIDProp);
+		propListFirst.add(0, agentIDProp);  // Agent ID is always first col
 		
+		// Create a column for each probe
 		for (ProbedPropertiesFinder.Property probe : propListFirst){
 			String probeID = probe.getName();
 			Integer col = columnMap.get(probeID);
 			
 			if (col == null){
-					addColumn(probe.getDisplayName());
-					tableHeaders.add(probe.getDisplayName());
-					col = getColumnCount() - 1; 
-					columnMap.put(probeID, col);
-					
-					if (probe.getUiCreator() != null){
-						colClassMap.put(col, JComponent.class);
-						columEditable.put(col,true);
+				addColumn(probe.getDisplayName());
+				tableHeaders.add(probe.getDisplayName());
+				col = getColumnCount() - 1; 
+				columnMap.put(probeID, col);
+
+				// Column class is needed for propert sort and rendering
+				if (probe.getUiCreator() != null){
+					colClassMap.put(col, JComponent.class);
+					columEditable.put(col,true);
+				}
+				else{
+					Class<?> clazz = probe.getType();
+
+					// Primitives need to be specified using the wrapper eg Double instead of double
+					if (clazz.isPrimitive()){
+						colClassMap.put(col, ClassUtils.primitiveToWrapper(probe.getType()));
 					}
-					else
+					else{
 						colClassMap.put(col, probe.getType());
+					}
+				}
 			}
 			else {
 				// TODO handle duplicate probe names?
 			}
 		}
-		
-//		// Create a sorted map of property names, so columns appear alphabetically
-//		Map<String,ProbedPropertiesFinder.Property> probeIDMap = 
-//				new TreeMap<String,ProbedPropertiesFinder.Property>();
-//		
-//		for (ProbedPropertiesFinder.Property probe : propListFirst){
-//			probeIDMap.put(probe.getName(), probe);
-//		}
-//		
-//		for (String probeID : probeIDMap.keySet()){
-//			ProbedPropertiesFinder.Property probe = probeIDMap.get(probeID);
-//
-//			addColumn(probe.getDisplayName());
-//			tableHeaders.add(probe.getDisplayName());
-//			int col = getColumnCount() - 1; 
-//			columnMap.put(probeID, col);
-//
-//			if (probe.getUiCreator() != null){
-//				colClassMap.put(col, JComponent.class);
-//				columEditable.put(col,true);
-//			}
-//			else
-//				colClassMap.put(col, probe.getType());
-//		}
-//		
+				
 		Object [][] tableData = new Object[agentPropList.size()][tableHeaders.size()];
 		setDataVector(tableData, tableHeaders.toArray());
 	}

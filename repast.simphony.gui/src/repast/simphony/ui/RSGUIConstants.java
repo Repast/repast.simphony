@@ -102,8 +102,10 @@ public abstract class RSGUIConstants {
   public static Icon USER_PANEL_ICON;
   public static Icon DATA_LOADER_ICON;
   public static Icon DELETE_ICON;
+  public static Icon ADD_ICON;
   
   public static Icon SM_SAVE_ICON;
+  public static Icon SM_FILTER_ICON;
 
   static {
     START_ICON = loadIcon("player_play");
@@ -113,6 +115,7 @@ public abstract class RSGUIConstants {
     OPEN_ICON = loadIcon("project_open");
     SAVE_ICON = loadIcon("filesave");
     SM_SAVE_ICON = loadIcon("filesave16");
+    SM_FILTER_ICON = loadIcon("filter16");
     RESET_ICON = loadIcon("reload");
     INIT_ICON = loadIcon("configure");
     SCENARIO_LEAF_ICON = loadIcon("exec");
@@ -133,5 +136,6 @@ public abstract class RSGUIConstants {
     USER_PANEL_ICON = loadIcon("view_sidetree");
     DATA_LOADER_ICON = loadIcon("harddrive");
     DELETE_ICON = loadIcon("button_cancel");
+    ADD_ICON = loadIcon("edit_add");
   }
 }
