@@ -106,8 +106,10 @@ public class SpreadsheetUtils {
 				Cell cell = sheetRow.createCell(col);
 				Object val = model.getValueAt(row, col);
 
+				if (val == null) continue;
+				
 				if (val instanceof Number){
-					cell.setCellValue((double)val);	
+					cell.setCellValue(((Number)val).doubleValue());	
 				}
 				else if (val instanceof Boolean){
 					cell.setCellValue((boolean)val);	
