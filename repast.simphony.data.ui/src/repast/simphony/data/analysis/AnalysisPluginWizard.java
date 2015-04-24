@@ -28,17 +28,17 @@ public abstract class AnalysisPluginWizard {
   protected static final MessageCenter LOG = MessageCenter
       .getMessageCenter(AnalysisPluginWizard.class);
 
-  private StaticModel wizardModel;
-  private DataSetRegistry loggingRegistry;
+  protected StaticModel wizardModel;
+  protected DataSetRegistry loggingRegistry;
 
-  private BrowseForHomeStep homeStep;
+  protected BrowseForHomeStep homeStep;
 
-  private boolean skipFirstStep;
+  protected boolean skipFirstStep;
 
-  private String defaultLocation;
-  private String installHome;
-  private String name;
-  private String licenseFileName;
+  protected String defaultLocation;
+  protected String installHome;
+  protected String name;
+  protected String licenseFileName;
 
   protected FileSinkChooserStep fileStep;
 
@@ -73,7 +73,7 @@ public abstract class AnalysisPluginWizard {
     setupWizard(showCopyright, browseForRHome);
   }
 
-  private void setupWizard(boolean showCopyright, boolean browseForHome) {
+  protected void setupWizard(boolean showCopyright, boolean browseForHome) {
     if (showCopyright) {
       addCopyRightStep();
     }
@@ -86,16 +86,16 @@ public abstract class AnalysisPluginWizard {
     }
   }
 
-  private void addCopyRightStep() {
+  protected void addCopyRightStep() {
     wizardModel.add(new CopyRightStep(name, this.getClass().getResourceAsStream(licenseFileName)));
   }
 
-  private void addBrowseForHomeStep() {
+  protected void addBrowseForHomeStep() {
     homeStep = new BrowseForHomeStep(name, installHome, defaultLocation);
     wizardModel.add(homeStep);
   }
 
-  private void addSelectOutputterStep() {
+  protected void addSelectOutputterStep() {
     fileStep = new FileSinkChooserStep(getTabularFileSinks(), true,
         "Select the outputter(s) to pass to " + name,
         "<HTML>Please select which file sinks' data you would " + "like to send to " + name

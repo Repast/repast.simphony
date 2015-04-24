@@ -1,6 +1,11 @@
 package repast.simphony.pajek;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.JOptionPane;
+
 import org.apache.commons.lang3.SystemUtils;
+
 import repast.simphony.data.analysis.AnalysisPluginRunner;
 
 /**
@@ -24,5 +29,18 @@ public class RunPajekModel extends AnalysisPluginRunner {
 
   public RunPajekModel() {
     super("Pajek", path, "license.txt", new PajekWizard());
+  }
+  
+  @Override
+  public void actionPerformed(ActionEvent e){
+  	if (!SystemUtils.IS_OS_WINDOWS) {
+  		JOptionPane.showMessageDialog(null,
+  		    "Pajek is only available for Windows.",
+  		    "Pajek warning",
+  		    JOptionPane.WARNING_MESSAGE);
+  	}
+  	else{
+  		super.actionPerformed(e);
+  	}
   }
 }
