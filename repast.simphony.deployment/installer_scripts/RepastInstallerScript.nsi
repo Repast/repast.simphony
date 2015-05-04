@@ -17,7 +17,7 @@
 Name "Repast Simphony ${VERSION}"
 
 ; The file to write
-OutFile "Repast-Simphony-${VERSION}-win32.exe"
+OutFile "Repast-Simphony-${VERSION}-win64.exe"
 
 ; The default installation directory
 ;InstallDir $PROGRAMFILES\RepastSimphony-${VERSION}
