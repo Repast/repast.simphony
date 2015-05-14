@@ -3,8 +3,10 @@ package repast.simphony.ui.probe;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import repast.simphony.parameter.StringConverter;
 import repast.simphony.ui.RSApplication;
@@ -73,23 +75,38 @@ public class ProbedPropertiesFinder {
   IntrospectionException, IllegalAccessException, IllegalArgumentException, 
   InvocationTargetException {
     
+  	Set<String> propNames = new HashSet<String>();
+  	
     List<Property> props = new ArrayList<>();
     ProbeInfo pbInfo = ProbeIntrospector.getInstance().getProbeInfo(obj.getClass());
     Property prop = new Property(NAME_KEY, "ID", 
     		ProbedPropertyFactory.createProbedTitle(pbInfo, obj), null, String.class);
     props.add(prop);
     
+    // Fields are done first so that instrumented classes (eg groovy) with 
+    //   generated getters are not added.
+    createFieldProperties(pbInfo, obj, props);
+    
+    for (ProbedPropertiesFinder.Property p : props){
+    	propNames.add(p.getName());
+    }
+    
     for (MethodPropertyDescriptor mpd : pbInfo.methodPropertyDescriptors()) {
       if (mpd.getReadMethod() != null) {
         Object val = mpd.getReadMethod().invoke(obj, new Object[0]);
-        prop = new Property(mpd.getName(), mpd.getDisplayName(), val, 
-        		mpd.getStringConverter(), mpd.getPropertyType());
-        props.add(prop);
+        
+        if (propNames.contains(mpd.getName())){
+        	System.out.println("Ignoring duplicate method prop " + mpd.getName() + 
+        			" for " + obj.getClass());
+        }
+        else {
+        	prop = new Property(mpd.getName(), mpd.getDisplayName(), val, 
+        			mpd.getStringConverter(), mpd.getPropertyType());
+        	props.add(prop);
+        }
       }
     }
     
-    createFieldProperties(pbInfo, obj, props);
-        
     return props;
   }
   
