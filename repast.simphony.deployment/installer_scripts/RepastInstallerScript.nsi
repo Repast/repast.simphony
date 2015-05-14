@@ -176,7 +176,8 @@ Function WelcomePageSetupLinkPre
 FunctionEnd
  
 Function WelcomePageSetupLinkShow
-  Call DetectJRE  ; First thing check if a suitable JRE is installed
+; Disabled JRE detect due to issues with 32/64 bit registry info
+;  Call DetectJRE  ; First thing check if a suitable JRE is installed
 
   ; Thanks to pengyou
   ; Fix colors of added link control
