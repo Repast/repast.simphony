@@ -96,8 +96,8 @@ public class ProbedPropertiesFinder {
         Object val = mpd.getReadMethod().invoke(obj, new Object[0]);
         
         if (propNames.contains(mpd.getName())){
-        	System.out.println("Ignoring duplicate method prop " + mpd.getName() + 
-        			" for " + obj.getClass());
+//        	System.out.println("Ignoring duplicate method prop " + mpd.getName() + 
+//        			" for " + obj.getClass());
         }
         else {
         	prop = new Property(mpd.getName(), mpd.getDisplayName(), val, 

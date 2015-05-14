@@ -115,15 +115,18 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			}
 			buttons.add(button);
 			button.registerList(buttons);
-
-			// If the window is currently open, highlight button
-			if (windowRegistry.get(statechart) != null){
-				button.highlight();
-			}
 		}
 
 		public StateChartSVGDisplayController getController(StateChart statechart){
 			return windowRegistry.get(statechart);
+		}
+
+		public Map<StateChart, StateChartSVGDisplayController> getWindowRegistry() {
+			return windowRegistry;
+		}
+
+		public Map<StateChart, List<StateChartButton>> getButtonRegistry() {
+			return buttonRegistry;
 		}
 	}
 
@@ -148,13 +151,15 @@ public class UICreatorFactory implements PPUICreatorFactory {
 		public void highlight(){
 			setBackground(Color.GREEN);
 			setText(SHOW_LABEL);
-			parentPanel.setName(SHOW_LABEL);  // used for sorting in table
+			if (parentPanel != null)
+				parentPanel.setName(SHOW_LABEL);  // used for sorting in table
 		}
 
 		public void unHighlight(){
 			setBackground(null);
 			setText(DISPLAY_LABEL);
-			parentPanel.setName(DISPLAY_LABEL);  // used for sorting in table
+			if (parentPanel != null)
+				parentPanel.setName(DISPLAY_LABEL);  // used for sorting in table
 		}
 
 		public void registerList(List<StateChartButton> list){
@@ -244,6 +249,13 @@ public class UICreatorFactory implements PPUICreatorFactory {
 			
 			JPanel panel = builder.getPanel();
 			button.setParentPanel(panel);
+			
+			// If the statechart window is currently open, highlight button
+			// Needs to be called after button.setParentPanel(panel);
+			if (WindowRegistry.getInstance().getWindowRegistry().get(statechart) != null){
+				button.highlight();
+			}
+			
 			return panel;
 		}
 
