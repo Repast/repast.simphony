@@ -1,0 +1,36 @@
+Instructions for Git merging and tagging of a release
+
+The following steps apply to the Repast code repository for development and master 
+branches.  A similar process is used to tag other repository master branches. 
+The additional repositories are: "RS Feature", "RS Models", and "RS Docs."
+
+1. Branch "development" should be synchronized with the remote repository and
+   contain the code for the release version.  If the repository has new commits 
+   that should not be included in the release tag, you can simply select the 
+   proper commit point in step 4. 
+   
+2. Switch to branch "master" and pull from the remote repository.
+
+3. In Eclipse -> Team -> Merge and select the local "development" branch to 
+   merge into master. Branch "development" should now be merged into master.
+
+4. Create an annotated tag on branch master (as opposed to a lightweight tag, 
+   see: http://git-scm.com/book/en/v2/Git-Basics-Tagging)
+
+	 In Eclipse -> Team -> Advanced -> Tag.  Create the tag ID (version) and 
+	 message.  The tag is associated with a particular commit which is selected
+	 in the list box here. 
+	 
+	 Note that the tag is only associated with a specific branch.  The same tag
+	 cannot be used across multiple branches within a repository.  The only branch
+	 that really needs tagging is "master."
+	 
+5. Push branch "master".
+
+6. Finally, the local tag needs to be pushed to the remote repository on 
+   Sourceforge.  If the tag is not pushed via Eclipse EGit, the 
+   simple Git command "git push --follow-tags" will push the new tag correctly.
+   It seems that the more general "git push --tags" is not recommended as this may
+   push "lightweight"s tags not properly associated with a specific commit.
+   
+7. Switch back to branch "development"
