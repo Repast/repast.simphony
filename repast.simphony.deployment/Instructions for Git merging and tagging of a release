@@ -25,10 +25,11 @@ The additional repositories are: "RS Feature", "RS Models", and "RS Docs."
 	 cannot be used across multiple branches within a repository.  The only branch
 	 that really needs tagging is "master."
 	 
+	 Select "Create tag and start push" to push the tag to remote.
+	 
 5. Push branch "master".
 
-6. Finally, the local tag needs to be pushed to the remote repository on 
-   Sourceforge.  If the tag is not pushed via Eclipse EGit, the 
+6. Finally, if the local tag is not pushed to remote via Eclipse EGit, the 
    simple Git command "git push --follow-tags" will push the new tag correctly.
    It seems that the more general "git push --tags" is not recommended as this may
    push "lightweight"s tags not properly associated with a specific commit.

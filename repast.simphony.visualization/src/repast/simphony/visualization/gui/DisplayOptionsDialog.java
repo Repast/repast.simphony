@@ -50,8 +50,6 @@ public class DisplayOptionsDialog extends OptionsEditorDialog implements Editor 
     
     // Add remaining step.
     while (model.isNextAvailable()) {	
-    	System.out.println(model.getActiveStep().getName());
-
       addContent(model.getActiveStep().getName(), null, (PanelWizardStep) model.getActiveStep(), wizard);
     	model.nextStep();
     }
