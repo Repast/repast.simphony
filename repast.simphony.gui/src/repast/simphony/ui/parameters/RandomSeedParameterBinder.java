@@ -35,6 +35,7 @@ public class RandomSeedParameterBinder extends DefaultParameterBinder {
       seed = ((Integer) defaultValue).intValue();
     }
     field.setText(String.valueOf(seed));
+    toParameter();
   }
 
   public String toXML() {
