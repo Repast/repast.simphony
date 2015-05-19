@@ -106,10 +106,10 @@ public class ProbePropertyTableModel extends DefaultTableModel {
 	protected void initColumnData(List<List<ProbedPropertiesFinder.Property>> agentPropList){
 		int row = 0;
 		for (List<ProbedPropertiesFinder.Property> propList : agentPropList){
-			Integer myrow = row;
+			final Integer myrow = row;
 			for (ProbedPropertiesFinder.Property probe : propList){
 				String probeID = probe.getName();
-				Integer col = columnMap.get(probeID);
+				final Integer col = columnMap.get(probeID);
 				
 				// If no column found, then skip this probe
 				if (col == null) continue;  

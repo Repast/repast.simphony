@@ -83,7 +83,7 @@ public class AgentTablePanel extends JPanel implements DockableFrameListener{
 		initToolBar(models);
 	}
 	
-	protected void initToolBar(Map<String,TableModel> models){
+	protected void initToolBar(final Map<String,TableModel> models){
 		
 		// Export table to Excel button
 		JButton excelButton = new JButton(RSGUIConstants.SM_SAVE_ICON);
