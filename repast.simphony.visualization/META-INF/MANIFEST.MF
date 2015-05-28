@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast visualization
 Bundle-SymbolicName: repast.simphony.visualization
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Require-Bundle: repast.simphony.core,
  repast.simphony.scenario,
  repast.simphony.gui,
@@ -38,4 +38,4 @@ Export-Package: repast.simphony.visualization,
 Bundle-ClassPath: lib/jung-visualization-2.0.1.jar,
  lib/MS3DLoader-1.0.8.jar,
  bin/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

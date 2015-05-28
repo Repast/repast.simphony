@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast system dynamics model
 Bundle-SymbolicName: repast.simphony.systemdynamics.model;singleton:=true
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Bundle-ClassPath: bin/
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: repast.simphony.systemdynamics.sdmodel,
  repast.simphony.systemdynamics.sdmodel.impl,
  repast.simphony.systemdynamics.sdmodel.util,

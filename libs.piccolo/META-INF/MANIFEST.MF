@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast libs piccolo
 Bundle-SymbolicName: libs.piccolo
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Bundle-ClassPath: lib/piccolo2d-core-3.0.jar,
  lib/piccolo2d-extras-3.0.jar
 Export-Package: org.piccolo2d,
@@ -18,5 +18,5 @@ Export-Package: org.piccolo2d,
  org.piccolo2d.extras.util,
  org.piccolo2d.nodes,
  org.piccolo2d.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Argonne National Laboratory

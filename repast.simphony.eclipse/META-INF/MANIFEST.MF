@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast Simphony
 Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-Vendor: Argonne National Laboratory
@@ -44,6 +44,6 @@ Export-Package: .,
  repast.simphony.eclipse.action,
  repast.simphony.eclipse.ide,
  repast.simphony.eclipse.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Plugin-Class: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-ActivationPolicy: lazy

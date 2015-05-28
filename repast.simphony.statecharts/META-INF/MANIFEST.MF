@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast statecharts
 Bundle-SymbolicName: repast.simphony.statecharts
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Export-Package: repast.simphony.statecharts
 Require-Bundle: repast.simphony.core;visibility:=reexport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Argonne National Laboratory

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast relogo ide
 Bundle-SymbolicName: repast.simphony.relogo.ide;singleton:=true
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Bundle-Activator: relogo.Activator
 Require-Bundle: org.eclipse.debug.core;bundle-version="3.5.1",
  org.eclipse.debug.ui;bundle-version="3.5.2",
@@ -36,5 +36,5 @@ Bundle-ClassPath: libs/commons-io-1.4.jar,
  libs/groovy-all-1.8.2.jar
 Import-Package: repast.simphony.relogo.image,
  repast.simphony.relogo.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Argonne National Laboratory

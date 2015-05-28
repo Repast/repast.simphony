@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast distriubuted batch ui
 Bundle-SymbolicName: repast.simphony.distributed.batch.ui
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Require-Bundle: repast.simphony.scenario,
  saf.core.ui,
  repast.simphony.gui,
@@ -15,5 +15,5 @@ Bundle-ClassPath: .,
  lib/jgoodies-common-1.6.0.jar,
  bin/,
  bin-standalone/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Argonne National Laboratory

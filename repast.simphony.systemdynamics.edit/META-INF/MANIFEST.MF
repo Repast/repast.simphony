@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast system dynamics edit
 Bundle-SymbolicName: repast.simphony.systemdynamics.model.edit;singleton:=true
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.systemdynamics.sdmodel.provider.SystemdynamicsEditPlugin$Implementation
 Bundle-Vendor: Argonne National Laboratory
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: repast.simphony.systemdynamics.sdmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.systemdynamics.model;visibility:=reexport,

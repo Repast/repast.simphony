@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast distributed batch
 Bundle-SymbolicName: repast.simphony.distributed.batch
-Bundle-Version: 2.3.0
+Bundle-Version: 2.3.1
 Require-Bundle: repast.simphony.batch,
  repast.simphony.core,
  repast.simphony.data,
@@ -20,5 +20,5 @@ Bundle-ClassPath: .,
  lib/ant.jar,
  lib/ant-launcher.jar,
  lib/xmltask.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Vendor: Argonne National Laboratory
