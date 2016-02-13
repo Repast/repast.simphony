@@ -11,10 +11,11 @@ import gov.nasa.worldwind.render.SurfaceShape;
 
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Styled display layer for WorldWind display layers.
@@ -42,12 +43,27 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
     
     // TODO WWJ [blocker] do a check on points and only update when new
     if (shape instanceof SurfacePolygon){
-    	SurfacePolygon polygon = (SurfacePolygon)shape;
-    	List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
+    	SurfacePolygon polygonShape = (SurfacePolygon)shape;
     	
-    	if (!polygon.getLocations().equals(pts)){
-    	  polygon.setLocations(pts);
-    	  System.out.println("points dont match.");
+    	// TODO type checking
+    	
+    	// TODO if geography projection CRS is not WGS84, reproject the geoms
+//    	Polygon p = (Polygon)WWUtils.projectGeometryToWGS84(geom, geography.getCRS());
+    	
+    	Polygon p = (Polygon)geom;
+    	    	
+    	List<LatLon> pts = WWUtils.CoordToLatLon(p.getExteriorRing().getCoordinates());
+    	
+    	if (!polygonShape.getLocations().equals(pts)){
+      	// Set the outer polygon boundary
+    		polygonShape.setLocations(pts);
+
+    		// Set inner polygon rings if any
+    		int numInterRings = p.getNumInteriorRing();
+    		for (int i=0; i<numInterRings; i++){
+    			List<LatLon> internalPts = WWUtils.CoordToLatLon(p.getInteriorRingN(i).getCoordinates());
+    			polygonShape.addInnerBoundary(internalPts);
+    		}
     	}
     }
     else if (shape instanceof SurfacePolyline){
@@ -92,6 +108,8 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
       line.setLocations(pts);
     } 
     else if (shape instanceof SurfacePolygon){
+    	// TODO interior holes as above
+    	
     	SurfacePolygon polygon = (SurfacePolygon)shape;
       List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
     	polygon.setLocations(pts);
