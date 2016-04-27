@@ -105,7 +105,7 @@ public class ParameterInputPanel extends JPanel {
       if (params != null && params.getSchema().getDetails(pName) != null) {
         ParameterSchema schema = params.getSchema().getDetails(pName);
         if (schema.getDefaultValue() != null)
-          ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema.getDefaultValue());
+          ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema.toString(schema.getDefaultValue()));
       }
     }
     notifyBP = true;
