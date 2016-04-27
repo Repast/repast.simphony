@@ -6,9 +6,7 @@ import repast.simphony.space.grid.GridDimensions;
 import repast.simphony.space.grid.GridPoint;
 import repast.simphony.space.grid.GridPointTranslator;
 import repast.simphony.space.grid.StrictBorders;
-import cern.colt.matrix.DoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+import simphony.util.messages.MessageCenter;
 
 /**
  * A grid value layer. Each cell in the grid is accessed via integer x, y, z,
@@ -23,7 +21,7 @@ public class GridValueLayer implements IGridValueLayer {
 
   protected String name;
 
-  protected DoubleMatrix1D matrix;
+  protected ValueLayerStore store;
   
   protected int[] stride;
 
@@ -32,6 +30,8 @@ public class GridValueLayer implements IGridValueLayer {
   // GridValueLayerConverter -- don't change it
   // without changing that!!!
 
+  protected  int[] origin;
+  
   protected boolean dense;
 
   protected GridPointTranslator translator;
@@ -136,16 +136,29 @@ public class GridValueLayer implements IGridValueLayer {
     this.dense = dense;
     this.translator = translator;
 
-    int _size = 1;
+    long _size = 1;
     for (int dim : dimensions) {
       _size *= dim;
     }
-
-    if (dense)
-      matrix = new DenseDoubleMatrix1D(_size);
-    else
-      matrix = new SparseDoubleMatrix1D(_size);
-    matrix.assign(defaultValue);
+ 
+    if (dense){
+    	// Dense size cannot exceed Integer.MAX_VALUE since the dense store is backed
+    	//   by an int indexed array.
+    	 if (_size > Integer.MAX_VALUE){ 
+       	SpatialException ex = new SpatialException(
+       		"Dense grid value layer capacity exceded: " + _size + ". Try sparse value layer.");
+       
+       	MessageCenter.getMessageCenter(GridValueLayer.class).error(
+       			"Value layer initialization error: ", ex);
+       	
+       	throw ex;
+       }
+    	
+    	 store = new DenseValueLayerStore((int)_size, defaultValue);
+    }
+    else{
+    	store = new SparseValueLayerStore((int)_size, defaultValue);
+    }
 
     int tmpStride = 1;
     stride = new int[dimensions.length];
@@ -156,6 +169,7 @@ public class GridValueLayer implements IGridValueLayer {
 
     translator.init(new GridDimensions(dimensions, origin));
     dims = new Dimensions(dimensions, origin);
+    this.origin = origin;
   }
 
   /**
@@ -233,20 +247,25 @@ public class GridValueLayer implements IGridValueLayer {
       coords[i] = (int) coordinates[i];
 
     int index = getIndex(getTransformedLocation(coords));
-    return matrix.get(index);
+    return store.get(index);
   }
 
-  // returns the index into the matrix given a point
-  // this casts the double to an int
+  /**
+   * Translate the nD point coordinates to the 1D storage vector index 
+   * @param point
+   * @return
+   * 
+   * TODO Hotspot.  This accounts for 50% time in accessing the value layer.
+   */
   private int getIndex(int... point) {
     int[] matrixPoint = new int[point.length];
-    int[] origin = this.dims.originToIntArray(null);
+   
     for (int i = 0; i < point.length; i++) {
       matrixPoint[i] = point[i] + origin[i];
     }
     int index = 0;
     for (int i = 0; i < matrixPoint.length; i++) {
-      index = index + (int) matrixPoint[i] * stride[i];
+      index = index + matrixPoint[i] * stride[i];
     }
     return index;
   }
@@ -262,7 +281,7 @@ public class GridValueLayer implements IGridValueLayer {
   public void set(double value, int... coordinate) {
     if (coordinate.length != dims.size()) throw new SpatialException("Invalid number coordinates");
     int index = getIndex(getTransformedLocation(coordinate));
-    matrix.set(index, value);
+    store.set(index, value);
   }
 
   /**
@@ -308,5 +327,16 @@ public class GridValueLayer implements IGridValueLayer {
    */
   public void setGridPointTranslator(GridPointTranslator rule) {
     this.translator = rule;
+  }
+  
+  /**
+   * Return the number of entries in the value layer.  For dense layers, this is
+   * the product of dimensions, eg x * y * z... For sparse layers, this is the 
+   * number of entries in sparse storage.
+   * 
+   * @return
+   */
+  public int size(){
+  	return store.size();
   }
 }
