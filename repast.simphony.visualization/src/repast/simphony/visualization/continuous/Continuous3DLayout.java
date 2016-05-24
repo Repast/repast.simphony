@@ -65,7 +65,10 @@ public class Continuous3DLayout implements Layout<Object, ContinuousSpace> {
 		double[] origin = space.getDimensions().originToDoubleArray(null);
 		float xOffset = (float) origin[0];
 		float yOffset = (float) origin[1];
-		float zOffset = (float) origin[2];
+		float zOffset = 0;
+		if (origin.length == 3) {
+		  zOffset = (float) origin[2];
+		}
 		
 		if (gpoint == null) {
 			point[0] = Float.NEGATIVE_INFINITY;
@@ -75,7 +78,10 @@ public class Continuous3DLayout implements Layout<Object, ContinuousSpace> {
 		}
 		float x = (float) gpoint.getX();
 		float y = (float) gpoint.getY();
-		float z = (float) gpoint.getZ();
+		float z = 0;
+		if (gpoint.dimensionCount() == 3) {
+		  z = (float) gpoint.getZ();
+		}
 
 //		point[0] = ((numb & 4) >> 2);
 //		point[1] = ((numb & 2) >> 1);

@@ -18,7 +18,10 @@ public class Continuous3DProjectionDecorator extends AbstractProjectionDecorator
 		ContinuousSpace space = (ContinuousSpace) projection;
 		float width = (float) space.getDimensions().getWidth() * unitSize;
 		float height = (float) space.getDimensions().getHeight() * unitSize;
-		float depth = (float) space.getDimensions().getDimension(2) * unitSize;
+		float depth = 0;
+		if (space.getDimensions().size() == 3) {
+		  depth = (float) space.getDimensions().getDimension(2) * unitSize;
+		}
 
 		if (width == Float.NEGATIVE_INFINITY || height == Float.NEGATIVE_INFINITY
 						|| depth == Float.NEGATIVE_INFINITY) {
