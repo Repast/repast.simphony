@@ -39,8 +39,8 @@ public class PerspectiveFactory implements IPerspectiveFactory {
   private static final String CONFIG_EXTENSION_ID = "repast.simphony.perspective.config";
 
   private void configureLayout(IPageLayout layout) {
-    IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(
-        CONFIG_EXTENSION_ID);
+    IConfigurationElement[] configs = Platform.getExtensionRegistry()
+        .getConfigurationElementsFor(CONFIG_EXTENSION_ID);
     for (IConfigurationElement element : configs) {
       IContributor contrib = element.getContributor();
       try {
@@ -49,9 +49,8 @@ public class PerspectiveFactory implements IPerspectiveFactory {
           ((IRepastPerspectiveConfigurator) obj).configurePerspective(layout);
         }
       } catch (Exception ex) {
-        RepastSimphonyPlugin.getInstance().log(
-            new CoreException(new Status(Status.ERROR, contrib.getName(),
-                "Error during perspective configuration", ex)));
+        RepastSimphonyPlugin.getInstance().log(new CoreException(new Status(Status.ERROR,
+            contrib.getName(), "Error during perspective configuration", ex)));
       }
     }
   }
@@ -82,9 +81,8 @@ public class PerspectiveFactory implements IPerspectiveFactory {
                   if (o != null && o instanceof ActionContributionItem) {
                     ActionContributionItem aci = (ActionContributionItem) o;
                     IAction a = aci.getAction();
-                    if (a != null
-                        && a.getActionDefinitionId().equals(
-                            IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR)) {
+                    if (a != null && a.getActionDefinitionId() != null && a.getActionDefinitionId()
+                        .equals(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR)) {
                       Action aa = (Action) a;
                       aa.setChecked(true);
                       a.run();
@@ -100,8 +98,8 @@ public class PerspectiveFactory implements IPerspectiveFactory {
     folder.addView(JavaUI.ID_PACKAGES);
     folder.addView(IPageLayout.ID_RES_NAV);
 
-    IFolderLayout outputfolder = layout.createFolder(
-        "bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea); //$NON-NLS-1$
+    IFolderLayout outputfolder = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, //$NON-NLS-1$
+        editorArea);
 
     outputfolder.addView(IConsoleConstants.ID_CONSOLE_VIEW);
     outputfolder.addView(IPageLayout.ID_PROBLEM_VIEW);
