@@ -144,7 +144,7 @@ public class Utilities {
   		IProgressMonitor monitor, String[][] variableMap) throws CoreException{
     IFolder newFolder = srcFolder.getFolder("../installer");
     if (!newFolder.exists())
-      newFolder.create(true, false, monitor);
+      newFolder.create(true, true, monitor);
     Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
         "installation_components.xml", variableMap, monitor);
     Utilities.copyFileFromPluginInstallation("installer/shortcuts_Windows.xml", newFolder,

@@ -176,6 +176,8 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
     IJavaProject javaProject = javaPage.getJavaProject();
     BasicNewProjectResourceWizard.updatePerspective(configElement);
 
+    
+    
     IClasspathEntry list[] = javaProject.getRawClasspath();
     IPath srcPath = null;
     for (IClasspathEntry entry : list) {
@@ -183,6 +185,8 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
         srcPath = entry.getPath();
       }
     }
+    
+  
     if (srcPath != null) {
 
       // String scenarioDirectory = this.contextPage.getModelPackage()
@@ -206,7 +210,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       String packageName = mainPage.getProjectName().replace(" ", "_");
       packageName = packageName.substring(0, 1).toLowerCase() + packageName.substring(1, packageName.length());
       IFolder packageFolder = srcFolder.getFolder(packageName);
-      packageFolder.create(true, false, monitor);
+      packageFolder.create(true, true, monitor);
       
       String[][] variableMap = { { "%MODEL_NAME%", mainPage.getProjectName() },
           { "%PROJECT_NAME%", javaProject.getElementName() },
@@ -214,6 +218,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
           { "%PACKAGE%", packageName },
           { "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
 
+     
       if (this.configureGroovyAndVisualEditing) {
         Utilities
             .copyFileFromPluginInstallation("ModelInitializer.agent", packageFolder,
@@ -221,10 +226,10 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
         Utilities.copyFileFromPluginInstallation("ModelInitializer.txt", packageFolder,
             "ModelInitializer.groovy", variableMap, monitor);
       }
-
+  
       IFolder newFolder = srcFolder.getFolder("../docs");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("docs/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("docs/index.html", newFolder, "index.html",
@@ -233,17 +238,17 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       // for distributed batch (see SIM-459)
       newFolder = srcFolder.getFolder("../output");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
 
       newFolder = srcFolder.getFolder("../freezedried_data");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("freezedried_data/ReadMe.txt", newFolder,
           "ReadMe.txt", variableMap, monitor);
 
       newFolder = srcFolder.getFolder("../icons");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("icons/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("icons/model.png", newFolder, "model.png",
@@ -255,7 +260,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       
       newFolder = srcFolder.getFolder("../repast-licenses");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("repast-licenses/apache-license.txt", newFolder,
           "apache-license.txt", variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("repast-licenses/asm-license.txt", newFolder,
@@ -351,7 +356,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
 
       newFolder = srcFolder.getFolder("../launchers");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
@@ -360,7 +365,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
 
       newFolder = srcFolder.getFolder("../batch");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("batch/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("batch/batch_params.xml", newFolder,
@@ -368,25 +373,25 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
 
       newFolder = srcFolder.getFolder("../integration");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("integration/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
       newFolder = srcFolder.getFolder("../lib");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
       newFolder = srcFolder.getFolder("../misc");
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
       newFolder = srcFolder.getFolder("../" + scenarioDirectory);
       if (!newFolder.exists())
-        newFolder.create(true, false, monitor);
+        newFolder.create(true, true, monitor);
       Utilities.copyFileFromPluginInstallation("package.rs/scenario.xml", newFolder,
           "scenario.xml", variableMap, monitor);
       Utilities.copyFileFromPluginInstallation("package.rs/user_path.xml", newFolder,
@@ -415,8 +420,10 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
             .getCorrespondingResource(), this.getWorkbench().getActiveWorkbenchWindow());
       } catch (Exception e) {
       }
+     
 
     }
+    
 
     monitor.done();
   }
