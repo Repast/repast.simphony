@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.SelectObservableValue;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EAttribute;
@@ -55,6 +57,7 @@ public class LanguageButtonsGroup {
     btnGroovy.setSelection(selectedType.equals(LanguageTypes.GROOVY));
   }
   
+  @SuppressWarnings("unchecked")
   public void bindModel(EMFDataBindingContext context, EObject eObject, EAttribute attributeToBind) {
     EStructuralFeature feature = eObject.eClass().getEStructuralFeature(attributeToBind.getFeatureID());
     selectedType = (LanguageTypes)eObject.eGet(feature);
@@ -63,7 +66,20 @@ public class LanguageButtonsGroup {
     UpdateValueStrategy targetToModel = new UpdateValueStrategy();
     BooleanToLanguageConverter converter = new BooleanToLanguageConverter();
     targetToModel.setConverter(converter);
+    
+    SelectObservableValue<LanguageTypes> langTypesObs = new SelectObservableValue<LanguageTypes>(LanguageTypes.class);
+    IObservableValue btnJavaSelection = WidgetProperties.selection().observe(btnJava);
+    langTypesObs.addOption(LanguageTypes.JAVA, btnJavaSelection);
+    
+    IObservableValue btnGrooovySelection = WidgetProperties.selection().observe(btnGroovy);
+    langTypesObs.addOption(LanguageTypes.GROOVY, btnGrooovySelection);
+    
+    IObservableValue btnRelogoSelection = WidgetProperties.selection().observe(btnRelogo);
+    langTypesObs.addOption(LanguageTypes.RELOGO, btnRelogoSelection);
+    context.bindValue(langTypesObs, EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
+            attributeToBind).observe(eObject));
 
+    /*
     context.bindValue(
         WidgetProperties.selection().observe(btnJava),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
@@ -81,6 +97,7 @@ public class LanguageButtonsGroup {
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             attributeToBind).observe(eObject), targetToModel,
         null);
+        */
 
   }
   
@@ -115,7 +132,11 @@ public class LanguageButtonsGroup {
     btnGroovy.addSelectionListener(listener);
   }
 
-  private class BooleanToLanguageConverter implements IConverter {
+  private class BooleanToLanguageConverter extends Converter {
+    
+    public BooleanToLanguageConverter() {
+       super(Boolean.class, LanguageTypes.class);
+    }
 
     @Override
     public Object getFromType() {
