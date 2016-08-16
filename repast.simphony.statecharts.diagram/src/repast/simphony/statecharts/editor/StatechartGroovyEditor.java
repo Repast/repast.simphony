@@ -236,7 +236,9 @@ public class StatechartGroovyEditor extends GroovyEditor implements StatechartCo
     if (this.input != null) {
       provider.disconnect(this.input);
       uninstallGroovySemanticHighlighting();
-      fSourceViewerDecorationSupport.uninstall();
+      if (fSourceViewerDecorationSupport != null) {
+        fSourceViewerDecorationSupport.uninstall();
+      }
       fSourceViewerDecorationSupport = null;
     }
 

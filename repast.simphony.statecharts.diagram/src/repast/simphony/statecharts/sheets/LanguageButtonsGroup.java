@@ -6,17 +6,14 @@ package repast.simphony.statecharts.sheets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.conversion.Converter;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.SelectObservableValue;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -34,6 +31,8 @@ public class LanguageButtonsGroup {
   private Button btnJava, btnRelogo, btnGroovy;
   private LanguageTypes selectedType;
   private List<SelectionListener> listeners = new ArrayList<>();
+  private EObject obj;
+  private EStructuralFeature feature;
 
   public LanguageButtonsGroup(Button btnJava, Button btnRelogo, Button btnGroovy) {
     this.btnGroovy = btnGroovy;
@@ -57,16 +56,20 @@ public class LanguageButtonsGroup {
     btnGroovy.setSelection(selectedType.equals(LanguageTypes.GROOVY));
   }
   
-  @SuppressWarnings("unchecked")
+  //@SuppressWarnings("unchecked")
   public void bindModel(EMFDataBindingContext context, EObject eObject, EAttribute attributeToBind) {
-    EStructuralFeature feature = eObject.eClass().getEStructuralFeature(attributeToBind.getFeatureID());
+    obj = eObject;
+    feature = eObject.eClass().getEStructuralFeature(attributeToBind.getFeatureID());
     selectedType = (LanguageTypes)eObject.eGet(feature);
     initLanguageButton();
 
+    /*
     UpdateValueStrategy targetToModel = new UpdateValueStrategy();
     BooleanToLanguageConverter converter = new BooleanToLanguageConverter();
     targetToModel.setConverter(converter);
+    */
     
+    /*
     SelectObservableValue<LanguageTypes> langTypesObs = new SelectObservableValue<LanguageTypes>(LanguageTypes.class);
     IObservableValue btnJavaSelection = WidgetProperties.selection().observe(btnJava);
     langTypesObs.addOption(LanguageTypes.JAVA, btnJavaSelection);
@@ -77,26 +80,28 @@ public class LanguageButtonsGroup {
     IObservableValue btnRelogoSelection = WidgetProperties.selection().observe(btnRelogo);
     langTypesObs.addOption(LanguageTypes.RELOGO, btnRelogoSelection);
     context.bindValue(langTypesObs, EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
-            attributeToBind).observe(eObject));
-
+        attributeToBind).observe(eObject));
+    */
+   
     /*
+    LanguageToBooleanConverter modelToTargetConverter = new LanguageToBooleanConverter();
     context.bindValue(
         WidgetProperties.selection().observe(btnJava),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             attributeToBind).observe(eObject), targetToModel,
-        null);
+        new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER));
 
     context.bindValue(
         WidgetProperties.selection().observe(btnGroovy),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             attributeToBind).observe(eObject), targetToModel,
-        null);
+        new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER));
 
     context.bindValue(
         WidgetProperties.selection().observe(btnRelogo),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             attributeToBind).observe(eObject), targetToModel,
-        null);
+        new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER));
         */
 
   }
@@ -122,8 +127,12 @@ public class LanguageButtonsGroup {
         // only fire if the type changes -- the first selection
         // is the "deselection" of the currently selected so
         // we need this.
-        if (type != selectedType)
-        fireEvent(e);
+        if (type != selectedType) {
+          fireEvent(e);
+          TransactionalEditingDomain ted = TransactionUtil.getEditingDomain(obj);
+          Command command = SetCommand.create(ted, obj, feature, selectedType);
+          ted.getCommandStack().execute(command);
+        }
       }
     };
 
@@ -132,6 +141,7 @@ public class LanguageButtonsGroup {
     btnGroovy.addSelectionListener(listener);
   }
 
+  /*
   private class BooleanToLanguageConverter extends Converter {
     
     public BooleanToLanguageConverter() {
@@ -153,5 +163,29 @@ public class LanguageButtonsGroup {
       return selectedType;
     }
   }
+  
+private class LanguageToBooleanConverter extends Converter {
+    
+    public LanguageToBooleanConverter() {
+       super(LanguageTypes.class, Boolean.class);
+    }
+
+    @Override
+    public Object getFromType() {
+      return LanguageTypes.class;
+    }
+
+    @Override
+    public Object getToType() {
+      return Boolean.class;
+    }
+
+    @Override
+    public Object convert(Object fromObject) {
+      return Boolean.valueOf(selectedType == (LanguageTypes)fromObject);
+    }
+  }
+  */
+
 
 }
