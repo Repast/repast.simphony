@@ -43,7 +43,7 @@ public class ListParameterBinder extends AbstractParameterBinder {
       final ParameterValueModel vModel = new ParameterValueModel(getName(), params);
       Object val = params.getValue(name);
       converter = params.getSchema().getDetails(name).getConverter();
-      List<Object> objs = new ArrayList<>(params.getSchema().getDetails(name).getConstrainingList());
+      List<Object> objs = new ArrayList<Object>(params.getSchema().getDetails(name).getConstrainingList());
 
       DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
       for (Object obj : objs) {
