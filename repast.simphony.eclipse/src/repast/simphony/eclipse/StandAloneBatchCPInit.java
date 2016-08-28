@@ -37,24 +37,6 @@ public class StandAloneBatchCPInit extends ClasspathVariableInitializer {
         url = FileLocator.resolve(url);
         File f = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
         JavaCore.setClasspathVariable(var, new Path(f.getAbsolutePath()), null);
-        // TODO: add jar urls for repast.simphony.runtime_${rs.version}/lib/commons-cli-1.3.1.jar and
-        // repast.simphony.core_${rs.version}/lib/commons-lang3-3.1.jar
-        // Look at repast.simphony.eclipse.RepastSimphonyPlugin for how to properly include these
-        
-//        String pluginDirectory = RepastSimphonyPlugin.getInstance().getPluginInstallationDirectory();
-//        File file;
-//        if (pluginDirectory.trim().equals("")) {
-//          file = new Path(RepastSimphonyPlugin.JAR_PATH_RELATIVE).toFile();
-//        } else {
-//          file = new Path(pluginDirectory + RepastSimphonyPlugin.JAR_PATH_RELATIVE).toFile();
-//        }
-//        boolean inDevEnv = !file.exists();
-//        
-//        String[] jars = {
-//        	      "/repast.simphony.runtime_" + RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.3.1.jar",
-//        	      "/repast.simphony.core_" + RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-lang3-3.1.jar"};
-//        
-        
       } catch (Exception ex) {
         RepastSimphonyPlugin.getInstance().log(ex);
       }
