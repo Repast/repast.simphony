@@ -32,6 +32,9 @@
       <classpathContainerInitializer 
          id="REPAST_SIMPHONY_LAUNCHER"
          class="repast.simphony.eclipse.RepastLauncherClasspathContainer"/>
+      <classpathContainerInitializer
+         id="STAND_ALONE_BATCH_LAUNCHER"
+         class="repast.simphony.eclipse.StandAloneBatchClasspathContainer"/>
    </extension>
     
 <!-- =================================================================================== -->

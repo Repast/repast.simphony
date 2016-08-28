@@ -7,7 +7,8 @@ Require-Bundle: repast.simphony.scenario,
  saf.core.ui,
  repast.simphony.gui,
  repast.simphony.core,
- repast.simphony.distributed.batch
+ repast.simphony.distributed.batch,
+ repast.simphony.runtime;bundle-version="2.3.1"
 Bundle-ClassPath: .,
  lib/log4j-1.2.16.jar,
  lib/jgoodies-forms-1.7.1.jar,

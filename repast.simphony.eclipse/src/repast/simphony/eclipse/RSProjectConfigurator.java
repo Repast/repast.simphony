@@ -303,9 +303,9 @@ public class RSProjectConfigurator {
           IRuntimeClasspathEntry.STANDARD_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
       classpath.add(r.getMemento());
-      
-      jarPath = new Path(StandAloneBatchCPInit.CP_VARIABLE_NAME);
-      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
+            
+      jarPath = new Path(StandAloneBatchClasspathContainer.JAR_CLASSPATH_DEFAULT);
+      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       
@@ -523,8 +523,9 @@ public class RSProjectConfigurator {
           IRuntimeClasspathEntry.STANDARD_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
       classpath.add(r.getMemento());
-      jarPath = new Path(StandAloneBatchCPInit.CP_VARIABLE_NAME);
-      r = JavaRuntime.newVariableRuntimeClasspathEntry(jarPath);
+            
+      jarPath = new Path(StandAloneBatchClasspathContainer.JAR_CLASSPATH_DEFAULT);
+      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       
