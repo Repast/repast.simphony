@@ -160,9 +160,10 @@ public abstract class JungNetwork<T> extends DefaultProjection<T> implements
 	}
 
 	public void removeEdge(RepastEdge<T> edge) {
-		graph.removeEdge(edge);
-		fireProjectionEvent(new ProjectionEvent<T>(this, edge,
-				ProjectionEvent.EDGE_REMOVED));
+	        if (graph.removeEdge(edge)) {
+	          fireProjectionEvent(new ProjectionEvent<T>(this, edge,
+    				ProjectionEvent.EDGE_REMOVED));
+	        }
 	}
 
   /**
