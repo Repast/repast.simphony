@@ -36,6 +36,8 @@ public class StandAloneMain {
 		// Batch configuration file
 		options.addOption("c", "batch_config", true,
 				"location of the batch configuration file\n(only with -hl option)");
+		// Parameters file
+		options.addOption("p", "params", true, "location of the parameters file\n(only with -hl option)");
 		// Batch parameters file
 		options.addOption("b", "batch_params", true, "location of the batch parameters file\n(only with -hl option)");
 		// Unrolled parameter file

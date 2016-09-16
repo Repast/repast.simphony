@@ -267,6 +267,9 @@ public class HeadlessMain {
 				model.load(new File(line.getOptionValue("c")));
 			}
 			// Find overriding elements
+			if (line.hasOption("p")) {
+				model.setParameterFile(line.getOptionValue("p"));
+			}
 			if (line.hasOption("b")) {
 				model.setBatchParameterFile(line.getOptionValue("b"));
 			}
