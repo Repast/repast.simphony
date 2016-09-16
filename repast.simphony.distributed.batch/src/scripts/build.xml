@@ -16,6 +16,9 @@
 	<condition property="plugins.prefix" value="${eclipse.home}/plugins/" else="../../../">
 		<isset property="eclipse.home" />
 	</condition>
+	<!-- For running in dev environment, comment the above and uncomment the following -->
+	<!-- <property name="plugins.prefix" value="${eclipse.home}/repast.simphony/" /> -->
+	
 	<echo message="plugins.prefix=${plugins.prefix}" />
 
 	<condition property="plugins.suffix" value="_${plugins.version}" else="">
@@ -89,7 +92,7 @@
 		<move file="${working.dir}/scenario.rs/${batch.param.file.name}" tofile="${working.dir}/scenario.rs/${default.batch.param.file.name}" />
 
 		<!-- replace <agents path="../bin" in the user_path.xml with "../lib/model.jar" -->
-		<xmltask todir="${working.dir}/scenario.rs" preserveType="true" report="true">
+		<xmltask todir="${working.dir}/scenario.rs" preserveType="true" report="false">
 			<fileset dir="${working.dir}/scenario.rs">
 				<include name="user_path.xml" />
 			</fileset>
@@ -121,6 +124,7 @@
 		<mkdir dir="${working.lib}" />
 
 		<!--  jar up the bin directories for the required projects -->
+		<!-- For running in dev environment, see comment above for defining plugins.prefix-->
 		<jar destfile="${working.lib}/repast.simphony.batch.jar" basedir="${batch}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.distributed.batch.jar" basedir="${distributed.batch}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.core.jar" basedir="${core}/bin" />

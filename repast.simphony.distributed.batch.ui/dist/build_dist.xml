@@ -4,6 +4,7 @@
 	<property name="batch_runner.dir" location="./batch_runner" />
 	<property name="app.name" value="Batch Runner" />
 	<property name="release.dir" location="./releases" />
+	<property name="rs.version" value="${releaseVersionNumber}" />
 
 
 	<target name="jar.files">
@@ -11,54 +12,9 @@
 		<jar jarfile="${batch_runner.dir}/batch_runner.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png">
 			<manifest>
 				<attribute name="Main-Class" value="repast.simphony.batch.standalone.StandAloneMain"/>
+				<attribute name="Class-Path" value="eclipse/plugins/repast.simphony.runtime_${rs.version}/lib/commons-cli-1.3.1.jar eclipse/plugins/repast.simphony.core_${rs.version}/lib/commons-lang3-3.1.jar"/>
 			</manifest>
 		</jar>
-	</target>
-
-
-	<target name="dist" depends="jar.files">
-
-		<mkdir dir="${release.dir}" />
-		<delete file="${release.dir}/${app.name}-1.0.app" failonerror="false" />
-
-		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
-			<classpath path="./distlib/jarbundler-2.3.0.jar" />
-		</taskdef>
-
-		<jarbundler dir="${batch_runner.dir}" name="${app.name}-1.0" 
-			shortname="Batch Runner" mainclass="repast.simphony.batch.standalone.StandAloneMain" 
-			arguments="-plugin_dir $APP_PACKAGE/../eclipse/plugins"
-			vmoptions="-Xmx256M" jvmversion="1.6+" 
-			workingdirectory="$APP_PACKAGE/.." icon="./icons/agents.icns">
-			
-			<jarfileset dir="${batch_runner.dir}">
-				<include name="*.jar" />
-			</jarfileset>
-
-			<javaproperty name="apple.awt.showGrowBox" value="true" />
-			<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-
-		</jarbundler>
-
-		<move todir="${release.dir}" file="${batch_runner.dir}/${app.name}-1.0.app"/>
-		<move todir="${release.dir}" file="${batch_runner.dir}/batch_runner.jar"/>
-		
-		<!--
-		<move todir="${arteriopathy.dir}/${app.name}-1.0/">
-			  <fileset dir="${arteriopathy.dir}"/>
-		</move>
-
-		<echo message="Creating Disk Image ${dmg.file} - this may take a few minutes" />
-		<exec executable="hdiutil" os="Mac OS X">
-		        <arg value="create"/>
-		        <arg value="-srcfolder"/>
-		        <arg value="${arteriopathy.dir}"/>
-		        <arg value="-ov"/>
-		        <arg value="${release.dir}/${dmg.file}"/>
-		    </exec>
-		-->
-
-
 	</target>
 
 </project>
