@@ -43,6 +43,6 @@ Export-Package: .,
  repast.simphony.eclipse.action,
  repast.simphony.eclipse.ide,
  repast.simphony.eclipse.util
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Plugin-Class: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-ActivationPolicy: lazy

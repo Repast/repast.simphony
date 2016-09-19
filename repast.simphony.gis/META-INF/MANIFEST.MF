@@ -252,7 +252,7 @@ Export-Package: com.vividsolutions.jts,
  repast.simphony.gis.xml,
  repast.simphony.query.space.gis,
  repast.simphony.space.gis
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: lib/gt-api-13.0.jar,
  lib/gt-coverage-13.0.jar,
  lib/gt-cql-13.0.jar,

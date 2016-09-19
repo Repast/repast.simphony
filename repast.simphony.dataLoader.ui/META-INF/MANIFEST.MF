@@ -14,5 +14,5 @@ Require-Bundle: repast.simphony.dataLoader,
  repast.simphony.scenario,
  repast.simphony.core,
  repast.simphony.freezedry
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory

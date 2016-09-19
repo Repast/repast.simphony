@@ -21,4 +21,4 @@ Export-Package: repast.simphony.annotate;uses:="simphony.util.messages",
  repast.simphony.score
 Bundle-Vendor: Argonne National Laboratory
 Bundle-ClassPath: bin/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

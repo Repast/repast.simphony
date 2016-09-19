@@ -11,5 +11,5 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.core
 Export-Package: 
  repast.simphony.userpanel.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
