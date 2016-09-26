@@ -126,8 +126,8 @@ public class RWizard extends AnalysisPluginWizard {
 			getRHome();
 			envVars.put("R_PROFILE_USER", cwd + "/RHome/.RProfile");
 			commands.add("open");
-			commands.add("-a");
-			commands.add("RStudio.app");
+			commands.add("-n");
+			commands.add(getInstallHome());
 			commands.add(cwd);
 
 		} else {
