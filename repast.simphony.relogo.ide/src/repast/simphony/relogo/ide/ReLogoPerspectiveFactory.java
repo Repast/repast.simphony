@@ -85,7 +85,7 @@ public class ReLogoPerspectiveFactory implements IPerspectiveFactory {
 											&& o instanceof ActionContributionItem) {
 										ActionContributionItem aci = (ActionContributionItem) o;
 										IAction a = aci.getAction();
-										if (a != null
+										if (a != null && a.getActionDefinitionId() != null
 												&& a.getActionDefinitionId()
 														.equals(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR)) {
 											Action aa = (Action) a;
