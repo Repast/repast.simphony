@@ -119,6 +119,7 @@ class ReLogoReferenceCreator {
 	 */
 	protected String getClassNameForValidURL(String sheetName, String methodString){
 		String pat = Pattern.quote(methodString)
+		
 		if (sheetName.equals("Utilities")){
 			String u = "Utility"
 			String content = getContentText(u)
@@ -141,8 +142,11 @@ class ReLogoReferenceCreator {
 	
 	protected String transformMethodString(String input){
 		String result = input
+		
 		// remove all generics greedily
-		result = result.replaceAll(/<.+>/,"")
+//		result = result.replaceAll(/<.+>/,"")
+		
+//		println("result in: " + result)  // testing
 		
 		// replace keywords
 		Pattern word = Pattern.compile(/\b\w+/)
@@ -153,15 +157,38 @@ class ReLogoReferenceCreator {
 			}
 			return it
 		}
-		result = result.replaceAll(word,closure)
-		// replace whitespace
-		//result = result.replaceAll(" ","%20")
+		
+		// Break up the method string into parts separated by commas
+		List<String> resultParts =  result.tokenize(",")
+		result = "";
+		for (String part : resultParts){
+			// If part contains doesn't contain generics, then format for the full 
+			//    class name
+			if (part.indexOf("<") == -1){
+				result += part.replaceAll(word,closure)
+			}
+			else{  // otherwise just append the part
+				result += part
+			}
+			
+			// Add a comma to separate multiple method args
+			if (resultParts.size > 1){
+				result += ","
+			}
+		}
+		
+		// drop the last "," added to the end of multi arg methods
+		if (resultParts.size > 1){
+			result = result[0..-2 ] 
+		}
 		
 		// add space after comma
 		result = result.replaceAll(",",", ")
 		
 		// remove vararg ellipsis
 		result = result.replaceAll(/\.\.\./,"")
+		
+//		println("  result out: " + result)  // testing
 		
 		return result
 	}
@@ -218,7 +245,7 @@ class ReLogoReferenceCreator {
 			// check that the cell is not null and string type
 			if (firstCell != null && firstCell.getCellType() == Cell.CELL_TYPE_STRING){
 				String firstCellString = firstCell.getRichStringCellValue().getString().trim()
-				
+					
 				// check that the string cell is not a blank string cell
 				if(!firstCellString.equals("")){
 					// check if we are looking for the next category
@@ -274,7 +301,20 @@ class ReLogoReferenceCreator {
 		def writer = new FileWriter('docs/ReLogo API/ReLogoPrimitives.html')
 		def html	= new groovy.xml.MarkupBuilder(writer) 
 		html.html {
-			head { title 'ReLogo Primitives' }
+			head { title 'ReLogo Primitives'
+				
+				style(type:"text/css", '''
+    table, th, td {
+				border:10px;
+				width:100%;
+				white-space:nowrap;
+        
+    }
+    ''')
+				
+			}
+			
+			
 			body {
 				h1 'ReLogo Primitives'
 				StringBuffer sb = new StringBuffer() 
@@ -292,7 +332,7 @@ class ReLogoReferenceCreator {
 					A (NAME: name)
 					h2(name)
 					
-					table (border:1){
+					table {
 						tr {
 							for (PrimitiveCategory prim : si.getPrimitiveCategories()){
 								th {
@@ -302,7 +342,7 @@ class ReLogoReferenceCreator {
 						}
 						tr {
 							for (PrimitiveCategory prim : si.getPrimitiveCategories()){
-								td(valign:"top"){
+								td {
 									
 									for (String method : prim.getMethods() ){
 
