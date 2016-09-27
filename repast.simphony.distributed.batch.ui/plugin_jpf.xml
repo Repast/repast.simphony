@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.distributed.batch.ui" version="">
 
 	<attributes>
-		<attribute id="simphony" value="2.3.1"/>
+		<attribute id="simphony" value="2.4.0"/>
 	</attributes>
 
 	<requires>
