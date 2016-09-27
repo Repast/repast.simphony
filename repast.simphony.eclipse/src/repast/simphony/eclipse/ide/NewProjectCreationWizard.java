@@ -218,15 +218,7 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
           { "%PACKAGE%", packageName },
           { "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
 
-     
-      if (this.configureGroovyAndVisualEditing) {
-        Utilities
-            .copyFileFromPluginInstallation("ModelInitializer.agent", packageFolder,
-                "ModelInitializer.agent", variableMap, monitor);
-        Utilities.copyFileFromPluginInstallation("ModelInitializer.txt", packageFolder,
-            "ModelInitializer.groovy", variableMap, monitor);
-      }
-  
+      
       IFolder newFolder = srcFolder.getFolder("../docs");
       if (!newFolder.exists())
         newFolder.create(true, true, monitor);

@@ -7,7 +7,7 @@ Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.systemdynamics.sdmodel.provider.SystemdynamicsEditPlugin$Implementation
 Bundle-Vendor: Argonne National Laboratory
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: repast.simphony.systemdynamics.sdmodel.provider
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.systemdynamics.model;visibility:=reexport,

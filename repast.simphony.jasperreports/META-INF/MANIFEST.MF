@@ -117,4 +117,4 @@ Bundle-ClassPath: lib/jasperreports-5.1.0.jar,
  lib/commons-digester-2.1.jar,
  lib/iText-2.1.7.js2.jar
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

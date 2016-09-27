@@ -16,5 +16,5 @@ Bundle-ClassPath: .,
  lib/jgoodies-common-1.6.0.jar,
  bin/,
  bin-standalone/
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory

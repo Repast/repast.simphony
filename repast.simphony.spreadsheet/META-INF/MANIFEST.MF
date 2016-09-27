@@ -12,4 +12,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.data.ui
 Bundle-Vendor: Argonne National Laboratory
 Export-Package: repast.simphony.spreadsheet
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -25,4 +25,4 @@ Require-Bundle: repast.simphony.gui,
  repast.simphony.dataLoader.ui,
  org.junit;bundle-version="4.11.0"
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

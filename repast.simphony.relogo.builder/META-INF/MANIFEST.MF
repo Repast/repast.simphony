@@ -25,5 +25,5 @@ Bundle-ClassPath: lib/commons-io-1.4.jar,
  bin/
 Export-Package: repast.simphony.relogo.ide.handlers,
  templates
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory

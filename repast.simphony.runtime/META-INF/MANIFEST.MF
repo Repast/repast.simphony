@@ -111,4 +111,4 @@ Export-Package:
  simphony.util.error,
  simphony.util.messages
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

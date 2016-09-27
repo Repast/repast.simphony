@@ -544,4 +544,4 @@ Require-Bundle: repast.simphony.runtime,
  libs.ext
 Bundle-Vendor: Argonne National Laboratory
 Eclipse-LazyStart: false
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

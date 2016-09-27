@@ -11,5 +11,5 @@ Require-Bundle: repast.simphony.runtime,
  saf.core.ui,
  repast.simphony.core
 Bundle-Vendor: Argonne National Laboratory
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: repast.simphony.ui.plugin.editor

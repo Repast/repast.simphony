@@ -24,4 +24,4 @@ Export-Package: com.gentlyweb.utils,
  repast.simphony.sql
 Bundle-ClassPath: lib/JoSQL-2.2.jar,
  lib/gentlyWEB-utils-1.1.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
