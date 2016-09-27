@@ -36,7 +36,7 @@ requires the xmltask.jar in antlib so run it accordingly.
 with the new version number.
 
 8. Update the feature version in feature.xml in r.s.feature in the overview tab.
-In the plugins tab, click the versions button and select force feature version into
+In the Included plugins tab, click the versions button and select force feature version into
 plugin. The listed plugins should now be updated to the correct version number.
 
 9. Run deploy.xml to create the bin and src jar. If there is not

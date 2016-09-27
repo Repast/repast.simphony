@@ -1,0 +1,29 @@
+Eclipse Classic 4.2.2
+
+Groovy:
+    http://dist.springsource.org/release/GRECLIPSE/e4.2/
+    * Extra Groovy Compilers
+    * Groovy-Eclipse
+    
+GMF:
+    http://download.eclipse.org/modeling/gmp/gmf-tooling/updates/releases/
+    * GMF Tooling Experimental SDK 1.2.1
+    * Graphical Modeling Framework (GMF) Tooling 3.0.2
+    * Graphical Modeling Framework (GMF) Tooling - Runtime Extensions 3.0.2
+    
+    
+    
+Eclipse Standard 4.3 (formerly knows as "Classic")
+    
+GMF:
+    http://download.eclipse.org/releases/kepler in the Modeling Section
+    GMF Tooling 3.1.0
+    GMF Tooling - Runtime Extensions 3.1.0
+    
+Groovy:
+    http://dist.springsource.org/release/GRECLIPSE/e4.3/
+    * Extra Groovy Compilers
+    * Groovy-Eclipse
+    
+I had to set the groovy compiler (preferences -> groovy -> compiler) to 2.0.7
+in order to eliminate errors on the existing demo projects.
