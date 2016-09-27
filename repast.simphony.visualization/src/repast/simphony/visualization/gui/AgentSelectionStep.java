@@ -33,7 +33,7 @@ import repast.simphony.visualization.engine.DisplayType;
 @SuppressWarnings("serial")
 public class AgentSelectionStep extends PluginWizardStep {
 
-  private static class AgentDataRenderer extends DefaultListCellRenderer {
+  protected static class AgentDataRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index,
         boolean isSelected, boolean cellHasFocus) {
@@ -43,10 +43,10 @@ public class AgentSelectionStep extends PluginWizardStep {
     }
   }
 
-  private AgentSelectionPanel panel;
-  private DisplayWizardModel model;
+  protected AgentSelectionPanel panel;
+  protected DisplayWizardModel model;
 
-  private ListDataListener dataListener = new ListDataListener() {
+  protected ListDataListener dataListener = new ListDataListener() {
 
     // Each time the state of the list is changed, we need to apply the state
     // so that changes are saved to the display descriptor.
@@ -101,39 +101,43 @@ public class AgentSelectionStep extends PluginWizardStep {
     this.model = (DisplayWizardModel) wizardModel;
   }
 
+  @Override
   public void applyState() throws InvalidStateException {
     DisplayDescriptor descriptor = model.getDescriptor();
-
     ListModel listModel = panel.target.getModel();
+     
     boolean reset = false;
+    
     Map<String, Integer> layerOrders = descriptor.getLayerOrders();
-    if (layerOrders.size() == listModel.getSize()) {
-      for (int i = 0, n = listModel.getSize(); i < n; i++) {
-        AgentData agent = (AgentData) listModel.getElementAt(i);
-        Integer val = layerOrders.get(agent.getClassName());
-        if (val == null || val != n - i - 1) {
-          reset = true;
-        }
-      }
-    } else {
-      reset = true;
-    }
+    
+//    if (layerOrders.size() == listModel.getSize()) {
+//      for (int i = 0, n = listModel.getSize(); i < n; i++) {
+//        AgentData agent = (AgentData) listModel.getElementAt(i);
+//        Integer val = layerOrders.get(agent.getClassName());
+//        if (val == null || val != n - i - 1) {
+//          reset = true;
+//        }
+//      }
+//    } else {
+//      reset = true;
+//    }
 
-    if (reset) {
+//    if (reset) {
       layerOrders.clear();
-      for (int i = 0, n = listModel.getSize(); i < n; i++) {
+      for (int i = 0; i < listModel.getSize(); i++) {
         AgentData agent = (AgentData) listModel.getElementAt(i);
-        descriptor.addLayerOrder(agent.getClassName(), n - i - 1);
+        
+        // Layer order reverse of list order
+        descriptor.addLayerOrder(agent.getClassName(), listModel.getSize() - i - 1);
       }
-    }
-
-    Map<String, String> styles = new HashMap<String, String>(descriptor.getStyles());
-    if (styles.size() > 0) {
+      
+      // TODO Investigate if this code is causing the style not to apply in cases
+      //      when a layer is added/removed from an existing display.
+      Map<String, String>styles = new HashMap<String, String>(descriptor.getStyles());
+//    if (styles.size() > 0) {
       // we are editing an existing display so we need to add a default style
-      // for
-      // any unstyled class as it is possible to close the editor before picking
-      // out
-      // the style.
+      // for any unstyled class as it is possible to close the editor before 
+    	// picking out the style.
       for (String classname : descriptor.getLayerOrders().keySet()) {
         if (!styles.containsKey(classname)) {
           String styleClass = model.getDefaultStyle();
@@ -141,12 +145,63 @@ public class AgentSelectionStep extends PluginWizardStep {
             descriptor.addStyle(classname, styleClass);
         }
       }
-    }
+//    }
+      
+      // Update any steps whose data are dependent on this step.
+      updateListeners();
   }
 
+  /**
+   * Check if there are existing styles in the display.  This would happen if 
+   * the wizard is opened on an existing display.
+   * 
+   * Subclass can override to provide the agent list in different order.
+   * 
+   * @return
+   */
+  protected List<AgentData> getTargetAgentList(DisplayDescriptor descriptor){
+  	 List<AgentData> target = new ArrayList<AgentData>();
+     List<AgentData> unorderedTarget = new ArrayList<AgentData>();
+     Map<String, String> styles = descriptor.getStyles();
+     List<Integer> orders = new ArrayList<Integer>();
+     Map<Integer, AgentData> orderedMap = new HashMap<Integer, AgentData>();
+
+     // check each style in the descriptor
+     if (styles.keySet().size() > 0) {
+       for (String className : styles.keySet()) {
+
+         // if the layer is ordered, save it in order.
+         if (descriptor.getLayerOrder(className) != null) {
+           int order = descriptor.getLayerOrder(className);
+
+           orderedMap.put(order, new AgentData(className));
+           orders.add(order);
+         }
+         // else add it to a temp list;
+         else
+           unorderedTarget.add(new AgentData(className));
+       }
+     }
+
+     Collections.sort(orders);
+     for (int i : orders)
+       target.add(i, orderedMap.get(i));
+
+     // NOTE that order layer starts with background at index 0, while the
+     // lists should be displayed with the foreground at index 0, so it needs
+     // to be reversed.
+     Collections.reverse(target);
+
+     // append the unordered layers to the end of the ordered list.
+     target.addAll(unorderedTarget);
+  	 
+  	 return target;
+  }
+  
+  @Override
   public void prepare() {
     DisplayDescriptor descriptor = model.getDescriptor();
-
+    
     // Disable layer ordering buttons for 3D since they don't apply.
     // TODO Projections: instead of DisplayType, check if descriptor is layerable?
     if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
@@ -154,42 +209,7 @@ public class AgentSelectionStep extends PluginWizardStep {
       panel.downBtn.setEnabled(false);
     }
 
-    // Check if there are existing styles in the display...this would
-    // happen if the wizard is opened on an existing display.
-    List<AgentData> target = new ArrayList<AgentData>();
-    List<AgentData> unorderedTarget = new ArrayList<AgentData>();
-    Map<String, String> styles = descriptor.getStyles();
-    List<Integer> orders = new ArrayList<Integer>();
-    Map<Integer, AgentData> orderedMap = new HashMap<Integer, AgentData>();
-
-    // check each style in the descriptor
-    if (styles.keySet().size() > 0) {
-      for (String className : styles.keySet()) {
-
-        // if the layer is ordered, save it in order.
-        if (descriptor.getLayerOrder(className) != null) {
-          int order = descriptor.getLayerOrder(className);
-
-          orderedMap.put(order, new AgentData(className));
-          orders.add(order);
-        }
-        // else add it to a temp list;
-        else
-          unorderedTarget.add(new AgentData(className));
-      }
-    }
-
-    Collections.sort(orders);
-    for (int i : orders)
-      target.add(i, orderedMap.get(i));
-
-    // NOTE that order layer starts with background at index 0, while the
-    // lists should be displayed with the foreground at index 0, so it needs
-    // to be reversed.
-    Collections.reverse(target);
-
-    // append the unordered layers to the end of the ordered list.
-    target.addAll(unorderedTarget);
+    List<AgentData> target = getTargetAgentList(descriptor);
 
     // the list of all agents available to the runtime.
     List<AgentData> source = model.getContext().getAgentData(true);
@@ -217,5 +237,9 @@ public class AgentSelectionStep extends PluginWizardStep {
     // need to set complete true otherwise the other steps won't show up in
     // editor dialog.
     setComplete(true);
+  }
+  
+  public ListModel getListModel(){
+  	return  panel.target.getModel();
   }
 }

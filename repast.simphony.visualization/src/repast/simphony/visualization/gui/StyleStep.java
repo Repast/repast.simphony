@@ -1,6 +1,5 @@
 package repast.simphony.visualization.gui;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,15 +15,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.pietschy.wizard.InvalidStateException;
-import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
-
-import repast.simphony.ui.plugin.editor.PluginWizardStep;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
+import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
  * Abstract style step for display wizards that provides basic agent selection.

@@ -7,11 +7,13 @@ import org.pietschy.wizard.WizardModel;
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.AgentSelectionStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.GISStyleStep;
+import repast.simphony.visualization.gui.StyleClassStep;
 
 /**
  * Adds wizard step panels to the Display editor for GIS displays.
@@ -34,8 +36,10 @@ public class GISDisplayWizardStepCreator {
 	public static List<Pair<WizardStep, Condition>> getDisplayWizardSteps() {
 		ArrayList<Pair<WizardStep, Condition>> steps = new ArrayList<Pair<WizardStep, Condition>>();
 
-		// TODO GIS: need an agent selection step?
-		steps.add(new Pair<WizardStep, Condition>(new AgentSelectionStep(), new Condition() {
+		// TODO Instead of using a specific agent selection step for GIS, the viz 
+		//      registry data should specify if background/foreground layer index is zero.
+		PluginWizardStep agentSelectionStep = new GISAgentSelectionStep();
+		steps.add(new Pair<WizardStep, Condition>(agentSelectionStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();
@@ -44,7 +48,12 @@ public class GISDisplayWizardStepCreator {
 			}
 		}));
 
-		steps.add(new Pair<WizardStep, Condition>(new GISStyleStep(), new Condition() {
+		// The style step init is dependent on the agent selection step, so it 
+		//   will listen for any changes that occur.
+		PluginWizardStep styleStep = new GISStyleStep();
+		agentSelectionStep.addStepListener(styleStep);
+		
+		steps.add(new Pair<WizardStep, Condition>(styleStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();

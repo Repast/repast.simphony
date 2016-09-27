@@ -171,9 +171,12 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
    *          the layer order
    */
   public void registerAgentStyle(String agentName, Style style, Integer order) {
-    classNames.add(agentName);
-    styler.registerStyle(agentName, style);
-    layerOrder.put(order, agentName);
+    
+  	if (style != null && order != null){
+  		classNames.add(agentName);
+  		styler.registerStyle(agentName, style);
+  		layerOrder.put(order, agentName);
+  	}
   }
 
   /**

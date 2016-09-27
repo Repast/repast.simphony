@@ -12,6 +12,7 @@ import org.pietschy.wizard.models.Condition;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.plugin.editor.PluginWizard;
+import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -91,7 +92,9 @@ public class DisplayConfigurationWizard {
 	protected List<Pair<WizardStep, Condition>> getCartesianSteps() {
 		ArrayList<Pair<WizardStep, Condition>> steps = new ArrayList<Pair<WizardStep, Condition>>();
 
-		steps.add(pair(new AgentSelectionStep(), new Condition() {
+		PluginWizardStep agentSelectionStep = new AgentSelectionStep();
+		
+		steps.add(pair(agentSelectionStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();
@@ -100,7 +103,12 @@ public class DisplayConfigurationWizard {
 			}
 		}));
 
-		steps.add(pair(new StyleClassStep(), new Condition() {
+		// The style step init is dependent on the agent selection step, so it 
+		//   will listen for any changes that occur.
+		PluginWizardStep styleClassStep = new StyleClassStep();
+		agentSelectionStep.addStepListener(styleClassStep);
+		
+		steps.add(pair(styleClassStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();

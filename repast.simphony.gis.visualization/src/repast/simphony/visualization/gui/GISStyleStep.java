@@ -16,7 +16,7 @@ import repast.simphony.ui.plugin.editor.PluginWizardStep;
 public class GISStyleStep extends PluginWizardStep {
 
   private DisplayWizardModel model;
-  private GISStylePanel panel = new GISStylePanel();
+  private GISStylePanel panel;
 
   public GISStyleStep() {
     super("Agent Style", "Please provide a style for each agent type in the model and the " +
@@ -32,9 +32,12 @@ public class GISStyleStep extends PluginWizardStep {
   }
 
   @Override
-  public void prepare() {
-    super.prepare();
+  public void prepare() {  	
     panel.init(model.getContext(), model.getDescriptor());
+   
+    // need to set complete true otherwise the other steps won't show up in
+    // editor dialog.
+    setComplete(true);
   }
 
   @Override
@@ -44,7 +47,6 @@ public class GISStyleStep extends PluginWizardStep {
 
   @Override
   public void applyState() throws InvalidStateException {
-    super.applyState();
     panel.done();
   }
 }

@@ -40,7 +40,7 @@ import com.jgoodies.forms.layout.Sizes;
 public class AgentSelectionPanel extends JPanel {
   
   
-  private static class AgentList extends JList {
+  protected static class AgentList extends JList {
 
     @Override
     public String getToolTipText(MouseEvent event) {
@@ -61,14 +61,14 @@ public class AgentSelectionPanel extends JPanel {
     addListeners();
   }
   
-  private void initButtons() {
+  protected void initButtons() {
     addBtn.setIcon(IconUtils.loadIcon("forward.png"));
     removeBtn.setIcon(IconUtils.loadIcon("back.png"));
     upBtn.setIcon(IconUtils.loadIcon("up.png"));
     downBtn.setIcon(IconUtils.loadIcon("down.png"));
   }
 
-  private void addListeners() {
+  protected void addListeners() {
     source.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         addBtn.setEnabled(source.getSelectedValues().length > 0);
@@ -163,7 +163,7 @@ public class AgentSelectionPanel extends JPanel {
     downBtn.setEnabled(false);
   }
 
-  private void initComponents() {
+  protected void initComponents() {
     // JFormDesigner - Component initialization - DO NOT MODIFY
     // //GEN-BEGIN:initComponents
     // Generated using JFormDesigner non-commercial license
@@ -258,21 +258,21 @@ public class AgentSelectionPanel extends JPanel {
 
   // JFormDesigner - Variables declaration - DO NOT MODIFY //GEN-BEGIN:variables
   // Generated using JFormDesigner non-commercial license
-  private JPanel panel5;
-  private JPanel hSpacer1;
-  private JLabel label2;
-  private JScrollPane scrollPane1;
+  protected JPanel panel5;
+  protected JPanel hSpacer1;
+  protected JLabel label2;
+  protected JScrollPane scrollPane1;
   JList source;
-  private JPanel panel1;
-  private JPanel vSpacer1;
-  private JButton addBtn;
-  private JButton removeBtn;
-  private JPanel vSpacer2;
-  private JScrollPane scrollPane2;
+  protected JPanel panel1;
+  protected JPanel vSpacer1;
+  protected JButton addBtn;
+  protected JButton removeBtn;
+  protected JPanel vSpacer2;
+  protected JScrollPane scrollPane2;
   JList target;
-  private JPanel panel4;
+  protected JPanel panel4;
   JButton upBtn;
   JButton downBtn;
-  private JLabel label1;
+  protected JLabel label1;
   // JFormDesigner - End of variables declaration //GEN-END:variables
 }
