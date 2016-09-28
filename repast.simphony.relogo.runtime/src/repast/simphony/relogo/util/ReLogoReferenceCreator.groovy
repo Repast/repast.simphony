@@ -29,6 +29,7 @@ import sun.net.www.protocol.file.FileURLConnection;
 
 class ReLogoReferenceCreator {
 	
+	static final String docTitle = "ReLogo Primitives ver. 2.4"
 	static final String filename = "data/ReLogoPrimitives.xls"
 	static final String docLocation = "docs/ReLogo API/repast/simphony/relogo/"
 	static final String refURLbase = "repast/simphony/relogo/"
@@ -301,32 +302,65 @@ class ReLogoReferenceCreator {
 		def writer = new FileWriter('docs/ReLogo API/ReLogoPrimitives.html')
 		def html	= new groovy.xml.MarkupBuilder(writer) 
 		html.html {
-			head { title 'ReLogo Primitives'
+			head { 
+				title docTitle
 				
+				// Style inline using simple CSS to match the Javadoc atyle
 				style(type:"text/css", '''
-    table, th, td {
-				border:10px;
-				width:100%;
-				white-space:nowrap;
-        
-    }
-    ''')
-				
+          table {
+            border: 1px solid #dee3e9;
+            border-collapse: collapse;
+          }
+          td {
+            border: 2px solid #4D7A97;
+            white-space: nowrap;
+            border-collapse: collapse;
+            vertical-align: top;
+            padding: 10px;
+            font-family:"DejaVu Sans", Arial, Helvetica, sans-serif;
+            font-size:14px;
+          }
+          th {
+            color:#4E4E4E;
+            white-space: nowrap;
+            border-collapse: collapse;
+            vertical-align: top;
+            padding: 10px;
+            font-family:"DejaVu Sans", Arial, Helvetica, sans-serif;
+            font-size:14px;
+            background-color: #dee3e9;
+          }
+          body {
+
+            font-family:"DejaVu Sans", Arial, Helvetica, sans-serif;
+          }
+          a:link, a:visited {
+            text-decoration:none;
+            color:#4A6782;
+            font-weight:bold;
+          }
+          a:hover, a:focus {
+            text-decoration:none;
+            color:#bb7a2a;
+            font-weight:bold;
+          }
+
+        ''')
 			}
 			
 			
 			body {
-				h1 'ReLogo Primitives'
+				h1 docTitle
 				StringBuffer sb = new StringBuffer() 
 				for (SheetInfo si in workbookSheetsInfo) {
 					String name = si.getSheetName();
-					font(size:4) {
+					font(size:5) {
 						a(href:"#$name",name)
 						mkp.yieldUnescaped('&nbsp;&nbsp;')
 					}
 					
 				}
-				hr()
+				hr(width:'100%')
 				for (SheetInfo si in workbookSheetsInfo) {
 					String name = si.getSheetName();
 					A (NAME: name)
