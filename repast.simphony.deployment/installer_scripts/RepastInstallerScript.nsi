@@ -11,7 +11,7 @@
 
  ${StrTok} # Supportable for Install Sections and Functions
 
-!define VERSION "2.3"
+!define VERSION "2.4"
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -63,14 +63,17 @@ Section "Repast Simphony"
   ; Store the files.
   File /r "*.*"
   
-  ; Write the installation path into the registry
-  WriteRegStr HKLM Software\RepastSimphony-${VERSION} "Install_Dir" "$INSTDIR"
-  
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}" "DisplayName" "Repast Simphony"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "DisplayName" "Repast Simphony ${VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+
+  ; Used for enterprise remote uninstall
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "QuietUninstallString" '"$INSTDIR\uninstall.exe"'
+  
+  ; Removes uninstall options for modify and repair (only allow uninstall)
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "NoRepair" 1
+  
   WriteUninstaller "uninstall.exe"
   
 SectionEnd
@@ -81,27 +84,26 @@ Section "Start Menu Shortcuts"
   ; Install for all users
   SetShellVarContext all
   
-  CreateDirectory "$SMPROGRAMS\RepastSimphony-${VERSION}"
-  CreateDirectory "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation"
+  CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}"
+  CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation"
 
-  
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Batch Runner.lnk" "$INSTDIR\batch_runner.jar" "" "$INSTDIR\batch_runner.jar"
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\batch_runner.jar" "" "$INSTDIR\batch_runner.jar"
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
 
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Flow Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" "" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony System Dynamics Getting Started.lnk" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" "" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony-${VERSION}\Documentation\Upgrading_Repast_Simphony.lnk" "$INSTDIR\docs\Upgrading_Repast_Simphony.txt" "" "$INSTDIR\docs\Upgrading_Repast_Simphony.txt" 0  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Flow Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" "" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony System Dynamics Getting Started.lnk" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" "" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Upgrading & Troubleshooting Repast Simphony.lnk" "$INSTDIR\docs\Upgrading_Troubleshooting_Repast_Simphony.txt" "" "$INSTDIR\docs\Upgrading_Troubleshooting_Repast_Simphony.txt" 0  
   
 SectionEnd
 
@@ -113,12 +115,11 @@ Section "Uninstall"
   ; Install for all users
   SetShellVarContext all
   
-  ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony-${VERSION}"
-  DeleteRegKey HKLM SOFTWARE\RepastSimphony-${VERSION}
+  ; Remove registry keys for uninstall
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}"
 
   ; Remove program group dir
-  RMDir /r "$SMPROGRAMS\RepastSimphony-${VERSION}"
+  RMDir /r "$SMPROGRAMS\RepastSimphony ${VERSION}"
   
   ; Remove the install dir and the docs and eclipse sub-dirs 
   DELETE $INSTDIR\*.*
@@ -167,8 +168,8 @@ Function WelcomePageSetupLinkPre
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "4" ; increase counter
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "122" ; limit size of the upper label
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "Link"
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "http://repast.sourceforge.net/"
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "http://repast.sourceforge.net/"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "https://repast.github.io/"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "https://repast.github.io/"
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "315"
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "123"
