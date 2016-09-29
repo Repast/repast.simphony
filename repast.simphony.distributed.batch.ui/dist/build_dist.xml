@@ -6,13 +6,19 @@
 	<property name="release.dir" location="./releases" />
 	<property name="rs.version" value="${releaseVersionNumber}" />
 
-
 	<target name="jar.files">
-		<delete dir="${batch_runner.dir}" quiet="true"/>
-		<jar jarfile="${batch_runner.dir}/batch_runner.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png">
+		<delete dir="${batch_runner.dir}" quiet="true" />
+		<jar jarfile="${batch_runner.dir}/batch_runner_osx.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png">
 			<manifest>
-				<attribute name="Main-Class" value="repast.simphony.batch.standalone.StandAloneMain"/>
-				<attribute name="Class-Path" value="eclipse/plugins/repast.simphony.runtime_${rs.version}/lib/commons-cli-1.3.1.jar eclipse/plugins/repast.simphony.core_${rs.version}/lib/commons-lang3-3.1.jar"/>
+				<attribute name="Main-Class" value="repast.simphony.batch.standalone.StandAloneMain" />
+				<attribute name="Class-Path" value="Eclipse.app/Contents/Eclipse/plugins/repast.simphony.runtime_${rs.version}/lib/commons-cli-1.3.1.jar Eclipse.app/Contents/Eclipse/plugins/repast.simphony.core_${rs.version}/lib/commons-lang3-3.1.jar" />
+			</manifest>
+		</jar>
+
+		<jar jarfile="${batch_runner.dir}/batch_runner_win.jar" basedir="../bin-standalone" includes="**/*.class, **/*.gif,**/*.jpg,**/*.png">
+			<manifest>
+				<attribute name="Main-Class" value="repast.simphony.batch.standalone.StandAloneMain" />
+				<attribute name="Class-Path" value="eclipse/plugins/repast.simphony.runtime_${rs.version}/lib/commons-cli-1.3.1.jar eclipse/plugins/repast.simphony.core_${rs.version}/lib/commons-lang3-3.1.jar" />
 			</manifest>
 		</jar>
 	</target>
