@@ -191,7 +191,14 @@ public class StandAloneMain {
       clazz.getMethod("main", String[].class).invoke(null, new Object[] { full_args });
     } else {
       Class<?> clazz = Class.forName("repast.simphony.batch.gui.Main", true, loader);
-      clazz.getMethod("main", String[].class).invoke(null, new Object[] { baseArgs });
+      if (modelDir.isEmpty()){
+    	  clazz.getMethod("main", String[].class).invoke(null, new Object[] { baseArgs });
+      }
+      else {
+    	  String[] modelArg = new String[] { "-".concat(MODEL_DIR), modelDir };
+    	  String[] guiFullArgs = ArrayUtils.addAll(baseArgs, modelArg);
+    	  clazz.getMethod("main", String[].class).invoke(null, new Object[] { guiFullArgs });
+      }
     }
 
   }
