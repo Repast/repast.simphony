@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -26,9 +27,9 @@ public class ImportSampleModelsWizard extends Wizard implements IImportWizard, I
   public ImportSampleModelsWizard() {
     IPath eclipseHome = JavaCore.getClasspathVariable("ECLIPSE_HOME");
     String eclipseHomeString = eclipseHome.toOSString();
-    this.wizard = new ExternalProjectImportWizard(eclipseHomeString + File.separator + ".."
-        + File.separator + "models");
-
+    String modelsPath = Platform.getOS().equals(Platform.OS_MACOSX) ?  eclipseHomeString + File.separator + "../../.."
+        + File.separator + "models" : eclipseHomeString + File.separator + ".." + File.separator + "models";
+    this.wizard = new ExternalProjectImportWizard(modelsPath);
   }
 
   @Override

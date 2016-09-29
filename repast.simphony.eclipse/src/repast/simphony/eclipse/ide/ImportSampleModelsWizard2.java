@@ -6,6 +6,7 @@ package repast.simphony.eclipse.ide;
 import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -28,7 +29,8 @@ public class ImportSampleModelsWizard2 extends ExternalProjectImportWizard {
    * 
    */
   public ImportSampleModelsWizard2() {
-    super(JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + ".."
+    super(Platform.getOS().equals(Platform.OS_MACOSX) ?  JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + "../../.."
+        + File.separator + "models" : JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + ".."
         + File.separator + "models");
   }
 
