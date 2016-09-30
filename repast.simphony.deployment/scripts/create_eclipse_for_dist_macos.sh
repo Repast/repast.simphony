@@ -32,12 +32,15 @@ GMF_FEATURES+=org.eclipse.wst.xml_ui.feature.feature.group
 set -x
 open -W ./Eclipse.app --args -application org.eclipse.equinox.p2.director -repository $REPOSITORIES -installIU $GROOVY_FEATURES,$SIMPHONY_FEATURES,$GMF_FEATURES
 
-# remove references to local Repast update site
+#remove references to local Repast update site
 rm ./Eclipse.app/Contents/eclipse/configuration/*.log
 sed -i'.temp' '/repast.simphony.updatesite/d' ./Eclipse.app/Contents/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.committers.profile/.data/.settings/org.eclipse.equinox.p2.artifact.repository.prefs
 sed -i'.temp' '/repast.simphony.updatesite/d' ./Eclipse.app/Contents/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.committers.profile/.data/.settings/org.eclipse.equinox.p2.metadata.repository.prefs
 rm ./Eclipse.app/Contents/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.committers.profile/.data/.settings/org.eclipse.equinox.p2.artifact.repository.prefs.temp
 rm ./Eclipse.app/Contents/eclipse/p2/org.eclipse.equinox.p2.engine/profileRegistry/epp.package.committers.profile/.data/.settings/org.eclipse.equinox.p2.metadata.repository.prefs.temp
+
+codesign -f -s nick.collier@gmail.com -v Eclipse.app/
+codesign -v ./Eclipse.app
 
 # to check if all repast.simphony.updatesite mentions were removed uncomment below
 grep -Rl "repast.simphony.updatesite" .
