@@ -29,8 +29,7 @@ public class ImportSampleModelsWizard2 extends ExternalProjectImportWizard {
    * 
    */
   public ImportSampleModelsWizard2() {
-    super(Platform.getOS().equals(Platform.OS_MACOSX) ?  JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + "../../.."
-        + File.separator + "models" : JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + ".."
+    super(Platform.getOS().equals(Platform.OS_MACOSX) ?  Constants.OS_MODELS_PATH : JavaCore.getClasspathVariable("ECLIPSE_HOME").toOSString() + File.separator + ".."
         + File.separator + "models");
   }
 

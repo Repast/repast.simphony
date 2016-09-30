@@ -27,8 +27,7 @@ public class ImportSampleModelsWizard extends Wizard implements IImportWizard, I
   public ImportSampleModelsWizard() {
     IPath eclipseHome = JavaCore.getClasspathVariable("ECLIPSE_HOME");
     String eclipseHomeString = eclipseHome.toOSString();
-    String modelsPath = Platform.getOS().equals(Platform.OS_MACOSX) ?  eclipseHomeString + File.separator + "../../.."
-        + File.separator + "models" : eclipseHomeString + File.separator + ".." + File.separator + "models";
+    String modelsPath = Platform.getOS().equals(Platform.OS_MACOSX) ?  Constants.OS_MODELS_PATH : eclipseHomeString + File.separator + ".." + File.separator + "models";
     this.wizard = new ExternalProjectImportWizard(modelsPath);
   }
 
