@@ -5,7 +5,7 @@ cd $PBS_O_WORKDIR
 totr=$1 # total runs
 rpi=$2 # runs per instance
 fin=$3 # first instance number
-param_file=$4 # unrolled param file
+paramFile=$4 # unrolled param file
 
 instance=$((PBS_VNODENUM + fin))
 
