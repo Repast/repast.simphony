@@ -26,6 +26,9 @@ public class DisplayProducer {
     this.displayDescriptor = displayDescriptor;
     Context<?> masterContext = runState.getMasterContext();
     setContext(masterContext, contextID);
+    if (context == null) {
+      throw new IllegalArgumentException("Unable to create display for context id: '" + contextID + "'. This is must match that set in the model's ContextBuilder.");
+    }
   }
 
   private void setContext(Context<?> context, Object contextID) {
