@@ -105,7 +105,7 @@ public class ParameterInputPanel extends JPanel {
       if (params != null && params.getSchema().getDetails(pName) != null) {
         ParameterSchema schema = params.getSchema().getDetails(pName);
         if (schema.getDefaultValue() != null)
-          ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema.toString(schema.getDefaultValue()));
+          ((ConstantInputPanel) getCurrentPanel()).setDefaultValue(schema);
       }
     }
     notifyBP = true;
@@ -367,11 +367,11 @@ public class ParameterInputPanel extends JPanel {
       return ValidationResult.SUCCESS;
     }
 
-    void setDefaultValue(Object obj) {
-      if (obj instanceof Boolean) {
-        ((JCheckBox) fld).setSelected((Boolean) obj);
+    void setDefaultValue(ParameterSchema schema) {
+      if (schema.getType().equals(Boolean.class) || schema.getType().equals(boolean.class)) {
+        ((JCheckBox) fld).setSelected((Boolean) schema.getDefaultValue());
       } else {
-        ((JTextField) fld).setText(obj.toString());
+        ((JTextField) fld).setText(schema.toString(schema.getDefaultValue()));
       }
     }
 
