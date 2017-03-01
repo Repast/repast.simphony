@@ -27,7 +27,7 @@
 		
 	    <library id="icons" path="icons/" type="resources"/>
 	    
-		<library id="worldwind" path="lib/worldwind-2.0.0.jar" type="code">
+		<library id="worldwind" path="lib/worldwind-2.1.0.jar" type="code">
       <export prefix="*"/>
     </library>
     
