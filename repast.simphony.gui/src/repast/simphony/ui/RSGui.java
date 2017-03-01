@@ -56,6 +56,7 @@ import repast.simphony.engine.environment.GUIRegistryType;
 import repast.simphony.parameter.MutableParameters;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersValuesLoader;
+import repast.simphony.ui.action.SaveCurrentParams;
 import repast.simphony.ui.parameters.ParametersUI;
 import repast.simphony.ui.plugin.TickCountFormatter;
 import repast.simphony.ui.probe.Probe;
@@ -390,21 +391,6 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
   }
 
-  /*
-   * private class SaveParams extends AbstractAction {
-   * 
-   * private Parameters params;
-   * 
-   * public SaveParams(Parameters params) { super("Save Parameters");
-   * this.params = params; }
-   * 
-   * public void actionPerformed(ActionEvent e) { File file =
-   * FileChooserUtilities.getSaveFile(frame, paramDir); if (file != null) {
-   * ParametersWriter writer = new ParametersWriter(); try {
-   * writer.writeValuesToFile(params, file); paramDir = file.getParentFile(); }
-   * catch (IOException ex) { msg.warn("Error writing parameters", ex); } } } }
-   */
-
   @SuppressWarnings("serial")
   private class DefaultParams extends AbstractAction {
 
@@ -447,6 +433,36 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
 
     public abstract boolean showParamModificationDialog(MutableParameters parameters);
+  }
+  
+  /**
+   * Save the existing parameters and values to the scenario folder.
+   *
+   */
+  @SuppressWarnings("serial")
+  private class SaveParameterAction extends AbstractAction {
+    private RSApplication rsApp;
+    private Parameters params;
+
+    public SaveParameterAction(RSApplication rsApp, Parameters params) {
+      this.rsApp = rsApp;
+      this.params = params;
+    }
+
+    // The action first confirms parameter save, then asks to set defaults and
+    //  last saves to the parameters file.
+    public void actionPerformed(ActionEvent e) {
+    	int n = JOptionPane.showConfirmDialog(
+    	    frame,
+    	    "Save current parameters?",
+    	    "",
+    	    JOptionPane.YES_NO_OPTION);
+    	
+    	if (n == JOptionPane.YES_OPTION) {		
+    		new DefaultParams(params).actionPerformed(null);  // Set defaults
+    		rsApp.saveCurrentParameters();  // Save to file
+    	}
+    }
   }
 
   public Probe updateProbePanel(Probe probe, MutableParameters params) {
@@ -570,7 +586,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       RemoveParameter rem = new RemoveParameter((MutableParameters) params, pui, rsApp);
 
       JButton btn = new JButton(add);
-      btn.setIcon(IconUtils.loadIcon("add_exc.gif"));
+      btn.setIcon(RSGUIConstants.ADD_ICON);
       btn.setText("");
       btn.setToolTipText("Add Parameter");
       tbar.add(btn);
@@ -578,7 +594,7 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
       btn = new JButton(rem);
       btn.setToolTipText("Remove Parameters");
       btn.setText("");
-      btn.setIcon(IconUtils.loadIcon("rem_co.gif"));
+      btn.setIcon(RSGUIConstants.DELETE_ICON);
       tbar.add(btn);
     }
     
@@ -587,10 +603,16 @@ public class RSGui implements DockableFrameListener, PropertyChangeListener {
     }
     JButton btn = new JButton(new DefaultParams(params));
     btn.setText("");
-    btn.setIcon(IconUtils.loadIcon("nav_refresh.gif"));
+    btn.setIcon(RSGUIConstants.REDO_ICON);
     btn.setToolTipText("Set current parameter values as default parameter values");
     tbar.add(btn);
 
+    JButton savebtn = new JButton(new SaveParameterAction(rsApp, params));
+    savebtn.setText("");
+    savebtn.setIcon(RSGUIConstants.SM_SAVE_ICON);
+    savebtn.setToolTipText("Save parameter values to scenario");
+    tbar.add(savebtn);
+    
     DockableFrame view = dockingManager.createDockable(id, panel, MinimizeLocation.BOTTOM,
         DockingManager.FLOAT | DockingManager.MINIMIZE | DockingManager.MAXIMIZE);
     view.setTitle("Parameters");

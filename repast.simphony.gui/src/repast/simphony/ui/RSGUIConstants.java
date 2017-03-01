@@ -83,7 +83,6 @@ public abstract class RSGUIConstants {
   public static Icon OPEN_ICON;
   public static Icon SAVE_ICON;
   public static Icon RESET_ICON;
-  public static Icon INIT_ICON;
   public static Icon SCENARIO_LEAF_ICON;
   public static Icon SCENARIO_FOLDER_ICON;
   public static Icon SCENARIO_FOLDER_OPEN_ICON;
@@ -103,6 +102,8 @@ public abstract class RSGUIConstants {
   public static Icon DATA_LOADER_ICON;
   public static Icon DELETE_ICON;
   public static Icon ADD_ICON;
+  public static Icon APPLY_ICON;
+  public static Icon REDO_ICON;
   
   public static Icon SM_SAVE_ICON;
   public static Icon SM_FILTER_ICON;
@@ -117,7 +118,6 @@ public abstract class RSGUIConstants {
     SM_SAVE_ICON = loadIcon("filesave16");
     SM_FILTER_ICON = loadIcon("filter16");
     RESET_ICON = loadIcon("reload");
-    INIT_ICON = loadIcon("configure");
     SCENARIO_LEAF_ICON = loadIcon("exec");
     SCENARIO_FOLDER_ICON = loadIcon("folder");
     SCENARIO_FOLDER_OPEN_ICON = loadIcon("folder_open");
@@ -137,5 +137,7 @@ public abstract class RSGUIConstants {
     DATA_LOADER_ICON = loadIcon("harddrive");
     DELETE_ICON = loadIcon("button_cancel");
     ADD_ICON = loadIcon("edit_add");
+    APPLY_ICON = loadIcon("apply");
+    REDO_ICON = loadIcon("redo");
   }
 }
