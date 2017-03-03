@@ -1,29 +1,6 @@
 package repast.simphony.visualization.gis3D;
 
 import static repast.simphony.ui.RSGUIConstants.CAMERA_ICON;
-import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.StereoOptionSceneController;
-import gov.nasa.worldwind.StereoSceneController;
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.globes.Earth;
-import gov.nasa.worldwind.globes.EarthFlat;
-import gov.nasa.worldwind.globes.FlatGlobe;
-import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.view.orbit.BasicOrbitView;
-import gov.nasa.worldwind.view.orbit.FlatOrbitView;
-import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,6 +26,32 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+import com.jogamp.common.os.Platform;
+
+import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.StereoSceneController;
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.SelectEvent;
+import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.EarthFlat;
+import gov.nasa.worldwind.globes.FlatGlobe;
+import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.ViewControlsLayer;
+import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
+import gov.nasa.worldwind.view.orbit.FlatOrbitView;
+import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import repast.simphony.gis.visualization.engine.GISDisplayData;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor.VIEW_TYPE;
 import repast.simphony.space.gis.Geography;
@@ -67,8 +71,6 @@ import repast.simphony.visualization.gis3D.style.MarkStyle;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
 import simphony.util.ThreadUtilities;
-
-import com.jogamp.common.os.Platform;
 
 public class DisplayGIS3D extends AbstractDisplay {
 
@@ -117,7 +119,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		trackAgents = data.getTrackAgents();
 
 		Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
-				StereoOptionSceneController.class.getName());
+				RepastStereoOptionSceneController.class.getName());
 		
 		Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
 		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
@@ -307,11 +309,31 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 		// TODO WWJ also loop through network and raster styles TBD
 
+		// TODO set background image color via display wizard
+		setBackground();
+		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
 		doRender();
 		
 		resetHomeView();
+	}
+	
+	protected void setBackground(){
+	  SurfaceImage bgImage = new SurfaceImage(new ImageIcon(getClass().getClassLoader().getResource("white.png")), 
+	  		new ArrayList<LatLon>(Arrays.asList(
+        LatLon.fromDegrees(-90d, -180d),
+        LatLon.fromDegrees(-90d, 180d),
+        LatLon.fromDegrees(90d, 180d),
+        LatLon.fromDegrees(90d, -180d)
+    )));
+	  
+	  RenderableLayer layer = new RenderableLayer();
+    layer.setName("Background");
+    layer.setPickEnabled(false);
+    layer.addRenderable(bgImage);
+    
+    model.getLayers().add(0, layer);
 	}
 
 	/**
@@ -567,6 +589,36 @@ public class DisplayGIS3D extends AbstractDisplay {
 		wmsButton.setToolTipText("WMS");
 		bar.add(wmsButton);
 		
+		// TODO replace quality button with JList
+		
+		// Add the quality button
+		JToggleButton qualityButton = new JToggleButton(new AbstractAction(){
+			public void actionPerformed(ActionEvent event){
+				AbstractButton abstractButton = (AbstractButton) event.getSource();
+				boolean selected = abstractButton.getModel().isSelected();
+				
+				RepastStereoOptionSceneController controller = 
+						(RepastStereoOptionSceneController)worldWindow.getSceneController();
+		
+				if (selected){
+					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_VERY_HIGH_QUALITY);
+					System.out.println("HQ");
+				}
+				else{
+					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_MEDIUM_QUALITY);
+				}
+								
+				worldWindow.redraw();
+			}
+		});
+		
+			qualityButton.setText("HQ");
+//			qualityButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(WMS_ICON)));
+			qualityButton.setToolTipText("Map shape draw quality");
+			bar.add(qualityButton);
+		
+	  // TODO Adjust Gazetter size and move to the right
+			
 		// Add a Gazetter
 		try {
 			bar.add(new GazetteerPanel(worldWindow, null));
