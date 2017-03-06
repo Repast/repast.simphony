@@ -319,6 +319,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		resetHomeView();
 	}
 	
+	// TODO GIS Background create the ImageIcon programmatically instead of using file.
 	protected void setBackground(){
 	  SurfaceImage bgImage = new SurfaceImage(new ImageIcon(getClass().getClassLoader().getResource("white.png")), 
 	  		new ArrayList<LatLon>(Arrays.asList(
@@ -333,6 +334,9 @@ public class DisplayGIS3D extends AbstractDisplay {
     layer.setPickEnabled(false);
     layer.addRenderable(bgImage);
     
+    // TODO GIS background dont show in layer legend.
+    
+    // Add background layer to first layer position (reshuffles automatically)
     model.getLayers().add(0, layer);
 	}
 

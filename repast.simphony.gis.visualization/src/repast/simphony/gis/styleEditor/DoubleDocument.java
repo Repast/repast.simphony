@@ -1,4 +1,4 @@
-package repast.simphony.gis.util;
+package repast.simphony.gis.styleEditor;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
