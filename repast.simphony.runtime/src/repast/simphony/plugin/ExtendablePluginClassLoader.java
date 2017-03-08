@@ -1,5 +1,18 @@
 package repast.simphony.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Library;
 import org.java.plugin.registry.PluginDescriptor;
@@ -7,14 +20,11 @@ import org.java.plugin.registry.PluginPrerequisite;
 import org.java.plugin.registry.PluginRegistry;
 import org.java.plugin.standard.StandardPluginClassLoader;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-
 /**
+ * Repast plugin ClassLoader implementation.
+ * 
  * @author Nick Collier
- * @version $Revision$ $Date$
+ *
  */
 public class ExtendablePluginClassLoader extends StandardPluginClassLoader {
 
@@ -31,7 +41,34 @@ public class ExtendablePluginClassLoader extends StandardPluginClassLoader {
     collectFilters();
     libraryCache = new HashMap();
   }
+  
+  /**
+   * Override java.langClassLoader package definition method to prevent null
+   * values in java.lang.Package attributes.  The JPF classloader does not process
+   * the META-INF/MANIFEST.MF files inside Jars that contain metadata about the 
+   * library.  Null values can cause some libraries such as JAI to fail since they
+   * require non-null, but arbitrary, meta-data to instantiate properly.
+   * 
+   * @see java.lang.ClassLoader#defindPackage
+   */
+  @Override
+  protected Package definePackage(String name, String specTitle,
+  		String specVersion, String specVendor, String implTitle, String implVersion,
+  		String implVendor, URL sealBase) throws IllegalArgumentException {
 
+  	// Replace all null entries with empty string
+  	
+  	if (specTitle == null) specTitle = "";
+  	if (specVersion == null) specVersion = "";
+  	if (specVendor == null) specVendor = "";
+  	if (implTitle == null) implTitle = "";
+  	if (implVersion == null) implVersion = "";
+  	if (implVendor == null) implVendor = "";
+  	
+  	return super.definePackage(name, specTitle, specVersion, specVendor,
+  		implTitle, implVersion, implVendor, sealBase);
+  }
+  
   public void addDescriptor(PluginDescriptor descriptor) {
     // addURLS from passed in descriptor to this descriptor
     if (!descriptors.contains(descriptor)) {
