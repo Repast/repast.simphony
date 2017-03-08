@@ -53,12 +53,31 @@ public class GeographyValueLayerTests extends TestCase {
 	}
 	
 	/**
-	 * Test the GeoTools GeoTiff reader directly to verify the classpath is 
+	 * Test the GeoTools ArcGrid reader directly to verify the classpath is 
 	 * configured with the correct GeoTool jars.
 	 * 
 	 */
 	public void testGTArcGridReader(){
 		File file = new File("test/data/ArcGrid.asc");
+	
+		GridCoverage2D coverage = null;
+		try {
+			GridCoverageReader reader = new ArcGridReader(file);
+			coverage = (GridCoverage2D) reader.read(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		assertNotNull(coverage);
+	}
+	
+	/**
+	 * Test the GeoTools ArcGrid reader using a gzip file directly to verify the 
+	 * classpath is configured with the correct GeoTool jars.
+	 * 
+	 */
+	public void testGTArcGridReaderGZip(){
+		File file = new File("test/data/spearfish.asc.gz");
 	
 		GridCoverage2D coverage = null;
 		try {

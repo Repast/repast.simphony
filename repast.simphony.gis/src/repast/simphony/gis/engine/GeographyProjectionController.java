@@ -14,6 +14,11 @@ public class GeographyProjectionController implements ControllerAction {
 	
 	@Override
 	public void batchInitialize(RunState runState, Object contextId) {
+		
+		System.out.println("GeographyProjectionController.batchInitialize()");
+		
+		new GeographyProjectionInitializer().initJAI();
+		
 	}
 
 	@Override

@@ -2,7 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-cql-16.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-arcgrid-1.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-geocore-1.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-streams-1.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-tiff-1.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-utilities-1.1.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-algebra-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-bandcombine-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-bandmerge-1.0.12.jar"/>
@@ -31,16 +35,14 @@
 	<classpathentry exported="true" kind="lib" path="lib/jt-stats-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-translate-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-utilities-1.0.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt-utils-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-vectorbin-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-vectorbinarize-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-vectorize-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-warp-1.0.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-zonal-1.0.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-geocore-1.1.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-streams-1.1.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-arcgrid-1.1.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-utilities-1.1.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/imageio-ext-tiff-1.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt-zonalstats-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-cql-16.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ejml-core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/GeographicLib-Java-1.44.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-api-16.2.jar"/>
