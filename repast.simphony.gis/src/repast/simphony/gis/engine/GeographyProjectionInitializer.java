@@ -13,6 +13,7 @@ import javax.media.jai.OperationRegistry;
 
 import com.sun.media.jai.imageioimpl.ImageReadWriteSpi;
 
+import repast.simphony.engine.environment.RunEnvironment;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -35,7 +36,10 @@ public class GeographyProjectionInitializer {
 	public void initJAI() {
 		// Disable JAI MediaLib native libraries since we don't provide them 
 		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
-
+	
+		// Batch run uses the default classloader, so JAI is already loaded properly
+		if (RunEnvironment.getInstance().isBatch() ) return;
+		
 		// First add the JAI-ImageIO OperationRegistrySPI instance to the JAI OperationRegistry
 		OperationRegistry registry = JAI.getDefaultInstance().getOperationRegistry();
 		
@@ -44,12 +48,8 @@ public class GeographyProjectionInitializer {
 			return;
 		} 
 		else {
-			try {
-				// ImageReadWriteSpi is the only OperationRegistrySPI in JAI-ImageIO
-				new ImageReadWriteSpi().updateRegistry(registry);
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			}
+			new ImageReadWriteSpi().updateRegistry(registry);
+
 
 			// Next look for JAI registry files on classpath
 			// Note: META-INF/javax.media.jai.registryFile.jai in jai_core.jar and 
