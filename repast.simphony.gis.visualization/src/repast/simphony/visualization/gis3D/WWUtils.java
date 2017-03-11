@@ -122,6 +122,20 @@ public class WWUtils {
 		return Sector.fromDegrees(envelope.getMinY(), envelope.getMaxY(), 
 				envelope.getMinX(), envelope.getMaxX());
 	}
+	
+	public static Sector envelopeToSectorReversedOrder(ReferencedEnvelope envelope){
+
+		if (envelope.getCoordinateReferenceSystem() != DefaultGeographicCRS.WGS84){
+			try {
+				envelope = envelope.transform(DefaultGeographicCRS.WGS84, true);
+			} catch (TransformException | FactoryException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return Sector.fromDegrees(envelope.getMinX(), envelope.getMaxX(), 
+				envelope.getMinY(), envelope.getMaxY());
+	}
 
 	public static void insertBeforeCompass(WorldWindow wwd, Layer layer){
 		// Insert the layer into the layer list just before the compass.

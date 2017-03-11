@@ -77,6 +77,7 @@ public class GISUtilTests extends TestCase {
 	 */
 	public void testEnvelopeToSectorDifferentCRS_UTM(){
 
+		// Expected lat/lon to north/east conversions
 		double minLon = -87.6204001; double minUTMeast = -49514.0;
 		double minLat =  41.8736001; double minUTMnorth = 4656766.5;
 		double maxLon = -87.6177001; double maxUTMeast = -49246.8;

@@ -17,9 +17,9 @@ Require-Bundle: libs.ext,
  repast.simphony.plugin.util,
  org.junit;bundle-version="4.11.0"
 Bundle-ClassPath: .,
- lib/gt-brewer-13.0.jar,
- lib/gt-render-13.0.jar,
- lib/worldwind-2.1.0.jar
+ lib/worldwind-2.1.0.jar,
+ lib/gt-brewer-16.2.jar,
+ lib/gt-render-16.2.jar
 Export-Package: com.zebraimaging,
  gov.nasa.worldwind,
  gov.nasa.worldwind.animation,
@@ -142,6 +142,7 @@ Export-Package: com.zebraimaging,
  repast.simphony.gis.visualization.engine,
  repast.simphony.visualization.editor.gis,
  repast.simphony.visualization.gis,
+ repast.simphony.visualization.gis.util,
  repast.simphony.visualization.gis3D,
  repast.simphony.visualization.gis3D.style,
  repast.simphony.visualization.gui
