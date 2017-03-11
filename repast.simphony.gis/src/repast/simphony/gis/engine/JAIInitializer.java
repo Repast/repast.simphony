@@ -17,16 +17,16 @@ import repast.simphony.engine.environment.RunEnvironment;
 import simphony.util.messages.MessageCenter;
 
 /**
- * GeographyProjectionInitializer provides initialization functions to support
+ * JAIInitializer provides Java Advanced Imaging initialization functions to support
  * the Geography projection.
  * 
  * @author Eric Tatara
  *
  */
-public class GeographyProjectionInitializer {
+public class JAIInitializer {
 
 	private static final MessageCenter msgCenter = MessageCenter
-			.getMessageCenter(GeographyProjectionInitializer.class);
+			.getMessageCenter(JAIInitializer.class);
 
 	/**
 	 * Initialize Java Advanced Imaging library performs init functions for JAI that
@@ -36,9 +36,6 @@ public class GeographyProjectionInitializer {
 	public void initJAI() {
 		// Disable JAI MediaLib native libraries since we don't provide them 
 		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
-	
-		// Batch run uses the default classloader, so JAI is already loaded properly
-		if (RunEnvironment.getInstance().isBatch() ) return;
 		
 		// First add the JAI-ImageIO OperationRegistrySPI instance to the JAI OperationRegistry
 		OperationRegistry registry = JAI.getDefaultInstance().getOperationRegistry();

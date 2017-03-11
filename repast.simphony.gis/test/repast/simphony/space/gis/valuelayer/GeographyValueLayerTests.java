@@ -1,5 +1,6 @@
 package repast.simphony.space.gis.valuelayer;
 
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -15,7 +16,12 @@ import org.geotools.gce.arcgrid.ArcGridFormatFactory;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.coverage.grid.GridCoverageReader;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 
 import junit.framework.TestCase;
 
@@ -32,8 +38,10 @@ public class GeographyValueLayerTests extends TestCase {
 	 * 
 	 */
 	public void testGTGeoTiffReader(){
-		File file = new File("test/data/bogota.tif");
-	
+//		File file = new File("test/data/bogota.tif");
+		File file = new File("test/data/sst_io.bin.20170305.tif");
+		
+		
 		GeoTiffReader reader = null;
 		try {
 			reader = new GeoTiffReader(file, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
@@ -86,7 +94,7 @@ public class GeographyValueLayerTests extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		assertNotNull(coverage);
 	}
 
@@ -96,7 +104,7 @@ public class GeographyValueLayerTests extends TestCase {
 	 * 
 	 */
 	public void testGTFactoryFinderGeoTiff(){
-		File file = new File("test/data/bogota.tif");
+		File file = new File("test/data/craterlake-imagery-30m.tif");
 
 		AbstractGridFormat format = GridFormatFinder.findFormat(file);
 		GridCoverage2DReader reader = format.getReader(file);
@@ -106,8 +114,23 @@ public class GeographyValueLayerTests extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		WritableRaster raster = coverage.getRenderedImage().copyData(null);
+		ReferencedEnvelope latLonEnvelope = null;
+		
+		try {
+			latLonEnvelope = new ReferencedEnvelope(
+					coverage.getEnvelope()).transform(DefaultGeographicCRS.WGS84, false);
+		} catch (MismatchedDimensionException | TransformException
+				| FactoryException e) {
+			e.printStackTrace();
+		}
 
+		
+		System.out.println(latLonEnvelope);
+		
 		assertNotNull(coverage);
+		assertNotNull(raster);
 	}
 	
 	/**
