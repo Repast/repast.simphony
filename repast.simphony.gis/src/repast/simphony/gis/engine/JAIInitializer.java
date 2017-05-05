@@ -45,8 +45,11 @@ public class JAIInitializer {
 			return;
 		} 
 		else {
-			new ImageReadWriteSpi().updateRegistry(registry);
-
+			try {
+				new ImageReadWriteSpi().updateRegistry(registry);
+			} catch (IllegalArgumentException e) {
+				msgCenter.warn("Cannot initialize JAI ImageReadWriteSpi", e);
+			}
 
 			// Next look for JAI registry files on classpath
 			// Note: META-INF/javax.media.jai.registryFile.jai in jai_core.jar and 
@@ -59,13 +62,14 @@ public class JAIInitializer {
 				e.printStackTrace();
 			}
 			while (resources.hasMoreElements()) {
+				URL url = null;
 				try {
-					URL url = resources.nextElement();
+					url = resources.nextElement();
 					msgCenter.debug("Register JAI resource: " + url.toString());
 					registry.updateFromStream(url.openStream());
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					msgCenter.warn("Cannot initialize JAI  resource " + url.toString(), e);
 				}
 			}
 		}
