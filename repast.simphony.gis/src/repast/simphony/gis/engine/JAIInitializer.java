@@ -82,7 +82,7 @@ public class JAIInitializer {
 
 			while (riter.hasNext()) {
 				IIOServiceProvider provider = riter.next();
-				msgCenter.debug("\t Registering provider " + provider.toString());
+				msgCenter.debug("\t Registering provider " + provider.getClass().getName());
 				ioRegistry.registerServiceProvider(provider);
 			}
 		}
