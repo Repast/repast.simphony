@@ -13,7 +13,6 @@ import javax.media.jai.OperationRegistry;
 
 import com.sun.media.jai.imageioimpl.ImageReadWriteSpi;
 
-import repast.simphony.engine.environment.RunEnvironment;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -48,7 +47,7 @@ public class JAIInitializer {
 			try {
 				new ImageReadWriteSpi().updateRegistry(registry);
 			} catch (IllegalArgumentException e) {
-				msgCenter.warn("Cannot initialize JAI ImageReadWriteSpi", e);
+				msgCenter.warn("Cannot initialize JAI ImageReadWriteSpi: " + e.getMessage());
 			}
 
 			// Next look for JAI registry files on classpath
