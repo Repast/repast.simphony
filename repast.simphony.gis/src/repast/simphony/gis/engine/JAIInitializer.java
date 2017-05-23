@@ -13,7 +13,6 @@ import javax.media.jai.OperationRegistry;
 
 import com.sun.media.jai.imageioimpl.ImageReadWriteSpi;
 
-import repast.simphony.engine.environment.RunEnvironment;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -45,8 +44,11 @@ public class JAIInitializer {
 			return;
 		} 
 		else {
-			new ImageReadWriteSpi().updateRegistry(registry);
-
+			try {
+				new ImageReadWriteSpi().updateRegistry(registry);
+			} catch (IllegalArgumentException e) {
+				msgCenter.warn("Cannot initialize JAI ImageReadWriteSpi: " + e.getMessage());
+			}
 
 			// Next look for JAI registry files on classpath
 			// Note: META-INF/javax.media.jai.registryFile.jai in jai_core.jar and 
@@ -59,13 +61,14 @@ public class JAIInitializer {
 				e.printStackTrace();
 			}
 			while (resources.hasMoreElements()) {
+				URL url = null;
 				try {
-					URL url = resources.nextElement();
+					url = resources.nextElement();
 					msgCenter.debug("Register JAI resource: " + url.toString());
 					registry.updateFromStream(url.openStream());
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					msgCenter.warn("Cannot initialize JAI  resource " + url.toString(), e);
 				}
 			}
 		}
@@ -82,7 +85,7 @@ public class JAIInitializer {
 
 			while (riter.hasNext()) {
 				IIOServiceProvider provider = riter.next();
-				msgCenter.debug("\t Registering provider " + provider.toString());
+				msgCenter.debug("\t Registering provider " + provider.getClass().getName());
 				ioRegistry.registerServiceProvider(provider);
 			}
 		}
