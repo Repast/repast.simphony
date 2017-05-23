@@ -123,7 +123,7 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
   public void processAnnotations(Class<?> clazz) {
     // if its a context, don't process from the class
     // process during run intialize
-    if (!Context.class.isAssignableFrom(clazz)) {
+    if (!Context.class.isAssignableFrom(clazz) && !clazz.toString().contains("repast.simphony")) {
       Method[] methods = clazz.getMethods();
       for (Method method : methods) {
         // If the method has already been processed, skip it. This prevents
