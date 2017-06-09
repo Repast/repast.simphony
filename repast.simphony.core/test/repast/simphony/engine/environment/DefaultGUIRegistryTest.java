@@ -1,6 +1,3 @@
-/*
- * Created on Aug 3, 2005
- */
 package repast.simphony.engine.environment;
 
 import java.util.ArrayList;
@@ -12,9 +9,8 @@ import javax.swing.JPanel;
 import junit.framework.TestCase;
 import junitx.util.PrivateAccessor;
 import repast.simphony.TestUtils;
-import repast.simphony.engine.environment.DefaultGUIRegistry;
-import repast.simphony.engine.environment.GUIRegistryType;
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.IDisplay;
 
 public class DefaultGUIRegistryTest extends TestCase {
 	DefaultGUIRegistry guiRegistry;
@@ -24,16 +20,10 @@ public class DefaultGUIRegistryTest extends TestCase {
 		guiRegistry = new DefaultGUIRegistry();
 	}
 	
-	/*
-	 * Test method for 'repast.simphony.engine.engine.DefaultGUIRegistry.DefaultGUIRegistry()'
-	 */
 	public void testDefaultGUIRegistry() {
 		guiRegistry = new DefaultGUIRegistry();
 	}
 
-	/*
-	 * Test method for 'repast.simphony.engine.engine.DefaultGUIRegistry.addComponent(JComponent, String, String)'
-	 */
 	public void testAddComponent() throws NoSuchFieldException {
 		JPanel panel = new JPanel();
 		
@@ -52,9 +42,6 @@ public class DefaultGUIRegistryTest extends TestCase {
 		"componentNameTable")).get(panel));
 	}
 
-	/*
-	 * Test method for 'repast.simphony.engine.engine.DefaultGUIRegistry.removeComponent(JComponent)'
-	 */
 	public void testRemoveComponent() throws NoSuchFieldException {
 		JPanel panel = new JPanel();
 		
@@ -73,11 +60,6 @@ public class DefaultGUIRegistryTest extends TestCase {
 		"componentNameTable")).get("name1"));
 	}
 
-
-
-	/*
-	 * Test method for 'repast.simphony.engine.engine.DefaultGUIRegistry.getName(JComponent)'
-	 */
 	public void testGetName() throws NoSuchFieldException {
 		JPanel panel = new JPanel();
 		
@@ -86,9 +68,6 @@ public class DefaultGUIRegistryTest extends TestCase {
 		assertSame("name1", guiRegistry.getName(panel));
 	}
 
-	/*
-	 * Test method for 'repast.simphony.engine.engine.DefaultGUIRegistry.getTypesAndComponents()'
-	 */
 	@SuppressWarnings("unchecked")
 	public void testGetTypesAndComponents() {
 
@@ -112,6 +91,25 @@ public class DefaultGUIRegistryTest extends TestCase {
 		
 		assertTrue(TestUtils.collectionsContentsEqual(pairList, guiRegistry
 				.getTypesAndComponents()));
+	}
+	
+	public void testAddDisplay(){
+		IDisplay display = new TestDisplay();
+		JPanel panel = display.getPanel();
+		
+		guiRegistry.addDisplay("Display ABC", GUIRegistryType.DISPLAY, display);
+		
+		assertSame(display, guiRegistry.getDisplayForComponent(panel));
+		
+		assertNotSame(display, guiRegistry.getDisplayForComponent(new JPanel()));
+		
+		assertSame(display, guiRegistry.getDisplayForName("Display ABC"));
+		
+		assertEquals("Display ABC", guiRegistry.getName(panel));
+		
+		assertNull(guiRegistry.getDisplayForName("bazinga"));
+		
+		assertSame(display, guiRegistry.getDisplays().iterator().next());
 	}
 
 }

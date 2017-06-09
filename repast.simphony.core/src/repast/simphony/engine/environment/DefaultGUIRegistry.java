@@ -1,4 +1,3 @@
-/*CopyrightHere*/
 package repast.simphony.engine.environment;
 
 import repast.simphony.util.collections.Pair;
@@ -11,15 +10,20 @@ import java.util.*;
  * A default implementation of a GUI registry.
  *
  * @author Jerry Vos
- * @version $Revision: 1.1 $ $Date: 2005/12/21 22:25:34 $
+ * @author Eric Tatara
+ *
  */
 public class DefaultGUIRegistry implements GUIRegistry {
 
-	private Hashtable<GUIRegistryType, ArrayList<JComponent>> typeComponentTable;
-	private Hashtable<JComponent, GUIRegistryType> componentTypeTable;
-	private HashMap<JComponent, String> componentNameTable;
-
-	private Map<JComponent, IDisplay> compDisplayMap = new HashMap<JComponent, IDisplay>();
+	protected Hashtable<GUIRegistryType, ArrayList<JComponent>> typeComponentTable;
+	protected Hashtable<JComponent, GUIRegistryType> componentTypeTable;
+	protected HashMap<JComponent, String> componentNameTable;
+	protected Map<String,IDisplay> displayNameTable;
+	
+	/**
+	 * Maps String display name to IDisplay object.  Only stores unique names. 
+	 */
+	protected Map<JComponent, IDisplay> compDisplayMap;
 
 	/**
 	 * Constructs the GUI Registry.
@@ -27,9 +31,11 @@ public class DefaultGUIRegistry implements GUIRegistry {
 	public DefaultGUIRegistry() {
 		super();
 
-		this.typeComponentTable = new Hashtable<GUIRegistryType, ArrayList<JComponent>>();
-		this.componentNameTable = new HashMap<JComponent, String>();
-		this.componentTypeTable = new Hashtable<JComponent, GUIRegistryType>();
+		typeComponentTable = new Hashtable<GUIRegistryType, ArrayList<JComponent>>();
+		componentNameTable = new HashMap<JComponent, String>();
+		componentTypeTable = new Hashtable<JComponent, GUIRegistryType>();
+		compDisplayMap = new HashMap<JComponent, IDisplay>();
+		displayNameTable = new HashMap<String, IDisplay>();
 	}
 
 	/**
@@ -48,8 +54,8 @@ public class DefaultGUIRegistry implements GUIRegistry {
 		Collection<JComponent> components = getComponents(type);
 		components.add(component);
 
-		this.componentNameTable.put(component, name);
-		this.componentTypeTable.put(component, type);
+		componentNameTable.put(component, name);
+		componentTypeTable.put(component, type);
 	}
 
 	/**
@@ -95,7 +101,7 @@ public class DefaultGUIRegistry implements GUIRegistry {
 	 * @return the specified component's name
 	 */
 	public String getName(JComponent component) {
-		return this.componentNameTable.get(component);
+		return componentNameTable.get(component);
 	}
 
 	/**
@@ -116,7 +122,7 @@ public class DefaultGUIRegistry implements GUIRegistry {
 
   /**
    * Adds an IDisplay to this GUIRegistry. If the display is added, there is NO need
-   * to add the compoment associated with the IDisplay as well.
+   * to add the component associated with the IDisplay as well.
    *
    * @param display the renderer to add
    */
@@ -124,6 +130,7 @@ public class DefaultGUIRegistry implements GUIRegistry {
 	  JPanel panel = display.getPanel();
 	  addComponent(panel, type, name);
 	  compDisplayMap.put(panel, display);
+	  displayNameTable.put(name, display);
   }
 
   /**
@@ -143,5 +150,14 @@ public class DefaultGUIRegistry implements GUIRegistry {
 	 */
 	public IDisplay getDisplayForComponent(JComponent comp) {
 		return compDisplayMap.get(comp);
+	}
+	
+	/**
+	 * Get the IDisplay associated with the specified display name;
+	 * @param displayName the display name
+	 * @return the IDisplay with the provided name
+	 */
+	public IDisplay getDisplayForName(String displayName){
+		return displayNameTable.get(displayName);
 	}
 }

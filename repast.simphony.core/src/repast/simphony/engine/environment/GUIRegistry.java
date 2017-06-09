@@ -1,4 +1,3 @@
-/*CopyrightHere*/
 package repast.simphony.engine.environment;
 
 import repast.simphony.util.collections.Pair;
@@ -13,7 +12,7 @@ import java.util.List;
  * a simulation and that are to be displayed to the user.
  * 
  * @author Jerry Vos
- * @version $Revision: 1.1 $ $Date: 2005/12/21 22:25:34 $
+ * @author Eric Tatara
  */
 public interface GUIRegistry {
 
@@ -29,7 +28,7 @@ public interface GUIRegistry {
 	 * @param name
 	 *            the name of the component (can be null)
 	 */
-	void addComponent(JComponent component, GUIRegistryType type, String name);
+	public void addComponent(JComponent component, GUIRegistryType type, String name);
 
 	/**
 	 * Removes a component from the registry.
@@ -40,7 +39,7 @@ public interface GUIRegistry {
 	 * @return true if something was removed (false if this didn't contain the
 	 *          component
 	 */
-	boolean removeComponent(JComponent component);
+	 public boolean removeComponent(JComponent component);
 
 	/**
 	 * Retrieves the name of a given component. This may return null if the name
@@ -50,7 +49,7 @@ public interface GUIRegistry {
 	 *            the component who's name to retrieve
 	 * @return the specified component's name
 	 */
-	String getName(JComponent component);
+	 public String getName(JComponent component);
 
 	/**
 	 * Retrieves the (type, components) pairs that were registered with this
@@ -58,7 +57,7 @@ public interface GUIRegistry {
 	 * 
 	 * @return a collection of (type, components) pairs
 	 */
-	Collection<Pair<GUIRegistryType, Collection<JComponent>>> getTypesAndComponents();
+	 public Collection<Pair<GUIRegistryType, Collection<JComponent>>> getTypesAndComponents();
 
 
   /**
@@ -67,14 +66,14 @@ public interface GUIRegistry {
    *
    * @param display the renderer to add
    */
-  void addDisplay(String name, GUIRegistryType type, IDisplay display);
+	 public void addDisplay(String name, GUIRegistryType type, IDisplay display);
 
   /**
    * Gets the list of IDisplay-s registered with this GUIRegistry.
    *
    * @return the list of IDisplays-s registered with this GUIRegistry.
    */
-  List<IDisplay> getDisplays();
+	 public List<IDisplay> getDisplays();
 
   /**
    * Gets the display associated with the specified component.
@@ -83,5 +82,12 @@ public interface GUIRegistry {
    *
    * @return the associated display
    */
-  IDisplay getDisplayForComponent(JComponent comp);
+	 public IDisplay getDisplayForComponent(JComponent comp);
+  
+  /**
+	 * Get the IDisplay associated with the specified display name;
+	 * @param displayName the display name
+	 * @return the IDisplay with the provided name
+	 */
+	 public IDisplay getDisplayForName(String displayName);
 }
