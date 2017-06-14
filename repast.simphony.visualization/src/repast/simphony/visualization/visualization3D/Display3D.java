@@ -67,29 +67,29 @@ public class Display3D extends AbstractDisplay3D {
 
   public static final int TRANSFORMS_APPLIED = 1;
 
-  private Style3D defaultStyle = new DefaultStyle3D();
-  private EdgeStyle3D defaultEdgeStyle = new DefaultEdgeStyle3D();
-  private boolean firstRender = true;
-  private Color backgroundColor = null;
-  private PickCanvas pick;
+  protected Style3D defaultStyle = new DefaultStyle3D();
+  protected EdgeStyle3D defaultEdgeStyle = new DefaultEdgeStyle3D();
+  protected boolean firstRender = true;
+  protected Color backgroundColor = null;
+  protected PickCanvas pick;
 
   static {
     SimpleUniverse.setJ3DThreadPriority(1);
   }
 
-  private JCanvas3D canvas;
-  private BranchGroup sceneRoot;
-  private SimpleUniverse universe;
-  private MainBehavior updater;
+  protected JCanvas3D canvas;
+  protected BranchGroup sceneRoot;
+  protected SimpleUniverse universe;
+  protected MainBehavior updater;
 
-  private TransformGroup topRotTransGroup;
-  private TransformGroup projectionTransGroup;
-  private TransformGroup valueLayerTransGroup;
+  protected TransformGroup topRotTransGroup;
+  protected TransformGroup projectionTransGroup;
+  protected TransformGroup valueLayerTransGroup;
   // tracks whether or not the last call to render
   // actually triggered an update of the scene or not.
   // an update won't be triggered if the canvas is
   // not visible
-  private boolean updatedLastRender = false;
+  protected boolean updatedLastRender = false;
 
   public Display3D(DisplayData<?> data, Layout layout) {
     super(data, layout);

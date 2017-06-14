@@ -63,26 +63,27 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     System.setProperty("sun.awt.noerasebackground", "true");
   }
 
-  private Runnable updater = new Runnable() {
+  protected Runnable updater = new Runnable() {
     public void run() {
       canvas.update();
     }
   };
 
-  private Layout<?, ?> layout;
-  private Canvas2D canvas;
-  private DisplayData<?> displayData;
+  protected JPanel panel;
+  protected Layout<?, ?> layout;
+  protected Canvas2D canvas;
+  protected DisplayData<?> displayData;
 
-  private Map<Class<?>, StyledDisplayLayerOGL2D> classStyleMap = new HashMap<Class<?>, StyledDisplayLayerOGL2D>();
-  private Map<Network<?>, NetworkLayerOGL2D> networkStyleMap = new HashMap<Network<?>, NetworkLayerOGL2D>();
-  private Map<ValueLayer, ValueLayerDisplayLayer> valueLayerStyleMap = new HashMap<ValueLayer, ValueLayerDisplayLayer>();
-  private Map<String, ProjectionDecorator2D<?>> decoratorMap = new HashMap<String, ProjectionDecorator2D<?>>();
-  private LayoutUpdater layoutUpdater;
-  private boolean doRender = false, glInitialized = false, iconified = false;
-  private JTabbedPane tabParent = null;
-  private Component tabChild = null;
+  protected Map<Class<?>, StyledDisplayLayerOGL2D> classStyleMap = new HashMap<Class<?>, StyledDisplayLayerOGL2D>();
+  protected Map<Network<?>, NetworkLayerOGL2D> networkStyleMap = new HashMap<Network<?>, NetworkLayerOGL2D>();
+  protected Map<ValueLayer, ValueLayerDisplayLayer> valueLayerStyleMap = new HashMap<ValueLayer, ValueLayerDisplayLayer>();
+  protected Map<String, ProjectionDecorator2D<?>> decoratorMap = new HashMap<String, ProjectionDecorator2D<?>>();
+  protected LayoutUpdater layoutUpdater;
+  protected boolean doRender = false, glInitialized = false, iconified = false;
+  protected JTabbedPane tabParent = null;
+  protected Component tabChild = null;
 
-  private VLayer decoratorLayer = new VLayer();
+  protected VLayer decoratorLayer = new VLayer();
 
   public DisplayOGL2D(DisplayData<?> data, Layout<?, ?> layout) {
     this.layout = layout;
@@ -271,17 +272,20 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     return layout;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see repast.simphony.visualization.IDisplay#getPanel()
-   */
   public JPanel getPanel() {
-    JPanel panel = canvas.getPanel();
-    ImageablePanel iPanel = new ImageablePanel(new BorderLayout());
-    iPanel.add(panel, BorderLayout.CENTER);
+    if (panel == null) {
+      createPanel();
+    }
 
-    panel.addComponentListener(new ComponentAdapter() {
+    return panel;
+  }
+
+  public void createPanel() {
+    JPanel cpanel = canvas.getPanel();
+    panel = new ImageablePanel(new BorderLayout());
+    panel.add(cpanel, BorderLayout.CENTER);
+
+    cpanel.addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent e) {
         if (glInitialized) {
           if (isVisible()) {
@@ -292,7 +296,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
       }
     });
 
-    panel.addPropertyChangeListener("ancestor", new PropertyChangeListener() {
+    cpanel.addPropertyChangeListener("ancestor", new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         Component child = canvas.getPanel();
@@ -316,8 +320,6 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
         tabChild = null;
       }
     });
-
-    return iPanel;
   }
 
   public void stateChanged(ChangeEvent evt) {
@@ -630,4 +632,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
     }
   }
 
+  public Canvas2D getCanvas(){
+  	return canvas;
+  }
 }
