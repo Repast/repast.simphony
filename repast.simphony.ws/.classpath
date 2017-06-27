@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-all-9.4.4.v20170414-uber.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="bin_root" path="src_root"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.scenario"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.batch"/>
+	<classpathentry kind="lib" path="lib/gson-2.8.0.jar"/>
+	<classpathentry kind="lib" path="/repast.simphony.runtime/lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
