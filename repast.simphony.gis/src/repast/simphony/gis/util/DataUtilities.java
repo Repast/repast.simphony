@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.collection.CollectionDataStore;
+import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
@@ -47,7 +47,7 @@ public class DataUtilities {
 	 */
 	public static FeatureSource createFeatureSource(FeatureCollection collection) {
 
-		DataStore store = new CollectionDataStore(collection);
+		DataStore store = new MemoryDataStore(collection);
 
 		try {
 			return store.getFeatureSource(store.getTypeNames()[0]);

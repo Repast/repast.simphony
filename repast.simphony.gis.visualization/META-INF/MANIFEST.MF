@@ -18,8 +18,8 @@ Require-Bundle: libs.ext,
  org.junit;bundle-version="4.11.0"
 Bundle-ClassPath: .,
  lib/worldwind-2.1.0.jar,
- lib/gt-brewer-16.2.jar,
- lib/gt-render-16.2.jar
+ lib/gt-brewer-17.2.jar,
+ lib/gt-render-17.2.jar
 Export-Package: com.zebraimaging,
  gov.nasa.worldwind,
  gov.nasa.worldwind.animation,
@@ -120,7 +120,6 @@ Export-Package: com.zebraimaging,
  org.geotools.referencing.piecewise,
  org.geotools.renderer,
  org.geotools.renderer.composite,
- org.geotools.renderer.crs,
  org.geotools.renderer.i18n,
  org.geotools.renderer.label,
  org.geotools.renderer.lite,
