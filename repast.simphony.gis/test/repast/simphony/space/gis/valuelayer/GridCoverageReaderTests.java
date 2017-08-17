@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import javax.media.jai.PlanarImage;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
@@ -16,16 +18,11 @@ import org.geotools.gce.arcgrid.ArcGridFormatFactory;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.coverage.grid.GridCoverageReader;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 import junit.framework.TestCase;
 
-public class GeographyValueLayerTests extends TestCase {
+public class GridCoverageReaderTests extends TestCase {
 
 	@Override
 	public void setUp() {
@@ -58,6 +55,8 @@ public class GeographyValueLayerTests extends TestCase {
 		}
 
 		assertNotNull(coverage);
+		
+		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 	
 	/**
@@ -77,6 +76,8 @@ public class GeographyValueLayerTests extends TestCase {
 		}
 
 		assertNotNull(coverage);
+		
+		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 	
 	/**
@@ -96,6 +97,8 @@ public class GeographyValueLayerTests extends TestCase {
 		}
 		
 		assertNotNull(coverage);
+		
+		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 
 	/**
@@ -115,22 +118,9 @@ public class GeographyValueLayerTests extends TestCase {
 			e.printStackTrace();
 		}
 		
-		WritableRaster raster = coverage.getRenderedImage().copyData(null);
-		ReferencedEnvelope latLonEnvelope = null;
-		
-		try {
-			latLonEnvelope = new ReferencedEnvelope(
-					coverage.getEnvelope()).transform(DefaultGeographicCRS.WGS84, false);
-		} catch (MismatchedDimensionException | TransformException
-				| FactoryException e) {
-			e.printStackTrace();
-		}
-
-		
-		System.out.println(latLonEnvelope);
-		
 		assertNotNull(coverage);
-		assertNotNull(raster);
+	
+		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 	
 	/**
