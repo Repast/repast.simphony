@@ -19,6 +19,7 @@ import javax.websocket.server.ServerEndpointConfig;
 
 public class ServletAwareConfig extends ServerEndpointConfig.Configurator {
 
+  /*
   private void createURLs(String directory, List<URL> urls) {
 
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(directory))) {
@@ -29,9 +30,9 @@ public class ServletAwareConfig extends ServerEndpointConfig.Configurator {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
-
+  */
+  
   private String getPath(URL url) {
     String path = null;
     try {
@@ -54,9 +55,7 @@ public class ServletAwareConfig extends ServerEndpointConfig.Configurator {
       URL root = context.getResource("/WEB-INF");
       String path = getPath(root);
       config.getUserProperties().put("WEB_INF", path);
-      List<URL> urls = new ArrayList<>();
-      createURLs(path + "/lib.ws", urls);
-      config.getUserProperties().put("SIMPHONY_JARS", urls);
+      config.getUserProperties().put("SERVER", context.getAttribute("SERVER"));
     } catch (Exception ex) {
       // TODO handle
       ex.printStackTrace();

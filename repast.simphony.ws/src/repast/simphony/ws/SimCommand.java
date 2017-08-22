@@ -5,5 +5,6 @@ public enum SimCommand {
   START,
   STOP,
   PAUSE,
+  RESUME,
   EXIT
 }

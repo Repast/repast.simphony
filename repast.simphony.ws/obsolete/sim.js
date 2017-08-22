@@ -1,8 +1,7 @@
-
 var data = {
     labels: [],
     datasets: [{
-            label: "Variable A",
+            label: "Zombie Count",
             fill: true,
             borderColor: "rgba(127,63,191,1)",
             pointBackgroundColor: "rgba(127,63,191,1)",
@@ -10,7 +9,7 @@ var data = {
             data: [],
         },
         {
-            label: "Variable B",
+            label: "Human Count",
             fill: false,
             borderColor: "rgba(63,191,191,1)",
             pointBackgroundColor: "rgba(63,191,191,1)",
@@ -20,9 +19,7 @@ var data = {
     ]
 };
 
-
 var ui = {};
-
 
 var charts = (function() {
 
@@ -51,7 +48,6 @@ var charts = (function() {
     return obj;
 })();
 
-
 var repast_ws = (function() {
 
     var SimState = {
@@ -68,7 +64,6 @@ var repast_ws = (function() {
       if (simState == SimState.STOPPED) {
           obj.init();
           $("#start").html("Pause");
-          $("#stop").removeAttr("disabled");
           obj.start(socket);
           simState = SimState.STARTED;
       } else if (simState == SimState.STARTED) {
@@ -87,10 +82,7 @@ var repast_ws = (function() {
     obj.stopClicked = function(socket) {
       if (simState == SimState.STARTED || simState == SimState.PAUSED) {
         var msg = {command: 'stop'};
-        simState = SimState.STOPPED;
         socket.send(JSON.stringify(msg));
-        $("#start").html("Start");
-        $("#stop").attr("disabled", "disabled");
       }
     }
 
@@ -99,14 +91,11 @@ var repast_ws = (function() {
     }
 
     obj.start = function(socket) {
-        console.log('start');
-        //prefix = '/Users/nick/Documents/workspace/RepastSimphony2/'
-        prefix = '/usr/share/tomcat8/temp'
+        //console.log('start');
         var msg = {
             command: 'start',
-            scenario: prefix + '/jzombies/jzombies.rs',
-            repast_jars: '/usr/share/tomcat8/webapps/simphony/WEB-INF/lib'
-            //classpath: prefix + '/jzombies/bin',
+            scenario: '/Users/nick/Documents/workspace/RepastSimphony2/jzombies/jzombies.rs',
+            classpath: '/Users/nick/Documents/workspace/RepastSimphony2/jzombies/bin',
             //scenario: '/Users/nick/Documents/repos/gcmat2/rareEarths/rareEarths_large_outputs.rs',
             //classpath: '/Users/nick/Documents/repos/gcmat2/rareEarths/bin:/Users/nick/Documents/repos/gcmat2/rareEarths/lib/joptimizer-3.5.1.jar',
         };
@@ -126,11 +115,7 @@ var repast_ws = (function() {
 
 $(document).ready(function() {
 
-	 $("#stop").attr("disabled", "disabled");
-
-    var host = window.location.host;
-    console.log(host)
-    const socket = new WebSocket('ws://' + host + '/simphony/simsocket');
+    var socket = new WebSocket('ws://localhost:8080/events/');
 
     $("#start").on('click', function() {
       repast_ws.startClicked(socket);
@@ -140,55 +125,19 @@ $(document).ready(function() {
       repast_ws.stopClicked(socket);
     });
 
+    var ctx = document.getElementById("chart1").getContext("2d");
+    ui.chart1 = new Chart(ctx, {
+        type: 'line',
+        data: data
+    });
+
     socket.onmessage = function(evt) {
         console.log(event.data);
         var obj = JSON.parse(event.data);
-        if (obj.id == "data" && obj.type == "row") {
+        if (obj.id == "row") {
             charts.update(ui.chart1, obj.data);
         } else if (obj.id == "status") {
           repast_ws.updateStatus(obj.data);
         }
     }
-
-    var ctx = document.getElementById("chart1").getContext("2d");
-    ui.chart1 = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              usePointStyle: true
-            }
-          },
-          title: {
-            display: true,
-            text: 'Some Data'
-        },
-          scales: {
-            yAxes: [{
-              scaleLabel: {
-                display: true,
-                labelString: 'Data'
-              },
-              ticks: {
-                suggestedMax: 30,
-                suggestedMin: 0
-              }
-            }],
-
-            xAxes: [{
-              scaleLabel: {
-                display: true,
-                labelString: 'Time Step'
-              },
-              ticks: {
-                suggestedMax: 10,
-                suggestedMin: 0,
-                maxTicksLimit: 20
-              }
-            }]
-          }
-        }
-    });
 });
