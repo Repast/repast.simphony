@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Scenario>
+<Scenario simphonyVersion="$simphonyVersion">
 #foreach($entry in $entries)
 <$entry.getRegistryID() context="$entry.getContextID()" file="$entry.getFileName()" />
 #end
