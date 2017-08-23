@@ -16,7 +16,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import repast.simphony.engine.schedule.Frequency;
 import repast.simphony.engine.schedule.ScheduleParameters;
-import repast.simphony.ui.widget.PostiveDoubleDocument;
 import saf.core.ui.util.DoubleDocument;
 
 /**
@@ -77,7 +76,7 @@ public class ScheduleParamsPanel extends JPanel {
     add(builder.getPanel(), BorderLayout.CENTER);
 
     startFld.setDocument(new DoubleDocument());
-    intervalFld.setDocument(new PostiveDoubleDocument());
+    intervalFld.setDocument(new DoubleDocument());
     durationFld.setDocument(new DoubleDocument());
     priorityFld.setEditable(true);
     // ((JTextField)priorityFld.getEditor().getEditorComponent()).setDocument(new
@@ -166,6 +165,7 @@ public class ScheduleParamsPanel extends JPanel {
       if (duration < 0)
         duration = ScheduleParameters.NO_DURATION;
     }
+    
 
     Frequency frequency = (Frequency) frequencyBox.getSelectedItem();
     if (frequency.equals(Frequency.REPEAT)) {
@@ -176,8 +176,8 @@ public class ScheduleParamsPanel extends JPanel {
         return null;
       }
 
-      if (interval < 0) {
-        showError("Interval", "Interval must be greater than 0");
+      if (interval <= 0) {
+        showError("Interval", "Interval must be greater than 0.0");
         return null;
       }
 

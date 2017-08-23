@@ -54,7 +54,10 @@ public class DataSetScheduleStep extends ModelAwarePanelStep<DataSetWizardModel>
   @Override
   public void applyState() throws InvalidStateException {
     super.applyState();
-
+    ScheduleParameters params = scheduleParamsPanel1.createScheduleParameters();
+    if (params == null) {
+      throw new InvalidStateException();
+    }
     model.setSchedParams(scheduleParamsPanel1.createScheduleParameters(),
         scheduleParamsPanel1.getAtEnd());
   }
