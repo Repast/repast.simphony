@@ -11,12 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import repast.simphony.engine.schedule.Frequency;
-import repast.simphony.engine.schedule.ScheduleParameters;
-import saf.core.ui.util.DoubleDocument;
-
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
+
+import repast.simphony.engine.schedule.Frequency;
+import repast.simphony.engine.schedule.ScheduleParameters;
+import repast.simphony.ui.widget.PostiveDoubleDocument;
+import saf.core.ui.util.DoubleDocument;
 
 /**
  * @author Nick Collier
@@ -76,7 +77,7 @@ public class ScheduleParamsPanel extends JPanel {
     add(builder.getPanel(), BorderLayout.CENTER);
 
     startFld.setDocument(new DoubleDocument());
-    intervalFld.setDocument(new DoubleDocument());
+    intervalFld.setDocument(new PostiveDoubleDocument());
     durationFld.setDocument(new DoubleDocument());
     priorityFld.setEditable(true);
     // ((JTextField)priorityFld.getEditor().getEditorComponent()).setDocument(new
