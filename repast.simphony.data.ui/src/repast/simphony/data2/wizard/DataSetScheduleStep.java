@@ -58,7 +58,6 @@ public class DataSetScheduleStep extends ModelAwarePanelStep<DataSetWizardModel>
     if (params == null) {
       throw new InvalidStateException();
     }
-    model.setSchedParams(scheduleParamsPanel1.createScheduleParameters(),
-        scheduleParamsPanel1.getAtEnd());
+    model.setSchedParams(params, scheduleParamsPanel1.getAtEnd());
   }
 }
