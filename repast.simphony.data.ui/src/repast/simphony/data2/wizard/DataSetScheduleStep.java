@@ -46,7 +46,8 @@ public class DataSetScheduleStep extends ModelAwarePanelStep<DataSetWizardModel>
     super.prepare();
 
     if (model.getSchedParams() != null) {
-      scheduleParamsPanel1.setAtEnd(model.isScheduleAtEnd());
+      // Note "Only At End" is set through the ScheduleParameter from the model
+      scheduleParamsPanel1.setAlsoAtEnd(model.isScheduleAtEnd());
       scheduleParamsPanel1.setScheduleParameters(model.getSchedParams());
     }
   }
@@ -58,6 +59,6 @@ public class DataSetScheduleStep extends ModelAwarePanelStep<DataSetWizardModel>
     if (params == null) {
       throw new InvalidStateException();
     }
-    model.setSchedParams(params, scheduleParamsPanel1.getAtEnd());
+    model.setSchedParams(params, scheduleParamsPanel1.getAlsoAtEnd());
   }
 }
