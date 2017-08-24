@@ -20,9 +20,6 @@ public class GeographyProjectionController implements ControllerAction {
 		// Geography Projection
 		ProjectionRegistry.addRegistryData(new GeographyProjectionRegistryData());
 		
-		// GeoRasterLayer Projection
-		ProjectionRegistry.addRegistryData(new GeoRasterLayerProjectionRegistryData());
-		
 		// Initialize the JAI registry for JAI plugins used by GeoRasterLayer
 		// Only init JAI when using the Repast ClassLoader, since the normal Java
 		// ClassLoader with batch runs will pick them up automatically.

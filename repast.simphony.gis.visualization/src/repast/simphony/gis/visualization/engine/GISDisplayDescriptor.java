@@ -1,7 +1,9 @@
 package repast.simphony.gis.visualization.engine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import repast.simphony.visualization.engine.BasicDisplayDescriptor;
-import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 
 /**
@@ -33,13 +35,20 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	/**
 	 * The view type determines how the map is displayed, eg flat or round globe.
 	 */
-	private VIEW_TYPE viewType;
+	private VIEW_TYPE viewType = VIEW_TYPE.FLAT;
 	
 	/**
 	 * If true, the display will zoom extent to always keep all agents in view.
 	 */
 	private boolean trackAgents = false;
 
+	/**
+	 * Map of <layer name, file name> for static raster layers
+	 *
+	 * TODO unique layer names?
+	 */
+	protected Map<String,String> staticRasterMap = new HashMap<String,String>();
+	
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
 //      DefaultSurfaceShapeStyle.class };
@@ -81,10 +90,7 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	}
   
 	public VIEW_TYPE getViewType() {
-		if (viewType == null)  // for backwards compatibility with older display descriptors
-			return VIEW_TYPE.FLAT;
-		
-		else return viewType;
+		return viewType;
 	}
 
 	public void setViewType(VIEW_TYPE viewType) {
@@ -102,4 +108,13 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public Map<String, String> getStaticRasterMap() {
+		return staticRasterMap;
+	}
+
+	public void setStaticRasterMap(Map<String, String> staticRasterMap) {
+		this.staticRasterMap = staticRasterMap;
+	}
+	
 }

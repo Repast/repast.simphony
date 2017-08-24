@@ -22,6 +22,8 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  *
+ *  TODO add other methods like getEnvelope -ERT
+ *
  * @author Michael Bedward
  */
 public class WritableGridCoverage2D extends GridCoverage2D {
@@ -204,7 +206,10 @@ public class WritableGridCoverage2D extends GridCoverage2D {
         flushCache(false);
     }
 
-    private void flushCache(boolean force) {
+    public void flushCache(boolean force) {
+    	
+    	System.out.println("WritableGridCoverage2D.flushCache()");
+    	
         if (pendingValues.size() >= MAX_PENDING_VALUES || (force && pendingValues.size() > 0)) {
 
             WritableRenderedImage writableImage = null;

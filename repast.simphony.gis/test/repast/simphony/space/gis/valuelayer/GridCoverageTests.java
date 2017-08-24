@@ -59,6 +59,7 @@ public class GridCoverageTests extends TestCase {
 
 		// Check the CRS of the coverage
 		CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+			
 		assertEquals(crs, coverage.getCoordinateReferenceSystem());
 		
 		// Check the coverage envelope

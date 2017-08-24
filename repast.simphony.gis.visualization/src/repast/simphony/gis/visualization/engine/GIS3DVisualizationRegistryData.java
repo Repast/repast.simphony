@@ -70,7 +70,7 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 
 	@Override
 	public ProjectionDescriptorFactory getProjectionDescriptorFactory() {
-		return new GISProjectionDescritorFactory();
+		return new GISProjectionDescriptorFactory();
 	}
 
 	@Override

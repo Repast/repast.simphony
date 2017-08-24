@@ -1,11 +1,8 @@
 package repast.simphony.space.gis.valuelayer;
 
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-
-import javax.media.jai.PlanarImage;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -13,7 +10,6 @@ import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFactorySpi;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.data.DataSourceException;
-import org.geotools.factory.Hints;
 import org.geotools.gce.arcgrid.ArcGridFormatFactory;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
@@ -22,6 +18,16 @@ import org.opengis.coverage.grid.GridCoverageReader;
 
 import junit.framework.TestCase;
 
+/**
+ * Test if various coverage format (e.g. GeoTiff) readers are available on the
+ * classpath and can read test files correctly.  Does not test for data correctness,
+ * only if the reader returns a non-null coverage object from the file.
+ * 
+ * TODO additional file formats
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class GridCoverageReaderTests extends TestCase {
 
 	@Override
@@ -36,12 +42,13 @@ public class GridCoverageReaderTests extends TestCase {
 	 */
 	public void testGTGeoTiffReader(){
 //		File file = new File("test/data/bogota.tif");
-		File file = new File("test/data/sst_io.bin.20170305.tif");
+//		File file = new File("test/data/sst_io.bin.20170305.tif");
+		File file = new File("test/data/UTM2GTIF.TIF");
 		
 		
 		GeoTiffReader reader = null;
 		try {
-			reader = new GeoTiffReader(file, new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+			reader = new GeoTiffReader(file);
 		} catch (DataSourceException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -55,8 +62,6 @@ public class GridCoverageReaderTests extends TestCase {
 		}
 
 		assertNotNull(coverage);
-		
-		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 	
 	/**
@@ -76,8 +81,6 @@ public class GridCoverageReaderTests extends TestCase {
 		}
 
 		assertNotNull(coverage);
-		
-		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 	
 	/**
@@ -97,8 +100,6 @@ public class GridCoverageReaderTests extends TestCase {
 		}
 		
 		assertNotNull(coverage);
-		
-		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
 	}
 
 	/**
@@ -107,8 +108,10 @@ public class GridCoverageReaderTests extends TestCase {
 	 * 
 	 */
 	public void testGTFactoryFinderGeoTiff(){
-		File file = new File("test/data/craterlake-imagery-30m.tif");
+//		File file = new File("test/data/craterlake-imagery-30m.tif");
 
+		File file = new File("test/data/UTM2GTIF.TIF");
+		
 		AbstractGridFormat format = GridFormatFinder.findFormat(file);
 		GridCoverage2DReader reader = format.getReader(file);
 		GridCoverage2D coverage = null;
@@ -119,8 +122,19 @@ public class GridCoverageReaderTests extends TestCase {
 		}
 		
 		assertNotNull(coverage);
-	
-		System.out.println(file.getName() + " editable? " +coverage.isDataEditable());
+		
+		file = new File("test/data/craterlake-imagery-30m.tif");
+		
+		format = GridFormatFinder.findFormat(file);
+		reader = format.getReader(file);
+		coverage = null;
+		try {
+			coverage = reader.read(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		assertNotNull(coverage);
 	}
 	
 	/**

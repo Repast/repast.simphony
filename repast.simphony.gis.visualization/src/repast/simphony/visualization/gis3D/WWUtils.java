@@ -108,6 +108,11 @@ public class WWUtils {
 	 * 
 	 * @param envelope
 	 * @return
+	 
+	 *
+	 * TODO projecting the envelope may not be the correct way - it may only
+	 *      change the envelope but not the containing points. 
+	 *
 	 */
 	public static Sector envelopeToSector(ReferencedEnvelope envelope){
 

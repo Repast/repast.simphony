@@ -14,9 +14,9 @@ import simphony.util.messages.MessageCenter;
  * @author Eric Tatara
  *
  */
-public class GISProjectionDescritorFactory implements ProjectionDescriptorFactory {
+public class GISProjectionDescriptorFactory implements ProjectionDescriptorFactory {
 	 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(GISProjectionDescritorFactory.class);
+	private static final MessageCenter msg = MessageCenter.getMessageCenter(GISProjectionDescriptorFactory.class);
 	 
 	@Override
 	public ProjectionDescriptor createDescriptor(ProjectionData proj) {

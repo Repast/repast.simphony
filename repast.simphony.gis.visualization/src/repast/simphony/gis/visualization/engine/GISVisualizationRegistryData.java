@@ -63,7 +63,7 @@ public class GISVisualizationRegistryData implements VisualizationRegistryData {
 
 	@Override
 	public ProjectionDescriptorFactory getProjectionDescriptorFactory() {
-		return new GISProjectionDescritorFactory();
+		return new GISProjectionDescriptorFactory();
 	}
 
 	@Override

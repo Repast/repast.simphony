@@ -13,6 +13,7 @@ import javax.media.jai.OperationRegistry;
 
 import com.sun.media.jai.imageioimpl.ImageReadWriteSpi;
 
+import it.geosolutions.jaiext.JAIExt;
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -33,6 +34,14 @@ public class JAIInitializer {
 	 * initializing itself automatically.
 	 */
 	public void initJAI() {
+		// Initialize JAI-EXT. This will add JAI-EXT registry files (registryFile.jaiext) 
+		//    on classpath that are contained in jar manifests.  This must be called
+		//    before the code below because JAIExt.initJAIEXT() creates a new
+		//    instance of the JAI OperationRegistry which would lose any changes
+		//    made prior.
+		// See http://docs.geotools.org/stable/userguide/tutorial/raster/jaiext.html#
+		JAIExt.initJAIEXT();
+		
 		// Disable JAI MediaLib native libraries since we don't provide them 
 		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
 		
@@ -50,9 +59,10 @@ public class JAIInitializer {
 				msgCenter.warn("Cannot initialize JAI ImageReadWriteSpi: " + e.getMessage());
 			}
 
-			// Next look for JAI registry files on classpath
+			// Next look for JAI registry files (registryFile.jai) on classpath that 
+			//    are contained in jar manifests 
+			//
 			// Note: META-INF/javax.media.jai.registryFile.jai in jai_core.jar and 
-			//       META-INF/registryFile.jaiext in jt-*.jar should be loaded automatically
 			
 			Enumeration<URL> resources = null;;
 			try {
