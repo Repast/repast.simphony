@@ -3,10 +3,13 @@ package repast.simphony.ui.plugin.editor;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -30,7 +33,8 @@ public class ScheduleParamsPanel extends JPanel {
   protected JTextField durationFld = new JTextField();
   protected JComboBox frequencyBox = new JComboBox(new Frequency[] { Frequency.ONE_TIME,
       Frequency.REPEAT });
-  protected JCheckBox atEndBox = new JCheckBox();
+  protected JCheckBox alsoAtEndBox = new JCheckBox();
+  protected JCheckBox onlyAtEndBox = new JCheckBox();
 
   /**
    * This is the same as
@@ -52,7 +56,7 @@ public class ScheduleParamsPanel extends JPanel {
   public ScheduleParamsPanel(ScheduleParameters params, boolean showDuration, boolean showAtEnd) {
     setLayout(new BorderLayout());
 
-    FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow", "");
+    FormLayout layout = new FormLayout("right:pref, 3dlu, pref, 3dlu, right:pref, 3dlu, pref:grow", "");
     // "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
 
     DefaultFormBuilder builder = new DefaultFormBuilder(layout);
@@ -61,16 +65,22 @@ public class ScheduleParamsPanel extends JPanel {
     // Add a titled separator to cell (1, 1) that spans 7 columns.
     builder.appendSeparator("Schedule Parameters");
     builder.nextLine();
-    builder.append("Start Time:", startFld);
-    builder.append("Priority:", priorityFld);
+   
+   // builder.addLabel("Start Time:", CC.xy(1, 2), startFld, CC.xyw(3, 2, 2));
+    List<JLabel> lbls = new ArrayList<>();
+    lbls.add(builder.append("Start Time:", startFld, 5));
+    // don't add the priority label to the list of labels to
+    // disable when onlyAtEnd is selected
+    builder.append("Priority:", priorityFld, 5);
     if (showDuration) {
-      builder.append("Duration:", durationFld);
+      lbls.add(builder.append("Duration:", durationFld, 5));
     }
-    builder.append("Frequency:", frequencyBox);
-    builder.append("Interval:", intervalFld);
+    lbls.add(builder.append("Frequency:", frequencyBox, 5));
+    lbls.add(builder.append("Interval:", intervalFld, 5));
 
     if (showAtEnd) {
-      builder.append("At End:", atEndBox);
+      lbls.add(builder.append("Also At End:", alsoAtEndBox));
+      builder.append("Only At End:", onlyAtEndBox);
     }
 
     add(builder.getPanel(), BorderLayout.CENTER);
@@ -79,19 +89,28 @@ public class ScheduleParamsPanel extends JPanel {
     intervalFld.setDocument(new DoubleDocument());
     durationFld.setDocument(new DoubleDocument());
     priorityFld.setEditable(true);
-    // ((JTextField)priorityFld.getEditor().getEditorComponent()).setDocument(new
-    // DoubleDocument());
+    
+    onlyAtEndBox.addChangeListener(evt -> {
+      startFld.setEnabled(!onlyAtEndBox.isSelected());
+      frequencyBox.setEnabled(!onlyAtEndBox.isSelected());
+      intervalFld.setEnabled(!onlyAtEndBox.isSelected());
+      alsoAtEndBox.setEnabled(!onlyAtEndBox.isSelected());
+      for (JLabel lbl : lbls) {
+        lbl.setEnabled(!onlyAtEndBox.isSelected());
+      }
+    });
+    
     setScheduleParameters(params);
   }
   
-  public void setAtEnd(boolean atEnd) {
-    atEndBox.setSelected(atEnd);
+  public void setAlsoAtEnd(boolean atEnd) {
+    alsoAtEndBox.setSelected(atEnd);
   }
   
-  public boolean getAtEnd() {
-    return atEndBox.isSelected();
+  public boolean getAlsoAtEnd() {
+    return alsoAtEndBox.isSelected();
   }
-
+ 
   public void setScheduleParameters(ScheduleParameters params) {
 
     startFld.setText(String.valueOf(params.getStart()));
@@ -117,6 +136,8 @@ public class ScheduleParamsPanel extends JPanel {
         intervalFld.setEnabled(frequencyBox.getSelectedIndex() == 1);
       }
     });
+
+    onlyAtEndBox.setSelected(params.getStart() == ScheduleParameters.END);
   }
 
   public void showError(String fieldName, String message) {
@@ -125,19 +146,9 @@ public class ScheduleParamsPanel extends JPanel {
   }
 
   public ScheduleParameters createScheduleParameters() {
+    
     double start, interval, priority, duration;
-    try {
-      start = Double.valueOf(startFld.getText());
-    } catch (NumberFormatException ex) {
-      showError("Start Time", "Start time cannot be blank");
-      return null;
-    }
-
-    if (start < 0) {
-      showError("Start Time", "Start time must be greater than 0");
-      return null;
-    }
-
+    
     String priorityVal = priorityFld.getSelectedItem().toString();
     if (priorityVal == null || priorityVal.length() == 0) {
       priority = ScheduleParameters.RANDOM_PRIORITY;
@@ -156,6 +167,25 @@ public class ScheduleParamsPanel extends JPanel {
           return null;
         }
       }
+    }
+    
+    if (onlyAtEndBox.isSelected()) {
+      // set this to false as its incoherent to have 
+      // both "at ends".
+      alsoAtEndBox.setSelected(false);
+      return ScheduleParameters.createAtEnd(priority);
+    }
+    
+    try {
+      start = Double.valueOf(startFld.getText());
+    } catch (NumberFormatException ex) {
+      showError("Start Time", "Start time cannot be blank");
+      return null;
+    }
+
+    if (start < 0) {
+      showError("Start Time", "Start time must be greater than 0");
+      return null;
     }
 
     if (durationFld.getText() == null || durationFld.getText().length() == 0) {
