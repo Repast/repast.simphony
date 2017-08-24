@@ -38,24 +38,26 @@ public class WatchAnnotationReader {
   }
 
   private void findWatchAnnotation(Class<?> clazz) {
-    Method[] methods = clazz.getMethods();
-    for (Method method : methods) {
-      // we don't need to use ClassUtilities.deepAnnotationCheck here because
-      // class.getMethods() returns all the inherited public methods anyway.
-      Watch watch = method.getAnnotation(Watch.class);
-      if (watch != null) {
-        processWatch(watch, clazz, method);
-      } else {
-        WatchItems items = method.getAnnotation(WatchItems.class);
-        if (items != null) {
-          for (Watch aWatch : items.watches()) {
-            processWatch(aWatch, clazz, method);
+    if (!clazz.toString().contains("repast.simphony.")) {
+      Method[] methods = clazz.getMethods();
+      for (Method method : methods) {
+        // we don't need to use ClassUtilities.deepAnnotationCheck here because
+        // class.getMethods() returns all the inherited public methods anyway.
+        Watch watch = method.getAnnotation(Watch.class);
+        if (watch != null) {
+          processWatch(watch, clazz, method);
+        } else {
+          WatchItems items = method.getAnnotation(WatchItems.class);
+          if (items != null) {
+            for (Watch aWatch : items.watches()) {
+              processWatch(aWatch, clazz, method);
+            }
           }
         }
       }
     }
   }
-  
+
   /**
    * Gets the number of watches.
    * 

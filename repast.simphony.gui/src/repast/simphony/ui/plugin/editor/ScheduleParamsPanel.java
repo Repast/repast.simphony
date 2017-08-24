@@ -11,12 +11,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import repast.simphony.engine.schedule.Frequency;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import saf.core.ui.util.DoubleDocument;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * @author Nick Collier
@@ -165,6 +165,7 @@ public class ScheduleParamsPanel extends JPanel {
       if (duration < 0)
         duration = ScheduleParameters.NO_DURATION;
     }
+    
 
     Frequency frequency = (Frequency) frequencyBox.getSelectedItem();
     if (frequency.equals(Frequency.REPEAT)) {
@@ -175,8 +176,8 @@ public class ScheduleParamsPanel extends JPanel {
         return null;
       }
 
-      if (interval < 0) {
-        showError("Interval", "Interval must be greater than 0");
+      if (interval <= 0) {
+        showError("Interval", "Interval must be greater than 0.0");
         return null;
       }
 

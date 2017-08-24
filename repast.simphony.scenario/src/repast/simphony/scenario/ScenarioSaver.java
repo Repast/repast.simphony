@@ -11,18 +11,19 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ParseErrorException;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import com.thoughtworks.xstream.io.xml.XppDriver;
+
+import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.engine.environment.ControllerRegistry;
+import repast.simphony.engine.schedule.Descriptor;
 import repast.simphony.plugin.ActionExtensions;
 import repast.simphony.plugin.ControllerActionIOExtensions;
 import repast.simphony.scenario.data.ContextData;
-import repast.simphony.scenario.data.ContextFileWriter;
 import repast.simphony.util.collections.Tree;
 import simphony.util.messages.MessageCenter;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * Saves a scenario, that is, this serializes the scenario action tree.
@@ -131,15 +132,19 @@ public class ScenarioSaver {
     template = template.replace('.', '/');
     template = template + "/Scenario.vt";
     context.put("entries", entries);
+    context.put("simphonyVersion", RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION);
     if (modelInitName != null && modelInitName.length() > 0) context.put("modelInit", modelInitName);
     if (modelPluginPath != null) context.put("modelPlugin", modelPluginPath);
 
-    XStream xstream = new XStream(new XppDriver(new XStream11XmlFriendlyReplacer())) {
+    XStream xstream = new XStream(new XppDriver(new XmlFriendlyNameCoder())) {
       protected boolean useXStream11XmlFriendlyMapper() {
         return true;
       }
     };
+    
     xstream.registerConverter(new FastMethodConvertor(xstream));
+    xstream.registerConverter(
+        new DescriptorConverter(xstream.getMapper(), xstream.getReflectionProvider(), RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION));
 
     /*
     NC: these are obsolete?

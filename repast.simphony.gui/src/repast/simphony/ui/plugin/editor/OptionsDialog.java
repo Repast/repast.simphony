@@ -156,6 +156,7 @@ public class OptionsDialog extends JPanel implements ChangeListener {
       content.ok();
     } catch (InvalidStateException e) {
       msgCenter.error("Error ok'ing content in Options Dialog", e);
+      return;
     }
     dialog.dispose();
   }
