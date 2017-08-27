@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.media.jai.PlanarImage;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -25,6 +28,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.coverage.grid.io.GridFormatFinder;
+import org.geotools.coverage.processing.Operations;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import com.jogamp.common.os.Platform;
 
@@ -58,7 +70,6 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.AddedRemovedLayoutUpdater;
-import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.DisplayEditorLifecycle;
 import repast.simphony.visualization.IDisplay;
 import repast.simphony.visualization.IntervalLayoutUpdater;
@@ -89,7 +100,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected JPanel panel;
 	protected Layout layout;
 	protected LayoutUpdater layoutUpdater;
-	protected DisplayData<?> initData;
+	protected GISDisplayData<?> initData;
 
 	protected Geography geog;
 	protected Model model;
@@ -151,15 +162,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	/**
-	 * Gets the data used to initialize this display.
-	 * 
-	 * @return the data used to initialize this display.
-	 */
-	public DisplayData getInitData() {
-		return initData;
-	}
-
-	/**
 	 * Create the select listener.
 	 */
 	private void initListener() {
@@ -185,6 +187,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 			probeSupport.fireProbeEvent(this, objList);
 	}
 
+	// TODO WWJ - register network and raster styles
 	public void registerStyle(Class clazz, StyleGIS style) {
 		AbstractRenderableLayer layer = classStyleMap.get(clazz);
 
@@ -204,9 +207,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		else {
 			layer.setStyle(style);
 		}
-	}
-
-	// TODO WWJ - register network and raster styles  
+	}  
 
 	public void createPanel() {
 		panel = new JPanel();
@@ -307,10 +308,19 @@ public class DisplayGIS3D extends AbstractDisplay {
 			model.getLayers().add(layer);
 		}
 
+		// TODO Loop through static raster layers
+		
 		// TODO WWJ also loop through network and raster styles TBD
 
 		// TODO set background image color via display wizard
 		setBackground();
+		
+		// TODO Testing
+		
+//		addRasterLayer(new File("data/craterlake-imagery-30m.tif"));
+		addRasterLayer(new File("data/UTM2GTIF.TIF"));
+//		addRasterLayer(new File("data/SP27GTIF.TIF"));
+//		addRasterLayer(new File("data/sample.tiff"));
 		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
@@ -339,6 +349,57 @@ public class DisplayGIS3D extends AbstractDisplay {
     // Add background layer to first layer position (reshuffles automatically)
     model.getLayers().add(0, layer);
 	}
+	
+	// TODO Testing raster layer
+	protected void addRasterLayer(File file){
+		
+		AbstractGridFormat format = GridFormatFinder.findFormat(file);
+		GridCoverage2DReader reader = format.getReader(file);
+		GridCoverage2D coverage = null;
+		
+		try {
+			coverage = reader.read(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		ReferencedEnvelope envelope = null;
+		
+		// TODO make sure not to resample to WGS84 if already set to WGS84
+		// TODO need to automatically project coverages to WGS84
+		if (!CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+			coverage = (GridCoverage2D)Operations.DEFAULT.resample(coverage,DefaultGeographicCRS.WGS84);
+		}
+		
+		envelope = new ReferencedEnvelope(coverage.getEnvelope());
+				
+		// TODO axis order !!
+//		Sector sector = WWUtils.envelopeToSectorReversedOrder(envelope);
+		Sector sector = WWUtils.envelopeToSector(envelope);
+		
+		
+		// GridCoverage2D.getRenderedImage() returns a PlanarImage
+		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
+		
+		SurfaceImage si = new RepastSurfaceImage(pi.getAsBufferedImage(), sector);
+
+		// SurfaceImageLayer is only useful when adding image paths for large images
+		//  since it does automatic tiling.  SurfaceImageLayer.addRenderable() simply
+		//  passes the object to the RenderableLayer
+//		SurfaceImageLayer layer = new SurfaceImageLayer();
+		
+		RenderableLayer layer = new RenderableLayer();
+		
+		layer.setName(file.getName());
+		layer.setPickEnabled(false);
+		layer.addRenderable(si);
+		
+		// TODO GIS add layer attributes to descriptor
+		layer.setOpacity(0.5);
+		
+		 WWUtils.insertBeforeCompass(worldWindow, layer);
+	}
+	
 
 	/**
 	 * !!! Destroy needs to properly dispose and shutdown of WorldWind objects 
@@ -427,6 +488,12 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	public void update() {
+				
+		// TODO GIS it might be useful to provide the GPU cache size in the UI
+//		long cacheBytes = worldWindow.getGpuResourceCache().getUsedCapacity();
+//		
+//		System.out.println("GPU Cache (MB): " + cacheBytes / 1E6);
+		
 		if (isVisible()){
 			doUpdate();
 			doRender = true;

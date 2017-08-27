@@ -63,7 +63,7 @@ public class RasterLayerTests extends TestCase {
 		// Generate an image with data such that the 
 		int height = 200;
 		int width = 100;
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
 
 		// Alt method for creating single band raster / image
 //		WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, 1, null);
@@ -73,16 +73,18 @@ public class RasterLayerTests extends TestCase {
 			for (int x=0; x<width; x++) {
 			// Create a black and white checker board pattern image
 				raster.setSample(x, y, 0, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
-				raster.setSample(x, y, 1, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
-				raster.setSample(x, y, 2, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
+//				raster.setSample(x, y, 1, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
+//				raster.setSample(x, y, 2, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
 				// Just set to zero
 //				raster.setSample(x, y, 0, 0);
 			}
 		}
 		image.setData(raster); // Assign the raster back to the image
 		
+		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+		
 		//  DefaultGeographicCRS.WGS84 axis order is lon,lat (x,y) 
-		ReferencedEnvelope envelope = new ReferencedEnvelope(lon1, lon2, lat1, lat2, DefaultGeographicCRS.WGS84);
+		ReferencedEnvelope envelope = new ReferencedEnvelope(lat1, lat2, lon1, lon2,  crs);
 		
 		// Alt method using raster directly
 //	  GridCoverage gc = factory.create("test", raster, envelope);
