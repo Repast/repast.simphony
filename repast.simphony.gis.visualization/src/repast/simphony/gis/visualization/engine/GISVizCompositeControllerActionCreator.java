@@ -3,6 +3,12 @@ package repast.simphony.gis.visualization.engine;
 import repast.simphony.engine.environment.ControllerAction;
 import repast.simphony.plugin.CompositeControllerActionCreator;
 
+/**
+ * Provides the GIS visualization registry data creator.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class GISVizCompositeControllerActionCreator implements
 		CompositeControllerActionCreator {
 

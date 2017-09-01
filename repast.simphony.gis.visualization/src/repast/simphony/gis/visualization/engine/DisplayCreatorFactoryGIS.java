@@ -4,6 +4,13 @@ import repast.simphony.context.Context;
 import repast.simphony.visualization.engine.DisplayCreator;
 import repast.simphony.visualization.engine.DisplayCreatorFactory;
 
+/**
+ * 
+ * @author Eric Tatara
+ *
+ * @deprecated Use 3D GIS display instead
+ */
+@Deprecated
 public class DisplayCreatorFactoryGIS implements DisplayCreatorFactory<GISDisplayDescriptor> {
 
 	@Override

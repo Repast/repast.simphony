@@ -1,10 +1,6 @@
 package repast.simphony.gis.visualization.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
@@ -12,7 +8,7 @@ import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 
 /**
- * Creates GIS styles from a style classname.  The GIS registrar implementation
+ * Creates GIS3D styles from a style classname.  The GIS registrar implementation
  *   is separate from the r.s.visualization.engine.StyleRegistrar because GIS
  *   displays can handle more complex ordering of the various layer types
  * 

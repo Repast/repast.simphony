@@ -11,7 +11,7 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
  * 
  * @author Eric Tatara
  *
- * TODO Projections: implement GIS-specific info like raster layers.
+ * TODO GIS Network style (included with BasicDisplayDescriptor ?)
  */
 public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 
@@ -43,11 +43,10 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	private boolean trackAgents = false;
 
 	/**
-	 * Map of <layer name, file name> for static raster layers
+	 * Map of <file name, style> for static coverages.  Style can be null.
 	 *
-	 * TODO unique layer names?
 	 */
-	protected Map<String,String> staticRasterMap = new HashMap<String,String>();
+	protected Map<String,String> staticCoverages = new HashMap<String,String>();
 	
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
@@ -69,7 +68,7 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   	super.set(descriptor);
   	
   	getLayerOrders().clear();
-  	
+  	 	
   	if (descriptor.agentClassLayerOrders() != null) {
   		for (String name : descriptor.agentClassLayerOrders()) {
   			addLayerOrder(name, descriptor.getLayerOrder(name));
@@ -81,6 +80,13 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
     if (descriptor instanceof GISDisplayDescriptor){
     	setViewType(((GISDisplayDescriptor)descriptor).getViewType());
     	setTrackAgents(((GISDisplayDescriptor)descriptor).getTrackAgents());
+    	
+    	Map<String,String> coverageMap = ((GISDisplayDescriptor)descriptor).getStaticCoverageMap();
+    	
+    	staticCoverages.clear();
+    	for (String fileName : coverageMap.keySet()) {
+    		addStaticCoverage(fileName, coverageMap.get(fileName));
+    	}
     }
   }
 
@@ -95,6 +101,7 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 
 	public void setViewType(VIEW_TYPE viewType) {
 		this.viewType = viewType;
+		scs.fireScenarioChanged(this, "viewType");
 	}
 
 	public boolean getTrackAgents() {
@@ -103,18 +110,30 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 
 	public void setTrackAgents(boolean trackAgents) {
 		this.trackAgents = trackAgents;
+		scs.fireScenarioChanged(this, "trackAgents");
 	}
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
-	public Map<String, String> getStaticRasterMap() {
-		return staticRasterMap;
+	/**
+	 * 
+	 * @return a Map of static coverages <filename, style>
+	 */
+	public Map<String, String> getStaticCoverageMap() {
+		if (staticCoverages == null)
+			staticCoverages = new HashMap<String,String>();
+		
+		return staticCoverages;
 	}
 
-	public void setStaticRasterMap(Map<String, String> staticRasterMap) {
-		this.staticRasterMap = staticRasterMap;
+	public void addStaticCoverage(String fileName, String style) {
+		if (staticCoverages == null)
+			staticCoverages = new HashMap<String,String>();
+		
+		staticCoverages.put(fileName, style);
+		scs.fireScenarioChanged(this, "staticCoverage");
 	}
 	
 }

@@ -338,7 +338,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 				return obj;
 		}
 
-		// TODO WWJ also loop through network and raster styles TBD
+		// TODO WWJ also loop through network and raster 
 		
 		// WWJ Renderable for coverage will be the SurfaceImage
 
@@ -405,10 +405,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 			model.getLayers().add(layer);
   	}
    
-  	
-		// TODO GIS static raster layers should just load here once at init
-		for (String fileName : initData.getStaticRasterLayers()) {
+  	// TODO GIS should the axis order be part of the style?
+  	boolean forceLonLatOrder = true;
+		for (String fileName : initData.getStaticCoverageMap().keySet()) {
+			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
 			
+			// TODO GIS all rasters before a specific layer name ? compass??
+			 WWUtils.insertBeforeCompass(worldWindow, layer);
 		}
 		
 		// TODO WWJ also loop through network and raster styles TBD
@@ -421,10 +424,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		
 		// TODO Testing
 		
-		addStaticRasterLayer(new File("data/craterlake-imagery-30m.tif"), true);
-		addStaticRasterLayer(new File("data/UTM2GTIF.TIF"), true);
+//		addStaticRasterLayer(new File("data/craterlake-imagery-30m.tif"), true);
+//		addStaticRasterLayer(new File("data/UTM2GTIF.TIF"), true);
 //		addStaticRasterLayer(new File("data/SP27GTIF.TIF"), true);
-		addStaticRasterLayer(new File("data/sample_gray.tif"),true);
+//		addStaticRasterLayer(new File("data/sample_gray.tif"),true);
 		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
@@ -460,10 +463,15 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 *   is created and added to the WWJ Globe so that it persists as long as the
 	 *   display exists, but is not updated with display updates.
 	 *   
-	 * @param file the GIS raster file to display
+	 * @param filename the GIS raster filename to display
 	 * @param forceLongitudeFirstAxis true if lon should be forced first axis in coverage loader
 	 */
-	protected void addStaticRasterLayer(File file, boolean forceLongitudeFirstAxis){
+	protected RenderableLayer createStaticRasterLayer(String filename, boolean forceLongitudeFirstAxis){
+		
+		File file = new File(filename);
+		
+		if (!file.exists()) return null;
+		// TODO GIS msgCenter file not found
 		
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, forceLongitudeFirstAxis);
 		
@@ -479,13 +487,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 			// TODO GIS messagecenter file format not supported
 		}
 		
-		ReferencedEnvelope envelope = null;
+		if (coverage == null) return null;
 		
-		// TODO make sure not to resample to WGS84 if already set to WGS84
-		// TODO need to automatically project coverages to WGS84
-//		if (!CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
-//			coverage = (GridCoverage2D)Operations.DEFAULT.resample(coverage,DefaultGeographicCRS.WGS84);
-//		}
+		ReferencedEnvelope envelope = null;
 		
 		envelope = new ReferencedEnvelope(coverage.getEnvelope());
 		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
@@ -495,24 +499,19 @@ public class DisplayGIS3D extends AbstractDisplay {
 		
 		SurfaceImage si = new RepastSurfaceImage(pi.getAsBufferedImage(), sector);
 
-		// SurfaceImageLayer is only useful when adding image paths for large images
-		//  since it does automatic tiling.  SurfaceImageLayer.addRenderable() simply
-		//  passes the object to the RenderableLayer
-//		SurfaceImageLayer layer = new SurfaceImageLayer();
-		
-		// TODO GIS use AbstractRenderableLayer ?
+		// Use a standard Renderable layer for static images
 		RenderableLayer layer = new RenderableLayer();
-		
 		
 		layer.setName(file.getName());
 		layer.setPickEnabled(false);
 		layer.addRenderable(si);
 		
-		// TODO GIS add layer attributes to descriptor
+		// TODO static layer styling - use the GeoTools RasterSymbolizer to create
+		//      the BufferedImage.
+		
 //		layer.setOpacity(0.5);
 		
-		// TODO GIS all rasters before a specific layer name ? compass??
-		 WWUtils.insertBeforeCompass(worldWindow, layer);
+		return layer;
 	}
 	
 
