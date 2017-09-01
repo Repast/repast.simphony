@@ -126,6 +126,7 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
    * Updates the displayed nodes by applying styles etc. The display is not
    * updated to reflect these changes.
    */
+  @Override
   public void update(LayoutUpdater updater) {
     // remove what needs to be removed
     processRemovedObjects();

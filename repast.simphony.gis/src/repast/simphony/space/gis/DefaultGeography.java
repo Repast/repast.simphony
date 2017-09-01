@@ -17,6 +17,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.apache.commons.collections15.Predicate;
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.GeodeticCalculator;
@@ -31,14 +32,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 
-import repast.simphony.query.space.projection.Within;
-import repast.simphony.space.projection.DefaultProjection;
-import repast.simphony.space.projection.ProjectionEvent;
-import repast.simphony.space.projection.ProjectionEvent.Type;
-import repast.simphony.space.projection.ProjectionPredicate;
-import repast.simphony.util.collections.FilteredIterator;
-import simphony.util.messages.MessageCenter;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,6 +39,14 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.index.ItemVisitor;
 import com.vividsolutions.jts.index.SpatialIndex;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
+
+import repast.simphony.query.space.projection.Within;
+import repast.simphony.space.projection.DefaultProjection;
+import repast.simphony.space.projection.ProjectionEvent;
+import repast.simphony.space.projection.ProjectionEvent.Type;
+import repast.simphony.space.projection.ProjectionPredicate;
+import repast.simphony.util.collections.FilteredIterator;
+import simphony.util.messages.MessageCenter;
 
 /**
  * Default implementation of Geography, a geographic GIS type space.
@@ -74,6 +75,8 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
 
   private Map<String, Layer<T>> layerMap = new HashMap<String, Layer<T>>();
 
+  protected Map<String, GridCoverage2D> coverageMap = new HashMap<String, GridCoverage2D>();
+  
   protected GISAdder<T> adder;
 
   private Set<T> addedObjects = new HashSet<T>();
@@ -349,6 +352,8 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    */
   public void setCRS(CoordinateReferenceSystem crs) {
 
+  	// TODO GIS Transform coverage layers
+  	
     calc = new GeodeticCalculator(crs);
 
     if (this.crs == null) {
@@ -631,4 +636,22 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
   	}
   	return false;
   }
+
+	@Override
+	public GridCoverage2D getCoverage(String name) {
+		return coverageMap.get(name);
+	}
+
+	@Override
+	public void addCoverage(String name, GridCoverage2D coverage) {
+		
+		// TODO GIS need to covert convert coverage CRS if different?
+		
+		coverageMap.put(name, coverage);
+	}
+
+	@Override
+	public void removeCoverage(String name) {
+		coverageMap.remove(name);
+	}
 }

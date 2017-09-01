@@ -24,7 +24,6 @@ public class RepastSurfaceImage extends SurfaceImage {
 		super (imageSource, corners);
 	}
 	
-	
 	@Override
 	protected void initializeSourceTexture(DrawContext dc){
 		

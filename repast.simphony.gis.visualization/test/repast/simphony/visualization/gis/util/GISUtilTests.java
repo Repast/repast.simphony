@@ -32,7 +32,7 @@ public class GISUtilTests extends TestCase {
 		ReferencedEnvelope envelope = new ReferencedEnvelope(
 				minLon, maxLon, minLat, maxLat, DefaultGeographicCRS.WGS84);
 
-		Sector sector = WWUtils.envelopeToSector(envelope);
+		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
 		
 		assertEquals(minLat, sector.getMinLatitude().getDegrees());
 		assertEquals(maxLat, sector.getMaxLatitude().getDegrees());
@@ -64,7 +64,7 @@ public class GISUtilTests extends TestCase {
 		ReferencedEnvelope envelope = new ReferencedEnvelope(
 				minLat, maxLat, minLon, maxLon, crs);
 
-		Sector sector = WWUtils.envelopeToSector(envelope);
+		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
 
 		assertEquals(minLat, sector.getMinLatitude().getDegrees(), tol);
 		assertEquals(maxLat, sector.getMaxLatitude().getDegrees(), tol);
@@ -97,7 +97,7 @@ public class GISUtilTests extends TestCase {
 		ReferencedEnvelope envelope = new ReferencedEnvelope(
 				minUTMeast, maxUTMeast, minUTMnorth, maxUTMnorth, crs);
 
-		Sector sector = WWUtils.envelopeToSector(envelope);
+		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
 
 		assertEquals(minLat, sector.getMinLatitude().getDegrees(), tol);
 		assertEquals(maxLat, sector.getMaxLatitude().getDegrees(), tol);

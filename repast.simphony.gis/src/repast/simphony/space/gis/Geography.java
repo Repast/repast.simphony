@@ -7,12 +7,13 @@ import java.util.Collection;
 
 import javax.measure.unit.Unit;
 
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import repast.simphony.space.projection.Projection;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+
+import repast.simphony.space.projection.Projection;
 
 /**
  * Space that locates objects in a geographic gis-type space.
@@ -57,6 +58,24 @@ public interface Geography<T> extends Projection<T>{
    * @return the named Layer.
    */
   Layer getLayer(String name);
+  
+  /**
+   * Gets the named coverage layer
+   * 
+   * @param name the layer name
+   * @return the named coverage
+   */
+  GridCoverage2D getCoverage(String name);
+  
+  void removeCoverage(String name);
+  
+  /**
+   * Adds the named GridCoverage2D
+   * 
+   * @param name
+   * @param coverage
+   */
+  void addCoverage(String name, GridCoverage2D coverage);
 
   /**
    * Gets the geometric location of the specified object.

@@ -3,16 +3,12 @@ package repast.simphony.space.gis.valuelayer;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.PlanarImage;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -21,22 +17,27 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import junit.framework.TestCase;
 import repast.simphony.space.gis.RasterLayer;
 
 /**
- * Tests for RasterLayer API
+ * Tests for the Repast RasterLayer API
  * 
  * @author Eric Tatara
  *
  */
 public class RasterLayerTests extends TestCase {
 
-	public static final String SAMPLE_GEOTIFF = "test/data/sample.tiff";
-
-	GridCoverage2D coverage;
+	public static final String TEST_CRS_CODE = "EPSG:4326";  // WGS84
 	
-	// Test lat/lon pair describe a rectable over downtown Chicago.  (x1,y) is the
+	// Grayscale sample GeoTiff
+	public static final String SAMPLE_GEOTIFF_GRAY = "test/data/sample_gray.tif";
+
+	GridCoverage2D coverage1;  // grayscale (single band) coverage
+	
+	// Test lat/lon pair describe a rectangle over downtown Chicago.  (x1,y) is the
 	//   lower left corner and (x2,y2) is the upper left corner.
 	double lon1 = -87.668;  // x1
 	double lon2 = -87.582;  // x2
@@ -44,6 +45,10 @@ public class RasterLayerTests extends TestCase {
 	double lat1 = 41.834;  // y1
 	double lat2 = 41.916;  // y2
 	
+	// Some test lon,lat coord test points that should be within the above rectangle
+	Coordinate coord1 = new Coordinate(-87.6560, 41.9066);
+	Coordinate coord2 = new Coordinate(-87.5899, 41.8768);
+	Coordinate coord3 = new Coordinate(-87.6428, 41.8413);
 	
 	@Override
 	public void setUp() {
@@ -54,15 +59,19 @@ public class RasterLayerTests extends TestCase {
 		}		
 	}
 
+	/**
+	 * Create a sample grayscale GeoTiff file we can use for testing
+	 * @throws Exception
+	 */
 	private void generateSampleGeoTiff() throws Exception {
 
-		File file = new File(SAMPLE_GEOTIFF);
+		File file = new File(SAMPLE_GEOTIFF_GRAY);
 
 		GridCoverageFactory factory = new GridCoverageFactory( new Hints(Hints.TILE_ENCODING, "raw"));
 
 		// Generate an image with data such that the 
-		int height = 200;
-		int width = 100;
+		int height = 400;
+		int width = 200;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
 
 		// Alt method for creating single band raster / image
@@ -72,7 +81,7 @@ public class RasterLayerTests extends TestCase {
 		for (int y=0; y<height; y++) {
 			for (int x=0; x<width; x++) {
 			// Create a black and white checker board pattern image
-				raster.setSample(x, y, 0, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
+				raster.setSample(x, y, 0, (int)( 1+(Math.sin(x/10)*Math.cos(y/10))*256));
 //				raster.setSample(x, y, 1, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
 //				raster.setSample(x, y, 2, (int)( 1+(Math.sin(x)*Math.cos(y))*256));
 				// Just set to zero
@@ -81,88 +90,62 @@ public class RasterLayerTests extends TestCase {
 		}
 		image.setData(raster); // Assign the raster back to the image
 		
-		CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+		// Use the EPSG version of WGS84 since DefaultGeographicCRS.WGS84 is missing
+		// some meta-data used by GeoTiff
+		CoordinateReferenceSystem crs = CRS.decode(TEST_CRS_CODE);
 		
-		//  DefaultGeographicCRS.WGS84 axis order is lon,lat (x,y) 
-		ReferencedEnvelope envelope = new ReferencedEnvelope(lat1, lat2, lon1, lon2,  crs);
+		ReferencedEnvelope envelope = new ReferencedEnvelope(lat1, lat2, lon1, lon2, crs);
 		
 		// Alt method using raster directly
 //	  GridCoverage gc = factory.create("test", raster, envelope);
-		
-		
-		
-//		File file2 = new File("test/data/UTM2GTIF.TIF");
-//		
-//		AbstractGridFormat format = GridFormatFinder.findFormat(file2);
-//		GridCoverage2DReader reader = format.getReader(file2);
-//		GridCoverage2D coverage2 = null;
-//		try {
-//			coverage2 = reader.read(null);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		// TODO check the sample dimensions if causing issue in display
-		
-		coverage = factory.create("Test Coverage 123", image, envelope);
+				
+		// Coverage is stored for later tests
+		coverage1 = factory.create(file.getName(), image, envelope);
 		
 		GeoTiffWriter writer = new GeoTiffWriter(file);
-		writer.write(coverage, null);
+		writer.write(coverage1, null);
 		writer.dispose();
 		
-		// Check the raster image
-		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
+		// Output the image as PNG for visual inspection
+		PlanarImage pi = (PlanarImage)coverage1.getRenderedImage();
 		ImageIO.write(pi.getAsBufferedImage(), "png", new File("test/data/sample.png"));
-		
 	}
 	
 	/**
-	 * Create a GeoRasterLayer from a GeoTiff file and test various API calls.
+	 * Create a RasterLayer from a GeoTiff file and test various API calls.
 	 */
-	public void testCreateFromFile(){
-//		File file = new File("test/data/craterlake-imagery-30m.tif");
-//		File file = new File("test/data/UTM2GTIF.TIF");
-		File file = new File(SAMPLE_GEOTIFF);
+	public void testCreateFromFile() throws Exception{
+		File file = new File(SAMPLE_GEOTIFF_GRAY);
 			
-		RasterLayer layer = new RasterLayer("GRL Test 1", file);
-	
+		RasterLayer layer = new RasterLayer(file.getName(), file, true);
+		
+		assertEquals(file.getName(), layer.getName());
+		assertEquals(1, layer.getNumBands());
+		
+		assertTrue(layer.getGridCoverage().isDataEditable());
+		
+		// Test layer CRS
+		assertTrue(CRS.equalsIgnoreMetadata(CRS.decode(TEST_CRS_CODE), layer.getCRS()));
+		
+		// Set the layer to DefaultGeographicCRS.WGS84 
+		layer.setCRS(DefaultGeographicCRS.WGS84);
+		
 		// Test layer CRS
 		assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, layer.getCRS()));
 		
-		assertTrue(layer.isWritable());	
-		
-		// Try to set the layer to WGS84 which it should already be set to.  The 
-		//   layer.setCRS() should catch this otherwise it can cause an exception.
-		layer.setCRS(DefaultGeographicCRS.WGS84);
-		
-		// Test layer CRS
-			assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, layer.getCRS()));
-		
-		CoordinateReferenceSystem crsNAD83 = null;
-		try {
-			crsNAD83 = CRS.decode("EPSG:4269", false);
-		} catch (FactoryException e) {
-			e.printStackTrace();
-		}
-		
-		// Test layer CRS re-project
+		// Test layer CRS re-project to NAD83
+		CoordinateReferenceSystem crsNAD83 = CRS.decode("EPSG:4269", false);;
 		layer.setCRS(crsNAD83);	
 		
 		assertTrue(CRS.equalsIgnoreMetadata(crsNAD83, layer.getCRS()));
-//		assertEquals(DefaultGeographicCRS.WGS84, layer.getCRS());
-//		assertTrue(layer.isWritable());
 		
-		
-		layer.setCRS(DefaultGeographicCRS.WGS84);
-		
-		
-		assertEquals("GRL Test 1", layer.getName());
+//		layer.setCRS(DefaultGeographicCRS.WGS84);
 		
 		
 		// TODO other operations besides re-project to make sure wrapping with
 		//      WritableGridCoverage2D is robust to various processing steps
 		
-		// TODO read data
+		// TODO read data from known point inside envelope
 		
 		// Crater lake center lon = -122.1, lat = 42.94 degrees
 		double lat = 42.94;
@@ -178,23 +161,17 @@ public class RasterLayerTests extends TestCase {
 	}
 	
 	/**
-	 * Create a GeoRasterLayer from a GridCoverage2D and test various API calls.
+	 * Create a RasterLayer from a GridCoverage2D and test various API calls.
 	 */
-	public void testCreateFromCoverage(){
-				
-		assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, coverage.getCoordinateReferenceSystem()));
+	public void testCreateFromCoverage() throws Exception{
 		
-		RasterLayer layer = new RasterLayer(coverage);
+		File file = new File(SAMPLE_GEOTIFF_GRAY);  // only need for the name
 		
-		assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, layer.getCRS()));
+		RasterLayer layer = new RasterLayer(coverage1);
 		
-		assertNotNull(layer.getCRS());
-		
-		// TODO check what layer/coverage name should be
-		assertEquals("Test Coverage 123", layer.getName());
-		
-		// Should not be writable
-//		assertFalse(layer.isWritable());
+		assertEquals(file.getName(), layer.getName());
+		assertTrue(CRS.equalsIgnoreMetadata(CRS.decode(TEST_CRS_CODE), layer.getCRS()));
+		assertEquals(1, layer.getNumBands());
 		
 		// Now create writable layer
 //		layer = new RasterLayer("A Layer", coverage, true);
@@ -231,6 +208,33 @@ public class RasterLayerTests extends TestCase {
 		
 		// TODO test read/write after re-project
 		
+		// TODO serialize
+	}
+	
+	// Create a RasterLayer programmatically
+	public void testCreateFromCode() throws Exception {
+		CoordinateReferenceSystem crs = CRS.decode(TEST_CRS_CODE);
+		
+		//  DefaultGeographicCRS.WGS84 axis order is lon,lat (x,y) 
+		ReferencedEnvelope envelope = new ReferencedEnvelope(lon1, lon2, lat1, lat2,   crs);
+		RasterLayer layer = new RasterLayer("A Layer", 200, 100, envelope);
+		
+		assertEquals("A Layer", layer.getName());
+		assertEquals(1, layer.getNumBands());
+		
+		assertTrue(CRS.equalsIgnoreMetadata(CRS.decode(TEST_CRS_CODE), layer.getCRS()));
+		
+		// TODO read data
+		// TODO write data
+		
+		// Note data type of gridcoverage is USHORT
+		layer.setWorldValue(coord1.x, coord1.y, 10);
+		
+		assertEquals(10.0, layer.getDoubleWorldValue(coord1.x, coord1.y));
+		assertEquals(10, layer.getIntegerWorldValue(coord1.x, coord1.y));
+		assertEquals(10.0f, layer.getFloatWorldValue(coord1.x, coord1.y));
+		
+		// TODO transform CRS
 		// TODO serialize
 	}
 }

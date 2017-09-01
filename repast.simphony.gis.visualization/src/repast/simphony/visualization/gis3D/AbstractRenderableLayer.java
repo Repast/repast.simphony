@@ -25,7 +25,6 @@ public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer imple
   protected Map<Renderable, Object> renderableToObjectMap;
 
   protected S style;
-  protected Model model;
   protected Geography geography;
   protected Set<Object> addedObjects;
   protected Set<Object> removeObjects;
@@ -69,15 +68,6 @@ public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer imple
    */
   public void setGeography(Geography geography) {
     this.geography = geography;
-  }
-
-  /**
-   * Set the gov.nasa.worldwind.Model for this display.
-   * 
-   * @param model
-   */
-  public void setModel(Model model) {
-    this.model = model;
   }
   
   @Override

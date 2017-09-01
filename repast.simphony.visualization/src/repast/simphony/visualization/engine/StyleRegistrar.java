@@ -34,7 +34,7 @@ public abstract class StyleRegistrar<T> {
     registerStyles(registrar, descriptor, agentNames);
   }
 
-  private Collection<String> getOrderedAgentCollection(DisplayDescriptor descriptor) {
+  protected Collection<String> getOrderedAgentCollection(DisplayDescriptor descriptor) {
     TreeMap<Integer, String> map = new TreeMap<Integer, String>();
     List<String> unsorted = new ArrayList<String>();
 
@@ -73,7 +73,7 @@ public abstract class StyleRegistrar<T> {
   protected abstract T createdEditedStyle(String editedStyleName);
 
   @SuppressWarnings("unchecked")
-  private void registerStyles(Registrar<T> registrar, DisplayDescriptor descriptor,
+  protected void registerStyles(Registrar<T> registrar, DisplayDescriptor descriptor,
       Collection<String> agentNames) throws ClassNotFoundException, InstantiationException,
       IllegalAccessException {
 

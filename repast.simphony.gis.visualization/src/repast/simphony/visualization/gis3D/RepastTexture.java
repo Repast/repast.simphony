@@ -9,7 +9,7 @@ import gov.nasa.worldwind.render.LazilyLoadedTexture;
 
 public class RepastTexture extends LazilyLoadedTexture {
 
-	// Draw smooth will use linear interpolation smoothng on texture pixels.
+	// Draw smooth will use linear interpolation smoothing on texture pixels.
 	//    False will draw the raw image.
 	private boolean drawSmooth = false;
 	
@@ -17,9 +17,6 @@ public class RepastTexture extends LazilyLoadedTexture {
 		super(imageSource, useMipMaps);
 	}
 	
-	
-	// TODO GIS deal with Texture cache - compare with BufferedImageTexture
-	//      It looks like SurfaceImage handles cache image removal automatically!
 	
 	@Override
 	protected void setTextureParameters(DrawContext dc, Texture texture){

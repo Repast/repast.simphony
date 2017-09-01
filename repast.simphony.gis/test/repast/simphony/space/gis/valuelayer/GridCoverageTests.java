@@ -1,23 +1,44 @@
 package repast.simphony.space.gis.valuelayer;
 
+import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
+import java.awt.image.WritableRenderedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.measure.unit.SI;
+import javax.media.jai.PlanarImage;
+import javax.media.jai.RasterFactory;
+import javax.media.jai.iterator.WritableRandomIter;
 
 import org.geotools.coverage.Category;
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.GridSampleDimension;
+import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.coverage.grid.InvalidGridGeometryException;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.factory.Hints;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
+import it.geosolutions.jaiext.iterators.RandomIterFactory;
 import junit.framework.TestCase;
 
 /**
@@ -34,6 +55,19 @@ public class GridCoverageTests extends TestCase {
 
 	GridCoverageFactory coverageFactory;
 
+	// Test lat/lon pair describe a rectangle over downtown Chicago.  (x1,y) is the
+	//   lower left corner and (x2,y2) is the upper left corner.
+	double lon1 = -87.668;  // x1
+	double lon2 = -87.582;  // x2
+	
+	double lat1 = 41.834;  // y1
+	double lat2 = 41.916;  // y2
+	
+	// Some test lon,lat coord test points that should be within the above rectangle
+	Coordinate coord1 = new Coordinate(-87.6560, 41.9066);
+	Coordinate coord2 = new Coordinate(-87.5899, 41.8768);
+	Coordinate coord3 = new Coordinate(-87.6428, 41.8413);
+	
 	@Override
 	public void setUp() {
 		coverageFactory = CoverageFactoryFinder.getGridCoverageFactory(null);
@@ -76,22 +110,26 @@ public class GridCoverageTests extends TestCase {
 		GridSampleDimension[] gsd = coverage.getSampleDimensions();	
 		
 		// Read some of the coverage values and compare to expected
-		// Roughly middle of coverage envelope, should be around 10.0
+		// Roughly middle of coverage envelope, should be around 100.0
 		int[] val = (int[])coverage.evaluate(new DirectPosition2D(crs, -95, 39));
-		assertEquals(val[0], 8);
+		assertEquals(89, val[0]);
 		
-		// Roughly upper left corner of coverage envelope, should be around 0.0
+		val = new int[1];
+		// Read using Point2D should be the same
+		coverage.evaluate(new Point2D.Double(-95, 39), val);  // writes to val
+		assertEquals(89, val[0]);
+		
+		// Roughly upper left corner of coverage envelope, should be around 10.0
 		val = (int[])coverage.evaluate(new DirectPosition2D(crs, -122.87, 47.01));
-		assertEquals(val[0], 0);
+		assertEquals(9, val[0]);
 		
-		// Roughly bottom right corner of coverage envelope, should be around 20.0
+		// Roughly bottom right corner of coverage envelope, should be around 200.0
 		val = (int[])coverage.evaluate(new DirectPosition2D(crs, -65.65, 25.27));
-		assertEquals(val[0], 18);
+		assertEquals(195, val[0]);
 		
 		// Test if coverage is writable
 		assertTrue(coverage.isDataEditable());
 		
-		System.out.println(coverage.getRenderedImage().getClass().getName());
 	}
 	
 	/**
@@ -138,8 +176,8 @@ public class GridCoverageTests extends TestCase {
 	// Create a sample grid coverage from a BufferedImage
 	private GridCoverage2D createSampleCoverageFromBufferedImage(){
 
-		int width  = 10;
-		int height = 10;
+		int width  = 100;
+		int height = 100;
 		
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
 		WritableRaster raster = (WritableRaster) image.getData();
@@ -163,5 +201,107 @@ public class GridCoverageTests extends TestCase {
 		
 		return coverageFactory.create("test coverage", image,
 				new Envelope2D(crs, -124, 25, 60, 24));
+	}
+	
+	public void testCreateIndexedCoverage(){
+		int width = 100;
+		int height = 200;
+		
+		GridCoverage2D  coverage = null;
+ 
+		// TODO Category Color (rangees)
+		
+		Color[] temperatureColorScale = new Color[256];
+		
+		// white to red color scale
+		for (int i=0; i<256; i++) {
+			temperatureColorScale[i] = new Color(255, 255-i, 255-i); 
+		}
+		
+    Category[] categories	= new Category[] {	
+        new Category("No data",     null, 0),
+        new Category("Land",        Color.decode("#91ce84"), 1),
+        new Category("Cloud",       Color.decode("#e5f8fc"), 2),
+        new Category("Temperature", temperatureColorScale, 3, 256)
+    };
+    
+    // Single band
+    GridSampleDimension[] bands = new GridSampleDimension[] {
+    		new GridSampleDimension("Temperature", categories, SI.CELSIUS)
+    };
+    
+    
+//    BufferedImage image  = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED);
+//    
+//    WritableRaster raster = image.getRaster();
+    
+    WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_BYTE,
+        width, height, 1, null);
+    
+    for (int i=0; i<raster.getWidth(); i++) {
+    	for (int j=0; j<raster.getHeight(); j++) {
+    		raster.setSample(i,j,0, (i+j));
+       }
+    }
+    
+    //  DefaultGeographicCRS.WGS84 axis order is lon,lat (x,y) 
+		ReferencedEnvelope envelope = new ReferencedEnvelope(lon1, lon2, lat1, lat2, 
+				DefaultGeographicCRS.WGS84);
+		
+		Hints hints = new Hints(Hints.TILE_ENCODING, "raw");
+    GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(hints);
+    
+    coverage = factory.create("Test", raster, envelope, bands);
+    
+//    coverage = factory.create("Test", image, envelope, bands, null, null);
+    
+    // TODO Test Read
+    
+    int[] val = null;
+    val = coverage.evaluate(new Point2D.Double(coord1.x, coord1.y), val);
+    
+    Category cat = coverage.getSampleDimension(0).getCategory(val[0]);
+    
+    System.out.println(val[0] + " : " + cat.getName());
+    
+    // TODO Test Write
+    
+    WritableRenderedImage writableImage = (WritableRenderedImage)coverage.getRenderedImage();
+    
+    WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
+    int dataType = writableImage.getSampleModel().getDataType();
+    
+    System.out.println(dataType);
+    
+    // Write directly to the grid
+    writeIter.setSample(1, 1, 0, 250);
+    
+    // Write using the geographic coordinates
+    // First transform the geo coords to grid coords
+    GridCoordinates2D gridPos = null;
+    try {
+			gridPos = coverage.getGridGeometry().worldToGrid(new DirectPosition2D(coord1.x, coord1.y));
+		} catch (InvalidGridGeometryException e1) {
+			e1.printStackTrace();
+		} catch (TransformException e1) {
+			e1.printStackTrace();
+		}
+    
+    writeIter.setSample(gridPos.x, gridPos.y, 0, 250.1);
+    
+    double dval[] = null;
+    dval = coverage.evaluate(new Point2D.Double(coord1.x, coord1.y), dval);
+    cat = coverage.getSampleDimension(0).getCategory(dval[0]);
+    
+    System.out.println(dval[0] + " : " + cat.getName());
+    
+    // TODO serialize / image
+    
+		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
+		try {
+			ImageIO.write(pi.getAsBufferedImage(), "gif", new File("test/data/temperatureIndexed.gif"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

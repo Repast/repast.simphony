@@ -3,6 +3,7 @@ package repast.simphony.visualization.gis3D;
 import static repast.simphony.ui.RSGUIConstants.CAMERA_ICON;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -13,9 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,10 +36,8 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFinder;
-import org.geotools.coverage.processing.Operations;
+import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import com.jogamp.common.os.Platform;
 
@@ -67,6 +68,7 @@ import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import repast.simphony.gis.visualization.engine.GISDisplayData;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor.VIEW_TYPE;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.AddedRemovedLayoutUpdater;
@@ -78,7 +80,9 @@ import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.MovedLayoutUpdater;
 import repast.simphony.visualization.UpdateLayoutUpdater;
 import repast.simphony.visualization.editor.EditorFactory;
+import repast.simphony.visualization.gis3D.style.CoverageStyle;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
+import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
 import simphony.util.ThreadUtilities;
@@ -98,6 +102,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	protected Lock updateLock = new ReentrantLock();
 	protected JPanel panel;
+	
+	// TODO GIS need a GeoLayout that holds the geography and updateds locations
 	protected Layout layout;
 	protected LayoutUpdater layoutUpdater;
 	protected GISDisplayData<?> initData;
@@ -105,8 +111,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected Geography geog;
 	protected Model model;
 
-	protected Map<Class, AbstractRenderableLayer> classStyleMap;
+	protected Map<String,Integer> layerOrder;
+	protected Map<Class<?>, AbstractRenderableLayer<?,?>> classStyleMap;
+	protected Map<Network<?>, GISNetworkLayer> networkLayerMap;
+	protected Map<String, CoverageLayer> coverageLayerMap;
 
+	protected Map<GridCoverage2D, SurfaceImage> coverageToRenderableMap;
+	
 	protected WorldWindow worldWindow;
 	protected String displayMode = AVKey.STEREO_MODE_NONE;
 	protected LayerPanel layerPanel;
@@ -123,11 +134,16 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected Sector boundingSector;
 
 	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
-		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
+		layerOrder = new HashMap<String,Integer>();
+		classStyleMap = new LinkedHashMap<Class<?>, AbstractRenderableLayer<?,?>>();
+		networkLayerMap = new LinkedHashMap<Network<?>, GISNetworkLayer>();
+		coverageLayerMap = new LinkedHashMap<String, CoverageLayer>();
+		
+		coverageToRenderableMap = new LinkedHashMap<GridCoverage2D, SurfaceImage>();
+
 		initData = data;
 		this.layout = layout;
 		layoutUpdater = new UpdateLayoutUpdater(layout);
-		trackAgents = data.getTrackAgents();
 
 		Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
 				RepastStereoOptionSceneController.class.getName());
@@ -187,28 +203,68 @@ public class DisplayGIS3D extends AbstractDisplay {
 			probeSupport.fireProbeEvent(this, objList);
 	}
 
-	// TODO WWJ - register network and raster styles
-	public void registerStyle(Class clazz, StyleGIS style) {
+	/**
+	 * Register the agent class and style information
+	 * 
+	 * @param clazz the agent class to style in the display
+	 * @param style the agent style
+	 * @param order the agent layer order in the display
+	 */
+	public void registerStyle(Class<?> clazz, StyleGIS<?> style, Integer order) {
 		AbstractRenderableLayer layer = classStyleMap.get(clazz);
 
+		String layerName = clazz.getSimpleName();
+		
 		// TODO WWJ - set the layer type based on the style
 		if (layer == null) {
 			
 			if (style instanceof MarkStyle){
-			  layer = new PlaceMarkLayer(clazz.getSimpleName(), (MarkStyle)style);
+			  layer = new PlaceMarkLayer(layerName, (MarkStyle)style);
 			}
 			else if (style instanceof SurfaceShapeStyle){
-			  layer = new SurfaceShapeLayer(clazz.getSimpleName(), (SurfaceShapeStyle)style);
+			  layer = new SurfaceShapeLayer(layerName, (SurfaceShapeStyle)style);
 			}
 			
-			if (layer != null)
+			if (layer != null) {
 			  classStyleMap.put(clazz, layer);
+			  layerOrder.put(layerName, order);
+			}
 		} 
 		else {
 			layer.setStyle(style);
+			layerOrder.put(layerName, order);
 		}
 	}  
+	
+	//	TODO GIS - register network styles
+	public void registerNetworkStyle(Network<?> network, NetworkStyleGIS style) {
 
+		
+		//		networkLayerMap.put(key, value)
+	}
+	
+	/**
+	 * Register the dynamic coverage and style information
+	 * 
+	 * @param coverageName the coverage name to style in the display
+	 * @param style the coverage style
+	 * @param order the coverage layer order in the display
+	 */
+	public void registerCoverageStyle(String coverageName, CoverageStyle style, Integer order) {
+		
+		CoverageLayer layer = coverageLayerMap.get(coverageName);
+
+		if (layer == null) {
+			layer = new CoverageLayer(coverageName, style);
+			coverageLayerMap.put(coverageName, layer);
+			layerOrder.put(coverageName, order);
+		} 
+		else {
+			layer.setStyle(style);
+			layerOrder.put(coverageName, order);
+		}
+	}
+	
 	public void createPanel() {
 		panel = new JPanel();
 
@@ -275,14 +331,16 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 *         null if the object is not found.
 	 */
 	public Object findObjForItem(Renderable renderable) {
-		Collection<AbstractRenderableLayer> layers = classStyleMap.values();
-		for (AbstractRenderableLayer layer : layers) {
+		Collection<AbstractRenderableLayer<?,?>> layers = classStyleMap.values();
+		for (AbstractRenderableLayer<?,?> layer : layers) {
 			Object obj = layer.findObjectForRenderable(renderable);
 			if (obj != null)
 				return obj;
 		}
 
 		// TODO WWJ also loop through network and raster styles TBD
+		
+		// WWJ Renderable for coverage will be the SurfaceImage
 
 		return null;
 	}
@@ -294,33 +352,79 @@ public class DisplayGIS3D extends AbstractDisplay {
 			addObject(obj);
 		}
 
+		// TODO GIS This seems brittle since there technically could be multiple Geography
 		for (Projection proj : initData.getProjections()) {
 			if (proj instanceof Geography) {
 				geog = (Geography) proj;
 			}
 		}
 
+		// TODO GIS need to register network listener also?
 		geog.addProjectionListener(this);
 
-		for (AbstractRenderableLayer layer : classStyleMap.values()) {
+		// TODO GIS probable better to hand the geography to the layout ?
+		for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
 			layer.setGeography(geog);
-			layer.setModel(model);
-			model.getLayers().add(layer);
 		}
-
-		// TODO Loop through static raster layers
+		for (CoverageLayer layer : coverageLayerMap.values()) {
+			layer.setGeography(geog);
+		}
+		
+		// First collect all layers, then set the layer order using the order number 
+		// Ordered map of all renderable layers
+	  TreeMap<Integer, RenderableLayer> orderedLayerMap = 
+	  		new TreeMap<Integer, RenderableLayer>();
+    
+	  // Unsorted layers have no specified layer order
+	  List<RenderableLayer> unsortedLayers = new ArrayList<RenderableLayer>();
+    List<RenderableLayer> layersToSort = new ArrayList<RenderableLayer>();
+   
+    // TODO GIS add other layer types to be sorted
+    layersToSort.addAll(classStyleMap.values());
+    layersToSort.addAll(coverageLayerMap.values());
+    
+  	for (RenderableLayer layer : layersToSort) {
+  		Integer order = layerOrder.get(layer.getName());
+  		
+  		// If the order is non null and doesnt already exist, add the layer
+  		if (order != null && !orderedLayerMap.containsKey(order)) {	
+  			orderedLayerMap.put(order, layer);
+  		}
+  		// Otherwise save in the ordered layer list
+  		else {
+  			unsortedLayers.add(layer);
+  		}
+  	}
+  	
+  	for (RenderableLayer layer : orderedLayerMap.values()) {
+			model.getLayers().add(layer);
+  	}
+  	
+  	// GIS TODO should all unsorted coverage layers go to the back?
+  	for (RenderableLayer layer : unsortedLayers) {
+			model.getLayers().add(layer);
+  	}
+   
+  	
+		// TODO GIS static raster layers should just load here once at init
+		for (String fileName : initData.getStaticRasterLayers()) {
+			
+		}
 		
 		// TODO WWJ also loop through network and raster styles TBD
-
-		// TODO set background image color via display wizard
-		setBackground();
+		for (GISNetworkLayer layer : networkLayerMap.values()) {
+			
+		}
+		
+		// TODO set background image color from display creator
+		setBackgroundColor(null);
 		
 		// TODO Testing
 		
-//		addRasterLayer(new File("data/craterlake-imagery-30m.tif"));
-		addRasterLayer(new File("data/UTM2GTIF.TIF"));
-//		addRasterLayer(new File("data/SP27GTIF.TIF"));
-//		addRasterLayer(new File("data/sample.tiff"));
+		addStaticRasterLayer(new File("data/craterlake-imagery-30m.tif"), true);
+		addStaticRasterLayer(new File("data/UTM2GTIF.TIF"), true);
+//		addStaticRasterLayer(new File("data/SP27GTIF.TIF"), true);
+		addStaticRasterLayer(new File("data/sample_gray.tif"),true);
 		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
@@ -330,7 +434,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 	
 	// TODO GIS Background create the ImageIcon programmatically instead of using file.
-	protected void setBackground(){
+	public void setBackgroundColor (Color color){
 	  SurfaceImage bgImage = new SurfaceImage(new ImageIcon(getClass().getClassLoader().getResource("white.png")), 
 	  		new ArrayList<LatLon>(Arrays.asList(
         LatLon.fromDegrees(-90d, -180d),
@@ -350,33 +454,41 @@ public class DisplayGIS3D extends AbstractDisplay {
     model.getLayers().add(0, layer);
 	}
 	
-	// TODO Testing raster layer
-	protected void addRasterLayer(File file){
+		
+	/**
+	 * Adds a static raster layer from the provided file.  The raster BufferedImage
+	 *   is created and added to the WWJ Globe so that it persists as long as the
+	 *   display exists, but is not updated with display updates.
+	 *   
+	 * @param file the GIS raster file to display
+	 * @param forceLongitudeFirstAxis true if lon should be forced first axis in coverage loader
+	 */
+	protected void addStaticRasterLayer(File file, boolean forceLongitudeFirstAxis){
+		
+		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, forceLongitudeFirstAxis);
 		
 		AbstractGridFormat format = GridFormatFinder.findFormat(file);
-		GridCoverage2DReader reader = format.getReader(file);
+		GridCoverage2DReader reader = format.getReader(file, hints);
 		GridCoverage2D coverage = null;
-		
+
 		try {
 			coverage = reader.read(null);
 		} catch (IOException e) {
 			e.printStackTrace();
+			
+			// TODO GIS messagecenter file format not supported
 		}
 		
 		ReferencedEnvelope envelope = null;
 		
 		// TODO make sure not to resample to WGS84 if already set to WGS84
 		// TODO need to automatically project coverages to WGS84
-		if (!CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
-			coverage = (GridCoverage2D)Operations.DEFAULT.resample(coverage,DefaultGeographicCRS.WGS84);
-		}
+//		if (!CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+//			coverage = (GridCoverage2D)Operations.DEFAULT.resample(coverage,DefaultGeographicCRS.WGS84);
+//		}
 		
 		envelope = new ReferencedEnvelope(coverage.getEnvelope());
-				
-		// TODO axis order !!
-//		Sector sector = WWUtils.envelopeToSectorReversedOrder(envelope);
-		Sector sector = WWUtils.envelopeToSector(envelope);
-		
+		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
 		
 		// GridCoverage2D.getRenderedImage() returns a PlanarImage
 		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
@@ -388,15 +500,18 @@ public class DisplayGIS3D extends AbstractDisplay {
 		//  passes the object to the RenderableLayer
 //		SurfaceImageLayer layer = new SurfaceImageLayer();
 		
+		// TODO GIS use AbstractRenderableLayer ?
 		RenderableLayer layer = new RenderableLayer();
+		
 		
 		layer.setName(file.getName());
 		layer.setPickEnabled(false);
 		layer.addRenderable(si);
 		
 		// TODO GIS add layer attributes to descriptor
-		layer.setOpacity(0.5);
+//		layer.setOpacity(0.5);
 		
+		// TODO GIS all rasters before a specific layer name ? compass??
 		 WWUtils.insertBeforeCompass(worldWindow, layer);
 	}
 	
@@ -427,7 +542,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	protected void addObject(Object o) {
-		AbstractRenderableLayer layer = classStyleMap.get(o.getClass());
+		AbstractRenderableLayer<?,?> layer = classStyleMap.get(o.getClass());
 		if (layer != null) {
 			try{
 				updateLock.lock();
@@ -452,8 +567,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	protected void removeObject(Object o) {
-		Class clazz = o.getClass();
-		AbstractRenderableLayer layer = classStyleMap.get(clazz);
+		Class<?> clazz = o.getClass();
+		AbstractRenderableLayer<?,?> layer = classStyleMap.get(clazz);
 		if (layer != null) {
 			try{
 				updateLock.lock();
@@ -508,10 +623,40 @@ public class DisplayGIS3D extends AbstractDisplay {
 		try{
 			updateLock.lock();
 
-			for (AbstractRenderableLayer layer : classStyleMap.values())
+			for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
 				layer.update(layoutUpdater);
+			}
 
-			// TODO WWJ also loop through network and raster styles TBD
+			for (CoverageLayer layer : coverageLayerMap.values()){
+				layer.update();
+			}
+						
+			// TODO GIS loop through network layers
+			for (GISNetworkLayer layer : networkLayerMap.values()) {
+				
+			}
+					
+			// test
+			
+			
+//	    WritableRenderedImage writableImage = (WritableRenderedImage)coverage.getRenderedImage();
+
+//			RenderedImage image = coverage.getRenderedImage();
+//			WritableRenderedImage writableImage = new TiledImage(image, true);
+//			WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
+//
+//			for (int i=0; i<image.getWidth(); i++) {
+//				for (int j=0; j<image.getHeight(); j++) {
+//					writeIter.setSample(i, j, 0, RandomHelper.nextIntFromTo(1, 65000));
+//				}
+//			}
+//			
+//			PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
+//			ReferencedEnvelope envelope = new ReferencedEnvelope(coverage.getEnvelope());
+//			Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
+//			
+//			// slow step
+//			si.setImageSource(pi.getAsBufferedImage(), sector);
 
 		}
 		finally {
@@ -725,6 +870,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return model.getGlobe() instanceof FlatGlobe;
 	}
 
+	public void setTrackAgents(boolean trackAgents) {
+		this.trackAgents = trackAgents;
+	}
+	
 	/**
 	 * Set View controls for flat world
 	 */
@@ -771,7 +920,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public void toggleInfoProbe() {
 	}
 
-	public Map<Class, AbstractRenderableLayer> getClassStyleMap() {
+	public Map<Class<?>, AbstractRenderableLayer<?,?>> getClassStyleMap() {
 		return this.classStyleMap;
 	}
 
@@ -827,4 +976,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 			}
 		}
 	};
+
+	public void setLayerOrder(String layerName, int order) {
+		layerOrder.put(layerName, order);
+	}
+	
+	
 }
