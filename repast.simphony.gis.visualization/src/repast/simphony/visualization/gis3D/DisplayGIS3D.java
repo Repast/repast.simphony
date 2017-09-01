@@ -6,9 +6,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +70,7 @@ import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import repast.simphony.gis.visualization.engine.GISDisplayData;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor.VIEW_TYPE;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.RepastCoverageFactory;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
@@ -85,10 +88,12 @@ import repast.simphony.visualization.gis3D.style.MarkStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
+import repast.simphony.visualization.gui.GISStylePanel;
 import simphony.util.ThreadUtilities;
+import simphony.util.messages.MessageCenter;
 
 public class DisplayGIS3D extends AbstractDisplay {
-
+	private static MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS3D.class);
 	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 5000;  // meters
 
 	static {
@@ -124,6 +129,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	protected boolean doRender = true;
 	protected boolean visible;
+	protected Color backgroundColor;
 	
 	protected RepastViewControlsSelectListener viewControlsSelectListener = null;
 	protected RepastStatusBar statusBar = null;
@@ -196,7 +202,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public void probe(Renderable pickedShape) {
 		Object obj = findObjForItem(pickedShape);
 
-		List objList = new ArrayList() {};
+		List<Object> objList = new ArrayList<Object>() {};
 		objList.add(obj);
 
 		if (obj != null)
@@ -219,10 +225,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 		if (layer == null) {
 			
 			if (style instanceof MarkStyle){
-			  layer = new PlaceMarkLayer(layerName, (MarkStyle)style);
+			  layer = new PlaceMarkLayer(layerName, (MarkStyle<?>)style);
 			}
 			else if (style instanceof SurfaceShapeStyle){
-			  layer = new SurfaceShapeLayer(layerName, (SurfaceShapeStyle)style);
+			  layer = new SurfaceShapeLayer(layerName, (SurfaceShapeStyle<?>)style);
 			}
 			
 			if (layer != null) {
@@ -250,7 +256,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * @param style the coverage style
 	 * @param order the coverage layer order in the display
 	 */
-	public void registerCoverageStyle(String coverageName, CoverageStyle style, Integer order) {
+	public void registerCoverageStyle(String coverageName, CoverageStyle<?> style, Integer order) {
 		
 		CoverageLayer layer = coverageLayerMap.get(coverageName);
 
@@ -353,9 +359,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 
 		// TODO GIS This seems brittle since there technically could be multiple Geography
-		for (Projection proj : initData.getProjections()) {
+		for (Projection<?> proj : initData.getProjections()) {
 			if (proj instanceof Geography) {
-				geog = (Geography) proj;
+				geog = (Geography<?>) proj;
 			}
 		}
 
@@ -411,7 +417,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
 			
 			// TODO GIS all rasters before a specific layer name ? compass??
-			 WWUtils.insertBeforeCompass(worldWindow, layer);
+			if (layer != null)
+				WWUtils.insertBeforeCompass(worldWindow, layer);
 		}
 		
 		// TODO WWJ also loop through network and raster styles TBD
@@ -419,15 +426,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 			
 		}
 		
-		// TODO set background image color from display creator
-		setBackgroundColor(null);
-		
-		// TODO Testing
-		
-//		addStaticRasterLayer(new File("data/craterlake-imagery-30m.tif"), true);
-//		addStaticRasterLayer(new File("data/UTM2GTIF.TIF"), true);
-//		addStaticRasterLayer(new File("data/SP27GTIF.TIF"), true);
-//		addStaticRasterLayer(new File("data/sample_gray.tif"),true);
+		// Create a background layer with color from descriptor
+		createBackgroundLayer();
 		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
@@ -436,9 +436,21 @@ public class DisplayGIS3D extends AbstractDisplay {
 		resetHomeView();
 	}
 	
-	// TODO GIS Background create the ImageIcon programmatically instead of using file.
-	public void setBackgroundColor (Color color){
-	  SurfaceImage bgImage = new SurfaceImage(new ImageIcon(getClass().getClassLoader().getResource("white.png")), 
+	/**
+	 * Create a simple background layer that is a single colored rectangle that
+	 *   covers the entire globe.
+	 */
+	protected void createBackgroundLayer(){
+		if (backgroundColor == null)
+			backgroundColor = Color.WHITE;  
+		
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		g2d.setPaint(backgroundColor);
+		g2d.fillRect(0, 0, image.getWidth(), image.getHeight() );
+		
+	  SurfaceImage bgImage = new SurfaceImage(image, 
 	  		new ArrayList<LatLon>(Arrays.asList(
         LatLon.fromDegrees(-90d, -180d),
         LatLon.fromDegrees(-90d, 180d),
@@ -466,28 +478,21 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * @param filename the GIS raster filename to display
 	 * @param forceLongitudeFirstAxis true if lon should be forced first axis in coverage loader
 	 */
-	protected RenderableLayer createStaticRasterLayer(String filename, boolean forceLongitudeFirstAxis){
+	protected RenderableLayer createStaticRasterLayer(String filename, 
+			boolean forceLongitudeFirstAxis){
 		
 		File file = new File(filename);
-		
-		if (!file.exists()) return null;
-		// TODO GIS msgCenter file not found
-		
-		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, forceLongitudeFirstAxis);
-		
-		AbstractGridFormat format = GridFormatFinder.findFormat(file);
-		GridCoverage2DReader reader = format.getReader(file, hints);
-		GridCoverage2D coverage = null;
-
-		try {
-			coverage = reader.read(null);
-		} catch (IOException e) {
-			e.printStackTrace();
 			
-			// TODO GIS messagecenter file format not supported
-		}
+		GridCoverage2D coverage = RepastCoverageFactory.createCoverageFromFile(file, 
+				forceLongitudeFirstAxis);
 		
-		if (coverage == null) return null;
+		if (coverage == null) { 
+			String info = "Error loading coverage for display: " + file.getPath();
+			Exception ex = new Exception(info);
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
+		}
 		
 		ReferencedEnvelope envelope = null;
 		
@@ -635,28 +640,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 				
 			}
 					
-			// test
-			
-			
-//	    WritableRenderedImage writableImage = (WritableRenderedImage)coverage.getRenderedImage();
-
-//			RenderedImage image = coverage.getRenderedImage();
-//			WritableRenderedImage writableImage = new TiledImage(image, true);
-//			WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
-//
-//			for (int i=0; i<image.getWidth(); i++) {
-//				for (int j=0; j<image.getHeight(); j++) {
-//					writeIter.setSample(i, j, 0, RandomHelper.nextIntFromTo(1, 65000));
-//				}
-//			}
-//			
-//			PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
-//			ReferencedEnvelope envelope = new ReferencedEnvelope(coverage.getEnvelope());
-//			Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
-//			
-//			// slow step
-//			si.setImageSource(pi.getAsBufferedImage(), sector);
-
 		}
 		finally {
 			updateLock.unlock();
@@ -978,6 +961,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	public void setLayerOrder(String layerName, int order) {
 		layerOrder.put(layerName, order);
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 	
 	

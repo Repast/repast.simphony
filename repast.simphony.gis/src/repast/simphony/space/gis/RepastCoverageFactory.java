@@ -2,6 +2,7 @@ package repast.simphony.space.gis;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.geotools.coverage.CoverageFactoryFinder;
@@ -10,8 +11,11 @@ import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFinder;
+import org.geotools.coverage.grid.io.UnknownFormat;
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+
+import simphony.util.messages.MessageCenter;
 
 /**
  * Factory that provides support for creating GridCoverage2D instances that are
@@ -25,34 +29,89 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
  *
  */
 public class RepastCoverageFactory {
+	private static MessageCenter msg = MessageCenter.getMessageCenter(RepastCoverageFactory.class);
 	
 	/**
-	 * Create a writable coverage using a raster file.  
+	 * Create a writable coverage using a coverage file.  
 	 * 
-	 * @param rasterfile a georeferenced raster file such as GeoTif
+	 * @param file a georeferenced coverage file such as GeoTif
 	 * @param forceLonLatAxisOrder forces lon,lat coordinate order on read
 	 * @return WritableGridCoverage2D a writable GridCoverage2D
 	 */
-	public static WritableGridCoverage2D createWritableCoverageFromFile(File rasterfile, 
+	public static WritableGridCoverage2D createWritableCoverageFromFile(File file, 
 			boolean forceLonLatAxisOrder){
 		
-		Hints hints = null;
+		GridCoverage2D readCoverage = null;
 		
-		if (forceLonLatAxisOrder)
-			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-				
-		AbstractGridFormat format = GridFormatFinder.findFormat(rasterfile, hints);
-		GridCoverage2DReader reader = format.getReader(rasterfile);
+		readCoverage = createCoverageFromFile(file, forceLonLatAxisOrder);
+		if (readCoverage == null)
+			return null;
+		
+		return new WritableGridCoverage2D(readCoverage);
+	}
+	
+	/**
+	 * Create a coverage using a coverage file.  
+	 * 
+	 * @param file a georeferenced coverage file such as GeoTif
+	 * @param forceLonLatAxisOrder forces lon,lat coordinate order on read
+	 * @return GridCoverage2D 
+	 */
+	public static GridCoverage2D createCoverageFromFile(File file, boolean forceLonLatAxisOrder) {
+		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, forceLonLatAxisOrder);
+
+		if (!file.exists()) { 
+			String info = "Cannot find coverage file: " + file.getPath();
+			Exception ex = new FileNotFoundException(info);
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
+		}
+		
+		AbstractGridFormat format = GridFormatFinder.findFormat(file);
+		
+		if (format == null || format instanceof UnknownFormat) {
+			String info = "Cannot find coverage format for file: " + file.getPath();
+			Exception ex = new Exception(info);
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
+		}
+		
+		
+		GridCoverage2DReader reader = null;
+		
+		try {
+			reader = format.getReader(file,hints);
+		} 
+		catch(Exception ex) {
+			String info = "Cannot find coverage reader for format: " + format.toString() + 
+					" for file " + file.getPath();
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
+		}
+		
+		if (reader == null) {
+			String info = "Cannot find coverage reader for format: " + format.toString() + 
+					" for file " + file.getPath();
+			Exception ex = new Exception(info);
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
+		}
 		
 		GridCoverage2D readCoverage = null;
 		try {
 			readCoverage = reader.read(null);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			String info = "Error reading coverage from file: " + file.getPath();
+			msg.error(info, ex);
+			ex.printStackTrace();
 		}
-		
-		return new WritableGridCoverage2D(readCoverage);
+		return readCoverage;
 	}
+	
 	
 	/**
 	 * Create a writable raster instance using the specified parameters.
