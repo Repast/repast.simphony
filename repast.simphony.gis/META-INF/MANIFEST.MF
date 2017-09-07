@@ -232,6 +232,7 @@ Export-Package: com.vividsolutions.jts,
  org.geotools.filter.visitor,
  org.geotools.gce.arcgrid,
  org.geotools.gce.geotiff,
+ org.geotools.gce.image,
  org.geotools.geometry,
  org.geotools.geometry.coordinatesequence,
  org.geotools.geometry.jts,
@@ -437,5 +438,6 @@ Bundle-ClassPath: bin/,
  lib/jt-zonal-1.0.15.jar,
  lib/jt-zonalstats-1.4.0.jar,
  lib/jts-1.13.jar,
- lib/jdom-1.1.3.jar
+ lib/jdom-1.1.3.jar,
+ lib/gt-image-17.2.jar
 Bundle-Vendor: Argonne National Laboratory

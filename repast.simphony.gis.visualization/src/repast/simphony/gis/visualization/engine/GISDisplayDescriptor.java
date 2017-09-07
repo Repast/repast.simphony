@@ -48,6 +48,12 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	 */
 	protected Map<String,String> staticCoverages = new HashMap<String,String>();
 	
+	/**
+	 * Map of <coverage name, style> for dynamic coverages.  Style can be null.
+	 *
+	 */
+	protected Map<String,String> coverageLayers = new HashMap<String,String>();
+	
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
 //      DefaultSurfaceShapeStyle.class };
@@ -86,6 +92,11 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
     	staticCoverages.clear();
     	for (String fileName : coverageMap.keySet()) {
     		addStaticCoverage(fileName, coverageMap.get(fileName));
+    	}
+    	
+    	coverageLayers.clear();
+    	for (String name : coverageLayers.keySet()) {
+    		addCoverageLayer(name, coverageLayers.get(name));
     	}
     }
   }
@@ -136,4 +147,22 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 		scs.fireScenarioChanged(this, "staticCoverage");
 	}
 	
+	/**
+	 * 
+	 * @return a Map of dynamic coverages <name, style>
+	 */
+	public Map<String, String> getCoverageLayers() {
+		if (coverageLayers == null)
+			coverageLayers = new HashMap<String,String>();
+		
+		return coverageLayers;
+	}
+
+	public void addCoverageLayer(String name, String style) {
+		if (coverageLayers == null)
+			coverageLayers = new HashMap<String,String>();
+		
+		coverageLayers.put(name, style);
+		scs.fireScenarioChanged(this, "coverageLayers");
+	}
 }

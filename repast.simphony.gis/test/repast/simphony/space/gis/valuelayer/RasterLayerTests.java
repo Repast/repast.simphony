@@ -1,5 +1,6 @@
 package repast.simphony.space.gis.valuelayer;
 
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -21,6 +22,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import junit.framework.TestCase;
 import repast.simphony.space.gis.RasterLayer;
+import repast.simphony.space.gis.RepastCoverageFactory;
 
 /**
  * Tests for the Repast RasterLayer API
@@ -31,6 +33,9 @@ import repast.simphony.space.gis.RasterLayer;
 public class RasterLayerTests extends TestCase {
 
 	public static final String TEST_CRS_CODE = "EPSG:4326";  // WGS84
+	
+	// RGB world file checker pattern Black - Red - Green - Blue - White
+	public static final String SAMPLE_PNG_GRB = "test/data/RGBTestPattern.png";
 	
 	// Grayscale sample GeoTiff
 	public static final String SAMPLE_GEOTIFF_GRAY = "test/data/sample_gray.tif";
@@ -150,6 +155,67 @@ public class RasterLayerTests extends TestCase {
 		// Crater lake center lon = -122.1, lat = 42.94 degrees
 		double lat = 42.94;
 		double lon = -122.1; 
+		
+//		System.out.println(layer.getValue(lon, lat).getClass().getName());
+		
+		// TODO write data
+		
+		// TODO test read/write after re-project
+		
+		// TODO serialize
+	}
+	
+	/**
+	 * Create a RasterLayer from a PNG World file and test various API calls.
+	 */
+	public void testCreateFromFile2() throws Exception{
+		File file = new File(SAMPLE_PNG_GRB);
+			
+		GridCoverage2D layer = RepastCoverageFactory.createCoverageFromFile(file, true);
+		
+//		RasterLayer layer = new RasterLayer(file.getName(), file, true);
+		
+//		assertEquals(file.getName(), layer.getName());
+		
+		// Three band RGB
+		assertEquals(3, layer.getNumSampleDimensions());
+		
+		// Test layer CRS
+		assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, layer.getCoordinateReferenceSystem()));
+		
+		// Test layer CRS re-project to NAD83
+//		CoordinateReferenceSystem crsNAD83 = CRS.decode("EPSG:4269", false);;
+//		layer.setCRS(crsNAD83);	
+//		
+//		assertTrue(CRS.equalsIgnoreMetadata(crsNAD83, layer.getCRS()));
+		
+		
+		// TODO other operations besides re-project to make sure wrapping with
+		//      WritableGridCoverage2D is robust to various processing steps
+		
+		// TODO read data from known point inside envelope
+		
+		// Red point should have large Red pixel content and low B,G pixel content
+		double lat = 41.8686;
+		double lon = -87.8197;
+
+		int[] val = null;
+		val = layer.evaluate(new Point2D.Double(lon,lat), val);
+
+		assertTrue(val[0] > 200);  // R
+		assertTrue(val[1] < 50);   // G
+		assertTrue(val[2] < 50);   // B
+
+		// Black point should have low R,G,B pixel content
+		lat = 41.8706;
+		lon = -87.8544;
+
+		val = null;
+		val = layer.evaluate(new Point2D.Double(lon,lat), val);
+
+		assertTrue(val[0] < 50);   // R
+		assertTrue(val[1] < 50);   // G
+		assertTrue(val[2] < 50);   // B
 		
 //		System.out.println(layer.getValue(lon, lat).getClass().getName());
 		

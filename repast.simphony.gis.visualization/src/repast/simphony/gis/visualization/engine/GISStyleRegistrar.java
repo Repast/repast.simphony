@@ -1,9 +1,8 @@
 package repast.simphony.gis.visualization.engine;
 
-import java.util.Map;
-
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
+import repast.simphony.visualization.gis3D.style.CoverageStyle;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 
@@ -22,22 +21,16 @@ public class GISStyleRegistrar {
 		this.display = display;
 	}
 
-	public void registerAllStyles(DisplayDescriptor descriptor) 
+	public void registerAllStyles(GISDisplayDescriptor descriptor) 
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		// TODO GIS register all styles looking at layer orders etc
 	
-		// The descriptor layer orders is just a map independent of other descriptor info
-		Map<String,Integer> layerOrders = descriptor.getLayerOrders();
-		
-		for (String layerName : layerOrders.keySet()) {
-			System.out.println("GIS Display layer: " + layerName + " - " + layerOrders.get(layerName));
-		}
-		
 		registerAgentStyles(descriptor);
+		registerCoverageStyles(descriptor);
 	}
 	
-  public void registerAgentStyles(DisplayDescriptor descriptor)
+  public void registerAgentStyles(GISDisplayDescriptor descriptor)
       throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     
     // Iterate through layers in order and register
@@ -67,11 +60,38 @@ public class GISStyleRegistrar {
     }
   }
   
-  public void registerCoverageStyles(DisplayDescriptor descriptor)
+  public void registerCoverageStyles(GISDisplayDescriptor descriptor)
       throws ClassNotFoundException, InstantiationException, IllegalAccessException {
     
-//  	Collection<String> agentNames = getOrderedAgentCollection(descriptor);
-//  	registerAgentStyles(descriptor, agentNames);
+  	 // Iterate through layers in order and register
+    for (String coverageName : descriptor.getCoverageLayers().keySet()) {
+    	String styleName = descriptor.getCoverageLayers().get(coverageName);
+    	
+    	// TODO GIS coverage edited style
+      String editedStyleName = null;
+//      editedStyleName = descriptor.getEditedStyleName(agentName);
+
+      Integer layerOrder = descriptor.getLayerOrder(coverageName);
+
+      System.out.println("DDesc: " + coverageName + " - " + layerOrder);
+      
+      CoverageStyle<?> style = null;
+      // Style editor references get priority over explicit style classes if
+      // both are specified in descriptor
+      if (editedStyleName != null) {
+      	style = createCoverageEditedStyle(editedStyleName);
+      } 
+      else if (styleName != null) {
+        Class<?> styleClass = Class.forName(styleName, true, this.getClass().getClassLoader());
+        style = (CoverageStyle<?>) styleClass.newInstance();
+      }
+      
+      // TODO GIS use a basic empty coverage style if none specified in descriptor
+      
+//      if (style != null) {
+      	display.registerCoverageStyle(coverageName, style, layerOrder);
+//      }
+    }
   }
   
   public void registerNetworkStyles(DisplayDescriptor descriptor)
@@ -88,7 +108,7 @@ public class GISStyleRegistrar {
   	return null;
   }
   
-  protected StyleGIS<?> createCoverageEditedStyle(String editedStyleName) {
+  protected CoverageStyle<?> createCoverageEditedStyle(String editedStyleName) {
   	
   	// TODO GIS provided editid style 
   	

@@ -14,6 +14,7 @@ import org.geotools.gce.arcgrid.ArcGridFormatFactory;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.image.WorldImageFormatFactory;
 import org.opengis.coverage.grid.GridCoverageReader;
 
 import junit.framework.TestCase;
@@ -32,6 +33,7 @@ public class GridCoverageReaderTests extends TestCase {
 
 	File geoTiffFile1, geoTiffFile2, geoTiffFile3;
 	File arcGridFile, arcGridFileZip;
+	File jpegWorldFile, tiffWorldFile, pngWorldFile;
 	
 	@Override
 	public void setUp() {
@@ -41,6 +43,10 @@ public class GridCoverageReaderTests extends TestCase {
 		
 		arcGridFile = new File("test/data/ArcGrid.asc");
 		arcGridFileZip = new File("test/data/spearfish.asc.gz");
+		
+		jpegWorldFile = new File("test/data/RGBTestPattern.jpg");
+		pngWorldFile = new File("test/data/RGBTestPattern.png");
+		tiffWorldFile = new File("test/data/RGBTestPattern.tif");
 	}
 
 	/**
@@ -73,8 +79,14 @@ public class GridCoverageReaderTests extends TestCase {
 		readGTFactoryFinder(geoTiffFile1);
 		readGTFactoryFinder(geoTiffFile2);
 		readGTFactoryFinder(geoTiffFile3);
+		
+		readGTFactoryFinder(arcGridFile);
+//		readGTFactoryFinder(arcGridFileZip); // Finder doesnt support zip
+		
+		readGTFactoryFinder(jpegWorldFile);
+		readGTFactoryFinder(pngWorldFile);
+		readGTFactoryFinder(tiffWorldFile);
 	}
-	
 
 	public void readGTGeoTiff(File file){
 		
@@ -132,6 +144,7 @@ public class GridCoverageReaderTests extends TestCase {
 
 		boolean geoTiffAvailable = false;
 		boolean arcGridAvailable = false;
+		boolean worldFileAvailable = false;
 		
 		for (GridFormatFactorySpi f : formats){
 			
@@ -144,9 +157,14 @@ public class GridCoverageReaderTests extends TestCase {
 			else if (f instanceof ArcGridFormatFactory){
 				arcGridAvailable = true;
 			}
+			
+			else if (f instanceof WorldImageFormatFactory) {
+				worldFileAvailable = true;
+			}
 		}
 
 		assertTrue(geoTiffAvailable);
 		assertTrue(arcGridAvailable);
+		assertTrue(worldFileAvailable);
 	}
 }

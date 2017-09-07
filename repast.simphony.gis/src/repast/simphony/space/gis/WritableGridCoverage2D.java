@@ -36,7 +36,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class WritableGridCoverage2D extends GridCoverage2D {
 
-    private GridCoverage2D wrapped;
+	private static final long serialVersionUID = 1722776130754905671L;
+		
+	private GridCoverage2D wrapped;
     private static final int MAX_PENDING_VALUES = 10000;
 
     private static class PendingValue {

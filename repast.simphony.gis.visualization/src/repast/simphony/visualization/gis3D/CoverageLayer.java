@@ -1,5 +1,7 @@
 package repast.simphony.visualization.gis3D;
 
+import java.awt.image.BufferedImage;
+
 import javax.media.jai.PlanarImage;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -32,6 +34,11 @@ public class CoverageLayer extends RenderableLayer{
   	setName(coverageName);
   	this.coverageName = coverageName;
   	this.style = style;
+  	
+  	// Create a single SurfaceImage once with dummy data that will be update later.
+  	// Needed here since the coverage can be null during init or any time later
+  	surfaceImage = new RepastSurfaceImage(
+  			new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB), Sector.EMPTY_SECTOR);
   }
 
   /**
@@ -69,12 +76,18 @@ public class CoverageLayer extends RenderableLayer{
   	// Get the coverage each update in case it changed or was created/destroyed
   	GridCoverage2D coverage = geography.getCoverage(coverageName);
   	
-  	// TODO GIS can we handle this of coverage added to Geography after init?
-  	// TODO GIS removing the renderable each time handles null coverage but 
-  	//      might cause display issues so check.
-  	removeRenderable(surfaceImage);
-  	
-  	if (coverage == null) return;  // Nothing to do if null coverage
+  	if (coverage == null) {
+  		if (surfaceImage != null) {
+  			
+  			// Remove previous SurfaceImage if it exists
+  			// TODO GIS Remove every update cause issue like flicker?
+  			removeRenderable(surfaceImage); 
+  		}
+  		surfaceImage = null;
+  		
+  		return;  // Nothing left to do if null coverage
+  	}
+  
   	
   	// TODO GIS Coverage styling that overrides the internal buffered image.
   	

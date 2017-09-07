@@ -123,6 +123,7 @@ public class RepastCoverageFactory {
 	 * @return WritableGridCoverage2D a writable GridCoverage2D
 	 * 
 	 * TODO image data type (int, float, double, etc).
+	 * TODO default value
 	 */
 	public static WritableGridCoverage2D createWritableCoverage(String name, int width, 
 			int height, ReferencedEnvelope envelope){

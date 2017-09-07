@@ -12,7 +12,6 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,10 +34,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.coverage.grid.io.GridFormatFinder;
-import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import com.jogamp.common.os.Platform;
@@ -88,7 +83,6 @@ import repast.simphony.visualization.gis3D.style.MarkStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
-import repast.simphony.visualization.gui.GISStylePanel;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
 
@@ -391,6 +385,8 @@ public class DisplayGIS3D extends AbstractDisplay {
     
   	for (RenderableLayer layer : layersToSort) {
   		Integer order = layerOrder.get(layer.getName());
+  		
+  		System.out.println("Layer: " + layer.getName() + " - " + order);
   		
   		// If the order is non null and doesnt already exist, add the layer
   		if (order != null && !orderedLayerMap.containsKey(order)) {	
