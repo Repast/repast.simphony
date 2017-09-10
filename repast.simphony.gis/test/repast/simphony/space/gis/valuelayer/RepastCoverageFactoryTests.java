@@ -25,12 +25,13 @@ import repast.simphony.space.gis.RasterLayer;
 import repast.simphony.space.gis.RepastCoverageFactory;
 
 /**
- * Tests for the Repast RasterLayer API
+ * Tests for the RepastCoverageFactory.  Considers all general GridCoverage
+ * operations like creating in memory, creating from file, read, write, etc.
  * 
  * @author Eric Tatara
  *
  */
-public class RasterLayerTests extends TestCase {
+public class RepastCoverageFactoryTests extends TestCase {
 
 	public static final String TEST_CRS_CODE = "EPSG:4326";  // WGS84
 	

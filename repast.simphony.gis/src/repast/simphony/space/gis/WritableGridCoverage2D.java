@@ -237,12 +237,12 @@ public class WritableGridCoverage2D extends GridCoverage2D {
 //                case DataBuffer.TYPE_BYTE: //0
 //                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Byte)pv.value);
 //                	break;
-                case DataBuffer.TYPE_USHORT: //1
-                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
-                	break;
-                case DataBuffer.TYPE_SHORT: //2
-                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
-                	break;
+//                case DataBuffer.TYPE_USHORT: //1
+//                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
+//                	break;
+//                case DataBuffer.TYPE_SHORT: //2
+//                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
+//                	break;
 
                 case DataBuffer.TYPE_INT:  //3
                 	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);

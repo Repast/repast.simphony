@@ -1,11 +1,17 @@
 package repast.simphony.space.gis;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.media.jai.RasterFactory;
+
+import org.geotools.coverage.Category;
 import org.geotools.coverage.CoverageFactoryFinder;
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -142,5 +148,42 @@ public class RepastCoverageFactory {
 		return new WritableGridCoverage2D(factory.create(name, image, envelope));
 	}
 	
+	public static WritableGridCoverage2D createWritableFloatCoverage(String name, int width, 
+			int height, int defaultValue, ReferencedEnvelope envelope) {
+		
+		WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT,
+				width, height, 1, null);
+		
+		for (int y=0; y<height; y++) {
+			for (int x=0; x<width; x++) {
+				raster.setSample(x, y, 0, defaultValue);
+			}
+		}
+		
+		Hints hints = new Hints(Hints.TILE_ENCODING, "raw");
+    GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(hints);  
+    GridCoverage2D  coverage = factory.create("Test", raster, envelope);
+
+    return new WritableGridCoverage2D(coverage);
+	}
 	
+	public static WritableGridCoverage2D createWritableIndexedCoverage(String name, int width, 
+			int height, int defaultValue, ReferencedEnvelope envelope, Category[] categories,
+			GridSampleDimension[] bands ){
+	
+    BufferedImage image  = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED);    
+    WritableRaster raster = image.getRaster();
+        
+    for (int i=0; i<raster.getWidth(); i++) {
+    	for (int j=0; j<raster.getHeight(); j++) {
+    		raster.setSample(i,j,0,defaultValue);
+       }
+    }
+		
+		Hints hints = new Hints(Hints.TILE_ENCODING, "raw");
+    GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(hints);  
+    GridCoverage2D  coverage = factory.create("Test", raster, envelope, bands);
+
+    return new WritableGridCoverage2D(coverage);
+	}
 }
