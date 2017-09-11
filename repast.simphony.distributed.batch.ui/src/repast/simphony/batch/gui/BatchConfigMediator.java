@@ -11,8 +11,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JComponent;
@@ -344,7 +347,7 @@ public class BatchConfigMediator {
         AntSessionRunner runner = new AntSessionRunner(p, configFile.getCanonicalPath());
         runner.execute();
 
-      } catch (IOException ex) {
+      } catch (IOException | URISyntaxException ex) {
         ex.printStackTrace();
         ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
       } catch (ParserConfigurationException ex) {
@@ -357,15 +360,15 @@ public class BatchConfigMediator {
     }
   }
 
-  private Project createAntProject() throws IOException, ParserConfigurationException, SAXException {
+  private Project createAntProject() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
 
     Project project = new Project();
     @SuppressWarnings("restriction")
     URL url = groovy.lang.GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
-    project.setProperty("groovy.home", URLDecoder.decode(url.getFile(), "UTF-8"));
+    project.setProperty("groovy.home", Paths.get(url.toURI()).toString()); 
    
     url = SessionsDriver.class.getResource("/scripts/build.xml");
-    String antFile = new File(URLDecoder.decode(url.getFile(), "UTF-8")).getCanonicalPath();
+    String antFile = Paths.get(url.toURI()).toFile().getCanonicalPath();
     int index = antFile.indexOf("repast.simphony.distributed.batch_");
     if (index != -1) {
       int start = index + "repast.simphony.distributed.batch_".length();
@@ -429,7 +432,7 @@ public class BatchConfigMediator {
         writeConfigFile(configFile);
         Project p = createAntProject();
         new AntSessionRunner(p, null).execute();
-      } catch (IOException ex) {
+      } catch (IOException | URISyntaxException ex) {
         ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
       } catch (ParserConfigurationException ex) {
         ex.printStackTrace(new PrintStream(console.getErrorOutputStream(), true));
