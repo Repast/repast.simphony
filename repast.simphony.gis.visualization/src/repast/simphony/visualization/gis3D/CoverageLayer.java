@@ -1,6 +1,10 @@
 package repast.simphony.visualization.gis3D;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.WritableRaster;
 
 import javax.media.jai.PlanarImage;
 
@@ -27,6 +31,9 @@ public class CoverageLayer extends RenderableLayer{
   protected CoverageStyle style;
   protected SurfaceImage surfaceImage;  // Only one SurfaceImage in the layer
   
+  // Image to set when the coverage is null
+  protected BufferedImage noImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+  
   // TODO GIS get smoothing param from descriptor
   protected boolean smoothing = false;
   
@@ -37,8 +44,8 @@ public class CoverageLayer extends RenderableLayer{
   	
   	// Create a single SurfaceImage once with dummy data that will be update later.
   	// Needed here since the coverage can be null during init or any time later
-  	surfaceImage = new RepastSurfaceImage(
-  			new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB), Sector.EMPTY_SECTOR);
+  	surfaceImage = new RepastSurfaceImage(noImage, Sector.EMPTY_SECTOR);
+  	addRenderable(surfaceImage);
   }
 
   /**
@@ -76,14 +83,8 @@ public class CoverageLayer extends RenderableLayer{
   	// Get the coverage each update in case it changed or was created/destroyed
   	GridCoverage2D coverage = geography.getCoverage(coverageName);
   	
-  	if (coverage == null) {
-  		if (surfaceImage != null) {
-  			
-  			// Remove previous SurfaceImage if it exists
-  			// TODO GIS Remove every update cause issue like flicker?
-  			removeRenderable(surfaceImage); 
-  		}
-  		surfaceImage = null;
+  	if (coverage == null) {  		
+  		surfaceImage.setImageSource(noImage, Sector.EMPTY_SECTOR);
   		
   		return;  // Nothing left to do if null coverage
   	}
@@ -95,15 +96,28 @@ public class CoverageLayer extends RenderableLayer{
 		//  to speed up this code by comparing the underlying raster or PlanarImage
 		//  which is relatively fast, and only updating if the data has changed.
 		
+ 		ReferencedEnvelope envelope = new ReferencedEnvelope(coverage.getEnvelope());
+ 		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
+  	
 		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
+		BufferedImage image = pi.getAsBufferedImage();
 		
-		// TODO GIS these probably wont change so think about storing
-		ReferencedEnvelope envelope = new ReferencedEnvelope(coverage.getEnvelope());
-		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
-		
+		// TODO GIS check all other potential data types
+		// If the raster is backed with a Double DataBuffer, we need to convert it
+		// to a Float DataBuffer because double is not supported by OpenGL.  The
+		// easiest approach seems to just create a new image and draw on it rather
+		// than creating new buffers and rasters.
+		if (pi.getData().getDataBuffer().getDataType() == DataBuffer.TYPE_DOUBLE){
+			BufferedImage original = pi.getAsBufferedImage();
+
+			image = new BufferedImage(original.getWidth(), original.getHeight(), 
+					BufferedImage.TYPE_INT_ARGB);
+			
+			image.getGraphics().drawImage(original, 0, 0, null);
+		}
+	
 		// slow step
-		surfaceImage.setImageSource(pi.getAsBufferedImage(), sector);
-		addRenderable(surfaceImage);
+		surfaceImage.setImageSource(image, sector);
   }
   
   /**

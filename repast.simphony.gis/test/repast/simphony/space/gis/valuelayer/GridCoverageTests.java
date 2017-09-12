@@ -211,11 +211,11 @@ public class GridCoverageTests extends TestCase {
 		int width = 100;
 		int height = 200;
 		
-		int type = DataBuffer.TYPE_USHORT;
-		int maxColorIndex = 2*Short.MAX_VALUE;
+//		int type = DataBuffer.TYPE_USHORT;
+//		int maxColorIndex = 2*Short.MAX_VALUE;
 		
-//		int type = DataBuffer.TYPE_BYTE;
-//		int maxColorIndex = 2*Byte.MAX_VALUE;
+		int type = DataBuffer.TYPE_BYTE;
+		int maxColorIndex = 2*Byte.MAX_VALUE;
 		
 		Color[] temperatureColorScale = new Color[maxColorIndex+1];
 		
@@ -227,6 +227,8 @@ public class GridCoverageTests extends TestCase {
 			temperatureColorScale[i] = new Color(1.0f, 1-a, 1-a);
 		}
 	
+		// If colors are null, the coverage factory will provide default colormap
+		// values for single value, and grayscale pallette for ranges.
     Category[] categories	= new Category[] {	
         new Category("No data",     Color.BLACK, 0),
         new Category("Land",        Color.GREEN, 1),

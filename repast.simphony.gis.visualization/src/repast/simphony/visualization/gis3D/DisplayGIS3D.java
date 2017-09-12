@@ -682,6 +682,9 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	private Sector calculateBoundingSector(){
+		
+		// TODO GIS include the coverages
+		
 		ArrayList<LatLon> points = new ArrayList<LatLon>(); 
 		for (Object o : geog.getAllObjects()){
 			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));

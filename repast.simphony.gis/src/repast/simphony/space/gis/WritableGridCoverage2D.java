@@ -203,7 +203,7 @@ public class WritableGridCoverage2D extends GridCoverage2D {
 
     public void flushCache(boolean force) {
     	
-    	System.out.println("WritableGridCoverage2D.flushCache()");
+//    	System.out.println("WritableGridCoverage2D.flushCache()");
     	
         if (pendingValues.size() >= MAX_PENDING_VALUES || (force && pendingValues.size() > 0)) {
 
@@ -215,9 +215,7 @@ public class WritableGridCoverage2D extends GridCoverage2D {
             }
             WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
             int dataType = writableImage.getSampleModel().getDataType();
-
-            System.out.println("DataType: " + dataType);
-            
+  
             GridCoordinates2D gridPos = null;
             for (PendingValue pv : pendingValues) {
                 if (pv.isGeographic) {
