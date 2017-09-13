@@ -135,13 +135,33 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
+			
 			<fileset dir="../repast.simphony.batch/test" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
+			
+			<fileset dir="../repast.simphony.distributed.batch/src" casesensitive="no">
+                <include name="**/*.java" />
+                <include name="**/*.groovy" />
+            </fileset>
+			
+			<fileset dir="../repast.simphony.distributed.batch/bin" casesensitive="no">
+                <include name="**/*.class" />
+            </fileset>
+			
 			<fileset dir="../repast.simphony.batch/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+			
+			<fileset dir="../repast.simphony.distributed.batch/src" casesensitive="no">
+                <include name="**/*.java" />
+                <include name="**/*.groovy" />
+            </fileset>
+            
+            <fileset dir="../repast.simphony.distributed.batch/bin" casesensitive="no">
+                <include name="**/*.class" />
+            </fileset>
 
 			<fileset dir="../repast.simphony.chart/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -373,6 +393,7 @@
 				<include name="**/*.groovy" />
 			</fileset>
 
+			<!--
 			<fileset dir="../repast.simphony.systemdynamics.generator/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -381,6 +402,7 @@
 			<fileset dir="../repast.simphony.systemdynamics.generator/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+			-->
 
 			<fileset dir="../repast.simphony.userpanel.ui/bin" casesensitive="no">
 				<include name="**/*.class" />
