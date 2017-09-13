@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +44,8 @@ import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.PositionEvent;
+import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Angle;
@@ -132,7 +133,21 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected FlatGlobe flatGlobe;
 	protected boolean trackAgents; // keeps all agents in view even if moving
 	protected Sector boundingSector;
+	protected GlobePositionListener positionListener; // listens for mouse globe position
 
+	public class GlobePositionListener implements PositionListener{
+		private Position pos = null;
+		
+		@Override
+		public void moved(PositionEvent event) {
+			pos = event.getPosition();
+		}
+		
+		public Position getPosition() {
+			return pos;
+		}
+	}
+	
 	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
 		layerOrder = new HashMap<String,Integer>();
 		classStyleMap = new LinkedHashMap<Class<?>, AbstractRenderableLayer<?,?>>();
@@ -177,31 +192,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		initListener();
 	}
 
-	/**
-	 * Create the select listener.
-	 */
-	private void initListener() {
-		worldWindow.addSelectListener(new SelectListener() {
-			public void selected(SelectEvent event) {
-				if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
-					if (event.hasObjects()) {
-						if (event.getTopObject() instanceof Renderable)
-							probe((Renderable) event.getTopObject());
-					}
-				}
-			}
-		});
-	}
-
-	public void probe(Renderable pickedShape) {
-		Object obj = findObjForItem(pickedShape);
-
-		List<Object> objList = new ArrayList<Object>() {};
-		objList.add(obj);
-
-		if (obj != null)
-			probeSupport.fireProbeEvent(this, objList);
-	}
 
 	/**
 	 * Register the agent class and style information
@@ -323,28 +313,63 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	/**
-	 * Finds the object for which the specified PNode is the representation.
-	 * 
-	 * @param node
-	 *          the representational PNode
-	 * @return the object for which the specified PNode is the representation or
-	 *         null if the object is not found.
+	 * Create the select listener.
 	 */
-	public Object findObjForItem(Renderable renderable) {
-		Collection<AbstractRenderableLayer<?,?>> layers = classStyleMap.values();
-		for (AbstractRenderableLayer<?,?> layer : layers) {
-			Object obj = layer.findObjectForRenderable(renderable);
-			if (obj != null)
-				return obj;
-		}
-
-		// TODO WWJ also loop through network and raster 
+	private void initListener() {
 		
-		// WWJ Renderable for coverage will be the SurfaceImage
-
-		return null;
+		// The position listener maintains the current globe position of the cursor.
+		positionListener = new GlobePositionListener();
+		worldWindow.addPositionListener(positionListener);
+		
+		worldWindow.addSelectListener(new SelectListener() {
+			public void selected(SelectEvent event) {
+				if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
+					if (event.hasObjects()) {
+						if (event.getTopObject() instanceof Renderable)
+							probe(event);
+					}
+				}
+			}
+		});
 	}
 
+	
+	public void probe(SelectEvent event) {
+		Object obj = null;
+		Renderable pickedShape = (Renderable) event.getTopObject();
+		
+		// First check if probed object is a coverage
+		if (pickedShape instanceof SurfaceImage) {
+			for (CoverageLayer layer : coverageLayerMap.values()) {
+				if ( pickedShape == layer.getSurfaceImage() ) {	
+					
+//					worldWindow.getSceneController().getView().unProject(event.getPickPoint());
+//					model.getGlobe().computePositionFromPoint(point);
+					
+					obj = layer.getProbedObject(positionListener.getPosition());
+				}
+			}
+		}
+		
+		// Next check if probed object is an agent
+		else {
+			for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
+				Object foundObj = layer.findObjectForRenderable(pickedShape);
+				if (foundObj != null)
+					obj = foundObj;
+			}
+
+			// TODO WWJ also loop through network
+
+		}
+		
+		List<Object> objList = new ArrayList<Object>() {};
+		objList.add(obj);
+
+		if (obj != null)
+			probeSupport.fireProbeEvent(this, objList);
+	}
+	
 	@Override
 	public void init() {
 

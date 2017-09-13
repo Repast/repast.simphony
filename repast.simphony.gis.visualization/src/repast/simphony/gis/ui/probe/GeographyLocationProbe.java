@@ -12,14 +12,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 /**
- * Probe for an objects geometry in a geography
+ * Provides the location of probed objects in Geography projections.
  * 
  * @author Nick Collier
  */
 public class GeographyLocationProbe implements LocationProbe{
 
-  private Object obj;
-  private Geography<?> geog;
+  protected Object obj;
+  protected Geography<?> geog;
 
   public GeographyLocationProbe(Object obj, Geography<?> geog) {
     this.obj = obj;

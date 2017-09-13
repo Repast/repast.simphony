@@ -8,6 +8,7 @@ import javax.media.jai.PlanarImage;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
@@ -23,7 +24,7 @@ import repast.simphony.visualization.gis3D.style.CoverageStyle;
  */
 public class CoverageLayer extends RenderableLayer{
 
-	protected String coverageName;
+	protected String layerName;
 	protected Geography<?> geography;
   protected CoverageStyle<?> style;
   protected SurfaceImage surfaceImage;  // Only one SurfaceImage in the layer
@@ -34,9 +35,9 @@ public class CoverageLayer extends RenderableLayer{
   // TODO GIS get smoothing param from descriptor
   protected boolean smoothing = false;
   
-  public CoverageLayer(String coverageName, CoverageStyle<?> style){
-  	setName(coverageName);
-  	this.coverageName = coverageName;
+  public CoverageLayer(String layerName, CoverageStyle<?> style){
+  	setName(layerName);
+  	this.layerName = layerName;
   	
   	this.style = style;
   	
@@ -79,7 +80,7 @@ public class CoverageLayer extends RenderableLayer{
   public void update() {
   	
   	// Get the coverage each update in case it changed or was created/destroyed
-  	GridCoverage2D coverage = geography.getCoverage(coverageName);
+  	GridCoverage2D coverage = geography.getCoverage(layerName);
   	
   	if (coverage == null) {  		
   		surfaceImage.setImageSource(noImage, Sector.EMPTY_SECTOR);
@@ -142,5 +143,26 @@ public class CoverageLayer extends RenderableLayer{
 
   public Sector getBoundingSector() {
   	return surfaceImage.getSector();
+  }
+  
+  public SurfaceImage getSurfaceImage() {
+  	return surfaceImage;
+  }
+  
+  /**
+   * Create a probe object that represents the value of the coverage at the probed
+   * location, which is provided via argument rather than referenced from a projection
+   * as is usually dont with the other probe object classes.
+   * 
+   * @param point
+   * @return
+   */
+  public CoverageProbeObject getProbedObject(Position position) {
+  	GridCoverage2D coverage = geography.getCoverage(layerName);
+  		
+  	if (coverage == null) 
+  		return null;
+  	
+    return new CoverageProbeObject(layerName, position, coverage);
   }
 }
