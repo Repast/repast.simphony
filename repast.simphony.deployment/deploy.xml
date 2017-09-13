@@ -99,6 +99,7 @@
 			<exclude name="**/xmltask.jar" />
 
 			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
+			<exclude name="**/repast.simphony.distributed.batch/test_data/**" />
 			<exclude name="**/repast.simphony.statecharts.diagram/**" />
 			
 			<!-- Exclude deprecated plugins-->
