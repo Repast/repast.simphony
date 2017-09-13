@@ -88,10 +88,10 @@ public class MapViewer {
 //		try {
 //			crs = factory.createCoordinateReferenceSystem("EPSG:3005");
 //		} catch (NoSuchAuthorityCodeException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		} catch (FactoryException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		}
 		

@@ -331,7 +331,7 @@ public class FeatureAgent<T> implements SimpleFeature {
 	 * @see Feature#getBounds()
 	 */
 	public BoundingBox getBounds() {
-		//TODO: cache this value
+		
 		ReferencedEnvelope bounds = new ReferencedEnvelope(
 				featureType.getCoordinateReferenceSystem());
 
@@ -402,7 +402,7 @@ public class FeatureAgent<T> implements SimpleFeature {
   //  however they may be necessary to implement if the FeatureAgent is used
   //  with any GeoTools API that requires them.
   //
-	//  TODO Geotools [minor] - determine what stubs are required to be implemented
+	// 
   //
 	//**************************************************************************
 

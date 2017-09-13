@@ -67,16 +67,11 @@ public class DefaultCoverageStyle<T> implements CoverageStyle<T> {
 
 	@Override
 	public boolean isSmoothed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public double getOpacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1.0;
 	}
-
-	
-
 }

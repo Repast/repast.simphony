@@ -270,9 +270,6 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
     mapContext.getViewport().setBounds(new ReferencedEnvelope(
     		new Envelope(-90, -90, -90, 90), geog.getCRS()));
     
-    // TODO Geotools: Look at how mapContext.getViewport().setCoordinateReferenceSystem(arg0);
-    //        might be used to set the display based on the layer CRS.  The viewport
-    //        bounds are also set in several other classes eg PGISCanvas, etc.
     
     geog.addProjectionListener(this);
     decorator = new SelectionDecorator(mapContext);
@@ -694,7 +691,6 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
   }
 
   public void toggleInfoProbe() {
-    // TODO Auto-generated method stub
-
+  
   }
 }

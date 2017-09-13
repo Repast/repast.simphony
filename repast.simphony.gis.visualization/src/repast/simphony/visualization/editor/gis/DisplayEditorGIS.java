@@ -140,7 +140,7 @@ public class DisplayEditorGIS implements DisplayEditor, ObjectSelectionListener,
   public RepastEdge addEdge(Object source, Object target, List<Coordinate> coords) {
     RepastEdge edge = selectedNetwork.addEdge(source, target);
 
-    // TODO - added a projection listener to the geography to handle net events,
+    //  added a projection listener to the geography to handle net events,
     //        so below should be unnecessary?
   
     // we add the edge to the geography but NOT to the context
@@ -150,7 +150,7 @@ public class DisplayEditorGIS implements DisplayEditor, ObjectSelectionListener,
     // adding an object to a context would a cause
 //    display.projectionEventOccurred(new ProjectionEvent(geog, edge, ProjectionEvent.Type.OBJECT_ADDED));
 
-    // TODO use LineString or MultiLineString?
+    //  use LineString or MultiLineString?
 //  geog.move(edge, createLineString(coords));
     List<LineString> lines = new ArrayList<LineString>();
     lines.add(createLineString(coords));
@@ -234,7 +234,7 @@ public class DisplayEditorGIS implements DisplayEditor, ObjectSelectionListener,
         }
         geog.move(edge, null); // remove the geography representation of the edge.
         
-        // TODO - added a projection listener to the geography to handle net events,
+        //  added a projection listener to the geography to handle net events,
         //        so below should be unnecessary?
         
         // mimic the event that removing an agent from a context
@@ -454,7 +454,7 @@ public class DisplayEditorGIS implements DisplayEditor, ObjectSelectionListener,
       RepastEdge edge = (RepastEdge) subject;
       agentEditor.edgeRemoved(edge);
       
-      // TODO - added a projection listener to the geography to handle net events,
+      //  added a projection listener to the geography to handle net events,
       //        so below should be unnecessary?
       
 //      if (geog.getGeometry(edge) != null) {

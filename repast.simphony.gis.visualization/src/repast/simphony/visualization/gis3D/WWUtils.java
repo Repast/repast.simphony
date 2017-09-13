@@ -36,12 +36,6 @@ import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 public class WWUtils {
 
 	public static LatLon CoordToLatLon(Coordinate coord){
-
-		// TODO HACK
-		// prevent conversion error for cases where lon might be slightly larger than 180.
-		//		if (coord.x > 180)
-		//			coord.x = 180;
-
 		return LatLon.fromDegrees(coord.y,coord.x);
 	}
 

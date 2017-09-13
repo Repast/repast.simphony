@@ -11,7 +11,8 @@ import repast.simphony.util.ContextUtils;
 import repast.simphony.visualization.gis3D.CoverageProbeObject;
 
 /**
- * Provides location information to probe panels for the probed objects in a Geography.
+ * Provides location information to probe panels for the probed objects in a 
+ *   Geography or GridCoverage2D
  * 
  * @author Eric Tatara
  *

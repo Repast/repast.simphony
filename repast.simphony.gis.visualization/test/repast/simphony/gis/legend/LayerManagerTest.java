@@ -76,7 +76,7 @@ public class LayerManagerTest extends TestCase {
 
 		@Override
 		public ReferencedEnvelope getBounds() {
-			// TODO Auto-generated method stub
+			
 			return null;
 		}
 		
