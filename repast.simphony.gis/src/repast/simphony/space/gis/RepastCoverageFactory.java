@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.media.jai.RasterFactory;
 
@@ -47,7 +46,7 @@ public class RepastCoverageFactory {
 	public static int MAX_SHORT_COLOR_INDEX = 2*Short.MAX_VALUE;
 	
   // Maximum valid color index for indexed colormodels of DataBuffer.TYPE_BYTE
-	public static int MAX_BYTE_COLOR_INDEX = 2*Byte.MAX_VALUE;
+	public static int MAX_BYTE_COLOR_INDEX = 2*Byte.MAX_VALUE+1;
 	
 	private static MessageCenter msg = MessageCenter.getMessageCenter(RepastCoverageFactory.class);
 	
@@ -241,6 +240,22 @@ public class RepastCoverageFactory {
     return new WritableGridCoverage2D(coverage);
 	}
 	
+	public static WritableGridCoverage2D createWritableByteIndexedCoverage(String name, int width, 
+			int height, ReferencedEnvelope envelope, Category[] categories,
+			Unit<?> unit, int defaultValue){
+		
+		return createWritableIndexedCoverage(name, width, height, envelope, 
+				categories, DataBuffer.TYPE_BYTE, unit, defaultValue);
+	}
+	
+	public static WritableGridCoverage2D createWritableShortIndexedCoverage(String name, int width, 
+			int height, ReferencedEnvelope envelope, Category[] categories,
+			Unit<?> unit, int defaultValue){
+		
+		return createWritableIndexedCoverage(name, width, height, envelope, 
+				categories, DataBuffer.TYPE_USHORT, unit, defaultValue);
+	}
+	
 	public static WritableGridCoverage2D createWritableIndexedCoverage(String name, int width, 
 			int height, ReferencedEnvelope envelope, Category[] categories,
 			int dataType, Unit<?> unit, Integer defaultValue){
@@ -249,7 +264,7 @@ public class RepastCoverageFactory {
 		for (Category cat : categories) {
 			double maxVal = cat.getRange().getMaximum();
 			
-			if (dataType == DataBuffer.TYPE_BYTE && maxVal >= MAX_BYTE_COLOR_INDEX) {
+			if (dataType == DataBuffer.TYPE_BYTE && maxVal > MAX_BYTE_COLOR_INDEX) {
 				String info = "The category " + cat.getName() + " has a maximum value of " 
 						+ maxVal + " but the data type BYTE is only valid to " + MAX_BYTE_COLOR_INDEX;
 				Exception ex = new Exception(info);
@@ -257,7 +272,7 @@ public class RepastCoverageFactory {
 				ex.printStackTrace();
 				return null;
 			}
-			else if (dataType == DataBuffer.TYPE_USHORT && maxVal >= MAX_SHORT_COLOR_INDEX) {
+			else if (dataType == DataBuffer.TYPE_USHORT && maxVal > MAX_SHORT_COLOR_INDEX) {
 				String info = "The category " + cat.getName() + " has a maximum value of " 
 						+ maxVal + " but the data type SHORT is only valid to " + MAX_SHORT_COLOR_INDEX;
 				Exception ex = new Exception(info);
@@ -269,7 +284,7 @@ public class RepastCoverageFactory {
 
 		// Single band with the same name as the coverage
 		GridSampleDimension[] bands = new GridSampleDimension[] {
-				new GridSampleDimension(name, categories, SI.CELSIUS)
+				new GridSampleDimension(name, categories, unit)
 		};
 
 		// Create the colormodel first since it is used to create a compatible
@@ -308,4 +323,5 @@ public class RepastCoverageFactory {
 
     return new WritableGridCoverage2D(coverage);
 	}
+	
 }

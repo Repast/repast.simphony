@@ -130,6 +130,7 @@ public class GridCoverageReaderTests extends TestCase {
 		}
 		assertNotNull(coverage);
 	}
+
 	
 	/**
 	 * Test the GeoTools GridFormatFinder to read available expected Factory 

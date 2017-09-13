@@ -30,8 +30,11 @@ import org.opengis.referencing.operation.TransformException;
  *	Adapted from example code in the GeoTools distribution.  Original work
  *  by Michael Bedward.
  *  
+ *  TODO GIS catch set position or lat/lon out of bounds
+ *  
  *  TODO GIS allow multi-band storage
  *
+ * @author Michael Bedward
  * @author Eric Tatara
  */
 public class WritableGridCoverage2D extends GridCoverage2D {
@@ -210,7 +213,8 @@ public class WritableGridCoverage2D extends GridCoverage2D {
             WritableRenderedImage writableImage = null;
             if (super.isDataEditable()) {
                 writableImage = (WritableRenderedImage) image;
-            } else {
+            } 
+            else {
                 writableImage = new TiledImage(wrapped.getRenderedImage(), true);
             }
             WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
@@ -228,30 +232,33 @@ public class WritableGridCoverage2D extends GridCoverage2D {
                 } else {
                     gridPos = (GridCoordinates2D) pv.pos;
                 }
-
-//                writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.doubleValue());
                 
+                // Note that Number._Value is called rather than casting, which
+                //  would an exception since the PendingValue is a Number object.
+                // TODO GIS check that BYTE,USHORT,SHORT should set intValue
                 switch (dataType) {
-//                case DataBuffer.TYPE_BYTE: //0
-//                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Byte)pv.value);
-//                	break;
-//                case DataBuffer.TYPE_USHORT: //1
-//                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
-//                	break;
-//                case DataBuffer.TYPE_SHORT: //2
-//                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
-//                	break;
+                case DataBuffer.TYPE_BYTE: //0
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.byteValue());
+                	break;
+                
+                case DataBuffer.TYPE_USHORT: //1
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.shortValue());
+                	break;
+
+                case DataBuffer.TYPE_SHORT: //2
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.shortValue());
+                	break;
 
                 case DataBuffer.TYPE_INT:  //3
-                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.intValue());
                 	break;
 
                 case DataBuffer.TYPE_FLOAT: //4
-                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Float)pv.value);
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.floatValue());
                 	break;
 
                 case DataBuffer.TYPE_DOUBLE:  //5
-                	writeIter.setSample(gridPos.x, gridPos.y, 0, (Double)pv.value);
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.doubleValue());
                 	break;
                 }
             }

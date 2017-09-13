@@ -603,15 +603,20 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	public void update() {
-				
-		// TODO GIS it might be useful to provide the GPU cache size in the UI
-//		long cacheBytes = worldWindow.getGpuResourceCache().getUsedCapacity();
-//		
-//		System.out.println("GPU Cache (MB): " + cacheBytes / 1E6);
+
+		// TODO GIS The update/render cycle needs to be cleaned up.  Originally, the
+		//      update() was just supposed to set values, while render() draw the 
+		//      screen.  However, the WWJ globe is updated when any surface object
+		//      is updated, so we need to treat the update() call like a render,
+		//      which should be less frequent.  Perhaps update() here doesn't actually
+		//      need to do anything, and we can delegate all to render.
+
 		
 		if (isVisible()){
-			doUpdate();
+//			doUpdate();
 			doRender = true;
+			
+			render();
 		}
 	}
 	
@@ -619,7 +624,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * Do an update without checking for display visibility
 	 */
 	private void doUpdate(){
-		layoutUpdater.update();
+	
 		try{
 			updateLock.lock();
 
@@ -647,6 +652,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+				doUpdate();
 				doRender();
 				lastRenderTS = ts;
 			}
@@ -681,13 +687,19 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return null;
 	}
 
+	/**
+	 * Calculate a bounding sector around all objects and coverages in the display.
+	 * 
+	 * @return the bounding sector.
+	 */
 	private Sector calculateBoundingSector(){
-		
-		// TODO GIS include the coverages
-		
 		ArrayList<LatLon> points = new ArrayList<LatLon>(); 
 		for (Object o : geog.getAllObjects()){
 			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));
+		}
+		
+		for (CoverageLayer layer : coverageLayerMap.values()){
+			points.addAll(layer.getBoundingSector().asList());
 		}
  
 		return Sector.boundingSector(points);

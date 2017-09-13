@@ -30,6 +30,9 @@ import repast.simphony.space.gis.RepastCoverageFactory;
  * 
  * @author Eric Tatara
  *
+ * TODO GIS test creating different data types and writing different types (eg float, 
+ *       double, int) to each to make sure we dont have any cast Exception in the
+ *       WritableCoverage class.  Better yet, put those in a separate Test
  */
 public class RepastCoverageFactoryTests extends TestCase {
 

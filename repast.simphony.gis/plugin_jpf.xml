@@ -21,6 +21,7 @@
 		<!-- GeoTools Libraries -->
 		<library id="gt-api" path="lib/gt-api-17.2.jar" type="code"/>
 		<library id="gt-arcgrid" path="lib/gt-arcgrid-17.2.jar" type="code"/>
+		<library id="gt-brewer" path="./lib/gt-brewer-17.2.jar" type="code"/>
 		<library id="gt-coverage" path="lib/gt-coverage-17.2.jar" type="code"/>
 		<library id="gt-cql" path="lib/gt-cql-17.2.jar" type="code"/>
 		<library id="gt-data" path="lib/gt-data-17.2.jar" type="code"/>

@@ -18,7 +18,6 @@
 	</requires>
 	
 	<runtime>
-		<library id="gt-brewer" path="./lib/gt-brewer-17.2.jar" type="code"/>
 		<library id="gt-render" path="./lib/gt-render-17.2.jar" type="code"/>
 		
 	  <library id="gis.visualization" path="bin/" type="code">

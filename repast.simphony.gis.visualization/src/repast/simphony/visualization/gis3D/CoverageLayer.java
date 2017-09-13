@@ -2,9 +2,6 @@ package repast.simphony.visualization.gis3D;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferDouble;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.WritableRaster;
 
 import javax.media.jai.PlanarImage;
 
@@ -27,8 +24,8 @@ import repast.simphony.visualization.gis3D.style.CoverageStyle;
 public class CoverageLayer extends RenderableLayer{
 
 	protected String coverageName;
-	protected Geography geography;
-  protected CoverageStyle style;
+	protected Geography<?> geography;
+  protected CoverageStyle<?> style;
   protected SurfaceImage surfaceImage;  // Only one SurfaceImage in the layer
   
   // Image to set when the coverage is null
@@ -37,9 +34,10 @@ public class CoverageLayer extends RenderableLayer{
   // TODO GIS get smoothing param from descriptor
   protected boolean smoothing = false;
   
-  public CoverageLayer(String coverageName, CoverageStyle style){
+  public CoverageLayer(String coverageName, CoverageStyle<?> style){
   	setName(coverageName);
   	this.coverageName = coverageName;
+  	
   	this.style = style;
   	
   	// Create a single SurfaceImage once with dummy data that will be update later.
@@ -116,6 +114,21 @@ public class CoverageLayer extends RenderableLayer{
 			image.getGraphics().drawImage(original, 0, 0, null);
 		}
 	
+		// TODO GIS Style below works.  Need to provide the Symbolizer editor via GUI and 
+		//      DefaultCoverageStyle as example.
+		
+		// Apply styles to the coverage
+//		RasterSymbolizer symbolizer = style.getSymbolizer();
+//		if (symbolizer != null) {
+//			
+//			RasterSymbolizerHelper helper = new RasterSymbolizerHelper(coverage, null);
+//			
+//			helper.visit(symbolizer);
+//			
+//			pi = (PlanarImage)((GridCoverage2D)helper.getOutput()).getRenderedImage();
+//			image = pi.getAsBufferedImage();
+//		}
+		
 		// slow step
 		surfaceImage.setImageSource(image, sector);
   }
@@ -127,4 +140,7 @@ public class CoverageLayer extends RenderableLayer{
   @Override   // TODO WWJ - find out if this can be handled better
   public void dispose() {}
 
+  public Sector getBoundingSector() {
+  	return surfaceImage.getSector();
+  }
 }
