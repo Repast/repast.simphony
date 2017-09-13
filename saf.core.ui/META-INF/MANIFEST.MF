@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Saf core ui
 Bundle-SymbolicName: saf.core.ui
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Export-Package: 
  bibliothek.extension.gui.dock,
  bibliothek.extension.gui.dock.preference,

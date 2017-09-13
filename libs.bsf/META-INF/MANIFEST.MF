@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast libs bsf
 Bundle-SymbolicName: libs.bsf
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Bundle-ClassPath: lib/bsf.jar,
  lib/bsh-2.0b4.jar
 Export-Package: bsh,

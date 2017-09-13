@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast relogo ide
 Bundle-SymbolicName: repast.simphony.relogo.ide;singleton:=true
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Bundle-Activator: relogo.Activator
 Require-Bundle: org.eclipse.debug.core;bundle-version="3.5.1",
  org.eclipse.debug.ui;bundle-version="3.5.2",

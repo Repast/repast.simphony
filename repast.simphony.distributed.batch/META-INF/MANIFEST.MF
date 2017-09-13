@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast distributed batch
 Bundle-SymbolicName: repast.simphony.distributed.batch
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Require-Bundle: repast.simphony.batch,
  repast.simphony.core,
  repast.simphony.data,

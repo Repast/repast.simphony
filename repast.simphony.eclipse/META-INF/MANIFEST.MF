@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast Simphony
 Bundle-SymbolicName: repast.simphony.eclipse;singleton:=true
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Bundle-ClassPath: bin/
 Bundle-Activator: repast.simphony.eclipse.RepastSimphonyPlugin
 Bundle-Vendor: Argonne National Laboratory

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast jasper reports
 Bundle-SymbolicName: repast.simphony.jasperreports
-Bundle-Version: 2.4.0
+Bundle-Version: 2.5.0
 Export-Package: 
  net.sf.jasperreports.ant,
  net.sf.jasperreports.charts,
