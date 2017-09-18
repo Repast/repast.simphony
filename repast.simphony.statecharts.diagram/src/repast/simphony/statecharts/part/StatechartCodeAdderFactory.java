@@ -3,8 +3,8 @@
  */
 package repast.simphony.statecharts.part;
 
-import greclipse.org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
-import greclipse.org.eclipse.jdt.ui.CodeStyleConfiguration;
+import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
+import org.eclipse.jdt.ui.CodeStyleConfiguration;
 
 import org.codehaus.jdt.groovy.model.GroovyCompilationUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -113,6 +113,7 @@ public class StatechartCodeAdderFactory {
      */
     @Override
     protected void createImport(String importString) throws Exception {
+	
       ImportRewrite rewriter = CodeStyleConfiguration.createImportRewrite(unit, true);
       rewriter.addImport(importString);
       unit.applyTextEdit(rewriter.rewriteImports(monitor), null);

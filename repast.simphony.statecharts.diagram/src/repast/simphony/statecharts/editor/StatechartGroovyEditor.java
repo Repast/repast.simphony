@@ -3,6 +3,7 @@
  */
 package repast.simphony.statecharts.editor;
 
+import org.codehaus.groovy.eclipse.GroovyPlugin;
 import org.codehaus.groovy.eclipse.editor.GroovyEditor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,7 +62,7 @@ public class StatechartGroovyEditor extends GroovyEditor implements StatechartCo
     setPreferenceStore(JavaPlugin.getDefault().getCombinedPreferenceStore());
   }
 
-  /**
+  /**On o
    * Gets the viewer for this editor.
    * 
    * @return the viewer for this editor.

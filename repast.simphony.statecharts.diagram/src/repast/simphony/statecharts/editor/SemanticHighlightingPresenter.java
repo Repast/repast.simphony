@@ -14,15 +14,11 @@
  *******************************************************************************/
 package repast.simphony.statecharts.editor;
 
-import greclipse.org.eclipse.jdt.internal.ui.javaeditor.HighlightedPosition;
-import greclipse.org.eclipse.jdt.internal.ui.javaeditor.HighlightingStyle;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
 import org.eclipse.jdt.internal.ui.text.JavaPresentationReconciler;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -291,7 +287,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
    * @return The new highlighted position
    */
   public HighlightedPosition createHighlightedPosition(int offset, int length,
-      HighlightingStyle highlighting) {
+      Highlighting highlighting) {
     // TODO: reuse deleted positions
     return new HighlightedPosition(offset, length, highlighting, fPositionUpdater);
   }
@@ -779,7 +775,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
    * @param highlighting
    *          The highlighting
    */
-  public void highlightingStyleChanged(HighlightingStyle highlighting) {
+  public void highlightingStyleChanged(Highlighting highlighting) {
     for (int i = 0, n = fPositions.size(); i < n; i++) {
       HighlightedPosition position = (HighlightedPosition) fPositions.get(i);
       if (position.getHighlighting() == highlighting)
@@ -808,7 +804,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
    *          The range length
    * @param highlighting
    */
-  void addPositionFromUI(int offset, int length, HighlightingStyle highlighting) {
+  void addPositionFromUI(int offset, int length, Highlighting highlighting) {
     Position position = createHighlightedPosition(offset, length, highlighting);
     synchronized (fPositionLock) {
       insertPosition(position);
