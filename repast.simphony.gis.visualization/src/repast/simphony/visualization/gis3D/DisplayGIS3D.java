@@ -113,7 +113,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	protected Map<String,Integer> layerOrder;
 	protected Map<Class<?>, AbstractRenderableLayer<?,?>> classStyleMap;
-	protected Map<Network<?>, GISNetworkLayer> networkLayerMap;
+	protected Map<Network<?>, NetworkLayerGIS> networkLayerMap;
 	protected Map<String, CoverageLayer> coverageLayerMap;
 
 	protected Map<GridCoverage2D, SurfaceImage> coverageToRenderableMap;
@@ -151,7 +151,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
 		layerOrder = new HashMap<String,Integer>();
 		classStyleMap = new LinkedHashMap<Class<?>, AbstractRenderableLayer<?,?>>();
-		networkLayerMap = new LinkedHashMap<Network<?>, GISNetworkLayer>();
+		networkLayerMap = new LinkedHashMap<Network<?>, NetworkLayerGIS>();
 		coverageLayerMap = new LinkedHashMap<String, CoverageLayer>();
 		
 		coverageToRenderableMap = new LinkedHashMap<GridCoverage2D, SurfaceImage>();
@@ -229,6 +229,15 @@ public class DisplayGIS3D extends AbstractDisplay {
 	//	TODO GIS - register network styles
 	public void registerNetworkStyle(Network<?> network, NetworkStyleGIS style) {
 
+		NetworkLayerGIS layer = networkLayerMap.get(network);
+		
+//		AbstractDisplayLayer3D layer = networkMap.get(network);
+//    if (layer == null) {
+//      layer = createEdgeLayer(style, network);
+//      networkMap.put(network, layer);
+//    } else {
+//      layer.setStyle(style);
+//    }
 		
 		//		networkLayerMap.put(key, value)
 	}
@@ -443,7 +452,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 		
 		// TODO WWJ also loop through network and raster styles TBD
-		for (GISNetworkLayer layer : networkLayerMap.values()) {
+		for (NetworkLayerGIS layer : networkLayerMap.values()) {
 			
 		}
 		
@@ -662,7 +671,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 			}
 						
 			// TODO GIS loop through network layers
-			for (GISNetworkLayer layer : networkLayerMap.values()) {
+			for (NetworkLayerGIS layer : networkLayerMap.values()) {
 				
 			}
 					

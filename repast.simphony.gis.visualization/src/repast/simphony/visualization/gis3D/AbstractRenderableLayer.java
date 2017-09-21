@@ -1,14 +1,13 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Renderable;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Renderable;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;
@@ -19,18 +18,34 @@ import repast.simphony.visualization.LayoutUpdater;
  * @author Eric Tatara
  * 
  */
-public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer implements IDisplayLayer<Object>{
+public abstract class AbstractRenderableLayer<S,T extends Renderable> 
+			extends RenderableLayer implements IDisplayLayer<Object>{
 
   protected Map<Object, T> visualItemMap;
   protected Map<Renderable, Object> renderableToObjectMap;
 
   protected S style;
-  protected Geography geography;
+  protected Geography<?> geography;
   protected Set<Object> addedObjects;
   protected Set<Object> removeObjects;
 
+  /**
+   * Defines how the implementing subclasses apply updates to Renderables, e.g.
+   *   setting line colors or updating coordinates.
+   *   
+   * @param o the object (agent) to be used for styling the renderable
+   */
   protected abstract void applyUpdatesToShape(Object o);
 
+  /**
+   * Defines how the implementing subclasses create Renderables for objects in
+   *   the display
+   *   
+   * @param o the object for which to create the renderable
+   * @return the Renderable to be displayed
+   */
+  protected abstract T createVisualItem(Object o);
+  
   public AbstractRenderableLayer(String name, S style){
   	setName(name);
   	this.style = style;
@@ -118,7 +133,13 @@ public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer imple
    * updated to reflect these changes.
    */
   @Override
-  public abstract void update(LayoutUpdater updater);
+  public void update(LayoutUpdater updater) {
+    processRemovedObjects();
+    processAddedObjects();
+    updateObjects(updater);
+    
+    firePropertyChange(AVKey.LAYER, null, this);
+  }
   
   @Override   // TODO WWJ - find out if this can be handled better
   /**
@@ -135,5 +156,45 @@ public abstract class AbstractRenderableLayer<S,T> extends RenderableLayer imple
    */
   public Object findObjectForRenderable(Renderable renderable) {
     return renderableToObjectMap.get(renderable);
+  }
+  
+  /**
+   * Apply style to all objects that exist in the layer
+   * 
+   * @param updater
+   */
+  protected void updateObjects(LayoutUpdater updater){
+  	for (Object o : visualItemMap.keySet()){
+  		applyUpdatesToShape(o);
+  	}
+  }
+  
+  /**
+   * Create visual items for each object added since the last update.
+   */
+  protected void processAddedObjects() {
+    for (Object o : addedObjects) {
+    	T renderable = createVisualItem(o);
+    	
+    	if (renderable == null) return;
+    	
+    	renderableToObjectMap.put(renderable, o);
+    	addRenderable(renderable);
+    }
+    addedObjects.clear();
+  }
+  
+  /**
+   * Remove any items and their renderables since the last update.
+   */
+  protected void processRemovedObjects() {
+    for (Object o : removeObjects) {
+    	T renderable  = visualItemMap.remove(o);
+      if (renderable != null) {
+        removeRenderable(renderable);
+        renderableToObjectMap.remove(renderable);
+      }
+    }
+    removeObjects.clear();
   }
 }
