@@ -5,6 +5,7 @@ package repast.simphony.batch.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,13 +23,13 @@ import javax.swing.event.DocumentListener;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import repast.simphony.parameter.ParameterConstants;
 import repast.simphony.parameter.ParameterSchema;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.StringConverter;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * @author Nick Collier
@@ -43,6 +44,8 @@ public class ParameterInputPanel extends JPanel {
   private BatchParamPanel batchPanel;
   private boolean notifyBP = true;
   private Parameters params;
+  private JLabel title;
+  private Color titleBackground;
 
   public ParameterInputPanel(BatchParamPanel batchPanel, String pName, Parameters params,
       ParameterData pData) {
@@ -59,7 +62,9 @@ public class ParameterInputPanel extends JPanel {
 
     FormLayout layout = new FormLayout("5dlu, left:pref, 3dlu, fill:default:grow", "");
     DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout);
-    formBuilder.append(new JLabel(params.getDisplayName(pName) + ":"), 4);
+    title = new JLabel(params.getDisplayName(pName) + ":");
+    titleBackground = title.getBackground();
+    formBuilder.append(title, 4);
     formBuilder.nextLine();
     formBuilder.setLeadingColumnOffset(1);
     formBuilder.append(typeBox, inputPanels);
@@ -78,6 +83,20 @@ public class ParameterInputPanel extends JPanel {
 
     update(pData, params);
     notifyBP = true;
+  }
+  
+  public void setHighlighted(boolean highlight) {
+      if (highlight) {
+          title.setOpaque(true);
+          title.setBackground(Color.YELLOW);
+      } else {
+	  title.setOpaque(false);
+	  title.setBackground(titleBackground);
+      }
+  }
+  
+  public boolean isHighlighted() {
+      return !title.isOpaque();
   }
 
   private void fireParameterChanged() {

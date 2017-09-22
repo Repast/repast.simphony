@@ -54,6 +54,7 @@ import com.jgoodies.binding.PresentationModel;
 public class BatchConfigMediator {
 
   private static Logger logger = Logger.getLogger(BatchConfigMediator.class);
+  private static int BATCH_INDEX = 1;
 
   // the current state of the model
   private BatchRunConfigBean model = new BatchRunConfigBean();
@@ -143,6 +144,13 @@ public class BatchConfigMediator {
     tabs.addTab("Hosts", hostsPanel);
     tabs.addTab("Console", console);
     hostsPanel.init(model);
+    
+    tabs.addChangeListener(evt -> {
+	if (tabs.getSelectedIndex() == BATCH_INDEX) {
+	    bpPanel.selected();
+	    tabs.setForegroundAt(BATCH_INDEX, Color.BLACK);
+	}
+    });
 
     if (model.getModelDirectory().length() > 0) {
       updateFromModel();
@@ -283,8 +291,12 @@ public class BatchConfigMediator {
     File modelDir = new File(modelPanel.getModelDirectory());
     modelPanel.update(modelDir);
     File scenario = new File(modelPanel.getScenarioDirectory());
-    if (scenario.exists())
-      bpPanel.update(scenario);
+    if (scenario.exists()) {
+      boolean updateSuccessful = bpPanel.update(scenario);
+      if (!updateSuccessful) {
+	 tabs.setForegroundAt(BATCH_INDEX, Color.RED);
+      }
+    }
   }
 
   private void writeConfigFile(File configFile) throws IOException {
