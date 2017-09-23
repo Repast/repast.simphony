@@ -1,17 +1,16 @@
 package repast.simphony.visualization.gis3D.style;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.render.Offset;
-import gov.nasa.worldwind.render.PatternFactory;
-import gov.nasa.worldwind.render.WWTexture;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
-import repast.simphony.visualization.gis3D.BufferedImageTexture;
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.render.BasicWWTexture;
+import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.Offset;
+import gov.nasa.worldwind.render.PatternFactory;
+import gov.nasa.worldwind.render.WWTexture;
 import repast.simphony.visualization.gis3D.PlaceMark;
 
 /**
@@ -23,19 +22,18 @@ import repast.simphony.visualization.gis3D.PlaceMark;
  */
 public class DefaultMarkStyle<T> implements MarkStyle<T>{
 	
+	protected BasicWWTexture texture;
+	
+	public DefaultMarkStyle() {		
+		BufferedImage image = PatternFactory.createPattern(PatternFactory.PATTERN_SQUARE, 
+				new Dimension(10, 10), 0.7f,  Color.RED);
+		
+		texture = new BasicWWTexture(image);
+	}
+	
 	@Override
 	public WWTexture getTexture(T object, WWTexture texture) {
-
-		if (texture != null)
 			return texture;
-		
-		Color color = Color.red;
-		
-		BufferedImage image = PatternFactory.createPattern(PatternFactory.PATTERN_SQUARE, 
-				new Dimension(10, 10), 0.7f,  color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));
-		
-		return new BufferedImageTexture(image);	
-		
 	}
 
 	@Override
@@ -101,6 +99,6 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 
 	@Override
 	public Offset getIconOffset(T obj) {
-		return null;
+		return Offset.CENTER;
 	}
 }

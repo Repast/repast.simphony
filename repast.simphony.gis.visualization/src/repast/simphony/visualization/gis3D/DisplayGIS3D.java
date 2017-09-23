@@ -133,8 +133,12 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected FlatGlobe flatGlobe;
 	protected boolean trackAgents; // keeps all agents in view even if moving
 	protected Sector boundingSector;
-	protected GlobePositionListener positionListener; // listens for mouse globe position
-
+	
+	// Use a position listener that keeps track of the last lat/lon coordinates the
+	//   mouse is pointed to.  This is easier than trying to determine the lat/lon
+	//   from the display directly for the purposes of probing.
+	protected GlobePositionListener positionListener; 
+	
 	public class GlobePositionListener implements PositionListener{
 		private Position pos = null;
 		
@@ -226,20 +230,21 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 	}  
 	
-	//	TODO GIS - register network styles
+	/**
+	 * Register the network and style information
+	 * @param network the network
+	 * @param style the network style
+	 */
 	public void registerNetworkStyle(Network<?> network, NetworkStyleGIS style) {
-
 		NetworkLayerGIS layer = networkLayerMap.get(network);
 		
-//		AbstractDisplayLayer3D layer = networkMap.get(network);
-//    if (layer == null) {
-//      layer = createEdgeLayer(style, network);
-//      networkMap.put(network, layer);
-//    } else {
-//      layer.setStyle(style);
-//    }
-		
-		//		networkLayerMap.put(key, value)
+		if (layer == null) {
+			layer = new NetworkLayerGIS(network, style);       
+			networkLayerMap.put(network, layer);
+		} 
+		else {
+			layer.setStyle(style);
+		}
 	}
 	
 	/**
@@ -350,11 +355,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// First check if probed object is a coverage
 		if (pickedShape instanceof SurfaceImage) {
 			for (CoverageLayer layer : coverageLayerMap.values()) {
-				if ( pickedShape == layer.getSurfaceImage() ) {	
-					
-//					worldWindow.getSceneController().getView().unProject(event.getPickPoint());
-//					model.getGlobe().computePositionFromPoint(point);
-					
+				if ( pickedShape == layer.getSurfaceImage() ) {					
 					obj = layer.getProbedObject(positionListener.getPosition());
 				}
 			}
@@ -367,9 +368,12 @@ public class DisplayGIS3D extends AbstractDisplay {
 				if (foundObj != null)
 					obj = foundObj;
 			}
-
-			// TODO WWJ also loop through network
-
+			
+			for (AbstractRenderableLayer<?,?> layer : networkLayerMap.values()) {
+				Object foundObj = layer.findObjectForRenderable(pickedShape);
+				if (foundObj != null)
+					obj = foundObj;
+			}
 		}
 		
 		List<Object> objList = new ArrayList<Object>() {};
@@ -393,11 +397,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 			}
 		}
 
-		// TODO GIS need to register network listener also?
-		geog.addProjectionListener(this);
+		geog.addProjectionListener(this);  // Listen for agent add/remove from geog
 
 		// TODO GIS probable better to hand the geography to the layout ?
 		for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
+			layer.setGeography(geog);
+		}
+		for (AbstractRenderableLayer<?,?> layer : networkLayerMap.values()) {
 			layer.setGeography(geog);
 		}
 		for (CoverageLayer layer : coverageLayerMap.values()) {
@@ -413,14 +419,14 @@ public class DisplayGIS3D extends AbstractDisplay {
 	  List<RenderableLayer> unsortedLayers = new ArrayList<RenderableLayer>();
     List<RenderableLayer> layersToSort = new ArrayList<RenderableLayer>();
    
-    // TODO GIS add other layer types to be sorted
     layersToSort.addAll(classStyleMap.values());
     layersToSort.addAll(coverageLayerMap.values());
+    layersToSort.addAll(networkLayerMap.values());
     
   	for (RenderableLayer layer : layersToSort) {
   		Integer order = layerOrder.get(layer.getName());
   		
-  		System.out.println("Layer: " + layer.getName() + " - " + order);
+  		System.out.println("DisplayGIS3D.init() Layer: " + layer.getName() + " - " + order);
   		
   		// If the order is non null and doesnt already exist, add the layer
   		if (order != null && !orderedLayerMap.containsKey(order)) {	
@@ -449,11 +455,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 			// TODO GIS all rasters before a specific layer name ? compass??
 			if (layer != null)
 				WWUtils.insertBeforeCompass(worldWindow, layer);
-		}
-		
-		// TODO WWJ also loop through network and raster styles TBD
-		for (NetworkLayerGIS layer : networkLayerMap.values()) {
-			
 		}
 		
 		// Create a background layer with color from descriptor
@@ -658,23 +659,18 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * Do an update without checking for display visibility
 	 */
 	private void doUpdate(){
-	
 		try{
 			updateLock.lock();
 
 			for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
 				layer.update(layoutUpdater);
+			}		
+			for (NetworkLayerGIS layer : networkLayerMap.values()) {
+				layer.update(layoutUpdater);
 			}
-
 			for (CoverageLayer layer : coverageLayerMap.values()){
 				layer.update();
-			}
-						
-			// TODO GIS loop through network layers
-			for (NetworkLayerGIS layer : networkLayerMap.values()) {
-				
-			}
-					
+			}					
 		}
 		finally {
 			updateLock.unlock();

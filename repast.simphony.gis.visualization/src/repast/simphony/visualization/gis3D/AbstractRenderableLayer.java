@@ -19,7 +19,7 @@ import repast.simphony.visualization.LayoutUpdater;
  * 
  */
 public abstract class AbstractRenderableLayer<S,T extends Renderable> 
-			extends RenderableLayer implements IDisplayLayer<Object>{
+			extends RenderableLayer implements IDisplayLayer<T>{
 
   protected Map<Object, T> visualItemMap;
   protected Map<Renderable, Object> renderableToObjectMap;

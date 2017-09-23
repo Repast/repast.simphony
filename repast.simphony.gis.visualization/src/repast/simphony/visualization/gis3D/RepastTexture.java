@@ -7,6 +7,13 @@ import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.LazilyLoadedTexture;
 
+/**
+ * RepastTexture overrides the default WorldWind Texture so that it can provide
+ *   options for smoothing (anti-aliasing) in cases such as raster layers.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class RepastTexture extends LazilyLoadedTexture {
 
 	// Draw smooth will use linear interpolation smoothing on texture pixels.

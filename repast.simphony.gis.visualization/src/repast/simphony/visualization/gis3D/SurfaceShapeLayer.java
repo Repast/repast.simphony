@@ -1,6 +1,10 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import java.util.List;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
+
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
@@ -8,14 +12,7 @@ import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygon;
 import gov.nasa.worldwind.render.SurfacePolyline;
 import gov.nasa.worldwind.render.SurfaceShape;
-
-import java.util.List;
-
-import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Styled display layer for WorldWind display layers.
@@ -36,11 +33,9 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
   	
   	SurfaceShape shape = getVisualItem(obj);
 
-    // TODO WWJ Test for code hot spots here
-    // TODO WWJ Refactor this method and createVisualItem since they are similar
-
+    // TODO GIS Test for code hot spots here
     
-    // TODO WWJ [blocker] do a check on points and only update when new
+    // TODO GIS [blocker] do a check on points and only update when new
     if (shape instanceof SurfacePolygon){
     	SurfacePolygon polygonShape = (SurfacePolygon)shape;
     	
@@ -53,13 +48,12 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
     	    	
     	List<LatLon> pts = WWUtils.CoordToLatLon(p.getExteriorRing().getCoordinates());
     	
+    	// Set the outer polygon boundary
     	Iterable<? extends LatLon> currentLocations = polygonShape.getLocations();
     	if (currentLocations == null){
-      	// Set the outer polygon boundary
     		polygonShape.setLocations(pts);
     	}
     	else if (!currentLocations.equals(pts)){
-      	// Set the outer polygon boundary
     		polygonShape.setLocations(pts);
     	}
   		// Set inner polygon rings if any

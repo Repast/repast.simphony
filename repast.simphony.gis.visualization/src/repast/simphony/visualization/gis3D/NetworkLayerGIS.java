@@ -22,16 +22,17 @@ import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
  * @author Eric Tatara
  *
  */
-public class NetworkLayerGIS extends AbstractRenderableLayer<NetworkStyleGIS<RepastEdge<?>>,SurfacePolyline> implements ProjectionListener {
+public class NetworkLayerGIS extends AbstractRenderableLayer<NetworkStyleGIS,
+			SurfacePolyline> implements ProjectionListener {
 
-	public NetworkLayerGIS(String name, NetworkStyleGIS<RepastEdge<?>> style,
-			Network<?> network) {
-		
-		super(name, style);
-		
+	protected boolean directed;
+	
+	public NetworkLayerGIS(Network<?> network, NetworkStyleGIS style) {
+		super(network.getName(), style);
 		network.addProjectionListener(this);
-
-		for (RepastEdge edge : network.getEdges()) {
+		directed = network.isDirected();
+		
+		for (RepastEdge<?> edge : network.getEdges()) {	
 			addedObjects.add(edge);
 		}
 	}
@@ -41,6 +42,8 @@ public class NetworkLayerGIS extends AbstractRenderableLayer<NetworkStyleGIS<Rep
 		RepastEdge<?> edge = (RepastEdge<?>)o;
 		
 		SurfacePolyline line = getVisualItem(edge);
+		
+		// TODO GIS Directed edge style
 		
 		Object source = edge.getSource();
   	Object target = edge.getTarget();
@@ -59,6 +62,8 @@ public class NetworkLayerGIS extends AbstractRenderableLayer<NetworkStyleGIS<Rep
    	pts.add(WWUtils.CoordToLatLon(sourcegeom.getCoordinate()));
    	pts.add(WWUtils.CoordToLatLon(targetgeom.getCoordinate()));
   	
+   	line.setLocations(pts);
+   	
    	ShapeAttributes attrs = line.getAttributes();
     
     if (attrs == null)
@@ -88,9 +93,9 @@ public class NetworkLayerGIS extends AbstractRenderableLayer<NetworkStyleGIS<Rep
 	@Override
 	public void projectionEventOccurred(ProjectionEvent evt) {
 		if (evt.getType() == ProjectionEvent.EDGE_ADDED) {
-			addObject((RepastEdge) evt.getSubject());
+			addObject((RepastEdge<?>) evt.getSubject());
 		} else if (evt.getType() == ProjectionEvent.EDGE_REMOVED) {
-			removeObject((RepastEdge) evt.getSubject());
+			removeObject((RepastEdge<?>) evt.getSubject());
 		}
 	}
 }

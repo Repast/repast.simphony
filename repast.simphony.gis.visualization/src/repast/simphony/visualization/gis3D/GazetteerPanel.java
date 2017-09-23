@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Eric Tatara
  *
+ * TODO GIS update Gazetter with latest WWJ
  */
 public class GazetteerPanel extends JPanel
 {

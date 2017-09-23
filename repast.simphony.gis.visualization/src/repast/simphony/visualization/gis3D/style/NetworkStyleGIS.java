@@ -3,13 +3,14 @@ package repast.simphony.visualization.gis3D.style;
 import java.awt.Color;
 
 import gov.nasa.worldwind.render.SurfacePolyline;
+import repast.simphony.space.graph.RepastEdge;
 
 /**
  * Interface for network projection surface lines in the 3D GIS display.
  * 
  * @author Eric Tatara
  */
-public interface NetworkStyleGIS<RepastEdge> extends StyleGIS<RepastEdge> {
+public interface NetworkStyleGIS extends StyleGIS<RepastEdge> {
 
 	public SurfacePolyline getSurfaceShape(RepastEdge edge, SurfacePolyline shape);
 
