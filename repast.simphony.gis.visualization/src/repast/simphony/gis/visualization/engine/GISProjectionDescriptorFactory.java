@@ -21,9 +21,12 @@ public class GISProjectionDescriptorFactory implements ProjectionDescriptorFacto
 	@Override
 	public ProjectionDescriptor createDescriptor(ProjectionData proj) {
 		
-		// GIS displays only handle descriptors for Geography and Network projections.
 		
 		if (proj.getType().equals(GeographyProjectionRegistryData.NAME)) {
+			return new GisProjectionDescriptor(proj);
+		} 
+		
+		else if (proj.getType().equals(GeographyProjectionRegistryData.COVERAGE_NAME)) {
 			return new GisProjectionDescriptor(proj);
 		} 
 		

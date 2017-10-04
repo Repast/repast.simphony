@@ -20,7 +20,7 @@ public class GISDisplayValidator implements DisplayValidator {
 	public boolean validateDisplay(List<String> selectedProjectionTypes) {
 
 		int geoCount = 0;
-		int geoRasterCount = 0;
+		int geoCoverageCount = 0;
 		int netCount = 0;
 		int otherCount = 0;
 
@@ -29,42 +29,29 @@ public class GISDisplayValidator implements DisplayValidator {
 			if (projType.equals(GeographyProjectionRegistryData.NAME)){
 				geoCount++;
 			}
-			
-			// TODO GIS handle geoRaster projections - for now allow in GIS Display
-//			else if (projType.equals(GeoRasterLayerProjectionRegistryData.NAME)){
-//				geoRasterCount++;
-//			}
-			
+			else if (projType.equals(GeographyProjectionRegistryData.COVERAGE_NAME)){
+				geoCoverageCount++;
+			}
 			else if (projType.equals(ProjectionData.NETWORK_TYPE)){
 				netCount++;
-			}
+			}			
 			else{
 				otherCount++;
 			}
 		}
 
-		// TODO GIS handle geoRaster projections - for now allow in GIS Display
-		
 		if (geoCount != 1) {
 			JOptionPane.showMessageDialog(null, "A GIS display must contain a single Geography.",
 					"Display Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
-		else if (geoCount <= 1 && (otherCount > 0 || netCount > 0) ) {
+		else if (geoCount <= 1 && (otherCount > 0) ) {
 			JOptionPane.showMessageDialog(null,
 					"GIS displays may only contain Geography projections.", "Display Error",
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-
-		// TODO GIS: reactivate when GIS displays support Network.
-//		else if (geoCount == 1 && netCount > 0) {
-//			JOptionPane.showMessageDialog(null,
-//					"Note that network edges in GIS displays should be treated as agents with a LINE geometry.", "Display Info",
-//					JOptionPane.INFORMATION_MESSAGE);
-//			return true;
-//		}
 		
 		return true;
 	}

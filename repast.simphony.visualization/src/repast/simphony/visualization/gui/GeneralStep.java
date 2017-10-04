@@ -26,6 +26,7 @@ import repast.simphony.visualization.engine.CartesianProjectionDescritorFactory;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.DisplayValidator;
+import repast.simphony.visualization.engine.ProjectionDescriptor;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.engine.VisualizationRegistry;
@@ -362,18 +363,22 @@ public class GeneralStep extends PluginWizardStep {
     			ProjectionDescriptorFactory pdf = null;
     			
     			// TODO Projections: move 2D/3D to proj registry
-    			if (DisplayType.TWO_D.equals(curType) || DisplayType.THREE_D.equals(curType)){
+    			if (DisplayType.TWO_D.equals(newType) || DisplayType.THREE_D.equals(newType)){
     				pdf = new CartesianProjectionDescritorFactory();
     			}
     			else{
-    				pdf = VisualizationRegistry.getDataFor(curType).getProjectionDescriptorFactory();
+    				pdf = VisualizationRegistry.getDataFor(newType).getProjectionDescriptorFactory();
     			}
     			
     			if (pdf != null){	
-    				descriptor.addProjection(item.proj, pdf.createDescriptor(item.proj));
+    				
+    				ProjectionDescriptor pdesc = pdf.createDescriptor(item.proj);
+    				pdesc.registerProjectionData(item.proj, descriptor);
+    				
+//    				descriptor.addProjection(item.proj, pdf.createDescriptor(item.proj));
     			}
     			else{
-    				msg.error("No ProjectionDescriptorFactory found for type: " + curType, null);
+    				msg.error("No ProjectionDescriptorFactory found for type: " + newType, null);
     			}
     		}
     	}
