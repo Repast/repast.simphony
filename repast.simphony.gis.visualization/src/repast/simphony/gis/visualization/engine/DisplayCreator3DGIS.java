@@ -58,10 +58,12 @@ public class DisplayCreator3DGIS implements DisplayCreator {
     GISStyleRegistrar registrar = new GISStyleRegistrar(display);    
     registrar.registerAllStyles(descriptor, context);
 
-    // TODO GIS display render quality
     // TODO GIS layer legend visible layers
     // TODO GIS initial view location
     
+    descriptor.getGlobeLayersMap();
+    
+    display.setRenderQuality(descriptor.getRenderQuality());
     display.setBackgroundColor(descriptor.getBackgroundColor());    
     display.setTrackAgents(descriptor.getTrackAgents());
     display.setLayoutFrequency(descriptor.getLayoutFrqeuency(), descriptor.getLayoutInterval());

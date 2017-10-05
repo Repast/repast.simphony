@@ -3,17 +3,18 @@ package repast.simphony.visualization.gui;
 import java.awt.BorderLayout;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-
-import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
-import repast.simphony.scenario.data.ContextData;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
+import repast.simphony.scenario.data.ContextData;
 
 /**
  * Panel for GIS options step
@@ -75,6 +76,15 @@ public class GIS3DOptionsPanel extends JPanel {
 		typeBox.setModel(cmbModel);
 		typeBox.setSelectedItem(descriptor.getViewType());
 		typeBox.setToolTipText("Sets the map to a globe sphere or flat.");
+		
+		// TODO GIS layers here
+		// TODO test using JTable like in p-fast app instead of JList
+		LayerList layerList = new BasicModel().getLayers();
+		
+		for (Layer layer : layerList) {
+			layer.getName();
+		}
+		
 		
 //		trackAgentsCheckBox.setSelected(descriptor.getTrackAgents());
 //		trackAgentsCheckBox.setToolTipText("Keep agents in view by tracking the view.");

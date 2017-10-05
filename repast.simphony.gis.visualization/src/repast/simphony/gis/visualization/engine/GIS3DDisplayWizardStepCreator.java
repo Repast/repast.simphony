@@ -7,11 +7,13 @@ import org.pietschy.wizard.WizardModel;
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.AgentSelectionStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
+import repast.simphony.visualization.gui.EdgeStyleStep;
 import repast.simphony.visualization.gui.GIS3DOptionStep;
 import repast.simphony.visualization.gui.StyleClassStep;
 
@@ -72,26 +74,16 @@ public class GIS3DDisplayWizardStepCreator {
 			}
 		}));
 
-		// TODO GIS: network visualization 
-//		steps.add(new Pair<WizardStep, Condition>(new NetLayoutStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsOnlyProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS3D(descriptor);
-//			}
-//		}));
-//
-//		steps.add(new Pair<WizardStep, Condition>(new EdgeStyleStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS3D(descriptor);
-//			}
-//		}));
+
+		steps.add(new Pair<WizardStep, Condition>(new EdgeStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+
+				return model.containsProjectionType(ProjectionData.NETWORK_TYPE) 
+						&& isGIS3D(descriptor);
+			}
+		}));
 	
 		return steps;
 	}

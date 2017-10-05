@@ -79,6 +79,7 @@ import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.MovedLayoutUpdater;
 import repast.simphony.visualization.UpdateLayoutUpdater;
 import repast.simphony.visualization.editor.EditorFactory;
+import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController.RenderQuality;
 import repast.simphony.visualization.gis3D.style.CoverageStyle;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
@@ -171,7 +172,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
 
 		model = new BasicModel();
-
+		model.getLayers().removeAll();  // clear all default layers
+		
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on
 			// OSX with jogl 2.0 under Java7
@@ -836,15 +838,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 				AbstractButton abstractButton = (AbstractButton) event.getSource();
 				boolean selected = abstractButton.getModel().isSelected();
 				
-				RepastStereoOptionSceneController controller = 
-						(RepastStereoOptionSceneController)worldWindow.getSceneController();
-		
 				if (selected){
-					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_VERY_HIGH_QUALITY);
-					System.out.println("HQ");
+					setRenderQuality(RenderQuality.VERYHIGH);
 				}
 				else{
-					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_MEDIUM_QUALITY);
+					setRenderQuality(RenderQuality.MEDIUM);
 				}
 								
 				worldWindow.redraw();
@@ -895,6 +893,13 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	public void setTrackAgents(boolean trackAgents) {
 		this.trackAgents = trackAgents;
+	}
+	
+	public void setRenderQuality(RenderQuality quality) {
+		RepastStereoOptionSceneController controller = 
+				(RepastStereoOptionSceneController)worldWindow.getSceneController();
+
+			controller.setRenderQuality(quality);		
 	}
 	
 	/**

@@ -52,7 +52,7 @@ public abstract class StyleStep extends PluginWizardStep {
 	/**
 	 * Stores agent name, class and style attributes in the list entries
 	 */
-	protected static class AgentTypeElement {
+	public static class AgentTypeElement {
 		private String agentName;
 		private String agentClassName;
 		

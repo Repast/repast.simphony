@@ -5,6 +5,7 @@ import java.util.Map;
 
 import repast.simphony.visualization.engine.BasicDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController.RenderQuality;
 
 /**
  * Display descriptor for GIS displays.
@@ -33,15 +34,26 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	}
 
 	/**
+	 * Render quality for surface objects
+	 */
+	protected RenderQuality renderQuality;
+	
+	/**
 	 * The view type determines how the map is displayed, eg flat or round globe.
 	 */
-	private VIEW_TYPE viewType = VIEW_TYPE.FLAT;
+	private VIEW_TYPE viewType;
 	
 	/**
 	 * If true, the display will zoom extent to always keep all agents in view.
 	 */
 	private boolean trackAgents = false;
 
+	/**
+	 * Globe layers are the default WWJ layers like the WMS background, stars,
+	 * etc that can be optionally added to displays.
+	 */
+	protected Map<String,Boolean> globeLayers = new HashMap<String,Boolean>();
+	
 	/**
 	 * Map of <file name, style> for static coverages.  Style can be null.
 	 *
@@ -107,12 +119,26 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	}
   
 	public VIEW_TYPE getViewType() {
+		if (viewType == null)
+			return VIEW_TYPE.FLAT;
+		
 		return viewType;
 	}
 
 	public void setViewType(VIEW_TYPE viewType) {
 		this.viewType = viewType;
 		scs.fireScenarioChanged(this, "viewType");
+	}
+
+	public RenderQuality getRenderQuality() {
+		if (renderQuality == null)
+			return RenderQuality.MEDIUM;
+		
+		return renderQuality;
+	}
+
+	public void setRenderQuality(RenderQuality renderQuality) {
+		this.renderQuality = renderQuality;
 	}
 
 	public boolean getTrackAgents() {
@@ -128,6 +154,18 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 		return serialVersionUID;
 	}
 
+	public Map<String,Boolean> getGlobeLayersMap(){
+		if (globeLayers == null)
+			globeLayers = new HashMap<String,Boolean>();
+		
+		return globeLayers;
+	}
+	
+	public void addGlobeLayer(String layerName, boolean enabled) {
+		getGlobeLayersMap().put(layerName, enabled);
+		scs.fireScenarioChanged(this, "globelayers");
+	}
+	
 	/**
 	 * 
 	 * @return a Map of static coverages <filename, style>
@@ -140,10 +178,7 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	}
 
 	public void addStaticCoverage(String fileName, String style) {
-		if (staticCoverages == null)
-			staticCoverages = new HashMap<String,String>();
-		
-		staticCoverages.put(fileName, style);
+		getStaticCoverageMap().put(fileName, style);
 		scs.fireScenarioChanged(this, "staticCoverage");
 	}
 	
