@@ -52,19 +52,19 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
 	 * Globe layers are the default WWJ layers like the WMS background, stars,
 	 * etc that can be optionally added to displays.
 	 */
-	protected Map<String,Boolean> globeLayers = new HashMap<String,Boolean>();
+	protected Map<String,Boolean> globeLayers;
 	
 	/**
 	 * Map of <file name, style> for static coverages.  Style can be null.
 	 *
 	 */
-	protected Map<String,String> staticCoverages = new HashMap<String,String>();
+	protected Map<String,String> staticCoverages;
 	
 	/**
 	 * Map of <coverage name, style> for dynamic coverages.  Style can be null.
 	 *
 	 */
-	protected Map<String,String> coverageLayers = new HashMap<String,String>();
+	protected Map<String,String> coverageLayers;
 	
   // TODO WWJ - handle multiple styles
 //  private static Class<?>[] stylesGIS3D = new Class<?>[] { DefaultMarkStyle.class,
@@ -82,33 +82,47 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   }
 
   @Override
-  public void set(DisplayDescriptor descriptor) {
-  	super.set(descriptor);
+  public void set(DisplayDescriptor sourceDescriptor) {
+  	super.set(sourceDescriptor);
+  	
+  	// Copy data from source descriptor to this
+  	
+  	// TODO GIS Make sure all new data are set here !!!!!!!!!!!!!!!!!!!!!
   	
   	getLayerOrders().clear();
   	 	
-  	if (descriptor.agentClassLayerOrders() != null) {
-  		for (String name : descriptor.agentClassLayerOrders()) {
-  			addLayerOrder(name, descriptor.getLayerOrder(name));
+  	if (sourceDescriptor.agentClassLayerOrders() != null) {
+  		for (String name : sourceDescriptor.agentClassLayerOrders()) {
+  			addLayerOrder(name, sourceDescriptor.getLayerOrder(name));
   		}
   	}
   	
-     // For backwards compatibility with DefaultDisplayDescriptor, check if setting
+    // For backwards compatibility with DefaultDisplayDescriptor, check if setting
     //  new GIS specific settings is appropriate.
-    if (descriptor instanceof GISDisplayDescriptor){
-    	setViewType(((GISDisplayDescriptor)descriptor).getViewType());
-    	setTrackAgents(((GISDisplayDescriptor)descriptor).getTrackAgents());
+    if (sourceDescriptor instanceof GISDisplayDescriptor){
+    	setViewType(((GISDisplayDescriptor)sourceDescriptor).getViewType());
+    	setTrackAgents(((GISDisplayDescriptor)sourceDescriptor).getTrackAgents());
+    	setRenderQuality(((GISDisplayDescriptor)sourceDescriptor).getRenderQuality());
     	
-    	Map<String,String> coverageMap = ((GISDisplayDescriptor)descriptor).getStaticCoverageMap();
+    	Map<String,String> sourceStaticCoverages = ((GISDisplayDescriptor)sourceDescriptor).getStaticCoverageMap();
     	
-    	staticCoverages.clear();
-    	for (String fileName : coverageMap.keySet()) {
-    		addStaticCoverage(fileName, coverageMap.get(fileName));
+    	getStaticCoverageMap().clear();
+    	for (String fileName : sourceStaticCoverages.keySet()) {
+    		addStaticCoverage(fileName, sourceStaticCoverages.get(fileName));
     	}
     	
-    	coverageLayers.clear();
-    	for (String name : coverageLayers.keySet()) {
-    		addCoverageLayer(name, coverageLayers.get(name));
+    	Map<String,String> sourceCoverageLayers = ((GISDisplayDescriptor)sourceDescriptor).getCoverageLayers();
+    	
+    	getCoverageLayers().clear();
+    	for (String name : sourceCoverageLayers.keySet()) {
+    		addCoverageLayer(name, sourceCoverageLayers.get(name));
+    	}
+    	
+    	Map<String,Boolean> sourceGlobeLayers = ((GISDisplayDescriptor)sourceDescriptor).getGlobeLayersMap();
+    	
+    	getGlobeLayersMap().clear();
+    	for (String layerName : sourceGlobeLayers.keySet() ) {
+    		addGlobeLayer(layerName, sourceGlobeLayers.get(layerName));
     	}
     }
   }
