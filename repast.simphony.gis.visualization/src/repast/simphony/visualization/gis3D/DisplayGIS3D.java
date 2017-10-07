@@ -56,6 +56,8 @@ import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.globes.FlatGlobe;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.render.Renderable;
@@ -172,7 +174,32 @@ public class DisplayGIS3D extends AbstractDisplay {
 		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
 
 		model = new BasicModel();
+		
+		// Only include WWJ globe layers specified in the descriptor if any
+		List<Layer> layersToInclude = new ArrayList<Layer>();
+		LayerList modelLayers = model.getLayers();
+		
+		Map<String,Boolean> globeLayers = data.getGlobeLayers();
+		for (String layerName : globeLayers.keySet()) {
+			Layer layer = modelLayers.getLayerByName(layerName);
+		
+			if (layer != null) { 
+				layersToInclude.add(layer);
+				Boolean enabled = globeLayers.get(layerName);
+				if (enabled != null) 
+					layer.setEnabled(enabled);
+			}
+			else {
+				msg.warn("Globe layer not available: " + layerName);
+			}
+		}
+			
 		model.getLayers().removeAll();  // clear all default layers
+		
+		for (Layer layer : layersToInclude) {
+			model.getLayers().add(layer);
+		}
+		
 		
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on

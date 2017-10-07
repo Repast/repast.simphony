@@ -1,5 +1,7 @@
 package repast.simphony.gis.visualization.engine;
 
+import java.util.Map;
+
 import repast.simphony.context.Context;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.IDisplay;
@@ -43,6 +45,12 @@ public class DisplayCreator3DGIS implements DisplayCreator {
     // Add static coverage filename and style
     for (String fileName : descriptor.getStaticCoverageMap().keySet()) {
     	data.addStaticCoverage(fileName, descriptor.getStaticCoverageMap().get(fileName));
+    }
+    
+    // The optional background WWJ globe layers
+    Map<String,Boolean> globeLayers = descriptor.getGlobeLayersMap();
+    for (String layerName : globeLayers.keySet()) {
+    	data.addGlobeLayer(layerName, globeLayers.get(layerName));
     }
     
     return data;

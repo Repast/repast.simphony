@@ -25,6 +25,11 @@ public class GISDisplayData<T> extends DefaultDisplayData<T> {
 	 */
 	protected Map<String,String> staticCoverageMap = new HashMap<String,String>();
 
+	/**
+	 * Globe layers are the default WWJ layers like the WMS background, stars,
+	 * etc that can be optionally added to displays.
+	 */
+	protected Map<String,Boolean> globeLayers = new HashMap<String,Boolean>();
 	
 	// View type: FLAT or GLOBE
 	protected GISDisplayDescriptor.VIEW_TYPE viewType;
@@ -48,4 +53,13 @@ public class GISDisplayData<T> extends DefaultDisplayData<T> {
 	public void addStaticCoverage(String fileName, String style) {
 		staticCoverageMap.put(fileName, style);
 	}
+
+	public Map<String, Boolean> getGlobeLayers() {
+		return globeLayers;
+	}
+	
+	public void addGlobeLayer(String layerName, boolean enabled) {
+		globeLayers.put(layerName, enabled);
+	}
+	
 }

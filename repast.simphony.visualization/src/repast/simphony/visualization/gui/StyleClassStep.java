@@ -88,6 +88,8 @@ public class StyleClassStep extends StyleStep {
 
 		buildStyleButton = new JButton();
 		builder.add(buildStyleButton, cc.xy(7, 3));
+		
+		buildStyleButton.setEnabled(false);  // False unless enabled based on descriptor
 		buildStyleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(EDIT_ICON)));
 		buildStyleButton.setToolTipText("Edit the style of the selected agent type");
 		buildStyleButton.addActionListener(new ActionListener() {
@@ -208,9 +210,9 @@ public class StyleClassStep extends StyleStep {
 		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
 			buildStyleButton.setEnabled(true);
 		}
-		else {
-			buildStyleButton.setEnabled(false);
-		}
+//		else {
+//			buildStyleButton.setEnabled(false);
+//		}
 		
 		// Find all available style classes for the display type
 		List<String> foundStyleClasses = new ArrayList<String>();

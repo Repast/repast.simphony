@@ -12,6 +12,7 @@ import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.AgentSelectionStep;
+import repast.simphony.visualization.gui.CoverageStyleClassStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.EdgeStyleStep;
 import repast.simphony.visualization.gui.GIS3DOptionStep;
@@ -54,8 +55,22 @@ public class GIS3DDisplayWizardStepCreator {
 		PluginWizardStep styleClassStep = new StyleClassStep();
 		agentSelectionStep.addStepListener(styleClassStep);
 		
-		// Use the built-in Repast Style step
+		// Use the built-in Repast Style step for agents
 		steps.add(new Pair<WizardStep, Condition>(styleClassStep, new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+				
+				return isGIS3D(descriptor);
+			}
+		}));
+		
+		PluginWizardStep coverageStyleClassStep = new CoverageStyleClassStep();
+		
+		// GIS Coverage styles
+		// TODO GIS need something similar for the general step projections?
+//		agentSelectionStep.addStepListener(coverageStyleClassStep);
+		steps.add(new Pair<WizardStep, Condition>(coverageStyleClassStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();
