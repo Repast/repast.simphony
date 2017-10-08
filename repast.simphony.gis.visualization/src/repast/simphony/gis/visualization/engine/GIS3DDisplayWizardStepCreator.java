@@ -52,7 +52,9 @@ public class GIS3DDisplayWizardStepCreator {
 
 		// The style step init is dependent on the agent selection step, so it 
 		//   will listen for any changes that occur.
-		PluginWizardStep styleClassStep = new StyleClassStep();
+		StyleClassStep styleClassStep = new StyleClassStep();
+		styleClassStep.setShowBackgroundButton(false);
+		
 		agentSelectionStep.addStepListener(styleClassStep);
 		
 		// Use the built-in Repast Style step for agents

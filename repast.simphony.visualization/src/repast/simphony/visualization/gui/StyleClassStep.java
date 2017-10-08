@@ -59,6 +59,8 @@ public class StyleClassStep extends StyleStep {
 	protected Map<String, String> editedStyleFileMap = new HashMap<String, String>();
 	protected Color backgroundColor;
   
+	private boolean showBackgroundButton = true; 
+	
 	protected static Map<Class<?>,List<String>> styleCache = 
 			new HashMap<Class<?>,List<String>>();
 	
@@ -134,18 +136,25 @@ public class StyleClassStep extends StyleStep {
 			}
 		});
 	
-		builder.addLabel("Display Background Color:", cc.xy(1, 5));
+		// TODO Projections this is a temporary fix to toggle BG button visibility
+		//      in the agent style dialog since the GIS wizard also shows it in the
+		//      coverage layers dialog.  
+		//      It should probably be moved to the display misc options dialog.
 		bgcolorBtn = new JButton();
-		builder.add(bgcolorBtn, cc.xy(7, 5));
-		bgcolorBtn.setToolTipText("Click to change background color");
-		bgcolorBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				Color c = JColorChooser.showDialog(StyleClassStep.this, 
-						"Select Display Background Color", backgroundColor);
-				if (c != null)
-					setBackgroundColor(c);
-			}
-		});
+		
+		if (showBackgroundButton) {
+			builder.addLabel("Display Background Color:", cc.xy(1, 5));	
+			builder.add(bgcolorBtn, cc.xy(7, 5));
+			bgcolorBtn.setToolTipText("Click to change background color");
+			bgcolorBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					Color c = JColorChooser.showDialog(StyleClassStep.this, 
+							"Select Display Background Color", backgroundColor);
+					if (c != null)
+						setBackgroundColor(c);
+				}
+			});
+		}
 		
 		return builder.getPanel();
 	}
@@ -302,6 +311,9 @@ public class StyleClassStep extends StyleStep {
 				msg.error("Error creating style step for " + descriptor.getDisplayType() 
 						+ ". No visualization registry data found.", null);
 			}
+			
+			// TODO Projections get default BG color from registry or set elswhere
+			setBackgroundColor(Color.WHITE);
 		}
 		return defaultStyle;
 	}
@@ -334,4 +346,10 @@ public class StyleClassStep extends StyleStep {
 		this.backgroundColor = backgroundColor;
 		bgcolorBtn.setIcon(new SquareIcon(14, 14, backgroundColor));
 	}
+
+	public void setShowBackgroundButton(boolean showBackgroundButton) {
+		this.showBackgroundButton = showBackgroundButton;
+	}
+	
+	
 }

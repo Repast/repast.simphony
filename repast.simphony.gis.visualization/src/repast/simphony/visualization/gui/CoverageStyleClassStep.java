@@ -19,11 +19,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.commons.io.FilenameUtils;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
+import repast.simphony.scenario.ScenarioUtils;
 import repast.simphony.ui.RSApplication;
 import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.gis3D.style.CoverageStyle;
@@ -179,25 +182,13 @@ public class CoverageStyleClassStep extends CoverageStyleStep {
     	// If the shapefile path is contained within model path, then set the
     	// path to a relative path so that model distribution is easier.  Otherwise
     	// set the path to absolute path.
-      String filePath = file.getAbsolutePath();
+      String filePath = ScenarioUtils.makeRelativePathToProject(file.getAbsolutePath());  
       
-      File scenarioDir = RSApplication.getRSApplicationInstance().getCurrentScenario().getScenarioDirectory();
-      
-      // Trim the actual .rs folder so we're left with the model folder
-      String modelFolder = scenarioDir.getAbsolutePath().replace(scenarioDir.getName(), "");
-      
-      if (filePath.contains(modelFolder)){
-      	filePath = filePath.replace(modelFolder, "." + File.separator);	
-        file = new File (filePath);
-      }  
-      
+      // Just the file name and extension is shown in the GUI
       String name = file.getName();
-      
-      // Use Apache commons io lib to force serialized filename to unix
-//      FilenameUtils;
-      
+     
       CoverageLayerElement elem = new CoverageLayerElement(name);
-      elem.setValue(STATIC_LAYER_PATH, file.getPath());
+      elem.setValue(STATIC_LAYER_PATH, filePath);
       elem.setValue(STYLE_KEY, defaultStyle);
       
       DefaultListModel<CoverageLayerElement> model = 
@@ -292,13 +283,8 @@ public class CoverageStyleClassStep extends CoverageStyleStep {
 		}
 		
 		Map<String,String> staticCoverageLayerMap = descriptor.getStaticCoverageMap();
-		for (String path : staticCoverageLayerMap.keySet()) {
-			
-			// Trim any leading folders for the displayed coverage name
-			String name = path;
-			int idx = path.lastIndexOf(File.separator) + 1;
-			if (idx >= 0)
-				name = path.substring(idx);
+		for (String path : staticCoverageLayerMap.keySet()) {	
+			String name = new File(path).getName();  // short file name.ext
 			
 			CoverageLayerElement e = new CoverageLayerElement(name);
 			
@@ -313,8 +299,10 @@ public class CoverageStyleClassStep extends CoverageStyleStep {
 			agentListModel.addElement(e);	
 		}
 		
-		if (descriptor.getBackgroundColor() != null)
-			setBackgroundColor(descriptor.getBackgroundColor());
+		if (descriptor.getBackgroundColor() == null)
+			descriptor.setBackgroundColor(Color.WHITE);
+			
+		setBackgroundColor(descriptor.getBackgroundColor());
 	}
 		
 	/**
