@@ -23,11 +23,10 @@ public class RepastTexture extends LazilyLoadedTexture {
 	public RepastTexture(Object imageSource, boolean useMipMaps) {
 		super(imageSource, useMipMaps);
 	}
-	
-	
+		
 	@Override
 	protected void setTextureParameters(DrawContext dc, Texture texture){
-
+		
 		// Override the WWJ texture parameter so we can control filtering etc.
 		//  See https://open.gl/textures for info.
 
@@ -61,4 +60,12 @@ public class RepastTexture extends LazilyLoadedTexture {
 		}
 	}
 
+	/**
+	 * Toggles smooth (anti-aliased) rendering of texture images.
+	 * 
+	 * @param drawSmooth
+	 */
+	public void setDrawSmooth(boolean drawSmooth) {
+		this.drawSmooth = drawSmooth;
+	}	
 }

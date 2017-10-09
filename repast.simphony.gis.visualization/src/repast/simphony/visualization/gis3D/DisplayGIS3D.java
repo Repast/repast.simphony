@@ -99,6 +99,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
+	public static final String LAYER_ID_KEY = "layer id";
+	
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
 	private static final String GLOBE_ICON = "browser.png";
 	private static final String WMS_ICON = "wms2.png";
@@ -114,11 +116,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected Geography geog;
 	protected Model model;
 
-	protected Map<String,Integer> layerOrder;
 	protected Map<Class<?>, AbstractRenderableLayer<?,?>> classStyleMap;
 	protected Map<Network<?>, NetworkLayerGIS> networkLayerMap;
 	protected Map<String, CoverageLayer> coverageLayerMap;
-
+	protected List<Layer> globeLayers;
 	protected Map<GridCoverage2D, SurfaceImage> coverageToRenderableMap;
 	
 	protected WorldWindow worldWindow;
@@ -156,7 +157,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 	
 	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
-		layerOrder = new HashMap<String,Integer>();
 		classStyleMap = new LinkedHashMap<Class<?>, AbstractRenderableLayer<?,?>>();
 		networkLayerMap = new LinkedHashMap<Network<?>, NetworkLayerGIS>();
 		coverageLayerMap = new LinkedHashMap<String, CoverageLayer>();
@@ -176,16 +176,17 @@ public class DisplayGIS3D extends AbstractDisplay {
 		model = new BasicModel();
 		
 		// Only include WWJ globe layers specified in the descriptor if any
-		List<Layer> layersToInclude = new ArrayList<Layer>();
+		globeLayers = new ArrayList<Layer>();
 		LayerList modelLayers = model.getLayers();
 		
-		Map<String,Boolean> globeLayers = data.getGlobeLayers();
-		for (String layerName : globeLayers.keySet()) {
+		Map<String,Boolean> globeLayersToInclude = data.getGlobeLayers();
+		for (String layerName : globeLayersToInclude.keySet()) {
 			Layer layer = modelLayers.getLayerByName(layerName);
 		
-			if (layer != null) { 
-				layersToInclude.add(layer);
-				Boolean enabled = globeLayers.get(layerName);
+			if (layer != null) {
+				layer.setValue(LAYER_ID_KEY, layerName);
+				globeLayers.add(layer);
+				Boolean enabled = globeLayersToInclude.get(layerName);
 				if (enabled != null) 
 					layer.setEnabled(enabled);
 			}
@@ -195,11 +196,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 			
 		model.getLayers().removeAll();  // clear all default layers
-		
-		for (Layer layer : layersToInclude) {
-			model.getLayers().add(layer);
-		}
-		
 		
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on
@@ -233,7 +229,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * @param style the agent style
 	 * @param order the agent layer order in the display
 	 */
-	public void registerStyle(Class<?> clazz, StyleGIS<?> style, Integer order) {
+	public void registerStyle(Class<?> clazz, StyleGIS<?> style) {
 		AbstractRenderableLayer layer = classStyleMap.get(clazz);
 
 		String layerName = clazz.getSimpleName();
@@ -249,13 +245,12 @@ public class DisplayGIS3D extends AbstractDisplay {
 			}
 			
 			if (layer != null) {
+			  layer.setValue(LAYER_ID_KEY, clazz.getName());
 			  classStyleMap.put(clazz, layer);
-			  layerOrder.put(layerName, order);
 			}
 		} 
 		else {
 			layer.setStyle(style);
-			layerOrder.put(layerName, order);
 		}
 	}  
 	
@@ -268,7 +263,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		NetworkLayerGIS layer = networkLayerMap.get(network);
 		
 		if (layer == null) {
-			layer = new NetworkLayerGIS(network, style);       
+			layer = new NetworkLayerGIS(network, style);
+			layer.setValue(LAYER_ID_KEY, network.getName());
 			networkLayerMap.put(network, layer);
 		} 
 		else {
@@ -283,18 +279,17 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * @param style the coverage style
 	 * @param order the coverage layer order in the display
 	 */
-	public void registerCoverageStyle(String coverageName, CoverageStyle<?> style, Integer order) {
+	public void registerCoverageStyle(String coverageName, CoverageStyle<?> style) {
 		
 		CoverageLayer layer = coverageLayerMap.get(coverageName);
 
 		if (layer == null) {
 			layer = new CoverageLayer(coverageName, style);
+			layer.setValue(LAYER_ID_KEY, coverageName);
 			coverageLayerMap.put(coverageName, layer);
-			layerOrder.put(coverageName, order);
 		} 
 		else {
 			layer.setStyle(style);
-			layerOrder.put(coverageName, order);
 		}
 	}
 	
@@ -376,7 +371,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		});
 	}
 
-	
 	public void probe(SelectEvent event) {
 		Object obj = null;
 		Renderable pickedShape = (Renderable) event.getTopObject();
@@ -439,23 +433,33 @@ public class DisplayGIS3D extends AbstractDisplay {
 			layer.setGeography(geog);
 		}
 		
+		// TODO GIS should the axis order be part of the style?
+		List<RenderableLayer> staticLayers = new ArrayList<RenderableLayer>();
+		boolean forceLonLatOrder = true;
+		for (String fileName : initData.getStaticCoverageMap().keySet()) {
+			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
+
+			// TODO GIS all rasters before a specific layer name ? compass??
+			if (layer != null)
+				staticLayers.add(layer);
+		}
+		
 		// First collect all layers, then set the layer order using the order number 
 		// Ordered map of all renderable layers
-	  TreeMap<Integer, RenderableLayer> orderedLayerMap = 
-	  		new TreeMap<Integer, RenderableLayer>();
+	  TreeMap<Integer, Layer> orderedLayerMap =	new TreeMap<Integer, Layer>();
     
 	  // Unsorted layers have no specified layer order
-	  List<RenderableLayer> unsortedLayers = new ArrayList<RenderableLayer>();
-    List<RenderableLayer> layersToSort = new ArrayList<RenderableLayer>();
+	  List<Layer> unsortedLayers = new ArrayList<Layer>();
+    List<Layer> layersToSort = new ArrayList<Layer>();
    
     layersToSort.addAll(classStyleMap.values());
     layersToSort.addAll(coverageLayerMap.values());
     layersToSort.addAll(networkLayerMap.values());
+    layersToSort.addAll(globeLayers);
+    layersToSort.addAll(staticLayers);
     
-  	for (RenderableLayer layer : layersToSort) {
-  		Integer order = layerOrder.get(layer.getName());
-  		
-  		System.out.println("DisplayGIS3D.init() Layer: " + layer.getName() + " - " + order);
+  	for (Layer layer : layersToSort) {
+  		Integer order = initData.getLayerOrders().get(layer.getValue(LAYER_ID_KEY));
   		
   		// If the order is non null and doesnt already exist, add the layer
   		if (order != null && !orderedLayerMap.containsKey(order)) {	
@@ -467,25 +471,15 @@ public class DisplayGIS3D extends AbstractDisplay {
   		}
   	}
   	
-  	for (RenderableLayer layer : orderedLayerMap.values()) {
+  	for (Layer layer : orderedLayerMap.values()) {
 			model.getLayers().add(layer);
   	}
   	
-  	// GIS TODO should all unsorted coverage layers go to the back?
-  	for (RenderableLayer layer : unsortedLayers) {
-			model.getLayers().add(layer);
+  	// Put all unsorted layers at the back (index 0 - auto index shift)
+  	for (Layer layer : unsortedLayers) {
+			model.getLayers().add(0,layer);
   	}
-   
-  	// TODO GIS should the axis order be part of the style?
-  	boolean forceLonLatOrder = true;
-		for (String fileName : initData.getStaticCoverageMap().keySet()) {
-			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
-			
-			// TODO GIS all rasters before a specific layer name ? compass??
-			if (layer != null)
-				WWUtils.insertBeforeCompass(worldWindow, layer);
-		}
-		
+   		
 		// Create a background layer with color from descriptor
 		createBackgroundLayer();
 		
@@ -568,11 +562,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 		RenderableLayer layer = new RenderableLayer();
 		
 		layer.setName(file.getName());
+		layer.setValue(LAYER_ID_KEY, filename);
 		layer.setPickEnabled(false);
 		layer.addRenderable(si);
 		
-		// TODO static layer styling - use the GeoTools RasterSymbolizer to create
-		//      the BufferedImage.
+		// TODO GIS static layer styling - get the style for opacity, smoothing and RasterSymbolizerHelper
 		
 //		layer.setOpacity(0.5);
 		
@@ -598,7 +592,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		worldWindow.removeSelectListener(viewControlsSelectListener);
 		viewControlsSelectListener.dispose();
 		statusBar.dispose();
-		layerPanel.dispose();
+//		layerPanel.dispose();
 		worldWindow.shutdown();
 		WorldWind.shutDown();
 		worldWindow = null;
@@ -1032,13 +1026,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 	};
 
-	public void setLayerOrder(String layerName, int order) {
-		layerOrder.put(layerName, order);
-	}
-
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
-	}
-	
-	
+	}	
 }

@@ -46,9 +46,7 @@ public class GISStyleRegistrar {
     	 // TODO GIS agent edited style
 //    	String editedStyleName = descriptor.getEditedStyleName(agentName);
     	String editedStyleName = null;
-
-      Integer layerOrder = descriptor.getLayerOrder(agentName);
-      
+  
       Class<?> agentClass = Class.forName(agentName, true, this.getClass().getClassLoader());
 
       StyleGIS<?> style = null;
@@ -63,7 +61,7 @@ public class GISStyleRegistrar {
       }
       
       if (style != null) {
-      	display.registerStyle(agentClass, style, layerOrder);
+      	display.registerStyle(agentClass, style);
       }
     }
   }
@@ -80,7 +78,7 @@ public class GISStyleRegistrar {
         String netEditedStyleName = null;
    
         Network<?> network = context.getProjection(Network.class, proj.getId());
-
+ 
         NetworkStyleGIS style = null;
         // Style editor references get priority over explicit style classes if
         // both are specified in descriptor
@@ -110,10 +108,6 @@ public class GISStyleRegistrar {
       String editedStyleName = null;
 //      editedStyleName = descriptor.getEditedStyleName(agentName);
 
-      Integer layerOrder = descriptor.getLayerOrder(coverageName);
-
-      System.out.println("DDesc: " + coverageName + " - " + layerOrder);
-      
       CoverageStyle<?> style = null;
       // Style editor references get priority over explicit style classes if
       // both are specified in descriptor
@@ -125,20 +119,10 @@ public class GISStyleRegistrar {
         style = (CoverageStyle<?>) styleClass.newInstance();
       }
       
-      // TODO GIS use a basic empty coverage style if none specified in descriptor
-      
-//      if (style != null) {
-      	display.registerCoverageStyle(coverageName, style, layerOrder);
-//      }
+      display.registerCoverageStyle(coverageName, style);
     }
   }
   
-  public void registerNetworkStyles(DisplayDescriptor descriptor)
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-    
-//  	Collection<String> agentNames = getOrderedAgentCollection(descriptor);
-//  	registerAgentStyles(descriptor, agentNames);
-  }
   
   protected StyleGIS<?> createAgentEditedStyle(String editedStyleName) {
   	

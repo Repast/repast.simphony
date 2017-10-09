@@ -17,8 +17,10 @@ import repast.simphony.visualization.DefaultDisplayData;
  */
 public class GISDisplayData<T> extends DefaultDisplayData<T> {
 	
+	protected Map<String,Integer> layerOrders = new HashMap<String,Integer>();
+	
 	/**
-	 * Map of tatic raster layer FILES loaded directly to the display 
+	 * Map of static raster layer FILES loaded directly to the display 
 	 *   <file name, style> for static coverages
 	 *
 	 *  style can be null
@@ -61,5 +63,13 @@ public class GISDisplayData<T> extends DefaultDisplayData<T> {
 	public void addGlobeLayer(String layerName, boolean enabled) {
 		globeLayers.put(layerName, enabled);
 	}
-	
+
+	public Map<String, Integer> getLayerOrders() {
+		return layerOrders;
+	}
+
+	public void setLayerOrders(Map<String, Integer> layerOrders) {
+		this.layerOrders = layerOrders;
+	}
+
 }

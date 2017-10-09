@@ -53,6 +53,8 @@ public class DisplayCreator3DGIS implements DisplayCreator {
     	data.addGlobeLayer(layerName, globeLayers.get(layerName));
     }
     
+    data.setLayerOrders(descriptor.getLayerOrders());
+    
     return data;
   }
   

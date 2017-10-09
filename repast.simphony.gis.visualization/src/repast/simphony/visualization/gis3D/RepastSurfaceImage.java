@@ -16,6 +16,7 @@ import gov.nasa.worldwind.render.SurfaceImage;
  */
 public class RepastSurfaceImage extends SurfaceImage {
 
+	protected boolean drawSmooth = false;
 	public RepastSurfaceImage (BufferedImage image, Sector sector) {
 		super(image, sector);
 	}
@@ -28,10 +29,16 @@ public class RepastSurfaceImage extends SurfaceImage {
 	protected void initializeSourceTexture(DrawContext dc){
 		
 		// Use a RepastTexture instead of the default WWJ texture implementation.
-		
-		this.sourceTexture = new RepastTexture(this.getImageSource(), false);
-		
-//      this.sourceTexture = new LazilyLoadedTexture(this.getImageSource(), false);
-		
+		sourceTexture = new RepastTexture(this.getImageSource(), false);	
+		((RepastTexture)sourceTexture).setDrawSmooth(drawSmooth);
+	}
+	
+	/**
+	 * Toggles smooth (anti-aliased) rendering of texture images.
+	 * 
+	 * @param drawSmooth
+	 */
+	public void setDrawSmooth(boolean drawSmooth) {
+		this.drawSmooth = drawSmooth;
 	}
 }

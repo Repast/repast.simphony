@@ -27,12 +27,12 @@ public class CoverageLayer extends RenderableLayer{
 	protected String layerName;
 	protected Geography<?> geography;
   protected CoverageStyle<?> style;
-  protected SurfaceImage surfaceImage;  // Only one SurfaceImage in the layer
+  protected RepastSurfaceImage surfaceImage;  // Only one SurfaceImage in the layer
   
   // Image to set when the coverage is null
   protected BufferedImage noImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
   
-  // TODO GIS get smoothing param from descriptor
+  // TODO GIS get smoothing param from STYLE
   protected boolean smoothing = false;
   
   public CoverageLayer(String layerName, CoverageStyle<?> style){
@@ -87,10 +87,8 @@ public class CoverageLayer extends RenderableLayer{
   		
   		return;  // Nothing left to do if null coverage
   	}
-  
   	
-  	// TODO GIS Coverage styling that overrides the internal buffered image.
-  	
+  	// TODO GIS improve render performance
   	// The slowest part is calling .getBufferedImage(), so we might be able
 		//  to speed up this code by comparing the underlying raster or PlanarImage
 		//  which is relatively fast, and only updating if the data has changed.
@@ -102,6 +100,7 @@ public class CoverageLayer extends RenderableLayer{
 		BufferedImage image = pi.getAsBufferedImage();
 		
 		// TODO GIS check all other potential data types
+		
 		// If the raster is backed with a Double DataBuffer, we need to convert it
 		// to a Float DataBuffer because double is not supported by OpenGL.  The
 		// easiest approach seems to just create a new image and draw on it rather
@@ -132,6 +131,9 @@ public class CoverageLayer extends RenderableLayer{
 		
 		// slow step
 		surfaceImage.setImageSource(image, sector);
+		
+		surfaceImage.setOpacity(style.getOpacity());
+		surfaceImage.setDrawSmooth(style.isSmoothed());
   }
   
   /**

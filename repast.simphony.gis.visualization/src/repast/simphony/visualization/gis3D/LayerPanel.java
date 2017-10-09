@@ -1,39 +1,33 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.Layer;
-
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.layers.Layer;
+
 /**
- * Modified version of WorldWind LayerPanel example that also explicitly disposes
- *   the Timer via the Disposable interface.
+ * Modified version of WorldWind LayerPanel example to reverse layer order in panel
  * 
  * @author Eric Tatara
  *
  */
-public class LayerPanel extends JPanel implements Disposable{
+public class LayerPanel extends JPanel{
 	private JPanel layersPanel;
 	private JPanel westPanel;
 	private JScrollPane scrollPane;
-
-	protected  Timer statusTimer;
 
 	public LayerPanel(WorldWindow wwd){
 		// Make a panel at a default size.
@@ -71,46 +65,20 @@ public class LayerPanel extends JPanel implements Disposable{
 		westPanel.add(scrollPane);
 		this.add(westPanel, BorderLayout.CENTER);
 
-		statusTimer = new Timer(500, new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent)
-			{
-				updateStatus();
-			}
-		});
-		statusTimer.start();
-	}
-
-	private Font defaultFont;
-	private Font atMaxFont;
-
-	private void updateStatus(){
-		for (Component layerItem : this.layersPanel.getComponents()){
-			if (!(layerItem instanceof JCheckBox))
-				continue;
-
-			LayerAction action = (LayerAction) ((JCheckBox) layerItem).getAction();
-			if (!(action.layer.isMultiResolution()))
-				continue;
-
-			if ((action.layer).isAtMaxResolution())
-				layerItem.setFont(this.atMaxFont);
-			else
-				layerItem.setFont(this.defaultFont);
-		}
 	}
 
 	private void fill(WorldWindow wwd){
 		// Fill the layers panel with the titles of all layers in the world window's current model.
-		for (Layer layer : wwd.getModel().getLayers()){
+		
+		// Reverse the standarard order so that the foreground is the first in the list
+		ArrayList<Layer> layers = new ArrayList<Layer>(wwd.getModel().getLayers());
+		Collections.reverse(layers);
+		
+		for (Layer layer : layers){
 			LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());
 			JCheckBox jcb = new JCheckBox(action);
 			jcb.setSelected(action.selected);
 			this.layersPanel.add(jcb);
-
-			if (defaultFont == null){
-				this.defaultFont = jcb.getFont();
-				this.atMaxFont = this.defaultFont.deriveFont(Font.ITALIC);
-			}
 		}
 	}
 
@@ -149,10 +117,5 @@ public class LayerPanel extends JPanel implements Disposable{
 
 			wwd.redraw();
 		}
-	}
-
-	@Override
-	public void dispose() {
-		statusTimer.stop();
 	}
 }

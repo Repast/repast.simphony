@@ -16,6 +16,7 @@ import repast.simphony.visualization.gui.CoverageStyleClassStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.EdgeStyleStep;
 import repast.simphony.visualization.gui.GIS3DOptionStep;
+import repast.simphony.visualization.gui.LayerOrderStep;
 import repast.simphony.visualization.gui.StyleClassStep;
 
 /**
@@ -101,7 +102,22 @@ public class GIS3DDisplayWizardStepCreator {
 						&& isGIS3D(descriptor);
 			}
 		}));
+		
+		LayerOrderStep layerOrderStep = new LayerOrderStep();
+		steps.add(new Pair<WizardStep, Condition>(layerOrderStep, new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+
+				return isGIS3D(descriptor);
+			}
+		}));
 	
+		// The layer order step init is dependent on the agent selection step, so it 
+		//   will listen for any changes that occur.
+		agentSelectionStep.addStepListener(layerOrderStep);
+		coverageStyleClassStep.addStepListener(layerOrderStep);
+		
 		return steps;
 	}
 }
