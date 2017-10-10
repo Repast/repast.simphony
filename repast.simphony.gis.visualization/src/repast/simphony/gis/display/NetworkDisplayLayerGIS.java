@@ -33,6 +33,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  * Display Layer for networks in 2D GIS displays
  * 
  * @author Eric Tatara
+ * 
+ * @deprecated 2D piccolo based code is being removed
  *
  */
 public class NetworkDisplayLayerGIS extends RepastMapLayer implements ProjectionListener {

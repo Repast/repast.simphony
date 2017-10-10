@@ -87,7 +87,7 @@ public class GISDisplayDescriptor extends BasicDisplayDescriptor {
   	
   	// Copy data from source descriptor to this
   	
-  	// TODO GIS Make sure all new data are set here !!!!!!!!!!!!!!!!!!!!!
+  	// TODO GIS [Permanent] Descriptor any changes need to be reflected here!
   	
   	getLayerOrders().clear();
   	 	

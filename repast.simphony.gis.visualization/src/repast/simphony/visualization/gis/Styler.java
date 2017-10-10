@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Point;
  * @author Nick Collier
  * @author Eric Tatara
  * 
+ * @deprecated 2D piccolo based code is being removed
+ * 
  */
 public class Styler {
 

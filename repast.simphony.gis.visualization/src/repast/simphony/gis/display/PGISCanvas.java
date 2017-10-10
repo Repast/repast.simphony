@@ -44,6 +44,8 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @author Howe
  * @author Eric Tatara
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class PGISCanvas extends PCanvas implements MapLayerListListener,
         PropertyChangeListener, MapBoundsListener {

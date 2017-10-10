@@ -99,6 +99,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
+	public static final String BACKGROUND_LAYER_NAME = "Background";
 	public static final String LAYER_ID_KEY = "layer id";
 	
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
@@ -439,7 +440,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		for (String fileName : initData.getStaticCoverageMap().keySet()) {
 			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
 
-			// TODO GIS all rasters before a specific layer name ? compass??
 			if (layer != null)
 				staticLayers.add(layer);
 		}
@@ -513,12 +513,10 @@ public class DisplayGIS3D extends AbstractDisplay {
     )));
 	  
 	  RenderableLayer layer = new RenderableLayer();
-    layer.setName("Background");
+    layer.setName(BACKGROUND_LAYER_NAME);
     layer.setPickEnabled(false);
     layer.addRenderable(bgImage);
-    
-    // TODO GIS background dont show in layer legend.
-    
+     
     // Add background layer to first layer position (reshuffles automatically)
     model.getLayers().add(0, layer);
 	}

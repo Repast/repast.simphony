@@ -68,7 +68,6 @@ public class DisplayCreator3DGIS implements DisplayCreator {
     GISStyleRegistrar registrar = new GISStyleRegistrar(display);    
     registrar.registerAllStyles(descriptor, context);
 
-    // TODO GIS layer legend visible layers
     // TODO GIS initial view location
     
     descriptor.getGlobeLayersMap();

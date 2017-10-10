@@ -11,6 +11,8 @@ import java.awt.*;
  * @author $Author: howe $
  * @version $Revision: 1.6 $
  * @date Oct 24, 2006
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendEntry extends DefaultMutableTreeNode implements
 				java.io.Serializable {

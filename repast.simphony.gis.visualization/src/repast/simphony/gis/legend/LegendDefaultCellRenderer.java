@@ -11,6 +11,8 @@ import java.awt.*;
  * @author $Author: howe $
  * @version $Revision: 1.4 $
  * @date Oct 24, 2006
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendDefaultCellRenderer extends javax.swing.JPanel implements
 		javax.swing.tree.TreeCellRenderer {

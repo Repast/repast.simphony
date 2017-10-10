@@ -6,6 +6,8 @@ package repast.simphony.gis.legend;
  * @author $Author: howe $
  * @version $Revision: 1.4 $
  * @date Oct 24, 2006
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public interface LegendAction<T extends LegendEntry> {
 

@@ -31,6 +31,8 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @author Tom Howe
  * @author Eric Tatara
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class PGisLayer extends PLayer implements MapLayerListener {
   private static final long serialVersionUID = 1732090043130770803L;

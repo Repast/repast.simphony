@@ -13,6 +13,8 @@ import java.awt.*;
  * @author $Author: howe $
  * @date $Date: 2007/04/18 19:26:11 $
  * @version $Revision: 1.5 $
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendRuleEntry extends LegendEntry {
 

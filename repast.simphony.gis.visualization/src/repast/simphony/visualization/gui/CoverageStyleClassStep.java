@@ -19,8 +19,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.commons.io.FilenameUtils;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -38,9 +36,8 @@ import simphony.util.messages.MessageCenter;
  * 
  * @author Eric Tatara
  * 
- * TODO GIS complete for coverage layers
  * 
- * TODO refactor with parent CoverageStyleStep to use a standard StyleStep that
+ * TODO GIS refactor with parent CoverageStyleStep to use a standard StyleStep that
  *      is generic wrt the types of classes and styles used.
  */
 public class CoverageStyleClassStep extends CoverageStyleStep {
@@ -109,7 +106,7 @@ public class CoverageStyleClassStep extends CoverageStyleStep {
 //				// TODO GIS coverage style editor
 //			}
 //		});
-//		buildStyleButton.setEnabled(false);  // TODO GIS enable when editor available
+//		buildStyleButton.setEnabled(false); 
 		
 		builder.addLabel("Background Layer Color:", cc.xyw(1, 5, 7));
 		bgcolorBtn = new JButton();

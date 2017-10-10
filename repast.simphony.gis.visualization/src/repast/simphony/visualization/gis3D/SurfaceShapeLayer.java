@@ -95,9 +95,7 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
     
     shape.setAttributes(attrs);
   }
-
-  // TODO GIS do we even need to do most of the location and styling in create?
-  
+ 
   @Override
   protected SurfaceShape createVisualItem(Object o) {
   	Geometry geom = geography.getGeometry(o);
@@ -105,36 +103,6 @@ public class SurfaceShapeLayer extends AbstractRenderableLayer<SurfaceShapeStyle
   	
   	SurfaceShape shape = style.getSurfaceShape(o,null);
   	 
-  	// TODO WWJ - any need to refactor this further to separate polygon and line layers?
-//    if (shape instanceof SurfacePolyline) {
-//    	SurfacePolyline line = (SurfacePolyline)shape;
-//    	List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
-//      line.setLocations(pts);
-//    } 
-//    else if (shape instanceof SurfacePolygon){
-//    	// TODO interior holes as above
-//    	
-//    	SurfacePolygon polygon = (SurfacePolygon)shape;
-//      List<LatLon> pts = WWUtils.CoordToLatLon(geom.getCoordinates());
-//    	polygon.setLocations(pts);
-//    } else {
-//      // TODO WWJ - Do we need a special NULL object for this case?
-//    }
-    
-//    ShapeAttributes attrs = shape.getAttributes();
-//
-//    if (attrs == null)
-//      attrs = new BasicShapeAttributes();
-//
-//    if (style.getFillColor(o) != null)
-//      attrs.setInteriorMaterial(new Material(style.getFillColor(o)));
-//    attrs.setInteriorOpacity(style.getFillOpacity(o));
-//    attrs.setOutlineMaterial(new Material(style.getLineColor(o)));
-//    attrs.setOutlineOpacity(style.getLineOpacity(o));
-//    attrs.setOutlineWidth(style.getLineWidth(o));
-//
-//    shape.setAttributes(attrs);
-   
     visualItemMap.put(o, shape);
 
     return shape;

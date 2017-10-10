@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * by adding a rule to the style for selection.
  *
  * @author Nick Collier
+ * @deprecated 2D piccolo based code is being removed
  */
 public class SelectionDecorator implements MapLayerListListener {
   private static final String HIGHLIGHT_RULE_NAME = "__high_light__";

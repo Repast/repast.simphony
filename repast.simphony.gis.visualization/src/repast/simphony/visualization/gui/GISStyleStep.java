@@ -12,6 +12,8 @@ import repast.simphony.ui.plugin.editor.PluginWizardStep;
  * 
  * @author Nick Collier
  * @author Eric Tatara
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class GISStyleStep extends PluginWizardStep {
 

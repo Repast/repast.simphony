@@ -18,6 +18,8 @@ import java.util.Map;
  * 
  * @author Nick Collier
  * @author Eric Tatara
+ * 
+ * @deprecated 2D piccolo based code is being removed
  *
  */
 public class GisDisplayMediator implements MapLayerListener,

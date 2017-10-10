@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * A square-shaped icon for use on buttons like color pickers.
  * 
- *
+ *@deprecated 2D piccolo based code is being removed
  */
 public class SquareIcon implements Icon {
 

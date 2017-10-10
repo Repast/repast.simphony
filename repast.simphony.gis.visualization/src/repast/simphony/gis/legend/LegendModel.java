@@ -28,6 +28,8 @@ import simphony.util.messages.MessageCenter;
  * @author $Author: howe $
  * @version $Revision: 1.20 $
  * @date Oct 24, 2006
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendModel extends DefaultTreeModel {
 

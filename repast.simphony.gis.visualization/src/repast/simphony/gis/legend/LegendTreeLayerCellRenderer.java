@@ -27,7 +27,9 @@ import java.awt.*;
 /**
  * Renderer for rendering root and layer Cell in LegendTree
  *
- * @author jianhuij
+ *
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendTreeLayerCellRenderer extends javax.swing.JPanel implements
         javax.swing.tree.TreeCellRenderer {

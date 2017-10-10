@@ -11,6 +11,7 @@ import org.geotools.map.Layer;
  * 
  * @author howe
  * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public interface LayerManager {
 	/**

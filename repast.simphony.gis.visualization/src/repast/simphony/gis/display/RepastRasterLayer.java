@@ -19,6 +19,7 @@ import org.geotools.styling.Style;
  * 
  * @author Eric Tatara
  *
+ *@deprecated 2D piccolo based code is being removed
  */
 public class RepastRasterLayer extends GridCoverageLayer {
 

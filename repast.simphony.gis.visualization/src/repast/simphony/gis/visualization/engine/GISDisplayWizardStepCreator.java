@@ -10,10 +10,8 @@ import org.pietschy.wizard.models.Condition;
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
-import repast.simphony.visualization.gui.AgentSelectionStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
 import repast.simphony.visualization.gui.GISStyleStep;
-import repast.simphony.visualization.gui.StyleClassStep;
 
 /**
  * Adds wizard step panels to the Display editor for GIS displays.
@@ -63,27 +61,6 @@ public class GISDisplayWizardStepCreator {
 				return isGIS(descriptor);
 			}
 		}));
-
-		// TODO GIS: network visualization 
-//		steps.add(new Pair<WizardStep, Condition>(new NetLayoutStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsOnlyProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS(descriptor);
-//			}
-//		}));
-//
-//		steps.add(new Pair<WizardStep, Condition>(new EdgeStyleStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS(descriptor);
-//			}
-//		}));
 	
 		return steps;
 	}

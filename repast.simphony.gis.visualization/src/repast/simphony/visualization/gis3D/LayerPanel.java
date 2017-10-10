@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -29,17 +31,17 @@ public class LayerPanel extends JPanel{
 	private JPanel westPanel;
 	private JScrollPane scrollPane;
 
+	// Layers to exclude from the legend panel
+	protected Set<String> layersToHide = new HashSet<String>();
+	
 	public LayerPanel(WorldWindow wwd){
-		// Make a panel at a default size.
 		super(new BorderLayout());
-		this.makePanel(wwd, new Dimension(200, 400));
+		
+		layersToHide.add(DisplayGIS3D.BACKGROUND_LAYER_NAME);
+		makePanel(wwd, new Dimension(200, 400));
 	}
 
-	public LayerPanel(WorldWindow wwd, Dimension size){
-		// Make a panel at a specified size.
-		super(new BorderLayout());
-		this.makePanel(wwd, size);
-	}
+	
 
 	private void makePanel(WorldWindow wwd, Dimension size){
 		// Make and fill the panel holding the layer titles.
@@ -75,24 +77,26 @@ public class LayerPanel extends JPanel{
 		Collections.reverse(layers);
 		
 		for (Layer layer : layers){
-			LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());
-			JCheckBox jcb = new JCheckBox(action);
-			jcb.setSelected(action.selected);
-			this.layersPanel.add(jcb);
+			if (!layersToHide.contains(layer.getName())){
+				LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());
+				JCheckBox jcb = new JCheckBox(action);
+				jcb.setSelected(action.selected);
+				layersPanel.add(jcb);
+			}
 		}
 	}
 
 	public void update(WorldWindow wwd){
 		// Replace all the layer names in the layers panel with the names of the current layers.
-		this.layersPanel.removeAll();
-		this.fill(wwd);
-		this.westPanel.revalidate();
-		this.westPanel.repaint();
+		layersPanel.removeAll();
+		fill(wwd);
+		westPanel.revalidate();
+		westPanel.repaint();
 	}
 
 	@Override
 	public void setToolTipText(String string){
-		this.scrollPane.setToolTipText(string);
+		scrollPane.setToolTipText(string);
 	}
 
 	private static class LayerAction extends AbstractAction{

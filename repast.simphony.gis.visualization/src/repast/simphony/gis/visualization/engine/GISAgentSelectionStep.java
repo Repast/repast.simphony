@@ -24,6 +24,7 @@ import repast.simphony.visualization.gui.AgentSelectionStep;
  * 
  * @author Eric Tatara
  *
+ *@deprecated 2D piccolo based code is being removed
  */
 public class GISAgentSelectionStep extends AgentSelectionStep {
 

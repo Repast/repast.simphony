@@ -12,6 +12,11 @@ import javax.swing.tree.TreePath;
 
 import org.geotools.map.Layer;
 
+/**
+ * 
+ * @
+ *@deprecated 2D piccolo based code is being removed
+ */
 public class DefaultLayerManager extends DefaultTreeModel implements
 		LayerManager {
 

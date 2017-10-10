@@ -12,6 +12,8 @@ import com.vividsolutions.jts.geom.Envelope;
  * Handler for creating probes.
  *
  * @author Nick Collier
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class GISProbeHandler extends AbstractMarqueeHandler {
 

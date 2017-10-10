@@ -15,6 +15,8 @@ import java.awt.*;
  * or does user select the checkbox for this layer node
  *
  * @author howe
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendLayerEntry extends LegendEntry {
 

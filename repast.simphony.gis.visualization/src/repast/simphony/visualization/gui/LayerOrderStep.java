@@ -209,9 +209,7 @@ public class LayerOrderStep extends PluginWizardStep {
 		GISDisplayDescriptor descriptor = (GISDisplayDescriptor)model.getDescriptor();
 
 		descriptor.getLayerOrders().clear();
-		
-	// TODO GIS descriptor set layer orders
-		
+			
 		// NOTE that order layer starts with background at index 0, while the
     // lists should be displayed with the foreground at index 0, so it needs
     // to be reversed.

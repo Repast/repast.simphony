@@ -20,6 +20,8 @@ import repast.simphony.gis.tools.ToolManager;
  * This is a very basic panel that holds a canvas and a toolbar.
  *
  * @author Tom Howe
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class PiccoloMapPanel extends JPanel {
   private static final long serialVersionUID = -3638545744874130251L;

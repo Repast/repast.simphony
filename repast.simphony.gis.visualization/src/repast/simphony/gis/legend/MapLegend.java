@@ -40,6 +40,8 @@ import java.util.Map;
  *
  * @author $Author: collier $
  * @version $Revision: 1.14 $
+ * 
+ * @deprecated 2D piccolo based code is being removed
  */
 public class MapLegend extends JPanel {
 

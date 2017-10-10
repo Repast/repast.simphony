@@ -75,6 +75,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  * @author Nick Collier
  * @author Eric Tatara
  * 
+ * @deprecated 2D piccolo based code is being removed
+ * 
  */
 public class DisplayGIS extends AbstractDisplay implements WindowListener {
 

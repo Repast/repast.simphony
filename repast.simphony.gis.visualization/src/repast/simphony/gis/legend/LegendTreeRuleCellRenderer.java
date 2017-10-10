@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  * Rule Cell Renderer, the userObject got from a rule node will generate an icon
  * for being set in the renderer as the rule icon
  *
- * @author jianhuij
+ * @deprecated 2D piccolo based code is being removed
  */
 public class LegendTreeRuleCellRenderer
     extends javax.swing.tree.DefaultTreeCellRenderer {
