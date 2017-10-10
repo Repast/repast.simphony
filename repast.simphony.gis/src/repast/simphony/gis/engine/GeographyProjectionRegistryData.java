@@ -25,6 +25,7 @@ public class GeographyProjectionRegistryData
 	implements ProjectionRegistryData<Geography<?>>, DataLoaderProjectionRegistryData{
 
 	public static final String NAME = "geography";
+	public static final String COVERAGE_NAME = "coverage layer";
 	public static final Class<?> CLASS = Geography.class;
 	
 	public GeographyProjectionRegistryData(){

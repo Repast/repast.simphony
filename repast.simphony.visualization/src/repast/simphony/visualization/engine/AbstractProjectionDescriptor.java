@@ -26,6 +26,10 @@ public abstract class AbstractProjectionDescriptor implements ProjectionDescript
         if (proj == null) throw new IllegalArgumentException("Projection cannot be null.");
 	}
 
+	public void registerProjectionData(ProjectionData data, DisplayDescriptor descriptor) {
+		descriptor.addProjection(data, this);
+	}
+	
 	/**
 	 * Gets the name of the projection.
 	 *

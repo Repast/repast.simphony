@@ -1,5 +1,6 @@
 package repast.simphony.visualization.engine;
 
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.visualization.decorator.ProjectionDecorator2D;
 import repast.simphony.visualization.decorator.ProjectionDecorator3D;
 
@@ -17,6 +18,17 @@ import repast.simphony.visualization.decorator.ProjectionDecorator3D;
  */
 public interface ProjectionDescriptor {
 
+	/**
+	 * Register ProjectionData with the DisplayDescriptor.  This is implemented 
+	 * here since different ProjectionDescriptor implementations might handle
+	 * psuedo-projections like value layers differently from actual Projection
+	 * implementations.
+	 * 
+	 * @param data the ProjectionData to register with the DisplayDescriptor
+	 * @param descriptor the DisplayDescriptor
+	 */
+	public void registerProjectionData(ProjectionData data, DisplayDescriptor descriptor);
+	
 	/**
 	 * Gets the name of the projection.
 	 *

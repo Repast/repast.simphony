@@ -13,6 +13,12 @@ import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
 
+/**
+ * 
+ * @author Eric Tatara
+ *
+ * @deprecated Use 3D GIS display instead
+ */
 public class GISVisualizationRegistryData implements VisualizationRegistryData {
 
 	public static final String TYPE = "GIS";

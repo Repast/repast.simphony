@@ -14,6 +14,7 @@ import org.geotools.gce.arcgrid.ArcGridFormatFactory;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffFormatFactorySpi;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.image.WorldImageFormatFactory;
 import org.opengis.coverage.grid.GridCoverageReader;
 
 import junit.framework.TestCase;
@@ -30,9 +31,22 @@ import junit.framework.TestCase;
  */
 public class GridCoverageReaderTests extends TestCase {
 
+	File geoTiffFile1, geoTiffFile2, geoTiffFile3;
+	File arcGridFile, arcGridFileZip;
+	File jpegWorldFile, tiffWorldFile, pngWorldFile;
+	
 	@Override
 	public void setUp() {
-
+		geoTiffFile1 = new File("test/data/UTM2GTIF.TIF");
+		geoTiffFile2 = new File("test/data/SP27GTIF.TIF");
+		geoTiffFile3 = new File("test/data/craterlake-imagery-30m.tif");
+		
+		arcGridFile = new File("test/data/ArcGrid.asc");
+		arcGridFileZip = new File("test/data/spearfish.asc.gz");
+		
+		jpegWorldFile = new File("test/data/RGBTestPattern.jpg");
+		pngWorldFile = new File("test/data/RGBTestPattern.png");
+		tiffWorldFile = new File("test/data/RGBTestPattern.tif");
 	}
 
 	/**
@@ -41,16 +55,45 @@ public class GridCoverageReaderTests extends TestCase {
 	 * 
 	 */
 	public void testGTGeoTiffReader(){
-//		File file = new File("test/data/bogota.tif");
-//		File file = new File("test/data/sst_io.bin.20170305.tif");
-		File file = new File("test/data/UTM2GTIF.TIF");
+		readGTGeoTiff(geoTiffFile1);
+		readGTGeoTiff(geoTiffFile2);
+		readGTGeoTiff(geoTiffFile3);
+	}
+	
+	/**
+	 * Test the GeoTools ArcGrid reader directly to verify the classpath is 
+	 * configured with the correct GeoTool jars.
+	 * 
+	 */
+	public void testGTArcGridReader() {
+		readGTArcGrid(arcGridFile);
+		readGTArcGrid(arcGridFileZip);
+	}
+	
+	/**
+	 * Test the GeoTools GridFormatFinder to read a files file to verify the 
+	 * classpath is configured with the correct GeoTool jars.
+	 * 
+	 */
+	public void testGTFactoryFinder() {
+		readGTFactoryFinder(geoTiffFile1);
+		readGTFactoryFinder(geoTiffFile2);
+		readGTFactoryFinder(geoTiffFile3);
 		
+		readGTFactoryFinder(arcGridFile);
+//		readGTFactoryFinder(arcGridFileZip); // Finder doesnt support zip
+		
+		readGTFactoryFinder(jpegWorldFile);
+		readGTFactoryFinder(pngWorldFile);
+		readGTFactoryFinder(tiffWorldFile);
+	}
+
+	public void readGTGeoTiff(File file){
 		
 		GeoTiffReader reader = null;
 		try {
 			reader = new GeoTiffReader(file);
 		} catch (DataSourceException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	
@@ -60,18 +103,11 @@ public class GridCoverageReaderTests extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		assertNotNull(coverage);
 	}
 	
-	/**
-	 * Test the GeoTools ArcGrid reader directly to verify the classpath is 
-	 * configured with the correct GeoTool jars.
-	 * 
-	 */
-	public void testGTArcGridReader(){
-		File file = new File("test/data/ArcGrid.asc");
-	
+	public void readGTArcGrid(File file){
+		
 		GridCoverage2D coverage = null;
 		try {
 			GridCoverageReader reader = new ArcGridReader(file);
@@ -79,39 +115,11 @@ public class GridCoverageReaderTests extends TestCase {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		assertNotNull(coverage);
 	}
 	
-	/**
-	 * Test the GeoTools ArcGrid reader using a gzip file directly to verify the 
-	 * classpath is configured with the correct GeoTool jars.
-	 * 
-	 */
-	public void testGTArcGridReaderGZip(){
-		File file = new File("test/data/spearfish.asc.gz");
-	
-		GridCoverage2D coverage = null;
-		try {
-			GridCoverageReader reader = new ArcGridReader(file);
-			coverage = (GridCoverage2D) reader.read(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		assertNotNull(coverage);
-	}
+	public void readGTFactoryFinder(File file){
 
-	/**
-	 * Test the GeoTools GridFormatFinder to read a GeoTiff file to verify the 
-	 * classpath is configured with the correct GeoTool jars.
-	 * 
-	 */
-	public void testGTFactoryFinderGeoTiff(){
-//		File file = new File("test/data/craterlake-imagery-30m.tif");
-
-		File file = new File("test/data/UTM2GTIF.TIF");
-		
 		AbstractGridFormat format = GridFormatFinder.findFormat(file);
 		GridCoverage2DReader reader = format.getReader(file);
 		GridCoverage2D coverage = null;
@@ -120,22 +128,9 @@ public class GridCoverageReaderTests extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		assertNotNull(coverage);
-		
-		file = new File("test/data/craterlake-imagery-30m.tif");
-		
-		format = GridFormatFinder.findFormat(file);
-		reader = format.getReader(file);
-		coverage = null;
-		try {
-			coverage = reader.read(null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		assertNotNull(coverage);
 	}
+
 	
 	/**
 	 * Test the GeoTools GridFormatFinder to read available expected Factory 
@@ -150,8 +145,12 @@ public class GridCoverageReaderTests extends TestCase {
 
 		boolean geoTiffAvailable = false;
 		boolean arcGridAvailable = false;
+		boolean worldFileAvailable = false;
 		
 		for (GridFormatFactorySpi f : formats){
+			
+			System.out.println("Found GridFormatFinder on classpath: " + f.toString());
+			
 			if (f instanceof GeoTiffFormatFactorySpi){
 				geoTiffAvailable = true;
 			}
@@ -159,9 +158,14 @@ public class GridCoverageReaderTests extends TestCase {
 			else if (f instanceof ArcGridFormatFactory){
 				arcGridAvailable = true;
 			}
+			
+			else if (f instanceof WorldImageFormatFactory) {
+				worldFileAvailable = true;
+			}
 		}
 
 		assertTrue(geoTiffAvailable);
 		assertTrue(arcGridAvailable);
+		assertTrue(worldFileAvailable);
 	}
 }

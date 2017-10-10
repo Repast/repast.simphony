@@ -2,8 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-17.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-image-17.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jdom-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="bin/"/>
-	<classpathentry exported="true" kind="lib" path="lib/"/>
 	<classpathentry exported="true" kind="lib" path="lib/ejml-core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/GeographicLib-Java-1.44.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-api-17.2.jar"/>

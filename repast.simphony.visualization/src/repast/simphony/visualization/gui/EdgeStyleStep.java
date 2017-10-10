@@ -59,7 +59,7 @@ public class EdgeStyleStep extends PluginWizardStep {
 	private int currentIndex;
 	private JComboBox styleBox;
 	private Map<String, String> editedStyleFileMap;
-	private JButton buildStyleButton = new JButton();
+	private JButton buildStyleButton;
 	private String defaultStyle;
 
 	static class ListElement {
@@ -111,8 +111,9 @@ public class EdgeStyleStep extends PluginWizardStep {
 
 		builder.add(buildStyleButton, cc.xy(9, 9));
 
-		buildStyleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-				StyleStep.EDIT_ICON)));
+		buildStyleButton.setEnabled(false);  // False unless enabled based on descriptor
+		buildStyleButton.setIcon(new ImageIcon(
+				getClass().getClassLoader().getResource(StyleStep.EDIT_ICON)));
 		buildStyleButton.setToolTipText("Edit the style of the selected edge type");
 		buildStyleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -253,9 +254,9 @@ public class EdgeStyleStep extends PluginWizardStep {
 		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
 			buildStyleButton.setEnabled(true);
 		}
-		else {
-			buildStyleButton.setEnabled(false);
-		}
+//		else {
+//			buildStyleButton.setEnabled(false);
+//		}
 		
 		// Find all available style classes for the display type
 

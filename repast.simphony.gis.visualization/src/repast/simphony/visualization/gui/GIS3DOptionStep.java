@@ -44,6 +44,6 @@ public class GIS3DOptionStep extends PluginWizardStep {
   @Override
   public void applyState() throws InvalidStateException {
     super.applyState();
-    panel.done();
+    panel.applyChanges();
   }
 }

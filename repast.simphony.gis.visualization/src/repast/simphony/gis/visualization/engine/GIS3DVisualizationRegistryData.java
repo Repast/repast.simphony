@@ -12,7 +12,9 @@ import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
+import repast.simphony.visualization.gis3D.style.DefaultNetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
+import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
 
@@ -47,15 +49,12 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 	@Override
 	public Class<?>[] getDefaultEdgeStyles() {
 		
-		// TODO GIS: implement an edge style.
-		return null;
+		return  new Class<?>[] {DefaultNetworkStyleGIS.class};
 	}
 
 	@Override
 	public Class<?> getEdgeStyleInterface() {
-		
-		// TODO GIS: implement an edge style interface.
-		return null;
+		return NetworkStyleGIS.class;
 	}
 
 	@Override

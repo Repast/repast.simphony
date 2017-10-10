@@ -10,6 +10,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
@@ -25,7 +26,9 @@ import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 
 /**
- * Utilities for GIS visualization
+ * Utilities for GIS visualization in WorldWind.  The WWJ display uses a WGS84
+ *   coordinate system, so all returned objects are converted to WGS84 lat/lon
+ *   degrees irrespective of the original objects CRS.
  * 
  * @author Eric Tatara
  *
@@ -33,17 +36,11 @@ import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 public class WWUtils {
 
 	public static LatLon CoordToLatLon(Coordinate coord){
-
-		// TODO HACK
-		// prevent conversion error for cases where lon might be slightly larger than 180.
-		//		if (coord.x > 180)
-		//			coord.x = 180;
-
 		return LatLon.fromDegrees(coord.y,coord.x);
 	}
 
 	// TODO GIS - assumes coords are in degrees lat/lon - need to generalize
-	// TODO GIS - assumes coords are in lon, lat order - need to generalize
+	// TODO GIS - assumes coords are in lon, lat order - need to generalizes
 
 	/**
 	 * Convert a coordinate array to a list of WWJ LatLon
@@ -104,19 +101,18 @@ public class WWUtils {
 	}
 
 	/**
-	 * Create a WWJ Sector from a GeoTools ReferencedEnvelope
+	 * Create a WWJ Sector in WGS84 CRS from a GeoTools ReferencedEnvelope
 	 * 
-	 * @param envelope
-	 * @return
-	 
-	 *
-	 * TODO projecting the envelope may not be the correct way - it may only
-	 *      change the envelope but not the containing points. 
+	 * @param envelope the ReferencedEnvelope in any CRS
+	 * @return the WWJ Sector in WGS84
 	 *
 	 */
-	public static Sector envelopeToSector(ReferencedEnvelope envelope){
+	public static Sector envelopeToSectorWGS84(ReferencedEnvelope envelope){
 
-		if (envelope.getCoordinateReferenceSystem() != DefaultGeographicCRS.WGS84){
+		CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+		
+		// Transform envelope coords to WGS84 if not already.
+		if (crs != DefaultGeographicCRS.WGS84){
 			try {
 				envelope = envelope.transform(DefaultGeographicCRS.WGS84, true);
 			} catch (TransformException | FactoryException e) {
@@ -124,22 +120,22 @@ public class WWUtils {
 			}
 		}
 
+		crs = envelope.getCoordinateReferenceSystem();
+		
+		// The DefaultGeographicCRS.WGS84 axis order should always be EAST,NORTH;
 		return Sector.fromDegrees(envelope.getMinY(), envelope.getMaxY(), 
 				envelope.getMinX(), envelope.getMaxX());
-	}
-	
-	public static Sector envelopeToSectorReversedOrder(ReferencedEnvelope envelope){
-
-		if (envelope.getCoordinateReferenceSystem() != DefaultGeographicCRS.WGS84){
-			try {
-				envelope = envelope.transform(DefaultGeographicCRS.WGS84, true);
-			} catch (TransformException | FactoryException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return Sector.fromDegrees(envelope.getMinX(), envelope.getMaxX(), 
-				envelope.getMinY(), envelope.getMaxY());
+		
+//		// CRS axis order is EAST,NORTH (Lon,Lat)
+//		if (crs.getCoordinateSystem().getAxis(0).getDirection() == AxisDirection.EAST) {
+//			return Sector.fromDegrees(envelope.getMinY(), envelope.getMaxY(), 
+//					envelope.getMinX(), envelope.getMaxX());
+//		}
+//		// CRS axis order is NORTH,EAST (Lat,Lon)
+//		else {
+//			return Sector.fromDegrees(envelope.getMinX(), envelope.getMaxX(),
+//					envelope.getMinY(), envelope.getMaxY());
+//		}
 	}
 
 	public static void insertBeforeCompass(WorldWindow wwd, Layer layer){

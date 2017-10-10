@@ -23,7 +23,10 @@ import repast.simphony.visualization.gis.DisplayGIS;
  * Display creator for 2D GIS displays.
  * 
  * @author Nick Collier
+ * 
+ * @deprecated Use 3D GIS display instead
  */
+@Deprecated
 public class DisplayCreatorGIS implements DisplayCreator {
 	 protected Context<?> context;
 	 protected GISDisplayDescriptor descriptor; 
@@ -43,7 +46,6 @@ public class DisplayCreatorGIS implements DisplayCreator {
     return data;
   }
 
-  @SuppressWarnings("deprecation")
   private FeatureSource createFeatureSource(File shpFile) throws IOException {
     ShapefileDataStore dataStore = new ShapefileDataStore(shpFile.toURL());
     return dataStore.getFeatureSource(dataStore.getTypeNames()[0]);

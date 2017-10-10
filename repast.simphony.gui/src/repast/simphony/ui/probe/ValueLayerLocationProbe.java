@@ -8,7 +8,7 @@ import java.beans.PropertyDescriptor;
  * 
  * @author Eric Tatara
  */
-public class ValueLayerLocationProbe {
+public class ValueLayerLocationProbe implements LocationProbe {
 
   private Object obj;
 

@@ -20,7 +20,9 @@ import repast.simphony.visualization.gui.StyleClassStep;
  * 
  * @author Eric Tatara
  *
+ * @deprecated Use 3D GIS display instead
  */
+@Deprecated
 public class GISDisplayWizardStepCreator {
 
 	/**

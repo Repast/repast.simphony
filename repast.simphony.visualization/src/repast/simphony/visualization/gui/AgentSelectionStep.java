@@ -184,8 +184,8 @@ public class AgentSelectionStep extends PluginWizardStep {
      }
 
      Collections.sort(orders);
-     for (int i : orders)
-       target.add(i, orderedMap.get(i));
+     for (int i=0; i<orders.size(); i++)
+       target.add(i, orderedMap.get(orders.get(i)));
 
      // NOTE that order layer starts with background at index 0, while the
      // lists should be displayed with the foreground at index 0, so it needs

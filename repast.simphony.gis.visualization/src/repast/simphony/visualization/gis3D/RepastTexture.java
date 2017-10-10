@@ -7,23 +7,26 @@ import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.LazilyLoadedTexture;
 
+/**
+ * RepastTexture overrides the default WorldWind Texture so that it can provide
+ *   options for smoothing (anti-aliasing) in cases such as raster layers.
+ * 
+ * @author Eric Tatara
+ *
+ */
 public class RepastTexture extends LazilyLoadedTexture {
 
-	// Draw smooth will use linear interpolation smoothng on texture pixels.
+	// Draw smooth will use linear interpolation smoothing on texture pixels.
 	//    False will draw the raw image.
 	private boolean drawSmooth = false;
 	
 	public RepastTexture(Object imageSource, boolean useMipMaps) {
 		super(imageSource, useMipMaps);
 	}
-	
-	
-	// TODO GIS deal with Texture cache - compare with BufferedImageTexture
-	//      It looks like SurfaceImage handles cache image removal automatically!
-	
+		
 	@Override
 	protected void setTextureParameters(DrawContext dc, Texture texture){
-
+		
 		// Override the WWJ texture parameter so we can control filtering etc.
 		//  See https://open.gl/textures for info.
 
@@ -57,4 +60,12 @@ public class RepastTexture extends LazilyLoadedTexture {
 		}
 	}
 
+	/**
+	 * Toggles smooth (anti-aliased) rendering of texture images.
+	 * 
+	 * @param drawSmooth
+	 */
+	public void setDrawSmooth(boolean drawSmooth) {
+		this.drawSmooth = drawSmooth;
+	}	
 }

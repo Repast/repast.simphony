@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * **** IN PROGRESS NYI ****
  * 
- * TODO determine if needed.
+ * 
  * 
  * Display Layer for networks in 2D GIS displays
  * 
@@ -51,7 +51,7 @@ public class NetworkDisplayLayerGIS extends RepastMapLayer implements Projection
 //		try {
 //			fc = this.getFeatureSource().getFeatures();
 //		} catch (IOException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		}
 		

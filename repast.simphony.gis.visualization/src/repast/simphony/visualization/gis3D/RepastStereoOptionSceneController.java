@@ -10,30 +10,47 @@ import gov.nasa.worldwind.StereoOptionSceneController;
  */
 public class RepastStereoOptionSceneController extends StereoOptionSceneController {
 
-	// Preset split scale values to include in the Repast display descriptor
-	public static double SPLIT_SCALE_LOW_QUALITY = 2.7;
-	public static double SPLIT_SCALE_MEDIUM_QUALITY = 2.9;
-	public static double SPLIT_SCALE_HIGH_QUALITY = 3.2;
-	public static double SPLIT_SCALE_VERY_HIGH_QUALITY = 3.5;
-	public static double SPLIT_SCALE_ULTRA_HIGH_QUALITY = 3.7;
+	/**
+	 * RenderQuality determines the WWJ AbstractSceneController split scale value.  
+	 * The value determines the number of tiles per surface area, thus affecting 
+	 * the image quality of surface shapes.  Higher values produce sharper surface 
+	 * shapes but with a performance penalty.  
+	 * 
+	 * Values less than about 2.5 result in extreme blur and values over 5.0 will 
+	 * produce unusable canvas refresh rates.
+	 *
+	 */
+	public enum RenderQuality{
+		LOW (2.7),
+		MEDIUM (2.9),
+		HIGH (3.2),
+		VERYHIGH (3.5),
+		ULTRAHIGH (3.7);
+		
+		double splitScale = 3.0;
+		
+		RenderQuality(double splitScale){
+			this.splitScale = splitScale;
+		}
+		
+		public double getSplitScale() {return splitScale;}
+	}
+
+	protected RenderQuality renderQuality = RenderQuality.MEDIUM;
 	
 	public RepastStereoOptionSceneController(){
 		super();
 		
-		setSplitScape(SPLIT_SCALE_MEDIUM_QUALITY);
+		setRenderQuality(RenderQuality.MEDIUM);
 	}
 	
-	/**
-	 * Set the AbstractSceneController split scale value.  The value determines
-	 * the number of tiles per surface area, thus affecting the image quality of
-	 * surface shapes.  Higher values produce sharper surface shapes but with a
-	 * performance penalty.  Values less than about 2.5 result in extreme blur
-	 * and values over 5 will produce unusable canvas refresh rates.
-	 * 
-	 * @param splitScale
-	 */
-	protected void setSplitScape(double splitScale){
-		surfaceObjectTileBuilder.setSplitScale(splitScale);
+	public RenderQuality getRenderQuality() {
+		return renderQuality;
 	}
+
+	public void setRenderQuality(RenderQuality renderQuality) {
+		this.renderQuality = renderQuality;
 	
+		surfaceObjectTileBuilder.setSplitScale(renderQuality.getSplitScale());
+	}
 }

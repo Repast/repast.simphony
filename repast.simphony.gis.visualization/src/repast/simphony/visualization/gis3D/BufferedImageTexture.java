@@ -1,17 +1,8 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.render.BasicWWTexture;
-import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.Logging;
-
 import java.awt.image.BufferedImage;
 
-import javax.media.opengl.GL;
-
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import gov.nasa.worldwind.render.BasicWWTexture;
 
 /**
  * BufferedImageTexture is a non-cached BasicWWTexture implementation that is 

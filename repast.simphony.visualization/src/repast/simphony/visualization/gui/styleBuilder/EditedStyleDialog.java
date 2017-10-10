@@ -728,7 +728,7 @@ public class EditedStyleDialog extends JDialog {
  
       if (chosenFile != null) {
         iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
-        userStyleData.setIconFile2D(makeRelativePath(chosenFile.getAbsolutePath()));
+        userStyleData.setIconFile2D(ScenarioUtils.makeRelativePathToProject(chosenFile.getAbsolutePath()));
         iconButton.setText("Icon Set");
         preview.setIconFile(chosenFile);
         disableColorButtons();
@@ -740,44 +740,12 @@ public class EditedStyleDialog extends JDialog {
     	
       if (chosenFile != null) {
         iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
-        userStyleData.setModelFile3D(makeRelativePath(chosenFile.getAbsolutePath()));
+        userStyleData.setModelFile3D(ScenarioUtils.makeRelativePathToProject(chosenFile.getAbsolutePath()));
         iconButton.setText("Model Set");
       }
     }
   }
   
-  /**
-   * Checks if the selected path contains the project root and if so, remove
-   * the project root from the path, making it a relative path.
-   * 
-   * @param fileName the full path to the file
-   * @return the relative path to the project root
-   */
-  private String makeRelativePath(String fileName){
-  	String path;
-  	String projectRoot = ScenarioUtils.getScenarioDir().getParentFile().getAbsolutePath();  
-  	
-  	if (fileName.startsWith(projectRoot))
-  		path = StringUtils.substringAfter(fileName, projectRoot);
-  	
-  	else{ 
-  		path = fileName;
-  		
-  		//TODO warn user about icons external to project.
-  		//TODO offer to copy icon into user project?
-  	
-  	}
-    // force the file separator to "/"
-  	path = StringUtils.replace(path, "\\", "/");
-  	
-  	// strip leading file separators if any
-  	if (path.charAt(0) == '/')
-  		path = StringUtils.substringAfter(path, String.valueOf(path.charAt(0)));
-  	
-  	return path;
-  
-  }
-
   private void clearFileButtonActionPerformed(ActionEvent e) {
     iconButton.setFont(iconButton.getFont().deriveFont(Font.PLAIN));
 
@@ -797,11 +765,13 @@ public class EditedStyleDialog extends JDialog {
 
   private void textureButtonActionPerformed(ActionEvent e) {
     File currentFile;
+    String projetRoot = ScenarioUtils.getScenarioDir().getParentFile().getAbsolutePath(); 
+    
     if (userStyleData.getTextureFile3D() != null)
       currentFile = new File(userStyleData.getTextureFile3D());
 
     else
-      currentFile = new File("/");
+      currentFile = new File(projetRoot);
 
     if (!currentFile.exists())
       currentFile = currentFile.getParentFile();
@@ -812,7 +782,7 @@ public class EditedStyleDialog extends JDialog {
   	File chosenFile = chooser.getSelectedFile();
    
     if (chosenFile != null) {
-      userStyleData.setTextureFile3D(chosenFile.getAbsolutePath());
+      userStyleData.setTextureFile3D(ScenarioUtils.makeRelativePathToProject(chosenFile.getAbsolutePath()));
       textureButton.setFont(textureButton.getFont().deriveFont(Font.BOLD));
       textureButton.setText("Texture Set");
       disableColorButtons();

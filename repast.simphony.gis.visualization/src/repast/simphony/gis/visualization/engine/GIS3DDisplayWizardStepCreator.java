@@ -7,12 +7,16 @@ import org.pietschy.wizard.WizardModel;
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
+import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gui.AgentSelectionStep;
+import repast.simphony.visualization.gui.CoverageStyleClassStep;
 import repast.simphony.visualization.gui.DisplayWizardModel;
+import repast.simphony.visualization.gui.EdgeStyleStep;
 import repast.simphony.visualization.gui.GIS3DOptionStep;
+import repast.simphony.visualization.gui.LayerOrderStep;
 import repast.simphony.visualization.gui.StyleClassStep;
 
 /**
@@ -49,11 +53,27 @@ public class GIS3DDisplayWizardStepCreator {
 
 		// The style step init is dependent on the agent selection step, so it 
 		//   will listen for any changes that occur.
-		PluginWizardStep styleClassStep = new StyleClassStep();
+		StyleClassStep styleClassStep = new StyleClassStep();
+		styleClassStep.setShowBackgroundButton(false);
+		
 		agentSelectionStep.addStepListener(styleClassStep);
 		
-		// Use the built-in Repast Style step
+		// Use the built-in Repast Style step for agents
 		steps.add(new Pair<WizardStep, Condition>(styleClassStep, new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+				
+				return isGIS3D(descriptor);
+			}
+		}));
+		
+		PluginWizardStep coverageStyleClassStep = new CoverageStyleClassStep();
+		
+		// GIS Coverage styles
+		// TODO GIS need something similar for the general step projections?
+//		agentSelectionStep.addStepListener(coverageStyleClassStep);
+		steps.add(new Pair<WizardStep, Condition>(coverageStyleClassStep, new Condition() {
 			public boolean evaluate(WizardModel wizardModel) {
 				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
 				DisplayDescriptor descriptor = model.getDescriptor();
@@ -72,27 +92,32 @@ public class GIS3DDisplayWizardStepCreator {
 			}
 		}));
 
-		// TODO GIS: network visualization 
-//		steps.add(new Pair<WizardStep, Condition>(new NetLayoutStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsOnlyProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS3D(descriptor);
-//			}
-//		}));
-//
-//		steps.add(new Pair<WizardStep, Condition>(new EdgeStyleStep(), new Condition() {
-//			public boolean evaluate(WizardModel wizardModel) {
-//				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
-//				DisplayDescriptor descriptor = model.getDescriptor();
-//
-//				return model.containsProjectionType(ProjectionData.NETWORK_TYPE) 
-//						&& isGIS3D(descriptor);
-//			}
-//		}));
+
+		steps.add(new Pair<WizardStep, Condition>(new EdgeStyleStep(), new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+
+				return model.containsProjectionType(ProjectionData.NETWORK_TYPE) 
+						&& isGIS3D(descriptor);
+			}
+		}));
+		
+		LayerOrderStep layerOrderStep = new LayerOrderStep();
+		steps.add(new Pair<WizardStep, Condition>(layerOrderStep, new Condition() {
+			public boolean evaluate(WizardModel wizardModel) {
+				DisplayWizardModel model = (DisplayWizardModel) wizardModel;
+				DisplayDescriptor descriptor = model.getDescriptor();
+
+				return isGIS3D(descriptor);
+			}
+		}));
 	
+		// The layer order step init is dependent on the agent selection step, so it 
+		//   will listen for any changes that occur.
+		agentSelectionStep.addStepListener(layerOrderStep);
+		coverageStyleClassStep.addStepListener(layerOrderStep);
+		
 		return steps;
 	}
 }

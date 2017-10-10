@@ -3,19 +3,22 @@ package repast.simphony.visualization.gis3D;
 import static repast.simphony.ui.RSGUIConstants.CAMERA_ICON;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,13 +33,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.coverage.grid.io.GridCoverage2DReader;
-import org.geotools.coverage.grid.io.GridFormatFinder;
-import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import com.jogamp.common.os.Platform;
 
@@ -47,6 +44,8 @@ import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.PositionEvent;
+import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Angle;
@@ -57,6 +56,8 @@ import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.globes.FlatGlobe;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.render.Renderable;
@@ -67,6 +68,8 @@ import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import repast.simphony.gis.visualization.engine.GISDisplayData;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor.VIEW_TYPE;
 import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.RepastCoverageFactory;
+import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.AbstractDisplay;
 import repast.simphony.visualization.AddedRemovedLayoutUpdater;
@@ -78,13 +81,17 @@ import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.MovedLayoutUpdater;
 import repast.simphony.visualization.UpdateLayoutUpdater;
 import repast.simphony.visualization.editor.EditorFactory;
+import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController.RenderQuality;
+import repast.simphony.visualization.gis3D.style.CoverageStyle;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
+import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
 import simphony.util.ThreadUtilities;
+import simphony.util.messages.MessageCenter;
 
 public class DisplayGIS3D extends AbstractDisplay {
-
+	private static MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS3D.class);
 	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 5000;  // meters
 
 	static {
@@ -92,12 +99,16 @@ public class DisplayGIS3D extends AbstractDisplay {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
+	public static final String LAYER_ID_KEY = "layer id";
+	
 	private static final String ANAGLYPH_ICON = "3d_smiley.png";
 	private static final String GLOBE_ICON = "browser.png";
 	private static final String WMS_ICON = "wms2.png";
 
 	protected Lock updateLock = new ReentrantLock();
 	protected JPanel panel;
+	
+	// TODO GIS need a GeoLayout that holds the geography and updateds locations
 	protected Layout layout;
 	protected LayoutUpdater layoutUpdater;
 	protected GISDisplayData<?> initData;
@@ -105,14 +116,19 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected Geography geog;
 	protected Model model;
 
-	protected Map<Class, AbstractRenderableLayer> classStyleMap;
-
+	protected Map<Class<?>, AbstractRenderableLayer<?,?>> classStyleMap;
+	protected Map<Network<?>, NetworkLayerGIS> networkLayerMap;
+	protected Map<String, CoverageLayer> coverageLayerMap;
+	protected List<Layer> globeLayers;
+	protected Map<GridCoverage2D, SurfaceImage> coverageToRenderableMap;
+	
 	protected WorldWindow worldWindow;
 	protected String displayMode = AVKey.STEREO_MODE_NONE;
 	protected LayerPanel layerPanel;
 
 	protected boolean doRender = true;
 	protected boolean visible;
+	protected Color backgroundColor;
 	
 	protected RepastViewControlsSelectListener viewControlsSelectListener = null;
 	protected RepastStatusBar statusBar = null;
@@ -121,13 +137,35 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected FlatGlobe flatGlobe;
 	protected boolean trackAgents; // keeps all agents in view even if moving
 	protected Sector boundingSector;
-
+	
+	// Use a position listener that keeps track of the last lat/lon coordinates the
+	//   mouse is pointed to.  This is easier than trying to determine the lat/lon
+	//   from the display directly for the purposes of probing.
+	protected GlobePositionListener positionListener; 
+	
+	public class GlobePositionListener implements PositionListener{
+		private Position pos = null;
+		
+		@Override
+		public void moved(PositionEvent event) {
+			pos = event.getPosition();
+		}
+		
+		public Position getPosition() {
+			return pos;
+		}
+	}
+	
 	public DisplayGIS3D(GISDisplayData<?> data, Layout layout) {
-		classStyleMap = new LinkedHashMap<Class, AbstractRenderableLayer>();
+		classStyleMap = new LinkedHashMap<Class<?>, AbstractRenderableLayer<?,?>>();
+		networkLayerMap = new LinkedHashMap<Network<?>, NetworkLayerGIS>();
+		coverageLayerMap = new LinkedHashMap<String, CoverageLayer>();
+		
+		coverageToRenderableMap = new LinkedHashMap<GridCoverage2D, SurfaceImage>();
+
 		initData = data;
 		this.layout = layout;
 		layoutUpdater = new UpdateLayoutUpdater(layout);
-		trackAgents = data.getTrackAgents();
 
 		Configuration.setValue(AVKey.SCENE_CONTROLLER_CLASS_NAME,
 				RepastStereoOptionSceneController.class.getName());
@@ -136,7 +174,29 @@ public class DisplayGIS3D extends AbstractDisplay {
 		Configuration.setValue(AVKey.VIEW_CLASS_NAME, FlatOrbitView.class.getName());
 
 		model = new BasicModel();
-
+		
+		// Only include WWJ globe layers specified in the descriptor if any
+		globeLayers = new ArrayList<Layer>();
+		LayerList modelLayers = model.getLayers();
+		
+		Map<String,Boolean> globeLayersToInclude = data.getGlobeLayers();
+		for (String layerName : globeLayersToInclude.keySet()) {
+			Layer layer = modelLayers.getLayerByName(layerName);
+		
+			if (layer != null) {
+				layer.setValue(LAYER_ID_KEY, layerName);
+				globeLayers.add(layer);
+				Boolean enabled = globeLayersToInclude.get(layerName);
+				if (enabled != null) 
+					layer.setEnabled(enabled);
+			}
+			else {
+				msg.warn("Globe layer not available: " + layerName);
+			}
+		}
+			
+		model.getLayers().removeAll();  // clear all default layers
+		
 		if (Platform.getOSType() == Platform.OSType.MACOS) {
 			// use the slower swing version to avoid problems on
 			// OSX with jogl 2.0 under Java7
@@ -161,54 +221,78 @@ public class DisplayGIS3D extends AbstractDisplay {
 		initListener();
 	}
 
+
 	/**
-	 * Create the select listener.
+	 * Register the agent class and style information
+	 * 
+	 * @param clazz the agent class to style in the display
+	 * @param style the agent style
+	 * @param order the agent layer order in the display
 	 */
-	private void initListener() {
-		worldWindow.addSelectListener(new SelectListener() {
-			public void selected(SelectEvent event) {
-				if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
-					if (event.hasObjects()) {
-						if (event.getTopObject() instanceof Renderable)
-							probe((Renderable) event.getTopObject());
-					}
-				}
-			}
-		});
-	}
-
-	public void probe(Renderable pickedShape) {
-		Object obj = findObjForItem(pickedShape);
-
-		List objList = new ArrayList() {};
-		objList.add(obj);
-
-		if (obj != null)
-			probeSupport.fireProbeEvent(this, objList);
-	}
-
-	// TODO WWJ - register network and raster styles
-	public void registerStyle(Class clazz, StyleGIS style) {
+	public void registerStyle(Class<?> clazz, StyleGIS<?> style) {
 		AbstractRenderableLayer layer = classStyleMap.get(clazz);
 
+		String layerName = clazz.getSimpleName();
+		
 		// TODO WWJ - set the layer type based on the style
 		if (layer == null) {
 			
 			if (style instanceof MarkStyle){
-			  layer = new PlaceMarkLayer(clazz.getSimpleName(), (MarkStyle)style);
+			  layer = new PlaceMarkLayer(layerName, (MarkStyle<?>)style);
 			}
 			else if (style instanceof SurfaceShapeStyle){
-			  layer = new SurfaceShapeLayer(clazz.getSimpleName(), (SurfaceShapeStyle)style);
+			  layer = new SurfaceShapeLayer(layerName, (SurfaceShapeStyle<?>)style);
 			}
 			
-			if (layer != null)
+			if (layer != null) {
+			  layer.setValue(LAYER_ID_KEY, clazz.getName());
 			  classStyleMap.put(clazz, layer);
+			}
 		} 
 		else {
 			layer.setStyle(style);
 		}
 	}  
+	
+	/**
+	 * Register the network and style information
+	 * @param network the network
+	 * @param style the network style
+	 */
+	public void registerNetworkStyle(Network<?> network, NetworkStyleGIS style) {
+		NetworkLayerGIS layer = networkLayerMap.get(network);
+		
+		if (layer == null) {
+			layer = new NetworkLayerGIS(network, style);
+			layer.setValue(LAYER_ID_KEY, network.getName());
+			networkLayerMap.put(network, layer);
+		} 
+		else {
+			layer.setStyle(style);
+		}
+	}
+	
+	/**
+	 * Register the dynamic coverage and style information
+	 * 
+	 * @param coverageName the coverage name to style in the display
+	 * @param style the coverage style
+	 * @param order the coverage layer order in the display
+	 */
+	public void registerCoverageStyle(String coverageName, CoverageStyle<?> style) {
+		
+		CoverageLayer layer = coverageLayerMap.get(coverageName);
 
+		if (layer == null) {
+			layer = new CoverageLayer(coverageName, style);
+			layer.setValue(LAYER_ID_KEY, coverageName);
+			coverageLayerMap.put(coverageName, layer);
+		} 
+		else {
+			layer.setStyle(style);
+		}
+	}
+	
 	public void createPanel() {
 		panel = new JPanel();
 
@@ -267,26 +351,61 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 
 	/**
-	 * Finds the object for which the specified PNode is the representation.
-	 * 
-	 * @param node
-	 *          the representational PNode
-	 * @return the object for which the specified PNode is the representation or
-	 *         null if the object is not found.
+	 * Create the select listener.
 	 */
-	public Object findObjForItem(Renderable renderable) {
-		Collection<AbstractRenderableLayer> layers = classStyleMap.values();
-		for (AbstractRenderableLayer layer : layers) {
-			Object obj = layer.findObjectForRenderable(renderable);
-			if (obj != null)
-				return obj;
-		}
-
-		// TODO WWJ also loop through network and raster styles TBD
-
-		return null;
+	private void initListener() {
+		
+		// The position listener maintains the current globe position of the cursor.
+		positionListener = new GlobePositionListener();
+		worldWindow.addPositionListener(positionListener);
+		
+		worldWindow.addSelectListener(new SelectListener() {
+			public void selected(SelectEvent event) {
+				if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
+					if (event.hasObjects()) {
+						if (event.getTopObject() instanceof Renderable)
+							probe(event);
+					}
+				}
+			}
+		});
 	}
 
+	public void probe(SelectEvent event) {
+		Object obj = null;
+		Renderable pickedShape = (Renderable) event.getTopObject();
+		
+		// First check if probed object is a coverage
+		if (pickedShape instanceof SurfaceImage) {
+			for (CoverageLayer layer : coverageLayerMap.values()) {
+				if ( pickedShape == layer.getSurfaceImage() ) {					
+					obj = layer.getProbedObject(positionListener.getPosition());
+				}
+			}
+		}
+		
+		// Next check if probed object is an agent
+		else {
+			for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
+				Object foundObj = layer.findObjectForRenderable(pickedShape);
+				if (foundObj != null)
+					obj = foundObj;
+			}
+			
+			for (AbstractRenderableLayer<?,?> layer : networkLayerMap.values()) {
+				Object foundObj = layer.findObjectForRenderable(pickedShape);
+				if (foundObj != null)
+					obj = foundObj;
+			}
+		}
+		
+		List<Object> objList = new ArrayList<Object>() {};
+		objList.add(obj);
+
+		if (obj != null)
+			probeSupport.fireProbeEvent(this, objList);
+	}
+	
 	@Override
 	public void init() {
 
@@ -294,33 +413,75 @@ public class DisplayGIS3D extends AbstractDisplay {
 			addObject(obj);
 		}
 
-		for (Projection proj : initData.getProjections()) {
+		// TODO GIS This seems brittle since there technically could be multiple Geography
+		for (Projection<?> proj : initData.getProjections()) {
 			if (proj instanceof Geography) {
-				geog = (Geography) proj;
+				geog = (Geography<?>) proj;
 			}
 		}
 
-		geog.addProjectionListener(this);
+		geog.addProjectionListener(this);  // Listen for agent add/remove from geog
 
-		for (AbstractRenderableLayer layer : classStyleMap.values()) {
+		// TODO GIS probable better to hand the geography to the layout ?
+		for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
 			layer.setGeography(geog);
-			layer.setModel(model);
-			model.getLayers().add(layer);
 		}
+		for (AbstractRenderableLayer<?,?> layer : networkLayerMap.values()) {
+			layer.setGeography(geog);
+		}
+		for (CoverageLayer layer : coverageLayerMap.values()) {
+			layer.setGeography(geog);
+		}
+		
+		// TODO GIS should the axis order be part of the style?
+		List<RenderableLayer> staticLayers = new ArrayList<RenderableLayer>();
+		boolean forceLonLatOrder = true;
+		for (String fileName : initData.getStaticCoverageMap().keySet()) {
+			RenderableLayer layer = createStaticRasterLayer(fileName, forceLonLatOrder);
 
-		// TODO Loop through static raster layers
+			// TODO GIS all rasters before a specific layer name ? compass??
+			if (layer != null)
+				staticLayers.add(layer);
+		}
 		
-		// TODO WWJ also loop through network and raster styles TBD
-
-		// TODO set background image color via display wizard
-		setBackground();
-		
-		// TODO Testing
-		
-//		addRasterLayer(new File("data/craterlake-imagery-30m.tif"));
-		addRasterLayer(new File("data/UTM2GTIF.TIF"));
-//		addRasterLayer(new File("data/SP27GTIF.TIF"));
-//		addRasterLayer(new File("data/sample.tiff"));
+		// First collect all layers, then set the layer order using the order number 
+		// Ordered map of all renderable layers
+	  TreeMap<Integer, Layer> orderedLayerMap =	new TreeMap<Integer, Layer>();
+    
+	  // Unsorted layers have no specified layer order
+	  List<Layer> unsortedLayers = new ArrayList<Layer>();
+    List<Layer> layersToSort = new ArrayList<Layer>();
+   
+    layersToSort.addAll(classStyleMap.values());
+    layersToSort.addAll(coverageLayerMap.values());
+    layersToSort.addAll(networkLayerMap.values());
+    layersToSort.addAll(globeLayers);
+    layersToSort.addAll(staticLayers);
+    
+  	for (Layer layer : layersToSort) {
+  		Integer order = initData.getLayerOrders().get(layer.getValue(LAYER_ID_KEY));
+  		
+  		// If the order is non null and doesnt already exist, add the layer
+  		if (order != null && !orderedLayerMap.containsKey(order)) {	
+  			orderedLayerMap.put(order, layer);
+  		}
+  		// Otherwise save in the ordered layer list
+  		else {
+  			unsortedLayers.add(layer);
+  		}
+  	}
+  	
+  	for (Layer layer : orderedLayerMap.values()) {
+			model.getLayers().add(layer);
+  	}
+  	
+  	// Put all unsorted layers at the back (index 0 - auto index shift)
+  	for (Layer layer : unsortedLayers) {
+			model.getLayers().add(0,layer);
+  	}
+   		
+		// Create a background layer with color from descriptor
+		createBackgroundLayer();
 		
 		boundingSector = calculateBoundingSector();
 		doUpdate();
@@ -329,9 +490,21 @@ public class DisplayGIS3D extends AbstractDisplay {
 		resetHomeView();
 	}
 	
-	// TODO GIS Background create the ImageIcon programmatically instead of using file.
-	protected void setBackground(){
-	  SurfaceImage bgImage = new SurfaceImage(new ImageIcon(getClass().getClassLoader().getResource("white.png")), 
+	/**
+	 * Create a simple background layer that is a single colored rectangle that
+	 *   covers the entire globe.
+	 */
+	protected void createBackgroundLayer(){
+		if (backgroundColor == null)
+			backgroundColor = Color.WHITE;  
+		
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = image.createGraphics();
+		
+		g2d.setPaint(backgroundColor);
+		g2d.fillRect(0, 0, image.getWidth(), image.getHeight() );
+		
+	  SurfaceImage bgImage = new SurfaceImage(image, 
 	  		new ArrayList<LatLon>(Arrays.asList(
         LatLon.fromDegrees(-90d, -180d),
         LatLon.fromDegrees(-90d, 180d),
@@ -350,54 +523,54 @@ public class DisplayGIS3D extends AbstractDisplay {
     model.getLayers().add(0, layer);
 	}
 	
-	// TODO Testing raster layer
-	protected void addRasterLayer(File file){
 		
-		AbstractGridFormat format = GridFormatFinder.findFormat(file);
-		GridCoverage2DReader reader = format.getReader(file);
-		GridCoverage2D coverage = null;
+	/**
+	 * Adds a static raster layer from the provided file.  The raster BufferedImage
+	 *   is created and added to the WWJ Globe so that it persists as long as the
+	 *   display exists, but is not updated with display updates.
+	 *   
+	 * @param filename the GIS raster filename to display
+	 * @param forceLongitudeFirstAxis true if lon should be forced first axis in coverage loader
+	 */
+	protected RenderableLayer createStaticRasterLayer(String filename, 
+			boolean forceLongitudeFirstAxis){
 		
-		try {
-			coverage = reader.read(null);
-		} catch (IOException e) {
-			e.printStackTrace();
+		File file = new File(filename);
+			
+		GridCoverage2D coverage = RepastCoverageFactory.createCoverageFromFile(file, 
+				forceLongitudeFirstAxis);
+		
+		if (coverage == null) { 
+			String info = "Error loading coverage for display: " + file.getPath();
+			Exception ex = new Exception(info);
+			msg.error(info, ex);
+			ex.printStackTrace();
+			return null;
 		}
 		
 		ReferencedEnvelope envelope = null;
 		
-		// TODO make sure not to resample to WGS84 if already set to WGS84
-		// TODO need to automatically project coverages to WGS84
-		if (!CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
-			coverage = (GridCoverage2D)Operations.DEFAULT.resample(coverage,DefaultGeographicCRS.WGS84);
-		}
-		
 		envelope = new ReferencedEnvelope(coverage.getEnvelope());
-				
-		// TODO axis order !!
-//		Sector sector = WWUtils.envelopeToSectorReversedOrder(envelope);
-		Sector sector = WWUtils.envelopeToSector(envelope);
-		
+		Sector sector = WWUtils.envelopeToSectorWGS84(envelope);
 		
 		// GridCoverage2D.getRenderedImage() returns a PlanarImage
 		PlanarImage pi = (PlanarImage)coverage.getRenderedImage();
 		
 		SurfaceImage si = new RepastSurfaceImage(pi.getAsBufferedImage(), sector);
 
-		// SurfaceImageLayer is only useful when adding image paths for large images
-		//  since it does automatic tiling.  SurfaceImageLayer.addRenderable() simply
-		//  passes the object to the RenderableLayer
-//		SurfaceImageLayer layer = new SurfaceImageLayer();
-		
+		// Use a standard Renderable layer for static images
 		RenderableLayer layer = new RenderableLayer();
 		
 		layer.setName(file.getName());
+		layer.setValue(LAYER_ID_KEY, filename);
 		layer.setPickEnabled(false);
 		layer.addRenderable(si);
 		
-		// TODO GIS add layer attributes to descriptor
-		layer.setOpacity(0.5);
+		// TODO GIS static layer styling - get the style for opacity, smoothing and RasterSymbolizerHelper
 		
-		 WWUtils.insertBeforeCompass(worldWindow, layer);
+//		layer.setOpacity(0.5);
+		
+		return layer;
 	}
 	
 
@@ -419,7 +592,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		worldWindow.removeSelectListener(viewControlsSelectListener);
 		viewControlsSelectListener.dispose();
 		statusBar.dispose();
-		layerPanel.dispose();
+//		layerPanel.dispose();
 		worldWindow.shutdown();
 		WorldWind.shutDown();
 		worldWindow = null;
@@ -427,7 +600,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	protected void addObject(Object o) {
-		AbstractRenderableLayer layer = classStyleMap.get(o.getClass());
+		AbstractRenderableLayer<?,?> layer = classStyleMap.get(o.getClass());
 		if (layer != null) {
 			try{
 				updateLock.lock();
@@ -452,8 +625,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	protected void removeObject(Object o) {
-		Class clazz = o.getClass();
-		AbstractRenderableLayer layer = classStyleMap.get(clazz);
+		Class<?> clazz = o.getClass();
+		AbstractRenderableLayer<?,?> layer = classStyleMap.get(clazz);
 		if (layer != null) {
 			try{
 				updateLock.lock();
@@ -488,15 +661,20 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	public void update() {
-				
-		// TODO GIS it might be useful to provide the GPU cache size in the UI
-//		long cacheBytes = worldWindow.getGpuResourceCache().getUsedCapacity();
-//		
-//		System.out.println("GPU Cache (MB): " + cacheBytes / 1E6);
+
+		// TODO GIS The update/render cycle needs to be cleaned up.  Originally, the
+		//      update() was just supposed to set values, while render() draw the 
+		//      screen.  However, the WWJ globe is updated when any surface object
+		//      is updated, so we need to treat the update() call like a render,
+		//      which should be less frequent.  Perhaps update() here doesn't actually
+		//      need to do anything, and we can delegate all to render.
+
 		
 		if (isVisible()){
-			doUpdate();
+//			doUpdate();
 			doRender = true;
+			
+			render();
 		}
 	}
 	
@@ -504,15 +682,18 @@ public class DisplayGIS3D extends AbstractDisplay {
 	 * Do an update without checking for display visibility
 	 */
 	private void doUpdate(){
-		layoutUpdater.update();
 		try{
 			updateLock.lock();
 
-			for (AbstractRenderableLayer layer : classStyleMap.values())
+			for (AbstractRenderableLayer<?,?> layer : classStyleMap.values()) {
 				layer.update(layoutUpdater);
-
-			// TODO WWJ also loop through network and raster styles TBD
-
+			}		
+			for (NetworkLayerGIS layer : networkLayerMap.values()) {
+				layer.update(layoutUpdater);
+			}
+			for (CoverageLayer layer : coverageLayerMap.values()){
+				layer.update();
+			}					
 		}
 		finally {
 			updateLock.unlock();
@@ -524,6 +705,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+				doUpdate();
 				doRender();
 				lastRenderTS = ts;
 			}
@@ -558,10 +740,19 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return null;
 	}
 
+	/**
+	 * Calculate a bounding sector around all objects and coverages in the display.
+	 * 
+	 * @return the bounding sector.
+	 */
 	private Sector calculateBoundingSector(){
 		ArrayList<LatLon> points = new ArrayList<LatLon>(); 
 		for (Object o : geog.getAllObjects()){
 			points.addAll(WWUtils.CoordToLatLon(geog.getGeometry(o).getCoordinates()));
+		}
+		
+		for (CoverageLayer layer : coverageLayerMap.values()){
+			points.addAll(layer.getBoundingSector().asList());
 		}
  
 		return Sector.boundingSector(points);
@@ -668,15 +859,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 				AbstractButton abstractButton = (AbstractButton) event.getSource();
 				boolean selected = abstractButton.getModel().isSelected();
 				
-				RepastStereoOptionSceneController controller = 
-						(RepastStereoOptionSceneController)worldWindow.getSceneController();
-		
 				if (selected){
-					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_VERY_HIGH_QUALITY);
-					System.out.println("HQ");
+					setRenderQuality(RenderQuality.VERYHIGH);
 				}
 				else{
-					controller.setSplitScape(RepastStereoOptionSceneController.SPLIT_SCALE_MEDIUM_QUALITY);
+					setRenderQuality(RenderQuality.MEDIUM);
 				}
 								
 				worldWindow.redraw();
@@ -725,6 +912,17 @@ public class DisplayGIS3D extends AbstractDisplay {
 		return model.getGlobe() instanceof FlatGlobe;
 	}
 
+	public void setTrackAgents(boolean trackAgents) {
+		this.trackAgents = trackAgents;
+	}
+	
+	public void setRenderQuality(RenderQuality quality) {
+		RepastStereoOptionSceneController controller = 
+				(RepastStereoOptionSceneController)worldWindow.getSceneController();
+
+			controller.setRenderQuality(quality);		
+	}
+	
 	/**
 	 * Set View controls for flat world
 	 */
@@ -771,7 +969,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	public void toggleInfoProbe() {
 	}
 
-	public Map<Class, AbstractRenderableLayer> getClassStyleMap() {
+	public Map<Class<?>, AbstractRenderableLayer<?,?>> getClassStyleMap() {
 		return this.classStyleMap;
 	}
 
@@ -827,4 +1025,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 			}
 		}
 	};
+
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}	
 }

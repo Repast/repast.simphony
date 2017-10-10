@@ -18,32 +18,40 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.DirectPosition2D;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ *	WritableGridCoverage2D provides write capabilities to GridCoverage2D by
+ *  wrapping a standard GridCoverage2D and overriding the evaluate methods
+ *  and providing set methods.  All other method calls are handled as usual by
+ *  the parent Abstract coverage which is set via super().
  *
- *  TODO add other methods like getEnvelope -ERT
+ *	Adapted from example code in the GeoTools distribution.  Original work
+ *  by Michael Bedward.
+ *  
+ *  TODO GIS catch set position or lat/lon out of bounds
+ *  
+ *  TODO GIS allow multi-band storage
  *
  * @author Michael Bedward
+ * @author Eric Tatara
  */
 public class WritableGridCoverage2D extends GridCoverage2D {
 
-    private GridCoverage2D wrapped;
+	private static final long serialVersionUID = 1722776130754905671L;
+		
+	private GridCoverage2D wrapped;
     private static final int MAX_PENDING_VALUES = 10000;
 
     private static class PendingValue {
         Object pos;
         boolean isGeographic;
-        Object value;
+        Number value;
     }
 
     private List<PendingValue> pendingValues = new ArrayList<PendingValue>();
 
-    /**
-     * Constructor: wraps the given grid
-     *
-     * @param grid the original grid
-     */
     public WritableGridCoverage2D(GridCoverage2D grid) {
         super(grid.getName().toString(), grid);
         this.wrapped = grid;
@@ -115,15 +123,6 @@ public class WritableGridCoverage2D extends GridCoverage2D {
         return super.evaluate(coord, dest);
     }
 
-//    /**
-//     * @deprecated
-//     */
-//    @Override
-//    public GridCoverage2D geophysics(boolean geo) {
-//        flushCache(true);
-//        return super.geophysics(geo);
-//    }
-
     @Override
     public RenderableImage getRenderableImage(int xAxis, int yAxis) {
         flushCache(true);
@@ -157,13 +156,12 @@ public class WritableGridCoverage2D extends GridCoverage2D {
         flushCache(true);
         super.show(title);
     }
-
-//    @Override
-//    public GridCoverage2D view(ViewType type) {
-//        flushCache(true);
-//        return super.view(type);
-//    }
-
+    
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+    	return wrapped.getCoordinateReferenceSystem();
+    }
+    
     public void setValue(DirectPosition worldPos, int value) {
         doSetWorldValue(worldPos, value);
     }
@@ -208,19 +206,20 @@ public class WritableGridCoverage2D extends GridCoverage2D {
 
     public void flushCache(boolean force) {
     	
-    	System.out.println("WritableGridCoverage2D.flushCache()");
+//    	System.out.println("WritableGridCoverage2D.flushCache()");
     	
         if (pendingValues.size() >= MAX_PENDING_VALUES || (force && pendingValues.size() > 0)) {
 
             WritableRenderedImage writableImage = null;
             if (super.isDataEditable()) {
                 writableImage = (WritableRenderedImage) image;
-            } else {
+            } 
+            else {
                 writableImage = new TiledImage(wrapped.getRenderedImage(), true);
             }
             WritableRandomIter writeIter = RandomIterFactory.createWritable(writableImage, null);
             int dataType = writableImage.getSampleModel().getDataType();
-
+  
             GridCoordinates2D gridPos = null;
             for (PendingValue pv : pendingValues) {
                 if (pv.isGeographic) {
@@ -233,19 +232,34 @@ public class WritableGridCoverage2D extends GridCoverage2D {
                 } else {
                     gridPos = (GridCoordinates2D) pv.pos;
                 }
-
+                
+                // Note that Number._Value is called rather than casting, which
+                //  would an exception since the PendingValue is a Number object.
+                // TODO GIS check that BYTE,USHORT,SHORT should set intValue
                 switch (dataType) {
-                    case DataBuffer.TYPE_INT:
-                        writeIter.setSample(gridPos.x, gridPos.y, 0, (Integer)pv.value);
-                        break;
+                case DataBuffer.TYPE_BYTE: //0
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.byteValue());
+                	break;
+                
+                case DataBuffer.TYPE_USHORT: //1
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.shortValue());
+                	break;
 
-                    case DataBuffer.TYPE_FLOAT:
-                        writeIter.setSample(gridPos.x, gridPos.y, 0, (Float)pv.value);
-                        break;
+                case DataBuffer.TYPE_SHORT: //2
+                	writeIter.setSample(gridPos.x, gridPos.y, 0,  pv.value.shortValue());
+                	break;
 
-                    case DataBuffer.TYPE_DOUBLE:
-                        writeIter.setSample(gridPos.x, gridPos.y, 0, (Double)pv.value);
-                        break;
+                case DataBuffer.TYPE_INT:  //3
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.intValue());
+                	break;
+
+                case DataBuffer.TYPE_FLOAT: //4
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.floatValue());
+                	break;
+
+                case DataBuffer.TYPE_DOUBLE:  //5
+                	writeIter.setSample(gridPos.x, gridPos.y, 0, pv.value.doubleValue());
+                	break;
                 }
             }
 

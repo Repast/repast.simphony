@@ -1,17 +1,14 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import java.awt.Color;
+
+import com.vividsolutions.jts.geom.Geometry;
+
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.WWTexture;
-
-import java.awt.Color;
-
-import repast.simphony.visualization.LayoutUpdater;
 import repast.simphony.visualization.gis3D.style.MarkStyle;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Styled display layer for WorldWind display layers.
@@ -25,6 +22,7 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
     super(name, style);
   }
 
+  @Override
   protected void applyUpdatesToShape(Object obj) {
   	Geometry geom = geography.getGeometry(obj);
   	if (geom == null) return;
@@ -80,58 +78,15 @@ public class PlaceMarkLayer extends AbstractRenderableLayer<MarkStyle,PlaceMark>
     }
   }
   
+  @Override
   protected PlaceMark createVisualItem(Object o) {
   	Geometry geom = geography.getGeometry(o);
   	if (geom == null) return null;
   	
-  	LatLon pt = WWUtils.CoordToLatLon(geom.getCoordinate());
   	PlaceMark mark = style.getPlaceMark(o, null);  	 
   	
   	visualItemMap.put(o, mark);
     
   	return mark;
-  }
-  
-  protected void updateExistingObjects(LayoutUpdater updater){
-  	for (Object o : visualItemMap.keySet()){
-  		applyUpdatesToShape(o);
-  	}
-  }
-  
-  protected void processAddedObjects() {
-    for (Object o : addedObjects) {
-    	PlaceMark mark  = createVisualItem(o);
-    	
-    	if (mark != null){
-    		renderableToObjectMap.put(mark, o);
-    		addRenderable(mark);
-    	}
-    }
-    addedObjects.clear();
-  }
-
-  protected void processRemovedObjects() {
-    for (Object o : removeObjects) {
-    	PlaceMark mark  = visualItemMap.remove(o);
-      if (mark != null) {
-        removeRenderable(mark);
-        renderableToObjectMap.remove(mark);
-      }
-    }
-    removeObjects.clear();
-  }
-
-  
-  /**
-   * Updates the displayed nodes by applying styles etc. The display is not
-   * updated to reflect these changes.
-   */
-  public void update(LayoutUpdater updater) {
-    // remove what needs to be removed
-    processRemovedObjects();
-    updateExistingObjects(updater);
-    processAddedObjects();
-    
-    firePropertyChange(AVKey.LAYER, null, this);
   }
 }

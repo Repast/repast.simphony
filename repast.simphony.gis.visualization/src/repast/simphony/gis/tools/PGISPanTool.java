@@ -43,12 +43,12 @@ public class PGISPanTool extends PPanEventHandler implements MapTool {
 
 	@Override
 	public void activate(PiccoloMapPanel panel) {
-		// TODO Auto-generated method stub
+	
 	}
 
 	@Override
 	public void deactivate() {
-		// TODO Auto-generated method stub
+	
 	}
 
 	@Override

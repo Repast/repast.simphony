@@ -8,9 +8,11 @@ import repast.simphony.space.gis.Geography;
 import repast.simphony.ui.probe.LocationProbe;
 import repast.simphony.ui.probe.LocationProbeProvider;
 import repast.simphony.util.ContextUtils;
+import repast.simphony.visualization.gis3D.CoverageProbeObject;
 
 /**
- * Provides location information to probe panels for the probed objects in a Geography.
+ * Provides location information to probe panels for the probed objects in a 
+ *   Geography or GridCoverage2D
  * 
  * @author Eric Tatara
  *
@@ -27,6 +29,12 @@ public class GeographyLocationProbeProvider implements LocationProbeProvider {
 				probes.put(geog.getName(), new GeographyLocationProbe(target, geog));				
 			}
 		}
+		
+		if (target instanceof CoverageProbeObject) {
+			CoverageProbeObject probeObject = (CoverageProbeObject)target;
+				probes.put(probeObject.getLayerName(), new CoverageLocationProbe(probeObject));				
+		}
+		
 		return probes;
 	}
 }
