@@ -138,49 +138,56 @@ public class WWUtils {
 //		}
 	}
 
+	// The first globe layer for adding new layers.  Should always be larger than
+	//   the background layer or other layers that are not user-settable.
+	public static final int FIRST_GLOBE_LAYER = 1;
+	
 	public static void insertBeforeCompass(WorldWindow wwd, Layer layer){
 		// Insert the layer into the layer list just before the compass.
-		int compassPosition = 0;
+		int pos = FIRST_GLOBE_LAYER;
 		LayerList layers = wwd.getModel().getLayers();
 		for (Layer l : layers){
 			if (l instanceof CompassLayer)
-				compassPosition = layers.indexOf(l);
+				pos = layers.indexOf(l);
 		}
-		layers.add(compassPosition, layer);
+		layers.add(pos, layer);
 	}
 
 	public static void insertBeforePlacenames(WorldWindow wwd, Layer layer){
 		// Insert the layer into the layer list just before the placenames.
-		int compassPosition = 0;
+		int pos = FIRST_GLOBE_LAYER;
 		LayerList layers = wwd.getModel().getLayers();
 		for (Layer l : layers){
 			if (l instanceof PlaceNameLayer)
-				compassPosition = layers.indexOf(l);
+				pos = layers.indexOf(l);
 		}
-		layers.add(compassPosition, layer);
+		layers.add(pos, layer);
 	}
 
 	public static void insertAfterPlacenames(WorldWindow wwd, Layer layer){
 		// Insert the layer into the layer list just after the placenames.
-		int compassPosition = 0;
+		int pos = FIRST_GLOBE_LAYER;
 		LayerList layers = wwd.getModel().getLayers();
 		for (Layer l : layers){
 			if (l instanceof PlaceNameLayer)
-				compassPosition = layers.indexOf(l);
+				pos = layers.indexOf(l);
 		}
-		layers.add(compassPosition + 1, layer);
+		layers.add(pos + 1, layer);
 	}
 
 	public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, String targetName){
 		// Insert the layer into the layer list just before the target layer.
-		int targetPosition = 0;
+		int pos = FIRST_GLOBE_LAYER;
 		LayerList layers = wwd.getModel().getLayers();
 		for (Layer l : layers){
 			if (l.getName().indexOf(targetName) != -1){
-				targetPosition = layers.indexOf(l);
+				pos = layers.indexOf(l);
 				break;
 			}
 		}
-		layers.add(targetPosition, layer);
+		layers.add(pos, layer);
 	}
+	
+	// TODO GIS need something like insert before first agent layer for things
+	//      like raster or WMS layers
 }

@@ -6,26 +6,51 @@ All Rights Reserved.
 */
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.TitledBorder;
+
+import gov.nasa.worldwind.Factory;
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.globes.ElevationModel;
-import gov.nasa.worldwind.layers.*;
-import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
-import gov.nasa.worldwind.ogc.wms.*;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.LayerList;
+import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerCapabilities;
+import gov.nasa.worldwind.ogc.wms.WMSLayerStyle;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwind.util.WWUtil;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author tag
  * @version $Id: WMSLayersPanel.java 13380 2010-05-10 14:54:21Z tgaskins $
+ * 
+ * Minor modifications made for use with Repast.
  */
 public class WMSLayersPanel extends JPanel
 {
@@ -258,7 +283,7 @@ public class WMSLayersPanel extends JPanel
             {
                 if (!layers.contains(layer))
                 {
-                    insertBeforePlacenames(this.wwd, layer);
+                    WWUtils.insertBeforePlacenames(this.wwd, layer);
                     this.firePropertyChange("LayersPanelUpdated", null, layer);
                 }
             }
@@ -295,7 +320,7 @@ public class WMSLayersPanel extends JPanel
         {
             String factoryKey = getFactoryKeyForCapabilities(caps);
             Factory factory = (Factory) WorldWind.createConfigurationComponent(factoryKey);
-            return factory.createFromConfigSource(caps, params);
+            return factory.createFromConfigSource(caps, configParams);
         }
         catch (Exception e)
         {
@@ -387,18 +412,5 @@ public class WMSLayersPanel extends JPanel
         outerPanel.add(innerPanel, BorderLayout.NORTH);
         this.add(outerPanel, BorderLayout.CENTER);
         this.revalidate();
-    }
-
-    public static void insertBeforePlacenames(WorldWindow wwd, Layer layer)
-    {
-        // Insert the layer into the layer list just before the placenames.
-        int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers)
-        {
-            if (l instanceof PlaceNameLayer)
-                compassPosition = layers.indexOf(l);
-        }
-        layers.add(compassPosition, layer);
     }
 }

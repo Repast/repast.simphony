@@ -90,6 +90,15 @@ import repast.simphony.visualization.gis3D.style.SurfaceShapeStyle;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
 
+/**
+ * Display for GIS 3D
+ * 
+ * @author Eric Tatara
+ *
+ *	TODO GIS add separator layers that are always hidden with predefined 
+ *       String key IDs that can be used to separate layer types such as 
+ *       agent layers, network layers, coverage layers, wms layers, etc.
+ */
 public class DisplayGIS3D extends AbstractDisplay {
 	private static MessageCenter msg = MessageCenter.getMessageCenter(DisplayGIS3D.class);
 	protected static final double MIN_DEFAULT_ZOOM_ALTITUDE = 5000;  // meters
@@ -211,7 +220,8 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// Create and install the view controls layer and register a controller for
 		// it with the World Window.
 		ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-		WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
+		model.getLayers().add(0, viewControlsLayer);
+//		WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
 		viewControlsSelectListener = new RepastViewControlsSelectListener(worldWindow, viewControlsLayer);
 		worldWindow.addSelectListener(viewControlsSelectListener);
 

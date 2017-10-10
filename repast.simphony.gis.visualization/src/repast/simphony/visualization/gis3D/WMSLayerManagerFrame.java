@@ -16,10 +16,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class WMSLayerManagerFrame extends JFrame{
+	private static final long serialVersionUID = -6745733733859079433L;
+
 	private static final String[] servers = new String[] {
-		"http://neowms.sci.gsfc.nasa.gov/wms/wms",
-		"http://mapserver.flightgear.org/cgi-bin/landcover",
-		"http://wms.jpl.nasa.gov/wms.cgi",
+			"https://neowms.sci.gsfc.nasa.gov/wms/wms",
+      "https://sedac.ciesin.columbia.edu/geoserver/wcs"
 	};
 
 	private final Dimension wmsPanelSize = new Dimension(400, 600);
