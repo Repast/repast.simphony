@@ -7,6 +7,8 @@ import javax.media.jai.PlanarImage;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.renderer.lite.gridcoverage2d.RasterSymbolizerHelper;
+import org.geotools.styling.RasterSymbolizer;
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
@@ -118,20 +120,23 @@ public class CoverageLayer extends RenderableLayer{
 		//      DefaultCoverageStyle as example.
 		
 		// Apply styles to the coverage
-//		RasterSymbolizer symbolizer = style.getSymbolizer();
-//		if (symbolizer != null) {
-//			
-//			RasterSymbolizerHelper helper = new RasterSymbolizerHelper(coverage, null);
-//			
-//			helper.visit(symbolizer);
-//			
-//			pi = (PlanarImage)((GridCoverage2D)helper.getOutput()).getRenderedImage();
-//			image = pi.getAsBufferedImage();
-//		}
+		RasterSymbolizer symbolizer = style.getSymbolizer();
+		if (symbolizer != null) {
+			
+			RasterSymbolizerHelper helper = new RasterSymbolizerHelper(coverage, null);
+			
+			helper.visit(symbolizer);
+			
+			pi = (PlanarImage)((GridCoverage2D)helper.getOutput()).getRenderedImage();
+			image = pi.getAsBufferedImage();
+		}
 		
 		// slow step
 		surfaceImage.setImageSource(image, sector);
 		
+		// TODO GIS Should opacity be part of the RasterSymbolizer?  Providing the
+		//      opacity separately is nice for people who dont want to implement
+		//      a full RasterSymbolizer in the style.
 		surfaceImage.setOpacity(style.getOpacity());
 		surfaceImage.setDrawSmooth(style.isSmoothed());
   }
