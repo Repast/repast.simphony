@@ -679,6 +679,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		//      which should be less frequent.  Perhaps update() here doesn't actually
 		//      need to do anything, and we can delegate all to render.
 
+//		System.out.println("DisplayGIS3D.update()");
 		
 		if (isVisible()){
 //			doUpdate();
@@ -711,10 +712,15 @@ public class DisplayGIS3D extends AbstractDisplay {
 	}
 	
 	@Override
-	public void render() {		
+	public void render() {	
+//		System.out.println("DisplayGIS3D.render()");
+		
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
+				
+				// Putting doUpdate() in the update interval is key to avoiding flicker
+				
 				doUpdate();
 				doRender();
 				lastRenderTS = ts;
@@ -864,30 +870,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		wmsButton.setToolTipText("WMS");
 		bar.add(wmsButton);
 		
-		// TODO replace quality button with JList
-		
-		// Add the quality button
-//		JToggleButton qualityButton = new JToggleButton(new AbstractAction(){
-//			public void actionPerformed(ActionEvent event){
-//				AbstractButton abstractButton = (AbstractButton) event.getSource();
-//				boolean selected = abstractButton.getModel().isSelected();
-//				
-//				if (selected){
-//					setRenderQuality(RenderQuality.VERYHIGH);
-//				}
-//				else{
-//					setRenderQuality(RenderQuality.MEDIUM);
-//				}
-//								
-//				worldWindow.redraw();
-//			}
-//		});
-//		
-//			qualityButton.setText("HQ");
-////			qualityButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(WMS_ICON)));
-//			qualityButton.setToolTipText("Map shape draw quality");
-//			bar.add(qualityButton);
-		
+		// Render quality list
 		DefaultComboBoxModel<RenderQuality> rendermodel = 
 				new DefaultComboBoxModel<RenderQuality>();
 	

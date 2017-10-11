@@ -10,6 +10,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.renderer.lite.gridcoverage2d.RasterSymbolizerHelper;
 import org.geotools.styling.RasterSymbolizer;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -139,6 +140,8 @@ public class CoverageLayer extends RenderableLayer{
 		//      a full RasterSymbolizer in the style.
 		surfaceImage.setOpacity(style.getOpacity());
 		surfaceImage.setDrawSmooth(style.isSmoothed());
+		
+		firePropertyChange(AVKey.LAYER, null, this);
   }
   
   /**
