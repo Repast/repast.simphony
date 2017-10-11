@@ -102,7 +102,7 @@ public class GeneralStep extends PluginWizardStep {
   
   @Override
  	protected  JPanel getContentPanel(){ 
-  	nameFld = new JTextField();
+  	nameFld = new JTextField(DEFAULT_DISPLAY_TITLE);
     typeBox = new JComboBox();
     
     FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow",
@@ -294,9 +294,12 @@ public class GeneralStep extends PluginWizardStep {
     	}
     }
     // Otherwise it's creating a new display - Cartesian is default
-    else{ 
-    	nameFld.setText(DEFAULT_DISPLAY_TITLE); 
-    	model.setDescriptor(new CartesianDisplayDescriptor(DEFAULT_DISPLAY_TITLE));
+    else{
+    	String type = (String) typeBox.getSelectedItem();
+    	
+//    	nameFld.setText(DEFAULT_DISPLAY_TITLE); 
+//    	model.setDescriptor(new CartesianDisplayDescriptor(DEFAULT_DISPLAY_TITLE));
+    	model.setDescriptor(descriptorCache.get(type));
     }
 
     selector.setLists(source, target);
@@ -308,7 +311,7 @@ public class GeneralStep extends PluginWizardStep {
     	public void actionPerformed(ActionEvent e) {
     		String type = (String) typeBox.getSelectedItem();
 
-    		// If there's no current descritor or if the current model descriptor 
+    		// If there's no current descriptor or if the current model descriptor 
     		//  is different from what's selected, assign the selected descriptor
     		//  type from the cache.
     		if (model.getDescriptor() == null || !model.getDescriptor().getDisplayType().equals(type)){
@@ -317,7 +320,7 @@ public class GeneralStep extends PluginWizardStep {
     	}
     });
     
-    typeBox.setSelectedIndex(0); // Register the first item
+//    typeBox.setSelectedIndex(0); // Register the first item
   }
 
   /*
