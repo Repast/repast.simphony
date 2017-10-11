@@ -316,6 +316,8 @@ public class GeneralStep extends PluginWizardStep {
     		}					
     	}
     });
+    
+    typeBox.setSelectedIndex(0); // Register the first item
   }
 
   /*
