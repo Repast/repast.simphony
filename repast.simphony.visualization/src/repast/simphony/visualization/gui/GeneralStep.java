@@ -293,12 +293,9 @@ public class GeneralStep extends PluginWizardStep {
     		target.add(item);
     	}
     }
-    // Otherwise it's creating a new display - Cartesian is default
+    // Otherwise it's creating a new display - default depends on display type
     else{
     	String type = (String) typeBox.getSelectedItem();
-    	
-//    	nameFld.setText(DEFAULT_DISPLAY_TITLE); 
-//    	model.setDescriptor(new CartesianDisplayDescriptor(DEFAULT_DISPLAY_TITLE));
     	model.setDescriptor(descriptorCache.get(type));
     }
 
@@ -319,8 +316,6 @@ public class GeneralStep extends PluginWizardStep {
     		}					
     	}
     });
-    
-//    typeBox.setSelectedIndex(0); // Register the first item
   }
 
   /*

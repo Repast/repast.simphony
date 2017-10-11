@@ -654,4 +654,9 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
 	public void removeCoverage(String name) {
 		coverageMap.remove(name);
 	}
+
+	@Override
+	public Collection<String> getCoverageNames() {
+		return coverageMap.keySet();
+	}
 }

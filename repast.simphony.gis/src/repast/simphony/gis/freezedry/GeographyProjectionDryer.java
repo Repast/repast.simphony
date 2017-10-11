@@ -1,35 +1,37 @@
 /*CopyrightHere*/
 package repast.simphony.gis.freezedry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.space.gis.GeographyFactoryFinder;
-import repast.simphony.freezedry.freezedryers.proj.GridProjectionDryer2;
 import repast.simphony.freezedry.freezedryers.proj.ProjectionDryer;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import simphony.util.messages.MessageCenter;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 /**
- * A projection layer that builds a {@link repast.simphony.space.continuous.ContinuousSpace}.
+ * A projection layer that builds a Geography projection
  *
  * @author Jerry Vos
+ * @author Eric Tatara
  */
 public class GeographyProjectionDryer extends ProjectionDryer<Geography<?>> {
 
-
+	public static final String COVERAGES_KEY = "coverages";
   public static final String AGENT_LOCATIONS_KEY = "agentLocations";
   public static final String CRS_KEY = "crs";
 
-  private static final MessageCenter LOG = MessageCenter
-          .getMessageCenter(GridProjectionDryer2.class);
+  private static final MessageCenter LOG = MessageCenter.getMessageCenter(GeographyProjectionDryer.class);
 
   /**
    * Stores the spaces's agent locations, dimensions, adder, and translator.
@@ -46,11 +48,19 @@ public class GeographyProjectionDryer extends ProjectionDryer<Geography<?>> {
 
       agentLocs.put(o, geometry.getClass().cast(geometry));
     }
-
     map.put(AGENT_LOCATIONS_KEY, agentLocs);
+    
     CoordinateReferenceSystem crs = geog.getCRS();
     if (!crs.equals(DefaultGeographicCRS.WGS84)) map.put(CRS_KEY, crs.toWKT());
+    
     map.put(NAME_KEY, geog.getName());
+    
+    Map<String,GridCoverage2D> coverageMap = new HashMap<String,GridCoverage2D>();
+    
+    for (String coverageName : geog.getCoverageNames()) {
+    	coverageMap.put(coverageName, geog.getCoverage(coverageName));
+    }
+    map.put(COVERAGES_KEY, coverageMap);
   }
 
   /**

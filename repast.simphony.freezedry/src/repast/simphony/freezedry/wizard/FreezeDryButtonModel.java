@@ -69,7 +69,10 @@ public class FreezeDryButtonModel extends AbstractAction implements ISAFAction<R
             xmler.registerConverter(converter);
           }
           try {
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(new File(model.getXMLFile())));
+          	File file = new File(model.getXMLFile());
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            xmler.setXmlFile(file);
+             
             if (!model.useRoot()) {
               xmler.toXML(runState.getMasterContext().findContext(model.getFreezeDryedContextId()), out);
             } else {

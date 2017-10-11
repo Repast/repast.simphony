@@ -76,6 +76,7 @@ public class XMLContextBuilder implements ContextBuilder {
   public Context build(Context context) {
     XMLSerializer xml = new XMLSerializer();
     xml.setClassLoader(this.getClass().getClassLoader());
+    xml.setXmlFile(file);
 
     for (Converter converter : converters) {
       xml.registerConverter(converter);

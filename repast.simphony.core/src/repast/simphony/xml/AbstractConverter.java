@@ -1,13 +1,14 @@
 package repast.simphony.xml;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -18,6 +19,11 @@ import java.util.Map;
 public abstract class AbstractConverter implements Converter {
 
   protected Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+  
+  // The XML file path of the serialized context.  May be used by implementing
+  //   classes that need the path for creating sub-components like serialized
+  //   raster files that are not compatible with XML.
+  protected File xmlFile;
   
   protected String arrayToString(double[] vals) {
     StringBuilder buf = new StringBuilder();
@@ -124,4 +130,12 @@ public abstract class AbstractConverter implements Converter {
     writer.setValue(value);
     writer.endNode();
   }
+
+	public File getXmlFile() {
+		return xmlFile;
+	}
+
+	public void setXmlFile(File xmlFile) {
+		this.xmlFile = xmlFile;
+	}	
 }

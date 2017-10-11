@@ -4,6 +4,7 @@
 package repast.simphony.space.gis;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.measure.unit.Unit;
 
@@ -68,6 +69,8 @@ public interface Geography<T> extends Projection<T>{
   GridCoverage2D getCoverage(String name);
   
   void removeCoverage(String name);
+  
+  public Collection<String> getCoverageNames();
   
   /**
    * Adds the named GridCoverage2D

@@ -1,5 +1,6 @@
 package repast.simphony.xml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -8,9 +9,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import repast.simphony.engine.environment.ProjectionRegistry;
-import repast.simphony.engine.environment.ProjectionRegistryData;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -18,6 +16,9 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+
+import repast.simphony.engine.environment.ProjectionRegistry;
+import repast.simphony.engine.environment.ProjectionRegistryData;
 
 /**
  * Wraps an XStream instance and adds converters specialized
@@ -32,7 +33,7 @@ public class XMLSerializer {
   private class Root {
     private Object obj;
   }
-
+  
   private class RootConverter extends AbstractConverter {
 
     public boolean canConvert(Class aClass) {
@@ -73,29 +74,34 @@ public class XMLSerializer {
   private List<Converter> nonDefaultConverter = new ArrayList<Converter>();
   private XStream xstream = new XStream();
 
+  private List<AbstractConverter> defaultConverters = new ArrayList<AbstractConverter>();
 
   /**
    * Creates an XMLSerializer.
    */
   public XMLSerializer() {
-  	// TODO Projections: use the projection registry.
-    xstream.registerConverter(new DefaultContextConverter());
-    xstream.registerConverter(new NetworkConverter());
-    xstream.registerConverter(new GridConverter());
-    xstream.registerConverter(new SpaceConverter());
-    xstream.registerConverter(new RootConverter());
-    xstream.registerConverter(new AmountConverter());
-    xstream.registerConverter(new GridValueLayerConverter());
-    xstream.registerConverter(new ContinuousValueLayerConverter());
-    
+  	defaultConverters.add(new DefaultContextConverter());
+  	defaultConverters.add(new NetworkConverter());
+  	defaultConverters.add(new GridConverter());
+  	defaultConverters.add(new SpaceConverter());
+  	defaultConverters.add(new RootConverter());
+  	defaultConverters.add(new AmountConverter());
+  	defaultConverters.add(new GridValueLayerConverter());
+  	defaultConverters.add(new ContinuousValueLayerConverter());
+  	 
     // Add additional converters from the projection registry.
     for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
-    	xstream.registerConverter(data.getProjectionXMLConverter());
+    	defaultConverters.add(data.getProjectionXMLConverter());
+    }
+    
+    for (AbstractConverter con : defaultConverters) {
+    	xstream.registerConverter(con);
     }
     
     xstream.alias("root", Root.class);
     //xstream.registerConverter(new FastMethodConvertor(xstream));
     xstream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
+    
   }
 
   /**
@@ -217,5 +223,17 @@ public class XMLSerializer {
    */
   public void setClassLoader(ClassLoader classLoader) {
     xstream.setClassLoader(classLoader);
+  }
+
+  /**
+   * Set the XML file for converters that need the file path for serializing
+   *   out objects to other file types in the same folder as the XML file.
+   *   
+   * @param xmlFile
+   */
+  public void setXmlFile(File xmlFile) {
+  	for (AbstractConverter con : defaultConverters) {
+  		con.setXmlFile(xmlFile);
+  	}
   }
 }
