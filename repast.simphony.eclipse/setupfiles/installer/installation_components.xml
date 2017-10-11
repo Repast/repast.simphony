@@ -141,12 +141,8 @@
             <file src="$EclipsePluginsDirectory/repast.simphony.spreadsheet_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.sql_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.statecharts_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.statecharts.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.systemdynamics_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            <file src="$EclipsePluginsDirectory/repast.simphony.systemdynamics.generator_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-            
+            <file src="$EclipsePluginsDirectory/repast.simphony.statecharts.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>            
             <file src="$EclipsePluginsDirectory/repast.simphony.userpanel.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
-           
             <file src="$EclipsePluginsDirectory/repast.simphony.visualization_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/repast.simphony.weka_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
             <file src="$EclipsePluginsDirectory/saf.core.ui_$REPAST_VERSION" targetdir="$INSTALL_PATH/repast.simphony"/>
