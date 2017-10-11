@@ -81,6 +81,7 @@
             <xs:enumeration value="continuous space"/>
             <xs:enumeration value="geography" />
             <xs:enumeration value="value layer" />
+            <xs:enumeration value="coverage layer" />
         </xs:restriction>
     </xs:simpleType>
 
