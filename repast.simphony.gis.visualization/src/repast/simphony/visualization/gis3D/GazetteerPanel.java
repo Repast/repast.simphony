@@ -6,24 +6,14 @@ All Rights Reserved.
 */
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.exception.NoItemException;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.poi.BasicPointOfInterest;
-import gov.nasa.worldwind.poi.Gazetteer;
-import gov.nasa.worldwind.poi.PointOfInterest;
-import gov.nasa.worldwind.poi.YahooGazetteer;
-import gov.nasa.worldwind.view.orbit.OrbitView;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -41,6 +31,19 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.xml.sax.SAXException;
 
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.exception.NoItemException;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.poi.BasicPointOfInterest;
+import gov.nasa.worldwind.poi.Gazetteer;
+import gov.nasa.worldwind.poi.PointOfInterest;
+import gov.nasa.worldwind.poi.YahooGazetteer;
+import gov.nasa.worldwind.view.orbit.OrbitView;
+
 /**
  * Modified WW Gazetter that fits better into Repast GIS displays
  * 
@@ -54,6 +57,8 @@ public class GazetteerPanel extends JPanel
     private JPanel resultsPanel;
     private JComboBox resultsBox;
 
+    public static final String DEFAULT_SEARCH_TEXT = "Search";
+    
     public GazetteerPanel(final WorldWindow wwd, String gazetteerClassName)
         throws IllegalAccessException, InstantiationException, ClassNotFoundException
     {
@@ -67,7 +72,20 @@ public class GazetteerPanel extends JPanel
         this.wwd = wwd;
 
         // The text field
-        final JTextField field = new JTextField("Enter name or lat,lon.");
+        final JTextField field = new JTextField(DEFAULT_SEARCH_TEXT);
+        field.setFont(new Font("Arial",Font.ITALIC, 12));
+        
+        // Clear the Search text hint on first click
+        field.addMouseListener(new MouseAdapter(){
+          @Override
+          public void mouseClicked(MouseEvent e){
+          	if (field.getText().equals(DEFAULT_SEARCH_TEXT))
+          		field.setText("");
+          	field.setFont(new Font("Arial",Font.PLAIN, 12));
+          }
+      });
+
+        
         field.addActionListener(new ActionListener()
         {
             public void actionPerformed(final ActionEvent actionEvent)
@@ -135,7 +153,9 @@ public class GazetteerPanel extends JPanel
         });
         resultsPanel.add(resultsBox);
         resultsPanel.setVisible(false);
-        this.add(resultsPanel, BorderLayout.EAST);
+        
+        // Don't include ther results panel
+//        this.add(resultsPanel, BorderLayout.EAST);
     }
 
     private Gazetteer constructGazetteer(String className)

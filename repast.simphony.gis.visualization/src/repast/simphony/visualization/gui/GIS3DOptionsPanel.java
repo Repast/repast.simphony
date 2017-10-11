@@ -28,6 +28,7 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
 import repast.simphony.scenario.data.ContextData;
+import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController;
 
 /**
  * Panel for GIS options step
@@ -43,7 +44,8 @@ public class GIS3DOptionsPanel extends JPanel {
 	
 	private static final long serialVersionUID = 5139522879873045768L;
 	protected GISDisplayDescriptor descriptor;
-	private JComboBox<GISDisplayDescriptor.VIEW_TYPE> typeBox = new JComboBox();
+	private JComboBox<GISDisplayDescriptor.VIEW_TYPE> typeBox;
+	private JComboBox<RepastStereoOptionSceneController.RenderQuality> renderQualityBox;
 //	private JCheckBox trackAgentsCheckBox = new JCheckBox();
 	
 	protected JTable layerSelectTable;
@@ -61,10 +63,15 @@ public class GIS3DOptionsPanel extends JPanel {
     // General settings
     builder.addSeparator("General", cc.xyw(1, 1, 7));
     builder.addLabel("View Type:", cc.xy(1, 3));
+    typeBox = new JComboBox();
     builder.add(typeBox, cc.xy(3, 3));
 //    builder.addLabel("Track agents:", cc.xy(1, 5));
 //    builder.add(trackAgentsCheckBox, cc.xy(3, 5));
     
+    builder.addLabel("Render Quality:", cc.xy(1, 5));
+    
+    renderQualityBox = new JComboBox();
+    builder.add(renderQualityBox, cc.xy(3, 5));
     
     // Layer settings
     builder.addSeparator("Background Layers", cc.xyw(1, 7, 7));
@@ -133,7 +140,7 @@ public class GIS3DOptionsPanel extends JPanel {
     layerSelectTable.setFillsViewportHeight(true);
     layerSelectTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     layerSelectTable.setDragEnabled(false);
-    layerSelectTable.setPreferredScrollableViewportSize(new Dimension(400, 150)); 
+    layerSelectTable.setPreferredScrollableViewportSize(new Dimension(400, 130)); 
     
     JScrollPane scrollPane = new JScrollPane(layerSelectTable);
     scrollPane.getViewport().add(layerSelectTable);
@@ -160,6 +167,15 @@ public class GIS3DOptionsPanel extends JPanel {
 		typeBox.setSelectedItem(descriptor.getViewType());
 		typeBox.setToolTipText("Sets the map to a globe sphere or flat.");
 		
+		DefaultComboBoxModel<RepastStereoOptionSceneController.RenderQuality> rendermodel = 
+				new DefaultComboBoxModel<RepastStereoOptionSceneController.RenderQuality>();
+	
+		for (RepastStereoOptionSceneController.RenderQuality type : RepastStereoOptionSceneController.RenderQuality.values()){
+			rendermodel.addElement(type);		
+		}
+		renderQualityBox.setModel(rendermodel);
+		renderQualityBox.setSelectedItem(descriptor.getRenderQuality());
+		renderQualityBox.setToolTipText("Sets the display render quality for agents and networks.");
 		
 		Map<String,Boolean> globeLayerMap = descriptor.getGlobeLayersMap();
 		
@@ -190,6 +206,8 @@ public class GIS3DOptionsPanel extends JPanel {
 	 public void applyChanges() {
 		 descriptor.setViewType((GISDisplayDescriptor.VIEW_TYPE)typeBox.getSelectedItem());
 //		 descriptor.setTrackAgents(trackAgentsCheckBox.isSelected());
+		 descriptor.setRenderQuality(
+				 (RepastStereoOptionSceneController.RenderQuality)renderQualityBox.getSelectedItem());
 		 
 		 int numRow = layerSelectTable.getModel().getRowCount();
 		 for (int i=0; i<numRow; i++) {

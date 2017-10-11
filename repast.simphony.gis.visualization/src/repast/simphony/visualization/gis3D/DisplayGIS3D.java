@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
@@ -25,11 +26,14 @@ import javax.media.jai.PlanarImage;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -758,7 +762,11 @@ public class DisplayGIS3D extends AbstractDisplay {
 		}
 		
 		for (CoverageLayer layer : coverageLayerMap.values()){
-			points.addAll(layer.getBoundingSector().asList());
+			Sector sector = layer.getBoundingSector();
+					
+			// Don't include empty sectors in view limits
+			if (!Sector.EMPTY_SECTOR.equals(sector))
+				points.addAll(sector.asList());
 		}
  
 		return Sector.boundingSector(points);
@@ -766,7 +774,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 
 	@Override
 	public void resetHomeView() {
-		
 		boundingSector = calculateBoundingSector();
 		zoomToSector(boundingSector);
 
@@ -782,7 +789,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		
 		double distance = d * Earth.WGS84_EQUATORIAL_RADIUS;
 		
-		double scale = 1.2;  // make the view a little larger than the bounding sector
+		double scale = 1.5;  // make the view a little larger than the bounding sector
 		double altitude = scale * distance / Math.tan(worldWindow.getView().getFieldOfView().radians / 2);
 		
 		// don't allow the camera to zoom in super close in the case of features
@@ -860,32 +867,60 @@ public class DisplayGIS3D extends AbstractDisplay {
 		// TODO replace quality button with JList
 		
 		// Add the quality button
-		JToggleButton qualityButton = new JToggleButton(new AbstractAction(){
-			public void actionPerformed(ActionEvent event){
-				AbstractButton abstractButton = (AbstractButton) event.getSource();
-				boolean selected = abstractButton.getModel().isSelected();
+//		JToggleButton qualityButton = new JToggleButton(new AbstractAction(){
+//			public void actionPerformed(ActionEvent event){
+//				AbstractButton abstractButton = (AbstractButton) event.getSource();
+//				boolean selected = abstractButton.getModel().isSelected();
+//				
+//				if (selected){
+//					setRenderQuality(RenderQuality.VERYHIGH);
+//				}
+//				else{
+//					setRenderQuality(RenderQuality.MEDIUM);
+//				}
+//								
+//				worldWindow.redraw();
+//			}
+//		});
+//		
+//			qualityButton.setText("HQ");
+////			qualityButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(WMS_ICON)));
+//			qualityButton.setToolTipText("Map shape draw quality");
+//			bar.add(qualityButton);
+		
+		DefaultComboBoxModel<RenderQuality> rendermodel = 
+				new DefaultComboBoxModel<RenderQuality>();
+	
+		for (RenderQuality type : RenderQuality.values()){
+			rendermodel.addElement(type);		
+		}
+		
+		JComboBox<RenderQuality> renderQualityBox = new JComboBox<>();
+		renderQualityBox.setModel(rendermodel);
+		renderQualityBox.setToolTipText("Sets the display render quality for agents and networks.");
+		
+		RepastStereoOptionSceneController controller = 
+				(RepastStereoOptionSceneController)worldWindow.getSceneController();
+		renderQualityBox.setSelectedItem(controller.getRenderQuality());
+		
+		renderQualityBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				 JComboBox<RenderQuality> combo = (JComboBox)e.getSource();
+				 RenderQuality quality = (RenderQuality)combo.getSelectedItem();
 				
-				if (selected){
-					setRenderQuality(RenderQuality.VERYHIGH);
-				}
-				else{
-					setRenderQuality(RenderQuality.MEDIUM);
-				}
-								
-				worldWindow.redraw();
+				 setRenderQuality(quality);
 			}
 		});
 		
-			qualityButton.setText("HQ");
-//			qualityButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(WMS_ICON)));
-			qualityButton.setToolTipText("Map shape draw quality");
-			bar.add(qualityButton);
-		
-	  // TODO Adjust Gazetter size and move to the right
-			
-		// Add a Gazetter
+		bar.add(renderQualityBox);
+				
+		// Add a Search bar
 		try {
-			bar.add(new GazetteerPanel(worldWindow, null));
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.setBorder(new EmptyBorder(0,10,0,0));
+			panel.add(new GazetteerPanel(worldWindow, null));
+			bar.add(panel);
 		} catch (IllegalAccessException e1) {
 			e1.printStackTrace();
 		} catch (InstantiationException e1) {
@@ -927,6 +962,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 				(RepastStereoOptionSceneController)worldWindow.getSceneController();
 
 			controller.setRenderQuality(quality);		
+			doRender();
 	}
 	
 	/**
