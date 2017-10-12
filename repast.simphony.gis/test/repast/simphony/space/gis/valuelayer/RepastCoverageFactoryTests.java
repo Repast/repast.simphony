@@ -42,7 +42,9 @@ public class RepastCoverageFactoryTests extends TestCase {
 	public static final String SAMPLE_PNG_GRB = "test/data/RGBTestPattern.png";
 	
 	// Grayscale sample GeoTiff
-	public static final String SAMPLE_GEOTIFF_GRAY = "test/data/sample_gray.tif";
+	public static final String GENERATED_FOLDER = "test/data/generated";
+	public static final String GENERATED_GEOTIFF_GRAY = "test/data/generated/sample_gray.tif";
+	public static final String GENERATED_PNG_GRAY = "test/data/generated/sample_gray.png";
 
 	GridCoverage2D coverage1;  // grayscale (single band) coverage
 	
@@ -61,6 +63,13 @@ public class RepastCoverageFactoryTests extends TestCase {
 	
 	@Override
 	public void setUp() {
+		// Create the generated data folder
+		File genFolder = new File(GENERATED_FOLDER);
+		if (!genFolder.exists()) {
+			genFolder.mkdirs();
+		}
+		
+		// Generate sample file
 		try {
 			generateSampleGeoTiff();
 		} catch (Exception e) {
@@ -74,7 +83,7 @@ public class RepastCoverageFactoryTests extends TestCase {
 	 */
 	private void generateSampleGeoTiff() throws Exception {
 
-		File file = new File(SAMPLE_GEOTIFF_GRAY);
+		File file = new File(GENERATED_GEOTIFF_GRAY);
 
 		GridCoverageFactory factory = new GridCoverageFactory( new Hints(Hints.TILE_ENCODING, "raw"));
 
@@ -117,14 +126,14 @@ public class RepastCoverageFactoryTests extends TestCase {
 		
 		// Output the image as PNG for visual inspection
 		PlanarImage pi = (PlanarImage)coverage1.getRenderedImage();
-		ImageIO.write(pi.getAsBufferedImage(), "png", new File("test/data/generated_sample_gray.png"));
+		ImageIO.write(pi.getAsBufferedImage(), "png", new File(GENERATED_PNG_GRAY));
 	}
 	
 	/**
 	 * Create a RasterLayer from a GeoTiff file and test various API calls.
 	 */
 	public void testCreateFromFile() throws Exception{
-		File file = new File(SAMPLE_GEOTIFF_GRAY);
+		File file = new File(GENERATED_GEOTIFF_GRAY);
 			
 		RasterLayer layer = new RasterLayer(file.getName(), file, true);
 		
@@ -235,7 +244,7 @@ public class RepastCoverageFactoryTests extends TestCase {
 	 */
 	public void testCreateFromCoverage() throws Exception{
 		
-		File file = new File(SAMPLE_GEOTIFF_GRAY);  // only need for the name
+		File file = new File(GENERATED_GEOTIFF_GRAY);  // only need for the name
 		
 		RasterLayer layer = new RasterLayer(coverage1);
 		

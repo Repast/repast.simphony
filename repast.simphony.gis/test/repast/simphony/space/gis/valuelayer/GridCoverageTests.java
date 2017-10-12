@@ -57,6 +57,10 @@ import junit.framework.TestCase;
  */
 public class GridCoverageTests extends TestCase {
 
+	public static final String GENERATED_FOLDER = "test/data/generated";
+	public static final String GENERATED_GIF_TEMPERATURE = "test/data/generated/temperatureIndexed.gif";
+	public static final String GENERATED_GIF_PREFIX = "test/data/generated/Coverage_";
+	
 	GridCoverageFactory coverageFactory;
 
 	// Test lat/lon pair describe a rectangle over downtown Chicago.  (x1,y) is the
@@ -75,6 +79,11 @@ public class GridCoverageTests extends TestCase {
 	@Override
 	public void setUp() {
 		coverageFactory = CoverageFactoryFinder.getGridCoverageFactory(null);
+		
+		File genFolder = new File(GENERATED_FOLDER);
+		if (!genFolder.exists()) {
+			genFolder.mkdirs();
+		}
 	}
 
 	/**
@@ -348,7 +357,7 @@ public class GridCoverageTests extends TestCase {
 		
 		// Write an output image for visual inspection.  
 		try {
-			ImageIO.write(image2, "gif", new File("test/data/generatedTemperatureIndexed.gif"));
+			ImageIO.write(image2, "gif", new File(GENERATED_GIF_TEMPERATURE));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -497,7 +506,7 @@ public class GridCoverageTests extends TestCase {
 		
 		// Write an output image for visual inspection.  
 		try {
-			ImageIO.write(image, "gif", new File("test/data/generatedCoverage_" + clazz.getSimpleName() + ".gif"));
+			ImageIO.write(image, "gif", new File(GENERATED_GIF_PREFIX + clazz.getSimpleName() + ".gif"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
