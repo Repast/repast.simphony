@@ -21,6 +21,9 @@
 			<not>
 				<filename name="groovy-all-*-sources.jar" />
 			</not>
+			<not>
+				<filename name="groovy-all-*-javadoc.jar" />
+			</not>
 		</fileset>
 		<property name="Groovy_All_Jar" refid="gAll.jar" />
 		<echo message="Groovy_All_Jar = ${Groovy_All_Jar}" />
