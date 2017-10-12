@@ -9,7 +9,7 @@ Require-Bundle: repast.simphony.core,
  repast.simphony.plugin.util,
  saf.core.ui,
  repast.simphony.runtime,
- org.codehaus.groovy;bundle-version="1.7.0",
+ org.codehaus.groovy,
  libs.ext,
  org.junit
 Bundle-Vendor: Argonne National Laboratory

@@ -8,7 +8,7 @@ Require-Bundle: repast.simphony.integration,
  repast.simphony.sql,
  repast.simphony.core,
  repast.simphony.runtime,
- org.junit;bundle-version="4.11.0"
+ org.junit
 Export-Package: repast.simphony.essentials
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

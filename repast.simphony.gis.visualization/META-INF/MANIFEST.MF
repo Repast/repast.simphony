@@ -15,7 +15,7 @@ Require-Bundle: libs.ext,
  repast.simphony.gis,
  repast.simphony.visualization,
  repast.simphony.plugin.util,
- org.junit;bundle-version="4.11.0"
+ org.junit
 Bundle-ClassPath: .,
  lib/worldwind-2.1.0.jar,
  lib/gt-render-18.0.jar
