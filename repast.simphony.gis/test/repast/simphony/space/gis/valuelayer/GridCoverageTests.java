@@ -348,7 +348,7 @@ public class GridCoverageTests extends TestCase {
 		
 		// Write an output image for visual inspection.  
 		try {
-			ImageIO.write(image2, "gif", new File("test/data/temperatureIndexed.gif"));
+			ImageIO.write(image2, "gif", new File("test/data/generatedTemperatureIndexed.gif"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

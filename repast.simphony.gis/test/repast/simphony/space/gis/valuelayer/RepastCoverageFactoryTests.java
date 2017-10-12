@@ -117,7 +117,7 @@ public class RepastCoverageFactoryTests extends TestCase {
 		
 		// Output the image as PNG for visual inspection
 		PlanarImage pi = (PlanarImage)coverage1.getRenderedImage();
-		ImageIO.write(pi.getAsBufferedImage(), "png", new File("test/data/sample.png"));
+		ImageIO.write(pi.getAsBufferedImage(), "png", new File("test/data/generated_sample_gray.png"));
 	}
 	
 	/**
