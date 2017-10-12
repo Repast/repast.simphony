@@ -1,6 +1,3 @@
-/**
- * 
- */
 package repast.simphony.batch.standalone;
 
 import java.io.File;
@@ -103,7 +100,9 @@ public class StandAloneMain {
         for (File file : files) {
           String fileName = file.getName();
           if (fileName != null) {
-            if (fileName.startsWith("groovy-all-") && !fileName.contains("sources")) {
+            if (fileName.startsWith("groovy-all-") && 
+            		!fileName.contains("sources") &&
+            		!fileName.contains("javadoc")) {
               return file;
             }
           }
