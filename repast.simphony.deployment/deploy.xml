@@ -114,15 +114,15 @@
 		</pathconvert>
 
 		<echo message="Generic JAR Classpath:  ${GenericJARClasspath}" />
-		<tempfile property="tempfile.txt" />
-		<echo message="${GenericJARClasspath}" file="${tempfile.txt}" />
-		<loadfile srcfile="${tempfile.txt}" property="JARClasspath">
+		<tempfile property="temp.file" prefix="temp"/>
+		<echo message="${GenericJARClasspath}" file="${temp.file}" />
+		<loadfile srcfile="${temp.file}" property="JARClasspath">
 			<filterchain>
 				<replaceregex pattern="(\\)" replace="\/" flags="g" />
 				<replaceregex pattern="(\./.*?)\/" replace="\1_${releaseVersionNumber}\/" flags="g" />
 			</filterchain>
 		</loadfile>
-		<delete file="${tempfile.txt}" />
+		<delete file="${temp.file}" />
 		<echo message="Resolved JAR Classpath: ${JARClasspath}" />
 
 		<jar destfile="${outputDirectory}/repast.simphony.bin_and_src.jar" compress="true">
