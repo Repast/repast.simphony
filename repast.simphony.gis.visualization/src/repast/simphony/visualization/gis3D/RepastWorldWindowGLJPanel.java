@@ -1,10 +1,12 @@
 package repast.simphony.visualization.gis3D;
 
+import java.beans.PropertyChangeListener;
+
+import javax.media.nativewindow.ScalableSurface;
+
 import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.LayerList;
-
-import java.beans.PropertyChangeListener;
 
 /**
  * This implementation of WorldWindowGLJPanel fixes bugs relating to disposal
@@ -14,6 +16,11 @@ import java.beans.PropertyChangeListener;
  *
  */
 public class RepastWorldWindowGLJPanel extends WorldWindowGLJPanel {
+    
+    public RepastWorldWindowGLJPanel() {
+	setSurfaceScale(new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                ScalableSurface.IDENTITY_PIXELSCALE });
+    }
 	
 	@Override
 	public void shutdown() {
