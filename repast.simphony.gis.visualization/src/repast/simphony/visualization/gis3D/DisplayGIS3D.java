@@ -224,6 +224,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 		ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
 		model.getLayers().add(0, viewControlsLayer);
 //		WWUtils.insertBeforeCompass(worldWindow, viewControlsLayer);
+		initListener();
 		viewControlsSelectListener = new RepastViewControlsSelectListener(worldWindow, viewControlsLayer);
 		worldWindow.addSelectListener(viewControlsSelectListener);
 
@@ -231,7 +232,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		asc.setStereoMode(this.displayMode);
 
 		initGlobes(data.getViewType());
-		initListener();
 	}
 
 
@@ -366,12 +366,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	/**
 	 * Create the select listener.
 	 */
-	private void initListener() {
-		
-		// The position listener maintains the current globe position of the cursor.
-		positionListener = new GlobePositionListener();
-		worldWindow.addPositionListener(positionListener);
-		
+	private void initListener() {		
 		worldWindow.addSelectListener(new SelectListener() {
 			public void selected(SelectEvent event) {
 				if (event.getEventAction().equals(SelectEvent.LEFT_DOUBLE_CLICK)) {
@@ -382,6 +377,10 @@ public class DisplayGIS3D extends AbstractDisplay {
 				}
 			}
 		});
+		
+		// The position listener maintains the current globe position of the cursor.
+		positionListener = new GlobePositionListener();
+		worldWindow.addPositionListener(positionListener);
 	}
 
 	public void probe(SelectEvent event) {
