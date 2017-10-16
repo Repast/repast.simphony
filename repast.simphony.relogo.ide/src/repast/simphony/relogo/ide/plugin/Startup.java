@@ -31,10 +31,10 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		// System.out.println("Hello from Startup");
-		// System.out.println("The groovy version is: " +
-		// groovy.lang.GroovySystem.getVersion());
-		//
+		 System.out.println("Hello from Startup");
+		 System.out.println("The groovy version is: " +
+		 groovy.lang.GroovySystem.getVersion());
+		
 		final Runnable packageViewerRefresh = new Runnable() {
 
 			@Override

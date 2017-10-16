@@ -27,13 +27,13 @@ Require-Bundle: org.eclipse.debug.core,
  org.eclipse.ui.navigator,
  repast.simphony.relogo.builder,
  org.codehaus.groovy.eclipse.codeassist.completion,
- org.codehaus.groovy.eclipse.dsl
+ org.codehaus.groovy.eclipse.dsl,
+ org.codehaus.groovy.eclipse,
+ org.codehaus.groovy
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: libs/commons-io-1.4.jar,
- bin/,
- libs/antlrworks-1.1.7.jar,
+Bundle-ClassPath: bin/,
  .,
- libs/groovy-all-1.8.2.jar
+ libs/antlrworks-1.1.7.jar
 Import-Package: repast.simphony.relogo.image,
  repast.simphony.relogo.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
