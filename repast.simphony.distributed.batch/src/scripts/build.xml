@@ -139,7 +139,6 @@
 		<jar destfile="${working.lib}/repast.simphony.relogo.runtime.jar" basedir="${relogo.runtime}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.visualization.jar" basedir="${visualization}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.statecharts.jar" basedir="${statecharts}/bin" />
-		<jar destfile="${working.lib}/repast.simphony.systemdynamics.jar" basedir="${systemdynamics}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.sql.jar" basedir="${sql}/bin" />
 
 		<!-- copy project's 3rd party libs to the  lib directory -->
@@ -174,10 +173,6 @@
 			</fileset>
 
 			<fileset dir="${integration}/lib">
-				<include name="*.jar" />
-			</fileset>
-
-			<fileset dir="${systemdynamics}/lib">
 				<include name="*.jar" />
 			</fileset>
 
