@@ -12,6 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.data2.DataConstants;
 import repast.simphony.data2.DataSetRegistry;
+import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.engine.controller.Controller;
 import repast.simphony.ui.RSApplication;
 import repast.simphony.util.Settings;
@@ -54,7 +55,7 @@ public class AnalysisPluginRunner extends AbstractAction implements
 		this.defaultLocation = defaultLocation;
 		this.wizard = wizard;
 
-		installHomeKey = name + ".home";
+		installHomeKey = name + ".home." + RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION;
 		licenseAcceptedKey = name + ".licenseAccepted";
 	}
 

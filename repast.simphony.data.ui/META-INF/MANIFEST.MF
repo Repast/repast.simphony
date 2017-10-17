@@ -9,7 +9,8 @@ Require-Bundle: saf.core.ui,
  repast.simphony.plugin.util,
  repast.simphony.core,
  repast.simphony.runtime,
- repast.simphony.scenario
+ repast.simphony.scenario,
+ repast.simphony.eclipse;bundle-version="2.5.0"
 Export-Package: repast.simphony.data.analysis,
  repast.simphony.data2.gui,
  repast.simphony.data2.wizard

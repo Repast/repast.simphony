@@ -9,11 +9,11 @@ public class RunWekaModel extends AnalysisPluginRunner  {
 
   static {
     if (SystemUtils.IS_OS_MAC) 
-    	path = "/Applications/weka-3-6-6/weka.jar";
+    	path = "/Applications/weka-3-8-1/weka.jar";
     else if (SystemUtils.IS_OS_WINDOWS)
-    	path = "C:\\Program Files\\Weka-3-6-6\\weka.jar";
+    	path = "C:\\Program Files\\Weka-3-8-1\\weka.jar";
     else
-    	path = "/usr/local/bin/Weka-3-6-6/weka.jar";
+    	path = "/usr/local/bin/Weka-3-8-1/weka.jar";
   }
   
   public RunWekaModel(){
