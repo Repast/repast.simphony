@@ -99,7 +99,7 @@ public class RWizard extends AnalysisPluginWizard {
 				Formatter formatter = outputters.get(i).getFormatter();
 				if (outputters.get(i).getFormat() != FormatType.TABULAR) {
 					LOG.warn("When invoking R, an outputter without a delimited formatter "
-							+ "was found. R can only be invoked on output files with using a delimiter.");
+							+ "was found. R can only be invoked on output files with a delimiter.");
 					break;
 				}
 				delims.add(formatter.getDelimiter());
@@ -122,11 +122,11 @@ public class RWizard extends AnalysisPluginWizard {
 				envVars.put("DELIMITER" + i, delims.get(i));
 			}
 
-			// this should ceate the .RProfile file
+			// this should create the .RProfile file
 			getRHome();
 			envVars.put("R_PROFILE_USER", cwd + "/RHome/.RProfile");
 			commands.add("open");
-			commands.add("-n");
+			commands.add("-a");
 			commands.add(getInstallHome());
 			commands.add(cwd);
 
