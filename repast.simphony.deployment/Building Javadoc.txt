@@ -1,26 +1,9 @@
 Building Repast Javadoc
 
-1. Select (only core projects, no ide or plugins stuff) to export javadoc.  An
-     ant build script for javadoc doesn't work on Windows, so use the export method.
-     
-     - Select whole project to export, but only select the /src folder (no /test) 
-       in the following projects to avoid exporting test class info.  
-       This could be done in other projects, but causes errors, so omitting the 
-       /test just the following is helpful:
-       		- r.s.core
-       		- r.s.statecharts
-     - Specify the new version number in the javadoc title
-     - Need to include r.s.relogo.runtime but don't include other relogo projects
-     - Don't include data analysis plugin projects, eg r.s.spreadsheet
-     - Don't include /test folders, only use /src
+1. Run the Ant javadoc.xml.  You may need to modify or create a launch config
+   that provides the javadoc executable if not on the system path.
 
-2. Export javadoc for selected projects.  If javadoc reports errors, perhaps 
-    some non-core projects were selected.
-
-3. Copy the generated javadoc folder to RepastSimphonyAPI in the distriubution 
-   /docs folder with the installer script. 
-
-4. Run the buildGroovydocs ant script in r.s.relogo.runtime as described in the
+2. Run the buildGroovydocs ant script in r.s.relogo.runtime as described in the
     r.s.relogo.runtime/docs/Readme.txt Step 1.  
     
     - Groovydocs requires downloading a full Groovy SDK binary distribution. 
@@ -42,5 +25,5 @@ Building Repast Javadoc
       several minutes to run.  If the Terminate process button is red then it
       is still running.
 
-5.  Merge the results of the Groovydoc as described in the 
+3.  Merge the results of the Groovydoc as described in the 
     r.s.relogo.runtime/docs/Readme.txt

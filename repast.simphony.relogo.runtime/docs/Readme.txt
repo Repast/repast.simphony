@@ -6,7 +6,8 @@ The ReLogo API docs are generated in the following steps:
 	- The buildGroovyDocs.xml ant build file is used to create the Groovydoc API document.
 	- This will create the docs/RelogoAPI folder with groovy doc html 
 
-2. Run the repast.simphony.relogo.util.ReLogoReferenceCreator class.
+2. Update the release version number in repast.simphony.relogo.util.ReLogoReferenceCreator 
+	   and then run it.
 
 	- ReLogoPrimitives.html document generation (files in r.s.relogo.runtime):
 		- there is an Excel file, separated into sheets for turtle, patch, link, 
