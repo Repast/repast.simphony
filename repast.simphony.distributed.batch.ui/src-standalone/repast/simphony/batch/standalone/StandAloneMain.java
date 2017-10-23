@@ -80,8 +80,20 @@ public class StandAloneMain {
     if (!candidateGroovyAllJars.isEmpty()) {
       Version latest = new Version("0.0.0");
       for (File gJar : candidateGroovyAllJars) {
-        String name = gJar.getName().substring("groovy-all-".length());
-        Version current = new Version(name);
+      	
+      	// Groovy all jar format is usually: groovy-all-x.x.x-suffix.jar so need
+      	//  to extract the number version x.x.x
+      	
+      	// remove the prefix
+        String ver = gJar.getName().substring("groovy-all-".length());
+        
+        // remove the suffix
+        int suffixIndex = ver.indexOf('-');
+        
+        if (suffixIndex > 0)
+        	ver = ver.substring(0, suffixIndex);
+        
+        Version current = new Version(ver);
         if (latest.lessEqual(current)) {
           latest = current;
           latestGJar = gJar;
