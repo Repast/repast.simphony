@@ -25,7 +25,7 @@ public class RepastLauncherClasspathContainer extends
 					.setClasspathContainer(
 							containerPath,
 							new IJavaProject[] { project },
-							new IClasspathContainer[] { new GroovyRepastLauncherClasspathContainer(project.getProject())},
+							new IClasspathContainer[] { new GroovyRepastLauncherClasspathContainer(project)},
 							null);
 		}
 	}

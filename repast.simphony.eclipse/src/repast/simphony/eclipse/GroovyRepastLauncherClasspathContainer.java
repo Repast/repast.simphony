@@ -1,11 +1,11 @@
 package repast.simphony.eclipse;
 
 import org.codehaus.groovy.eclipse.core.builder.GroovyClasspathContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
 
@@ -19,7 +19,7 @@ public class GroovyRepastLauncherClasspathContainer extends GroovyClasspathConta
 
   private IClasspathEntry[] classpathList = null;
 
-  public GroovyRepastLauncherClasspathContainer(IProject project) {
+  public GroovyRepastLauncherClasspathContainer(IJavaProject project) {
     super(project);
   }
 
