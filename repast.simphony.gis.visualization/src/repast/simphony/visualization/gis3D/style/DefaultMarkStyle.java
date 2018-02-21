@@ -33,7 +33,7 @@ public class DefaultMarkStyle<T> implements MarkStyle<T>{
 	
 	@Override
 	public WWTexture getTexture(T object, WWTexture texture) {
-			return texture;
+			return this.texture;
 	}
 
 	@Override
