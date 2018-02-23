@@ -161,8 +161,7 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
+     
       List favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
@@ -243,9 +242,7 @@ public class RSProjectConfigurator {
                 + " -DGroovyHomeDirectory=\"${groovy_home}\""
                 + " -DREPAST_VERSION=${REPAST_VERSION}");
 
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
-
+     
       // add the ant classpath
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
@@ -381,8 +378,7 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
+    
       List favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
@@ -463,8 +459,7 @@ public class RSProjectConfigurator {
                 + " -DGroovyHomeDirectory=\"${groovy_home}\""
                 + " -DREPAST_VERSION=${REPAST_VERSION}");
 
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xss10M -Xmx400M");
+      
 
       // add the ant classpath
       launchConfigurationWorkingCopy.setAttribute(

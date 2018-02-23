@@ -28,4 +28,4 @@ CP=$CP:$PWD/groovylib/$Groovy_All_Jar
 cd %PROJECT_NAME%
 
 # Start the Model
-java -Xss10M -Xmx400M -cp $CP repast.simphony.runtime.RepastMain  ./%SCENARIO_DIRECTORY%
+java -cp $CP repast.simphony.runtime.RepastMain  ./%SCENARIO_DIRECTORY%

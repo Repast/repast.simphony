@@ -31,4 +31,4 @@ REM Change to the Default Repast Simphony Directory
 CD %PROJECT_NAME%
 
 REM Start the Model
-START javaw -Xss10M -Xmx400M -cp %CP% repast.simphony.runtime.RepastMain ./%SCENARIO_DIRECTORY%
+START javaw -cp %CP% repast.simphony.runtime.RepastMain ./%SCENARIO_DIRECTORY%
