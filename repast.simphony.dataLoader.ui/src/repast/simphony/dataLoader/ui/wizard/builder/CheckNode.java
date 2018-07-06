@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.piccolo2d.PLayer;
 
@@ -145,16 +146,16 @@ public abstract class CheckNode extends DefaultMutableTreeNode implements
 		}
 	}
 
-	public void sort() {
-		if (children != null) {
-			Collections.sort(children);
-			for (int i = 0; i < children.size(); i++) {
-				CheckNode node = (CheckNode) children.get(i);
-				node.sort();
-			}
-		}
-
-	}
+	// TODO fix if we ever re-enable the Graphical context builder.
+//	public void sort() {
+//		if (children != null) {
+//			Collections.sort(children);
+//			for (int i = 0; i < children.size(); i++) {
+//				CheckNode node = (CheckNode) children.get(i);
+//				node.sort();
+//			}
+//		}
+//	}
 
 	public int compareTo(Object o) {
 		return this.toString().compareTo(o.toString());
