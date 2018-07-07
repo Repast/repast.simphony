@@ -18,7 +18,7 @@
 	</requires>
 	
 	<runtime>
-		<library id="gt-render" path="./lib/gt-render-18.0.jar" type="code"/>
+		<library id="gt-render" path="./lib/gt-render-19.1.jar" type="code"/>
 		
 	  <library id="gis.visualization" path="bin/" type="code">
 			<export prefix="*"/>

@@ -18,7 +18,7 @@ Require-Bundle: libs.ext,
  org.junit
 Bundle-ClassPath: .,
  lib/worldwind-2.1.0.jar,
- lib/gt-render-18.0.jar
+ lib/gt-render-19.1.jar
 Export-Package: com.zebraimaging,
  gov.nasa.worldwind,
  gov.nasa.worldwind.animation,
