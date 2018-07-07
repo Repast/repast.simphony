@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/groovy-swing-2.5.0-indy.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/groovy-test-2.5.0-indy.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/groovy-xml-2.5.0-indy.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

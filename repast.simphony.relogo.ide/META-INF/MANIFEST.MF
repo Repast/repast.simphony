@@ -29,7 +29,8 @@ Require-Bundle: org.eclipse.debug.core,
  org.codehaus.groovy.eclipse.codeassist.completion,
  org.codehaus.groovy.eclipse.dsl,
  org.codehaus.groovy.eclipse,
- org.codehaus.groovy
+ org.codehaus.groovy,
+ repast.simphony.groovy
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: bin/,
  .,
