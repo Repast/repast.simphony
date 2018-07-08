@@ -1490,4 +1490,29 @@ public class GraphTest extends TestCase {
   public static junit.framework.Test suite() {
     return new TestSuite(GraphTest.class);
   }
+  
+//  public void testBigNet() {
+//    Network<Integer> net1 = context.getProjection(Network.class, "Network 1");
+//    
+//    List<Integer> agents = new ArrayList<Integer>();
+//    
+//    for (int i = 0; i < 3E6; i++) {
+//    	agents.add(i);
+//    	
+//    	context.add(i);
+//    }
+//    
+//    System.out.println("Building network");
+//    for (int i = 20; i < agents.size(); i++) {
+//    	
+//    	for (int j=1; j<20; j++) {
+//    		net1.addEdge(agents.get(i-j), agents.get(i));
+//    	}
+//    	
+//    	if (i % 10000 == 0) System.out.println(i);
+//    }
+//    
+//    assertEquals(agents.size() - 1, net1.numEdges());
+//    
+//  }
 }
