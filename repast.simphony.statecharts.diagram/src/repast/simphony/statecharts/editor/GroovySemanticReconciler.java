@@ -349,10 +349,9 @@ public class GroovySemanticReconciler implements IJavaReconcilingListener {
 	    }
     }
 
-    private TextAttribute getTextAttribute(Object highlightingStyle) {
-	// return highlightingStyle.getTextAttribute();
-	return (TextAttribute) ReflectionUtils.executeNoArgPrivateMethod(highlightingStyle.getClass(),
-		"getTextAttribute", highlightingStyle);
+    private TextAttribute getTextAttribute(Highlighting highlightingStyle) {
+    	return ReflectionUtils.executePrivateMethod(highlightingStyle.getClass(),
+    			"getTextAttribute", highlightingStyle);
     }
 
     private HighlightedPosition newHighlightedPosition(HighlightedTypedPosition pos) {
