@@ -27,5 +27,5 @@ Export-Package: groovy.inspect.swingui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
 Bundle-ClassPath: lib/groovy-xml-2.5.0-indy.jar,
- lib/groovy-test-2.5.0-indy.jar,
- lib/groovy-swing-2.5.0-indy.jar
+ lib/groovy-swing-2.5.0-indy.jar,
+ lib/groovy-test-2.5.0-indy.jar
