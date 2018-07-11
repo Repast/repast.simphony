@@ -1,11 +1,9 @@
 package repast.simphony.relogo;
 
-import groovy.lang.Closure;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
+import groovy.lang.Closure;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.util.SimUtilities;
 

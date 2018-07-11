@@ -23,7 +23,7 @@ import repast.simphony.relogo.Patch;
 import repast.simphony.relogo.Turtle;
 import repast.simphony.relogo.Utility;
 import repast.simphony.relogo.UtilityG;
-import sun.net.www.protocol.file.FileURLConnection;
+//import sun.net.www.protocol.file.FileURLConnection;
 
 //import org.apache.poi.ss.usermodel.*; 
 

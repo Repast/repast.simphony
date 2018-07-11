@@ -1,7 +1,11 @@
 package repast.simphony.relogo.ide.wizards;
 
 import groovy.io.FileType 
-import java.io.File;
+import java.io.File
+import java.util.List
+import java.util.ArrayList
+import java.lang.String
+import java.lang.Character
 
 public class WizardUtilities {
 	

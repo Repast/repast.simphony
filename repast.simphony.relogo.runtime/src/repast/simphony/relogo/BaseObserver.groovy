@@ -27,6 +27,7 @@ import repast.simphony.ui.probe.ProbeID
 import repast.simphony.util.*
 import au.com.bytecode.opencsv.CSVReader
 
+import java.util.List
 
 /**
  * @author jozik

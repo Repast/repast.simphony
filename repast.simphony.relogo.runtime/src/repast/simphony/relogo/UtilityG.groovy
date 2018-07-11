@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.awt.Toolkit
 import java.io.File;
 import java.lang.reflect.Modifier
-import java.util.ArrayList;
+import java.util.ArrayList
+import java.util.Collection
 import java.util.Collections;
 import java.util.Iterator;
 import javax.swing.JFileChooserimport javax.swing.JFrame
