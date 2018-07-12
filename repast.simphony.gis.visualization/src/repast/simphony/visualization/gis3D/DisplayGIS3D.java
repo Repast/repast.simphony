@@ -483,6 +483,9 @@ public class DisplayGIS3D extends AbstractDisplay {
   	}
   	
   	for (Layer layer : orderedLayerMap.values()) {
+  		
+  		System.out.println(layer.getName());
+  		
 			model.getLayers().add(layer);
   	}
   	
