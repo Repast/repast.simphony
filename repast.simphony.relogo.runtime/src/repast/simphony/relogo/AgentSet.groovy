@@ -3,12 +3,13 @@
  */
 package repast.simphony.relogo
 
-
-
 /**
  * @author jozik
  *
  */
+
+import java.util.Collection
+
 public class AgentSet<E extends ReLogoAgent> extends AbstractAgentSet<E>{
 		
 	public AgentSet(){
