@@ -11,7 +11,7 @@ tar -xzvf ../../Downloads/eclipse-committers-neon-1-macosx-cocoa-x86_64.tar
 
 # install Groovy and Repast plugins
 # look at the features in a working install to get the feature names
-REPOSITORIES=http://dist.springsource.org/snapshot/GRECLIPSE/e4.6,
+REPOSITORIES=http://dist.springsource.org/snapshot/GRECLIPSE/e4.7,
 REPOSITORIES+="file:///Users/nick/SimphonyRelease/repast.simphony.updatesite.2.5.0",
 REPOSITORIES+=http://download.eclipse.org/releases/neon
 
