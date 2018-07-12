@@ -31,10 +31,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import repast.simphony.parameter.ParameterConstants;
-import repast.simphony.parameter.Parameters;
-import repast.simphony.parameter.Schema;
-
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -45,6 +41,10 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.jidesoft.swing.CheckBoxList;
 import com.jidesoft.swing.CheckBoxListSelectionModel;
+
+import repast.simphony.parameter.ParameterConstants;
+import repast.simphony.parameter.Parameters;
+import repast.simphony.parameter.Schema;
 
 /**
  * @author User #2
