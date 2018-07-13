@@ -8,7 +8,7 @@ Bundle-ClassPath: lib/jmf.jar,
  lib/spark-1.2.jar,
  lib/jgoodies-binding-2.9.0.jar,
  lib/jgoodies-common-1.6.0.jar,
- lib/jide-oss-3.4.9.jar
+ lib/jide-oss-3.7.4.jar
 Export-Package: .,
  codecLib.mpa,
  com.ibm.media,
