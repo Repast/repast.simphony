@@ -4,17 +4,14 @@
 package repast.simphony.eclipse;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.codehaus.groovy.eclipse.core.builder.GroovyClasspathContainer;
+import org.codehaus.groovy.eclipse.core.compiler.CompilerUtils;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,6 +32,8 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import repast.simphony.eclipse.util.Utilities;
+
+import org.codehaus.groovy.frameworkadapter.util.SpecifiedVersion;
 
 /**
  * Configures a Repast Simphony project by setting the classpath, adding the
@@ -65,6 +64,9 @@ public class RSProjectConfigurator {
     // add the RepastSimphony nature which will use the repast config extension point
     // to give other plugins (e.g. flowchart) the chance to configure their project
     Utilities.addNature(project.getProject(), RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID);
+    
+    CompilerUtils.setCompilerLevel(project.getProject(), SpecifiedVersion.DONT_CARE);
+    
     project.save(monitor, true);
   }
   
