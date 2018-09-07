@@ -373,18 +373,6 @@ Export-Package: com.jogamp.common,
  org.apache.xmlgraphics.xmp,
  org.apache.xmlgraphics.xmp.merge,
  org.apache.xmlgraphics.xmp.schemas,
- org.apache.xmlgraphics.xmp.schemas.pdf,
- org.w3c.dom,
- org.w3c.dom.bootstrap,
- org.w3c.dom.css,
- org.w3c.dom.events,
- org.w3c.dom.html,
- org.w3c.dom.ls,
- org.w3c.dom.ranges,
- org.w3c.dom.stylesheets,
- org.w3c.dom.svg,
- org.w3c.dom.traversal,
- org.w3c.dom.views,
- org.w3c.dom.xpath
+ org.apache.xmlgraphics.xmp.schemas.pdf
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory

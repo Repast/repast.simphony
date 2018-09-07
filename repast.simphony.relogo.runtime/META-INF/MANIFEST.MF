@@ -23,7 +23,7 @@ Require-Bundle: repast.simphony.visualization,
  org.apache.ant,
  repast.simphony.statecharts,
  libs.ext,
- repast.simphony.groovy;bundle-version="2.5.0"
+ repast.simphony.groovy
 Bundle-ClassPath: lib/asm-3.2.jar,
  bin/
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
