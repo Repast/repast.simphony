@@ -44,7 +44,7 @@ public class BatchRunConfigBean {
   
   private String modelDirectory = "", scenarioDirectory = "", outputDirectory = "", 
       keyDirectory = System.getProperty("user.home") + "/.ssh",
-      vmArguments = "-Xmx512M";
+      vmArguments = "";
   private String batchParameterFile = "", parameterFile = "";
   private double pollFrequency = 1;
   private List<Host> hosts = new ArrayList<Host>();
