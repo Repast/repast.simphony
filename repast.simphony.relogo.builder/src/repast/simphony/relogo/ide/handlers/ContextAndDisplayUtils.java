@@ -1,7 +1,5 @@
 package repast.simphony.relogo.ide.handlers;
 
-import groovy.util.slurpersupport.GPathResult;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IType;
+
+import groovy.util.slurpersupport.GPathResult;
 
 public class ContextAndDisplayUtils {
 
