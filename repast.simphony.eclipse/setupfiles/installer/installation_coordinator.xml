@@ -9,7 +9,28 @@
 
 <project name="BuildModelInstaller" default="BuildUserModelInstaller" basedir="..">
 
-	<target name="BuildUserModelInstaller">
+	<!-- Perform a check against the Repast creator version which is this
+	     hard coded value that corresponds to the version that created the 
+	     model installer files, against the version of Repast that is actually
+	     in use in the workspace. -->
+	
+	<!-- The Repast creator version variable is hard-coded against the release 
+	     version. DO NOT USE A VARIABLE HERE! -->
+	<property name="RepastCreatorVersion" value="2.5.0" />
+				
+	<condition property="repast.version">
+	  <equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>
+	</condition>
+				
+	<target name="repast.version.OK" if="repast.version">
+		<echo message="Using Repast version ${REPAST_VERSION}"/>
+	</target>
+		
+	<target name="repast.version.check" depends="repast.version.OK" unless="repast.version">
+		<fail message="Inompatible Repast version.  The model builder configureation was built with ${RepastCreatorVersion}, but the current version is ${REPAST_VERSION}"/>
+	</target>
+		
+	<target name="BuildUserModelInstaller" if="repast.version" depends="repast.version.OK,repast.version.check">
 
 		<!-- Declare the local variables -->
 		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
