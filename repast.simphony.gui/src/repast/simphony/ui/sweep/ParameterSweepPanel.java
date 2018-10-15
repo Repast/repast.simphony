@@ -220,7 +220,7 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 			// if we are working with existing scenarios, we want to add these two
 			// new properties
 			if (sweepProps.getProperty("commandLineArguments") == null || sweepProps.getProperty("commandLineArguments").length() == 0) {
-				sweepProps.setProperty("commandLineArguments", "-Xmx600M");
+				sweepProps.setProperty("commandLineArguments", "");
 				sweepProps.setProperty("classpathAdditions", "");
 			}
 			
@@ -276,7 +276,7 @@ public class ParameterSweepPanel extends JPanel implements ActionListener {
 		sweepProps.setProperty("gridTF4", "");
 		sweepProps.setProperty("gridTF5", "");
 		
-		sweepProps.setProperty("commandLineArguments", "-Xmx600M");
+		sweepProps.setProperty("commandLineArguments", "");
 		sweepProps.setProperty("classpathAdditions", "");
 		
 		sweepProps.setProperty("executionMode", "local");

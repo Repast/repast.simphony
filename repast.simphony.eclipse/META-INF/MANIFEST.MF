@@ -37,7 +37,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.common.uriresolver,
  com.ibm.icu,
  org.codehaus.groovy.eclipse.core,
- org.codehaus.groovy.eclipse.ui
+ org.codehaus.groovy.eclipse.ui,
+ org.codehaus.groovy.eclipse.compilerResolver
 Export-Package: .,
  repast.simphony.conversion,
  repast.simphony.eclipse,
