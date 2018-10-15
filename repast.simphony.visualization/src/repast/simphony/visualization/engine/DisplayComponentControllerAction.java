@@ -1,5 +1,13 @@
 package repast.simphony.visualization.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import com.jgoodies.common.base.SystemUtils;
+import com.jogamp.common.os.Platform;
+
 import repast.simphony.engine.controller.DescriptorControllerAction;
 import repast.simphony.engine.environment.DefaultControllerAction;
 import repast.simphony.engine.environment.GUIRegistryType;
@@ -10,10 +18,6 @@ import repast.simphony.engine.schedule.NonModelAction;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.visualization.IDisplay;
 import simphony.util.messages.MessageCenter;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Component action for a display. This action when initalized creates a single display from a
@@ -71,6 +75,14 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
           JOptionPane.showMessageDialog(null, "Java3D 1.6 (java3d.dev.java.net) is required for 3D displays." +
                   "\nAborting 3D display creation of '" + descriptor.getName() + "'.");
           return;
+        }
+        
+        // Java 3D not supported on Java9+ on macOS
+        if (SystemUtils.IS_OS_MAC && !SystemUtils.IS_JAVA_8) {
+        	 JOptionPane.showMessageDialog(null, "3D displays only supported with Java 8 on macOS." +
+               "\nAborting display creation of '" + descriptor.getName() + "'.");
+        	 
+        	 return;	
         }
       }
       else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
