@@ -74,7 +74,7 @@ public class GISVisualizationRegistryData implements VisualizationRegistryData {
 
 	@Override
 	public String getRequiredLibraryClassName() {
-		return "javax.media.opengl.glu.GLU";
+		return "org.piccolo2d.PLayer";
 	}
 
 	@Override
