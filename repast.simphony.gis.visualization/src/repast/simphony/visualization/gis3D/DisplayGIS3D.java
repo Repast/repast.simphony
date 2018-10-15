@@ -209,14 +209,18 @@ public class DisplayGIS3D extends AbstractDisplay {
 			
 		model.getLayers().removeAll();  // clear all default layers
 		
-		if (Platform.getOSType() == Platform.OSType.MACOS) {
-			// use the slower swing version to avoid problems on
-			// OSX with jogl 2.0 under Java7
+//		if (Platform.getOSType() == Platform.OSType.MACOS) {
+//			// use the slower swing version to avoid problems on
+//			// OSX with jogl 2.0 under Java7
+//
+//			worldWindow = new RepastWorldWindowGLJPanel();
+//		} else {
+//			worldWindow = new RepastWorldWindowGLCanvas();
+//		}
 
-			worldWindow = new RepastWorldWindowGLJPanel();
-		} else {
-			worldWindow = new RepastWorldWindowGLCanvas();
-		}
+		// US GLPanel implementation on all OS to avoid display issues with Java 11
+		worldWindow = new RepastWorldWindowGLJPanel();
+		
 		worldWindow.setModel(model);
 
 		// Create and install the view controls layer and register a controller for
