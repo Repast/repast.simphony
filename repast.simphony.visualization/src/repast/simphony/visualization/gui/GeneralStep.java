@@ -97,7 +97,7 @@ public class GeneralStep extends PluginWizardStep {
 
   public GeneralStep() {
     super("Display Details", "Please enter the name and type of the display as well the "
-        + "projections the display should visualize");
+        + "projections the display should visualize. <b>Note that non-GIS 3D displays are not supported with Java 11 under macOS.</b>");
   }
   
   @Override
