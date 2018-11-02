@@ -79,7 +79,7 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
         
         // Java 3D not supported on Java9+ on macOS
         if (SystemUtils.IS_OS_MAC && !SystemUtils.IS_JAVA_8) {
-        	 JOptionPane.showMessageDialog(null, "3D displays only supported with Java 8 on macOS." +
+        	 JOptionPane.showMessageDialog(null, "3D displays are only supported with Java 8 on macOS." +
                "\nAborting display creation of '" + descriptor.getName() + "'.");
         	 
         	 return;	
