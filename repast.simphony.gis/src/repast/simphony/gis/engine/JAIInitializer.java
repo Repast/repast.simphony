@@ -74,7 +74,7 @@ public class JAIInitializer {
 				URL url = null;
 				try {
 					url = resources.nextElement();
-					msgCenter.debug("Register JAI resource: " + url.toString());
+//					msgCenter.debug("Register JAI resource: " + url.toString());
 					registry.updateFromStream(url.openStream());
 
 				} catch (IOException e) {
@@ -90,12 +90,12 @@ public class JAIInitializer {
 		Iterator<Class<?>> categories = ioRegistry.getCategories();
 		while (categories.hasNext()) {
 			Class<?> clazz = categories.next();
-			msgCenter.debug("Loading IO Registry category: " + clazz.getName());
+//			msgCenter.debug("Loading IO Registry category: " + clazz.getName());
 			Iterator<IIOServiceProvider> riter = ServiceLoader.load((Class<IIOServiceProvider>) clazz, loader).iterator();
 
 			while (riter.hasNext()) {
 				IIOServiceProvider provider = riter.next();
-				msgCenter.debug("\t Registering provider " + provider.getClass().getName());
+//				msgCenter.debug("\t Registering provider " + provider.getClass().getName());
 				ioRegistry.registerServiceProvider(provider);
 			}
 		}
