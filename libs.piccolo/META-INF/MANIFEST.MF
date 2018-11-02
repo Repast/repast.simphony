@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast libs piccolo
 Bundle-SymbolicName: libs.piccolo
-Bundle-Version: 2.5.0
+Bundle-Version: 2.6.0
 Bundle-ClassPath: lib/piccolo2d-core-3.0.jar,
  lib/piccolo2d-extras-3.0.jar
 Export-Package: org.piccolo2d,

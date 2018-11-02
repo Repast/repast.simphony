@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast batch
 Bundle-SymbolicName: repast.simphony.batch;singleton:=true
-Bundle-Version: 2.5.0
+Bundle-Version: 2.6.0
 Require-Bundle: libs.bsf,
  repast.simphony.dataLoader,
  repast.simphony.data,

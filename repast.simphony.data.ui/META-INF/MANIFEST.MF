@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast ui
 Bundle-SymbolicName: repast.simphony.data.ui
-Bundle-Version: 2.5.0
+Bundle-Version: 2.6.0
 Require-Bundle: saf.core.ui,
  repast.simphony.data,
  repast.simphony.gui,
@@ -10,7 +10,7 @@ Require-Bundle: saf.core.ui,
  repast.simphony.core,
  repast.simphony.runtime,
  repast.simphony.scenario,
- repast.simphony.eclipse;bundle-version="2.5.0"
+ repast.simphony.eclipse;bundle-version="2.6.0"
 Export-Package: repast.simphony.data.analysis,
  repast.simphony.data2.gui,
  repast.simphony.data2.wizard

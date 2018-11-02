@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast distriubuted batch ui
 Bundle-SymbolicName: repast.simphony.distributed.batch.ui
-Bundle-Version: 2.5.0
+Bundle-Version: 2.6.0
 Require-Bundle: repast.simphony.scenario,
  saf.core.ui,
  repast.simphony.gui,

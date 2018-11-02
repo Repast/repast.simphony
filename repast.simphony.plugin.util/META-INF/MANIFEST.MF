@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast plugin ui
 Bundle-SymbolicName: repast.simphony.plugin.util
-Bundle-Version: 2.5.0
+Bundle-Version: 2.6.0
 Bundle-ClassPath: .
 Export-Package: org.jdesktop.swingx.autocomplete,
  repast.simphony.util.wizard
