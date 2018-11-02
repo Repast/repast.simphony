@@ -49,6 +49,8 @@ public class RSProjectConfigurator {
 //  public final static String LAUNCH_DELEGATE_RUN = "[run]";
 //  public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
   
+  public final static String VMARGS = "--add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED";
+  
   /**
    * Configures a new project for Repast Simphony. This adds the GroovyRuntime to the project,
    * updates the classpath with the Repast Simphony classpath
@@ -163,7 +165,8 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-     
+      launchConfigurationWorkingCopy.setAttribute(
+          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
       List favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
@@ -244,7 +247,9 @@ public class RSProjectConfigurator {
                 + " -DGroovyHomeDirectory=\"${groovy_home}\""
                 + " -DREPAST_VERSION=${REPAST_VERSION}");
 
-     
+      launchConfigurationWorkingCopy.setAttribute(
+          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
+
       // add the ant classpath
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
@@ -380,7 +385,8 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
               + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-    
+      launchConfigurationWorkingCopy.setAttribute(
+          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
       List favoritesList = launchConfigurationWorkingCopy.getAttribute(
           IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
       if (favoritesList == null)
@@ -461,7 +467,8 @@ public class RSProjectConfigurator {
                 + " -DGroovyHomeDirectory=\"${groovy_home}\""
                 + " -DREPAST_VERSION=${REPAST_VERSION}");
 
-      
+      launchConfigurationWorkingCopy.setAttribute(
+          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
 
       // add the ant classpath
       launchConfigurationWorkingCopy.setAttribute(

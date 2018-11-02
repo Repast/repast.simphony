@@ -28,4 +28,4 @@ CP=$CP:$PWD/groovylib/$Groovy_All_Jar
 cd %PROJECT_NAME%
 
 # Start the Model
-java -cp $CP repast.simphony.runtime.RepastMain  ./%SCENARIO_DIRECTORY%
+java --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp $CP repast.simphony.runtime.RepastMain  ./%SCENARIO_DIRECTORY%
