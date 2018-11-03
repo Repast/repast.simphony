@@ -32,16 +32,12 @@
 		<library id="dom4j-1.6.1" path="./lib/dom4j-1.6.1.jar" type="code"/>
 		<library id="hsqldb-2.3.2" path="./lib/hsqldb-2.3.2.jar" type="code"/>
 		<library id="jbullet" path="./lib/jbullet.jar" type="code"/>
-		<library id="jgap" path="./lib/jgap.jar" type="code"/>
-		<library id="joone-editor" path="./lib/joone-editor.jar" type="code"/>
-		<library id="joone-engine" path="./lib/joone-engine.jar" type="code"/>
 		<library id="jscience" path="./lib/jscience-4.3.1-no_ogis.jar" type="code"/>
 		<library id="jung-algorithms-2.0.1" path="./lib/jung-algorithms-2.0.1.jar" type="code"/>
 		<library id="jung-api-2.0.1" path="./lib/jung-api-2.0.1.jar" type="code"/>
 		<library id="jung-graph-impl-2.0.1" path="./lib/jung-graph-impl-2.0.1.jar" type="code"/>
 		<library id="jung-io-2.0.1" path="./lib/jung-io-2.0.1.jar" type="code"/>
 		<library id="opencsv-2.3" path="./lib/opencsv-2.3.jar" type="code"/>
-		<library id="OpenForecast-0.4.0" path="./lib/OpenForecast-0.4.0.jar" type="code"/>
 		<library id="poi-3.9-20121203" path="./lib/poi-3.9-20121203.jar" type="code"/>
 		<library id="poi-ooxml-3.9-20121203" path="./lib/poi-ooxml-3.9-20121203.jar" type="code"/>
 		<library id="ooxml-schemas-1.1" path="./lib/ooxml-schemas-1.1.jar" type="code"/>
