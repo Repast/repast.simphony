@@ -487,9 +487,6 @@ public class DisplayGIS3D extends AbstractDisplay {
   	}
   	
   	for (Layer layer : orderedLayerMap.values()) {
-  		
-  		System.out.println(layer.getName());
-  		
 			model.getLayers().add(layer);
   	}
   	
@@ -684,8 +681,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 		//      is updated, so we need to treat the update() call like a render,
 		//      which should be less frequent.  Perhaps update() here doesn't actually
 		//      need to do anything, and we can delegate all to render.
-
-//		System.out.println("DisplayGIS3D.update()");
 		
 		if (isVisible()){
 //			doUpdate();
@@ -719,8 +714,6 @@ public class DisplayGIS3D extends AbstractDisplay {
 	
 	@Override
 	public void render() {	
-//		System.out.println("DisplayGIS3D.render()");
-		
 		long ts = System.currentTimeMillis();
 		if (doRender && isVisible()) {
 			if (ts - lastRenderTS > FRAME_UPDATE_INTERVAL) {
