@@ -49,7 +49,14 @@ public class RSProjectConfigurator {
 //  public final static String LAUNCH_DELEGATE_RUN = "[run]";
 //  public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
   
-  public final static String VMARGS = "--add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED";
+	// VM args that are required for Java 9+.
+	//   -XX:+IgnoreUnrecognizedVMOptions is used for cases when Java 8 is the JRE
+	//      so that the module exports don't cause an unrecognized arg error
+	//
+	//   --add-modules=ALL-SYSTEM is used to export all JRE modules to the runtime classpath
+	//   --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED is used to provide access 
+	//      to jdk.internal.ref that is used by some GeoTools JAI modules
+  public final static String VMARGS = "-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED";
   
   /**
    * Configures a new project for Repast Simphony. This adds the GroovyRuntime to the project,
