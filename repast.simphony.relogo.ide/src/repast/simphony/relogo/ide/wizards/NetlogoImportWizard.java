@@ -452,8 +452,8 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
 					variableMap, subMonitor.newChild(1));
 
-			newFolder = createFolderResource(project, "misc");
-			Utilities.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder, "ReadMe.txt",
+			newFolder = createFolderResource(project, "data");
+			Utilities.copyFileFromPluginInstallation("data/ReadMe.txt", newFolder, "ReadMe.txt",
 					variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "installer");

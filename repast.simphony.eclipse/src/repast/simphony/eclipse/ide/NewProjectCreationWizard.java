@@ -375,10 +375,10 @@ public class NewProjectCreationWizard extends BasicNewResourceWizard implements 
       Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
-      newFolder = srcFolder.getFolder("../misc");
+      newFolder = srcFolder.getFolder("../data");
       if (!newFolder.exists())
         newFolder.create(true, true, monitor);
-      Utilities.copyFileFromPluginInstallation("misc/ReadMe.txt", newFolder, "ReadMe.txt",
+      Utilities.copyFileFromPluginInstallation("data/ReadMe.txt", newFolder, "ReadMe.txt",
           variableMap, monitor);
 
       newFolder = srcFolder.getFolder("../" + scenarioDirectory);

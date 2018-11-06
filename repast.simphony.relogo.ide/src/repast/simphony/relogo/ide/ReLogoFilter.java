@@ -9,7 +9,7 @@ public class ReLogoFilter extends ViewerFilter {
 	
 	public static boolean isInReLogoPerspective = false;
 
-	String[] filterStrings = {"*.rs","*.log","**.context","**.style","**.factories","Repast.settings","MessageCenter.log4j.properties","license.txt","model_description.txt","launchers","batch", "builders", "docs", "freezedried_data", "icons", "installer", "integration", "launchers", "lib", "misc", "repast-licenses", "transferFiles","Groovy DSL Support","src-gen"};
+	String[] filterStrings = {"*.rs","*.log","**.context","**.style","**.factories","Repast.settings","MessageCenter.log4j.properties","license.txt","model_description.txt","launchers","batch", "builders", "docs", "freezedried_data", "icons", "installer", "integration", "launchers", "lib", "data", "repast-licenses", "transferFiles","Groovy DSL Support","src-gen"};
 
 	NamePatternFilter npf = new NamePatternFilter();
 	LibraryFilter lf = new LibraryFilter();

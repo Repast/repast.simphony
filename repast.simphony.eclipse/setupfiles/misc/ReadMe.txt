@@ -1,1 +1,0 @@
-Place your miscellaneous files in this directory.
