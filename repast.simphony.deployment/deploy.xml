@@ -486,7 +486,6 @@
 				<include name="**/repast.simphony.eclipse/setupfiles/launchers/**" />
 				<include name="**/repast.simphony.eclipse/setupfiles/repast-licenses/**" />
 				<include name="**/repast.simphony.eclipse/setupfiles/lib/**" />
-				<include name="**/repast.simphony.eclipse/setupfiles/misc/**" />
 				<include name="**/repast.simphony.eclipse/setupfiles/package.rs/**" />
 				<include name="**/repast.simphony.eclipse/setupfiles/license.txt" />
 				<include name="**/repast.simphony.eclipse/setupfiles/model_description.txt" />
