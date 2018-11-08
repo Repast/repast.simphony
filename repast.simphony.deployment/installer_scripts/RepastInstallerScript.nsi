@@ -12,9 +12,9 @@
 
 !define VERSION "2.6"     ; Repast Version
 
-!define JAVA_HOME "jdk11"                  ; The included Java root dir
-!define JAVA_BIN "${JAVA_HOME}\bin\javaw"  ; path to bundled VM
-!define VM_ARGS "-vm ${JAVA_BIN}"          ; vm arg for eclipse to use bundled jdk
+!define JAVA_HOME "jdk11"                          ; The included Java root dir
+!define JAVA_BIN "eclipse\${JAVA_HOME}\bin\javaw"  ; path to bundled VM
+!define VM_ARGS "-vm ${JAVA_BIN}"                  ; vm arg for eclipse to use bundled jdk
 
 Var /GLOBAL eclipse_params
 Var /GLOBAL javabin
