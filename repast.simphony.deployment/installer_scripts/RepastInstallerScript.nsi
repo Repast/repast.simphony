@@ -5,13 +5,19 @@
 ;--------------------------------
 
 !include "MUI.nsh"        ; user the modern UI
+!include nsDialogs.nsh
 !include "LogicLib.nsh"   ; Library for logical statements 
 !include "StrFunc.nsh"    ; String functions
 !include "x64.nsh"        ; Macros for x64 machines
 
- ${StrTok} # Supportable for Install Sections and Functions
+!define VERSION "2.6"     ; Repast Version
 
-!define VERSION "2.4"
+!define JAVA_HOME "jdk11"                  ; The included Java root dir
+!define JAVA_BIN "${JAVA_HOME}\bin\javaw"  ; path to bundled VM
+!define VM_ARGS "-vm ${JAVA_BIN}"          ; vm arg for eclipse to use bundled jdk
+
+Var /GLOBAL eclipse_params
+Var /GLOBAL javabin
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -19,21 +25,15 @@ Name "Repast Simphony ${VERSION}"
 ; The file to write
 OutFile "Repast-Simphony-${VERSION}-win64.exe"
 
-; The default installation directory
-;InstallDir $PROGRAMFILES\RepastSimphony-${VERSION}
-; changed to avoid user permissions problems with $PROGRAMFILES
-InstallDir C:\RepastSimphony-${VERSION}
-
-; The required Java version to run Repast
-!define JRE_VERSION "1.8"
+; The default installation directory.  The $PROFILE variable is the user's home dir
+InstallDir $PROFILE\RepastSimphony-${VERSION}
 
 ; Request Administrator level application privileges when copying files
-RequestExecutionLevel admin
+#RequestExecutionLevel admin
 
 ;--------------------------------
 
 ; Pages
-
 !define MUI_PAGE_CUSTOMFUNCTION_PRE WelcomePageSetupLinkPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW WelcomePageSetupLinkShow
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
@@ -42,6 +42,7 @@ RequestExecutionLevel admin
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE repast-license.txt
+Page Custom JavaInfoPage
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -53,15 +54,18 @@ RequestExecutionLevel admin
 ;--------------------------------
 
 ; The stuff to install
-Section "Repast Simphony"
+Section "Repast Simphony" Section_Repast
 
-  SectionIn RO
+  SectionIn RO ; Read-only - user can't unselect core files
   
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   
-  ; Store the files.
-  File /r "*.*"
+  ; Install the Repast core files
+  File /r eclipse
+  File batch_runner.jar
+  File run_batch_runner.bat
+  File repast-license.txt
   
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}" "DisplayName" "Repast Simphony ${VERSION}"
@@ -78,8 +82,41 @@ Section "Repast Simphony"
   
 SectionEnd
 
+Section "Java 11" Section_Java
+
+  ; Set output path for the JDK to the installation\eclipse directory.
+  SetOutPath $INSTDIR\eclipse
+  
+  ; Install the JDK
+  File /r ${JAVA_HOME}
+  
+  ; add the eclipse -vm option to use the bundled JDK
+  StrCpy $eclipse_params "${VM_ARGS}" 
+  
+  ; Define the Java VM bin to the bundled JDK
+  StrCpy $javabin "${JAVA_BIN}"
+  
+SectionEnd
+
+Section "Documentation" Section_Doc
+  ; Set output path to the installation directory.
+  SetOutPath $INSTDIR
+  
+  ; Install the Repast core files (Eclipse)
+  File /r docs
+SectionEnd
+
+Section "Example Models" Section_Models
+  ; Set output path to the installation directory.
+  SetOutPath $INSTDIR
+  
+  ; Install the Repast core files (Eclipse)
+  File /r models
+
+SectionEnd
+
 ; Optional section (can be disabled by the user)
-Section "Start Menu Shortcuts"
+Section "Start Menu Shortcuts" Section_Shortcuts
  
   ; Install for all users
   SetShellVarContext all
@@ -87,18 +124,20 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}"
   CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation"
 
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\batch_runner.jar" "" "$INSTDIR\batch_runner.jar"
+  ; CreateShortCut link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
+  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "$eclipse_params" "$INSTDIR\eclipse\eclipse.exe" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\run_batch_runner.bat" "$javabin"
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Flow Getting Started.lnk" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" "" "$INSTDIR\docs\RepastFlowGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference.pdf" "" "$INSTDIR\docs\RepastReference.pdf" 0
+  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference\RepastReference.html" "" "$INSTDIR\docs\RepastReference\RepastReference.html" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" "" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony System Dynamics Getting Started.lnk" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" "" "$INSTDIR\docs\RepastSystemDynamicsGettingStarted.pdf" 0
+  
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
@@ -130,38 +169,51 @@ Section "Uninstall"
 
 SectionEnd
 
-; Detects if a Java installation exists in the Windows registry and compares to the required version
-Function DetectJRE
-  
-  ; Set the Registry view depdending on 32- or 64-bit Windows
-  ${If} ${RunningX64}
-    SetRegView 64
-;    MessageBox MB_OK "64 bit Windows detected."
-  ${EndIf}
+; Section descriptions that appear in the compnents to install page
+LangString DESC_Section_Repast ${LANG_ENGLISH} "Installs the core Repast libraries (required)."
+LangString DESC_Section_Java ${LANG_ENGLISH} "Installs the include Java Development Kit. \ 
+	It is recommended to install the included Java unless you are certain that you have a compatible version of Java already installed."
+LangString DESC_Section_Doc ${LANG_ENGLISH} "Installs the Repast documentation."
+LangString DESC_Section_Models ${LANG_ENGLISH} "Installs the Repast demo models."
+LangString DESC_Section_Shortcuts ${LANG_ENGLISH} "Installs the Repast program and documents shortcuts."
 
-  ; Copy the current version to the stack
-  ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Repast} $(DESC_Section_Repast)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Java} $(DESC_Section_Java)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Doc} $(DESC_Section_Doc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Models} $(DESC_Section_Models)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Shortcuts} $(DESC_Section_Shortcuts)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-  ; If error reading registry for Java version
-  IfErrors 0 +2
-    MessageBox MB_YESNO "Java was not detected on your computer.  \
-    Would you like to download Java now?" IDYES downloadJava IDNO done
+; Custom page for Java installation information
+LangString JAVA_PAGE_TITLE ${LANG_ENGLISH} "Java Information"
+LangString JAVA_PAGE_SUBTITLE ${LANG_ENGLISH} "Please read carefully"
 
-  ; Compare the found Java version to the required version 
-  StrCmp $0 ${JRE_VERSION} done
+Var Dialog
+Var Text
 
-  ; Report only the common Java version, eg 7/8, not 1.7/1.8 
-  ${StrTok} $1 $0 "." "1" "1"
-  ${StrTok} $2 ${JRE_VERSION} "." "1" "1"
+LangString JAVA_INFO ${LANG_ENGLISH} "Java version 8 or greater is required to run Repast.$\r$\n$\r$\n\
+The default installation components include a compatible version of Java.  \
+If you are unsure if Java 8 or later is already installed on your system, use the \
+default installation settings and Java will be installed for you. $\r$\n$\r$\n\
+The included Java runtime will not conflict with an existing Java installation on your system.$\r$\n$\r$\n\
+Please see the Repast Quick Start guide for more information about Java."
 
-  MessageBox MB_YESNO "Java $1 detected on your computer.  Repast requires Java $2. \
-  Would you like to download Java now?" IDYES downloadJava IDNO done
+Function JavaInfoPage
+  !insertmacro MUI_HEADER_TEXT $(JAVA_PAGE_TITLE) $(JAVA_PAGE_SUBTITLE)
 
-  ; Brings up the Java download page in a browser    
-  downloadJava:
-    ExecShell "open" "http://java.com/en/download/index.jsp"
-  
-  done:
+  ; Create a simple dialog on this page with a single lable with the Java info.  
+  nsDialogs::Create 1018
+	Pop $Dialog
+
+	${If} $Dialog == error
+		Abort
+	${EndIf}
+
+	${NSD_CreateLabel} 0 0 100% 100u $(JAVA_INFO)
+	Pop $Text
+	
+	nsDialogs::Show
 FunctionEnd
 
 Function WelcomePageSetupLinkPre
@@ -177,9 +229,6 @@ Function WelcomePageSetupLinkPre
 FunctionEnd
  
 Function WelcomePageSetupLinkShow
-; Disabled JRE detect due to issues with 32/64 bit registry info
-;  Call DetectJRE  ; First thing check if a suitable JRE is installed
-
   ; Thanks to pengyou
   ; Fix colors of added link control
   ; See http://forums.winamp.com/showthread.php?s=&threadid=205674
