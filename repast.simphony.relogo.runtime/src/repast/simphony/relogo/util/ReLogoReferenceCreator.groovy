@@ -29,7 +29,7 @@ import repast.simphony.relogo.UtilityG;
 
 class ReLogoReferenceCreator {
 	
-	static final String docTitle = "ReLogo Primitives ver. 2.5"
+	static final String docTitle = "ReLogo Primitives ver. 2.6"
 	static final String filename = "data/ReLogoPrimitives.xls"
 	static final String docLocation = "docs/ReLogo API/repast/simphony/relogo/"
 	static final String refURLbase = "repast/simphony/relogo/"
