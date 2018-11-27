@@ -130,19 +130,21 @@ Section "Start Menu Shortcuts" Section_Shortcuts
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\run_batch_runner.bat" "$javabin"
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
 
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" "" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" "" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 
   
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference\RepastReference.html" "" "$INSTDIR\docs\RepastReference\RepastReference.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" "" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" "" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" "" "$INSTDIR\docs\Statecharts.pdf" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference\RepastReference.html" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" 
   
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" "" "$INSTDIR\docs\DataCollection.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" "" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" "" "$INSTDIR\docs\RepastModelTesting.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" "" "$INSTDIR\docs\RepastSimphonyFAQ.pdf" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Upgrading & Troubleshooting Repast Simphony.lnk" "$INSTDIR\docs\Upgrading_Troubleshooting_Repast_Simphony.txt" "" "$INSTDIR\docs\Upgrading_Troubleshooting_Repast_Simphony.txt" 0  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastFAQ\RepastFAQ.html" 
+  
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference (online).lnk" "https://repast.github.io/docs/RepastReference/RepastReference.html" 
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony FAQ (online).lnk" "https://repast.github.io/docs/RepastFAQ/RepastFAQ.html" 
   
 SectionEnd
 
