@@ -1,12 +1,15 @@
 package repast.simphony.gis.visualization.engine;
 
 import java.util.List;
+import java.util.Set;
 
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
@@ -17,6 +20,7 @@ import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
+import repast.simphony.visualization.gui.styleBuilder.IconFactory2D;
 
 public class GIS3DVisualizationRegistryData implements VisualizationRegistryData { 
 
@@ -89,4 +93,29 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 	public DisplayValidator getDisplayValidator() {
 		return new GISDisplayValidator();
 	}
+
+	// The GIS 3D display just re-uses the 2D edited style to support surface shapes
+	@Override
+	public Class<? extends EditedStyleData> getDefaultEditedStyleDataClass() {
+		return DefaultEditedStyleData2D.class;
+	}
+
+	@Override
+	public String getEditedStyleClassName() {
+		return "repast.simphony.visualization.editedStyle.EditedStyle2D";
+	}
+
+	@Override
+	public Set<String> getAllowedShapes() {
+		
+		// Allowed shapes in the GIS display are either the point marker shapes...
+		Set<String> allowedShapes = IconFactory2D.Shape_List;
+		
+		// ...or line or polygon shapes.
+		allowedShapes.add("line");
+		allowedShapes.add("polygon");
+		
+		return allowedShapes;
+	}
+
 }

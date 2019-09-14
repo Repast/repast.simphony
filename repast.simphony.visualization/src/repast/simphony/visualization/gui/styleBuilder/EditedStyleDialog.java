@@ -13,8 +13,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,17 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jscience.physics.amount.Amount;
-
-import repast.simphony.scenario.ScenarioUtils;
-import repast.simphony.ui.plugin.editor.SquareIcon;
-import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
-import repast.simphony.visualization.editedStyle.DefaultEditedStyleData3D;
-import repast.simphony.visualization.editedStyle.EditedStyleData;
-import repast.simphony.visualization.editedStyle.EditedStyleUtils;
-import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
-import repast.simphony.visualization.engine.DisplayType;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -54,38 +46,51 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
+import repast.simphony.scenario.ScenarioUtils;
+import repast.simphony.ui.plugin.editor.SquareIcon;
+import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
+import repast.simphony.visualization.editedStyle.DefaultEditedStyleData3D;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
+import repast.simphony.visualization.editedStyle.EditedStyleUtils;
+import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.engine.VisualizationRegistryData;
+import simphony.util.messages.MessageCenter;
+
 /**
  * @author Eric Tatara
  */
 public class EditedStyleDialog extends JDialog {
-  
+	private static final MessageCenter msg = MessageCenter.getMessageCenter(EditedStyleDialog.class);
+	
   private boolean save = false;
   private EditedStyleData userStyleData;
-  private static final Set<Class> pTypes = new HashSet<Class>();
+  private static final Set<Class<?>> pTypes = new HashSet<Class<?>>();
   private List<String> methodList;
   private List<String> labelMethodList;
 
-  private DefaultComboBoxModel sizeModel;
-  private DefaultComboBoxModel sizeMinModel;
-  private DefaultComboBoxModel sizeMaxModel;
-  private DefaultComboBoxModel sizeScaleModel;
-  private DefaultComboBoxModel labelModel;
-  private DefaultComboBoxModel labelFontFamilyModel;
+  private DefaultComboBoxModel<Object> sizeModel;
+  private DefaultComboBoxModel<Object> sizeMinModel;
+  private DefaultComboBoxModel<Object> sizeMaxModel;
+  private DefaultComboBoxModel<Object> sizeScaleModel;
+  private DefaultComboBoxModel<String> labelModel;
+  private DefaultComboBoxModel<String> labelFontFamilyModel;
 
-  private DefaultComboBoxModel shapeModel;
+  private DefaultComboBoxModel<String> shapeModel;
 
-  private DefaultComboBoxModel variableIconRedColorValueModel;
-  private DefaultComboBoxModel variableIconGreenColorValueModel;
-  private DefaultComboBoxModel variableIconBlueColorValueModel;
-  private DefaultComboBoxModel variableIconRedColorMinModel;
-  private DefaultComboBoxModel variableIconGreenColorMinModel;
-  private DefaultComboBoxModel variableIconBlueColorMinModel;
-  private DefaultComboBoxModel variableIconRedColorMaxModel;
-  private DefaultComboBoxModel variableIconGreenColorMaxModel;
-  private DefaultComboBoxModel variableIconBlueColorMaxModel;
-  private DefaultComboBoxModel variableIconRedColorScaleModel;
-  private DefaultComboBoxModel variableIconGreenColorScaleModel;
-  private DefaultComboBoxModel variableIconBlueColorScaleModel;
+  private DefaultComboBoxModel<Object> variableIconRedColorValueModel;
+  private DefaultComboBoxModel<Object> variableIconGreenColorValueModel;
+  private DefaultComboBoxModel<Object> variableIconBlueColorValueModel;
+  private DefaultComboBoxModel<Object> variableIconRedColorMinModel;
+  private DefaultComboBoxModel<Object> variableIconGreenColorMinModel;
+  private DefaultComboBoxModel<Object> variableIconBlueColorMinModel;
+  private DefaultComboBoxModel<Object> variableIconRedColorMaxModel;
+  private DefaultComboBoxModel<Object> variableIconGreenColorMaxModel;
+  private DefaultComboBoxModel<Object> variableIconBlueColorMaxModel;
+  private DefaultComboBoxModel<Object> variableIconRedColorScaleModel;
+  private DefaultComboBoxModel<Object> variableIconGreenColorScaleModel;
+  private DefaultComboBoxModel<Object> variableIconBlueColorScaleModel;
 
   private String agentClassName;
   private String userStyleName;
@@ -117,8 +122,8 @@ public class EditedStyleDialog extends JDialog {
     labelMethodList = new ArrayList<String>();
   }
 
-  public void init(Class agentClass, String userStyleName,
-  		CartesianDisplayDescriptor descriptor) {
+
+	public void init(Class agentClass, String userStyleName, DisplayDescriptor descriptor) {
     this.agentClassName = agentClass.getCanonicalName();
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();
@@ -146,48 +151,64 @@ public class EditedStyleDialog extends JDialog {
     labelMethodList.remove("toString");
     labelMethodList.add("Name");
 
- // TODO Projections: init from viz registry data entries
-    // Set objects based on display type 2D/3D
+    // The allowed agent shapes and style data depends on the display type.
+    // Use either the 2D, 3D, or types set externally from the 
+    Set<String> allowedShapes = new HashSet<String>();
+    
     if (displayType.equals(DisplayType.TWO_D)) {
-      if (userStyleData == null)
-        userStyleData = new DefaultEditedStyleData2D();
-
-      // TODO Eliminate GIS plugin depedency.
-      shapeModel = new DefaultComboBoxModel(IconFactory2D.Shape_List);
-
-      shapeModel.setSelectedItem(userStyleData.getShapeWkt());
-    } else {
-      if (userStyleData == null)
-        userStyleData = new DefaultEditedStyleData3D();
-
-      shapeModel = new DefaultComboBoxModel(new String[]{
-              "sphere",
-              "cube",
-              "cylinder",
-              "cone"});
-
-      shapeModel.setSelectedItem(userStyleData.getShapeWkt());
-
+    	if (userStyleData == null) 
+    		userStyleData = new DefaultEditedStyleData2D();
+    	allowedShapes = IconFactory2D.Shape_List;
+    } 
+    else if (displayType.equals(DisplayType.THREE_D)){
+    	if (userStyleData == null)
+    		userStyleData = new DefaultEditedStyleData3D();
+    	allowedShapes = new HashSet<String>(Arrays.asList("sphere","cube", "cylinder","cone"));
     }
+    
+		// For other displays, get the default style from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(
+					descriptor.getDisplayType());
 
-    sizeModel = new DefaultComboBoxModel();
-    sizeMinModel = new DefaultComboBoxModel();
-    sizeMaxModel = new DefaultComboBoxModel();
-    sizeScaleModel = new DefaultComboBoxModel();
-    labelModel = new DefaultComboBoxModel();
-    labelFontFamilyModel = new DefaultComboBoxModel();
-    variableIconRedColorValueModel = new DefaultComboBoxModel();
-    variableIconGreenColorValueModel = new DefaultComboBoxModel();
-    variableIconBlueColorValueModel = new DefaultComboBoxModel();
-    variableIconRedColorMinModel = new DefaultComboBoxModel();
-    variableIconGreenColorMinModel = new DefaultComboBoxModel();
-    variableIconBlueColorMinModel = new DefaultComboBoxModel();
-    variableIconRedColorMaxModel = new DefaultComboBoxModel();
-    variableIconGreenColorMaxModel = new DefaultComboBoxModel();
-    variableIconBlueColorMaxModel = new DefaultComboBoxModel();
-    variableIconRedColorScaleModel = new DefaultComboBoxModel();
-    variableIconGreenColorScaleModel = new DefaultComboBoxModel();
-    variableIconBlueColorScaleModel = new DefaultComboBoxModel();
+			if (data != null){
+				try {
+					userStyleData = data.getDefaultEditedStyleDataClass().getConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException
+						| IllegalArgumentException | InvocationTargetException
+						| NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+				
+				allowedShapes = data.getAllowedShapes();
+			}
+			else{
+				msg.error("Error creating style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
+    
+    shapeModel = new DefaultComboBoxModel<String>(allowedShapes.toArray(new String[allowedShapes.size()]));
+    shapeModel.setSelectedItem(userStyleData.getShapeWkt());
+
+    sizeModel = new DefaultComboBoxModel<Object>();
+    sizeMinModel = new DefaultComboBoxModel<Object>();
+    sizeMaxModel = new DefaultComboBoxModel<Object>();
+    sizeScaleModel = new DefaultComboBoxModel<Object>();
+    labelModel = new DefaultComboBoxModel<String>();
+    labelFontFamilyModel = new DefaultComboBoxModel<String>();
+    variableIconRedColorValueModel = new DefaultComboBoxModel<Object>();
+    variableIconGreenColorValueModel = new DefaultComboBoxModel<Object>();
+    variableIconBlueColorValueModel = new DefaultComboBoxModel<Object>();
+    variableIconRedColorMinModel = new DefaultComboBoxModel<Object>();
+    variableIconGreenColorMinModel = new DefaultComboBoxModel<Object>();
+    variableIconBlueColorMinModel = new DefaultComboBoxModel<Object>();
+    variableIconRedColorMaxModel = new DefaultComboBoxModel<Object>();
+    variableIconGreenColorMaxModel = new DefaultComboBoxModel<Object>();
+    variableIconBlueColorMaxModel = new DefaultComboBoxModel<Object>();
+    variableIconRedColorScaleModel = new DefaultComboBoxModel<Object>();
+    variableIconGreenColorScaleModel = new DefaultComboBoxModel<Object>();
+    variableIconBlueColorScaleModel = new DefaultComboBoxModel<Object>();
     
 //    sizeModel.addElement(ICON_SIZE);
 

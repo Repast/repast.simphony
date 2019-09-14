@@ -4,6 +4,9 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -23,14 +26,14 @@ public class IconFactory2D {
 	private static Shape X;
 	private static Shape square;
 
-	public static String[] Shape_List = new String[]{
+	public static Set<String> Shape_List = new HashSet<String>(Arrays.asList(
 		"circle",
 		"cross",
 		"star",
 		"square",
 		"triangle",
 		"X",
-		"arrow"};
+		"arrow"));
 	
 	static {
 		GeneralPath crossPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);

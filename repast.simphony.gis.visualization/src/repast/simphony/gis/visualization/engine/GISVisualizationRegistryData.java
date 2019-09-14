@@ -1,12 +1,14 @@
 package repast.simphony.gis.visualization.engine;
 
 import java.util.List;
+import java.util.Set;
 
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
@@ -88,5 +90,22 @@ public class GISVisualizationRegistryData implements VisualizationRegistryData {
 	@Override
 	public DisplayValidator getDisplayValidator() {
 		return new GISDisplayValidator();
+	}
+
+	// The legacy GIS displays do not support edited style classes, rather it uses
+	//   SLD styles.
+	@Override
+	public Class<? extends EditedStyleData> getDefaultEditedStyleDataClass() {
+		return null;
+	}
+
+	@Override
+	public String getEditedStyleClassName() {
+		return null;
+	}
+
+	@Override
+	public Set<String> getAllowedShapes() {
+		return null;
 	}
 }
