@@ -8,6 +8,7 @@ import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
@@ -100,12 +101,22 @@ public class GISVisualizationRegistryData implements VisualizationRegistryData {
 	}
 
 	@Override
-	public String getEditedStyleClassName() {
+	public Class<?> getEditedStyleClass() {
 		return null;
 	}
 
 	@Override
 	public Set<String> getAllowedShapes() {
+		return null;
+	}
+
+	@Override
+	public Class<?> getEditedEdgeStyleClass() {
+		return null;
+	}
+
+	@Override
+	public Class<? extends EditedEdgeStyleData> getDefaultEditedEdgeStyleDataClass() {
 		return null;
 	}
 }

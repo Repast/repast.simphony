@@ -8,7 +8,9 @@ import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.gis.engine.GeographyProjectionRegistryData;
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData2D;
 import repast.simphony.visualization.editedStyle.DefaultEditedStyleData2D;
+import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
@@ -17,6 +19,8 @@ import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
 import repast.simphony.visualization.gis3D.style.DefaultNetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
+import repast.simphony.visualization.gis3D.style.EditedNetworkStyleGIS;
+import repast.simphony.visualization.gis3D.style.EditedStyleGIS;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
@@ -100,9 +104,10 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 		return DefaultEditedStyleData2D.class;
 	}
 
+	// TODO class ? extends
 	@Override
-	public String getEditedStyleClassName() {
-		return "repast.simphony.visualization.editedStyle.EditedStyle2D";
+	public Class getEditedStyleClass() {
+		return EditedStyleGIS.class;
 	}
 
 	@Override
@@ -116,6 +121,16 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 		allowedShapes.add("polygon");
 		
 		return allowedShapes;
+	}
+
+	@Override
+	public Class getEditedEdgeStyleClass() {
+		return EditedNetworkStyleGIS.class;
+	}
+
+	@Override
+	public Class<? extends EditedEdgeStyleData> getDefaultEditedEdgeStyleDataClass() {
+		return DefaultEditedEdgeStyleData2D.class;
 	}
 
 }

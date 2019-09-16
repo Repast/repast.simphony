@@ -12,7 +12,7 @@ public class DefaultEditedEdgeStyleData2D<T> extends EditedEdgeStyleData<T> {
 	  sizeMax = 1;
 	  sizeScale = 1;
 	  
-	  color = new float[]{0,0,0};
+	  color = new float[]{0,1,0};   // Green
 	  
 	  colorMax = new float[]{10,10,10};
 	  colorMin = new float[]{0,0,0};

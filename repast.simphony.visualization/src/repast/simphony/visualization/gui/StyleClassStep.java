@@ -62,8 +62,7 @@ public class StyleClassStep extends StyleStep {
 
 	private boolean showBackgroundButton = true; 
 	
-	protected static Map<Class<?>,List<String>> styleCache = 
-			new HashMap<Class<?>,List<String>>();
+	protected static Map<Class<?>,List<String>> styleCache = new HashMap<Class<?>,List<String>>();
 	
 	public StyleClassStep() {
 		super("Agent Style", "Please provide a style for each agent type in the model");
@@ -115,7 +114,6 @@ public class StyleClassStep extends StyleStep {
 							styleModel.addElement(styleClassName);
 
 						styleBox.setSelectedItem(styleClassName);
-
 						editedStyleFileMap.put(classFld.getText(), dialog.getUserStyleName());
 					}
 
@@ -162,19 +160,11 @@ public class StyleClassStep extends StyleStep {
 			if (selectedItem != null) {
 				String styleClassName = selectedItem.toString();
 				
+				// Set the agent style class
 				element.setValue(STYLE_KEY, styleClassName);
-
-				if ("repast.simphony.visualization.editedStyle.EditedStyle2D"
-						.equals(styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyle3D"
-						.equals(styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyleGIS3D"
-						.equals(styleClassName))
-
-					element.setValue(EDITED_STYLE_KEY, editedStyleFileMap.get(
-							element.getAgentClassName()));
-				else
-					element.setValue(EDITED_STYLE_KEY, null);
+				
+				// Set the edited agent style data (may be null)
+				element.setValue(EDITED_STYLE_KEY, editedStyleFileMap.get(element.getAgentClassName()));
 			}
 		}
 	}
@@ -348,7 +338,7 @@ public class StyleClassStep extends StyleStep {
 	 * @param descriptor
 	 * @return
 	 */
-	protected static String getEditedStyleClassForDisplay(DisplayDescriptor descriptor){
+	protected String getEditedStyleClassForDisplay(DisplayDescriptor descriptor){
 		String styleClassName = null;
 	
 		if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
@@ -363,7 +353,10 @@ public class StyleClassStep extends StyleStep {
 					descriptor.getDisplayType());
 
 			if (data != null){
-				styleClassName = data.getEditedStyleClassName();
+				Class clazz = data.getEditedStyleClass();
+				
+				if (clazz != null)
+					styleClassName = clazz.getName();
 			}
 			else{
 				msg.error("Error creating style step for " + descriptor.getDisplayType() 

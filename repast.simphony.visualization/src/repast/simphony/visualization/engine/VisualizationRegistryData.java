@@ -7,6 +7,7 @@ import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
 
@@ -114,7 +115,11 @@ public interface VisualizationRegistryData {
 	
 	public Class<? extends EditedStyleData> getDefaultEditedStyleDataClass();
 	
-	public String getEditedStyleClassName();
+	public Class<? extends EditedEdgeStyleData> getDefaultEditedEdgeStyleDataClass();
+	
+	public Class getEditedStyleClass();
+	
+	public Class getEditedEdgeStyleClass();
 	
 	public Set<String> getAllowedShapes();
 }

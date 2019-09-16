@@ -23,7 +23,7 @@ public class DefaultEditedStyleData3D<T> extends EditedStyleData<T> {
 	  sizeMax = 0.1f;
 	  sizeScale = 1;
 	  
-	  color = new float[]{1,0,0};
+	  color = new float[]{1,0,0};   // Red
 	  
 	  colorMax = new float[]{10,10,10};
 	  colorMin = new float[]{0,0,0};

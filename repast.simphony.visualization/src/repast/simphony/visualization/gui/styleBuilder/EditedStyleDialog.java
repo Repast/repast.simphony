@@ -128,6 +128,7 @@ public class EditedStyleDialog extends JDialog {
     this.userStyleName = userStyleName;
     this.displayType = descriptor.getDisplayType();
 
+    // Get existing style data from a user-created edited style
     userStyleData = EditedStyleUtils.getStyle(descriptor.getEditedStyleName(agentClass.getName()));
 
     Method[] methods = agentClass.getMethods();
@@ -156,13 +157,21 @@ public class EditedStyleDialog extends JDialog {
     Set<String> allowedShapes = new HashSet<String>();
     
     if (displayType.equals(DisplayType.TWO_D)) {
-    	if (userStyleData == null) 
+    	// If undefined create a new default instance
+    	if (userStyleData == null) { 
     		userStyleData = new DefaultEditedStyleData2D();
+    	}
+    	
+    	// Agent shapes allowed in this display
     	allowedShapes = IconFactory2D.Shape_List;
     } 
     else if (displayType.equals(DisplayType.THREE_D)){
-    	if (userStyleData == null)
+    	// If undefined create a new default instance
+    	if (userStyleData == null) {
     		userStyleData = new DefaultEditedStyleData3D();
+    	}
+    	
+    	// Agent shapes allowed in this display
     	allowedShapes = new HashSet<String>(Arrays.asList("sphere","cube", "cylinder","cone"));
     }
     
@@ -172,7 +181,8 @@ public class EditedStyleDialog extends JDialog {
 					descriptor.getDisplayType());
 
 			if (data != null){
-				try {
+				// If undefined create a new default instance
+				if (userStyleData == null) try {
 					userStyleData = data.getDefaultEditedStyleDataClass().getConstructor().newInstance();
 				} catch (InstantiationException | IllegalAccessException
 						| IllegalArgumentException | InvocationTargetException
@@ -180,6 +190,7 @@ public class EditedStyleDialog extends JDialog {
 					e.printStackTrace();
 				}
 				
+				// Agent shapes allowed in this display
 				allowedShapes = data.getAllowedShapes();
 			}
 			else{
@@ -365,25 +376,8 @@ public class EditedStyleDialog extends JDialog {
     greenScaleComboBox.setModel(variableIconGreenColorScaleModel);
     blueScaleComboBox.setModel(variableIconBlueColorScaleModel);
 
- // TODO Projections: init from viz registry data entries
-    if (displayType.equals(DisplayType.TWO_D)) {
-      this.setTitle("2D Shape Editor");
-      preview = new PreviewIcon2D();
-      previewPanel.add((PreviewIcon2D) preview, cc.xy(1, 1));
-
-      iconButton.setText("Select Icon File");
-      iconButton.setFont(iconButton.getFont().deriveFont(Font.PLAIN));
-      clearFileButton.setText("Clear Icon File");
-
-      if (userStyleData.getIconFile2D() != null) {
-        disableColorButtons();
-        iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
-        iconButton.setText("Icon Set");
-      }
-
-      textureButton.setVisible(false);
-      clearTextureButton.setVisible(false);
-    } else {
+   
+    if (displayType.equals(DisplayType.THREE_D)) {
       this.setTitle("3D Shape Editor");
       preview = new PreviewIcon3D();
 
@@ -403,6 +397,26 @@ public class EditedStyleDialog extends JDialog {
         textureButton.setText("Texture Set");
       }
     }
+    
+    // TODO Projections: init from viz registry data entries
+    else {
+      this.setTitle("2D Shape Editor");
+      preview = new PreviewIcon2D();
+      previewPanel.add((PreviewIcon2D) preview, cc.xy(1, 1));
+
+      iconButton.setText("Select Icon File");
+      iconButton.setFont(iconButton.getFont().deriveFont(Font.PLAIN));
+      clearFileButton.setText("Clear Icon File");
+
+      if (userStyleData.getIconFile2D() != null) {
+        disableColorButtons();
+        iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
+        iconButton.setText("Icon Set");
+      }
+
+      textureButton.setVisible(false);
+      clearTextureButton.setVisible(false);
+    } 
 
     if (userStyleData.getIconFile2D() != null){
     	File iconFile = new File(userStyleData.getIconFile2D());
@@ -769,17 +783,20 @@ public class EditedStyleDialog extends JDialog {
   
   private void clearFileButtonActionPerformed(ActionEvent e) {
     iconButton.setFont(iconButton.getFont().deriveFont(Font.PLAIN));
-
- // TODO Projections: init from viz registry data entries
-    if (displayType.equals(DisplayType.TWO_D)) {
+    
+    if (displayType.equals(DisplayType.THREE_D)) {
+      userStyleData.setModelFile3D(null);
+      iconButton.setText("Select Model File");
+    }
+    
+    // TODO Projections: init from viz registry data entries
+    else {
       userStyleData.setIconFile2D(null);
       iconButton.setText("Select Icon File");
       preview.setIconFile(null);
       enableColorButtons();
-    } else {
-      userStyleData.setModelFile3D(null);
-      iconButton.setText("Select Model File");
-    }
+    } 
+    
     shapeComboBox.setEnabled(true);
     iconColorbutton.setEnabled(true);
   }
