@@ -117,9 +117,9 @@ public interface VisualizationRegistryData {
 	
 	public Class<? extends EditedEdgeStyleData> getDefaultEditedEdgeStyleDataClass();
 	
-	public Class getEditedStyleClass();
+	public Class<?> getEditedStyleClass(EditedStyleData editedStyleData);
 	
-	public Class getEditedEdgeStyleClass();
+	public Class<?> getEditedEdgeStyleClass();
 	
 	public Set<String> getAllowedShapes();
 }

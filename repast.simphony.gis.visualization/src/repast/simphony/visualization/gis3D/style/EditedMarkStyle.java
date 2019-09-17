@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import gov.nasa.worldwind.WorldWind;
@@ -25,7 +26,6 @@ public class EditedMarkStyle implements MarkStyle{
 
 	EditedStyleData<?> innerStyle;
 	protected BasicWWTexture texture;
-	private static Color defaultBackColor = new Color(0f, 0f, 0f, 0f);
 
 	public EditedMarkStyle (String userStyleFile) {
 		innerStyle = EditedStyleUtils.getStyle(userStyleFile);
@@ -52,11 +52,11 @@ public class EditedMarkStyle implements MarkStyle{
 
 			BufferedImage image = null;
 			if (shape != null) {
-				createShapeImage(shape, new Dimension(10, 10), 0.7f,  color, defaultBackColor);
+				image = createShapeImage(shape, new Dimension(20, 20), color);
 			}
 			else {
 				image = PatternFactory.createPattern(PatternFactory.PATTERN_SQUARE, 
-					new Dimension(10, 10), 0.7f,  Color.RED);
+					new Dimension(10, 10), 1.0f, Color.RED);
 			}
 			return new BasicWWTexture(image);	
 		}
@@ -86,7 +86,9 @@ public class EditedMarkStyle implements MarkStyle{
 
 	@Override
 	public double getScale(Object obj) {
-		return EditedStyleUtils.getSize(innerStyle, obj);
+		// Reduce the scale by a factor so that the DefaultEditedStyleData2D 
+		//    default size doesnt make the shape too large.
+		return EditedStyleUtils.getSize(innerStyle, obj) / 10 ;
 	}
 
 	@Override
@@ -130,31 +132,32 @@ public class EditedMarkStyle implements MarkStyle{
 		return lineMaterial;
 	}
 
-	public static BufferedImage createShapeImage(Shape shape, Dimension size, float scale, Color lineColor, Color backColor){
-		int halfWidth = size.width / 2;
-		int halfHeight = size.height / 2;
-		int dim = (int)(size.width * scale);
-		BufferedImage image = new BufferedImage(size.width,  size.height, BufferedImage.TYPE_4BYTE_ABGR);
+	public static BufferedImage createShapeImage(Shape shape, Dimension size, Color color){
+		double halfWidth = size.width / 2;
+		double halfHeight = size.height / 2;
+		
+		BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// Background
-		g2.setPaint(backColor);
-		g2.fillRect(0, 0, size.width, size.height);
-		if (scale <= 0)
-			return image;
-
-		// Pattern
-		g2.setPaint(lineColor);
-		g2.setStroke(new BasicStroke(dim));
-		 
-		// TODO check that the shape is centered correctly.
-		int x = halfWidth - dim / 2;
-    int y = halfHeight - dim / 2;
+		// Translate the shape to the image center, and scale to image size
+		AffineTransform at = new AffineTransform();
+		at.translate(halfWidth, halfHeight);
+		at.scale(0.8*size.width, 0.8*size.height);
+    shape = at.createTransformedShape(shape);
+   
+	  // Background Color TODO provide as parameters
+    Color bgcolor = new Color(0,0,0,0);
+    g2.setPaint(bgcolor);
+    g2.fillRect(0, 0, size.width, size.height);
 		
-    g2.translate(-x, -y);
+		g2.setPaint(Color.BLACK);
+		g2.setStroke(new BasicStroke(2.0f));
+		g2.draw(shape);
+		
+    g2.setPaint(color); 
+    g2.fill(shape);
     
-    g2.draw(shape);
 		g2.dispose();
 		return image;
 	}

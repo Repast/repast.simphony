@@ -482,7 +482,11 @@ public class EditedStyleDialog extends JDialog {
     }
   }
 
-  public boolean doSave() {
+  public EditedStyleData getUserStyleData() {
+		return userStyleData;
+	}
+
+	public boolean doSave() {
     return save;
   }
 

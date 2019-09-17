@@ -101,7 +101,7 @@ public class GISVisualizationRegistryData implements VisualizationRegistryData {
 	}
 
 	@Override
-	public Class<?> getEditedStyleClass() {
+	public Class<?> getEditedStyleClass(EditedStyleData data) {
 		return null;
 	}
 

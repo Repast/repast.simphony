@@ -19,12 +19,17 @@ import java.util.Set;
  */
 public class IconFactory2D {
 
+	private static Shape circle;
 	private static Shape cross;
 	private static Shape star;
 	private static Shape triangle;
 	private static Shape arrow;
 	private static Shape X;
 	private static Shape square;
+	private static Shape hatch;
+	private static Shape line;
+	private static Shape polygon;
+	
 
 	public static Set<String> Shape_List = new HashSet<String>(Arrays.asList(
 		"circle",
@@ -33,7 +38,8 @@ public class IconFactory2D {
 		"square",
 		"triangle",
 		"X",
-		"arrow"));
+		"arrow",
+		"hatch"));
 	
 	static {
 		GeneralPath crossPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
@@ -117,8 +123,25 @@ public class IconFactory2D {
 		hatchPath.lineTo(-.5f, .57f);
 		hatchPath.lineTo(-.57f,.57f);
 		hatchPath.lineTo(-.57f,.5f);
+		
+		hatch = hatchPath;
 
 		square = new Rectangle2D.Double(-.5, -.5, 1., 1.);
+		circle = new java.awt.geom.Ellipse2D.Double(-.5, -.5, 1., 1.);
+		
+		GeneralPath linePath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+		linePath.moveTo(-0.9, -0.9);
+		linePath.lineTo(0.9, 0.9);
+		line = linePath;
+		
+		GeneralPath polygonPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+		polygonPath.moveTo(-1.5, -0.9);
+		polygonPath.lineTo(0.9, -0.7);
+		polygonPath.lineTo(1.2, 0.0);
+		polygonPath.lineTo(0.7, 0.9);
+		polygonPath.lineTo(-0.9, 0.9);
+		polygonPath.lineTo(-1.5, -0.9);
+		polygon = polygonPath;
 	}
 
 	public static Shape getShape(String symbol) {
@@ -130,30 +153,32 @@ public class IconFactory2D {
 		if (symbol.equalsIgnoreCase("cross")) {
 			return cross;
 		}
-
 		if (symbol.equalsIgnoreCase("circle")) {
-			return new java.awt.geom.Ellipse2D.Double(-.5, -.5, 1., 1.);
+			return circle;
 		}
-
 		if (symbol.equalsIgnoreCase("triangle")) {
 			return triangle;
 		}
-
 		if (symbol.equalsIgnoreCase("X")) {
 			return X;
 		}
-
 		if (symbol.equalsIgnoreCase("star")) {
 			return star;
 		}
-
 		if (symbol.equalsIgnoreCase("arrow")) {
 			return arrow;
 		}
-
-
 		if (symbol.equalsIgnoreCase("square")) {
 			return square;
+		}
+		if (symbol.equalsIgnoreCase("hatch")) {
+			return hatch;
+		}
+		if (symbol.equalsIgnoreCase("polygon")) {
+			return polygon;
+		}
+		if (symbol.equalsIgnoreCase("line")) {
+			return line;
 		}
 
 		return null;
