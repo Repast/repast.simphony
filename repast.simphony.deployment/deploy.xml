@@ -101,20 +101,20 @@
 			<exclude name="**/repast.simphony.distributed.batch.ui/**" />
 			<exclude name="**/repast.simphony.distributed.batch/test_data/**" />
 			<exclude name="**/repast.simphony.statecharts.diagram/**" />
-			
+
 			<!-- Exclude deprecated plugins-->
 			<exclude name="**/repast.simphony.ora/**" />
 			<exclude name="**/repast.simphony.matlab/**" />
 		</fileset>
 
 		<pathconvert pathsep=" " property="GenericJARClasspath" refid="RawJARClasspath">
-		<!-- MJB 5/9/2013 Comment out to prevent duplication of directory name in path (John Murphy) -->
-		<!--	<map from="${workspaceDirectory}" to="." /> -->
+			<!-- MJB 5/9/2013 Comment out to prevent duplication of directory name in path (John Murphy) -->
+			<!--	<map from="${workspaceDirectory}" to="." /> -->
 			<map from="${NewProjectDirectory}" to="." />
 		</pathconvert>
 
 		<echo message="Generic JAR Classpath:  ${GenericJARClasspath}" />
-		<tempfile property="temp.file" prefix="temp"/>
+		<tempfile property="temp.file" prefix="temp" />
 		<echo message="${GenericJARClasspath}" file="${temp.file}" />
 		<loadfile srcfile="${temp.file}" property="JARClasspath">
 			<filterchain>
@@ -136,24 +136,24 @@
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.batch/test" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.batch/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-			
+
 			<fileset dir="../repast.simphony.distributed.batch/src" casesensitive="no">
-                <include name="**/*.java" />
-                <include name="**/*.groovy" />
-            </fileset>
-            
-            <fileset dir="../repast.simphony.distributed.batch/bin" casesensitive="no">
-                <include name="**/*.class" />
-            </fileset>
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
+			<fileset dir="../repast.simphony.distributed.batch/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
 
 			<fileset dir="../repast.simphony.chart/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -235,7 +235,7 @@
 			<fileset dir="../repast.simphony.gis/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
-					
+
 			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
@@ -425,6 +425,19 @@
 			<fileset dir="../repast.simphony.statecharts.visualization/bin" casesensitive="no">
 				<include name="**/*.class" />
 			</fileset>
+			
+			<!-- Server -->
+
+			<fileset dir="../repast.simphony.server/src" casesensitive="no">
+				<include name="**/*.java" />
+				<include name="**/*.groovy" />
+			</fileset>
+
+			<fileset dir="../repast.simphony.server/bin" casesensitive="no">
+				<include name="**/*.class" />
+			</fileset>
+
+
 
 		</jar>
 	</target>

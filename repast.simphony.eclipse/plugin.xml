@@ -148,6 +148,7 @@
          </action>
       </objectContribution>
       
+      
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -174,6 +175,22 @@
                enablesFor="1"
                id="repast.simphony.eclipse.converter_action"
                label="Convert Scenario">
+         </action>
+      </objectContribution>
+      
+      <objectContribution
+       objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="repast.simphony.eclipse.ServerAdd">
+            <filter
+               name="projectNature"
+               value="repast.simphony.eclipse.repast_simphony_nature">
+         </filter>
+         <action
+               label="Add Server Launcher"
+               class="repast.simphony.eclipse.ide.ServerLauncherAdder"
+               menubarPath="rs.main.menu/rs.natureGroup"
+               id="AddServerAction">
          </action>
       </objectContribution>
    </extension>

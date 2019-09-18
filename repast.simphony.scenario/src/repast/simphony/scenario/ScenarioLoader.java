@@ -4,6 +4,7 @@ package repast.simphony.scenario;
 import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import repast.simphony.engine.controller.ControllerActionConstants;
@@ -50,6 +51,7 @@ public class ScenarioLoader {
 
   private ActionExtensions actionExts;
   protected Scenario scenario;
+  private List<ModelInitializer> initializers = new ArrayList<>();
 
   public ScenarioLoader(File scenarioDir, ActionExtensions actionExts) {
     this.scenarioDir = scenarioDir;
@@ -100,6 +102,10 @@ public class ScenarioLoader {
    */
   public Parameters getParameters() {
     return params;
+  }
+  
+  public void addInitializer(ModelInitializer initializer) {
+      initializers.add(initializer);
   }
 
   public ControllerRegistry load(RunEnvironmentBuilder builder) throws ScenarioLoadException {
@@ -200,6 +206,9 @@ public class ScenarioLoader {
 
       // run the user's initialization code
       scenario.getModelInitializer().initialize(scenario, builder);
+      for (ModelInitializer mi : initializers) {
+          mi.initialize(scenario, builder);
+      }
 
       // add all controller actions that user may have created and that are
       // stored in the scenario
