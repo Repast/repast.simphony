@@ -5,10 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import repast.simphony.context.Context;
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.space.graph.Network;
-import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.gis3D.DisplayGIS3D;
 import repast.simphony.visualization.gis3D.style.CoverageStyle;
 import repast.simphony.visualization.gis3D.style.EditedMarkStyle;
+import repast.simphony.visualization.gis3D.style.EditedNetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.EditedSurfaceShapeStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
@@ -83,29 +83,34 @@ public class GISStyleRegistrar {
   }
   
   public void registerNetworkStyles(GISDisplayDescriptor descriptor, Context<?> context)
-      throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+      throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, NoSuchMethodException, 
+      SecurityException{
   
     for (ProjectionData proj : descriptor.getProjections()) {
       if (proj.getType().equals(ProjectionData.NETWORK_TYPE)) {
+      	Network<?> network = context.getProjection(Network.class, proj.getId());
         String styleName = descriptor.getNetworkStyleClassName(proj.getId());
   
-        // TODO GIS network edited style
-//        String netEditedStyleName = descriptor.getNetworkEditedStyleName(proj.getId());
-        String netEditedStyleName = null;
-   
-        Network<?> network = context.getProjection(Network.class, proj.getId());
- 
+        // The actual style class is either an edted style class...
         NetworkStyleGIS style = null;
-        // Style editor references get priority over explicit style classes if
-        // both are specified in descriptor
-        if (netEditedStyleName != null) {
-        	style = null;
-        } 
-        else if (styleName != null) {
-          Class<?> styleClass = Class.forName(styleName, true, this.getClass().getClassLoader());
-          style = (NetworkStyleGIS) styleClass.newInstance();
+        
+        Class<? extends NetworkStyleGIS> styleClass = (Class<? extends NetworkStyleGIS>)Class.forName(styleName, 
+        		true, this.getClass().getClassLoader());
+        
+        if (EditedNetworkStyleGIS.class.isAssignableFrom(styleClass)) {
+        	String netEditedStyleName = descriptor.getNetworkEditedStyleName(proj.getId());
+        	
+        	// Construct the edited style with the input XML style name arg
+        	style = styleClass.getConstructor(String.class).newInstance(netEditedStyleName);
         }
         
+        // ...or the style class is a user-defined class in the project classpath
+        else {
+        	// Construct the no-arg user style class.
+        	style = styleClass.getConstructor().newInstance();
+        }
+   
         if (style != null) {
         	display.registerNetworkStyle(network, style);
         }
