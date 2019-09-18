@@ -86,6 +86,13 @@ public class RepastWS {
             String classpath = "";
             List<String> command = new ArrayList<String>();
             command.add("java");
+            
+            // JDK 9+ module and exports needed for geotools classpath
+            command.add("--add-modules");
+            command.add("ALL-SYSTEM");
+            command.add("--add-exports");
+            command.add("java.base/jdk.internal.ref=ALL-UNNAMED");
+            
             command.add("-cp");
 
             if (OS.contains("win"))
