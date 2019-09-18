@@ -9,6 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.render.BasicWWTexture;
@@ -44,7 +45,15 @@ public class EditedMarkStyle implements MarkStyle{
 			return texture;
 		
 		else {
-		// TODO check for icon file
+			
+		  if (innerStyle.getIconFile2D() != null) {
+		  	
+		  	URL localUrl = WorldWind.getDataFileStore().requestFile(innerStyle.getIconFile2D());
+				if (localUrl != null)	{
+					return new BasicWWTexture(localUrl, false);
+				}
+		  	
+		  }
 			
 			String shapeName = innerStyle.getShapeWkt();
 			Color color = EditedStyleUtils.getColor(innerStyle, object);
