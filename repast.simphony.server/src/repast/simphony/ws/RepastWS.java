@@ -1,7 +1,9 @@
 package repast.simphony.ws;
 
+import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -369,7 +371,7 @@ public class RepastWS {
         return builder.toString();
     }
 
-    private void start(int port) {
+    private void start(int port, boolean openBrowser) {
         
         //String path = runtimeSource.getFile().replaceAll("%20", " ");
         app = Javalin.create(config -> {
@@ -428,6 +430,17 @@ public class RepastWS {
                 }
             });
         });
+        
+        if (openBrowser && Desktop.isDesktopSupported()) {
+            try {
+                System.out.println("!!!!! STARTING BROWSER AT http://localhost:" + port + " !!!!!");
+                Thread.sleep(1000);
+                Desktop.getDesktop().browse(new URI("http://localhost:" + port));
+            } catch (IOException | URISyntaxException | InterruptedException e) {
+                LOG.info("Cannot Start Web Browser");
+                System.out.println("!!!!! PLEASE START A WEB BROWSER (Chrome, Safari, etc.) AND GOTO http://localhost:" + port + " !!!!!");
+            }
+        }
     }
     
 
@@ -451,7 +464,7 @@ public class RepastWS {
     public static void main(String[] args) {
         BasicConfigurator.configure();
         RepastWS ws = new RepastWS(args[1]);
-        ws.start(Integer.parseInt(args[0]));
+        ws.start(Integer.parseInt(args[0]), Boolean.parseBoolean(args[2]));
 
     }
 }

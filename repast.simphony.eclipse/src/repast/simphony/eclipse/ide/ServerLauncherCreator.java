@@ -39,7 +39,7 @@ public class ServerLauncherCreator {
         
         String scenarioDirectory = project.getProject().getName() + ".rs";
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "5000 \"${workspace_loc:" + project.getElementName() + "}/" + scenarioDirectory + "\"");
+                "5000 \"${workspace_loc:" + project.getElementName() + "}/" + scenarioDirectory + "\" true");
         
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, RSProjectConfigurator.VMARGS);
         IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
