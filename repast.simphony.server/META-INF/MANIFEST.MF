@@ -43,3 +43,5 @@ Bundle-ClassPath: lib/annotations-13.0.jar,
  lib/websocket-server-9.4.17.v20190418.jar,
  lib/websocket-servlet-9.4.17.v20190418.jar,
  .
+Export-Package: repast.simphony.ws,
+ repast.simphony.ws.gis

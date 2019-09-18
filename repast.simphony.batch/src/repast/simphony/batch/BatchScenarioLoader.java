@@ -85,11 +85,6 @@ public class BatchScenarioLoader extends ScenarioLoader {
   }
 
   @Override
-  public BatchScenario getScenario() {
-    return (BatchScenario) scenario;
-  }
-
-  @Override
   protected ControllerActionIOExtensions getIOExts() {
     return ioExt;
   }

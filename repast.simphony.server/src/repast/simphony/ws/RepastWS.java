@@ -1,21 +1,27 @@
 package repast.simphony.ws;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.log4j.BasicConfigurator;
 import org.xml.sax.SAXException;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
@@ -65,8 +71,10 @@ public class RepastWS {
         private boolean run = true;
         private Process p; // the repast runner process
         private String initMsg;
+        private String modelClasspath;
+        private String serverPluginPath;
 
-        public MessageHandler(WsContext ctx, String scenarioDirectory) {
+        public MessageHandler(WsContext ctx, String scenarioDirectory, String modelClasspath, String serverPluginPath) {
             this.ctx = ctx;
             zCtx = new ZContext();
             incoming = zCtx.createSocket(SocketType.PULL);
@@ -76,25 +84,29 @@ public class RepastWS {
             outgoing.bind(OUTGOING_ADDR);
             zpoller = new ZPoller(zCtx);
             this.scenarioDirectory = scenarioDirectory;
+            this.modelClasspath = modelClasspath;
+            this.serverPluginPath = serverPluginPath;
         }
+        
 
-        private void runModel() throws IOException {
+        private void runModel(boolean debug) throws IOException {
 
             // Run OneRunRunner
             String debugArgs = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000";
 
-            String classpath = "";
             List<String> command = new ArrayList<String>();
             command.add("java");
             command.add("-cp");
 
-            if (OS.contains("win"))
-                classpath = "bin;lib/*;simphony_lib/*;simphony_lib_gis/*";
+//            if (OS.contains("win"))
+//                classpath = "bin;lib/*;simphony_lib/*;simphony_lib_gis/*";
+//
+//            else
+//                classpath = "./bin:./lib/*:./simphony_lib/*:./simphony_lib_gis/*";
+            
+            MSG_LOG.info(modelClasspath);
 
-            else
-                classpath = "./bin:./lib/*:./simphony_lib/*:./simphony_lib_gis/*";
-
-            command.add(classpath);
+            command.add(modelClasspath);
             command.add("repast.simphony.ws.OneRunRunner");
             command.add(scenarioDirectory + "/launch.props");
 
@@ -135,7 +147,7 @@ public class RepastWS {
             else if (cmd.equals("init_params")) {
                 try {
                     shutdownModel();
-                    runModel();
+                    runModel(false);
                     @SuppressWarnings("unchecked")
                     List<Map<String, String>> pvals = (List<Map<String, String>>) msg.get("params");
                     initMsg = "{\"params\" : " + mapper.writeValueAsString(pvals) + "}";
@@ -208,7 +220,7 @@ public class RepastWS {
                                     String icon = json.get("icon").toString();
                                     MSG_LOG.info("Copying icon " + icon);
                                     Files.copy(Paths.get(scenarioDirectory.toString(), "..", icon),
-                                            Paths.get("../static/textures/", Paths.get(icon).getFileName().toString()),
+                                            Paths.get(serverPluginPath + "/web/static/textures/", Paths.get(icon).getFileName().toString()),
                                             StandardCopyOption.REPLACE_EXISTING);
                                 } else {
                                     
@@ -273,6 +285,32 @@ public class RepastWS {
     };
     private ObjectMapper mapper = new ObjectMapper();
     private Javalin app;
+    private String serverPluginPath = null;
+    private String modelClasspath = null;
+    private String scenarioDirectory;
+    
+    public RepastWS(String scenarioDirectory) {
+        this.scenarioDirectory = scenarioDirectory;
+        URL runtimeSource = getClass().getProtectionDomain().getCodeSource().getLocation();
+        try {
+            serverPluginPath = Paths.get(runtimeSource.toURI()).resolve("..").toString();
+            modelClasspath = new ModelClasspathBuilder().run(Paths.get(serverPluginPath, "..").toAbsolutePath());
+            Properties props = new Properties();
+            props.put("working.directory", "../");
+            props.put("incoming", "tcp://127.0.0.1:5555");
+            props.put("outgoing", "tcp://127.0.0.1:5556");
+            props.put("scenario", Paths.get("../", Paths.get(scenarioDirectory).getFileName().toString()).toString());
+            try (BufferedWriter out = Files.newBufferedWriter(Paths.get(scenarioDirectory, "launch.props"), StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                props.store(out, "");
+            }
+           
+            System.out.println(modelClasspath);
+        } catch (URISyntaxException | IOException e) {
+            LOG.error("Error finding server location", e);
+        }
+        
+    }
 
     private String parseParameters(Path scenario) throws ParserConfigurationException, SAXException, IOException {
         Path parameters = scenario.resolve("parameters.xml");
@@ -331,10 +369,12 @@ public class RepastWS {
         return builder.toString();
     }
 
-    private void start(int port, String scenarioDirectory) {
+    private void start(int port) {
+        
+        //String path = runtimeSource.getFile().replaceAll("%20", " ");
         app = Javalin.create(config -> {
-            config.addStaticFiles("../static", Location.EXTERNAL);
-            config.addSinglePageRoot("/", "../index.html", Location.EXTERNAL);
+            config.addStaticFiles(serverPluginPath + "/web/static", Location.EXTERNAL);
+            config.addSinglePageRoot("/", serverPluginPath + "/web/index.html", Location.EXTERNAL);
         }).start(port);
 
         // ASSUMES ONE CONNECTION AT A TIME
@@ -348,7 +388,7 @@ public class RepastWS {
                     String paramsMsg = parseParameters(sd);
                     ctx.send(paramsMsg);
 
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
@@ -357,7 +397,7 @@ public class RepastWS {
                     msgHandlerThread.join();
                 }
 
-                msgHandler = new MessageHandler(ctx, scenarioDirectory);
+                msgHandler = new MessageHandler(ctx, scenarioDirectory, modelClasspath, serverPluginPath);
                 // TODO make this a field indexed ctx
                 msgHandlerThread = new Thread(msgHandler);
                 msgHandlerThread.start();
@@ -409,31 +449,9 @@ public class RepastWS {
     }
 
     public static void main(String[] args) {
-        RepastWS ws = new RepastWS();
-        ws.start(Integer.parseInt(args[0]), args[1]);
-        
-
-        // Create a simple Frame we can use to signal runtime shutdown properly.
-
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                JFrame frame = new JFrame("Repast Server");
-//                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//                frame.setPreferredSize(new Dimension(400, 200));
-//                frame.pack();
-//                frame.setVisible(true);
-//
-//                final RepastWS ws = new RepastWS();
-//                ws.start(Integer.parseInt(args[0]), args[1]);
-//
-//                Runtime.getRuntime().addShutdownHook(new Thread() {
-//                    public void run() {
-//                        System.out.println("ShutdownHook.run");
-//                        ws.shutDown();
-//                    }
-//                });
-//            }
-//        });
+        BasicConfigurator.configure();
+        RepastWS ws = new RepastWS(args[1]);
+        ws.start(Integer.parseInt(args[0]));
 
     }
 }

@@ -59,7 +59,43 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.7.jar",
       "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
-      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar" };
+      "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar",
+      
+      "ECLIPSE_HOME/plugins/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jackson-core-2.9.9.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jackson-databind-2.9.9.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/slf4j-simple-1.7.26.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/kotlin-stdlib-jdk7-1.3.31.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/slf4j-api-1.7.26.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-api-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-servlet-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-webapp-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/kotlin-stdlib-common-1.3.31.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-client-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javax.servlet-api-3.1.0.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-io-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-server-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-util-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/kotlin-stdlib-1.3.31.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-common-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/annotations-13.0.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javalin-3.0.0.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/kotlin-stdlib-jdk8-1.3.31.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-servlet-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jeromq-0.5.1.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jackson-annotations-2.9.9.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-client-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-xml-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/saf.core.v3d.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-http-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-server-9.4.17.v20190418.jar",
+      "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-security-9.4.17.v20190418.jar",
+      
+      "ECLIPSE_HOME/plugins/repast.simphony.scenario_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+      "ECLIPSE_HOME/plugins/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+      
+      
+  };
 
   public static final String RS_EXTRA_JAR_CODE = "REPAST_EXTRA_JAR_";
   public static final ArrayList<String> AGENT_BUILDER_EXTRA_JARS = new ArrayList<String>();

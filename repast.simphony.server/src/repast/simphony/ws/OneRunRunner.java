@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.JComponent;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -53,6 +52,7 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersCreator;
 import repast.simphony.parameter.ParametersParser;
 import repast.simphony.parameter.Schema;
+import repast.simphony.scenario.Scenario;
 import repast.simphony.scenario.ScenarioLoadException;
 import repast.simphony.scenario.ScenarioLoader;
 import repast.simphony.space.continuous.ContinuousSpace;
@@ -62,9 +62,7 @@ import repast.simphony.ui.probe.GridLocationProbe;
 import repast.simphony.ui.probe.MethodPropertyDescriptor;
 import repast.simphony.ui.probe.ProbeInfo;
 import repast.simphony.ui.probe.ProbeIntrospector;
-import repast.simphony.ui.probe.ProbeModel;
 import repast.simphony.ui.probe.SpaceLocationProbe;
-import repast.simphony.ui.probe.StringProbedProperty;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.util.collections.Tree;
@@ -333,13 +331,14 @@ public class OneRunRunner implements RunListener {
     private void init(File scenarioDir) throws ScenarioLoadException {
         if (scenarioDir.exists()) {
             ScenarioLoader loader = new BatchScenarioLoader(scenarioDir);
+            loader.addInitializer(new WSInitializer());
             ControllerRegistry registry = loader.load(runEnvironmentBuilder);
             controller.setControllerRegistry(registry);
         } else {
             // msgCenter.error("Scenario not found", new
             // IllegalArgumentException("Invalid scenario "
             // + scenarioDir.getAbsolutePath()));
-            System.err.println("Scenario not found");
+           LOG.error("Scenario not found", new IOException("Scenario Directory " + scenarioDir + " not found."));
         }
     }
 
