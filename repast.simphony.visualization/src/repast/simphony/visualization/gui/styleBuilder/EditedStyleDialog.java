@@ -482,7 +482,11 @@ public class EditedStyleDialog extends JDialog {
     }
   }
 
-  public boolean doSave() {
+  public EditedStyleData getUserStyleData() {
+		return userStyleData;
+	}
+
+	public boolean doSave() {
     return save;
   }
 
@@ -755,8 +759,19 @@ public class EditedStyleDialog extends JDialog {
 
   	JFileChooser chooser = new JFileChooser(currentFile);		
     
- // TODO Projections: init from viz registry data entries
-    if (displayType.equals(DisplayType.TWO_D)) {
+    if (displayType.equals(DisplayType.THREE_D)) {
+    	chooser.setFileFilter(new ModelFile3DFilter());
+    	chooser.showOpenDialog(this);
+    	chosenFile = chooser.getSelectedFile();
+    	
+      if (chosenFile != null) {
+        iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
+        userStyleData.setModelFile3D(ScenarioUtils.makeRelativePathToProject(chosenFile.getAbsolutePath()));
+        iconButton.setText("Model Set");
+      }
+    }
+    // TODO Projections: init from viz registry data entries
+    else {
     	chooser.setFileFilter(new IconFile2DFilter());
     	chooser.showOpenDialog(this);
     	chosenFile = chooser.getSelectedFile();
@@ -768,17 +783,7 @@ public class EditedStyleDialog extends JDialog {
         preview.setIconFile(chosenFile);
         disableColorButtons();
       }
-    } else {
-    	chooser.setFileFilter(new ModelFile3DFilter());
-    	chooser.showOpenDialog(this);
-    	chosenFile = chooser.getSelectedFile();
-    	
-      if (chosenFile != null) {
-        iconButton.setFont(iconButton.getFont().deriveFont(Font.BOLD));
-        userStyleData.setModelFile3D(ScenarioUtils.makeRelativePathToProject(chosenFile.getAbsolutePath()));
-        iconButton.setText("Model Set");
-      }
-    }
+    } 
   }
   
   private void clearFileButtonActionPerformed(ActionEvent e) {

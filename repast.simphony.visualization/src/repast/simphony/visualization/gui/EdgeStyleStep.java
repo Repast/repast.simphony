@@ -82,7 +82,7 @@ public class EdgeStyleStep extends PluginWizardStep {
 	}
 
 	public EdgeStyleStep() {
-		super("Edge Style", "Please provide an edge style for each network in the display");
+		super("Network Style", "Please provide an edge style for each network in the display");
 	}
 	
 	@Override

@@ -19,8 +19,9 @@ import repast.simphony.visualization.engine.VisualizationRegistryData;
 import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
 import repast.simphony.visualization.gis3D.style.DefaultNetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
+import repast.simphony.visualization.gis3D.style.EditedMarkStyle;
 import repast.simphony.visualization.gis3D.style.EditedNetworkStyleGIS;
-import repast.simphony.visualization.gis3D.style.EditedStyleGIS;
+import repast.simphony.visualization.gis3D.style.EditedSurfaceShapeStyle;
 import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.StyleGIS;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
@@ -106,8 +107,16 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 
 	// TODO class ? extends
 	@Override
-	public Class getEditedStyleClass() {
-		return EditedStyleGIS.class;
+	public Class<?> getEditedStyleClass(EditedStyleData editedStyledata) {
+		
+		String shape = editedStyledata.getShapeWkt();
+		
+		if (EditedSurfaceShapeStyle.LINE.equalsIgnoreCase(shape) || 
+				EditedSurfaceShapeStyle.POLYGON.equalsIgnoreCase(shape))
+		
+			return EditedSurfaceShapeStyle.class;
+			
+		return EditedMarkStyle.class;
 	}
 
 	@Override
@@ -117,14 +126,14 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 		Set<String> allowedShapes = IconFactory2D.Shape_List;
 		
 		// ...or line or polygon shapes.
-		allowedShapes.add("line");
-		allowedShapes.add("polygon");
+		allowedShapes.add(EditedSurfaceShapeStyle.LINE);
+		allowedShapes.add(EditedSurfaceShapeStyle.POLYGON);
 		
 		return allowedShapes;
 	}
 
 	@Override
-	public Class getEditedEdgeStyleClass() {
+	public Class<?> getEditedEdgeStyleClass() {
 		return EditedNetworkStyleGIS.class;
 	}
 

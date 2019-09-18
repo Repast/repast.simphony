@@ -19,6 +19,10 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import repast.simphony.ui.plugin.editor.SquareIcon;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
@@ -32,10 +36,6 @@ import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import repast.simphony.visualizationOGL2D.StyleOGL2D;
 import simphony.util.messages.MessageCenter;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Style editor step for displays that use style classes to style agents.
@@ -106,9 +106,10 @@ public class StyleClassStep extends StyleStep {
 					dialog.pack();
 					dialog.setVisible(true);
 
-					if (dialog.doSave()) {
-						// Set the style class name based on display type
-						String styleClassName = getEditedStyleClassForDisplay(model.getDescriptor());
+					if (dialog.doSave()) {				
+						// Set the style class name based on display type and edited style data
+						String styleClassName = getEditedStyleClassForDisplay(model.getDescriptor(), 
+								dialog.getUserStyleData());
 				
 						if (styleModel.getIndexOf(styleClassName) < 0)
 							styleModel.addElement(styleClassName);
@@ -338,7 +339,8 @@ public class StyleClassStep extends StyleStep {
 	 * @param descriptor
 	 * @return
 	 */
-	protected String getEditedStyleClassForDisplay(DisplayDescriptor descriptor){
+	protected String getEditedStyleClassForDisplay(DisplayDescriptor descriptor, 
+			EditedStyleData editedStyledata){
 		String styleClassName = null;
 	
 		if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
@@ -353,7 +355,7 @@ public class StyleClassStep extends StyleStep {
 					descriptor.getDisplayType());
 
 			if (data != null){
-				Class clazz = data.getEditedStyleClass();
+				Class<?> clazz = data.getEditedStyleClass(editedStyledata);
 				
 				if (clazz != null)
 					styleClassName = clazz.getName();
