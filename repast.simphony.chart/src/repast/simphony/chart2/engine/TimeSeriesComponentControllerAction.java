@@ -120,8 +120,10 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
    */
   @Override
   public void stopped() {
-    if (chartData != null)
+    if (chartData != null) {
       chartData.setRunning(false);
+      chartCreator.setAntiAliasing(true);
+    }
   }
 
   /*
@@ -131,8 +133,10 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
    */
   @Override
   public void paused() {
-    if (chartData != null)
+    if (chartData != null) {
       chartData.setRunning(false);
+      chartCreator.setAntiAliasing(true);
+    }
   }
 
   /*
@@ -142,8 +146,10 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
    */
   @Override
   public void started() {
-    if (chartData != null)
+    if (chartData != null) {
       chartData.setRunning(true);
+      chartCreator.setAntiAliasing(false);
+    }
   }
 
   /*
@@ -153,7 +159,9 @@ public class TimeSeriesComponentControllerAction extends DefaultControllerAction
    */
   @Override
   public void restarted() {
-    if (chartData != null)
+    if (chartData != null) {
       chartData.setRunning(true);
+      chartCreator.setAntiAliasing(false);
+    }
   }
 }
