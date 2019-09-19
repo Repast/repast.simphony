@@ -5,17 +5,30 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModelClasspathBuilder {
     
-    private Set<String> libs = new HashSet<>();
+    private List<String> libs = new ArrayList<>();
     
     public ModelClasspathBuilder() {
+        libs.add("repast.simphony.");
         libs.add("libs.bsf");
         libs.add("libs.ext");
         libs.add("libs.piccolo");
+    }
+    
+    private boolean isValid(Path p) {
+        String fn = p.getFileName().toString();
+        for (String lib : libs) {
+            if (fn.startsWith(lib)) {
+                return true;
+            }
+        }
+        
+        return false;
+        
     }
     
     public String run(Path pluginRoot) throws IOException {
@@ -23,8 +36,7 @@ public class ModelClasspathBuilder {
         b.append(File.pathSeparator);
         b.append("./lib/*");
         Files.walk(pluginRoot, 1).
-            filter(p -> (p.getFileName().toString().startsWith("repast.simphony.") || libs.contains(p.getFileName().toString()))
-                    && p.toFile().isDirectory()).
+            filter(p -> isValid(p) && p.toFile().isDirectory()).
             forEach(p -> {
                b.append(File.pathSeparator);
                b.append(p.toString());
