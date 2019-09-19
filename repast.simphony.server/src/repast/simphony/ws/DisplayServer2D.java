@@ -1,5 +1,6 @@
 package repast.simphony.ws;
 
+import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -43,8 +44,14 @@ public class DisplayServer2D extends DisplayServer {
         builder.append(id);
         builder.append(", \"type\":\"");
         builder.append(descriptor.getDisplayType());
+        
+        // Check for background color which may not exist in older descriptors
+        Color bgcolor = Color.WHITE;
+        if (descriptor.getBackgroundColor() != null)
+        	bgcolor = descriptor.getBackgroundColor();
+        
         builder.append("\", \"background_color\": [");
-        float[] color = descriptor.getBackgroundColor().getRGBColorComponents(null);
+        float[] color = bgcolor.getRGBColorComponents(null);
         builder.append(color[0]);
         builder.append(",");
         builder.append(color[1]);
@@ -57,18 +64,25 @@ public class DisplayServer2D extends DisplayServer {
         builder.append(box.getHeight());
         builder.append("], \"layers\": [");
         boolean first = true;
+        
+        Map<String, String> styles = descriptor.getEditedStyles();
         for (StyledLayer layer : classStyleMap.values()) {
-            if (!first) {
+        		EditedStyleData<Object> data = EditedStyleUtils.getStyle(styles.get(layer.getName()));
+        		
+        		if (data == null) {
+        			LOG.warn("Can't create server display for " + layer.getName() + 
+        					" in display " + descriptor.getName() + " because there is no edited style defined.");
+        			continue;
+        		}
+        		
+        		if (!first) {
                 builder.append(",");
             }
             builder.append("{\"name\":\"");
             builder.append(layer.getName());
             builder.append("\", \"layer_id\" : ");
             builder.append(layer.getLayerId());
-            
-            
-            Map<String, String> styles = descriptor.getEditedStyles();
-            EditedStyleData<Object> data = EditedStyleUtils.getStyle(styles.get(layer.getName()));
+              
             String iconFile = data.getIconFile2D();
             if (iconFile != null && iconFile.length() > 0) {
                 outgoing.send("{\"id\": \"req\", \"value\": \"copy_icon\", \"icon\": \"" + data.getIconFile2D() + "\"}");
@@ -161,14 +175,19 @@ public class DisplayServer2D extends DisplayServer {
     @Override
     protected void addObject(Object o) {
         StyledLayer layer = findLayer(o);
-        layer.addObject(o, idCounter);
-        ++idCounter;
+        
+        if (layer != null) {
+        	layer.addObject(o, idCounter);
+        	++idCounter;
+        }
     }
 
     @Override
     protected void removeObject(Object o) {
-        StyledLayer layer = findLayer(o);
-        layer.removeObject(o);
+    		StyledLayer layer = findLayer(o);
+    		if (layer != null) {
+    			layer.removeObject(o);
+    		}
     }
 
     @Override
