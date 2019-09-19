@@ -53,6 +53,8 @@ public class RepastWS {
     private static class MessageHandler implements Runnable {
 
         private static final MessageCenter MSG_LOG = MessageCenter.getMessageCenter(MessageHandler.class);
+        // 30 seconds
+        private static final long HEARTBEAT_INTERVAL = 30000;
 
         private static final String INCOMING_ADDR = "tcp://127.0.0.1:5556";
         private static final String OUTGOING_ADDR = "tcp://127.0.0.1:5555";
@@ -75,6 +77,7 @@ public class RepastWS {
         private String initMsg;
         private String modelClasspath;
         private String serverPluginPath;
+        private long heartBeatTS = 0;
 
         public MessageHandler(WsContext ctx, String scenarioDirectory, String modelClasspath, String serverPluginPath) {
             this.ctx = ctx;
@@ -236,6 +239,14 @@ public class RepastWS {
                             ctx.send(ByteBuffer.wrap(zmsg.getLast().getData()));
                         }
                         zmsg.destroy();
+                    }
+                    
+                    
+                    long ts = System.currentTimeMillis();
+                    if (ts - heartBeatTS > HEARTBEAT_INTERVAL) {
+                        // send a heart beat
+                        ctx.send("{\"id\": \"heartbeat\"}");
+                        heartBeatTS = ts;
                     }
 
                     HashMap<String, Object> msg = queue.poll();

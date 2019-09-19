@@ -247,6 +247,8 @@ function initSocket() {
 
             } else if (msg.id === 'probed') {
                 createProbes(msg.value, msg.display_id, msg.display_type);
+            } else if (msg.id == 'heartbeat') {
+                console.log(msg);
             }
         }
     }
