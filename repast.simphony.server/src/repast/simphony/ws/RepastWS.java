@@ -451,12 +451,12 @@ public class RepastWS {
         
         if (openBrowser && Desktop.isDesktopSupported()) {
             try {
-                System.out.println("!!!!! STARTING BROWSER AT http://localhost:" + port + " !!!!!");
+                System.out.println("\n!!!!! STARTING BROWSER AT http://localhost:" + port + " !!!!!\n");
                 Thread.sleep(1000);
                 Desktop.getDesktop().browse(new URI("http://localhost:" + port));
             } catch (IOException | URISyntaxException | InterruptedException e) {
                 LOG.info("Cannot Start Web Browser");
-                System.out.println("!!!!! PLEASE START A WEB BROWSER (Chrome, Safari, etc.) AND GOTO http://localhost:" + port + " !!!!!");
+                System.out.println("\n!!!!! PLEASE START A WEB BROWSER (Chrome, Safari, etc.) AND GOTO http://localhost:" + port + " !!!!!\n");
             }
         }
     }

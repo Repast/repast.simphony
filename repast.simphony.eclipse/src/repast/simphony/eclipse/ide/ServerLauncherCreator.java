@@ -17,7 +17,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import repast.simphony.eclipse.RSProjectConfigurator;
-import repast.simphony.eclipse.RepastLauncherClasspathContainer;
+import repast.simphony.eclipse.RepastServerLauncherClasspathContainer;
 
 public class ServerLauncherCreator {
 
@@ -48,7 +48,7 @@ public class ServerLauncherCreator {
         r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
         List classpath = new ArrayList();
         classpath.add(r.getMemento());
-        IPath jarPath = new Path(RepastLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
+        IPath jarPath = new Path(RepastServerLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
         r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
         r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
         classpath.add(r.getMemento());
