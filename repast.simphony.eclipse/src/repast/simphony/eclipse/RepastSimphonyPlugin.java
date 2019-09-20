@@ -91,8 +91,8 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
       "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/websocket-server-9.4.17.v20190418.jar",
       "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jetty-security-9.4.17.v20190418.jar",
       
-      "ECLIPSE_HOME/plugins/repast.simphony.scenario_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
-      "ECLIPSE_HOME/plugins/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+      //"ECLIPSE_HOME/plugins/repast.simphony.scenario_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+      //"ECLIPSE_HOME/plugins/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
       
       
   };
