@@ -10,7 +10,7 @@
 !include "StrFunc.nsh"    ; String functions
 !include "x64.nsh"        ; Macros for x64 machines
 
-!define VERSION "2.6"     ; Repast Version
+!define VERSION "2.7"     ; Repast Version
 
 !define JAVA_HOME "jdk11"                          ; The included Java root dir
 !define JAVA_BIN "eclipse\${JAVA_HOME}\bin\javaw"  ; path to bundled VM

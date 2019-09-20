@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Build the Repast JavaDoc
 
-	Working as of Release 2.6 Nov 2018
+	Working as of Release 2.7 Nov 2019
 
 	Notes: 	* Javadoc as of JDK 9 is a lot more sensitive to errors and options
 			  compared to JDK 8 and earlier, so pay attention to arguments.
@@ -44,7 +44,7 @@
 			author="true" 
 			version="true" 
 			use="true" 
-			windowtitle="Repast Simphony 2.6 API" 
+			windowtitle="Repast Simphony 2.7 API" 
 			useexternalfile="yes"
 			nohelp="false"
 			noindex="false"
