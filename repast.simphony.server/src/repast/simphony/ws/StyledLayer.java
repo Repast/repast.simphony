@@ -10,7 +10,6 @@ import java.util.Set;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.Box;
 import repast.simphony.visualization.Layout;
-import repast.simphony.visualizationOGL2D.StyleOGL2D;
 
 public class StyledLayer {
 
@@ -18,11 +17,11 @@ public class StyledLayer {
     private Set<Object> toBeRemoved = new HashSet<>();
     private Map<Object, DisplayProperties> objMap = new HashMap<>();
     private Map<Integer, Object> idMap = new HashMap<>();
-    private StyleOGL2D style;
+    private ServerStyle2D style;
     private String layerName;
     private int layerid;
 
-    public StyledLayer(StyleOGL2D style, String layerName, int layerid) {
+    public StyledLayer(ServerStyle2D style, String layerName, int layerid) {
         this.style = style;
         this.layerName = layerName;
         this.layerid = layerid;
@@ -223,7 +222,7 @@ public class StyledLayer {
         processAdded(bb, layout);
     }
 
-    public void setStyle(StyleOGL2D<?> style) {
+    public void setStyle(ServerStyle2D style) {
         this.style = style;
     }
     

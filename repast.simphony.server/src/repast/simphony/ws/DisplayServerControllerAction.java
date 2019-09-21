@@ -28,7 +28,6 @@ import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.scenario.FastMethodConvertor;
 import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.visualization.DefaultDisplayData;
@@ -36,15 +35,10 @@ import repast.simphony.visualization.DisplayData;
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
-import repast.simphony.visualization.engine.NetworkStyleRegistrar;
-import repast.simphony.visualization.engine.NetworkStyleRegistrarOGL2D;
 import repast.simphony.visualization.engine.ProjectionDescriptor;
 import repast.simphony.visualization.engine.StyleRegistrar;
-import repast.simphony.visualization.engine.StyleRegistrarOGL2D;
 import repast.simphony.visualization.engine.VisualizationRegistry;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
-import repast.simphony.visualizationOGL2D.EdgeStyleOGL2D;
-import repast.simphony.visualizationOGL2D.StyleOGL2D;
 import repast.simphony.ws.gis.ServerDisplayCreatorGIS;
 import simphony.util.messages.MessageCenter;
 
@@ -232,19 +226,21 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 				++dsIdx;
 				
 				try {
-					StyleRegistrarOGL2D styleReg = new StyleRegistrarOGL2D();
-					styleReg.registerStyles(new StyleRegistrar.Registrar<StyleOGL2D<?>>() {
-						public void register(Class<?> agentClass, StyleOGL2D<?> style) {
+					DisplayServerStyleRegistrar2D styleReg = new DisplayServerStyleRegistrar2D();
+					styleReg.registerStyles(new StyleRegistrar.Registrar<ServerStyle2D>() {
+						public void register(Class<?> agentClass, ServerStyle2D style) {
 							ds2d.registerStyle(agentClass, style);
 						}
 					}, descriptor);
 					
-					 NetworkStyleRegistrarOGL2D netReg = new NetworkStyleRegistrarOGL2D();
-			      netReg.registerNetworkStyles(new NetworkStyleRegistrar.Registrar<EdgeStyleOGL2D>() {
-			        public void register(Network<?> network, EdgeStyleOGL2D style) {
-			        	ds2d.registerNetworkStyle(network, style);
-			        }
-			      }, descriptor, context);
+					// TODO Networks
+					
+//					 NetworkStyleRegistrarOGL2D netReg = new NetworkStyleRegistrarOGL2D();
+//			      netReg.registerNetworkStyles(new NetworkStyleRegistrar.Registrar<EdgeStyleOGL2D>() {
+//			        public void register(Network<?> network, EdgeStyleOGL2D style) {
+//			        	ds2d.registerNetworkStyle(network, style);
+//			        }
+//			      }, descriptor, context);
 					
 					ds = ds2d;
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -266,6 +262,9 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 		    	
 		    	MSG_LOG.info("Found viz type in registry: " + data.getVisualizationType());
 		    
+		    	// TODO get the display creator from the registry so that the GIS stuff
+		    	//      can be moved to the r.s.gis.viz plugin.
+		    	
 		    	if (descriptor.getDisplayType().equals(GIS3DVisualizationRegistryData.TYPE)) {
 		    		ServerDisplayCreatorGIS creator = new ServerDisplayCreatorGIS(outgoingAddr, 
 		    				context, (GISDisplayDescriptor)descriptor);

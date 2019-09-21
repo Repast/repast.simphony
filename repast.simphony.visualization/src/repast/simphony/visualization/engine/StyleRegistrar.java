@@ -34,7 +34,7 @@ public abstract class StyleRegistrar<T> {
     registerStyles(registrar, descriptor, agentNames);
   }
 
-  protected Collection<String> getOrderedAgentCollection(DisplayDescriptor descriptor) {
+  public static Collection<String> getOrderedAgentCollection(DisplayDescriptor descriptor) {
     TreeMap<Integer, String> map = new TreeMap<Integer, String>();
     List<String> unsorted = new ArrayList<String>();
 

@@ -17,8 +17,6 @@ import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
 import repast.simphony.visualization.engine.DisplayDescriptor;
-import repast.simphony.visualizationOGL2D.EdgeStyleOGL2D;
-import repast.simphony.visualizationOGL2D.StyleOGL2D;
 
 public class DisplayServer2D extends DisplayServer {
 
@@ -132,7 +130,7 @@ public class DisplayServer2D extends DisplayServer {
         doUpdate();
     }
     
-    public void registerStyle(Class<?> clazz, StyleOGL2D<?> style) {
+    public void registerStyle(Class<?> clazz, ServerStyle2D style) {
         // style.init(canvas.getShapeFactory());
         StyledLayer layer = classStyleMap.get(clazz);
         if (layer == null) {
@@ -144,7 +142,7 @@ public class DisplayServer2D extends DisplayServer {
         }
     }
     
-    public void registerNetworkStyle(Network<?> network, EdgeStyleOGL2D style) {
+    public void registerNetworkStyle(Network<?> network, ServerNetStyle2D style) {
     	StyledLayer layer = networkStyleMap.get(network);
       if (layer == null) {
        
