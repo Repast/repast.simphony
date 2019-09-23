@@ -7,6 +7,11 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.editedStyle.EditedStyleUtils;
+import repast.simphony.visualization.gis3D.style.EditedMarkStyle;
+import repast.simphony.visualization.gis3D.style.EditedNetworkStyleGIS;
+import repast.simphony.visualization.gis3D.style.EditedSurfaceShapeStyle;
+import repast.simphony.visualization.gis3D.style.NetworkStyleGIS;
+import repast.simphony.visualization.gis3D.style.StyleGIS;
 
 
 /**
@@ -40,16 +45,31 @@ public class DisplayServerGISStyleRegistrar {
   	
     // Iterate through layers in order and register
     for (String agentName : descriptor.agentClassStyleNames()) {
-    	String styleName = descriptor.getStyleClassName(agentName);
-    	String editedStyleName = descriptor.getEditedStyleName(agentName);
+    	
+    	// The Style class name (e.g. org.MyStyle3D) for the agent class.
+    	String styleName = descriptor.getStyleClassName(agentName);  
+     
+    	// The agent class for this style, e.g. org.MyAgent
       Class<?> agentClass = Class.forName(agentName, true, this.getClass().getClassLoader());
+
+      // TODO perhaps this is not the best way to get the edited style data since
+      //      it may try to load classes with jogl depedencies.  Previously,
+      //      the registrar would just check for the edited style name.
+      
+      Class<? extends StyleGIS<?>> styleClass = (Class<? extends StyleGIS<?>>)Class.forName(styleName, 
+      		true, this.getClass().getClassLoader());
+      
       EditedStyleData<Object> data = null;
-   
-      // Use edited style if exists
-      if (editedStyleName != null) {
-      	data = EditedStyleUtils.getStyle(editedStyleName);
-      } 
-      else if (styleName != null) {
+      
+      if (EditedMarkStyle.class.isAssignableFrom(styleClass) ||
+      		EditedSurfaceShapeStyle.class.isAssignableFrom(styleClass)) {
+      	
+      	String editedStyleName = descriptor.getEditedStyleName(agentName);
+      	
+      	data = EditedStyleUtils.getStyle(editedStyleName);    	
+      }
+    	
+      else {
       	// TODO support other style class?
       	// TODO Handle unsupported style types
       }
@@ -66,19 +86,21 @@ public class DisplayServerGISStyleRegistrar {
   
     for (ProjectionData proj : descriptor.getProjections()) {
       if (proj.getType().equals(ProjectionData.NETWORK_TYPE)) {
+      	Network<?> network = context.getProjection(Network.class, proj.getId());
         String styleName = descriptor.getNetworkStyleClassName(proj.getId());
   
-        String netEditedStyleName = descriptor.getNetworkEditedStyleName(proj.getId());  
-        Network<?> network = context.getProjection(Network.class, proj.getId());
+        Class<? extends NetworkStyleGIS> styleClass = (Class<? extends NetworkStyleGIS>)Class.forName(styleName, 
+        		true, this.getClass().getClassLoader());
         
         EditedEdgeStyleData<Object> data = null;
         
-        // Style editor references get priority over explicit style classes if
-        // both are specified in descriptor
-        if (netEditedStyleName != null) {
+        if (EditedNetworkStyleGIS.class.isAssignableFrom(styleClass)) {
+        	String netEditedStyleName = descriptor.getNetworkEditedStyleName(proj.getId());
+        
         	data = EditedStyleUtils.getEdgeStyle(netEditedStyleName);
-        } 
-        else if (styleName != null) {
+        }
+            
+        else  {
         	// TODO support other style class?
         	// TODO Handle unsupported style types
         }
