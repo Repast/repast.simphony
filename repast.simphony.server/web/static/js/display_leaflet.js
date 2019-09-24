@@ -96,17 +96,12 @@ class ShapeCreator {
 export class LeafletDisplay {
     constructor(name, tab_content, display_id) {
         this.name = name;
-        this.objectMap = new Map();
-
+        this.objectMap = new Map();  
         this.tab_content = tab_content;
-        //this.createTab();
         
         // TODO perhaps refactor the container setup to an abstract parent class
         // Get a reference to the container element that will hold our scene
       
-        //let outer_cont = document.createElement("div");
-        //outer_cont.style.display = 'inline-block';    // allows multiple displays per row
-
         // Create the container that will hold this display
         this.container = document.createElement("div");
         this.container.className = "card-display-container";
@@ -122,12 +117,10 @@ export class LeafletDisplay {
 
         // tab_content.appendChild(this.container);
         tab_content.appendChild(this.container);
-
-        //this.container.id = this.name;  // needed by L.map()
-        this.card_body.id = this.name;
-        // this.map = L.map(this.container.id, { // constructor needs unique container ID
-		// 	preferCanvas: true
-        // 	});
+        
+        // Use the display id which is unique, since the display name can be duplicate
+        this.card_body.id = display_id;
+        
         this.map = L.map(this.card_body.id, { // constructor needs unique container ID
             preferCanvas: true
         });
@@ -218,7 +211,7 @@ export class LeafletDisplay {
    
 
     update(msg) {
-        console.log(msg);
+        //console.log(msg);
         
         for (var i = 0; i < msg.agent_layers.length; i++) {
             var lay = msg.agent_layers[i];
