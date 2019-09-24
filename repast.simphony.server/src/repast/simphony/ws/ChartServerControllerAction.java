@@ -153,7 +153,12 @@ public class ChartServerControllerAction extends DefaultControllerAction {
     }
 
     @Override
-    public void runInitialize(RunState runState, Object contextId, Parameters runParams) {
+    public void batchInitialize(RunState runState, Object contextId) {
+    	// TODO Auto-generated method stub
+    	//super.batchInitialize(runState, contextId);
+    //}
+    //@Override
+    //public void runInitialize(RunState runState, Object contextId, Parameters runParams) {
         LOG.info("Run Initialize");
 
         dataServers.clear();
@@ -183,9 +188,7 @@ public class ChartServerControllerAction extends DefaultControllerAction {
     }
 
     @Override
-    public void runCleanup(RunState runState, Object contextId) {
-        LOG.info(dataServers.size());
-
+    public void batchCleanup(RunState runState, Object contextId) {
         for (DataServer ds : dataServers.values()) {
             ds.close();
         }

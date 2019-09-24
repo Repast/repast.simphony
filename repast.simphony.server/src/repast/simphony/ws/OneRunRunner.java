@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.SAXException;
@@ -52,9 +53,10 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.parameter.ParametersCreator;
 import repast.simphony.parameter.ParametersParser;
 import repast.simphony.parameter.Schema;
-import repast.simphony.scenario.Scenario;
 import repast.simphony.scenario.ScenarioLoadException;
 import repast.simphony.scenario.ScenarioLoader;
+import repast.simphony.scenario.data.UserPathData;
+import repast.simphony.scenario.data.UserPathFileReader;
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.grid.Grid;
@@ -63,6 +65,7 @@ import repast.simphony.ui.probe.MethodPropertyDescriptor;
 import repast.simphony.ui.probe.ProbeInfo;
 import repast.simphony.ui.probe.ProbeIntrospector;
 import repast.simphony.ui.probe.SpaceLocationProbe;
+import repast.simphony.util.ClassPathEntry;
 import repast.simphony.util.ContextUtils;
 import repast.simphony.util.collections.Pair;
 import repast.simphony.util.collections.Tree;
@@ -208,7 +211,24 @@ public class OneRunRunner implements RunListener {
         ScheduleRunner scheduleRunner = new ScheduleRunner();
         scheduleRunner.setTickListener(tickServer);
         scheduleRunner.addRunListener(this);
-        runEnvironmentBuilder = new DefaultRunEnvironmentBuilder(scheduleRunner, false);
+        
+        boolean isRelogo = false;
+        UserPathFileReader fr = new UserPathFileReader();
+        try {
+			UserPathData upd = fr.read(scenario.resolve("user_path.xml").toFile());
+			for (ClassPathEntry entry : upd.agentEntries()) {
+				for (File f : entry.getClassPaths()) {
+					if (f.toString().contains("repast.simphony.relogo.runtime")) {
+						isRelogo = true;
+						break;
+					}
+				}
+			}
+		} catch (IOException | XMLStreamException e) {
+			LOG.error("Error reading user path", e);
+		}
+        
+        runEnvironmentBuilder = new DefaultRunEnvironmentBuilder(scheduleRunner, isRelogo);
 
         controller = new ORBController(runEnvironmentBuilder, outgoingAddr);
         controller.setScheduleRunner(scheduleRunner);

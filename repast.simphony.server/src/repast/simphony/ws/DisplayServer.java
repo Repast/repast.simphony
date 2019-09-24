@@ -74,7 +74,6 @@ public abstract class DisplayServer implements ProjectionListener {
     }
 
     public void destroy() {
-        System.out.println(this);
         LOG.info("Display Server Destroy");
         outgoing.close();
     }

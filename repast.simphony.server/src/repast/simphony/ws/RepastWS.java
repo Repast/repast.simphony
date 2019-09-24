@@ -44,7 +44,10 @@ import repast.simphony.parameter.ParametersParser;
 import repast.simphony.parameter.Schema;
 import repast.simphony.scenario.data.UserPathData;
 import repast.simphony.scenario.data.UserPathFileReader;
+import repast.simphony.util.ClassPathEntry;
 import simphony.util.messages.MessageCenter;
+
+import groovy.lang.GroovyObject;
 
 public class RepastWS {
 
@@ -313,8 +316,14 @@ public class RepastWS {
         this.scenarioDirectory = scenarioDirectory;
         URL runtimeSource = getClass().getProtectionDomain().getCodeSource().getLocation();
         try {
+        	URL groovySource = GroovyObject.class.getProtectionDomain().getCodeSource().getLocation();
+        	Path groovyPluginPath = Paths.get(groovySource.toURI()).getParent().resolve("..").toAbsolutePath();
+        	System.out.println(groovyPluginPath);
             serverPluginPath = Paths.get(runtimeSource.toURI()).resolve("..").toString();
-            modelClasspath = new ModelClasspathBuilder().run(Paths.get(serverPluginPath, "..").toAbsolutePath());
+            ModelClasspathBuilder mcb = new ModelClasspathBuilder();
+            mcb.add(groovyPluginPath);
+            mcb.run(Paths.get(serverPluginPath, "..").toAbsolutePath());
+            modelClasspath = mcb.getPath();
             Properties props = new Properties();
             props.put("working.directory", "../");
             props.put("incoming", "tcp://127.0.0.1:5555");

@@ -70,7 +70,36 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.7.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar",
-
+            
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/concurrent-1.3.4.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-api-2.0.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/opencsv-2.3.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/cglib-nodep-2.2.3.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-algorithms-2.0.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/colt-1.2.0-no_hep.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/poi-ooxml-3.9-20121203.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jscience-4.3.1-no_ogis.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlbeans-2.3.0.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/velocity-1.4.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-io-2.5.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/hsqldb-2.3.2.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/poi-3.9-20121203.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-math3-3.6.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-collections-3.2.2.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-graph-impl-2.0.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/dom4j-1.6.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-lang3-3.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-io-2.0.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jbullet.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/collections-generic-4.01.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/ooxml-schemas-1.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+            
+            // For ProbeID which is imported in relogo BasePatch with is referenced in user_path.xml
+            // and so read by RepastWS
+            "/repast.simphony.gui_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+            
+            
             "ECLIPSE_HOME/plugins/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
             "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jackson-core-2.9.9.jar",
             "/repast.simphony.server_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jackson-databind-2.9.9.jar",
@@ -103,6 +132,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
 
             "ECLIPSE_HOME/plugins/repast.simphony.scenario_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
             "ECLIPSE_HOME/plugins/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
+            "ECLIPSE_HOME/plugins/repast.simphony.relogo.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
 
     };
 

@@ -43,6 +43,7 @@ public class DataServer implements DataSink {
      */
     @Override
     public void open(List<String> sourceIds) {
+    	LOG.info("Remote Data Sink Opened");
         outgoing = new OutgoingMessageSocket(outgoingAddr);
         resetRowBuilder();
     }
@@ -128,7 +129,9 @@ public class DataServer implements DataSink {
      */
     @Override
     public void flush() {
-        sendUpdate(true);
+    	if (outgoing != null) {
+    		sendUpdate(true);
+    	}
     }
 
     /*

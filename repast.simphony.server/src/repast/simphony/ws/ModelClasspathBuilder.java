@@ -11,12 +11,18 @@ import java.util.List;
 public class ModelClasspathBuilder {
     
     private List<String> libs = new ArrayList<>();
+    private StringBuilder b;
     
     public ModelClasspathBuilder() {
         libs.add("repast.simphony.");
         libs.add("libs.bsf");
         libs.add("libs.ext");
         libs.add("libs.piccolo");
+        libs.add("org.codehaus.groovy");
+        
+        b = new StringBuilder("./bin");
+        b.append(File.pathSeparator);
+        b.append("./lib/*");
     }
     
     private boolean isValid(Path p) {
@@ -28,13 +34,23 @@ public class ModelClasspathBuilder {
         }
         
         return false;
-        
     }
     
-    public String run(Path pluginRoot) throws IOException {
-        StringBuilder b = new StringBuilder("./bin");
+    public void add(Path plugin) {
+    	b.append(File.pathSeparator);
+        b.append(plugin.toString());
+        b.append(("/bin"));
         b.append(File.pathSeparator);
-        b.append("./lib/*");
+        b.append(plugin.toString());
+        b.append("/lib/*");
+    }
+    
+    public String getPath() {
+    	return b.toString();
+    }
+    
+    public void run(Path pluginRoot) throws IOException {
+       
         Files.walk(pluginRoot, 1).
             filter(p -> isValid(p) && p.toFile().isDirectory()).
             forEach(p -> {
@@ -45,12 +61,13 @@ public class ModelClasspathBuilder {
                b.append(p.toString());
                b.append("/lib/*");
             });
-        return b.toString();
     }
     
     public static void main(String[] args) {
         try {
-            String cp = new ModelClasspathBuilder().run(Paths.get(args[0]));
+        	ModelClasspathBuilder b = new ModelClasspathBuilder();
+        	b.run(Paths.get(args[0]));
+            String cp = b.getPath();
             System.out.println(cp);
         } catch (IOException e) {
             e.printStackTrace();
