@@ -228,8 +228,7 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 			MSG_LOG.info("Initializing display : " + descriptor.getName() + " - " + descriptor.getDisplayType());
 
 			if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-				final DisplayServer2D ds2d = new DisplayServer2D(outgoingAddr, displayData, descriptor, layout, dsIdx);
-				++dsIdx;
+				final DisplayServer2D ds2d = new DisplayServer2D(outgoingAddr, displayData, descriptor, layout, getDisplayID());
 				
 				try {
 					StyleRegistrarOGL2D styleReg = new StyleRegistrarOGL2D();
@@ -271,7 +270,7 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 		    				context, (GISDisplayDescriptor)descriptor);
 
 		    		try {
-		    			ds = creator.createDisplay();
+		    			ds = creator.createDisplay(getDisplayID());
 		    		} 
 		    		catch (Exception ex) {
 		    			MSG_LOG.error("Error creating display for " + descriptor.getDisplayType(), ex);
@@ -319,5 +318,10 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 		// We don't clear the display server list here as we need
 		// to be able to get probed agents from them.
 		runState.getScheduleRegistry().getScheduleRunner().removeRunListener(rlUpdater);
+	}
+	
+	private int getDisplayID() {
+		dsIdx++;
+		return dsIdx;
 	}
 }

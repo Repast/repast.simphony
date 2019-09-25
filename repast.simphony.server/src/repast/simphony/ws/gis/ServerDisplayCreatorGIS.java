@@ -24,9 +24,6 @@ public class ServerDisplayCreatorGIS implements ServerDisplayCreator {
 	protected GISDisplayDescriptor descriptor; 
 	protected String outgoingAddr;
 	
-	// 1000 so as not to interfer with 2D display id which start at 0.
-	protected int displayCounter = 1000;
-
 	public ServerDisplayCreatorGIS(String outgoingAddr, Context<?> context, GISDisplayDescriptor descriptor) {
 		this.context = context;
 		this.descriptor = descriptor;
@@ -63,15 +60,14 @@ public class ServerDisplayCreatorGIS implements ServerDisplayCreator {
 		return data;
 	}
 
-	public DisplayServerGIS createDisplay() throws DisplayCreationException {
+	public DisplayServerGIS createDisplay(int display_id) throws DisplayCreationException {
 
 		try {
 			GISDisplayData<?> data = createDisplayData();
 			Layout<?, ?> layout = new NullLayout();
 
-			final DisplayServerGIS display = new DisplayServerGIS(outgoingAddr, data, descriptor, layout, displayCounter);
-			++displayCounter;
-
+			final DisplayServerGIS display = new DisplayServerGIS(outgoingAddr, data, descriptor, layout, display_id);
+	
 			DisplayServerGISStyleRegistrar registrar = new DisplayServerGISStyleRegistrar(display);    
 			try {
 				registrar.registerAllStyles((GISDisplayDescriptor)descriptor, context);

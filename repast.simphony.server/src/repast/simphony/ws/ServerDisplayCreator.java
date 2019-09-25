@@ -15,6 +15,6 @@ public interface ServerDisplayCreator {
 	   * @return the created display
 	   * @throws DisplayCreationException if there is an error while creating the display.
 	   */
-	  DisplayServer createDisplay() throws DisplayCreationException;
+	  DisplayServer createDisplay(int display_id) throws DisplayCreationException;
 
 }
