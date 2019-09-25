@@ -149,6 +149,11 @@ public class RepastWS {
                 } else {
                     outgoing.send("start");
                 }
+            } else if (cmd.equals("step")) {
+            	if (!started) {
+            		started = true;
+            	}
+            	outgoing.send("step");
             }
 
             else if (cmd.equals("pause")) {
