@@ -543,6 +543,13 @@ public class OneRunRunner implements RunListener {
     public void step() {
     	if (initRequired) {
     		initSim();
+    		try {
+    			// hack to let the browser GUI complete the init
+    			// before the model run update messages start
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
     	}
     	
     	if (startSim) {
@@ -556,6 +563,13 @@ public class OneRunRunner implements RunListener {
     public void start() {
         if (initRequired) {
             initSim();
+            try {
+    			// hack to let the browser GUI complete the init
+    			// before the model run update messages start
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
 
         if (startSim) {

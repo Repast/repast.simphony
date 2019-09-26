@@ -76,6 +76,7 @@ var runner = (function() {
                 tick_span.textContent = "0";
             }
             $("#init").prop('disabled', true);
+            $("#stop").prop('disabled', false);
             obj.sendCommand('step', socket);
             sim_state = SimState.PAUSED;
         }
@@ -124,8 +125,8 @@ var runner = (function() {
             sim_state = SimState.STOPPED;
             $("#start").html("Start");
             $("#init").prop('disabled', false);
-            $("#start").prop('disabled', true);
-            $("#step").prop('disabled', true);
+            $("#start").prop('disabled', false);
+            $("#step").prop('disabled', false);
             $("#stop").prop('disabled', true);
             obj.sendCommand('stop', socket);
         }
@@ -327,8 +328,8 @@ window.dragMoveListener = dragMoveListener;
 
 $(document).ready(function () {
     $("#stop").prop('disabled', true);
-    $("#start").prop('disabled', true);
-    $("#step").prop('disabled', true);
+    //$("#start").prop('disabled', true);
+    //$("#step").prop('disabled', true);
 
     initSocket();
     
