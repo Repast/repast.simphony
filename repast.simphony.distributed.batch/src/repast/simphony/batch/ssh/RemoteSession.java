@@ -276,9 +276,8 @@ public class RemoteSession implements Session {
         javaCmd = String.format(
             "java -cp \"./lib/repast.simphony.batch.jar;./lib/*\" repast.simphony.batch.LocalDriver "
                 + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
-        // String cmd = String.format("cd %s; nohup %s ", remoteDirectory,
-        // javaCmd);
-        cmd = String.format("cd %s;  %s ", remoteDirectory, javaCmd);
+        // Windows uses '&' char to separate commands
+        cmd = String.format("cd %s &  %s ", remoteDirectory, javaCmd);
       } else {
         javaCmd = String.format(
             "java -cp \"./lib/repast.simphony.batch.jar:./lib/*\" repast.simphony.batch.LocalDriver "
