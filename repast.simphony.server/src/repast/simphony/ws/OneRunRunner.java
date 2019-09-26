@@ -151,6 +151,9 @@ public class OneRunRunner implements RunListener {
                 } else if (msg.equals("start")) {
                     start();
                     started = true;
+                } else if (msg.equals("step")) {
+                	step();
+                	started = true;
                 } else if (msg.equals("stop")) {
                     stop();
                     if (!started) {
@@ -536,10 +539,37 @@ public class OneRunRunner implements RunListener {
             ZMsg.newStringMsg("json", "{\"id\": \"status\", \"value\": \"initialized\"}").send(outgoing);
         }
     }
+    
+    public void step() {
+    	if (initRequired) {
+    		initSim();
+    		try {
+    			// hack to let the browser GUI complete the init
+    			// before the model run update messages start
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
+    	
+    	if (startSim) {
+            controller.execute();
+            startSim = false;
+    	}
+    	controller.getScheduleRunner().step();
+    }
+
 
     public void start() {
         if (initRequired) {
             initSim();
+            try {
+    			// hack to let the browser GUI complete the init
+    			// before the model run update messages start
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
 
         if (startSim) {

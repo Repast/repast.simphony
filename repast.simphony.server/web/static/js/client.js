@@ -60,10 +60,33 @@ var runner = (function() {
             obj.init();
             $("#stop").prop('disabled', false);
             $("#init").prop('disabled', true);
+            $("#start").prop('disabled', false);
+            $("#step").prop('disabled', false);
             obj.sendCommand('init_run', socket);
             sim_state = SimState.INITIALIZED;
             tick_span.textContent = "0";
         } 
+    };
+
+    obj.stepClicked = (socket) => {
+        console.log("step");
+        if (sim_state == SimState.STOPPED || sim_state == SimState.INITIALIZED) {
+            if (sim_state != SimState.INITIALIZED) {
+                obj.init();
+                tick_span.textContent = "0";
+            }
+            $("#init").prop('disabled', true);
+            $("#stop").prop('disabled', false);
+            obj.sendCommand('step', socket);
+            sim_state = SimState.PAUSED;
+        }
+        else if (sim_state == SimState.STARTED || sim_state == SimState.PAUSED) {
+            // "Paused"
+            // $("#start").html("Start");
+            // sim_state = SimState.PAUSED;
+            obj.sendCommand('step', socket);
+            updatePicked();
+        }
     };
     
     // Start Run
@@ -77,12 +100,14 @@ var runner = (function() {
             $("#start").html("Pause");
             $("#stop").prop('disabled', false);
             $("#init").prop('disabled', true);
+            $("#step").prop('disabled', true);
             obj.sendCommand('start', socket);
             sim_state = SimState.STARTED;
         } 
         else if (sim_state == SimState.STARTED) {
             // "Paused"
             $("#start").html("Start");
+            $("#step").prop('disabled', false);
             sim_state = SimState.PAUSED;
             obj.sendCommand('pause', socket);
             updatePicked();
@@ -100,6 +125,8 @@ var runner = (function() {
             sim_state = SimState.STOPPED;
             $("#start").html("Start");
             $("#init").prop('disabled', false);
+            $("#start").prop('disabled', false);
+            $("#step").prop('disabled', false);
             $("#stop").prop('disabled', true);
             obj.sendCommand('stop', socket);
         }
@@ -110,6 +137,7 @@ var runner = (function() {
         obj.sendCommand('quit', socket);
         $("#init").prop('disabled', true);
         $("#stop").prop('disabled', true);
+        $("#step").prop('disabled', true);
         $("#quit").prop('disabled', true);
         $("#start").prop('disabled', true);
     };
@@ -300,6 +328,9 @@ window.dragMoveListener = dragMoveListener;
 
 $(document).ready(function () {
     $("#stop").prop('disabled', true);
+    //$("#start").prop('disabled', true);
+    //$("#step").prop('disabled', true);
+
     initSocket();
     
     $("#init").on('click', () => {
@@ -318,6 +349,15 @@ $(document).ready(function () {
 
     $("#stop").on('click', () => {
         runner.stopClicked(socket);
+    });
+
+    $("#step").on('click', () => {
+        runner.next = runner.stepClicked;
+        if (!runner.sendParams(socket)) {
+            // no need to wait for params OK message as they've
+            // already been sent
+            runner.stepClicked(socket);
+        }
     });
 
     $("#quit").on('click', () => {

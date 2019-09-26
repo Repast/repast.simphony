@@ -208,8 +208,8 @@ function createDisplays(display_data, display_updates, on_picked, parents) {
 
         if (type === "2D") {
             let display = new Display2D(name, disp_id, disp_bbox, parents[i]);
-            displays.set(disp_id, display);
             const promises = display.init(msg);
+            displays.set(disp_id, display);
             display.picked = on_picked;
             Promise.all(promises).then(() => {
                 if (display_updates.has(disp_id)) {
@@ -222,8 +222,8 @@ function createDisplays(display_data, display_updates, on_picked, parents) {
         else if (type === "GIS 3D") {
             let display = new LeafletDisplay(name, parents[i], disp_id);
             //let display = new ITownsDisplay(name, tabs[i], disp_id);
-            displays.set(disp_id, display);
             display.init(msg);
+            displays.set(disp_id, display);
             if (display_updates.has(disp_id)) {
                 let msg = display_updates.get(disp_id);
                 display_updates.delete(disp_id);
