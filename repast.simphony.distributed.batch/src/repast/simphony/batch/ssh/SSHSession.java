@@ -38,18 +38,24 @@ public class SSHSession {
   }
 
   /**
-   * Executes teh specified command in the background.
+   * Executes the specified command in the background.
    * 
    * @param cmd
    * @throws JSchException
    */
-  public void executeBackgroundCommand(String cmd) throws JSchException {
+  public void executeBackgroundCommand(String cmd, boolean isRemoteWindows) throws JSchException {
     Channel channel = null;
     try {
       channel = session.openChannel("exec");
       ((ChannelExec) channel).setPty(false);
-      // TODO maybe remove 2>&1 as that is bash specific
-      ((ChannelExec) channel).setCommand(cmd + " > /dev/null 2>&1 &");
+      
+      if (isRemoteWindows) {
+      	 ((ChannelExec) channel).setCommand(cmd);
+      }
+      else {
+      	// TODO maybe remove 2>&1 as that is bash specific
+      	((ChannelExec) channel).setCommand(cmd + " > /dev/null 2>&1 &");
+      }
       channel.setInputStream(null);
       channel.connect();
 
