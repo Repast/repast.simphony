@@ -165,20 +165,13 @@ public class RemoteSession implements Session {
     }
   }
 
-  private void unzipModel(SSHSession session, boolean isRemoteWindows) throws JSchException, SessionException {
+  private void unzipModel(SSHSession session) throws JSchException, SessionException {
     logger.info(String.format("Unzipping model on %s@%s", getUser(), getHost()));
-
-    String cmd;
-    // Windows uses '&' char to separate commands
-    if (isRemoteWindows) {
-    	cmd = String.format("cd %s & java -jar %s %s", remoteDirectory, modelArchive.getName(),
-          modelArchive.getName());
-    }
-    else {
-    cmd = String.format("cd %s; java -jar %s %s", remoteDirectory, modelArchive.getName(),
+    // String cmd = String.format("cd %s; jar -xf %s", remoteDirectory,
+    // modelArchive.getName());
+    String cmd = String.format("cd %s; java -jar %s %s", remoteDirectory, modelArchive.getName(),
         modelArchive.getName());
-    }
-    
+
     int exitStatus = session.executeCmd(cmd, Level.ERROR);
     if (exitStatus != 0) {
       String msg = String.format("Error executing '%s' on remote %s. See log for details.", cmd,
@@ -239,13 +232,10 @@ public class RemoteSession implements Session {
       throws JSchException, IOException, SessionException {
     StringBuilder builder = new StringBuilder();
     if (isRemoteWindows)
-      session.executeCmd("tasklist /fi \"imagename eq java.exe\"", builder, true);
+      session.executeCmd("ps -W", builder, true);
     else
       session.executeCmd("ps x", builder, true);
     String psOutput = builder.toString();
-    
-//    System.out.println(psOutput);
-    
     // remove the quotes around the classpath as ps x doesn't show that
     if (isRemoteWindows)
       return psOutput.contains("java.exe");
@@ -267,7 +257,9 @@ public class RemoteSession implements Session {
     SSHSession session = null;
     try {
       session = SSHSessionFactory.getInstance().create(this);
-      
+      checkForJava(session);
+      unzipModel(session);
+
       boolean isRemoteWindows = false;
       try {
         StringBuilder builder = new StringBuilder();
@@ -276,29 +268,21 @@ public class RemoteSession implements Session {
       } catch (IOException ex) {
         throw new SessionException("Error checking for nohup", ex);
       }
-      
-      checkForJava(session);
-      unzipModel(session, isRemoteWindows);
 
       // run the model
       logger.info(String.format("Running model on %s@%s ...", getUser(), getHost()));
       String javaCmd = "", cmd = "";
       if (isRemoteWindows) {
         javaCmd = String.format(
-            "powershell -Command \"Start-Process \\\"java.exe\\\" \\\"-cp ./lib/repast.simphony.batch.jar;./lib/* repast.simphony.batch.LocalDriver "
-                + BatchConstants.LOCAL_RUN_PROPS_FILE + "\\\"\"", remoteDirectory);
-        
-        // Windows uses '&' char to separate commands
-        cmd = String.format("cd %s & %s ", remoteDirectory, javaCmd);
-        
-//        System.out.println(cmd);
-        
-      } 
-      else {
+            "java -cp \"./lib/repast.simphony.batch.jar;./lib/*\" repast.simphony.batch.LocalDriver "
+                + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
+        // String cmd = String.format("cd %s; nohup %s ", remoteDirectory,
+        // javaCmd);
+        cmd = String.format("cd %s;  %s ", remoteDirectory, javaCmd);
+      } else {
         javaCmd = String.format(
             "java -cp \"./lib/repast.simphony.batch.jar:./lib/*\" repast.simphony.batch.LocalDriver "
                 + BatchConstants.LOCAL_RUN_PROPS_FILE, remoteDirectory);
-        
         cmd = String.format("cd %s; nohup %s ", remoteDirectory, javaCmd);
       }
 
