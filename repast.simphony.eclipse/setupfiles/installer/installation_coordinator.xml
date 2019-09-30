@@ -16,7 +16,7 @@
 	
 	<!-- The Repast creator version variable is hard-coded against the release 
 	     version. DO NOT USE A VARIABLE HERE! -->
-	<property name="RepastCreatorVersion" value="2.6.0" />
+	<property name="RepastCreatorVersion" value="2.7.0" />
 				
 	<condition property="repast.version">
 	  <equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>
@@ -32,23 +32,22 @@
 		
 	<target name="BuildUserModelInstaller" if="repast.version" depends="repast.version.OK,repast.version.check">
 
-		<!-- Declare the local variables -->
+		<!-- Location of the Eclipse /plugins folder -->
 		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
-		<echo message="GroovyHomeDirectory = ${GroovyHomeDirectory}" />
-		<property name="GroovyLibDirectory" value="${GroovyHomeDirectory}lib" />
-		<echo message="GroovyLibDirectory = ${GroovyLibDirectory}" />
-		<fileset dir="${GroovyLibDirectory}" id="gAll.jar">
-			<filename name="groovy-all-*.jar" />
+		
+		<!-- Search for the groovy-all-.jar -->
+		<fileset dir="${EclipsePluginsDirectory}" id="gAll.jar">
+			<filename name="**/groovy-all-*.jar" />
 			<not>
-				<filename name="groovy-all-*-sources.jar" />
+				<filename name="**/groovy-all-*-sources.jar" />
 			</not>
 			<not>
-				<filename name="groovy-all-*-javadoc.jar" />
+				<filename name="**/groovy-all-*-javadoc.jar" />
 			</not>
 		</fileset>
 		<property name="Groovy_All_Jar" refid="gAll.jar" />
 		<echo message="Groovy_All_Jar = ${Groovy_All_Jar}" />
-		<property name="GroovyAllJarLocation" value="${GroovyLibDirectory}/${Groovy_All_Jar}" />
+		<property name="GroovyAllJarLocation" value="${EclipsePluginsDirectory}/${Groovy_All_Jar}" />
 
 		<!-- A hidden staging dirctory to store the install files that will be deleted at cleanup -->
 		<property name="StagingArea" value="./.temp/%PROJECT_NAME%" />

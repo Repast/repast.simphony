@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/annotations-13.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-annotations-2.9.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.9.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-databind-2.9.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javalin-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jeromq-0.5.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-client-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-http-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-io-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-security-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-server-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-servlet-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-util-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-webapp-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-xml-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/kotlin-stdlib-1.3.31.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/kotlin-stdlib-common-1.3.31.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/kotlin-stdlib-jdk7-1.3.31.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/kotlin-stdlib-jdk8-1.3.31.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/saf.core.v3d.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.26.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-simple-1.7.26.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/websocket-api-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/websocket-client-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/websocket-common-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/websocket-server-9.4.17.v20190418.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/websocket-servlet-9.4.17.v20190418.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

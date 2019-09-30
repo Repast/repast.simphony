@@ -20,8 +20,6 @@ import javax.swing.JLabel;
 
 public class PreviewIcon2D extends JLabel implements PreviewIcon {
 
-  private GeneralPath polygonShape;
-
   private Shape shape;
   private Shape previewShape;
   private Image iconImage;
@@ -33,7 +31,7 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
   private Color outlineColor = Color.BLACK;
   private double outlineOpacity = 1;
   private double outlineThickness = 1;
-  private float markSize = 6;
+  private float markSize = 10;
   private Image image;
   private Font font = new Font("Arial", Font.PLAIN, 12);
   private Color fontColor = Color.BLACK;
@@ -42,13 +40,7 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
     image = new BufferedImage(200, 100, BufferedImage.TYPE_4BYTE_ABGR);
     setText("");
     this.setIcon(new ImageIcon(image));
-    polygonShape = new GeneralPath();
-    polygonShape.moveTo(10, 10);
-    polygonShape.lineTo(90, 30);
-    polygonShape.lineTo(70, 90);
-    polygonShape.lineTo(10, 90);
-    polygonShape.closePath();
-    shape = polygonShape;
+    shape = IconFactory2D.getShape("circle");  // the initial default shape
 
     updatePreview();
   }
@@ -124,15 +116,6 @@ public class PreviewIcon2D extends JLabel implements PreviewIcon {
     updateShape();
     updatePreview();
   }
-
-  public void setShapeToLine() {
-    GeneralPath path = new GeneralPath();
-    path.moveTo(10, 10);
-    path.lineTo(90, 90);
-    shape = path;
-    updatePreview();
-  }
-
   private void updateShape() {
     float ms = markSize == -1f ? 15.0f : markSize;
     if (this.mark != null) {

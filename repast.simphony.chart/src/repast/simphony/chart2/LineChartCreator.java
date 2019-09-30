@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -50,11 +49,10 @@ public class LineChartCreator extends AbstractChartCreator implements ChartCreat
     this.xydata = xydata;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see projz.chart.ChartCreator#reset()
-   */
+  public void setAntiAliasing(boolean antiAliasing) {
+  	panel.getChart().setAntiAlias(antiAliasing);
+  }
+  
   @Override
   public void reset() {
     JFreeChart chart = panel.getChart();
@@ -63,13 +61,9 @@ public class LineChartCreator extends AbstractChartCreator implements ChartCreat
     panel.setChart(null);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see projz.chart.ChartCreator#createChartComponents()
-   */
+
   @Override
-  public JComponent createChartComponent(TimeSeriesChartDescriptor descriptor) {
+  public ChartPanel createChartComponent(TimeSeriesChartDescriptor descriptor) {
 
     JFreeChart chart = ChartFactory.createXYLineChart(descriptor.getChartTitle(), 
         descriptor.getXAxisLabel(), descriptor.getYAxisLabel(), xydata,

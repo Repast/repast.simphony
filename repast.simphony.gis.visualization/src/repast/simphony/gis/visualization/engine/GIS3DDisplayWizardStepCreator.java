@@ -55,6 +55,7 @@ public class GIS3DDisplayWizardStepCreator {
 		//   will listen for any changes that occur.
 		StyleClassStep styleClassStep = new StyleClassStep();
 		styleClassStep.setShowBackgroundButton(false);
+	
 		
 		agentSelectionStep.addStepListener(styleClassStep);
 		

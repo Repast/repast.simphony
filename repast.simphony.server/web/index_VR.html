@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Coordination Test </title>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/js/client_VR.js"></script>
+
+    <link href="/static/styles/main.css" rel="stylesheet" type="text/css">
+    <script src="/static/vendor/HelioWebXRPolyfill.js"></script>
+    <script src="/static/vendor/three.js"></script>
+    <script src="/static/vendor/OrbitControls.js" ></script>
+    <script src="/static/vendor/stats.min.js"></script>
+    <script src="/static/vendor/WebVR.js"></script>
+   
+</head>
+
+<body>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+
+    <div id="scene-container">
+        <!-- This div will hold our scene-->
+    </div>
+
+    <div style="width:75%;">
+        <canvas id="chart1" ></canvas>
+    </div>
+</body>
+</html>

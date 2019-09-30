@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+     
+    <title>Repast Simphony</title>
+
+    <!-- Custom styles for this template -->
+    <link href="/styles/dashboard.css" rel="stylesheet">
+    <link href="/styles/leaflet.css" rel="stylesheet" type="text/css">
+    
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        #scene-container {
+            /*width: 200px;*/
+            height: 800px;
+            /*margin: 10px;*/
+            padding: 0px;
+            position: static; /* fixed or static */
+        }
+        
+        .leaflet-container { background-color: #FFFFFF }
+        
+        
+         /* iTowns PLUGINS/GUI */
+        .dg.main {
+            position: absolute;
+        }
+
+        @media (max-width: 600px) {
+            #menuDiv {
+                display: none;
+            }
+        }
+
+    </style>
+    
+</head>
+
+<body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Repast Simphony</a>
+    </nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+			<div class="col-md-2 d-md-block bg-light sidebar-sticky">
+                <h1 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Tick Count</span>
+                </h1>
+
+                <span class="px-3 ml-2 mt-1 mb-1" id="tick_count">0</span>
+
+				<h1 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-4 text-muted">
+					<span>Parameters</span>
+				</h1>
+
+				<div class="div" id="params-container">
+                </div>
+                
+                <h1 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-4 text-muted">
+                    <span>Agent Properties</span>
+                </h1>
+
+                
+                <form class="px-3 mt-1 mb-1">
+                    <div class="form-group">
+                        <select class="form-control" id="agents-select" placeholder="Agents">
+                            <option value="">Agents ...</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div id="probe-content">
+
+                </div>
+
+                <h1 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-4 text-muted">
+                    <span>Layout</span>
+                </h1>
+                
+                
+                <form class="px-3 mt-1 mb-1">
+                    <div class="form-group">
+                        <select class="form-control" id="layout-select" placeholder="">
+                            <option value="">Select Layout ...</option>
+                            <option value="tabs">Tabbed</option>
+                            <option value="freeform">Freeform</option>
+                        </select>
+                    </div>
+                </form>
+                
+                
+            </div>
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 id="model_name" class="h2"></h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group mr-2">
+                            <button type="button" id="init" class="btn btn-sm btn-outline-primary">Initialize</button>
+                            <button type="button" id="start" class="btn btn-sm btn-outline-primary">Start</button>
+                            <button type="button" id="step" class="btn btn-sm btn-outline-primary">Step</button>
+                            <button type="button" id="stop" class="btn btn-sm btn-outline-primary">Stop</button>
+                        </div>
+
+                        <div class="btn-group mr-2">
+                            <button type="button" id="quit" class="btn btn-sm btn-outline-primary">Quit</button>
+                        </div>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span data-feather="calendar"></span>
+                                Other Stuff
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#" id="shutdown-model">Kill Model</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- <h3>Displays</h3> -->
+                <h1 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-4 text-muted">
+                    <!-- change font size with: <span style="font-size: 1rem">Displays</span> -->
+                    <span>Displays</span>
+                </h1>
+
+                <div id="display-tab-container">
+                    <ul class="nav nav-tabs mt-4" id="display-tabs" role="tablist">
+                        <!-- <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                                aria-selected="true">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+                                aria-selected="false">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
+                                aria-selected="false">Contact</a>
+                        </li> -->
+                    </ul>
+                    <div class="tab-content" id="display-content">
+                        <!-- <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                        -->
+                    </div> 
+                </div>
+
+                <div class="display-freeform-container" id="display-freeform-container">
+
+                </div>
+    
+                <h1 class="sidebar-heading d-flex justify-content-between align-items-center mt-4 mb-4 text-muted">
+                    <!-- change font size with: <span style="font-size: 1rem">Displays</span> -->
+                    <span>Charts</span>
+                </h1>
+
+                <ul class="nav nav-tabs mt-4" id="chart-tabs" role="tablist">
+                 
+                </ul>
+                <div class="tab-content" id="chart-content">
+                   
+                </div>
+                <!--
+                <canvas class="my-4 w-100" id="chart1" width="900" height="380"></canvas>
+                -->
+            </main>
+        </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <script src="/vendor/three.js"></script>
+    <script src="/vendor/OrbitControls.js"></script>
+    <script src="/vendor/stats.min.js"></script>
+    
+    <!-- Leaflet display scripts -->
+    <script src="/vendor/leaflet.js"></script>
+    <script src="/vendor/pouchdb-7.1.1.min.js"></script>
+    <script src="/vendor/L.TileLayer.PouchDBCached.js"></script>
+    
+    <!-- iTowns GIS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+    <script src="/vendor/itowns.js"></script>
+    
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script type="module" src="/js/client.js"></script>
+           
+</body>
+
+</html>

@@ -19,7 +19,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import repast.simphony.ui.plugin.editor.SquareIcon;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
@@ -31,10 +36,6 @@ import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualizationOGL2D.DefaultStyleOGL2D;
 import repast.simphony.visualizationOGL2D.StyleOGL2D;
 import simphony.util.messages.MessageCenter;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Style editor step for displays that use style classes to style agents.
@@ -58,11 +59,10 @@ public class StyleClassStep extends StyleStep {
 	protected JComboBox<String> styleBox;
 	protected Map<String, String> editedStyleFileMap = new HashMap<String, String>();
 	protected Color backgroundColor;
-  
+
 	private boolean showBackgroundButton = true; 
 	
-	protected static Map<Class<?>,List<String>> styleCache = 
-			new HashMap<Class<?>,List<String>>();
+	protected static Map<Class<?>,List<String>> styleCache = new HashMap<Class<?>,List<String>>();
 	
 	public StyleClassStep() {
 		super("Agent Style", "Please provide a style for each agent type in the model");
@@ -101,32 +101,20 @@ public class StyleClassStep extends StyleStep {
 							.getWindowAncestor(StyleClassStep.this));
 
 					String editedStyleName = model.getDescriptor().getEditedStyleName(classFld.getText());
-
-					dialog.init(Class.forName(classFld.getText()), editedStyleName, 
-							(CartesianDisplayDescriptor)model.getDescriptor());
+					
+					dialog.init(Class.forName(classFld.getText()), editedStyleName, model.getDescriptor());
 					dialog.pack();
 					dialog.setVisible(true);
 
-					if (dialog.doSave()) {
-
-						// Set the style class name based on display type
-						String styleClassName = null;
-						
-						if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
-							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle2D";
-
-						else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
-							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
-
-						// TODO GIS get from registry
-//						else
-//							styleClassName = "repast.simphony.visualization.editedStyle.EditedStyleGIS3D";
-
+					if (dialog.doSave()) {				
+						// Set the style class name based on display type and edited style data
+						String styleClassName = getEditedStyleClassForDisplay(model.getDescriptor(), 
+								dialog.getUserStyleData());
+				
 						if (styleModel.getIndexOf(styleClassName) < 0)
 							styleModel.addElement(styleClassName);
 
 						styleBox.setSelectedItem(styleClassName);
-
 						editedStyleFileMap.put(classFld.getText(), dialog.getUserStyleName());
 					}
 
@@ -173,19 +161,11 @@ public class StyleClassStep extends StyleStep {
 			if (selectedItem != null) {
 				String styleClassName = selectedItem.toString();
 				
+				// Set the agent style class
 				element.setValue(STYLE_KEY, styleClassName);
-
-				if ("repast.simphony.visualization.editedStyle.EditedStyle2D"
-						.equals(styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyle3D"
-						.equals(styleClassName)
-						|| "repast.simphony.visualization.editedStyle.EditedStyleGIS3D"
-						.equals(styleClassName))
-
-					element.setValue(EDITED_STYLE_KEY, editedStyleFileMap.get(
-							element.getAgentClassName()));
-				else
-					element.setValue(EDITED_STYLE_KEY, null);
+				
+				// Set the edited agent style data (may be null)
+				element.setValue(EDITED_STYLE_KEY, editedStyleFileMap.get(element.getAgentClassName()));
 			}
 		}
 	}
@@ -212,39 +192,13 @@ public class StyleClassStep extends StyleStep {
 	public void initialize() {
 		editedStyleFileMap.clear();
 		DisplayDescriptor descriptor = model.getDescriptor();
-
-		String defaultStyle = getDefaultStyle(descriptor);
 		
-		// TODO GIS get the build style availability/editor from the viz registry.
-		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
-			buildStyleButton.setEnabled(true);
-		}
-//		else {
-//			buildStyleButton.setEnabled(false);
-//		}
+		// Check if the display type supports a style editor
+		boolean allowStyleEditor = checkForStyleEditor(descriptor);
+		buildStyleButton.setEnabled(allowStyleEditor); 
 		
-		// Find all available style classes for the display type
-		List<String> foundStyleClasses = new ArrayList<String>();
-
-		// Cartesian displays are explicit here
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			foundStyleClasses = findStylesFor(Style3D.class, defaultStyle);
-		} 
-		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			foundStyleClasses = findStylesFor(StyleOGL2D.class, defaultStyle);
-		} 
-		// For other displays, find the style interface from the registry
-		else{
-			Class<?> styleInterface = VisualizationRegistry.getDataFor(
-					descriptor.getDisplayType()).getStyleInterface();
-
-			if (styleInterface != null){
-				foundStyleClasses = findStylesFor(styleInterface, defaultStyle);
-			} 
-			else {
-			  msg.warn("No style interface defined for" + descriptor.getDisplayType());	
-			}
-		}
+		// Find all available styles on classpath for this display type
+		List<String>foundStyleClasses = findStylesForDisplay(descriptor);
 		
 		Collections.sort(foundStyleClasses);
 		styleModel.removeAllElements();
@@ -264,7 +218,7 @@ public class StyleClassStep extends StyleStep {
 			String editedStyle = descriptor.getEditedStyleName(className);
 			
 			if (style == null)
-				style = defaultStyle;
+				style = getDefaultStyle(descriptor);
 			
 			e.setValue(STYLE_KEY, style);
 			e.setValue(EDITED_STYLE_KEY, editedStyle);  // may be null
@@ -274,6 +228,63 @@ public class StyleClassStep extends StyleStep {
 
 		if (descriptor.getBackgroundColor() != null)
 			setBackgroundColor(descriptor.getBackgroundColor());
+		else
+			setBackgroundColor(getDefaultBackgroundColorForDisplay(descriptor));
+	}
+	
+	/**
+	 * Returns true if the display type in the descriptor supports edited styles.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected boolean checkForStyleEditor(DisplayDescriptor descriptor) {
+		if (descriptor instanceof CartesianDisplayDescriptor){
+			return true;
+		}
+		// Check the viz registry for support of edited styles for this display type
+		else {
+			Class<? extends EditedStyleData> defaultEditedStyleClass =
+					VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getDefaultEditedStyleDataClass();
+			
+			if (defaultEditedStyleClass != null) 
+				return true;
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Finds all classes that implement the style interface for the type in the descriptor.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected List<String> findStylesForDisplay(DisplayDescriptor descriptor){
+		// Find all available style classes for the display type
+		List<String> foundStyleClasses = new ArrayList<String>();
+		String defaultStyle = getDefaultStyle(descriptor);
+		
+		// Cartesian displays are explicit here
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
+			foundStyleClasses = findStylesFor(Style3D.class, defaultStyle);
+		} 
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			foundStyleClasses = findStylesFor(StyleOGL2D.class, defaultStyle);
+		} 
+		// For other displays, find the style interface from the registry
+		else{
+			Class<?> styleInterface = VisualizationRegistry.getDataFor(
+					descriptor.getDisplayType()).getStyleInterface();
+
+			if (styleInterface != null){
+				foundStyleClasses = findStylesFor(styleInterface, defaultStyle);
+			} 
+			else {
+				msg.warn("No style interface defined for" + descriptor.getDisplayType());	
+			}
+		}
+		return foundStyleClasses;
 	}
 	
 	/**
@@ -288,11 +299,9 @@ public class StyleClassStep extends StyleStep {
 		// Cartesian default styles are explicit here
 		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			defaultStyle = DefaultStyle3D.class.getName();
-			setBackgroundColor(Color.BLACK);
 		}
 		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
 			defaultStyle = DefaultStyleOGL2D.class.getName();
-			setBackgroundColor(Color.WHITE);
 		}
 
 		// For other displays, get the default style from the viz registry.
@@ -311,12 +320,54 @@ public class StyleClassStep extends StyleStep {
 				msg.error("Error creating style step for " + descriptor.getDisplayType() 
 						+ ". No visualization registry data found.", null);
 			}
-			
-			// TODO Projections get default BG color from registry or set elswhere
-			setBackgroundColor(Color.WHITE);
 		}
 		return defaultStyle;
 	}
+	
+	protected Color getDefaultBackgroundColorForDisplay(DisplayDescriptor descriptor) {
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
+			return Color.BLACK;
+		}
+		
+		// TODO Projections get default BG color from registry or set elswhere
+		return Color.WHITE;
+	}
+	
+	/**
+	 * Returns the class name for edited styles based on the display type in the descriptor.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected String getEditedStyleClassForDisplay(DisplayDescriptor descriptor, 
+			EditedStyleData editedStyledata){
+		String styleClassName = null;
+	
+		if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
+			styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle2D";
+
+		else if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
+			styleClassName = "repast.simphony.visualization.editedStyle.EditedStyle3D";
+
+		// For other displays, get the default style from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(
+					descriptor.getDisplayType());
+
+			if (data != null){
+				Class<?> clazz = data.getEditedStyleClass(editedStyledata);
+				
+				if (clazz != null)
+					styleClassName = clazz.getName();
+			}
+			else{
+				msg.error("Error creating style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
+		return styleClassName;
+	}
+	
 	
 	/**
 	 * Provides a list of available style classes (including default) for the specified
@@ -350,6 +401,6 @@ public class StyleClassStep extends StyleStep {
 	public void setShowBackgroundButton(boolean showBackgroundButton) {
 		this.showBackgroundButton = showBackgroundButton;
 	}
-	
+		
 	
 }

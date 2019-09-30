@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -24,24 +25,25 @@ import javax.swing.event.ListSelectionListener;
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.WizardModel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import repast.simphony.scenario.data.ProjectionData;
 import repast.simphony.ui.plugin.editor.PluginWizardStep;
+import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
 import repast.simphony.visualization.engine.CartesianDisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.VisualizationRegistry;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
-import repast.simphony.visualization.gui.styleBuilder.EditedEdgeStyleDialog;
+import repast.simphony.visualization.gui.styleBuilder.AbstractStyleDialog;
 import repast.simphony.visualization.gui.styleBuilder.SimpleEditedEdgeStyleDialog;
 import repast.simphony.visualization.visualization3D.style.DefaultEdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualizationOGL2D.DefaultEdgeStyleOGL2D;
 import repast.simphony.visualizationOGL2D.EdgeStyleOGL2D;
 import simphony.util.messages.MessageCenter;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Display wizard step for network edge styles.
@@ -55,13 +57,14 @@ public class EdgeStyleStep extends PluginWizardStep {
 	
 	private DisplayWizardModel model;
 	private JList objList;
-	private DefaultComboBoxModel styleModel;
+	private DefaultComboBoxModel<String> styleModel;
 	private int currentIndex;
-	private JComboBox styleBox;
+	private JComboBox<String> styleBox;
 	private Map<String, String> editedStyleFileMap;
 	private JButton buildStyleButton;
-	private String defaultStyle;
 
+	protected static Map<Class<?>,List<String>> styleCache = new HashMap<Class<?>,List<String>>();
+	
 	static class ListElement {
 		String netName;
 		String styleClassName;
@@ -79,13 +82,13 @@ public class EdgeStyleStep extends PluginWizardStep {
 	}
 
 	public EdgeStyleStep() {
-		super("Edge Style", "Please provide an edge style for each network in the display");
+		super("Network Style", "Please provide an edge style for each network in the display");
 	}
 	
 	@Override
 	protected  JPanel getContentPanel(){ 
 		objList = new JList(new DefaultListModel());
-		styleModel = new DefaultComboBoxModel();
+		styleModel = new DefaultComboBoxModel<String>();
 		currentIndex = -1;
 		editedStyleFileMap = new HashMap<String, String>();
 		buildStyleButton = new JButton();
@@ -98,7 +101,7 @@ public class EdgeStyleStep extends PluginWizardStep {
 
 		final JTextField netNameFld = new JTextField();
 		netNameFld.setEditable(false);
-		styleBox = new JComboBox(styleModel);
+		styleBox = new JComboBox<String>(styleModel);
 
 		CellConstraints cc = new CellConstraints();
 
@@ -117,75 +120,27 @@ public class EdgeStyleStep extends PluginWizardStep {
 		buildStyleButton.setToolTipText("Edit the style of the selected edge type");
 		buildStyleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				// TODO Projections: Setup the style step based on data from the viz registry
 				try {
-					if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D)) {
-						SimpleEditedEdgeStyleDialog dialog = new SimpleEditedEdgeStyleDialog(
-								(JDialog) SwingUtilities.getWindowAncestor(EdgeStyleStep.this));
+					// Select the dialog based on display type
+					AbstractStyleDialog dialog = null;
+					
+					String userStyleName = model.getDescriptor().getNetworkEditedStyleName(netNameFld.getText());
+					
+					dialog = new SimpleEditedEdgeStyleDialog((JDialog) SwingUtilities.getWindowAncestor(EdgeStyleStep.this));
+				  dialog.init(model.getContext(), netNameFld.getText(), userStyleName, model.getDescriptor());								
+					dialog.pack();
+					dialog.setVisible(true);
+					
+					if (dialog.doSave()) {
+						// Set the style class name based on display type
+						String styleClassName = getEditedStyleClassForDisplay(model.getDescriptor());
 
-						String userStyleName = model.getDescriptor().getNetworkEditedStyleName(
-								netNameFld.getText());
+						if (styleModel.getIndexOf(styleClassName) < 0)
+							styleModel.addElement(styleClassName);
 
-						dialog.init(model.getContext(), netNameFld.getText(), userStyleName,
-								model.getDescriptor());
-						dialog.pack();
-						dialog.setVisible(true);
-
-						if (dialog.doSave()) {
-
-							// Set the style class name based on display type
-							String styleClassName;
-
-							if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle2D";
-							else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle3D";
-							else
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyleGIS3D";
-
-							if (styleModel.getIndexOf(styleClassName) < 0)
-								styleModel.addElement(styleClassName);
-
-							styleBox.setSelectedItem(styleClassName);
-
-							editedStyleFileMap.put(netNameFld.getText(), dialog.getUserStyleName());
-						}
-
-					} else {
-
-						EditedEdgeStyleDialog dialog = new EditedEdgeStyleDialog((JDialog) SwingUtilities
-								.getWindowAncestor(EdgeStyleStep.this));
-
-						String userStyleName = model.getDescriptor().getNetworkEditedStyleName(
-								netNameFld.getText());
-
-						dialog.init(model.getContext(), netNameFld.getText(), userStyleName,
-								(CartesianDisplayDescriptor)model.getDescriptor());
-						dialog.pack();
-						dialog.setVisible(true);
-
-						if (dialog.doSave()) {
-
-							// Set the style class name based on display type
-							String styleClassName;
-
-							if (model.getDescriptor().getDisplayType().equals(DisplayType.TWO_D))
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle2D";
-							else if (model.getDescriptor().getDisplayType().equals(DisplayType.THREE_D))
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle3D";
-							else
-								styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyleGIS3D";
-
-							if (styleModel.getIndexOf(styleClassName) < 0)
-								styleModel.addElement(styleClassName);
-
-							styleBox.setSelectedItem(styleClassName);
-
-							editedStyleFileMap.put(netNameFld.getText(), dialog.getUserStyleName());
-						}
+						styleBox.setSelectedItem(styleClassName);
+						editedStyleFileMap.put(netNameFld.getText(), dialog.getUserStyleName());
 					}
-
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -220,99 +175,33 @@ public class EdgeStyleStep extends PluginWizardStep {
 		listModel.clear();
 
 		DisplayDescriptor descriptor = model.getDescriptor();
+	
+		// Check if the display type supports a style editor
+		boolean allowStyleEditor = checkForStyleEditor(descriptor);
+		buildStyleButton.setEnabled(allowStyleEditor); 
 
-		// TODO Projections: get init from the viz registry
-		Class<?>[] defaultEdgeStyles3D = new Class<?>[] { DefaultEdgeStyle3D.class };
-		Class<?>[] defaultEdgeStyles2D = new Class<?>[] { DefaultEdgeStyleOGL2D.class };
-		
-		
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)){
-			defaultStyle = defaultEdgeStyles3D[0].getName();
-		}
-		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			defaultStyle = defaultEdgeStyles2D[0].getName();
-		}
-
-		// Get the default style for the display from the viz registry.
-		else{
-			VisualizationRegistryData data = VisualizationRegistry.getDataFor(descriptor.getDisplayType());
-
-			if (data != null){
-				Class<?>[] defaultStyleClasses =  data.getDefaultEdgeStyles();
-				
-				if (defaultStyleClasses != null){
-					defaultStyle = defaultStyleClasses[0].getName();
-				}
-			}
-			else{
-				msg.error("Error creating edge style step for " + descriptor.getDisplayType() 
-						+ ". No visualization registry data found.", null);
-			}
-		}
-		
-		// TODO Projections: get the build style availability/editor from the viz registry.
-		if (model.getDescriptor() instanceof CartesianDisplayDescriptor){
-			buildStyleButton.setEnabled(true);
-		}
-//		else {
-//			buildStyleButton.setEnabled(false);
-//		}
-		
 		// Find all available style classes for the display type
-
-		// TODO Cache styles.  There was some unfinished code here for caching styles
-		//        found by the StyleClassFinder that might make the display wizards
-		//        slightly faster.  Removed during projections refactor.
-		java.util.List<String> vals = null;
+		List<String>foundStyleClasses = findStylesForDisplay(descriptor);
 		
-		// TODO Projections: init from viz registry data entries
-		Class<?> edgeStyle3DInterface = EdgeStyle3D.class;
-		Class<?> edgeStyle2DInterface = EdgeStyleOGL2D.class;
-
-		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
-			vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyle3DInterface);
-		} 
-		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
-			vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyle2DInterface);
-		} 
-		else{
-			Class<?> edgeStyleInterface = VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getEdgeStyleInterface();
-
-			if (edgeStyleInterface != null){
-				vals = StyleClassFinder.getAvailableStyles(model.getContext(), edgeStyleInterface);
-			} 
-			else {
-			  msg.warn("No edge styles found that implement " + edgeStyleInterface.getName());	
-			}
-		}
-		
-		if (vals == null){
-			vals = new ArrayList<String>();
-		}
-
-		if (defaultStyle != null){
-			vals.add(defaultStyle);
-		}
-		else{
-			msg.warn("No default edge styles found for " + descriptor.getDisplayType());	
-		}
-		
-		Collections.sort(vals);
+		Collections.sort(foundStyleClasses);
 		styleModel.removeAllElements();
 
-		for (String val : vals)
-			styleModel.addElement(val);
-
-		for (ProjectionData proj : model.getDescriptor().getProjections()) {
+		for (String style : foundStyleClasses){
+			styleModel.addElement(style);
+		}
+	
+		// Set the style mappings from the current descriptor
+		for (ProjectionData proj : descriptor.getProjections()) {
 			if (proj.getType().equals(ProjectionData.NETWORK_TYPE)) {
-				String name = proj.getId();
-				String style = descriptor.getNetworkStyleClassName(name);
-				String editedStyle = descriptor.getNetworkEditedStyleName(name);
-				if (style == null) {
-					style = defaultStyle;
-				}
-				listModel.addElement(new ListElement(name, style, editedStyle));
-				editedStyleFileMap.put(name, editedStyle);
+				String networkName = proj.getId();
+				String style = descriptor.getNetworkStyleClassName(networkName);
+				String editedStyle = descriptor.getNetworkEditedStyleName(networkName);
+				
+				if (style == null) 
+					style = getDefaultStyle(descriptor);;
+				
+				listModel.addElement(new ListElement(networkName, style, editedStyle));
+				editedStyleFileMap.put(networkName, editedStyle);
 			}
 		}
 
@@ -328,21 +217,15 @@ public class EdgeStyleStep extends PluginWizardStep {
 		DefaultListModel listModel = (DefaultListModel) objList.getModel();
 		if (elementIndex != -1 && elementIndex < listModel.getSize()) {
 			ListElement element = (ListElement) listModel.get(elementIndex);
-			Object obj = styleBox.getSelectedItem();
-			if (obj != null)
-				element.styleClassName = obj.toString();
+			
+			Object selectedItem = styleBox.getSelectedItem();
+			if (selectedItem != null) {
+				// Set the network style class
+				element.styleClassName = selectedItem.toString();
 
-			if ("repast.simphony.visualization.editedStyle.EditedEdgeStyle2D"
-					.equals(element.styleClassName)
-					|| "repast.simphony.visualization.editedStyle.EditedEdgeStyle3D"
-					.equals(element.styleClassName)
-					|| "repast.simphony.visualization.editedStyle.EditedEdgeStyleGIS3D"
-					.equals(element.styleClassName))
-
+				// Set the edited network style data (may be null)
 				element.editedStyleName = editedStyleFileMap.get(element.netName);
-			else
-				element.editedStyleName = null;
-
+			}
 		}
 	}
 
@@ -361,5 +244,153 @@ public class EdgeStyleStep extends PluginWizardStep {
 	@Override
 	public void init(WizardModel wizardModel) {
 		this.model = (DisplayWizardModel) wizardModel;
+	}
+	
+	/**
+	 * Returns true if the display type in the descriptor supports edited styles.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected boolean checkForStyleEditor(DisplayDescriptor descriptor) {
+		if (descriptor instanceof CartesianDisplayDescriptor){
+			return true;
+		}
+		// Check the viz registry for support of edited styles for this display type
+		else {
+			Class<? extends EditedEdgeStyleData> defaultEditedStyleClass =
+					VisualizationRegistry.getDataFor(descriptor.getDisplayType()).getDefaultEditedEdgeStyleDataClass();
+			
+			if (defaultEditedStyleClass != null) 
+				return true;
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the class name for edited styles based on the display type in the descriptor.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected String getEditedStyleClassForDisplay(DisplayDescriptor descriptor){
+		String styleClassName = null;
+	
+		if (descriptor.getDisplayType().equals(DisplayType.TWO_D))
+			styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle2D";
+
+		else if (descriptor.getDisplayType().equals(DisplayType.THREE_D))
+			styleClassName = "repast.simphony.visualization.editedStyle.EditedEdgeStyle3D";
+
+		// For other displays, get the default style from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(
+					descriptor.getDisplayType());
+
+			if (data != null){
+				Class clazz = data.getEditedEdgeStyleClass();
+				
+				if (clazz != null)
+					styleClassName = clazz.getName();
+			}
+			else{
+				msg.error("Error creating style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
+		return styleClassName;
+	}
+	
+	/**
+	 * Finds all classes that implement the style interface for the type in the descriptor.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected List<String> findStylesForDisplay(DisplayDescriptor descriptor){
+		// Find all available style classes for the display type
+		List<String> foundStyleClasses = new ArrayList<String>();
+		String defaultStyle = getDefaultStyle(descriptor);
+		
+		// Cartesian displays are explicit here
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
+			foundStyleClasses = findStylesFor(EdgeStyle3D.class, defaultStyle);
+		} 
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			foundStyleClasses = findStylesFor(EdgeStyleOGL2D.class, defaultStyle);
+		} 
+		// For other displays, find the style interface from the registry
+		else{
+			Class<?> styleInterface = VisualizationRegistry.getDataFor(
+					descriptor.getDisplayType()).getEdgeStyleInterface();
+
+			if (styleInterface != null){
+				foundStyleClasses = findStylesFor(styleInterface, defaultStyle);
+			} 
+			else {
+				msg.warn("No style interface defined for" + descriptor.getDisplayType());	
+			}
+		}
+		return foundStyleClasses;
+	}
+	
+	/**
+	 * Provides the default style class name for the display defined in the descriptor.
+	 * 
+	 * @param descriptor
+	 * @return
+	 */
+	protected String getDefaultStyle(DisplayDescriptor descriptor){
+		String defaultStyle = null;
+	
+		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)){
+			defaultStyle = DefaultEdgeStyle3D.class.getName();
+		}
+		else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
+			defaultStyle = DefaultEdgeStyleOGL2D.class.getName();
+		}
+
+		// Get the default style for the display from the viz registry.
+		else{
+			VisualizationRegistryData data = VisualizationRegistry.getDataFor(descriptor.getDisplayType());
+
+			if (data != null){
+				Class<?>[] defaultStyleClasses =  data.getDefaultEdgeStyles();
+				
+				if (defaultStyleClasses != null){
+					defaultStyle = defaultStyleClasses[0].getName();
+				}
+			}
+			else{
+				msg.error("Error creating edge style step for " + descriptor.getDisplayType() 
+						+ ". No visualization registry data found.", null);
+			}
+		}
+		return defaultStyle;
+	}
+	
+	/**
+	 * Provides a list of available style classes (including default) for the specified
+	 *   interface.
+	 *   
+	 * @param styleInterface
+	 * @return
+	 */
+	protected List<String> findStylesFor(Class<?> styleInterface, String defaultStyle){
+		List<String> foundStyleClasses = styleCache.get(styleInterface);
+
+		if (foundStyleClasses == null){
+			foundStyleClasses = StyleClassFinder.getAvailableStyles(model.getContext(), styleInterface);
+
+			if (defaultStyle != null){
+				foundStyleClasses.add(defaultStyle);
+			}
+			else{
+				msg.warn("No default styles found for " + model.getDescriptor().getDisplayType());	
+			}
+			styleCache.put(styleInterface, foundStyleClasses);
+		} 
+		return foundStyleClasses;
 	}
 }

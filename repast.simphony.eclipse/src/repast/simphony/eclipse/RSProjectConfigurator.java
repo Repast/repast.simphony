@@ -11,6 +11,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.codehaus.groovy.eclipse.core.builder.GroovyClasspathContainer;
 import org.codehaus.groovy.eclipse.core.compiler.CompilerUtils;
 import org.codehaus.groovy.eclipse.core.model.GroovyRuntime;
+import org.codehaus.groovy.frameworkadapter.util.SpecifiedVersion;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,9 +32,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import repast.simphony.eclipse.ide.ServerLauncherCreator;
 import repast.simphony.eclipse.util.Utilities;
-
-import org.codehaus.groovy.frameworkadapter.util.SpecifiedVersion;
 
 /**
  * Configures a Repast Simphony project by setting the classpath, adding the
@@ -196,6 +196,9 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
           classpath);
       launchConfigurationWorkingCopy.doSave();
+      
+      ServerLauncherCreator creator = new ServerLauncherCreator();
+      creator.run(javaProject, newFolder);
 
       // ******************************************************************
       // ******

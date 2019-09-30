@@ -10,7 +10,7 @@
 !include "StrFunc.nsh"    ; String functions
 !include "x64.nsh"        ; Macros for x64 machines
 
-!define VERSION "2.6"     ; Repast Version
+!define VERSION "2.7"     ; Repast Version
 
 !define JAVA_HOME "jdk11"                          ; The included Java root dir
 !define JAVA_BIN "eclipse\${JAVA_HOME}\bin\javaw"  ; path to bundled VM
@@ -133,12 +133,13 @@ Section "Start Menu Shortcuts" Section_Shortcuts
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Java Getting Started.lnk" "$INSTDIR\docs\RepastJavaGettingStarted.pdf" 
   
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Browser GUI.lnk" "$INSTDIR\docs\RepastNG\browser.html" 
+  
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Reference.lnk" "$INSTDIR\docs\RepastReference\RepastReference.html" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony API.lnk" "$INSTDIR\docs\RepastSimphonyAPI\index.html" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Primitives Quick Reference.lnk" "$INSTDIR\docs\RepastSimphonyAPI\ReLogoPrimitives.html" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Statecharts Guide.lnk" "$INSTDIR\docs\Statecharts.pdf" 
   
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony Data Collection.lnk" "$INSTDIR\docs\DataCollection.pdf" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Batch Getting Started.lnk" "$INSTDIR\docs\RepastBatchRunsGettingStarted.pdf" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Model Testing Guide.lnk" "$INSTDIR\docs\RepastModelTesting.pdf" 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\Repast Simphony FAQ.lnk" "$INSTDIR\docs\RepastFAQ\RepastFAQ.html" 

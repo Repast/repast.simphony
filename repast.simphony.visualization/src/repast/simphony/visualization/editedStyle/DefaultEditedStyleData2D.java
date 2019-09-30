@@ -24,7 +24,7 @@ public class DefaultEditedStyleData2D<T> extends EditedStyleData<T> {
 	  sizeMax = 15;
 	  sizeScale = 1;
 	  
-	  color = new float[]{0,0,1};
+	  color = new float[]{0,0,1};   // Blue
 	  
 	  colorMax = new float[]{10,10,10};
 	  colorMin = new float[]{0,0,0};

@@ -1,51 +1,21 @@
 package repast.simphony.visualization.gui.styleBuilder;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
-
-import org.jscience.physics.amount.Amount;
-
-import repast.simphony.scenario.data.Attribute;
-import repast.simphony.scenario.data.ContextData;
-import repast.simphony.scenario.data.ProjectionData;
-import repast.simphony.ui.plugin.editor.SquareIcon;
-import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData2D;
-import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData3D;
-import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
-import repast.simphony.visualization.editedStyle.EditedStyleUtils;
-import repast.simphony.visualization.editedStyle.LineStyle;
-import repast.simphony.visualization.engine.DisplayDescriptor;
-import repast.simphony.visualization.engine.DisplayType;
-import simphony.util.messages.MessageCenter;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -54,66 +24,36 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+
+import repast.simphony.scenario.data.Attribute;
+import repast.simphony.scenario.data.ContextData;
+import repast.simphony.scenario.data.ProjectionData;
+import repast.simphony.ui.plugin.editor.SquareIcon;
+import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData2D;
+import repast.simphony.visualization.editedStyle.DefaultEditedEdgeStyleData3D;
+import repast.simphony.visualization.editedStyle.EditedStyleUtils;
+import repast.simphony.visualization.editedStyle.LineStyle;
+import repast.simphony.visualization.engine.DisplayDescriptor;
+import repast.simphony.visualization.engine.DisplayType;
 
 /**
  * @author Eric Tatara
  */
 @SuppressWarnings("serial")
-public class SimpleEditedEdgeStyleDialog extends JDialog {
-  private boolean save = false;
-  private EditedEdgeStyleData userStyleData;
-  private static final Set<Class> pTypes = new HashSet<Class>();
-  private List<String> methodList;
+public class SimpleEditedEdgeStyleDialog extends AbstractStyleDialog{
 
-  private DefaultComboBoxModel sizeModel;
-  private DefaultComboBoxModel sizeMinModel;
-  private DefaultComboBoxModel sizeMaxModel;
-  private DefaultComboBoxModel sizeScaleModel;
-
-  private DefaultComboBoxModel variableIconRedColorValueModel;
-  private DefaultComboBoxModel variableIconGreenColorValueModel;
-  private DefaultComboBoxModel variableIconBlueColorValueModel;
-  private DefaultComboBoxModel variableIconRedColorMinModel;
-  private DefaultComboBoxModel variableIconGreenColorMinModel;
-  private DefaultComboBoxModel variableIconBlueColorMinModel;
-  private DefaultComboBoxModel variableIconRedColorMaxModel;
-  private DefaultComboBoxModel variableIconGreenColorMaxModel;
-  private DefaultComboBoxModel variableIconBlueColorMaxModel;
-  private DefaultComboBoxModel variableIconRedColorScaleModel;
-  private DefaultComboBoxModel variableIconGreenColorScaleModel;
-  private DefaultComboBoxModel variableIconBlueColorScaleModel;
-
-  private String netID;
-  private String userStyleName;
-  DisplayDescriptor descriptor;
-
-  private PreviewEdge preview;
-
-  static {
-    pTypes.add(int.class);
-    pTypes.add(double.class);
-    pTypes.add(float.class);
-    pTypes.add(long.class);
-    pTypes.add(byte.class);
-    pTypes.add(short.class);
-    pTypes.add(Amount.class);
-  }
-
+//	private DefaultComboBoxModel shapeModel;
+ 
   public SimpleEditedEdgeStyleDialog(Frame owner) {
     super(owner);
-    methodList = new ArrayList<String>();
   }
 
   public SimpleEditedEdgeStyleDialog(Dialog owner) {
     super(owner);
-    methodList = new ArrayList<String>();
   }
 
-  public void init(ContextData context, String netID, String userStyleName,
-      DisplayDescriptor descriptor) {
+  @Override
+  public void init(ContextData context, String netID, String userStyleName, DisplayDescriptor descriptor) {
     this.netID = netID;
     this.userStyleName = userStyleName;
     for (ProjectionData proj : context.projections()) {
@@ -135,10 +75,26 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
       if (userStyleData == null)
         userStyleData = new DefaultEditedEdgeStyleData2D();
 
+//			shapeModel = new DefaultComboBoxModel(new Object[] { 
+//					new LineStyleIcon(LineStyle.SOLID, 3f),
+//					new LineStyleIcon(LineStyle.DASH, 3f), 
+//					new LineStyleIcon(LineStyle.DASH_DOT, 3f),
+//					new LineStyleIcon(LineStyle.DASH_DASH_DOT, 3f) });
+
     } else {
       if (userStyleData == null)
         userStyleData = new DefaultEditedEdgeStyleData3D();
+//			shapeModel = new DefaultComboBoxModel(new Object[] { new LineStyleIcon(LineStyle.SOLID, 3f) });
     }
+
+//		for (int i = 0; i < shapeModel.getSize(); i++) {
+//			LineStyleIcon icon = (LineStyleIcon) shapeModel.getElementAt(i);
+//
+//			if (icon.getLineStyle().equals(userStyleData.getLineStyle())) {
+//				shapeModel.setSelectedItem(icon);
+//				break;
+//			}
+//		}
 
     sizeModel = new DefaultComboBoxModel();
     sizeMinModel = new DefaultComboBoxModel();
@@ -233,36 +189,10 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     initMyComponents(displayType);
   }
 
-  /**
-   * Method loads an edge class and adds get methods or just adds the getWeight
-   * method as default
-   * 
-   * @param a
-   *          a SAttribute from the score file
-   */
-  public void findAttributes(Attribute a) {
-    if (a.getId().equalsIgnoreCase("edgeClass")) {
-      Class<?> clazz = null;
-      try {
-        clazz = Class.forName(a.getValue());
-      } catch (ClassNotFoundException e) {
-        MessageCenter.getMessageCenter(SimpleEditedEdgeStyleDialog.class).error(
-            "Problems finding" + "class to load", e);
-        e.printStackTrace();
-      }
-      if (clazz != null) {
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-          if (method.getName().startsWith("get") && pTypes.contains(method.getReturnType()))
-            methodList.add(method.getName());
-        }
-      }
-    }
-  }
-
   public void initMyComponents(String displayType) {
     CellConstraints cc = new CellConstraints();
 
+//		shapeComboBox.setModel(shapeModel);
     sizeComboBox.setModel(sizeModel);
     sizeMinComboBox.setModel(sizeMinModel);
     sizeMaxComboBox.setModel(sizeMaxModel);
@@ -289,7 +219,7 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     } else {
       this.setTitle("3D Edge Style Editor");
       preview = new PreviewEdge3D();
-
+//			shapeComboBox.setEnabled(false); // TODO for now there are no 3D line
       // style
     }
 
@@ -305,67 +235,11 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
 
   }
 
-  private String removeSpaces(String s) {
-    StringTokenizer st = new StringTokenizer(s, " ", false);
-    String t = "";
-    while (st.hasMoreElements())
-      t += st.nextElement();
-    return t;
-  }
-
-  public void writeStyleData() {
-    XStream xstream = new XStream(new XppDriver(new XStream11XmlFriendlyReplacer())) {
-      protected boolean useXStream11XmlFriendlyMapper() {
-        return true;
-      }
-    };
-
-    File file = null;
-    try {
-      File dir = new File(EditedStyleUtils.getStyleDirName());
-
-      if (!dir.exists())
-        dir.mkdir();
-
-      if (userStyleName != null)
-        file = new File(dir, userStyleName);
-
-      else {
-        int cnt = 0;
-        userStyleName = removeSpaces(netID) + ".style_" + cnt + ".xml";
-
-        file = new File(dir, userStyleName);
-        while (file.exists()) {
-          userStyleName = removeSpaces(netID) + ".style_" + cnt + ".xml";
-
-          file = new File(dir, userStyleName);
-          cnt++;
-        }
-      }
-
-      FileWriter fw = new FileWriter(file);
-
-      xstream.toXML(userStyleData, fw);
-      fw.close();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-
-  public boolean doSave() {
-    return save;
-  }
-
-  private void cancelButtonActionPerformed(ActionEvent e) {
-    dispose();
-  }
-
-  private void okButtonActionPerformed(ActionEvent e) {
-    save = true;
-    writeStyleData();
-    dispose();
-  }
+//	private void shapeComboBoxActionPerformed(ActionEvent e) {
+//		userStyleData.setLineStyle(((LineStyleIcon) shapeComboBox.getSelectedItem()).getLineStyle());
+//
+//		// preview.setMark((String)shapeComboBox.getSelectedItem());
+//	}
 
   private void sizeComboBoxActionPerformed(ActionEvent e) {
     Object selection = sizeComboBox.getSelectedItem();
@@ -555,6 +429,7 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
     cancelButton = new JButton();
     panel1 = new JPanel();
     shapePanel = new JPanel();
+//    shapeComboBox = new JComboBox();
     shapeLbl = new JLabel();
     iconColorbutton = new JButton();
     panel3 = new JPanel();
@@ -655,6 +530,12 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
               RowSpec.decodeSpecs("default")));
 
           // ---- shapeComboBox ----
+//					shapeComboBox.addActionListener(new ActionListener() {
+//						public void actionPerformed(ActionEvent e) {
+//							shapeComboBoxActionPerformed(e);
+//						}
+//					});
+//					shapePanel.add(shapeComboBox, cc.xy(1, 1));
 
           shapePanel.add(shapeLbl, cc.xy(1, 1));
 
@@ -906,6 +787,7 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
   private JButton cancelButton;
   private JPanel panel1;
   private JPanel shapePanel;
+//  private JComboBox shapeComboBox;
   private JLabel shapeLbl;
   private JButton iconColorbutton;
   private JPanel panel3;
@@ -940,79 +822,4 @@ public class SimpleEditedEdgeStyleDialog extends JDialog {
   private JPanel previewPanel;
 
   // JFormDesigner - End of variables declaration //GEN-END:variables
-
-  public String getUserStyleName() {
-    return userStyleName;
-  }
-
-  class LineStyleIcon implements Icon {
-
-    protected float[] dash;
-    protected float width;
-    LineStyle lineStyle;
-    private Color color;
-
-    public LineStyleIcon(LineStyle lineStyle, float width) {
-      this(lineStyle, width, Color.BLACK);
-    }
-
-    public LineStyleIcon(LineStyle lineStyle, float width, Color color) {
-      this.color = color;
-
-      if (lineStyle == LineStyle.DASH)
-        dash = new float[] { 10f, 10f };
-      else if (lineStyle == LineStyle.DASH_DOT)
-        dash = new float[] { 10f, 4f, 2f, 4f };
-      else if (lineStyle == LineStyle.DASH_DASH_DOT)
-        dash = new float[] { 10f, 4f, 10f, 4f, 2f, 4f };
-      else
-        dash = null;
-
-      this.width = width;
-      this.lineStyle = lineStyle;
-    }
-
-    public int getIconHeight() {
-      return 20;
-    }
-
-    public int getIconWidth() {
-      return 100;
-    }
-
-    public void paintIcon(Component c, Graphics g, int x, int y) {
-
-      g.setColor(c.getBackground());
-      g.fillRect(x, y, getIconWidth(), getIconHeight());
-      g.setColor(color);
-
-      ((Graphics2D) g).setStroke(new BasicStroke(width, BasicStroke.CAP_BUTT,
-          BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
-
-      g.drawLine(0, getIconHeight() / 2, getIconWidth(), getIconHeight() / 2);
-    }
-
-    public LineStyle getLineStyle() {
-      return lineStyle;
-    }
-  }
-
-  private boolean isUserTypedNumber(Object obj) {
-    String validChars = "0123456789";
-    boolean isNumber = true;
-
-    if (obj instanceof String) {
-
-      String s = (String) obj;
-
-      char c = s.charAt(0);
-
-      if (validChars.indexOf(c) == -1)
-        return false;
-
-      else
-        return true;
-    }
-    return false;
-  }
 }

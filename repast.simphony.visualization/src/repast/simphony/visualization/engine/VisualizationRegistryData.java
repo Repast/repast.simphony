@@ -1,11 +1,14 @@
 package repast.simphony.visualization.engine;
 
 import java.util.List;
+import java.util.Set;
 
 import org.pietschy.wizard.WizardStep;
 import org.pietschy.wizard.models.Condition;
 
 import repast.simphony.util.collections.Pair;
+import repast.simphony.visualization.editedStyle.EditedEdgeStyleData;
+import repast.simphony.visualization.editedStyle.EditedStyleData;
 import repast.simphony.visualization.gui.DisplayDescriptorFactory;
 
 
@@ -109,4 +112,14 @@ public interface VisualizationRegistryData {
 	 * @return
 	 */
 	public DisplayValidator getDisplayValidator();
+	
+	public Class<? extends EditedStyleData> getDefaultEditedStyleDataClass();
+	
+	public Class<? extends EditedEdgeStyleData> getDefaultEditedEdgeStyleDataClass();
+	
+	public Class<?> getEditedStyleClass(EditedStyleData editedStyleData);
+	
+	public Class<?> getEditedEdgeStyleClass();
+	
+	public Set<String> getAllowedShapes();
 }
