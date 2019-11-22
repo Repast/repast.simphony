@@ -129,6 +129,10 @@
 			<fileset dir="../repast.simphony.scenario/src" casesensitive="no">
 				<include name="**/*.java" />
 			</fileset>
+			
+			<fileset dir="../repast.simphony.server/src" casesensitive="no">
+				<include name="**/*.java" />
+			</fileset>
 
 			<fileset dir="../repast.simphony.sql/src" casesensitive="no">
 				<include name="**/*.java" />
@@ -213,6 +217,10 @@
 				</fileset>
 
 				<fileset dir="../repast.simphony.runtime/lib" casesensitive="no">
+					<include name="**/*.jar" />
+				</fileset>
+				
+				<fileset dir="../repast.simphony.server/lib" casesensitive="no">
 					<include name="**/*.jar" />
 				</fileset>
 
