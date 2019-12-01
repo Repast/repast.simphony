@@ -1,7 +1,8 @@
 import { Display2D } from '/js/display.js';
 import { LeafletDisplay } from '/js/display_leaflet.js';
 import { empty } from '/js/utils.js';
-import { ITownsDisplay } from '/js/display_itowns.js';
+//import { ITownsDisplay } from '/js/display_itowns.js';
+import { ViziCitiesDisplay } from '/js/display_vizicities.js';
 
 let current_layout = "tabs";
 let tabs = [];
@@ -220,15 +221,20 @@ function createDisplays(display_data, display_updates, on_picked, parents) {
             });
         }
         else if (type === "GIS 3D") {
-            let display = new LeafletDisplay(name, parents[i], disp_id);
-            //let display = new ITownsDisplay(name, tabs[i], disp_id);
+//            let display = new LeafletDisplay(name, parents[i], disp_id);
+//            let display = new ITownsDisplay(name, parents[i], disp_id);
+        	let display = new ViziCitiesDisplay(name, parents[i], disp_id);
             display.init(msg);
             displays.set(disp_id, display);
-            if (display_updates.has(disp_id)) {
-                let msg = display_updates.get(disp_id);
-                display_updates.delete(disp_id);
-                display.update(msg);
-            }
+          
+            // TODO Implement Promises
+            
+	            if (display_updates.has(disp_id)) {
+	                let msg = display_updates.get(disp_id);
+	                display_updates.delete(disp_id);
+	                display.update(msg);
+	            }
+           
         }
     });
     interact('.card-display-container').draggable({

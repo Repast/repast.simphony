@@ -1,6 +1,16 @@
 
 import { empty } from '/js/utils.js';
 import { GuiTools } from '/js/GuiTools.js';
+import { VRButton } from '/vendor/VRButton.js';
+
+//import RGlobeView from '/js/RGlobeView.js';
+
+//we use to set a valid width / height for a display
+//the display's tab may not be visible yet if its not the
+//first tab and so its clientWidth / clientHeight will be 0
+//When that's the case, we can use these.
+let uwidth = -1;
+let uheight = -1;
 
 const ext = new itowns.Extent('EPSG:4326', [0, 0, 0, 0]);
 
@@ -146,52 +156,94 @@ class ShapeCreator {
 }
 
 export class ITownsDisplay {
-    constructor(name, tab, display_id) {
+    constructor(name, tab_content, display_id) {
         this.name = name;
         this.objectMap = new Map();
 
-        this.tab_content = tab.tab_content;
-        this.tab = tab.tab_li;
-        //this.createTab();
+        this.tab_content = tab_content;
         
         // TODO perhaps refactor the container setup to an abstract parent class
         // Get a reference to the container element that will hold our scene
       
-        let outer_cont = document.createElement("div");
-        outer_cont.style.display = 'inline-block';    // allows multiple displays per row
-
         // Create the container that will hold this display
         this.container = document.createElement("div");
-
-        // TO DISABLE DRAGGING AND RESIZING, COMMENT OUT THESE
-        // TWO LINES AND UNCOMMENT THE 4 STYLE LINES BELOW
-        this.container.className = "display-container";
+        this.container.className = "card-display-container";
         this.container.setAttribute("display_id", display_id);
         
-        // this.container.style.width = "600px";
-        // this.container.style.height = "600px";
-        // this.container.style.border = "solid black";
-        // this.container.style.margin = "30px";
-
-        outer_cont.appendChild(this.container);
-        this.tab_content.appendChild(outer_cont);
-
-        this.container.id = this.name;  // needed by L.map()
+        let header = document.createElement("h5");
+        header.className = "card-header";
+        header.textContent = name;
+        this.container.appendChild(header);
+        this.card_body = document.createElement("div");
+        this.card_body.className = "card-block-display w-100 p-0";
+        this.container.appendChild(this.card_body);
+        
+        tab_content.appendChild(this.container);
+        
+        // Use the display id which is unique, since the display name can be duplicate
+        this.card_body.id = display_id;
+        
+        let width = this.card_body.clientWidth == 0 ? uwidth : this.card_body.clientWidth;
+        let height = this.card_body.clientHeight == 0 ? uheight : this.card_body.clientHeight;
+ 
+        // should be > 0 for first tab 
+        uwidth = width;
+        uheight = height;
         
         //var position = new itowns.Coordinates('WGS84', -87.6, 45.5, 20e6);
         
         var positionOnGlobe = {longitude: -87.6, latitude: 41.5, altitude: 20e6 };
-        this.view = new itowns.GlobeView(this.container, positionOnGlobe);
-  
-        var provider = {
-            executeCommand: dynamicDataExecuteCommand,
-            id: 'EricProvider'};
-  
-        this.view.mainLoop.scheduler.addProtocolProvider('dynamic-data', provider);
-  
+       
+        // create a WebGLRenderer and set its width and height
+        
+        this.renderer = new THREE.WebGLRenderer({ 
+        	canvas: document.createElement('canvas'),
+        	antialias: true,
+        	alpha: true,
+        	logarithmicDepthBuffer: true
+//        	autoClear: false
+        	});
+
+//        this.renderer.vr.enabled = true;      
+        
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(width, height);
+        this.card_body.appendChild(this.renderer.domElement);
+        
+//        console.log(this.renderer);
+        
+        
+//        renderer.domElement.addEventListener( 'mousedown', onMouseDown, false );
+//		renderer.domElement.addEventListener( 'mouseup', onMouseUp, false );
+//		renderer.domElement.addEventListener( 'touchstart', onMouseDown, false );
+//		renderer.domElement.addEventListener( 'touchend', onMouseUp, false );
+        
+        
+//        this.card_body.appendChild( VRButton.createButton( this.renderer ) );
+
+        // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        //this.controls.addEventListener('change', this.render.bind(this));
+        //this.renderer.domElement.addEventListener('click', this.onClick.bind(this));
+        //window.addEventListener('resize', this.windowResize.bind(this));
+        
+ //       this.view = new RGlobeView(this.card_body, positionOnGlobe);
+ //      this.view = new itowns.GlobeView(this.card_body, positionOnGlobe);
+        this.view = new itowns.GlobeView(this.card_body, positionOnGlobe, { renderer: this.renderer });
+             
+//       console.log(this.view.mainLoop.gfxEngine.renderer);
+       
+//        this.view.mainLoop.gfxEngine.renderer.vr.enabled = true;          
+//        this.container.appendChild( VRButton.createButton( this.view.mainLoop.gfxEngine.renderer ) );
+        
+//        var provider = {
+//            executeCommand: dynamicDataExecuteCommand,
+//            id: 'EricProvider'};
+//  
+//        this.view.mainLoop.scheduler.addProtocolProvider('dynamic-data', provider);
+//  
   
     // GuiTools.js menu
-        var menuGlobe = new GuiTools(this.container, 'menuDiv', this.view);
+//        var menuGlobe = new GuiTools(this.container, 'menuDiv', this.view);
   
         // TODO not sure if we need a loading screen per the demos?  
 //        setupLoadingScreen(this.container, view);
@@ -208,7 +260,7 @@ export class ITownsDisplay {
             source: orthoSource,
         });
 
-        this.view.addLayer(orthoLayer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
+        this.view.addLayer(orthoLayer); //.then(menuGlobe.addLayerGUI.bind(menuGlobe));
         
         var elevatSource = new itowns.WMTSSource({
             url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wmts',
@@ -222,7 +274,7 @@ export class ITownsDisplay {
             source: elevatSource,
         });
 
-//        this.view.addLayer(elevatLayer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
+        this.view.addLayer(elevatLayer); //.then(menuGlobe.addLayerGUI.bind(menuGlobe));
 
        /*  var elevatSource2 = new itowns.WMTSSource({
             url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wmts',
@@ -242,92 +294,91 @@ export class ITownsDisplay {
         
         
         
-        var agentSource = new FeatureSource();
-        
-        this.geometryLayer = new itowns.GeometryLayer('Agents', new itowns.THREE.Group(), {
-           
-            source: agentSource,
+//        var agentSource = new FeatureSource();
+//        
+//        this.geometryLayer = new itowns.GeometryLayer('Agents', new itowns.THREE.Group(), {
+//           
+//            source: agentSource,
+//
+//            }
+//        
+//        );
+//        
+//        this.geometryLayer.projection = 'EPSG:4326';
+//        this.geometryLayer.mergeFeatures = false;
+//        
+//       // this.geometryLayer.protocol = "Eric Nutz";
+//        
+//        this.geometryLayer.update = itowns.FeatureProcessing.update;
+//        this.geometryLayer.convert = itowns.Feature2Mesh.convert({
+//              
+//                altitude: this.setAltitude 
+//                });
+//                
+//       
+//        
+//        this.geometryLayer.onMeshCreated = function scaleZ(mesh) {
+//                    mesh.scale.z = 0.01;
+//                    meshes.push(mesh);
+//                    
+//                    console.log("Heyoo " + str(mesh));
+//                };
+//        
+//        
+//      
+//       var coord = new itowns.Coordinates('EPSG:4326');
+//        coord.setFromValues(-87.618952, 41.875817);  // Buckingham Fountain
+//        coord.altitude = 10;
+//                 
+//        var featureType = itowns.FEATURE_TYPES.POINT;
+//        var crs = 'EPSG:4326';
+//        var options = {buildExtent: true };
+//        
+//        var feature = new itowns.Feature(featureType, crs, options);
+//        var geometry = feature.bindNewGeometry();
+//        
+//		
+//		geometry.startSubGeometry(1);
+//        geometry.pushCoordinates(coord);
+//        feature.updateExtent(geometry);
+//        
+//        var features = new itowns.FeatureCollection(crs, {buildExtent: true });
+//        
+//        features.pushFeature(feature);
+//        //features.updateExtent();
+//        
+//        this.geometryLayer.source.parsedData = features; 
+//        
+//            
+//        //this.view.addLayer(this.geometryLayer).then(console.log("Added geom layer"));
+//	  
+//        var p = this.view.addLayer(this.geometryLayer);
+//      
+//        
+//        
+//      
+//		// Add a geometry layer, which will contain the multipolygon to display
+//        this.marne = new itowns.GeometryLayer('Marne', new itowns.THREE.Group());
+//        this.marne.update = itowns.FeatureProcessing.update;
+//        this.marne.convert = itowns.Feature2Mesh.convert({ 
+//                                altitude: 1,
+//                                extrude: 100});
+//        this.marne.transparent = true;
+//        this.marne.opacity = 0.7;
+//        
+//		// Use a FileSource to load a single file once
+//        this.marne.source = new itowns.FileSource({
+//                url: 'https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/multipolygon.geojson',
+//                projection: 'EPSG:4326',
+//                format: 'application/json',
+//                zoom: { min: 10, max: 10 },
+//        });
+//		
+//		this.view.addLayer(this.marne).then(menuGlobe.addLayerGUI.bind(menuGlobe));
+//	  
+//        window.addEventListener('resize', this.windowResize.bind(this));
 
-            }
-        
-        );
-        
-        this.geometryLayer.projection = 'EPSG:4326';
-        this.geometryLayer.mergeFeatures = false;
-        
-       // this.geometryLayer.protocol = "Eric Nutz";
-        
-        this.geometryLayer.update = itowns.FeatureProcessing.update;
-        this.geometryLayer.convert = itowns.Feature2Mesh.convert({
-              
-                altitude: this.setAltitude 
-                });
-                
-       
-        
-        this.geometryLayer.onMeshCreated = function scaleZ(mesh) {
-                    mesh.scale.z = 0.01;
-                    meshes.push(mesh);
-                    
-                    console.log("Heyoo " + str(mesh));
-                };
-        
-        
       
-       var coord = new itowns.Coordinates('EPSG:4326');
-        coord.setFromValues(-87.618952, 41.875817);  // Buckingham Fountain
-        coord.altitude = 10;
-                 
-        var featureType = itowns.FEATURE_TYPES.POINT;
-        var crs = 'EPSG:4326';
-        var options = {buildExtent: true };
-        
-        var feature = new itowns.Feature(featureType, crs, options);
-        var geometry = feature.bindNewGeometry();
-        
-		
-		geometry.startSubGeometry(1);
-        geometry.pushCoordinates(coord);
-        feature.updateExtent(geometry);
-        
-        var features = new itowns.FeatureCollection(crs, {buildExtent: true });
-        
-        features.pushFeature(feature);
-        //features.updateExtent();
-        
-        this.geometryLayer.source.parsedData = features; 
-        
-            
-        //this.view.addLayer(this.geometryLayer).then(console.log("Added geom layer"));
-	  
-        var p = this.view.addLayer(this.geometryLayer);
-      
-        
-        
-      
-		// Add a geometry layer, which will contain the multipolygon to display
-        this.marne = new itowns.GeometryLayer('Marne', new itowns.THREE.Group());
-        this.marne.update = itowns.FeatureProcessing.update;
-        this.marne.convert = itowns.Feature2Mesh.convert({ 
-                                altitude: 1,
-                                extrude: 100});
-        this.marne.transparent = true;
-        this.marne.opacity = 0.7;
-        
-		// Use a FileSource to load a single file once
-        this.marne.source = new itowns.FileSource({
-                url: 'https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/multipolygon.geojson',
-                projection: 'EPSG:4326',
-                format: 'application/json',
-                zoom: { min: 10, max: 10 },
-        });
-		
-		this.view.addLayer(this.marne).then(menuGlobe.addLayerGUI.bind(menuGlobe));
-	  
-        window.addEventListener('resize', this.windowResize.bind(this));
-
-        // Tab Events doc: https://getbootstrap.com/docs/4.0/components/navs/#events
-        $('#display-tabs a[href="#' + tab.tab_id + '"]').on('shown.bs.tab', this.checkResize.bind(this));
     }
     
     setAltitude(properties) {
