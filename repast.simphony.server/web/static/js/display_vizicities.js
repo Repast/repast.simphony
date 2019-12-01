@@ -146,13 +146,28 @@ export class ViziCitiesDisplay {
        
         
         var coords = [40.739940, -73.988801];
-        var world = VIZI.world(this.card_body.id).setView(coords);
+        this.world = VIZI.world(this.card_body.id).setView(coords);
         
-        VIZI.Controls.orbit().addTo(world);
+        // Enable for VR
+        this.world._engine._renderer.vr.enabled = true; 
+        var camera = this.world.getCamera();
+       
+//        var camera = this.world._engine._renderer.vr.getCamera();
+//        camera.position.y = 1.6;
+
+        // This works setting the non-VR camera position
+        camera.position.set( 0, 1000, 0 );
+
+        this.world._engine._scene.translateY(-100);
         
-        VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-        	  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-        	}).addTo(world);
+        // Hack for testing VR, we should update orbit controls instead
+//        camera.zoom = 10;
+//        camera.updateProjectionMatrix();
+//        camera.updateMatrix();
+        
+//        VIZI.Controls.orbit().addTo(this.world);
+        
+        VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png').addTo(this.world);
         
      // Buildings from Tilezen
         VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
@@ -174,9 +189,8 @@ export class ViziCitiesDisplay {
           filter: function(feature) {
             // Don't show points
             return feature.geometry.type !== 'Point';
-          },
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://whosonfirst.mapzen.com#License">Who\'s On First</a>.'
-        }).addTo(world);
+          }
+        }).addTo(this.world);
         
         // create a WebGLRenderer and set its width and height
         
@@ -200,7 +214,9 @@ export class ViziCitiesDisplay {
 
 //        window.addEventListener('resize', this.windowResize.bind(this));
 
-      
+        if (this.world._engine._renderer.vr.enabled){
+        	this.container.appendChild( VRButton.createButton(this.world._engine._renderer ) );   
+        }
     }
     
     setAltitude(properties) {
@@ -420,7 +436,8 @@ export class ViziCitiesDisplay {
 //        this.map.remove();
 //        this.map = null;
         
-  
+    	this.world.destroy();
+    	this.world = null;
         
         empty(this.tab);
         empty(this.tab_content);
