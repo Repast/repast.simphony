@@ -141,11 +141,10 @@ export class ViziCitiesDisplay {
         // should be > 0 for first tab 
         uwidth = width;
         uheight = height;
-                
-//        var positionOnGlobe = {longitude: -87.6, latitude: 41.5, altitude: 20e6 };
-       
+                        
+//        var coords = [40.739940, -73.988801];  // NYC
+        var coords = [41.8758, -87.6189]; // Chicago
         
-        var coords = [40.739940, -73.988801];
         this.world = VIZI.world(this.card_body.id, {
         	 skybox: true
         	 //postProcessing: true
