@@ -112,7 +112,7 @@ export class ViziCitiesDisplay {
 
         this.tab_content = tab_content;
         
-        TweenLite.lagSmoothing(0);
+       let enable_vr = false;
         
         // TODO perhaps refactor the container setup to an abstract parent class
         // Get a reference to the container element that will hold our scene
@@ -146,27 +146,23 @@ export class ViziCitiesDisplay {
        
         
         var coords = [40.739940, -73.988801];
-        this.world = VIZI.world(this.card_body.id).setView(coords);
+        this.world = VIZI.world(this.card_body.id, {
+        	 skybox: true
+        	 //postProcessing: true
+        }).setView(coords);
+        
+        // Set position of sun in sky
+        this.world._environment._skybox.setInclination(0.3);
         
         // Enable for VR
-        this.world._engine._renderer.vr.enabled = true; 
-        var camera = this.world.getCamera();
-       
-//        var camera = this.world._engine._renderer.vr.getCamera();
-//        camera.position.y = 1.6;
+        if (enable_vr){
+        	this.world._engine._renderer.vr.enabled = true; 
 
-        // This works setting the non-VR camera position
-        camera.position.set( 0, 1000, 0 );
-
-        this.world._engine._scene.translateY(-100);
-        
-        // Hack for testing VR, we should update orbit controls instead
-//        camera.zoom = 10;
-//        camera.updateProjectionMatrix();
-//        camera.updateMatrix();
-        
-//        VIZI.Controls.orbit().addTo(this.world);
-        
+        	this.world._engine._scene.translateY(-100);
+        }
+        else {  // normal mouse camera control
+        	VIZI.Controls.orbit().addTo(this.world);
+        }
         VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png').addTo(this.world);
         
      // Buildings from Tilezen
@@ -192,29 +188,12 @@ export class ViziCitiesDisplay {
           }
         }).addTo(this.world);
         
-        // create a WebGLRenderer and set its width and height
+       
         
-//        this.renderer = new THREE.WebGLRenderer({ 
-//        	canvas: document.createElement('canvas'),
-//        	antialias: true,
-//        	alpha: true,
-//        	logarithmicDepthBuffer: true
-////        	autoClear: false
-//        	});
-//
-////        this.renderer.vr.enabled = true;      
-//        
-//        this.renderer.setPixelRatio(window.devicePixelRatio);
-//        this.renderer.setSize(width, height);
-//        this.card_body.appendChild(this.renderer.domElement);
         
-//        console.log(this.renderer);
-                
-//        this.card_body.appendChild( VRButton.createButton( this.renderer ) );
-
 //        window.addEventListener('resize', this.windowResize.bind(this));
 
-        if (this.world._engine._renderer.vr.enabled){
+        if (enable_vr){
         	this.container.appendChild( VRButton.createButton(this.world._engine._renderer ) );   
         }
     }
