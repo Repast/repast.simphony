@@ -2,7 +2,7 @@
 import { empty } from '/js/utils.js';
 import { VRButton } from '/vendor/VRButton.js';
 
-//import RGlobeView from '/js/RGlobeView.js';
+import { FirstPersonVRControls } from '/vendor/FirstPersonVRControls.js';
 
 //we use to set a valid width / height for a display
 //the display's tab may not be visible yet if its not the
@@ -11,7 +11,15 @@ import { VRButton } from '/vendor/VRButton.js';
 let uwidth = -1;
 let uheight = -1;
 
+let world;
+let fpVrControls;
 
+function updateVRControls() {
+
+	fpVrControls.update(world._engine.clock.getDelta());
+ 
+    requestAnimationFrame(updateVRControls);
+}
 
 class ShapeCreator {
 
@@ -145,24 +153,39 @@ export class ViziCitiesDisplay {
 //        var coords = [40.739940, -73.988801];  // NYC
         var coords = [41.8758, -87.6189]; // Chicago
         
-        this.world = VIZI.world(this.card_body.id, {
+        world = VIZI.world(this.card_body.id, {
         	 skybox: true
         	 //postProcessing: true
         }).setView(coords);
         
         // Set position of sun in sky
-        this.world._environment._skybox.setInclination(0.3);
+        world._environment._skybox.setInclination(0.15);
         
         // Enable for VR
         if (enable_vr){
-        	this.world._engine._renderer.vr.enabled = true; 
+        	world._engine._renderer.vr.enabled = true; 
 
-        	this.world._engine._scene.translateY(-100);
+//        	this.world._engine._scene.translateY(-100);
+        	
+        	var rig = new THREE.Object3D();
+        	rig.add(world.getCamera());
+        	world._engine._scene.add(rig);
+        	
+        	// Optionally provide a rig that is the camera's parent. 
+        	// If a rig is not provided, FirstPersonVRControls will create a rig and
+        	// add the camera to it.
+        	fpVrControls = new FirstPersonVRControls(world.getCamera(), world._engine._scene, rig);
+        	// Optionally enable vertical movement.
+        	fpVrControls.verticalMovement = true;
+        	// Optionally enable strafing.
+        	fpVrControls.strafing = true;
+        	
+        	updateVRControls();
         }
         else {  // normal mouse camera control
-        	VIZI.Controls.orbit().addTo(this.world);
+        	VIZI.Controls.orbit().addTo(world);
         }
-        VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png').addTo(this.world);
+        VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png').addTo(world);
         
      // Buildings from Tilezen
         VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
@@ -185,15 +208,73 @@ export class ViziCitiesDisplay {
             // Don't show points
             return feature.geometry.type !== 'Point';
           }
-        }).addTo(this.world);
+        }).addTo(world);
         
-       
+        // NG Compressor stations
+        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
+        	output: true,
+        	style: {
+        		color: '#ff0000',
+        		outline: true,
+        		outlineColor: '#580000',
+        		lineColor: '#0000ff',
+        		lineRenderOrder: 1,
+        		pointColor: '#00cc00'
+        	},
+        	pointGeometry: function(feature) {
+        		var geometry = new THREE.SphereGeometry(200, 16, 16);
+        		return geometry;
+        	}
+        }).addTo(world);
         
+        // NG Pipelines
+        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
+        	output: true,
+        	style: {
+        		color: '#ff0000',
+        		outline: true,
+        		outlineColor: '#580000',
+        		lineColor: '#0000ff',
+        		lineRenderOrder: 1,
+        		pointColor: '#00cc00'
+        	},
+        	pointGeometry: function(feature) {
+        		var geometry = new THREE.SphereGeometry(200, 16, 16);
+        		return geometry;
+        	},
+        	filter: function(feature) {
+        		// Don't show null
+        		return feature.geometry !== null;
+        	}
+        }).addTo(world);
+      
+        // EP Transmission Lines
+        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/70512b03fe994c6393107cc9946e5c22_0.geojson', {
+        	output: true,
+        	style: {
+        		color: '#ff0000',
+        		outline: true,
+        		outlineColor: '#580000',
+        		lineColor: '#00ff00',
+        		lineRenderOrder: 1,
+        		pointColor: '#00cc00'
+        	},
+        	pointGeometry: function(feature) {
+        		var geometry = new THREE.SphereGeometry(200, 16, 16);
+        		return geometry;
+        	},
+        	filter: function(feature) {
+        		// Don't show null
+        		return feature.geometry !== null;
+        	}
+        }).addTo(world);
+
+                
         
 //        window.addEventListener('resize', this.windowResize.bind(this));
 
         if (enable_vr){
-        	this.container.appendChild( VRButton.createButton(this.world._engine._renderer ) );   
+        	this.container.appendChild( VRButton.createButton(world._engine._renderer ) );   
         }
     }
     

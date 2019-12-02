@@ -162,6 +162,8 @@ export class ITownsDisplay {
 
         this.tab_content = tab_content;
         
+        let enable_vr = false;
+        
         // TODO perhaps refactor the container setup to an abstract parent class
         // Get a reference to the container element that will hold our scene
       
@@ -193,47 +195,34 @@ export class ITownsDisplay {
         //var position = new itowns.Coordinates('WGS84', -87.6, 45.5, 20e6);
         
         var positionOnGlobe = {longitude: -87.6, latitude: 41.5, altitude: 20e6 };
-       
-        // create a WebGLRenderer and set its width and height
         
-        this.renderer = new THREE.WebGLRenderer({ 
-        	canvas: document.createElement('canvas'),
-        	antialias: true,
-        	alpha: true,
-        	logarithmicDepthBuffer: true
-//        	autoClear: false
-        	});
-
-//        this.renderer.vr.enabled = true;      
+        // Enable for VR
+        if (enable_vr){
+        	 // create a WebGLRenderer and set its width and height
+	        this.renderer = new THREE.WebGLRenderer({ 
+	        	canvas: document.createElement('canvas'),
+	        	antialias: true,
+	        	alpha: true,
+	        	logarithmicDepthBuffer: true
+	        	});
+	
+	        this.renderer.vr.enabled = true;              
+	        this.renderer.setPixelRatio(window.devicePixelRatio);
+	        this.renderer.setSize(width, height);
+	        this.card_body.appendChild(this.renderer.domElement);
+	        
+	        this.view = new itowns.GlobeView(this.card_body, positionOnGlobe, { renderer: this.renderer });
+	        
+	        this.card_body.appendChild( VRButton.createButton( this.renderer ) );
+	        
+//	        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+//	        this.controls.addEventListener('change', this.render.bind(this));
+        }
+        else{
+        	 this.view = new itowns.GlobeView(this.card_body, positionOnGlobe);
+        	
+        }
         
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(width, height);
-        this.card_body.appendChild(this.renderer.domElement);
-        
-//        console.log(this.renderer);
-        
-        
-//        renderer.domElement.addEventListener( 'mousedown', onMouseDown, false );
-//		renderer.domElement.addEventListener( 'mouseup', onMouseUp, false );
-//		renderer.domElement.addEventListener( 'touchstart', onMouseDown, false );
-//		renderer.domElement.addEventListener( 'touchend', onMouseUp, false );
-        
-        
-//        this.card_body.appendChild( VRButton.createButton( this.renderer ) );
-
-        // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        //this.controls.addEventListener('change', this.render.bind(this));
-        //this.renderer.domElement.addEventListener('click', this.onClick.bind(this));
-        //window.addEventListener('resize', this.windowResize.bind(this));
-        
- //       this.view = new RGlobeView(this.card_body, positionOnGlobe);
- //      this.view = new itowns.GlobeView(this.card_body, positionOnGlobe);
-        this.view = new itowns.GlobeView(this.card_body, positionOnGlobe, { renderer: this.renderer });
-             
-//       console.log(this.view.mainLoop.gfxEngine.renderer);
-       
-//        this.view.mainLoop.gfxEngine.renderer.vr.enabled = true;          
-//        this.container.appendChild( VRButton.createButton( this.view.mainLoop.gfxEngine.renderer ) );
         
 //        var provider = {
 //            executeCommand: dynamicDataExecuteCommand,
@@ -243,11 +232,8 @@ export class ITownsDisplay {
 //  
   
     // GuiTools.js menu
-//        var menuGlobe = new GuiTools(this.container, 'menuDiv', this.view);
-  
-        // TODO not sure if we need a loading screen per the demos?  
-//        setupLoadingScreen(this.container, view);
-        
+        var menuGlobe = new GuiTools(this.container, 'menuDiv', this.view);
+          
         var orthoSource = new itowns.WMTSSource({
             url: 'http://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wmts',
             name: 'ORTHOIMAGERY.ORTHOPHOTOS',
@@ -353,30 +339,13 @@ export class ITownsDisplay {
 //        //this.view.addLayer(this.geometryLayer).then(console.log("Added geom layer"));
 //	  
 //        var p = this.view.addLayer(this.geometryLayer);
-//      
-//        
-//        
-//      
-//		// Add a geometry layer, which will contain the multipolygon to display
-//        this.marne = new itowns.GeometryLayer('Marne', new itowns.THREE.Group());
-//        this.marne.update = itowns.FeatureProcessing.update;
-//        this.marne.convert = itowns.Feature2Mesh.convert({ 
-//                                altitude: 1,
-//                                extrude: 100});
-//        this.marne.transparent = true;
-//        this.marne.opacity = 0.7;
-//        
-//		// Use a FileSource to load a single file once
-//        this.marne.source = new itowns.FileSource({
-//                url: 'https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/multipolygon.geojson',
-//                projection: 'EPSG:4326',
-//                format: 'application/json',
-//                zoom: { min: 10, max: 10 },
-//        });
-//		
-//		this.view.addLayer(this.marne).then(menuGlobe.addLayerGUI.bind(menuGlobe));
-//	  
-//        window.addEventListener('resize', this.windowResize.bind(this));
+      
+        
+        
+      
+	
+	  
+        window.addEventListener('resize', this.windowResize.bind(this));
 
       
     }

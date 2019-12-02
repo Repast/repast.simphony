@@ -1,7 +1,7 @@
 import { Display2D } from '/js/display.js';
 import { LeafletDisplay } from '/js/display_leaflet.js';
 import { empty } from '/js/utils.js';
-//import { ITownsDisplay } from '/js/display_itowns.js';
+import { ITownsDisplay } from '/js/display_itowns.js';
 import { ViziCitiesDisplay } from '/js/display_vizicities.js';
 
 let current_layout = "tabs";
