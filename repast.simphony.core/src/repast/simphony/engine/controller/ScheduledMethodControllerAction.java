@@ -84,7 +84,7 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
     // read the spec to find the schedule annotations and get the "pick"
     // information
 	clazzes.sort( (o1, o2) -> {
-		return o1.getCanonicalName().compareTo(o2.getCanonicalName());
+		return o1.toString().compareTo(o2.toString());
 	});
     processAnnotations(clazzes);
   }
