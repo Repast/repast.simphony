@@ -15,11 +15,16 @@ let world;
 let fpVrControls;
 
 function updateVRControls() {
-
 	fpVrControls.update(world._engine.clock.getDelta());
- 
     requestAnimationFrame(updateVRControls);
 }
+
+
+async function fetchJSON(url = '', data = {}) {
+	const response = await fetch(url);
+	return await response.json(); // parses JSON response into native JavaScript objects
+}
+
 
 class ShapeCreator {
 
@@ -185,107 +190,136 @@ export class ViziCitiesDisplay {
         else {  // normal mouse camera control
         	VIZI.Controls.orbit().addTo(world);
         }
-        VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png').addTo(world);
-        
-     // Buildings from Tilezen
-        VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
-          interactive: false,
-          style: function(feature) {
-            var height;
-
-            if (feature.properties.height) {
-              height = feature.properties.height;
-            } else {
-              height = 10 + Math.random() * 10;
-            }
-
-            return {
-              height: height
-            };
-          },
-          layers: ['buildings'],
-          filter: function(feature) {
-            // Don't show points
-            return feature.geometry.type !== 'Point';
-          }
-        }).addTo(world);
-        
-        // NG Compressor stations
-        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
-        	output: true,
-        	style: {
-        		color: '#ff0000',
-        		outline: true,
-        		outlineColor: '#580000',
-        		lineColor: '#0000ff',
-        		lineRenderOrder: 1,
-        		pointColor: '#00cc00'
-        	},
-        	pointGeometry: function(feature) {
-        		var geometry = new THREE.SphereGeometry(200, 16, 16);
-        		return geometry;
-        	}
-        }).addTo(world);
-        
-        // NG Pipelines
-        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
-        	output: true,
-        	style: {
-        		color: '#ff0000',
-        		outline: true,
-        		outlineColor: '#580000',
-        		lineColor: '#0000ff',
-        		lineRenderOrder: 1,
-        		pointColor: '#00cc00'
-        	},
-        	pointGeometry: function(feature) {
-        		var geometry = new THREE.SphereGeometry(200, 16, 16);
-        		return geometry;
-        	},
-        	filter: function(feature) {
-        		// Don't show null
-        		return feature.geometry !== null;
-        	}
-        }).addTo(world);
-      
-        // EP Transmission Lines
-        VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/70512b03fe994c6393107cc9946e5c22_0.geojson', {
-        	output: true,
-        	style: {
-        		color: '#ff0000',
-        		outline: true,
-        		outlineColor: '#580000',
-        		lineColor: '#00ff00',
-        		lineRenderOrder: 1,
-        		pointColor: '#00cc00'
-        	},
-        	pointGeometry: function(feature) {
-        		var geometry = new THREE.SphereGeometry(200, 16, 16);
-        		return geometry;
-        	},
-        	filter: function(feature) {
-        		// Don't show null
-        		return feature.geometry !== null;
-        	}
-        }).addTo(world);
-
                 
+        this.init_static_layers();
         
-//        window.addEventListener('resize', this.windowResize.bind(this));
+        window.addEventListener('resize', this.windowResize.bind(this));
 
         if (enable_vr){
         	this.container.appendChild( VRButton.createButton(world._engine._renderer ) );   
         }
     }
     
-    setAltitude(properties) {
-        console.log(properties);
-    }
+    async init_static_layers(){
+    	// OSM Tile layer
+//        VIZI.imageTileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(world);
+      
+    	VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+    		distance: 8 * 300000 * VIZI.Geo.multiplier
+    	}).addTo(world);
+    	
+    	// ESRI Gray Tile layer
+//    	VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+////    		maxLOD:25,
+////    		minLOD:1,
+////    		 maxCache: 10000
+////    		distance: 8 * 300000 * VIZI.Geo.multiplier
+//    	}).addTo(world);
+      
+    	// Buildings from Tilezen
+    	VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
+    		interactive: false,
+    		style: function(feature) {
+    			var height;
+
+    			if (feature.properties.height) {
+    				height = feature.properties.height;
+    			} else {
+    				height = 10 + Math.random() * 10;
+    			}
+
+    			return {
+    				height: height
+    			};
+    		},
+    		layers: ['buildings'],
+    		filter: function(feature) {
+    			// Don't show points
+    			return feature.geometry.type !== 'Point';
+    		}
+    	}).addTo(world);
+
+     
+    	// NG Pipelines
+    	var pipe_data = await fetchJSON('testdata/Natural_Gas_Pipelines.geojson');
+        
+    	// Load via URL
+//    	VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
+    	VIZI.geoJSONLayer(pipe_data, {
+    		output: true,
+    		style: {
+    			color: '#ff0000',
+    			outline: true,
+    			outlineColor: '#580000',
+    			lineColor: '#0000ff',
+    			lineRenderOrder: 1,
+    			pointColor: '#00cc00'
+    		},
+    		pointGeometry: function(feature) {
+    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			return geometry;
+    		},
+    		filter: function(feature) {
+    			// Don't show null
+    			return feature.geometry !== null;
+    		}
+    	}).addTo(world);
+
+    	// NG Compressor stations
+    	// Load via URL
+//    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
+    	// Need to await data since layer needs the actual geojson
+    	var data = await fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson');
+    	VIZI.geoJSONLayer(data, {
+    		output: true,
+    		style: {
+    			color: '#ff0000',
+    			outline: true,
+    			outlineColor: '#580000',
+    			lineColor: '#00ff00',
+    			lineRenderOrder: 1,
+    			pointColor: '#00cc00'
+    		},
+    		pointGeometry: function(feature) {
+    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			return geometry;
+    		},
+    		filter: function(feature) {
+    			// Don't show null
+    			return feature.geometry !== null;
+    		}
+    	}).addTo(world);    	
+ 
+    	
+    	 // EP Transmission Lines
+//    	var bes_data = await fetchJSON('testdata/Electric_Power_Transmission_Lines.geojson');
+//        
+//    	// Load via URL
+////    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/70512b03fe994c6393107cc9946e5c22_0.geojson', {
+//    	VIZI.geoJSONLayer(bes_data, {
+//    		output: true,
+//    		style: {
+//    			color: '#ff0000',
+//    			outline: true,
+//    			outlineColor: '#580000',
+//    			lineColor: '#00ff00',
+//    			lineRenderOrder: 1,
+//    			pointColor: '#00cc00'
+//    		},
+//    		pointGeometry: function(feature) {
+//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+//    			return geometry;
+//    		},
+//    		filter: function(feature) {
+//    			// Don't show null
+//    			return feature.geometry !== null;
+//    		}
+//    	}).addTo(world);
+    	
+    	
+    }  // end init_static_layers
     
-     acceptFeature(properties) {
-         return true;
-     }
-    
+ 
     // Initialize the display
     init(msg) {
         
@@ -385,7 +419,7 @@ export class ViziCitiesDisplay {
 //	   console.log(this.marne.object3d);
     }
    
-    
+
 
     update(msg) {
         console.log(msg);

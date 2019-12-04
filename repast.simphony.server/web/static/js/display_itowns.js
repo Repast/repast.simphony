@@ -3,7 +3,8 @@ import { empty } from '/js/utils.js';
 import { GuiTools } from '/js/GuiTools.js';
 import { VRButton } from '/vendor/VRButton.js';
 
-//import RGlobeView from '/js/RGlobeView.js';
+import { FeatureToolTip } from '/vendor/FeatureToolTip.js';
+
 
 //we use to set a valid width / height for a display
 //the display's tab may not be visible yet if its not the
@@ -15,25 +16,32 @@ let uheight = -1;
 const ext = new itowns.Extent('EPSG:4326', [0, 0, 0, 0]);
 
 
-   function dynamicDataExecuteCommand(command) {
-        const promises = [];
-        const layer = command.layer;
-        const requester = command.requester;
-        const extentsSource = command.extentsSource;
+function fetchJSON(url) {
+	return fetch(url)
+	.then(function(response) {
+		return response.json();
+	});
+}
 
-        console.log("dynamic data execute command");
-        
-        if (requester &&
-            !requester.material) {
-            return Promise.reject(new CancelledCommandException(command));
-        }
+function dynamicDataExecuteCommand(command) {
+	const promises = [];
+	const layer = command.layer;
+	const requester = command.requester;
+	const extentsSource = command.extentsSource;
 
-        for (let i = 0, size = extentsSource.length; i < size; i++) {
-            promises.push(layer.convert(requester, extentsSource[i]));
-        }
+	console.log("dynamic data execute command");
 
-        return Promise.all(promises);
-    }
+	if (requester &&
+			!requester.material) {
+		return Promise.reject(new CancelledCommandException(command));
+	}
+
+	for (let i = 0, size = extentsSource.length; i < size; i++) {
+		promises.push(layer.convert(requester, extentsSource[i]));
+	}
+
+	return Promise.all(promises);
+}
 
 
 class FeatureSource extends itowns.Source {
@@ -223,6 +231,8 @@ export class ITownsDisplay {
         	
         }
         
+        FeatureToolTip.init(this.card_body, this.view);
+        
         
 //        var provider = {
 //            executeCommand: dynamicDataExecuteCommand,
@@ -246,7 +256,7 @@ export class ITownsDisplay {
             source: orthoSource,
         });
 
-        this.view.addLayer(orthoLayer); //.then(menuGlobe.addLayerGUI.bind(menuGlobe));
+        this.view.addLayer(orthoLayer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
         
         var elevatSource = new itowns.WMTSSource({
             url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wmts',
@@ -260,25 +270,67 @@ export class ITownsDisplay {
             source: elevatSource,
         });
 
-        this.view.addLayer(elevatLayer); //.then(menuGlobe.addLayerGUI.bind(menuGlobe));
+        this.view.addLayer(elevatLayer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
 
-       /*  var elevatSource2 = new itowns.WMTSSource({
-            url: 'https://wxs.ign.fr/3ht7xcw6f7nciopo16etuqp2/geoportail/wmts',
-            name: 'ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES',
-            tileMatrixSet: 'WGS84G',
-            format: 'image/x-bil;bits=32',
-            projection: "EPSG:4326"
+        
+        // Add a geometry layer, which will contain the multipolygon to display
+        var pipes = new itowns.GeometryLayer('NG Compressor Stations', new itowns.THREE.Group());
+        pipes.update = itowns.FeatureProcessing.update;
+        pipes.convert = itowns.Feature2Mesh.convert({
+            color: new itowns.THREE.Color(0xbbffbb)});
+        pipes.transparent = true;
+        pipes.opacity = 0.7;
+        
+        // Use a FileSource to load a single file once
+        pipes.source = new itowns.FileSource({
+            url: 'testdata/Natural_Gas_Compressor_Stations.geojson',
+            projection: 'EPSG:4326',
+            format: 'application/json',
+            zoom: { min: 1, max: 100 },
         });
+        this.view.addLayer(pipes).then(menuGlobe.addLayerGUI.bind(menuGlobe));
+//        this.view.addLayer(pipes).then(function menu(layer) {
+//            var gui = debug.GeometryDebug.createGeometryDebugUI(menuGlobe.gui, view, layer);
+//            debug.GeometryDebug.addWireFrameCheckbox(gui, view, layer);
+//        });
+        
+        
+        
+        
+        
+//        var optionsGeoJsonParser = {
+//        		buildExtent: true,
+//        		crsIn: 'EPSG:4326',
+//        		crsOut: this.view.tileLayer.extent.crs,
+//        		mergeFeatures: true,
+//        		withNormal: false,
+//        		withAltitude: false,
+//        };
+//        var geojson = fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson').then(function(data) { return data });
+        
+//        var parsedData = itowns.GeoJsonParser.parse(geojson, optionsGeoJsonParser).then(function _(parsedData) {return parsedData  });
 
-        var elevatLayer2 = new itowns.ElevationLayer('IGN_MNT_HIGHRES', {
-            source: elevatSource2,
-        });
-
-        this.view.addLayer(elevatLayer2).then(menuGlobe.addLayerGUI.bind(menuGlobe));
-         */
+//        var pipeSource = new itowns.FileSource(parsedData);
         
-        
-        
+//        var pipeLayer = new itowns.ColorLayer('NG Pipelines', {
+//            name: 'NG Pipelines',
+//            transparent: true,
+//            style: {
+//                stroke: {
+//                    color:'white',
+//                },
+//            }
+//        });
+//        
+//        pipeLayer.source = new itowns.FileSource({
+//        	url: 'testdata/Natural_Gas_Compressor_Stations.geojson',
+////        	url: 'testdata/Natural_Gas_Pipelines.geojson',
+//        	projection: 'EPSG:4326',
+//        	format: 'application/json',
+//        	zoom: { min: 1, max: 100 },
+//        });
+//        
+//        this.view.addLayer(pipeLayer).then(FeatureToolTip.addLayer);
         
 //        var agentSource = new FeatureSource();
 //        
