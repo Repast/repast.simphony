@@ -13,16 +13,40 @@ let uheight = -1;
 
 let world;
 let fpVrControls;
+let buildingTileLayer;
+
+var controller1, controller2;
+var raycaster;
+var intersected = [];
+var tempMatrix = new THREE.Matrix4();
+
+let agent_layer;
+var shape = new THREE.SphereGeometry(100, 16, 16);
+var material = new THREE.MeshStandardMaterial( { color: 0x1f78b4 } );
+
+let mesh = new THREE.Mesh(shape, material);
 
 function updateVRControls() {
 	fpVrControls.update(world._engine.clock.getDelta());
+	
+	intersectObjects( controller1 );
+	intersectObjects( controller2 );
+	
     requestAnimationFrame(updateVRControls);
 }
 
+function updateLOD(){
+	buildingTileLayer._calculateLOD();
+}
 
 async function fetchJSON(url = '', data = {}) {
 	const response = await fetch(url);
 	return await response.json(); // parses JSON response into native JavaScript objects
+}
+
+function randomGreyHex() {
+	var v = (Math.random()*(256)|0).toString(16);//bitwise OR. Gives value in the range 0-255 which is then converted to base 16 (hex).
+	return "#" + v + v + v;
 }
 
 
@@ -125,7 +149,7 @@ export class ViziCitiesDisplay {
 
         this.tab_content = tab_content;
         
-       let enable_vr = false;
+       let enable_vr = true;
         
         // TODO perhaps refactor the container setup to an abstract parent class
         // Get a reference to the container element that will hold our scene
@@ -156,7 +180,7 @@ export class ViziCitiesDisplay {
         uheight = height;
                         
 //        var coords = [40.739940, -73.988801];  // NYC
-        var coords = [41.8758, -87.6189]; // Chicago
+        var coords = [41.8758, -87.6189, 1000]; // Chicago
         
         world = VIZI.world(this.card_body.id, {
         	 skybox: true
@@ -170,20 +194,41 @@ export class ViziCitiesDisplay {
         if (enable_vr){
         	world._engine._renderer.vr.enabled = true; 
 
-//        	this.world._engine._scene.translateY(-100);
+        	// Increase the camera FOV to minimize flickering in tile layers
+        	world.getCamera().fov = 100;
+        	world.getCamera().updateProjectionMatrix();
         	
+        	// Provide a moveable rig that is the camera's parent.
         	var rig = new THREE.Object3D();
         	rig.add(world.getCamera());
         	world._engine._scene.add(rig);
         	
-        	// Optionally provide a rig that is the camera's parent. 
-        	// If a rig is not provided, FirstPersonVRControls will create a rig and
-        	// add the camera to it.
+        	// Add controls to the rig
         	fpVrControls = new FirstPersonVRControls(world.getCamera(), world._engine._scene, rig);
         	// Optionally enable vertical movement.
         	fpVrControls.verticalMovement = true;
         	// Optionally enable strafing.
         	fpVrControls.strafing = true;
+
+        	// Add VR hand controllers and attach to the rig 
+			controller1 = world._engine._renderer.vr.getController( 0 );
+			controller1.addEventListener( 'selectstart', onSelectStart );
+			controller1.addEventListener( 'selectend', onSelectEnd );
+			rig.add( controller1 );
+			
+			controller2 = world._engine._renderer.vr.getController( 1 );
+			controller2.addEventListener( 'selectstart', onSelectStart );
+			controller2.addEventListener( 'selectend', onSelectEnd );
+			rig.add( controller2 );
+
+			// Add a simple line pointer to the controls
+			var geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+			var line = new THREE.Line( geometry );
+			line.name = 'line';
+			line.scale.z = 5;
+			controller1.add( line.clone() );
+			controller2.add( line.clone() );
+			raycaster = new THREE.Raycaster();
         	
         	updateVRControls();
         }
@@ -193,59 +238,25 @@ export class ViziCitiesDisplay {
                 
         this.init_static_layers();
         
-        window.addEventListener('resize', this.windowResize.bind(this));
-
-        if (enable_vr){
-        	this.container.appendChild( VRButton.createButton(world._engine._renderer ) );   
-        }
-    }
-    
-    async init_static_layers(){
-    	// OSM Tile layer
-//        VIZI.imageTileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(world);
-      
-    	VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-    		distance: 8 * 300000 * VIZI.Geo.multiplier
-    	}).addTo(world);
-    	
-    	// ESRI Gray Tile layer
-//    	VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-////    		maxLOD:25,
-////    		minLOD:1,
-////    		 maxCache: 10000
-////    		distance: 8 * 300000 * VIZI.Geo.multiplier
-//    	}).addTo(world);
-      
-    	// Buildings from Tilezen
-    	VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
-    		interactive: false,
-    		style: function(feature) {
-    			var height;
-
-    			if (feature.properties.height) {
-    				height = feature.properties.height;
-    			} else {
-    				height = 10 + Math.random() * 10;
-    			}
-
-    			return {
-    				height: height
-    			};
-    		},
-    		layers: ['buildings'],
-    		filter: function(feature) {
-    			// Don't show points
-    			return feature.geometry.type !== 'Point';
-    		}
-    	}).addTo(world);
-
-     
-    	// NG Pipelines
-    	var pipe_data = await fetchJSON('testdata/Natural_Gas_Pipelines.geojson');
+        var features = [];
         
-    	// Load via URL
-//    	VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
-    	VIZI.geoJSONLayer(pipe_data, {
+        var feature = {}
+        feature ["type"] = "Feature";
+        feature ["geometry"] = {"type" : "Point", "coordinates" : [-87.6189, 41.8758]};
+        feature ["properties"] = {"name" : "MyAgent"};
+        
+        features.push(feature);
+        
+        var feature_collection = {"type" : "FeatureCollection",
+        		"features" : features};
+        
+//        console.log(JSON.stringify(feature_collection));
+        
+//        var foo = world.project(coords);
+//        
+//        console.log(foo);
+        
+        agent_layer = VIZI.geoJSONLayer(feature_collection, {
     		output: true,
     		style: {
     			color: '#ff0000',
@@ -256,42 +267,145 @@ export class ViziCitiesDisplay {
     			pointColor: '#00cc00'
     		},
     		pointGeometry: function(feature) {
-    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			var geometry = new THREE.SphereGeometry(100, 16, 16);
     			return geometry;
-    		},
-    		filter: function(feature) {
-    			// Don't show null
-    			return feature.geometry !== null;
     		}
+//    		,
+//    		filter: function(feature) {
+//    			// Don't show null
+//    			return feature.geometry !== null;
+//
+//    		}
     	}).addTo(world);
+        
+//        agent_layer.add(mesh);
+        
+        window.addEventListener('resize', this.windowResize.bind(this));
 
-    	// NG Compressor stations
-    	// Load via URL
-//    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
-    	// Need to await data since layer needs the actual geojson
-    	var data = await fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson');
-    	VIZI.geoJSONLayer(data, {
-    		output: true,
-    		style: {
-    			color: '#ff0000',
-    			outline: true,
-    			outlineColor: '#580000',
-    			lineColor: '#00ff00',
-    			lineRenderOrder: 1,
-    			pointColor: '#00cc00'
-    		},
-    		pointGeometry: function(feature) {
-    			var geometry = new THREE.SphereGeometry(200, 16, 16);
-    			return geometry;
-    		},
-    		filter: function(feature) {
-    			// Don't show null
-    			return feature.geometry !== null;
-    		}
-    	}).addTo(world);    	
- 
+        if (enable_vr){
+        	this.container.appendChild( VRButton.createButton(world._engine._renderer ) );   
+        	window.addEventListener('keydown', this._onKeyDown, false);
+        	
+        	setInterval(updateLOD, 100);
+        }
+    }
+    
+    async init_static_layers(){
+    	// OSM Tile layer
+//        VIZI.imageTileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(world);
+      
     	
-    	 // EP Transmission Lines
+    	
+    	let backgroundLayer = VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    		distance: 8 * 300000 * VIZI.Geo.multiplier
+    	});
+    	
+    	backgroundLayer._updateFrustum = function() {
+    		    var camera = this._world.getCamera();
+    		    var projScreenMatrix = new THREE.Matrix4();
+    		    projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+
+    		    this._frustum.setFromMatrix(camera.projectionMatrix);
+    		    this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
+    		  }
+    	
+    	backgroundLayer.addTo(world);
+    	
+//    	VIZI.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+//    		distance: 8 * 300000 * VIZI.Geo.multiplier
+//    	}).addTo(world);
+    	
+    	// ESRI Gray Tile layer
+//    	VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+////    		maxLOD:25,
+////    		minLOD:1,
+////    		 maxCache: 10000
+////    		distance: 8 * 300000 * VIZI.Geo.multiplier
+//    	}).addTo(world);
+      
+    	// Buildings from Tilezen
+    	buildingTileLayer = VIZI.geoJSONTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.json?api_key=-P8vfoBlQHWiTrDduihXhA', {
+    		interactive: true,
+    		maxCache: 10000,
+    		maxLOD: 15,
+//    	    distance: 1 * 100000 * VIZI.Geo.multiplier,
+    		
+    	    style: function(feature) {
+    			var height;
+
+    			if (feature.properties.height) {
+    				height = feature.properties.height;
+    			} else {
+    				height = 10 + Math.random() * 10;
+    			}
+
+    			return {
+    				height: height,
+    				color: randomGreyHex()
+    			};
+    		},
+    		layers: ['buildings'],
+    		filter: function(feature) {
+    			// Don't show points
+    			return feature.geometry.type !== 'Point';
+    		}
+    	});
+    	buildingTileLayer.addTo(world);
+
+    	
+     
+//    	// NG Pipelines
+//    	var pipe_data = await fetchJSON('testdata/Natural_Gas_Pipelines.geojson');
+//        
+//    	// Load via URL
+////    	VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
+//    	VIZI.geoJSONLayer(pipe_data, {
+//    		output: true,
+//    		style: {
+//    			color: '#ff0000',
+//    			outline: true,
+//    			outlineColor: '#580000',
+//    			lineColor: '#0000ff',
+//    			lineRenderOrder: 1,
+//    			pointColor: '#00cc00'
+//    		},
+//    		pointGeometry: function(feature) {
+//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+//    			return geometry;
+//    		},
+//    		filter: function(feature) {
+//    			// Don't show null
+//    			return feature.geometry !== null;
+//    		}
+//    	}).addTo(world);
+//
+//    	// NG Compressor stations
+//    	// Load via URL
+////    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
+//    	// Need to await data since layer needs the actual geojson
+//    	var data = await fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson');
+//    	VIZI.geoJSONLayer(data, {
+//    		output: true,
+//    		style: {
+//    			color: '#ff0000',
+//    			outline: true,
+//    			outlineColor: '#580000',
+//    			lineColor: '#00ff00',
+//    			lineRenderOrder: 1,
+//    			pointColor: '#00cc00'
+//    		},
+//    		pointGeometry: function(feature) {
+//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+//    			return geometry;
+//    		},
+//    		filter: function(feature) {
+//    			// Don't show null
+//    			return feature.geometry !== null;
+//    		}
+//    	}).addTo(world);    	
+// 
+//    	
+//    	// EP Transmission Lines
 //    	var bes_data = await fetchJSON('testdata/Electric_Power_Transmission_Lines.geojson');
 //        
 //    	// Load via URL
@@ -423,6 +537,26 @@ export class ViziCitiesDisplay {
 
     update(msg) {
         console.log(msg);
+        
+        var features = [];
+        
+        let x = -87.6189 + 0.05* Math.random();
+        let y = 41.8758 + 0.05* Math.random();
+        
+        var feature = {}
+        feature ["type"] = "Feature";
+        feature ["geometry"] = {"type" : "Point", "coordinates" : [x,y]};
+        feature ["properties"] = {"name" : "MyAgent"};
+        
+        features.push(feature);
+        
+        var feature_collection = {"type" : "FeatureCollection",
+        		"features" : features};
+        
+        
+//        agent_layer._layers = [];
+//        
+//        agent_layer._processData(feature_collection); 
         
          //this.view.mesh.updateMatrixWorld();
         
@@ -558,5 +692,65 @@ export class ViziCitiesDisplay {
         }
     }
 
+    // Hack to force tile updates when moving in VR
+    _onKeyDown = (event) => {
+        if (event.repeat) { return; }
+
+       
+//        buildingTileLayer._calculateLOD();
+      };
 }
+function onSelectStart( event ) {
+	var controller = event.target;
+	var intersections = getIntersections( controller );
+	if ( intersections.length > 0 ) {
+		var intersection = intersections[ 0 ];
+		tempMatrix.getInverse( controller.matrixWorld );
+		var object = intersection.object;
+		object.matrix.premultiply( tempMatrix );
+		object.matrix.decompose( object.position, object.quaternion, object.scale );
+		object.material.emissive.b = 1;
+		controller.add( object );
+		controller.userData.selected = object;
+	}
+}
+function onSelectEnd( event ) {
+	var controller = event.target;
+	if ( controller.userData.selected !== undefined ) {
+		var object = controller.userData.selected;
+		object.matrix.premultiply( controller.matrixWorld );
+		object.matrix.decompose( object.position, object.quaternion, object.scale );
+		object.material.emissive.b = 0;
+		world._engine._scene.add( object );
+		controller.userData.selected = undefined;
+	}
+}
+function getIntersections( controller ) {
+	tempMatrix.identity().extractRotation( controller.matrixWorld );
+	raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+	raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( tempMatrix );
+	return raycaster.intersectObjects( world._engine._scene.children );
+}
+function intersectObjects( controller ) {
+	// Do not highlight when already selected
+	if ( controller.userData.selected !== undefined ) return;
+	var line = controller.getObjectByName( 'line' );
+	var intersections = getIntersections( controller );
+	if ( intersections.length > 0 ) {
+		var intersection = intersections[ 0 ];
+		var object = intersection.object;
+		object.material.emissive.r = 1;
+		intersected.push( object );
+		line.scale.z = intersection.distance;
+	} else {
+		line.scale.z = 5;
+	}
+}
+function cleanIntersected() {
+	while ( intersected.length ) {
+		var object = intersected.pop();
+		object.material.emissive.r = 0;
+	}
+}
+
 
