@@ -26,6 +26,8 @@ import repast.simphony.visualization.engine.DisplayDescriptor;
 import repast.simphony.visualization.engine.DisplayType;
 import repast.simphony.visualization.engine.ValueLayerDescriptor;
 import repast.simphony.visualization.gui.styleBuilder.EditedValueLayerStyleDialog;
+import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
+import repast.simphony.visualizationOGL2D.ValueLayerStyleOGL;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -105,12 +107,12 @@ public class ValueLayerStep extends PluginWizardStep {
 		java.util.List<String> vals;
 		if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
 			if (style3DCache == null) 
-				style3DCache = StyleClassFinder.getAvailable3DValueLayerStyles(model.getContext());
+				style3DCache = ClassFinder.getFoundClasses(model.getContext(), ValueLayerStyle3D.class);
 			
 			vals = style3DCache;
 		} else {
 			if (style2DCache == null) 
-				style2DCache = StyleClassFinder.getAvailable2DValueLayerStyles(model.getContext());
+				style2DCache = ClassFinder.getFoundClasses(model.getContext(), ValueLayerStyleOGL.class);
 			
 			vals = style2DCache;
 		}

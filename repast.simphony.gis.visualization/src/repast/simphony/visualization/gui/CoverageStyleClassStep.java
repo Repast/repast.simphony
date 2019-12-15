@@ -313,7 +313,7 @@ public class CoverageStyleClassStep extends CoverageStyleStep {
 		List<String> foundStyleClasses = styleCache.get(styleInterface);
 
 		if (foundStyleClasses == null){
-			foundStyleClasses = StyleClassFinder.getAvailableStyles(model.getContext(), styleInterface);
+			foundStyleClasses = ClassFinder.getFoundClasses(model.getContext(), styleInterface);
 
 			if (defaultStyle != null){
 				foundStyleClasses.add(defaultStyle);
