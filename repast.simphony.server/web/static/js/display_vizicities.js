@@ -14,6 +14,7 @@ let uheight = -1;
 let world;
 let fpVrControls;
 let buildingTileLayer;
+let backgroundLayer;
 
 var controller1, controller2;
 var raycaster;
@@ -36,7 +37,11 @@ function updateVRControls() {
 }
 
 function updateLOD(){
+//	buildingTileLayer._onWorldUpdate();
 	buildingTileLayer._calculateLOD();
+	
+//	backgroundLayer._calculateLOD();
+//	backgroundLayer._onWorldUpdate();
 }
 
 async function fetchJSON(url = '', data = {}) {
@@ -204,7 +209,7 @@ export class ViziCitiesDisplay {
         	world._engine._scene.add(rig);
         	
         	// Add controls to the rig
-        	fpVrControls = new FirstPersonVRControls(world.getCamera(), world._engine._scene, rig);
+        	fpVrControls = new FirstPersonVRControls(world.getCamera(), world._engine._scene, rig, world);
         	// Optionally enable vertical movement.
         	fpVrControls.verticalMovement = true;
         	// Optionally enable strafing.
@@ -267,7 +272,7 @@ export class ViziCitiesDisplay {
     			pointColor: '#00cc00'
     		},
     		pointGeometry: function(feature) {
-    			var geometry = new THREE.SphereGeometry(100, 16, 16);
+    			var geometry = new THREE.SphereGeometry(10, 16, 16);
     			return geometry;
     		}
 //    		,
@@ -296,18 +301,9 @@ export class ViziCitiesDisplay {
       
     	
     	
-    	let backgroundLayer = VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    	backgroundLayer = VIZI.imageTileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     		distance: 8 * 300000 * VIZI.Geo.multiplier
     	});
-    	
-    	backgroundLayer._updateFrustum = function() {
-    		    var camera = this._world.getCamera();
-    		    var projScreenMatrix = new THREE.Matrix4();
-    		    projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
-
-    		    this._frustum.setFromMatrix(camera.projectionMatrix);
-    		    this._frustum.setFromMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
-    		  }
     	
     	backgroundLayer.addTo(world);
     	
@@ -354,81 +350,81 @@ export class ViziCitiesDisplay {
 
     	
      
-//    	// NG Pipelines
-//    	var pipe_data = await fetchJSON('testdata/Natural_Gas_Pipelines.geojson');
-//        
-//    	// Load via URL
-////    	VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
-//    	VIZI.geoJSONLayer(pipe_data, {
-//    		output: true,
-//    		style: {
-//    			color: '#ff0000',
-//    			outline: true,
-//    			outlineColor: '#580000',
-//    			lineColor: '#0000ff',
-//    			lineRenderOrder: 1,
-//    			pointColor: '#00cc00'
-//    		},
-//    		pointGeometry: function(feature) {
-//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
-//    			return geometry;
-//    		},
-//    		filter: function(feature) {
-//    			// Don't show null
-//    			return feature.geometry !== null;
-//    		}
-//    	}).addTo(world);
-//
-//    	// NG Compressor stations
-//    	// Load via URL
-////    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
-//    	// Need to await data since layer needs the actual geojson
-//    	var data = await fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson');
-//    	VIZI.geoJSONLayer(data, {
-//    		output: true,
-//    		style: {
-//    			color: '#ff0000',
-//    			outline: true,
-//    			outlineColor: '#580000',
-//    			lineColor: '#00ff00',
-//    			lineRenderOrder: 1,
-//    			pointColor: '#00cc00'
-//    		},
-//    		pointGeometry: function(feature) {
-//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
-//    			return geometry;
-//    		},
-//    		filter: function(feature) {
-//    			// Don't show null
-//    			return feature.geometry !== null;
-//    		}
-//    	}).addTo(world);    	
-// 
-//    	
-//    	// EP Transmission Lines
-//    	var bes_data = await fetchJSON('testdata/Electric_Power_Transmission_Lines.geojson');
-//        
-//    	// Load via URL
-////    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/70512b03fe994c6393107cc9946e5c22_0.geojson', {
-//    	VIZI.geoJSONLayer(bes_data, {
-//    		output: true,
-//    		style: {
-//    			color: '#ff0000',
-//    			outline: true,
-//    			outlineColor: '#580000',
-//    			lineColor: '#00ff00',
-//    			lineRenderOrder: 1,
-//    			pointColor: '#00cc00'
-//    		},
-//    		pointGeometry: function(feature) {
-//    			var geometry = new THREE.SphereGeometry(200, 16, 16);
-//    			return geometry;
-//    		},
-//    		filter: function(feature) {
-//    			// Don't show null
-//    			return feature.geometry !== null;
-//    		}
-//    	}).addTo(world);
+    	// NG Pipelines
+    	var pipe_data = await fetchJSON('testdata/Natural_Gas_Pipelines.geojson');
+        
+    	// Load via URL
+//    	VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/f44e00fce8b943f69a40a2324cf49dfd_0.geojson', {
+    	VIZI.geoJSONLayer(pipe_data, {
+    		output: true,
+    		style: {
+    			color: '#ff0000',
+    			outline: true,
+    			outlineColor: '#580000',
+    			lineColor: '#0000ff',
+    			lineRenderOrder: 1,
+    			pointColor: '#00cc00'
+    		},
+    		pointGeometry: function(feature) {
+    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			return geometry;
+    		},
+    		filter: function(feature) {
+    			// Don't show null
+    			return feature.geometry !== null;
+    		}
+    	}).addTo(world);
+
+    	// NG Compressor stations
+    	// Load via URL
+//    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/cb4ea4a90a5e4849860d0d56058c2f75_0.geojson', {
+    	// Need to await data since layer needs the actual geojson
+    	var data = await fetchJSON('testdata/Natural_Gas_Compressor_Stations.geojson');
+    	VIZI.geoJSONLayer(data, {
+    		output: true,
+    		style: {
+    			color: '#ff0000',
+    			outline: true,
+    			outlineColor: '#580000',
+    			lineColor: '#00ff00',
+    			lineRenderOrder: 1,
+    			pointColor: '#00cc00'
+    		},
+    		pointGeometry: function(feature) {
+    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			return geometry;
+    		},
+    		filter: function(feature) {
+    			// Don't show null
+    			return feature.geometry !== null;
+    		}
+    	}).addTo(world);    	
+ 
+    	
+    	// EP Transmission Lines
+    	var bes_data = await fetchJSON('testdata/Electric_Power_Transmission_Lines.geojson');
+        
+    	// Load via URL
+//    	 VIZI.geoJSONLayer('https://opendata.arcgis.com/datasets/70512b03fe994c6393107cc9946e5c22_0.geojson', {
+    	VIZI.geoJSONLayer(bes_data, {
+    		output: true,
+    		style: {
+    			color: '#ff0000',
+    			outline: true,
+    			outlineColor: '#580000',
+    			lineColor: '#00ff00',
+    			lineRenderOrder: 1,
+    			pointColor: '#00cc00'
+    		},
+    		pointGeometry: function(feature) {
+    			var geometry = new THREE.SphereGeometry(200, 16, 16);
+    			return geometry;
+    		},
+    		filter: function(feature) {
+    			// Don't show null
+    			return feature.geometry !== null;
+    		}
+    	}).addTo(world);
     	
     	
     }  // end init_static_layers

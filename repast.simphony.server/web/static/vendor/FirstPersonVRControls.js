@@ -17,8 +17,8 @@ export class FirstPersonVRControls {
   strafing = false;
   boost = true;
   movementSpeed = 100.0;
-  snapAngle = 5 * Math.PI / 180;
-  boostFactor = 2;
+  snapAngle = 1 * Math.PI / 180;
+  boostFactor = 10;
 
   _angleQuaternion = new THREE.Quaternion();
 
@@ -30,7 +30,10 @@ export class FirstPersonVRControls {
   _moveDown = false;
   _boosting = false;
 
-  constructor (camera, scene, rig) {
+  _snapLeft = false;
+  _snapRight = false;
+  
+  constructor (camera, scene, rig, world) {
     this._camera = camera;
     if (!rig) {
       this.rig = new THREE.Object3D();
@@ -39,6 +42,7 @@ export class FirstPersonVRControls {
     } else {
       this.rig = rig;
     }
+    this.world = world;
   
     window.addEventListener('keydown', this._onKeyDown, false);
     window.addEventListener('keyup', this._onKeyUp, false);
@@ -46,7 +50,7 @@ export class FirstPersonVRControls {
 
   _onKeyDown = (event) => {
     if (event.repeat) { return; }
-
+ 
     switch (event.key.toLowerCase()) {
       case 'arrowup': 
       case 'w': this._moveForward = true; break;
@@ -65,8 +69,12 @@ export class FirstPersonVRControls {
 
       case 'shift': this._boosting = true; break;
 
-      case 'q': this.snap('left'); break;
-      case 'e': this.snap('right'); break;
+//      case 'q': this.snap('left'); break;
+//      case 'e': this.snap('right'); break;
+      
+      case 'q': this._snapLeft = true; break;
+
+      case 'e': this._snapRight = true; break;
     }
   };
 
@@ -88,6 +96,10 @@ export class FirstPersonVRControls {
       case 'f': this._moveDown = false; break;
 
       case 'shift': this._boosting = false; break;
+      
+      case 'q': this._snapLeft = false; break;
+      
+      case 'e': this._snapRight = false; break;
     }
   };
 
@@ -143,7 +155,12 @@ export class FirstPersonVRControls {
     if (this.verticalMovement && this._moveUp) this._tempObject.translateY(actualMoveSpeed);
     if (this.verticalMovement && this._moveDown) this._tempObject.translateY(- actualMoveSpeed);
 
+    if (this._snapLeft) this.snap('left');
+    if (this._snapRight) this.snap('right');
+    
     this.rig.position.add(this._tempObject.position);
+    
+//    this.world._onControlsMoveEnd(this.rig.position);
   }
 
   dispose () {
