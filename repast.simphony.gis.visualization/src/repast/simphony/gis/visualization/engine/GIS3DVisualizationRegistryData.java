@@ -16,6 +16,11 @@ import repast.simphony.visualization.engine.DisplayCreatorFactory;
 import repast.simphony.visualization.engine.DisplayValidator;
 import repast.simphony.visualization.engine.ProjectionDescriptorFactory;
 import repast.simphony.visualization.engine.VisualizationRegistryData;
+import repast.simphony.visualization.gis3D.AbstractRenderableLayer;
+import repast.simphony.visualization.gis3D.CoverageLayer;
+import repast.simphony.visualization.gis3D.NetworkLayerGIS;
+import repast.simphony.visualization.gis3D.PlaceMarkLayer;
+import repast.simphony.visualization.gis3D.SurfaceShapeLayer;
 import repast.simphony.visualization.gis3D.style.DefaultMarkStyle;
 import repast.simphony.visualization.gis3D.style.DefaultNetworkStyleGIS;
 import repast.simphony.visualization.gis3D.style.DefaultSurfaceShapeStyle;
@@ -48,6 +53,11 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 	@Override
 	public Class<?>[] getDefaultStyles() {
 		return  new Class<?>[] { DefaultMarkStyle.class, DefaultSurfaceShapeStyle.class };
+	}
+	
+	public Class<?>[] getDefaultLayers(){
+		return new Class<?>[] {
+			SurfaceShapeLayer.class, PlaceMarkLayer.class, NetworkLayerGIS.class, CoverageLayer.class};
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -26,8 +28,11 @@ import com.jgoodies.forms.layout.FormLayout;
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
+import repast.simphony.gis.visualization.engine.GIS3DVisualizationRegistryData;
 import repast.simphony.gis.visualization.engine.GISDisplayDescriptor;
 import repast.simphony.scenario.data.ContextData;
+import repast.simphony.visualization.engine.VisualizationRegistry;
+import repast.simphony.visualization.gis3D.AbstractRenderableLayer;
 import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController;
 
 /**
@@ -40,7 +45,7 @@ import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController;
 public class GIS3DOptionsPanel extends JPanel {
 
 	// List of available WWJ layers in Basic Model
-	static LayerList DEFAULT_GLOBE_LAYERS = new BasicModel().getLayers();
+	static LayerList DEFAULT_WWJ_GLOBE_LAYERS = new BasicModel().getLayers();
 	
 	private static final long serialVersionUID = 5139522879873045768L;
 	protected GISDisplayDescriptor descriptor;
@@ -178,12 +183,36 @@ public class GIS3DOptionsPanel extends JPanel {
 		renderQualityBox.setToolTipText("Sets the display render quality for agents and networks.");
 		
 		Map<String,Boolean> globeLayerMap = descriptor.getGlobeLayersMap();
+		GIS3DVisualizationRegistryData data = (GIS3DVisualizationRegistryData) VisualizationRegistry.getDataFor(descriptor.getDisplayType());
+		
+		List<String> foundLayerClasses = ClassFinder.getFoundClasses(context, AbstractRenderableLayer.class);
+		Class<?>[] defaultLayerClasses = data.getDefaultLayers();
+		for(Class<?> clazz : defaultLayerClasses) {
+			String className = clazz.getName();
+			if(!foundLayerClasses.contains(className))
+				foundLayerClasses.remove(className);
+		}
 		
 		DefaultTableModel model = (DefaultTableModel)layerSelectTable.getModel();
-		model.setRowCount(DEFAULT_GLOBE_LAYERS.size());
-		
+		model.setRowCount(DEFAULT_WWJ_GLOBE_LAYERS.size() + foundLayerClasses.size());
+				
 		int row=0;
-		for (Layer layer : DEFAULT_GLOBE_LAYERS) {
+		// List Custom layers first
+		for (String layer: foundLayerClasses) {
+			
+			Boolean indisplay = false;
+			Boolean enabled = false;
+			if (globeLayerMap.get(layer) != null){
+				indisplay = true;
+				enabled = globeLayerMap.get(layer);
+			}
+			
+			model.setValueAt(indisplay, row, 0);
+			model.setValueAt(layer, row, 1);
+			model.setValueAt(enabled, row, 2);
+			row++;
+		}
+		for (Layer layer : DEFAULT_WWJ_GLOBE_LAYERS) {
 			
 			Boolean indisplay = false;
 			Boolean enabled = false;
