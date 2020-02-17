@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=<job_name>
-#SBATCH --partition=<partition>
-#SBATCH --nodes=<number_of_nodes>
-#SBATCH --ntasks-per-node=<tasks_per_node>
+#SBATCH --job-name=<Job_Name>
+#SBATCH --partition=<Queue_Name>
+#SBATCH --nodes=<nodes>
+#SBATCH --ntasks-per-node=<ppn>
 #SBATCH --time=<walltime>
 #SBATCH --output=output.txt
-#SBATCH --mail-user=email
+#SBATCH --mail-user=<email>
 #SBATCH --mail-type=all
 
 cd $SLURM_SUBMIT_DIR
