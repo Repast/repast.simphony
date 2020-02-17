@@ -40,7 +40,7 @@ public interface Observer extends ProjectionListener {
 	 * Diffuses to the eight neighboring patches a fraction number of the patch
 	 * variable.
 	 * 
-	 * @param patchVarible
+	 * @param patchVariable
 	 *            the name of a diffusible patch variable
 	 * @param number
 	 *            a number in the range [0,1]
@@ -51,7 +51,7 @@ public interface Observer extends ProjectionListener {
 	 * Diffuses to the four neighboring patches a fraction number of the patch
 	 * variable.
 	 * 
-	 * @param patchVarible
+	 * @param patchVariable
 	 *            the name of a diffusible patch variable
 	 * @param number
 	 *            a number number in the range [0,1]
