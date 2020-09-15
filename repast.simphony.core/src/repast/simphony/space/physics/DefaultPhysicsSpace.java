@@ -4,6 +4,16 @@ import java.util.HashMap;
 
 import org.jogamp.vecmath.Vector3f;
 
+import com.bulletphysics.collision.broadphase.AxisSweep3;
+import com.bulletphysics.collision.dispatch.CollisionConfiguration;
+import com.bulletphysics.collision.dispatch.CollisionDispatcher;
+import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.bulletphysics.linearmath.Transform;
+
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -11,18 +21,6 @@ import repast.simphony.space.continuous.ContinuousAdder;
 import repast.simphony.space.continuous.DefaultContinuousSpace;
 import repast.simphony.space.continuous.MultiOccupancyCoordinateAccessor;
 import repast.simphony.space.continuous.PointTranslator;
-
-import com.bulletphysics.collision.broadphase.AxisSweep3;
-import com.bulletphysics.collision.dispatch.CollisionConfiguration;
-import com.bulletphysics.collision.dispatch.CollisionDispatcher;
-import com.bulletphysics.collision.dispatch.CollisionObject;
-import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
-import com.bulletphysics.collision.narrowphase.ManifoldPoint;
-import com.bulletphysics.collision.narrowphase.PersistentManifold;
-import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
-import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
-import com.bulletphysics.linearmath.Transform;
 
 /**
  * A special 3-dimensional subclass of continuous space that determines the 
@@ -103,9 +101,7 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		Vector3f worldAabbMin = new Vector3f(-1000, -1000, -1000);
 		Vector3f worldAabbMax = new Vector3f(1000, 1000, 1000);
 		int maxProxies = 4*4096;
-		// TODO fix
-		AxisSweep3 overlappingPairCache = null; //new AxisSweep3(worldAabbMin, worldAabbMax, 
-				//maxProxies);
+		AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
 		
 	   // the default constraint solver. For parallel processing you can use a
 		// different solver (see Extras/BulletMultiThreaded)
@@ -113,8 +109,7 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, 
 				solver,	collisionConfiguration);
-		// TODO
-		// dynamicsWorld.setGravity(new Vector3f(0, -9.8f, 0));
+		dynamicsWorld.setGravity(new Vector3f(0, -9.8f, 0));
 		
 		if (scheduleStep){
 			ScheduleParameters params = ScheduleParameters.createRepeating(0, 1);
@@ -138,11 +133,8 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		Transform trans = new Transform();
 		body.getMotionState().getWorldTransform(trans);
 		
-		// TODO fix
-		//return super.moveTo(object, (double)trans.origin.x,	(double)trans.origin.y, 
-		//		(double)trans.origin.z);
-		return false;
-		
+		return super.moveTo(object, (double)trans.origin.x,	(double)trans.origin.y, 
+				(double)trans.origin.z);
 	}
 
 	public Transform getTransformForObject(T object){
@@ -161,9 +153,9 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 				if (bodyToObjectMap.get(body) != null){
 					
 				  // TODO handle super.moveTo() here or let user update via PhysicsSpace.getTransform()?
-				 // TODO Fix
-				  //super.moveTo(bodyToObjectMap.get(body), (double)trans.origin.x, 
-				//		(double)trans.origin.y, (double)trans.origin.z);
+				 
+				  super.moveTo(bodyToObjectMap.get(body), (double)trans.origin.x, 
+					(double)trans.origin.y, (double)trans.origin.z);
 				}
 			}
 		}
@@ -197,26 +189,22 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 	}
 	
   public void setLinearVelocity(T object, float x, float y, float z ){
-	  // TODO
-  	// objectToBodyMap.get(object).setLinearVelocity(new Vector3f(x,y,z));
+  	objectToBodyMap.get(object).setLinearVelocity(new Vector3f(x,y,z));
   }
 	
 	public float[] getLinearVelocity(T object){
 		float[] v = new float[3];
-		/// TODO
-		// objectToBodyMap.get(object).getLinearVelocity(new Vector3f(0,0,0)).get(v);
+		objectToBodyMap.get(object).getLinearVelocity(new Vector3f(0,0,0)).get(v);
 		return v;
 	}
 	
 	public void setGravity(float x, float y, float z){
-		// TODO
-		// dynamicsWorld.setGravity(new Vector3f(x,y,z));
+		dynamicsWorld.setGravity(new Vector3f(x,y,z));
 	}
 	
 	public float[] getGravity(){
 		float[] g = new float[3];
-		// TODO
-		//dynamicsWorld.getGravity(new Vector3f(0,0,0)).get(g);
+		dynamicsWorld.getGravity(new Vector3f(0,0,0)).get(g);
 		return g;
 	}
 	

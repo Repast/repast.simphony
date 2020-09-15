@@ -26,7 +26,8 @@ Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/jscience-4.3.1-no_ogis.jar,
  lib/commons-math3-3.6.1.jar,
  lib/commons-collections-3.2.2.jar,
- lib/commons-io-2.5.jar
+ lib/commons-io-2.5.jar,
+ lib/stack-alloc.jar
 Bundle-Localization: plugin
 Export-Package: .,
  EDU.oswego.cs.dl.util.concurrent,
