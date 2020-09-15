@@ -38,6 +38,6 @@ public class ColorMapStyleAdapter implements GridColorMap {
     int tx = x - origin[0];
     int ty = y - origin[1];
     Color c = style.getColor(tx, ty);
-    Utils3D.updateColor(c);
+    Utils3D.updateColor(color, c);
   }
 }
