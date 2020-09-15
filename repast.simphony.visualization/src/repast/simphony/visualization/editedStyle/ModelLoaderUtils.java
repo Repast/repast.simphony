@@ -3,13 +3,14 @@ package repast.simphony.visualization.editedStyle;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-// import com.glyphein.j3d.loaders.milkshape.MS3DLoader;
 import org.jogamp.java3d.loaders.IncorrectFormatException;
 import org.jogamp.java3d.loaders.Loader;
 import org.jogamp.java3d.loaders.ParsingErrorException;
 import org.jogamp.java3d.loaders.Scene;
 import org.jogamp.java3d.loaders.lw3d.Lw3dLoader;
 import org.jogamp.java3d.loaders.objectfile.ObjectFile;
+
+import com.glyphein.j3d.loaders.milkshape.MS3DLoader;
 
 /**
  * Utils class for finding a org.jogamp.java3d.loaders.Loader based on the
@@ -23,8 +24,7 @@ public class ModelLoaderUtils {
 	public static Loader getLoaderForFile(String filename){
 
 		if (filename.toLowerCase().endsWith("ms3d"))
-			// return new MS3DLoader(MS3DLoader.LOAD_ALL);
-			throw new UnsupportedOperationException("MS3D files are no longer supported");
+			return new MS3DLoader(MS3DLoader.LOAD_ALL);
 		
 		else if (filename.toLowerCase().endsWith("lws") || 
 				filename.toLowerCase().endsWith("lwo"))
