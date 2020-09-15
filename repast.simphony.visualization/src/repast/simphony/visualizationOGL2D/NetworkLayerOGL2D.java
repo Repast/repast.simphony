@@ -53,6 +53,10 @@ public class NetworkLayerOGL2D extends AbstractDisplayLayerOGL2D<EdgeStyleOGL2D>
       try {
         lock.lock();
         addObject((RepastEdge) evt.getSubject());
+        
+        RepastEdge e = (RepastEdge) evt.getSubject();
+        System.out.println("EDGE ADDED: " + e.getSource().hashCode() + " - " + e.getTarget().hashCode());
+        
       } finally {
         lock.unlock();
       }
@@ -61,6 +65,9 @@ public class NetworkLayerOGL2D extends AbstractDisplayLayerOGL2D<EdgeStyleOGL2D>
       try {
         lock.lock();
         removeObject((RepastEdge) evt.getSubject());
+        
+        RepastEdge e = (RepastEdge) evt.getSubject();
+        System.out.println("EDGE REMOVED: " + e.getSource().hashCode() + " - " + e.getTarget().hashCode());
       } finally {
         lock.unlock();
       }
@@ -84,6 +91,8 @@ public class NetworkLayerOGL2D extends AbstractDisplayLayerOGL2D<EdgeStyleOGL2D>
   public void update(LayoutUpdater updater) {
     for (Object obj : toBeRemoved) {
       VEdge2D item = (VEdge2D) objMap.remove(obj);
+      RepastEdge rEdge = (RepastEdge) obj;
+      System.out.println("REMOVING: " + rEdge.getSource().hashCode() + " - " + rEdge.getTarget().hashCode());
       layer.removeChild(item);
     }
     toBeRemoved.clear();
@@ -100,8 +109,20 @@ public class NetworkLayerOGL2D extends AbstractDisplayLayerOGL2D<EdgeStyleOGL2D>
     // style, update the location of them.
     for (Object obj : toBeAdded) {
       RepastEdge rEdge = (RepastEdge) obj;
+      System.out.println("ADDING: " + rEdge.getSource().hashCode() + " - " + rEdge.getTarget().hashCode());
       VSpatial source = display.getSpatialForObject(rEdge.getSource());
       VSpatial target = display.getSpatialForObject(rEdge.getTarget());
+      
+      if (source == null) {
+    	  System.out.println("NULL SOURCE: " + rEdge.getSource().hashCode());
+    	  System.exit(0);
+      }
+      
+      if (target == null) {
+    	  System.out.println("NULL TARGET: " + rEdge.getTarget().hashCode());
+    	  System.exit(0);
+      }
+      
       VEdge2D edge = new VEdge2D(source, target, isDirected);
       edge.putProperty(MODEL_OBJECT_KEY, obj);
       objMap.put(rEdge, edge);

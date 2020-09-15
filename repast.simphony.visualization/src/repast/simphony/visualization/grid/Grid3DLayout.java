@@ -1,6 +1,6 @@
 package repast.simphony.visualization.grid;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.visualization.Box;
 import repast.simphony.visualization.Layout;

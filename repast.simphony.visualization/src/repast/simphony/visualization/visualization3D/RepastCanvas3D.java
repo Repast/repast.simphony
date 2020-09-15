@@ -3,7 +3,7 @@ package repast.simphony.visualization.visualization3D;
 import java.awt.GraphicsConfiguration;
 import java.util.ArrayList;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 
 /**
  * @author Nick Collier

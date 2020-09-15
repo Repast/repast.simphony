@@ -1,6 +1,6 @@
 package repast.simphony.visualization.gis3D;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 
 import com.jogamp.opengl.util.texture.Texture;
 

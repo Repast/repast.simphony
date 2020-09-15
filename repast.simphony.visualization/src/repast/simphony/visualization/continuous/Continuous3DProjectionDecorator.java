@@ -1,8 +1,8 @@
 package repast.simphony.visualization.continuous;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.Group;
-import javax.media.j3d.Shape3D;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Shape3D;
 
 import repast.simphony.space.continuous.ContinuousSpace;
 import repast.simphony.visualization.decorator.AbstractProjectionDecorator;

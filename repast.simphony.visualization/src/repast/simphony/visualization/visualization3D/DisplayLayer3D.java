@@ -2,8 +2,8 @@ package repast.simphony.visualization.visualization3D;
 
 import java.util.Iterator;
 
-import javax.media.j3d.Group;
-import javax.media.j3d.Shape3D;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Shape3D;
 
 import repast.simphony.visualization.Layout;
 import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;

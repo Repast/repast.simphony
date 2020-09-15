@@ -114,10 +114,12 @@ public abstract class OutputFinder {
 
     for (String file : allFiles) {
       for (MatchedFiles matcher : matchers) {
+    	  // System.out.println("Attempting to match " + file);
         if (matcher.matches(new File(file).toPath())) {
           matcher.addFile(new File(instanceDir, file));
+          // System.out.println("Matcher matched " + file);
           break;
-        }
+        } 
       }
     }
 

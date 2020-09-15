@@ -1,12 +1,12 @@
 package repast.simphony.visualization.visualization3D;
 
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
+import org.jogamp.java3d.utils.geometry.GeometryInfo;
+import org.jogamp.java3d.utils.geometry.NormalGenerator;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
 
-import javax.media.j3d.Geometry;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.TriangleStripArray;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.TriangleStripArray;
 import java.awt.*;
 
 /**

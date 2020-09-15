@@ -1,7 +1,7 @@
 package repast.simphony.visualization.network;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.random.RandomHelper;
 import repast.simphony.visualization.visualization3D.AbstractLabel;

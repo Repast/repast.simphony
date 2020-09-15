@@ -1,6 +1,6 @@
 package repast.simphony.space.physics;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -33,7 +33,8 @@ public class RigidBodyFactory {
 		
 		// BoxShape uses half-lengths
 		Vector3f extents = new Vector3f(xLength/2,yLength/2,zLength/2);
-		CollisionShape colShape = new BoxShape(extents);
+		// TODO
+		CollisionShape colShape = null; // new BoxShape(extents);
 		RigidBodyConstructionInfo rbInfo = ConstructBodyInfo(colShape, mass, loc);
 		return new RigidBody(rbInfo);
 	}	
@@ -43,15 +44,17 @@ public class RigidBodyFactory {
 		
 		Vector3f localInertia = new Vector3f(0, 0, 0);
 		
+// TODO all this block
 		// don't calculate mass for static objects.
-		if (mass != 0)
-		  colShape.calculateLocalInertia(mass, localInertia);
-		
-		Transform startTransform = new Transform();
-  	startTransform.setIdentity();
-		startTransform.origin.set(new Vector3f(loc));
-		DefaultMotionState myMotionState = new DefaultMotionState(startTransform);
-		
-		return new RigidBodyConstructionInfo(mass,myMotionState, colShape, localInertia);
+//		if (mass != 0)
+//		  colShape.calculateLocalInertia(mass, localInertia);
+//		
+//		Transform startTransform = new Transform();
+//  	startTransform.setIdentity();
+//		startTransform.origin.set(new Vector3f(loc));
+//		DefaultMotionState myMotionState = new DefaultMotionState(startTransform);
+//		
+//		return new RigidBodyConstructionInfo(mass,myMotionState, colShape, localInertia);
+		return null;
 	}
 }
