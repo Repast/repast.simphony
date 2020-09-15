@@ -2,12 +2,12 @@ package repast.simphony.visualization.visualization3D;
 
 import java.awt.Color;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.TransparencyAttributes;
-import javax.vecmath.Color3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.TransparencyAttributes;
+import org.jogamp.vecmath.Color3f;
 
 /**
  * @author Nick Collier

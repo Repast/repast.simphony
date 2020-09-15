@@ -4,9 +4,9 @@ package repast.simphony.visualization.visualization3D;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.visualization.visualization3D.style.Style3D;
 

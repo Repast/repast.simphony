@@ -1,6 +1,6 @@
 package repast.simphony.visualization.continuous;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.space.Dimensions;
 import repast.simphony.space.continuous.ContinuousSpace;

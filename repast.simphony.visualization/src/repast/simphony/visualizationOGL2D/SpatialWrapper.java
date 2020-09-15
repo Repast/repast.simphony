@@ -5,10 +5,10 @@ package repast.simphony.visualizationOGL2D;
 
 import java.util.ArrayList;
 
-import javax.media.opengl.GL2;
-import javax.vecmath.Point3f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import com.jogamp.opengl.GL2;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3f;
 
 import saf.v3d.picking.Accumulator;
 import saf.v3d.picking.BoundingSphere;
@@ -53,7 +53,7 @@ public class SpatialWrapper extends VComposite implements TextureRenderable {
   /*
    * (non-Javadoc)
    * 
-   * @see saf.v3d.scene.VSpatial#transform(javax.vecmath.Point3f)
+   * @see saf.v3d.scene.VSpatial#transform(org.jogamp.vecmath.Point3f)
    */
   @Override
   public Point3f transform(Point3f pt) {
@@ -87,7 +87,7 @@ public class SpatialWrapper extends VComposite implements TextureRenderable {
   /*
    * (non-Javadoc)
    * 
-   * @see saf.v3d.scene.VSpatial#draw(javax.media.opengl.GL,
+   * @see saf.v3d.scene.VSpatial#draw(com.jogamp.opengl.GL,
    * saf.v3d.render.RenderState)
    */
   @Override
@@ -134,7 +134,7 @@ public class SpatialWrapper extends VComposite implements TextureRenderable {
    * (non-Javadoc)
    * 
    * @see
-   * anl.mifs.viz3d.VSpatial#intersects(javax.vecmath.Point3f,anl.mifs.viz3d
+   * anl.mifs.viz3d.VSpatial#intersects(org.jogamp.vecmath.Point3f,anl.mifs.viz3d
    * .Accumulator)
    */
   @Override
@@ -155,8 +155,8 @@ public class SpatialWrapper extends VComposite implements TextureRenderable {
   /*
    * (non-Javadoc)
    * 
-   * @see anl.mifs.viz3d.VSpatial#intersects(javax.vecmath.Point3f,
-   * javax.vecmath.Vector3f, anl.mifs.viz3d.Accumulator)
+   * @see anl.mifs.viz3d.VSpatial#intersects(org.jogamp.vecmath.Point3f,
+   * org.jogamp.vecmath.Vector3f, anl.mifs.viz3d.Accumulator)
    */
   @Override
   public void intersects(Point3f rayOrigin, Vector3f rayDirection, Accumulator accumulator) {

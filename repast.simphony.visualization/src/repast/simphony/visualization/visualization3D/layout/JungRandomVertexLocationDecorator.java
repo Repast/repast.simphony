@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.vecmath.Point3d;
+import org.jogamp.vecmath.Point3d;
 
 import cern.jet.random.engine.DRand;
 import cern.jet.random.engine.RandomEngine;

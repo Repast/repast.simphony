@@ -10,27 +10,36 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
-import javax.media.j3d.AmbientLight;
-import javax.media.j3d.Background;
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.GraphicsConfigTemplate3D;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.View;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
+
+import org.jogamp.java3d.AmbientLight;
+import org.jogamp.java3d.Background;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.DirectionalLight;
+import org.jogamp.java3d.GraphicsConfigTemplate3D;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.java3d.exp.swing.JCanvas3D;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseBehavior;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseRotate;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseTranslate;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseWheelZoom;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseZoom;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
 
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -46,17 +55,6 @@ import repast.simphony.visualization.visualization3D.style.DefaultStyle3D;
 import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
-
-import com.sun.j3d.exp.swing.JCanvas3D;
-import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.behaviors.mouse.MouseTranslate;
-import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
-import com.sun.j3d.utils.behaviors.mouse.MouseZoom;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.picking.PickResult;
-import com.sun.j3d.utils.picking.PickTool;
-import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * 3D Display class based on J3D. Uses a behavior to update the display.
@@ -542,7 +540,7 @@ public class Display3D extends AbstractDisplay3D {
       this.wakeupOn(wakeup);
     }
 
-    public void processStimulus(Enumeration criteria) {
+    public void processStimulus(Iterator criteria) {
       if (triggered) {
 
         for (IDisplayLayer display : displayMap.values()) {

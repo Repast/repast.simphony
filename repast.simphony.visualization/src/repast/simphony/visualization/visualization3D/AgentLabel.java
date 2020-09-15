@@ -1,7 +1,7 @@
 package repast.simphony.visualization.visualization3D;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.visualization.visualization3D.style.Style3D;
 

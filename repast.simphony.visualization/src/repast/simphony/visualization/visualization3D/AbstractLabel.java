@@ -3,23 +3,23 @@ package repast.simphony.visualization.visualization3D;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.Font3D;
-import javax.media.j3d.FontExtrusion;
-import javax.media.j3d.Group;
-import javax.media.j3d.OrientedShape3D;
-import javax.media.j3d.Text3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BoundingBox;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.Bounds;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.Font3D;
+import org.jogamp.java3d.FontExtrusion;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.OrientedShape3D;
+import org.jogamp.java3d.Text3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.visualization.visualization3D.style.Style3D;
 
@@ -34,7 +34,8 @@ public abstract class AbstractLabel implements Label {
   protected Style3D.LabelPosition position;
   protected BranchGroup group;
   protected boolean updated = true;
-  protected Color3f color = new Color3f(Color.YELLOW);
+  protected Color3f color = new Color3f(Color.YELLOW.getRGBColorComponents(null));
+  protected Color jColor = new Color(color.getX(), color.getY(), color.getZ());
   protected Font3D font = new Font3D(new Font("Helvetica", Font.PLAIN, 10), new FontExtrusion());
   protected Appearance appearance = new Appearance();
   protected float textScale = font.getFont().getSize() / SCALE;
@@ -86,14 +87,15 @@ public abstract class AbstractLabel implements Label {
   }
 
   public void setColor(Color color) {
-    if (color != null && !color.equals(this.color.get())) {
-      this.color.set(color);
+    if (color != null && !color.equals(jColor)) {
+      this.color.set(color.getColorComponents(null));
+      this.jColor = color;
       appearance.getColoringAttributes().setColor(this.color);
     }
   }
 
   public Color getColor() {
-    return this.color.get();
+    return jColor;
   }
 
   public void setFont(Font font) {

@@ -1,6 +1,6 @@
 package repast.simphony.visualization.visualization3D;
 
-import javax.media.j3d.BranchGroup;
+import org.jogamp.java3d.BranchGroup;
 import java.util.HashSet;
 import java.util.Set;
 

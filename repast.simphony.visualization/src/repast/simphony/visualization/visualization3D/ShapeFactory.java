@@ -1,12 +1,12 @@
 package repast.simphony.visualization.visualization3D;
 
-import com.sun.j3d.utils.geometry.*;
-import com.sun.j3d.utils.picking.PickTool;
+import org.jogamp.java3d.utils.geometry.*;
+import org.jogamp.java3d.utils.picking.PickTool;
 
-import javax.media.j3d.*;
-import javax.vecmath.Color3f;
-import javax.vecmath.Color4f;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.*;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Color4f;
+import org.jogamp.vecmath.Point3f;
 import java.awt.*;
 
 /**
@@ -178,7 +178,7 @@ public class ShapeFactory {
     lineArray.setCoordinate(i++, new Point3f(xExtent, 0, zExtent));
 
 
-    Color4f color4f = new Color4f(color);
+    Color4f color4f = new Color4f(color.getRGBComponents(null));
 
     for (int j = 0; j < i; j++) {
       lineArray.setColor(j, color4f);
@@ -231,7 +231,7 @@ public class ShapeFactory {
     lineArray.setCoordinate(i++, new Point3f(xdim, ydim, zdim));
     lineArray.setCoordinate(i++, new Point3f(0, ydim, zdim));
 
-    Color3f colors = new Color3f(color);
+    Color3f colors = new Color3f(color.getRGBColorComponents(null));
 
     for (int j = 0; j < i; j++) {
       lineArray.setColor(j, colors);
@@ -255,7 +255,7 @@ public class ShapeFactory {
       float z = cellSize * yDim;
       int index = 0;
       // todo update to indexed line array so we don't need a color for each vertex.
-      Color3f color3f = new Color3f(color);
+      Color3f color3f = new Color3f(color.getRGBColorComponents(null));
       for (int i = 0; i <= xDim; i++) {
         float x = i * cellSize;
         lineArray.setCoordinate(index, new Point3f(x, 0, 0));
@@ -288,7 +288,7 @@ public class ShapeFactory {
       LineArray lineArray = new LineArray(verts, GeometryArray.COORDINATES
               | GeometryArray.COLOR_3);
 
-      Color3f color3f = new Color3f(color);
+      Color3f color3f = new Color3f(color.getRGBColorComponents(null));
       float zMax = cellSize * zDim;
       float xMax = cellSize * xDim;
       int index = 0;
@@ -361,7 +361,7 @@ public class ShapeFactory {
     lineArray.setCoordinate(i++, new Point3f(0, 0, 0));
     lineArray.setCoordinate(i++, new Point3f(0, 0, depth));
 
-    Color3f colors = new Color3f(color);
+    Color3f colors = new Color3f(color.getRGBColorComponents(null));
 
     for (int j = 0; j < i; j++) {
       lineArray.setColor(j, colors);

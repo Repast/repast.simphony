@@ -5,9 +5,10 @@ package repast.simphony.visualizationOGL2D;
 
 import java.awt.Color;
 
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 
 import saf.v3d.grid.GridColorMap;
+import saf.v3d.util.Utils3D;
 
 /**
  * Adapts a ValueLayerStyle to a saf uil grid color map.
@@ -37,6 +38,6 @@ public class ColorMapStyleAdapter implements GridColorMap {
     int tx = x - origin[0];
     int ty = y - origin[1];
     Color c = style.getColor(tx, ty);
-    color.set(c);
+    Utils3D.updateColor(c);
   }
 }

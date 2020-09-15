@@ -1,6 +1,6 @@
 package repast.simphony.space.physics;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.space.projection.Projection;
 

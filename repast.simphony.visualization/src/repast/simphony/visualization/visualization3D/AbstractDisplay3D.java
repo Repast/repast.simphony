@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.media.j3d.Behavior;
+import org.jogamp.java3d.Behavior;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -38,7 +38,7 @@ import repast.simphony.visualization.visualization3D.style.EdgeStyle3D;
 import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
 
-import com.sun.j3d.exp.swing.JCanvas3D;
+import org.jogamp.java3d.exp.swing.JCanvas3D;
 
 /**
  * Abstract base class for 3D displays.

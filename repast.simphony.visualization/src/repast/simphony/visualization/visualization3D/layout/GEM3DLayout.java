@@ -3,8 +3,8 @@ package repast.simphony.visualization.visualization3D.layout;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import javolution.util.FastMap;
 import repast.simphony.random.RandomHelper;

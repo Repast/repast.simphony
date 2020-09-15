@@ -2,7 +2,7 @@ package repast.simphony.space.physics;
 
 import java.util.HashMap;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
@@ -103,8 +103,9 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		Vector3f worldAabbMin = new Vector3f(-1000, -1000, -1000);
 		Vector3f worldAabbMax = new Vector3f(1000, 1000, 1000);
 		int maxProxies = 4*4096;
-		AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, 
-				maxProxies);
+		// TODO fix
+		AxisSweep3 overlappingPairCache = null; //new AxisSweep3(worldAabbMin, worldAabbMax, 
+				//maxProxies);
 		
 	   // the default constraint solver. For parallel processing you can use a
 		// different solver (see Extras/BulletMultiThreaded)
@@ -112,8 +113,8 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, 
 				solver,	collisionConfiguration);
-
-		dynamicsWorld.setGravity(new Vector3f(0, -9.8f, 0));
+		// TODO
+		// dynamicsWorld.setGravity(new Vector3f(0, -9.8f, 0));
 		
 		if (scheduleStep){
 			ScheduleParameters params = ScheduleParameters.createRepeating(0, 1);
@@ -137,8 +138,10 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		Transform trans = new Transform();
 		body.getMotionState().getWorldTransform(trans);
 		
-		return super.moveTo(object, (double)trans.origin.x,	(double)trans.origin.y, 
-				(double)trans.origin.z);
+		// TODO fix
+		//return super.moveTo(object, (double)trans.origin.x,	(double)trans.origin.y, 
+		//		(double)trans.origin.z);
+		return false;
 		
 	}
 
@@ -158,9 +161,9 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 				if (bodyToObjectMap.get(body) != null){
 					
 				  // TODO handle super.moveTo() here or let user update via PhysicsSpace.getTransform()?
-				
-				  super.moveTo(bodyToObjectMap.get(body), (double)trans.origin.x, 
-						(double)trans.origin.y, (double)trans.origin.z);
+				 // TODO Fix
+				  //super.moveTo(bodyToObjectMap.get(body), (double)trans.origin.x, 
+				//		(double)trans.origin.y, (double)trans.origin.z);
 				}
 			}
 		}
@@ -194,22 +197,26 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 	}
 	
   public void setLinearVelocity(T object, float x, float y, float z ){
-  	objectToBodyMap.get(object).setLinearVelocity(new Vector3f(x,y,z));
+	  // TODO
+  	// objectToBodyMap.get(object).setLinearVelocity(new Vector3f(x,y,z));
   }
 	
 	public float[] getLinearVelocity(T object){
 		float[] v = new float[3];
-		objectToBodyMap.get(object).getLinearVelocity(new Vector3f(0,0,0)).get(v);
+		/// TODO
+		// objectToBodyMap.get(object).getLinearVelocity(new Vector3f(0,0,0)).get(v);
 		return v;
 	}
 	
 	public void setGravity(float x, float y, float z){
-		dynamicsWorld.setGravity(new Vector3f(x,y,z));
+		// TODO
+		// dynamicsWorld.setGravity(new Vector3f(x,y,z));
 	}
 	
 	public float[] getGravity(){
 		float[] g = new float[3];
-		dynamicsWorld.getGravity(new Vector3f(0,0,0)).get(g);
+		// TODO
+		//dynamicsWorld.getGravity(new Vector3f(0,0,0)).get(g);
 		return g;
 	}
 	

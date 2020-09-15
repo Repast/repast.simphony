@@ -3,16 +3,16 @@ package repast.simphony.visualization.editedStyle;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import com.glyphein.j3d.loaders.milkshape.MS3DLoader;
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.Loader;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.lw3d.Lw3dLoader;
-import com.sun.j3d.loaders.objectfile.ObjectFile;
+// import com.glyphein.j3d.loaders.milkshape.MS3DLoader;
+import org.jogamp.java3d.loaders.IncorrectFormatException;
+import org.jogamp.java3d.loaders.Loader;
+import org.jogamp.java3d.loaders.ParsingErrorException;
+import org.jogamp.java3d.loaders.Scene;
+import org.jogamp.java3d.loaders.lw3d.Lw3dLoader;
+import org.jogamp.java3d.loaders.objectfile.ObjectFile;
 
 /**
- * Utils class for finding a com.sun.j3d.loaders.Loader based on the
+ * Utils class for finding a org.jogamp.java3d.loaders.Loader based on the
  *  file type.
  * 
  * @author Eric Tatara
@@ -23,7 +23,8 @@ public class ModelLoaderUtils {
 	public static Loader getLoaderForFile(String filename){
 
 		if (filename.toLowerCase().endsWith("ms3d"))
-			return new MS3DLoader(MS3DLoader.LOAD_ALL);
+			// return new MS3DLoader(MS3DLoader.LOAD_ALL);a
+			throw new UnsupportedOperationException("Cannot load ms3d files");
 		
 		else if (filename.toLowerCase().endsWith("lws") || 
 				filename.toLowerCase().endsWith("lwo"))

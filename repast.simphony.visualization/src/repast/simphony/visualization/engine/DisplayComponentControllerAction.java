@@ -70,7 +70,7 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
       if (descriptor.getDisplayType().equals(DisplayType.THREE_D)) {
         // try to load a 3D class to make sure that the user has J3D installed
         try {
-          Class.forName("com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom");
+          Class.forName("org.jogamp.java3d.utils.behaviors.mouse.MouseWheelZoom");
         } catch (ClassNotFoundException e) {
           JOptionPane.showMessageDialog(null, "Java3D 1.6 (java3d.dev.java.net) is required for 3D displays." +
                   "\nAborting 3D display creation of '" + descriptor.getName() + "'.");
@@ -78,17 +78,17 @@ public class DisplayComponentControllerAction extends DefaultControllerAction im
         }
         
         // Java 3D not supported on Java9+ on macOS
-        if (SystemUtils.IS_OS_MAC && !SystemUtils.IS_JAVA_8) {
-        	 JOptionPane.showMessageDialog(null, "3D displays are only supported with Java 8 on macOS." +
-               "\nAborting display creation of '" + descriptor.getName() + "'.");
-        	 
-        	 return;	
-        }
+//        if (SystemUtils.IS_OS_MAC && !SystemUtils.IS_JAVA_8) {
+//        	 JOptionPane.showMessageDialog(null, "3D displays are only supported with Java 8 on macOS." +
+//               "\nAborting display creation of '" + descriptor.getName() + "'.");
+//        	 
+//        	 return;	
+//        }
       }
       else if (descriptor.getDisplayType().equals(DisplayType.TWO_D)) {
         // try to load a JOGL class to make sure that the user has JOGL installed
         try {
-          Class.forName("javax.media.opengl.glu.GLU");
+          Class.forName("com.jogamp.opengl.glu.GLU");
         } catch (ClassNotFoundException e) {
           JOptionPane.showMessageDialog(null, "JOGL (jogl.dev.java.net) is required for 2D displays." +
                   "\nAborting display creation of '" + descriptor.getName() + "'.");

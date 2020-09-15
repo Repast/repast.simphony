@@ -154,6 +154,7 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
    */
   private void processRemoved() {
     for (Object obj : toBeRemoved) {
+    	System.out.println("REMOVING: " + obj.hashCode());
       SpatialWrapper item = (SpatialWrapper) objMap.remove(obj);
       if (item != null) {
         if (item.getChild() instanceof TextureRenderable)
@@ -225,6 +226,7 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
     // create VSpatials for the objs to add,
     // style, update the location of them.
     for (Object obj : toBeAdded) {
+    	System.out.println("ADDING: " + obj.hashCode());
       SpatialWrapper wrapper = createSpatial(obj);
       wrapper.putProperty(LABEL_KEY, new LabelEntry());
       applyStyle(obj, wrapper);
@@ -245,6 +247,7 @@ public class StyledDisplayLayerOGL2D extends AbstractDisplayLayerOGL2D<StyleOGL2
    */
   public void update(LayoutUpdater updater) {
     // remove what needs to be removed
+	  System.out.println("################################");
     processRemoved();
     updateExistingSpatials(updater);
     processAdded(updater);

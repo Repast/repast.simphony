@@ -1,15 +1,15 @@
 package repast.simphony.visualization.visualization3D;
 
-import com.sun.j3d.utils.picking.PickTool;
+import org.jogamp.java3d.utils.picking.PickTool;
 import repast.simphony.space.Dimensions;
 import repast.simphony.valueLayer.ValueLayer;
 import repast.simphony.visualization.visualization3D.style.DefaultValueLayerStyle3D;
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
 
-import javax.media.j3d.*;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.*;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
