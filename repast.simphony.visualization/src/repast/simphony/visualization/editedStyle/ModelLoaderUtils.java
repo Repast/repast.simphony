@@ -23,8 +23,8 @@ public class ModelLoaderUtils {
 	public static Loader getLoaderForFile(String filename){
 
 		if (filename.toLowerCase().endsWith("ms3d"))
-			// return new MS3DLoader(MS3DLoader.LOAD_ALL);a
-			throw new UnsupportedOperationException("Cannot load ms3d files");
+			// return new MS3DLoader(MS3DLoader.LOAD_ALL);
+			throw new UnsupportedOperationException("MS3D files are no longer supported");
 		
 		else if (filename.toLowerCase().endsWith("lws") || 
 				filename.toLowerCase().endsWith("lwo"))
