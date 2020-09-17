@@ -2,8 +2,6 @@ package repast.simphony.visualization.gis3D;
 
 import java.beans.PropertyChangeListener;
 
-import javax.media.nativewindow.ScalableSurface;
-
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.LayerList;
@@ -18,8 +16,8 @@ import gov.nasa.worldwind.layers.LayerList;
 public class RepastWorldWindowGLCanvas extends WorldWindowGLCanvas {
 	
 	public RepastWorldWindowGLCanvas() {
-		setSurfaceScale(new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
-        ScalableSurface.IDENTITY_PIXELSCALE });
+//		setSurfaceScale(new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
+//        ScalableSurface.IDENTITY_PIXELSCALE });
 	}
 	
 	@Override
