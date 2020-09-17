@@ -1,6 +1,6 @@
 package repast.simphony.visualization.visualization2D;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.Box;

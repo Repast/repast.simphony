@@ -83,7 +83,7 @@ public class GIS3DVisualizationRegistryData implements VisualizationRegistryData
 
 	@Override
 	public String getRequiredLibraryClassName() {
-		return "javax.media.opengl.glu.GLU";
+		return "com.jogamp.opengl.glu.GLU";
 	}
 
 	@Override

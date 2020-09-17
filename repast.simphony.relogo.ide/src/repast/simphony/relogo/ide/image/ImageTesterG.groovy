@@ -1,5 +1,9 @@
 package repast.simphony.relogo.ide.image;
 
+@Grapes([
+	@Grab(group='org.codehaus.groovy', module='groovy-swing', version='2.5.12')]
+)
+
 import groovy.swing.SwingBuilder
 
 import java.awt.Color

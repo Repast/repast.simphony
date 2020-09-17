@@ -1,5 +1,10 @@
 package repast.simphony.relogo.ide.plugin
 
+@Grapes([
+	@Grab(group='org.codehaus.groovy', module='groovy-xml', version='2.5.12')]
+)
+
+
 import java.io.File;
 import java.util.List;
 
