@@ -3,10 +3,10 @@ package repast.simphony.visualization.network;
 import java.util.Map;
 import java.util.Set;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.Shape3D;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.visualization.visualization3D.Label;
 import repast.simphony.visualization.visualization3D.style.Style3D;

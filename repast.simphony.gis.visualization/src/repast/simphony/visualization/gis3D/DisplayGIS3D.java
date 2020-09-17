@@ -38,8 +38,6 @@ import javax.swing.border.EmptyBorder;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
-import com.jogamp.common.os.Platform;
-
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
@@ -47,6 +45,7 @@ import gov.nasa.worldwind.StereoSceneController;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.awt.WorldWindowGLJPanel;
 import gov.nasa.worldwind.event.PositionEvent;
 import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.event.SelectEvent;
@@ -219,7 +218,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 //		}
 
 		// US GLPanel implementation on all OS to avoid display issues with Java 11
-		worldWindow = new RepastWorldWindowGLJPanel();
+		worldWindow = new WorldWindowGLJPanel();
 		
 		worldWindow.setModel(model);
 

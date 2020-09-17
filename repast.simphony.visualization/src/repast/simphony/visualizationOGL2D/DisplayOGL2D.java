@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
-import javax.media.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLAutoDrawable;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import org.apache.commons.lang3.SystemUtils;
 
@@ -572,7 +572,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   /*
    * (non-Javadoc)
    * 
-   * @see saf.ui.v3d.CanvasListener#init(javax.media.opengl.GLAutoDrawable,
+   * @see saf.ui.v3d.CanvasListener#init(com.jogamp.opengl.GLAutoDrawable,
    * saf.ui.v3d.VNode)
    */
   public void init(GLAutoDrawable drawable, VRoot root) {
@@ -581,7 +581,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   /*
    * (non-Javadoc)
    * 
-   * @see saf.ui.v3d.CanvasListener#reshape(javax.media.opengl.GLAutoDrawable,
+   * @see saf.ui.v3d.CanvasListener#reshape(com.jogamp.opengl.GLAutoDrawable,
    * float, float, saf.ui.v3d.VNode)
    */
   public void reshape(GLAutoDrawable drawable, float width, float height, VRoot root) {
@@ -594,7 +594,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
    * (non-Javadoc)
    * 
    * @see saf.ui.v3d.CanvasListener#vSpatialMoved(saf.ui.v3d.VSpatial,
-   * javax.vecmath.Point3f)
+   * org.jogamp.vecmath.Point3f)
    */
   public void vSpatialMoved(VSpatial spatial, Point3f localTrans) {
   }
@@ -602,7 +602,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
   /*
    * (non-Javadoc)
    * 
-   * @see saf.ui.v3d.CanvasListener#dispose(javax.media.opengl.GLAutoDrawable)
+   * @see saf.ui.v3d.CanvasListener#dispose(com.jogamp.opengl.GLAutoDrawable)
    */
   public void dispose(GLAutoDrawable drawable) {
   }

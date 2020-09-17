@@ -1,7 +1,7 @@
 /*CopyrightHere*/
 package repast.simphony.visualization.visualization3D;
 
-import javax.media.j3d.Shape3D;
+import org.jogamp.java3d.Shape3D;
 
 import repast.simphony.visualization.IDisplayLayer;
 

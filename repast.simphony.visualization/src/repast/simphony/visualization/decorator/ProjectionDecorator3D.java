@@ -1,6 +1,6 @@
 package repast.simphony.visualization.decorator;
 
-import javax.media.j3d.Group;
+import org.jogamp.java3d.Group;
 
 import repast.simphony.space.projection.Projection;
 import repast.simphony.visualization.visualization3D.Display3D;

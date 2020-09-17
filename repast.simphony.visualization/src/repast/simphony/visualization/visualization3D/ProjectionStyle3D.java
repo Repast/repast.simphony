@@ -1,8 +1,8 @@
 /*CopyrightHere*/
 package repast.simphony.visualization.visualization3D;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.TransformGroup;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.TransformGroup;
 
 import repast.simphony.visualization.VisualizationProperties;
 import repast.simphony.space.projection.Projection;

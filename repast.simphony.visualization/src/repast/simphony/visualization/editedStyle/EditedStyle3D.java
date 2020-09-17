@@ -5,13 +5,14 @@ import java.awt.Container;
 import java.awt.Font;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Texture;
-import javax.media.j3d.TextureAttributes;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Texture;
+import org.jogamp.java3d.TextureAttributes;
 
 import repast.simphony.visualization.visualization3D.AppearanceFactory;
 import repast.simphony.visualization.visualization3D.ShapeFactory;
@@ -19,12 +20,12 @@ import repast.simphony.visualization.visualization3D.style.Style3D;
 import repast.simphony.visualization.visualization3D.style.TaggedAppearance;
 import repast.simphony.visualization.visualization3D.style.TaggedBranchGroup;
 
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.Loader;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.utils.geometry.Primitive;
-import com.sun.j3d.utils.image.TextureLoader;
+import org.jogamp.java3d.loaders.IncorrectFormatException;
+import org.jogamp.java3d.loaders.Loader;
+import org.jogamp.java3d.loaders.ParsingErrorException;
+import org.jogamp.java3d.loaders.Scene;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.java3d.utils.image.TextureLoader;
 
 /**
  * 
@@ -100,8 +101,9 @@ public class EditedStyle3D implements Style3D<Object> {
 
 			if (modelGroup != null){
 				BranchGroup aGroup = new BranchGroup();
-				for (Enumeration e=modelGroup.getAllChildren(); e.hasMoreElements();){
-					Node node = (Node) e.nextElement();
+				// for (Enumeration e=modelGroup.getAllChildren(); e.hasMoreElements();){
+				for (Iterator<Node> iter = modelGroup.getAllChildren(); iter.hasNext(); ) {
+					Node node = (Node) iter.next();
 					node.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
 					aGroup.addChild(node.cloneNode(true));
 				}

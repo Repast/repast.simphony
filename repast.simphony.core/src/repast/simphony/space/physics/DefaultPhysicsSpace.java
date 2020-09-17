@@ -2,7 +2,17 @@ package repast.simphony.space.physics;
 
 import java.util.HashMap;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
+
+import com.bulletphysics.collision.broadphase.AxisSweep3;
+import com.bulletphysics.collision.dispatch.CollisionConfiguration;
+import com.bulletphysics.collision.dispatch.CollisionDispatcher;
+import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.bulletphysics.linearmath.Transform;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ISchedule;
@@ -11,18 +21,6 @@ import repast.simphony.space.continuous.ContinuousAdder;
 import repast.simphony.space.continuous.DefaultContinuousSpace;
 import repast.simphony.space.continuous.MultiOccupancyCoordinateAccessor;
 import repast.simphony.space.continuous.PointTranslator;
-
-import com.bulletphysics.collision.broadphase.AxisSweep3;
-import com.bulletphysics.collision.dispatch.CollisionConfiguration;
-import com.bulletphysics.collision.dispatch.CollisionDispatcher;
-import com.bulletphysics.collision.dispatch.CollisionObject;
-import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
-import com.bulletphysics.collision.narrowphase.ManifoldPoint;
-import com.bulletphysics.collision.narrowphase.PersistentManifold;
-import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
-import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
-import com.bulletphysics.linearmath.Transform;
 
 /**
  * A special 3-dimensional subclass of continuous space that determines the 
@@ -103,8 +101,7 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		Vector3f worldAabbMin = new Vector3f(-1000, -1000, -1000);
 		Vector3f worldAabbMax = new Vector3f(1000, 1000, 1000);
 		int maxProxies = 4*4096;
-		AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, 
-				maxProxies);
+		AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
 		
 	   // the default constraint solver. For parallel processing you can use a
 		// different solver (see Extras/BulletMultiThreaded)
@@ -112,7 +109,6 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		
 		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, overlappingPairCache, 
 				solver,	collisionConfiguration);
-
 		dynamicsWorld.setGravity(new Vector3f(0, -9.8f, 0));
 		
 		if (scheduleStep){
@@ -139,7 +135,6 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 		
 		return super.moveTo(object, (double)trans.origin.x,	(double)trans.origin.y, 
 				(double)trans.origin.z);
-		
 	}
 
 	public Transform getTransformForObject(T object){
@@ -158,9 +153,9 @@ public class DefaultPhysicsSpace<T> extends DefaultContinuousSpace<T> implements
 				if (bodyToObjectMap.get(body) != null){
 					
 				  // TODO handle super.moveTo() here or let user update via PhysicsSpace.getTransform()?
-				
+				 
 				  super.moveTo(bodyToObjectMap.get(body), (double)trans.origin.x, 
-						(double)trans.origin.y, (double)trans.origin.z);
+					(double)trans.origin.y, (double)trans.origin.z);
 				}
 			}
 		}

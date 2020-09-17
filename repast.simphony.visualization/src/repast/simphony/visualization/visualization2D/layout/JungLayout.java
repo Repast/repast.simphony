@@ -2,7 +2,7 @@ package repast.simphony.visualization.visualization2D.layout;
 
 import java.awt.Dimension;
 
-import javax.vecmath.Point3f;
+import org.jogamp.vecmath.Point3f;
 
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;

@@ -1,6 +1,6 @@
 package repast.simphony.visualization.visualization3D.style;
 
-import javax.media.j3d.Appearance;
+import org.jogamp.java3d.Appearance;
 
 import repast.simphony.visualization.visualization3D.AppearanceFactory;
 

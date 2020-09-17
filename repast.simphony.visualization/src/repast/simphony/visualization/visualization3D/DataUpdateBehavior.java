@@ -1,10 +1,10 @@
 package repast.simphony.visualization.visualization3D;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.Geometry;
-import javax.media.j3d.WakeupOnBehaviorPost;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.WakeupOnBehaviorPost;
 
 /**
  * Behavior to update geometry.
@@ -29,7 +29,7 @@ public class DataUpdateBehavior extends Behavior {
 		wakeupOn(wakeUp);
 	}
 
-	public void processStimulus(Enumeration criteria) {
+	public void processStimulus(Iterator criteria) {
 		updater.updateData(geometry);
 		wakeupOn(wakeUp);
 	}

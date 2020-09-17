@@ -1,6 +1,6 @@
 package repast.simphony.visualization.visualization3D;
 
-import javax.media.j3d.Geometry;
+import org.jogamp.java3d.Geometry;
 
 import repast.simphony.visualization.visualization3D.style.ValueLayerStyle3D;
 
