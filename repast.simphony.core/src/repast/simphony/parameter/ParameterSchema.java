@@ -1,6 +1,5 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang3.Range;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ public interface ParameterSchema {
    * @return the numeric range of values that constrain this parameter or null
    *         if the parameter is unconstrained by a range.
    */
-  Range getConstrainingRange();
+  SteppedRange getConstrainingRange();
 
   /**
    * Gets the list of values that constrain this parameter. This will return

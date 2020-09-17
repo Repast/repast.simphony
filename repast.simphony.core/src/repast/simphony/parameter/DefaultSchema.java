@@ -1,6 +1,5 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang3.Range;
 import repast.simphony.util.collections.Pair;
 
 import java.util.HashMap;
@@ -94,7 +93,7 @@ public class DefaultSchema implements Schema {
    * @param name              the name of the parmaeter
    * @param constrainingRange a range of the possible values for the named parameter
    */
-  public void addConstraint(String name, Range constrainingRange) {
+  public void addConstraint(String name, SteppedRange constrainingRange) {
     ParameterSchema schema = schemas.get(name);
     DefaultParameterSchema newSchema = new DefaultParameterSchema(schema);
     newSchema.setConstrainingRange(constrainingRange);

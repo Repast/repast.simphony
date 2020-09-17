@@ -1,6 +1,5 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang3.Range;
 import simphony.util.messages.MessageCenter;
 
 import java.beans.BeanInfo;
@@ -110,10 +109,10 @@ public class ParametersCreator {
    * Constrains the value of the named parameter to those in the
    * specified range.
    *
-   * @param name              the name of the parmaeter
+   * @param name              the name of the parameter
    * @param constrainingRange a range of the possible values for the named parameter
    */
-  public void addConstraint(String name, Range constrainingRange) {
+  public void addConstraint(String name, SteppedRange constrainingRange) {
     parameters.addConstraint(name, constrainingRange);
   }
 

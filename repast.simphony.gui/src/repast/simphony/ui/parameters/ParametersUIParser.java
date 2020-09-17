@@ -104,9 +104,10 @@ public class ParametersUIParser {
                                         throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
                                 if (type.equals("int")) {
                                         try {
-                                                int min = Integer.parseInt(vals[0]);
-                                                int max = Integer.parseInt(vals[1]);
-                                                int spacing = Integer.parseInt(vals[2]);
+                                        		
+                                                int min = (int)Double.parseDouble(vals[0]);
+                                                int max = (int)Double.parseDouble(vals[1]);
+                                                int spacing = (int)Double.parseDouble(vals[2]);
                                                 creator.addBinder(group, new RangeParameterBinder(name, displayName, min, max, spacing));
                                         } catch (NumberFormatException ex) {
                                                 throw new IllegalArgumentException("Invalid range for ranged parameter '" + name + "'");
