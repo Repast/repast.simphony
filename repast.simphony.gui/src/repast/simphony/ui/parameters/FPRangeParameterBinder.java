@@ -61,7 +61,7 @@ public class FPRangeParameterBinder extends AbstractParameterBinder {
   @Override
   public void resetToDefault() {
     Object defaultValue = params.getSchema().getDetails(getName()).getDefaultValue();
-    int val = ((Integer) defaultValue).intValue();
+    double val = ((Double) defaultValue).doubleValue();
     spinner.setValue(val);
   }
 
