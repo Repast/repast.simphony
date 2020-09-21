@@ -604,8 +604,7 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
    * 
    * @see saf.ui.v3d.CanvasListener#dispose(com.jogamp.opengl.GLAutoDrawable)
    */
-  public void dispose(GLAutoDrawable drawable) {
-  }
+  public void dispose(GLAutoDrawable drawable) {}
 
   @SuppressWarnings("serial")
   class ImageablePanel extends JPanel implements Imageable {
