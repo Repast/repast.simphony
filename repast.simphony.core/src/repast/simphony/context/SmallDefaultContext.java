@@ -132,11 +132,11 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
   }
 
   /**
-   * Gets a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+   * Gets a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
    * of the specified type.
    *
    * @param clazz the type of objects to return
-   * @return a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+   * @return a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
    *         of the specified type.
    */
   public IndexedIterable<T> getObjects(Class<?> clazz) {
@@ -156,11 +156,11 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
   }
   
   	/**
-	 * Gets a sequential Stream over the all the objects in this context (and thus in the sub contexts) that are
+	 * Gets a sequential Stream over all the objects in this context (and thus in the sub contexts) that are
 	 * of the specified type.
 	 *
 	 * @param clazz the type of objects to return
-	 * @return  a Stream over the all the objects in this context (and thus in the sub contexts) that are
+	 * @return  a Stream over all the objects in this context (and thus in the sub contexts) that are
 	 * of the specified type. The Stream is sequential.
 	 */
 	public Stream<T> getObjectsAsStream(Class<?> clazz) {
@@ -172,7 +172,7 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
 	/**
 	 * Gets a sequential Stream over a collection of objects chosen at random. The number of objects
 	 * is determined by the specified count and the type of objects by the specified class.
-	 * If the context contains less objects than the specified count, all
+	 * If the context contains fewer objects than the specified count, all
 	 * the appropriate objects in the context will be returned. <p>
 	 *
 	 * If this is repeatedly called with a count equal to the number of objects
@@ -191,7 +191,7 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
   /**
    * Gets an iterable over a collection of objects chosen at random. The number of objects
    * is determined by the specified count and the type of objects by the specified class.
-   * If the context contains less objects than the specified count, all
+   * If the context contains fewer objects than the specified count, all
    * the appropriate objects in the context will be returned. <b>
    * <p/>
    * If this is repeatedly called with a count equal to the number of objects

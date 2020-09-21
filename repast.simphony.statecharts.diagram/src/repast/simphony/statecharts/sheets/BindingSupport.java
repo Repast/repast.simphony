@@ -42,7 +42,7 @@ public class BindingSupport {
   }
 
   /**
-   * Removes the all the bindings created by this BindingSupport.
+   * Removes all the bindings created by this BindingSupport.
    */
   public void removeBindings() {
     for (Binding binding : bindings.values()) {
