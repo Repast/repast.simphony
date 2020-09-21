@@ -30,6 +30,11 @@ public interface Context<T> extends Collection<T>, RepastElement {
 
   static final String SYN_CONTEXT_PREFIX = "__Synthetic_Context__";
 
+  /**
+   * @deprecated Use {@link #getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
+   * 
+   */
+  @Deprecated
   Iterable<T> query(Predicate query);
 
 	/**
