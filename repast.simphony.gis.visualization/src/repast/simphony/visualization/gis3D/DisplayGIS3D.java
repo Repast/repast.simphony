@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
@@ -133,7 +135,7 @@ public class DisplayGIS3D extends AbstractDisplay {
 	protected List<Layer> globeLayers;
 	protected Map<GridCoverage2D, SurfaceImage> coverageToRenderableMap;
 	
-	protected WorldWindow worldWindow;
+	protected WorldWindowGLJPanel worldWindow;
 	protected String displayMode = AVKey.STEREO_MODE_NONE;
 	protected LayerPanel layerPanel;
 
@@ -318,6 +320,17 @@ public class DisplayGIS3D extends AbstractDisplay {
 		JPanel wwPanel = new JPanel(new BorderLayout());
 		wwPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0));
 		wwPanel.add(((Component) worldWindow), BorderLayout.CENTER);
+		
+		// Update the WorldWindow size on window resize/move
+		wwPanel.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+					if (isVisible()) {
+						int w = e.getComponent().getWidth();
+						int h = e.getComponent().getHeight();
+						worldWindow.setSize(w, h);
+					}
+			}
+		});
 
 		panel.add(wwPanel, BorderLayout.CENTER);
 
