@@ -8,6 +8,7 @@ import repast.simphony.util.collections.FilteredIterator;
  * instances of the specified type.
  *
  * @author Nick Collier
+ * @deprecated Use {@link Context#getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
  */
 public class InstanceOfQuery<T> implements Query<T> {
 

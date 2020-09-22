@@ -21,6 +21,8 @@ import repast.simphony.context.Context;
  *
  * @author Nick Collier
  * @version $Revision$ $Date$
+ * 
+ * @deprecated Use {@link Context#getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
  */
 public class PropertyNotEquals<T> extends AbstractPropertyQuery<T> {
 
