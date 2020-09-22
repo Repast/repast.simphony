@@ -1,5 +1,6 @@
 package repast.simphony.query;
 
+import repast.simphony.context.Context;
 import repast.simphony.util.collections.FilteredIterator;
 
 import java.util.HashSet;
@@ -10,6 +11,8 @@ import java.util.Set;
  *
  * @author Nick Collier
  * @version $Revision$ $Date$
+ * 
+ * @deprecated Use {@link Context#getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
  */
 public class OrQuery<T> implements Query<T>{
 
