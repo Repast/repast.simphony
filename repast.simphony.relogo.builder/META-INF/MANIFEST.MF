@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast relogo builder
 Bundle-SymbolicName: repast.simphony.relogo.builder;singleton:=true
-Bundle-Version: 2.7.0
+Bundle-Version: 2.8.0
 Bundle-Activator: repast.simphony.relogo.builder.Activator
 Require-Bundle: org.eclipse.core.runtime,
  repast.simphony.eclipse,
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.jdt.launching,
  org.eclipse.core.resources,
- repast.simphony.groovy;bundle-version="2.7.0"
+ repast.simphony.groovy;bundle-version="2.8.0"
 Bundle-ActivationPolicy: lazy
 Import-Package: org.codehaus.jdt.groovy.model,
  org.eclipse.core.resources,

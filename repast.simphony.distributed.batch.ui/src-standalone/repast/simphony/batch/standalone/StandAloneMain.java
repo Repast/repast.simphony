@@ -57,7 +57,7 @@ public class StandAloneMain {
     return options;
   }
 
-  private static final String PLUGINS_VERSION = "2.7.0";
+  private static final String PLUGINS_VERSION = "2.8.0";
   private static final String PLUGIN_DIR = "plugin_dir";
   public static final String MODEL_DIR = "model_dir";
   public static final String PROPS_FILE = "props_file";
