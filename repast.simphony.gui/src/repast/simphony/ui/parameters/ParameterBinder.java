@@ -56,4 +56,16 @@ public interface ParameterBinder {
    * @return the parameter xml representation of this ParameterBinder.
    */
   String toXML();
+  
+  /**
+   * Sets the order of the created component in the display.
+   * 
+   * @param val
+   */
+  void setDisplayOrder(double val);
+ 
+  /**
+   * Gets the order of the created component in the display.
+   */
+  double getDisplayOrder();
 }
