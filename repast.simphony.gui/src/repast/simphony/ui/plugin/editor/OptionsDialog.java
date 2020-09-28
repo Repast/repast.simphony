@@ -103,7 +103,7 @@ public class OptionsDialog extends JPanel implements ChangeListener {
 
   private void createButtons() {
     JButton okBtn = new JButton("OK");
-    JButton applyBtn = new JButton("Apply All");
+//    JButton applyBtn = new JButton("Apply All");
     JButton cancelBtn = new JButton("Cancel");
     okBtn.setMnemonic('o');
     okBtn.addActionListener(new ActionListener() {
@@ -112,12 +112,12 @@ public class OptionsDialog extends JPanel implements ChangeListener {
       }
     });
 
-    applyBtn.setMnemonic('a');
-    applyBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        apply();
-      }
-    });
+//    applyBtn.setMnemonic('a');
+//    applyBtn.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent evt) {
+//        apply();
+//      }
+//    });
 
     cancelBtn.setMnemonic('c');
     cancelBtn.addActionListener(new ActionListener() {
@@ -132,8 +132,8 @@ public class OptionsDialog extends JPanel implements ChangeListener {
     panel.add(Box.createHorizontalGlue());
     panel.add(okBtn);
     panel.add(Box.createRigidArea(new Dimension(6, 0)));
-    panel.add(applyBtn);
-    panel.add(Box.createRigidArea(new Dimension(6, 0)));
+    //panel.add(applyBtn);
+    //panel.add(Box.createRigidArea(new Dimension(6, 0)));
     panel.add(cancelBtn);
 
     FormLayout dlgLayout = new FormLayout("fill:p:grow", "pref, 3dlu, pref");
