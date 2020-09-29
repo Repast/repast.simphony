@@ -69,7 +69,7 @@
 				<javaresource name="repastwrapper.sh" />
 				<javaresource name="outputcombiner.sh" />
 				<javaresource name="repastwrapper_slurm.sh" />
-				<javaresource name="repast.slurm"
+				<javaresource name="repast.slurm" />
 			</resources>
 			<fileset file="${message.center.props}" />
 			<fileset file="${unrolled.param.file}" />
