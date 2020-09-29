@@ -21,7 +21,9 @@
 			values="$constraint"
 			#end
 			#end
-			
+			#if($displayOrder.containsKey($name))
+			displayOrder="$displayOrder.get($name)"
+			#end
 		/>
 		#end
 </parameters>

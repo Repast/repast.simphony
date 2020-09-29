@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +22,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.xml.stream.XMLStreamException;
 
-import repast.simphony.parameter.ParameterConstants;
-import repast.simphony.parameter.Parameters;
-
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.FormLayout;
+
+import repast.simphony.parameter.ParameterConstants;
+import repast.simphony.parameter.Parameters;
 
 /**
  * @author Nick Collier
@@ -48,13 +49,13 @@ public class ParametersUI {
 
 	public void addBinder(String group, ParameterBinder creator, double displayOrder) {
 		creator.setDisplayOrder(displayOrder);
-    List<ParameterBinder> binders = bindersMap.get(group);
-    if (binders == null) {
-      binders = new ArrayList<ParameterBinder>();
-      bindersMap.put(group, binders);
-    }
-    binders.add(creator);
-  }
+		List<ParameterBinder> binders = bindersMap.get(group);
+		if (binders == null) {
+			binders = new ArrayList<ParameterBinder>();
+			bindersMap.put(group, binders);
+		}
+		binders.add(creator);
+	}
 
 	/**
 	 * Updates the panel with the latest parameters from the parameters file.
@@ -117,7 +118,7 @@ public class ParametersUI {
 
 		return topPanel;
 	}
-	
+
 	private void addComponent(DefaultFormBuilder builder, ParameterBinder creator) {
 		builder.leadingColumnOffset(0);
 		builder.append(new JLabel(creator.getLabel() + ":"), 2);
@@ -136,7 +137,7 @@ public class ParametersUI {
 	}
 
 	private JPanel createPanel(Parameters params, List<ParameterBinder> binders) {
-		
+
 		List<ParameterBinder> unordered = new ArrayList<>();
 		List<ParameterBinder> ordered = new ArrayList<>();
 		for (ParameterBinder binder : binders) {
@@ -153,7 +154,7 @@ public class ParametersUI {
 				return o1.getLabel().compareTo(o2.getLabel());
 			}
 		});
-		
+
 		Collections.sort(ordered, new Comparator<ParameterBinder>() {
 			@Override
 			public int compare(ParameterBinder o1, ParameterBinder o2) {
@@ -170,7 +171,7 @@ public class ParametersUI {
 		for (ParameterBinder creator : ordered) {
 			addComponent(builder, creator);
 		}
-		
+
 		for (ParameterBinder creator : unordered) {
 			addComponent(builder, creator);
 		}
@@ -220,6 +221,23 @@ public class ParametersUI {
 				binder.resetToDefault();
 			}
 		}
+	}
+
+	/**
+	 * Gets GUI display order of the current parameters.
+	 * 
+	 * @return the order (a double) of the display parameters by display id.
+	 */
+	public Map<String, Double> getDisplayOrder() {
+		Map<String, Double> map = new HashMap<>();
+		for (List<ParameterBinder> binders : bindersMap.values()) {
+			for (ParameterBinder binder : binders) {
+				if (binder.getDisplayOrder() != LAST)
+					map.put(binder.getName(), binder.getDisplayOrder());
+			}
+		}
+
+		return map;
 	}
 
 	/**

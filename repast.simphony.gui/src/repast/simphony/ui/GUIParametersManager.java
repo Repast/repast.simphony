@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 
 import repast.simphony.parameter.ParameterConstants;
 import repast.simphony.parameter.ParameterSchema;
@@ -68,6 +69,15 @@ public class GUIParametersManager implements ParameterSetter {
         }
       }
     }
+  }
+  
+  /**
+   * Gets GUI display order of the current parameters.
+   * 
+   * @return the order (a double) of the display parameters by display id.
+   */
+  public Map<String, Double> getDisplayOrder() {
+	  return pui.getDisplayOrder();
   }
 
   /**
