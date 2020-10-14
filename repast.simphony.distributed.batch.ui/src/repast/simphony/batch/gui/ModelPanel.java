@@ -73,7 +73,7 @@ public class ModelPanel extends JPanel implements BatchRunPanel {
     formBuilder.nextLine();
     formBuilder.append(new JLabel("Optional Output File Patterns:"), 4);
     formBuilder.nextLine();
-    formBuilder.defaultRowSpec(RowSpec.decode("fill:pref"));
+    formBuilder.defaultRowSpec(RowSpec.decode("fill:pref:grow"));
     
     formBuilder.append(createPatternPanel(), 5);
     formBuilder.defaultRowSpec(FormSpecs.PREF_ROWSPEC);
@@ -91,8 +91,11 @@ public class ModelPanel extends JPanel implements BatchRunPanel {
     
     formBuilder.append("Poll Frequency (minutes):");
     formBuilder.append(pollSpn, 1);
-    
-    add(formBuilder.getPanel(), BorderLayout.CENTER);
+
+    JScrollPane sp = new JScrollPane(formBuilder.getPanel());
+    sp.getVerticalScrollBar().setUnitIncrement(8);
+    sp.getViewport().setOpaque(false);
+    add(sp, BorderLayout.CENTER);
     bindComponents(pModel);
     initListeners();
   }
