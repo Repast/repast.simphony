@@ -95,6 +95,7 @@ public class ModelPanel extends JPanel implements BatchRunPanel {
     JScrollPane sp = new JScrollPane(formBuilder.getPanel());
     sp.getVerticalScrollBar().setUnitIncrement(8);
     sp.getViewport().setOpaque(false);
+    sp.setBackground(new JPanel().getBackground());
     add(sp, BorderLayout.CENTER);
     bindComponents(pModel);
     initListeners();
