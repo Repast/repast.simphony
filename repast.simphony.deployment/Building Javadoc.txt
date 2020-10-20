@@ -2,6 +2,10 @@ Building Repast Javadoc
 
 1. Run the Ant javadoc.xml.  You may need to modify or create a launch config
    that provides the javadoc executable if not on the system path.
+   
+   	- Update the javadoc title in javadoc.xml
+   	- Check the link href to online Java API in javadoc.xml
+   	- Make sure that links to Java base classes work in the generated javadoc.
 
 2. Run the buildGroovydocs ant script in r.s.relogo.runtime as described in the
     r.s.relogo.runtime/docs/Readme.txt Step 1.  
