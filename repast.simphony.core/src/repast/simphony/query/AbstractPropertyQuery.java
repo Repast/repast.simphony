@@ -15,6 +15,8 @@ import java.util.Set;
  *
  * @author Nick Collier
  * @version $Revision$ $Date$
+ * 
+ * @deprecated Use {@link Context#getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
  */
 public abstract class AbstractPropertyQuery<T> implements Query<T> {
 

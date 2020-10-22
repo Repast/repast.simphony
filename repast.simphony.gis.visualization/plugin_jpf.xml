@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.gis.visualization" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.7.0"/>
+         <attribute id="simphony" value="2.8.0"/>
      </attributes>
 	
 	<requires>
@@ -26,7 +26,7 @@
 		
 	  <library id="icons" path="icons/" type="resources"/>
 	    
-		<library id="worldwind" path="lib/worldwind-2.1.0.jar" type="code">
+		<library id="worldwind" path="lib/worldwind-2.2.0.jar" type="code">
       <export prefix="*"/>
     </library>
     

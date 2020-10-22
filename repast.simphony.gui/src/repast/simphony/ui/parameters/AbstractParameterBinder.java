@@ -19,6 +19,7 @@ public abstract class AbstractParameterBinder implements ParameterBinder {
 
   protected String name, displayName;
   protected Parameters params;
+  protected double order = Double.MAX_VALUE;
 
   protected static Map<Class<?>, String> typeMap = new HashMap<Class<?>, String>();
 
@@ -40,6 +41,14 @@ public abstract class AbstractParameterBinder implements ParameterBinder {
   public AbstractParameterBinder(String name, String displayName) {
     this.name = name;
     this.displayName = displayName;
+  }
+  
+  public void setDisplayOrder(double val) {
+	  order = val;
+  }
+  
+  public double getDisplayOrder() {
+	  return order;
   }
 
   /*

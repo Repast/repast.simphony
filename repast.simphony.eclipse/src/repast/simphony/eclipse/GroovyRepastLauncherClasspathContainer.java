@@ -20,7 +20,7 @@ public class GroovyRepastLauncherClasspathContainer extends GroovyClasspathConta
   private IClasspathEntry[] classpathList = null;
 
   public GroovyRepastLauncherClasspathContainer(IJavaProject project) {
-    super(project);
+    super(PATH);
   }
 
   public IClasspathEntry[] getClasspathEntries() {

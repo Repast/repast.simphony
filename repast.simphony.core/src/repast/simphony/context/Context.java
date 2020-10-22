@@ -1,11 +1,13 @@
 package repast.simphony.context;
 
+import java.util.Collection;
+import java.util.stream.Stream;
+
 import org.apache.commons.collections15.Predicate;
+
 import repast.simphony.space.projection.Projection;
 import repast.simphony.util.collections.IndexedIterable;
 import repast.simphony.valueLayer.ValueLayer;
-
-import java.util.Collection;
 
 /**
  * Represents a group of agents that participate in a simulation. A <code>Context</code> ecapsulates
@@ -28,6 +30,11 @@ public interface Context<T> extends Collection<T>, RepastElement {
 
   static final String SYN_CONTEXT_PREFIX = "__Synthetic_Context__";
 
+  /**
+   * @deprecated Use {@link #getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
+   * 
+   */
+  @Deprecated
   Iterable<T> query(Predicate query);
 
 	/**
@@ -40,7 +47,7 @@ public interface Context<T> extends Collection<T>, RepastElement {
 	/**
 	 * Gets an iterable over a collection of objects chosen at random. The number of objects
 	 * is determined by the specified count and the type of objects by the specified class.
-	 * If the context contains less objects than the specified count, all
+	 * If the context contains fewer objects than the specified count, all
 	 * the appropriate objects in the context will be returned. <p>
 	 *
 	 * If this is repeatedly called with a count equal to the number of objects
@@ -51,16 +58,43 @@ public interface Context<T> extends Collection<T>, RepastElement {
 	 * @return an iterable over a collection of random objects
 	 */
 	Iterable<T> getRandomObjects(Class<? extends T> clazz, long count);
+	
+	/**
+	 * Gets a sequential Stream over a collection of objects chosen at random. The number of objects
+	 * is determined by the specified count and the type of objects by the specified class.
+	 * If the context contains fewer objects than the specified count, all
+	 * the appropriate objects in the context will be returned. <p>
+	 *
+	 * If this is repeatedly called with a count equal to the number of objects
+	 * in the context, the iteration order will be shuffled each time.
+	 *
+	 * @param clazz the class of the objects to return
+	 * @param count the number of random objects to return
+	 * @return a sequential Stream over a collection of random objects
+	 */
+	Stream<T> getRandomObjectsAsStream(Class<? extends T> clazz, long count);
+	
 
 	/**
-	 * Gets a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+	 * Gets a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
 	 * of the specified type.
 	 *
 	 * @param clazz the type of objects to return
-	 * @return  a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+	 * @return  a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
 	 * of the specified type.
 	 */
 	IndexedIterable<T> getObjects(Class<?> clazz);
+	
+	
+	/**
+	 * Gets a sequential Stream over all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type.
+	 *
+	 * @param clazz the type of objects to return
+	 * @return  a Stream over all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type.
+	 */
+	Stream<T> getObjectsAsStream(Class<?> clazz);
 
 	/**
 	 * Gets an id that indentifies the user-defined type of this context. A context type typically

@@ -27,7 +27,7 @@ public class DisplayProducer {
     Context<?> masterContext = runState.getMasterContext();
     setContext(masterContext, contextID);
     if (context == null) {
-      throw new IllegalArgumentException("Unable to create display for context id: '" + contextID + "'. This is must match that set in the model's ContextBuilder.");
+      throw new IllegalArgumentException("Unable to create display for context id: '" + contextID + "'. This must match that set in the model's ContextBuilder.");
     }
   }
 

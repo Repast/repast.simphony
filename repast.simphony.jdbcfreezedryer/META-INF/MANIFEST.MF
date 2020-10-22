@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast jdbc freezedryer
 Bundle-SymbolicName: repast.simphony.jdbcfreezedryer
-Bundle-Version: 2.7.0
+Bundle-Version: 2.8.0
 Bundle-ClassPath: .,
  lib/commons-dbcp-1.4.jar,
  lib/commons-pool-1.6.jar

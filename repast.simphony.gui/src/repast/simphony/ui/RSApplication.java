@@ -487,7 +487,7 @@ public class RSApplication implements TickListener, RunListener {
         }
         
         ParametersWriter pw = new ParametersWriter();
-        pw.writeSpecificationToFile(paramsManager.getParameters(), paramFile);
+        pw.writeSpecificationToFile(paramsManager.getParameters(), paramsManager.getDisplayOrder(), paramFile);
   
       }
     } catch (Exception ex) {

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector3d;
+import org.jogamp.vecmath.Matrix3d;
+import org.jogamp.vecmath.Vector3d;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

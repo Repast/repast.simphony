@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.Range;
-
 import repast.simphony.util.ClassUtilities;
 
 /**
@@ -163,7 +161,7 @@ public class DefaultParameters implements MutableParameters {
    * @param constrainingRange
    *          a range of the possible values for the named parameter
    */
-  public void addConstraint(String name, Range constrainingRange) {
+  public void addConstraint(String name, SteppedRange constrainingRange) {
     schema.addConstraint(name, constrainingRange);
   }
 

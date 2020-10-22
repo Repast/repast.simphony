@@ -1,8 +1,8 @@
 package repast.simphony.visualization.network;
 
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.AxisAngle4f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3f;
 
 import repast.simphony.visualization.visualization3D.Label;
 import repast.simphony.visualization.visualization3D.VisualItem3D;

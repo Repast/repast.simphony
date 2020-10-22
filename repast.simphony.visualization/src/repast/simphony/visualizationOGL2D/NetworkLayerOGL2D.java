@@ -102,6 +102,17 @@ public class NetworkLayerOGL2D extends AbstractDisplayLayerOGL2D<EdgeStyleOGL2D>
       RepastEdge rEdge = (RepastEdge) obj;
       VSpatial source = display.getSpatialForObject(rEdge.getSource());
       VSpatial target = display.getSpatialForObject(rEdge.getTarget());
+      
+      if (source == null) {
+    	  System.out.println("NULL SOURCE: " + rEdge.getSource().hashCode());
+    	  System.exit(0);
+      }
+      
+      if (target == null) {
+    	  System.out.println("NULL TARGET: " + rEdge.getTarget().hashCode());
+    	  System.exit(0);
+      }
+      
       VEdge2D edge = new VEdge2D(source, target, isDirected);
       edge.putProperty(MODEL_OBJECT_KEY, obj);
       objMap.put(rEdge, edge);

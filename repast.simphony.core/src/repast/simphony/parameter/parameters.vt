@@ -14,10 +14,16 @@
 			converter="$details.getConverter().getClass().getName()"
 			#end
 			#set ($constraint = $details.getConstraintString()) 
-			#if (($constraint) && !($constraint == "")) 
+			#if (($constraint) && !($constraint == ""))
+			#if($details.getConstrainingRange())
+			range="$constraint"	
+			#else
 			values="$constraint"
 			#end
-			
+			#end
+			#if($displayOrder.containsKey($name))
+			displayOrder="$displayOrder.get($name)"
+			#end
 		/>
 		#end
 </parameters>

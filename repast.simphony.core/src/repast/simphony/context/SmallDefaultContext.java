@@ -9,6 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections15.iterators.IteratorChain;
 import org.apache.commons.collections15.iterators.SingletonIterator;
@@ -128,11 +132,11 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
   }
 
   /**
-   * Gets a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+   * Gets a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
    * of the specified type.
    *
    * @param clazz the type of objects to return
-   * @return a IndexedIterable over the all the objects in this context (and thus in the sub contexts) that are
+   * @return a IndexedIterable over all the objects in this context (and thus in the sub contexts) that are
    *         of the specified type.
    */
   public IndexedIterable<T> getObjects(Class<?> clazz) {
@@ -150,11 +154,44 @@ public class SmallDefaultContext<T> extends AbstractContext<T> {
     }
     return iter;
   }
+  
+  	/**
+	 * Gets a sequential Stream over all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type.
+	 *
+	 * @param clazz the type of objects to return
+	 * @return  a Stream over all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type. The Stream is sequential.
+	 */
+	public Stream<T> getObjectsAsStream(Class<?> clazz) {
+		IndexedIterable<T> iiter = getObjects(clazz);
+		Spliterator<T> iter = Spliterators.spliterator(iiter.iterator(), iiter.size(), Spliterator.ORDERED | Spliterator.IMMUTABLE);
+		return StreamSupport.stream(iter, false);
+	}
+	
+	/**
+	 * Gets a sequential Stream over a collection of objects chosen at random. The number of objects
+	 * is determined by the specified count and the type of objects by the specified class.
+	 * If the context contains fewer objects than the specified count, all
+	 * the appropriate objects in the context will be returned. <p>
+	 *
+	 * If this is repeatedly called with a count equal to the number of objects
+	 * in the context, the iteration order will be shuffled each time.
+	 *
+	 * @param clazz the class of the objects to return
+	 * @param count the number of random objects to return
+	 * @return a sequential Stream over a collection of random objects
+	 */
+	public Stream<T> getRandomObjectsAsStream(Class<? extends T> clazz, long count) {
+		Iterable<T> riter = getRandomObjects(clazz, count);
+		Spliterator<T> iter = Spliterators.spliteratorUnknownSize(riter.iterator(), Spliterator.ORDERED | Spliterator.IMMUTABLE);
+		return StreamSupport.stream(iter, false);
+	}
 
   /**
    * Gets an iterable over a collection of objects chosen at random. The number of objects
    * is determined by the specified count and the type of objects by the specified class.
-   * If the context contains less objects than the specified count, all
+   * If the context contains fewer objects than the specified count, all
    * the appropriate objects in the context will be returned. <b>
    * <p/>
    * If this is repeatedly called with a count equal to the number of objects

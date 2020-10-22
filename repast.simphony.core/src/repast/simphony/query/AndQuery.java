@@ -1,5 +1,6 @@
 package repast.simphony.query;
 
+import repast.simphony.context.Context;
 import repast.simphony.util.collections.FilteredIterator;
 
 /**
@@ -7,6 +8,8 @@ import repast.simphony.util.collections.FilteredIterator;
  *
  * @author Nick Collier
  * @version $Revision$ $Date$
+ * 
+ * @deprecated Use {@link Context#getObjectsAsStream(Class)} and the Java 8+ streaming API {@link java.util.stream.Stream} instead. 
  */
 public class AndQuery<T> implements Query<T>{
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $PBS_O_WORKDIR
+cd $SUBMIT_DIR
 
 totr=$1 # total runs
 rpi=$2 # runs per instance

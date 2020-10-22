@@ -16,7 +16,7 @@
 	
 	<!-- The Repast creator version variable is hard-coded against the release 
 	     version. DO NOT USE A VARIABLE HERE! -->
-	<property name="RepastCreatorVersion" value="2.7.0" />
+	<property name="RepastCreatorVersion" value="2.8.0" />
 				
 	<condition property="repast.version">
 	  <equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>

@@ -2,7 +2,7 @@
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
 <plugin id="repast.simphony.chart" version="">
 	<attributes>
-         <attribute id="simphony" value="2.7.0"/>
+         <attribute id="simphony" value="2.8.0"/>
      </attributes>
 
 	<requires>

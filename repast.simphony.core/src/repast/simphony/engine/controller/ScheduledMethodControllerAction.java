@@ -3,9 +3,9 @@ package repast.simphony.engine.controller;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
     ScheduledMethod annotation;
     long pickCount = 0;
     boolean shuffle = true;
-    Set<Class<?>> excludes = new HashSet<Class<?>>();
+    Set<Class<?>> excludes = new LinkedHashSet<Class<?>>();
 
     public PickData(Method method, ScheduledMethod annotation) {
       this.method = method;
@@ -60,13 +60,13 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
   }
 
   private List<PickData> pickData = new ArrayList<PickData>();
-  private Set<Class<?>> processedClasses = new HashSet<Class<?>>();
-  private Set<Method> processedMethods = new HashSet<Method>();
+  private Set<Class<?>> processedClasses = new LinkedHashSet<Class<?>>();
+  private Set<Method> processedMethods = new LinkedHashSet<Method>();
 
   private ISchedule schedule;
   // we have to track that actions added for contexts and subcontexts
   // so if those are removed then we remove their actions
-  private Map<Object, ISchedulableAction> contextActions = new HashMap<Object, ISchedulableAction>();
+  private Map<Object, ISchedulableAction> contextActions = new LinkedHashMap<Object, ISchedulableAction>();
 
   /**
    * Creates a ScheduledMethodControllerAction with no methods scheduled.
@@ -83,6 +83,9 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
   public ScheduledMethodControllerAction(List<Class<?>> clazzes) {
     // read the spec to find the schedule annotations and get the "pick"
     // information
+	clazzes.sort( (o1, o2) -> {
+		return o1.toString().compareTo(o2.toString());
+	});
     processAnnotations(clazzes);
   }
 
@@ -97,7 +100,7 @@ public class ScheduledMethodControllerAction implements ControllerAction, Contex
     }
 
     for (Class<?> clazz : clazzes) {
-      Set<Class<?>> interfaces = new HashSet<Class<?>>();
+      Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
       gatherInterfaces(clazz, interfaces);
       for (Class<?> inter : interfaces) {
         if (!processedClasses.contains(inter)) {

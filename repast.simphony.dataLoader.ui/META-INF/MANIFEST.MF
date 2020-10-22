@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast dataloader ui
 Bundle-SymbolicName: repast.simphony.dataLoader.ui
-Bundle-Version: 2.7.0
+Bundle-Version: 2.8.0
 Export-Package: repast.simphony.dataLoader.ui,
  repast.simphony.dataLoader.ui.wizard,
  repast.simphony.dataLoader.ui.wizard.builder

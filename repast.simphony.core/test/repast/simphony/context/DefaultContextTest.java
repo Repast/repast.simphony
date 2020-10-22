@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.IntUnaryOperator;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections15.PredicateUtils;
 import org.apache.log4j.BasicConfigurator;
@@ -114,6 +116,28 @@ public class DefaultContextTest extends MockObjectTestCase {
     assertEquals((Object) "Hello", (Object) stringIter.next());
     Iterator<Integer> intIter = child2.iterator();
     assertEquals(new Integer(10), intIter.next());
+  }
+  
+  public void testStream() {
+	  for (int i = 11; i < 20; ++i) {
+		  child2.add(i);
+	  }
+	  
+	  Stream<Integer> s = child2.getObjectsAsStream(Integer.class);
+	  List<Integer> list = new ArrayList<>();
+	  s.forEach(list::add);
+	  
+	  for (int i = 10; i < 20; ++i) {
+		  assertEquals(i, list.get(i - 10).intValue());
+	  }
+	  
+	  Stream<Object> s1 = parent.getObjectsAsStream(Integer.class);
+	  List<Object> l2 = new ArrayList<>();
+	  s1.forEach(l2::add);
+	  
+	  for (int i = 10; i < 20; ++i) {
+		  assertEquals(i, l2.get(i - 10));
+	  }
   }
 
   /*
@@ -423,6 +447,37 @@ public class DefaultContextTest extends MockObjectTestCase {
     // this may fail occasionally, but it should be unlikely that we draw
     // the same 3 every time.
     assertTrue(!pickedObjs.containsAll(set));
+  }
+  
+  public void testGetRandomStream() {
+	  for (int i = 20; i < 30; i++) {
+	      child2.add(i);
+	      child1.add(String.valueOf(i));
+	    }
+
+	    parent.add("Foo");
+	    parent.add("Bar");
+
+	    Set<Object> set = new HashSet<>();
+	    for (Object obj : parent) {
+	      set.add(obj);
+	    }
+	    
+	    for (Object obj : child2) {
+	    	set.add(obj);
+	    }
+	    
+	    for (Object obj : child1) {
+	    	set.add(obj);
+	    }
+
+	    List<Object> pickedObj = new ArrayList<>();
+	    Stream<Object> s = parent.getRandomObjectsAsStream(Object.class, 3);
+	    s.forEach(pickedObj::add);
+	    assertEquals(3, pickedObj.size());
+	    for (Object obj : pickedObj) {
+	    	assertTrue(set.contains(obj));
+	    }
   }
 
   // tests for duplicate projection adding

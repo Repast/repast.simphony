@@ -1,6 +1,6 @@
 Repast Simphony
 
-   Copyright (c) 2019 Argonne National Laboratory
+   Copyright (c) 2020 Argonne National Laboratory
    All rights reserved.
   
    Redistribution and use in source and binary forms, with 

@@ -4,6 +4,7 @@
 package repast.simphony.batch.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,7 +67,9 @@ public class Main {
     else
       frame.add(new MainPanel(), BorderLayout.CENTER);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(650, 550);
+    frame.setSize(650, 650);
+    frame.setMinimumSize(new Dimension(600, 430));
+    frame.setTitle("Repast Simphony Batch");
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

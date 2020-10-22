@@ -2,7 +2,7 @@
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
 <plugin id="repast.simphony.core" version="">
 	<attributes>
-		<attribute id="simphony" value="2.7.0"/>
+		<attribute id="simphony" value="2.8.0"/>
 	</attributes>
 
 	<requires>
@@ -40,6 +40,7 @@
 		<library id="opencsv-2.3" path="./lib/opencsv-2.3.jar" type="code"/>
 		<library id="poi-3.9-20121203" path="./lib/poi-3.9-20121203.jar" type="code"/>
 		<library id="poi-ooxml-3.9-20121203" path="./lib/poi-ooxml-3.9-20121203.jar" type="code"/>
+		<library id="stack-alloc" path="./lib/stack-alloc.jar" type="code"/>
 		<library id="ooxml-schemas-1.1" path="./lib/ooxml-schemas-1.1.jar" type="code"/>
 		<library id="velocity-1.4" path="./lib/velocity-1.4.jar" type="code"/>
 		<library id="xmlbeans-2.3.0" path="./lib/xmlbeans-2.3.0.jar" type="code"/>

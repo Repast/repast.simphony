@@ -1,7 +1,7 @@
 package repast.simphony.visualization.visualization3D;
 
-import javax.media.j3d.Geometry;
-import javax.media.j3d.GeometryUpdater;
+import org.jogamp.java3d.Geometry;
+import org.jogamp.java3d.GeometryUpdater;
 
 /**
  * @author Nick Collier

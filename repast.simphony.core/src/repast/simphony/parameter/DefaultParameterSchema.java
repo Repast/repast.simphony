@@ -1,11 +1,11 @@
 package repast.simphony.parameter;
 
-import org.apache.commons.lang3.Range;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.Range;
 
 /**
  * Default implementation of ParameterSchema.
@@ -29,7 +29,7 @@ public class DefaultParameterSchema implements ParameterSchema {
 
 
   private List list;
-  private Range range;
+  private SteppedRange range;
   private Class type;
   private Object defValue;
   private String name;
@@ -55,7 +55,7 @@ public class DefaultParameterSchema implements ParameterSchema {
     setConstrainingList(possibleValues);
   }
 
-  public DefaultParameterSchema(String name, Class type, Object defValue, Range constrainingRange) {
+  public DefaultParameterSchema(String name, Class type, Object defValue, SteppedRange constrainingRange) {
     this(name, type, defValue);
     setConstrainingRange(constrainingRange);
   }
@@ -143,7 +143,7 @@ public class DefaultParameterSchema implements ParameterSchema {
    *
    * @param range the constraining range.
    */
-  public void setConstrainingRange(Range range) {
+  public void setConstrainingRange(SteppedRange range) {
     this.range = range;
     if (defValue != null && !validate(defValue)) {
       throw new IllegalParameterException("Constraining range '" + range + "' for parameter '" +
@@ -159,7 +159,7 @@ public class DefaultParameterSchema implements ParameterSchema {
    * @return the numeric range of values that constrain this parameter or null
    *         if the parameter is unconstrained by a range.
    */
-  public Range getConstrainingRange() {
+  public SteppedRange getConstrainingRange() {
     return range;
   }
 
@@ -184,8 +184,9 @@ public class DefaultParameterSchema implements ParameterSchema {
 	  if (list != null) {
 		  val = ParameterUtils.getStringValue(type, converter, list);
 	  } else if (range != null) {
-		  val = range.toString();
+		  val = range.getMin() + " " + range.getMax()  + " " + range.getStep();
 	  }
+	  
 	  return val;
   }
   /**

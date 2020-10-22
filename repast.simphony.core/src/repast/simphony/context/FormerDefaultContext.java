@@ -1,12 +1,14 @@
 package repast.simphony.context;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.Stream;
+
 import org.apache.commons.collections15.Predicate;
+
 import repast.simphony.space.projection.Projection;
 import repast.simphony.util.collections.IndexedIterable;
 import repast.simphony.valueLayer.ValueLayer;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 public class FormerDefaultContext<T> implements Context<T> {
 
@@ -322,5 +324,34 @@ public class FormerDefaultContext<T> implements Context<T> {
 			return true;
 		else
 			return false;
+	}
+	
+	/**
+	 * Gets a sequential Stream over the all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type.
+	 *
+	 * @param clazz the type of objects to return
+	 * @return  a Stream over the all the objects in this context (and thus in the sub contexts) that are
+	 * of the specified type.
+	 */
+	public Stream<T> getObjectsAsStream(Class<?> clazz) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Gets a sequential Stream over a collection of objects chosen at random. The number of objects
+	 * is determined by the specified count and the type of objects by the specified class.
+	 * If the context contains less objects than the specified count, all
+	 * the appropriate objects in the context will be returned. <p>
+	 *
+	 * If this is repeatedly called with a count equal to the number of objects
+	 * in the context, the iteration order will be shuffled each time.
+	 *
+	 * @param clazz the class of the objects to return
+	 * @param count the number of random objects to return
+	 * @return a sequential Stream over a collection of random objects
+	 */
+	public Stream<T> getRandomObjectsAsStream(Class<? extends T> clazz, long count) {
+		throw new UnsupportedOperationException();
 	}
 }

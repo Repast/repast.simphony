@@ -36,8 +36,8 @@ package aragost.repast.visualization;
 
 import java.awt.image.BufferedImage;
 
-import javax.media.opengl.GL2;
-import javax.vecmath.Point3f;
+import com.jogamp.opengl.GL2;
+import org.jogamp.vecmath.Point3f;
 
 import saf.v3d.picking.BoundingSphere;
 import saf.v3d.render.RenderState;

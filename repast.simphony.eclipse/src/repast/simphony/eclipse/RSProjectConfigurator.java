@@ -323,7 +323,7 @@ public class RSProjectConfigurator {
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       
-      jarPath = GroovyClasspathContainer.CONTAINER_ID;
+      jarPath = new Path(GroovyClasspathContainer.ID);
       r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.USER_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
@@ -543,7 +543,7 @@ public class RSProjectConfigurator {
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
       
-      jarPath = GroovyClasspathContainer.CONTAINER_ID;
+      jarPath = new Path(GroovyClasspathContainer.ID);
       r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.USER_CLASSES);
       r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
       classpath.add(r.getMemento());
