@@ -182,9 +182,9 @@ var runner = (function() {
 
 
 
-function initSocket() {
+function initSocket(port) {
     //var socket = io.connect('http://localhost:5000');
-    socket = new WebSocket('ws://localhost:5000/simphony/simsocket');
+    socket = new WebSocket('ws://localhost:' + port + '/simphony/simsocket');
 
     socket.onmessage = function(evt) {
         if (evt.data instanceof Blob) {
@@ -331,7 +331,7 @@ $(document).ready(function () {
     //$("#start").prop('disabled', true);
     //$("#step").prop('disabled', true);
 
-    initSocket();
+    initSocket(location.port);
     
     $("#init").on('click', () => {
         runner.next = runner.initClicked;

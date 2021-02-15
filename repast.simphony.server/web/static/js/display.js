@@ -23,17 +23,25 @@ function getElementPosition(element) {
 }
 
 class SpriteCreator {
-    constructor(texture_file, scale) {
+    //include the size property so that the display will respect agent's size, not the icon's one
+    constructor(texture_file, scale, size) {
         this.promise = textureLoader.load('textures/' + texture_file).then(this.onLoad.bind(this)).catch( (err ) => {
             console.log(err);
         });
         this.scale = scale;
+        this.size = size;
     }
 
     onLoad(texture) {
         this.material = new THREE.SpriteMaterial({ map: texture });
-        this.img_width = texture.image.width;
-        this.img_height = texture.image.height;
+        //if size is not null, then consider it has sprite's width and height, otherwise consider the icon's ones
+        if(!this.size){
+            this.img_width = texture.image.width;
+            this.img_height = texture.image.height;
+        }
+        else{
+            this.img_width = this.img_height = this.size;
+        }
     }
 
     create() {
@@ -274,7 +282,7 @@ export class Display2D {
             let lay = display_msg.layers[i];
             let creator = null;
             if (lay.icon != "") {
-                creator = new SpriteCreator(lay.icon, lay.scale);
+                creator = new SpriteCreator(lay.icon, lay.scale, lay.size); //include the size property
                 promises.push(creator.promise);
             } else {
                 let shape_color = new THREE.Color(lay.color[0], lay.color[1], lay.color[2]);
