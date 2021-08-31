@@ -96,7 +96,7 @@ public class PerspectiveFactory implements IPerspectiveFactory {
       }
     }
     folder.addView(JavaUI.ID_PACKAGES);
-    folder.addView(IPageLayout.ID_RES_NAV);
+//    folder.addView(IPageLayout.ID_RES_NAV);
 
     IFolderLayout outputfolder = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, //$NON-NLS-1$
         editorArea);
@@ -118,7 +118,7 @@ public class PerspectiveFactory implements IPerspectiveFactory {
     // views - standard workbench
     layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
     layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-    layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+//    layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
     layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
     layout.addShowViewShortcut(IProgressConstants.PROGRESS_VIEW_ID);
     layout.addShowViewShortcut("org.eclipse.ui.navigator.ProjectExplorer");

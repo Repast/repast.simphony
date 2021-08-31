@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Build the Repast JavaDoc
 
-	Working as of Release 2.7 Nov 2019
+	Working as of Release 2.8 Nov 2020
 
-	Notes: 	* Javadoc as of JDK 9 is a lot more sensitive to errors and options
+	***** BEFORE RUNNING ***** 
+		- Update the version number in the document title
+		- Check that the link href to online API docs matches the JDK
+		  version used to run.  Missing Java API links in the generated
+		  javadoc may not work otherwise.
+		  
+	Notes: 	
+			* Javadoc as of JDK 9 is a lot more sensitive to errors and options
 			  compared to JDK 8 and earlier, so pay attention to arguments.
 	
 			* Groovy files will fail and should not be included
@@ -28,132 +35,132 @@
 	        
 	        * - -ignore-source-errors is needed otherwise javadoc will fail due
 	          to the numerous source warnings for things like groovy classes.
-	          
-	        * - -no-module-direcories is needed otherwise the search index will
-	          put in an /undefined/ module in the path, since we don't actually
-	          use modules in the project.
-	          
+	            
 	        * - -frames will generate frames (deprecated)
 -->
 
 
 <project default="javadoc">
+
 	<target name="javadoc">
 		<javadoc 
 			destdir="doc" 
 			author="true" 
 			version="true" 
 			use="true" 
-			windowtitle="Repast Simphony 2.7 API" 
+			windowtitle="Repast Simphony 2.8 API" 
 			useexternalfile="yes"
 			nohelp="false"
 			noindex="false"
-			additionalparam="--ignore-source-errors --no-module-directories" >
+			additionalparam="--ignore-source-errors">
+			
+			<!-- Link to online Java API - should match JDK version used to generate javadoc -->
+			<link href="https://docs.oracle.com/en/java/javase/11/docs/api"/>
 			
 			<fileset dir="../repast.simphony.batch/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.chart/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.core/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.data/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.data.ui/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.dataLoader/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.dataLoader.ui/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.distributed.batch/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.essentials/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.freezedry/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.gis/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.groovy/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.gui/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.integration/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.jdbcfreezedryer/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.plugin.util/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.relogo.runtime/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.runtime/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.scenario/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 			
 			<fileset dir="../repast.simphony.server/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.sql/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.statecharts/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.statecharts.visualization/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.userpanel.ui/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
 
 			<fileset dir="../repast.simphony.visualization/src" casesensitive="no">
-				<include name="**/*.java" />
+				<include name="repast/simphony/**/*.java" />
 			</fileset>
-
+			
 			<!-- Classthpath entries to reference JAR libraries -->
 			<classpath>
 				<fileset dir="../libs.bsf/lib" casesensitive="no">

@@ -12,7 +12,7 @@
 <project default="generate">
     <property name="docsDirectory" value="docs/ReLogo API"/>
 	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
-    <property name="version" value="2.7"/>
+    <property name="version" value="2.8"/>
     <property name="title" value="API V${version}"/>
     <property name="docFooter" value="ReLogo ${title}"/>
     <property name="mainSourceDirectory" value="src"/>
@@ -44,7 +44,7 @@
             private="false">
         	<!-- This line linking to the repast Java API doesn't appear to work -->
         	<link packages="repast.simphony." href="https://repast.github.io/docs/api/repast_simphony/"/>
-        	<link packages= "java.,org.xml.,javax.,org.xml." href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base"/>
+        	<link packages= "java.,org.xml.,javax.,org.xml." href="http://docs.oracle.com/en/java/javase/11/docs/api/java.base"/>
         	<link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
         	<link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
         	<link packages="groovy." href="http://docs.groovy-lang.org/latest/html/groovy-jdk/"/>

@@ -101,7 +101,7 @@ public class ReLogoPerspectiveFactory implements IPerspectiveFactory {
 			}
 		}
 		folder.addView(JavaUI.ID_PACKAGES);
-		folder.addView(IPageLayout.ID_RES_NAV);
+//		folder.addView(IPageLayout.ID_RES_NAV);
 
 		IFolderLayout outputfolder = layout.createFolder(
 				"bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class ReLogoPerspectiveFactory implements IPerspectiveFactory {
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
-		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+//		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 		layout.addShowViewShortcut(IProgressConstants.PROGRESS_VIEW_ID);
 		layout.addShowViewShortcut(ID_PROJECT_EXPLORER);
