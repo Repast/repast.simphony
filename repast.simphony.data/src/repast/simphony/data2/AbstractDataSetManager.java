@@ -32,7 +32,8 @@ import repast.simphony.parameter.Parameters;
  */
 public abstract class AbstractDataSetManager implements DataSetManager, RunListener {
 
-  @SuppressWarnings("rawtypes")
+
+@SuppressWarnings("rawtypes")
   protected static class ObjList implements ContextListener, SizedIterable<Object> {
 
     Class<?> targetType;
@@ -143,6 +144,16 @@ public abstract class AbstractDataSetManager implements DataSetManager, RunListe
     rndSeedDataSource = new RandomSeedDataSource();
     batchRunDataSource = new BatchRunDataSource();
   }
+  
+  @Override
+	public void removeDataSetbuilder(String id) {
+	  builders.remove(id);
+	}
+
+	@Override
+	public void clearDataSetBuilders() {
+		builders.clear();
+	}
 
   /**
    * Gets the BatchRunDataSource that this manager will auto update with the
@@ -261,6 +272,7 @@ public abstract class AbstractDataSetManager implements DataSetManager, RunListe
   public DataSetBuilder<?> getDataSetBuilder(String id) {
     return builders.get(id);
   }
+  
 
   /* (non-Javadoc)
    * @see repast.simphony.engine.environment.RunListener#stopped()
