@@ -70,7 +70,6 @@ public class StandAloneMain {
 
 	protected List<File> findGroovyJars(String bundleDir) {
 		File dir = new File(bundleDir);
-		System.out.println(dir);
 		List<File> jars = new ArrayList<>();
 		for (String gRegex : GROOVY_REGEXS) {
 			Pattern pattern = Pattern.compile(gRegex);
