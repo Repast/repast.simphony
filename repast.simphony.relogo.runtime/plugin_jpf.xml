@@ -1,33 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 0.6" "http://jpf.sourceforge.net/plugin_0_6.dtd">
 <plugin id="repast.simphony.relogo.runtime" version="">
-	
+
 	<attributes>
-         <attribute id="simphony" value="2.8.0"/>
-     </attributes>
+		<attribute id="simphony" value="2.8.0" />
+	</attributes>
 
 	<requires>
-			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true"/>
-			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="true"/>
-			<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true"/>
-  </requires>
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.core" reverse-lookup="true" />
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.data" reverse-lookup="true" />
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.statecharts" reverse-lookup="true" />
+		<import exported="false" match="compatible" optional="false" plugin-id="repast.simphony.groovy" reverse-lookup="true" />
+	</requires>
 
 	<runtime>
 		<library id="relogo" path="bin/" type="code">
-			<export prefix="*"/>
+			<export prefix="*" />
 		</library>
 	</runtime>
-
-	<!--<extension plugin-id="saf.core.ui" point-id="ui.Actions" id="weka.actions">
-		<parameter id="actionSpec">
-			<parameter id="actionID" value="repast.simphony.weka.runWeka"/>
-			<parameter id="label" value="Run Weka"/>
-			<parameter id="class" value="repast.simphony.weka.RunWekaModel"/>
-			<parameter id="icon" value="weka.png" />
-			<parameter id="menuID" value="repast.simphony.ui.tools_menu"/>
-			<parameter id="groupID" value="runTools" />
-			<parameter id="tooltip" value="Run Weka" />
-		</parameter>
-	</extension>-->
 
 </plugin>
