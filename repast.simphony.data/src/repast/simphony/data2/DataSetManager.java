@@ -97,6 +97,20 @@ public interface DataSetManager {
    */
   void addDataSetBuilder(DataSetBuilder<?> builder);
   
+  
+  /**
+   * Removes the specified DataSetBuilder.
+   * 
+   * @param id the id of the DataSetBuilder to remove.
+   */
+  void removeDataSetbuilder(String id);
+  
+  
+  /**
+   * Clears all the DataSetBuilder-s from this DataSetManager.
+   */
+  void clearDataSetBuilders();
+  
   /**
    * Gets the named DataSetBuilder.
    * 

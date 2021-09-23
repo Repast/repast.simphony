@@ -8,31 +8,28 @@ import javax.swing.text.PlainDocument;
 
 @SuppressWarnings("serial")
 public class FloatDocument extends PlainDocument {
-  
-  private String decPoint;
 
-  public FloatDocument() {
-    DecimalFormat df = new DecimalFormat();
-    decPoint = String.valueOf(df.getDecimalFormatSymbols().
-            getDecimalSeparator());
-  }
+	private String decPoint;
 
-  public void insertString(int offs, String string, AttributeSet att)
-          throws BadLocationException {
-    if (string.indexOf(decPoint) != -1 &&
-            getText(0, getLength()).indexOf(decPoint) != -1) {
-      return;
-    }
+	public FloatDocument() {
+		DecimalFormat df = new DecimalFormat();
+		decPoint = String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator());
+	}
 
-    try {
-      if (!string.equals(decPoint)) {
-        Float.parseFloat(string);
-      }
-    } catch (NumberFormatException ex) {
-      return;
-    }
+	public void insertString(int offs, String string, AttributeSet att) throws BadLocationException {
+		if (string.indexOf(decPoint) != -1 && getText(0, getLength()).indexOf(decPoint) != -1) {
+			return;
+		}
 
-    super.insertString(offs, string, att);
-  }
+		try {
+			if (!(string.equals(decPoint) || string.equals("-"))) {
+				Float.parseFloat(string);
+			}
+		} catch (NumberFormatException ex) {
+			return;
+		}
+
+		super.insertString(offs, string, att);
+	}
 
 }
