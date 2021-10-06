@@ -224,39 +224,16 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "org.apache.tools.ant.launch.Launcher");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      if (SystemUtils.IS_OS_MAC)
-        launchConfigurationWorkingCopy
-            .setAttribute(
-                IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "-buildfile \"${workspace_loc:"
-                    + javaProject.getElementName()
-                    + "}"
-                    + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                    + "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
-                    + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                    + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                    + " -DREPAST_VERSION=${REPAST_VERSION}");
-      else if (SystemUtils.IS_OS_WINDOWS)
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-      // for non-Windows or Mac
-      else
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-
+      
+      launchConfigurationWorkingCopy.setAttribute(
+      		IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+      		"-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
+      				+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
+      				+ "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
+      				+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
+//      				+ " -DGroovyHomeDirectory=\"${groovy_home}\""
+      				+ " -DREPAST_VERSION=${REPAST_VERSION}");
+      
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
 
@@ -444,38 +421,15 @@ public class RSProjectConfigurator {
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
           "org.apache.tools.ant.launch.Launcher");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      if (SystemUtils.IS_OS_MAC)
-        launchConfigurationWorkingCopy
-            .setAttribute(
-                IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "-buildfile \"${workspace_loc:"
-                    + javaProject.getElementName()
-                    + "}"
-                    + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                    + "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
-                    + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                    + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                    + " -DREPAST_VERSION=${REPAST_VERSION}");
-      else if (SystemUtils.IS_OS_WINDOWS)
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-      // for non-Windows or Mac
-      else
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
+
+      launchConfigurationWorkingCopy.setAttribute(
+      		IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
+      		"-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
+      				+ "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
+      				+ "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
+      				+ "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
+//      				+ " -DGroovyHomeDirectory=\"${groovy_home}\""
+      				+ " -DREPAST_VERSION=${REPAST_VERSION}");
 
       launchConfigurationWorkingCopy.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);

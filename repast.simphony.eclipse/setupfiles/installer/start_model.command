@@ -22,7 +22,8 @@ CP=$CP:$REPAST_SIMPHONY_LIB/xpp3_min-1.1.4c.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/xstream-1.4.7.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/xmlpull-1.1.3.1.jar
 CP=$CP:$REPAST_SIMPHONY_LIB/commons-cli-1.3.1.jar
-CP=$CP:$PWD/groovylib/$Groovy_All_Jar
+CP=$CP:$PWD/groovylib/$Groovy_Jar
+CP=$CP:lib/*
 
 # Change to the Default Repast Simphony Directory
 cd %PROJECT_NAME%
