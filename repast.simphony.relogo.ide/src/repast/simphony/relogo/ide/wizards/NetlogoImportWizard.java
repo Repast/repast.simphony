@@ -473,8 +473,8 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 			// create XML files defining model and UI
 			IFolder rsFolder = createFolderResource(project, projectName + ".rs");
-			Utilities.copyFileFromPluginInstallation("package.rs/default_frame_layout.xml", rsFolder,
-					"default_frame_layout.xml", variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("default_frame_layout.xml", rsFolder, "default_frame_layout.xml", variableMap, subMonitor.newChild(1));
+			
 			exportReLogoParameters(rsFolder, projectName);
 			exportReLogoModel(rsFolder, projectName);
 			exportReLogoDataLoader(rsFolder, packageName);
