@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -54,6 +55,9 @@ import repast.simphony.eclipse.RepastSimphonyPlugin;
  *         to the Original Author)
  */
 public class Utilities {
+	
+	// File extensions that can be parsed for variable name replacement
+	public static String[] PARSABLE = {"txt","html","xml","bat","command"};
 
   public static void addNature(IProject project, String natureId) throws CoreException {
 
@@ -134,13 +138,17 @@ public class Utilities {
    */
   public static void parseAndReplaceFileVars(InputStream input, IFolder destinationFolder, 
   		String destinationFileName, String[][] variableMap, IProgressMonitor monitor) {
+  	
   	IFile output = destinationFolder.getFile(destinationFileName);
-
+  	
+  	// Only parse and replace vars on parsable types to avoid corrupting binary files
+  	String fileExtension = output.getFileExtension();
+  	boolean parsable = Stream.of(PARSABLE).anyMatch(x -> x.equalsIgnoreCase(fileExtension));
+  	
   	try {
-
   		InputStream filteredInput = input;
-
-  		if (variableMap != null) {
+	
+  		if (parsable && variableMap != null) {
 
   			String inputString = "";
   			while (input.available() > 0)
