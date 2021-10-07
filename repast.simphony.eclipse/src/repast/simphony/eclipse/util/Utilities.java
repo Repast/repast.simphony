@@ -90,74 +90,101 @@ public class Utilities {
     project.getProject().setDescription(description, IResource.FORCE, null);
   }
 
-  public static void copyFileFromPluginInstallation(String sourceFileName,
-      IFolder destinationFolder, String destinationFileName, String[][] variableMap,
-      IProgressMonitor monitor) {
 
-    try {
+  /**
+   * Copy the template contents of the source folder to the destination folder and 
+   * optionally replace variables in the template source files when copying.
+   * 
+   * @param sourceFolderName
+   * @param destinationFolder
+   * @param variableMap
+   * @param monitor
+   */
+  public static void copyFolderFromPluginInstallation(String sourceFolderName,
+  		IFolder destinationFolder, String[][] variableMap, IProgressMonitor monitor) {
 
-      File projPath = new File(RepastSimphonyPlugin.getInstance().getPluginInstallationDirectory()
-          + RepastSimphonyPlugin.getInstance().getPluginDirectoryName());
+  	try {	
+  		if (!destinationFolder.exists())
+  			destinationFolder.create(true, true, monitor);
 
-      InputStream input = new BufferedInputStream(new FileInputStream(projPath.getAbsolutePath()
-          + "/setupfiles/" + sourceFileName));
+  		File projPath = new File(RepastSimphonyPlugin.getInstance().getPluginInstallationDirectory()
+  				+ RepastSimphonyPlugin.getInstance().getPluginDirectoryName());
 
-      IFile output = destinationFolder.getFile(destinationFileName);
+  		// Get the list of all files in the source folder
+  		File[] fileList = new File(projPath.getAbsolutePath() + "/setupfiles/" + sourceFolderName ).listFiles();
+  	
+  		for (File f : fileList) {
+  			InputStream input = new BufferedInputStream(new FileInputStream(f));
+  			String destinationFileName = f.getName();
 
-      InputStream filteredInput = input;
-
-      if (variableMap != null) {
-
-        String inputString = "";
-        while (input.available() > 0)
-          inputString += ((char) input.read());
-
-        for (int i = 0; i < variableMap.length; i++) {
-          inputString = inputString.replace(variableMap[i][0], variableMap[i][1]);
-        }
-
-        filteredInput = new ByteArrayInputStream(inputString.getBytes());
-
-      }
-      if (output.exists())
-        output.delete(true, monitor);
-      output.create(filteredInput, true, monitor);
-
-    } catch (Exception e) {
-      System.err.println("Error: Could not find \"" + "/setupfiles/" + sourceFileName + "\"");
-    }
-
-  }
-
-  public static void copyFileFromPluginInstallation(String sourceFileName,
-      IFolder destinationFolder, String destinationFileName, IProgressMonitor monitor) {
-    copyFileFromPluginInstallation(sourceFileName, destinationFolder, destinationFileName, null,
-        monitor);
-  }
-
-  public static void copyFileFromPluginInstallation(String sourceFileName,
-      IFolder destinationFolder, IProgressMonitor monitor) {
-    copyFileFromPluginInstallation(sourceFileName, destinationFolder, sourceFileName, monitor);
+  			parseAndReplaceFileVars(input, destinationFolder, destinationFileName, variableMap, monitor);
+  		} 
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  	}    
   }
   
-  public static void createModelInstallerFiles(IFolder srcFolder, 
-  		IProgressMonitor monitor, String[][] variableMap) throws CoreException{
-    IFolder newFolder = srcFolder.getFolder("../installer");
-    if (!newFolder.exists())
-      newFolder.create(true, true, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
-        "installation_components.xml", variableMap, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/shortcuts.xml", newFolder,
-        "shortcuts.xml", variableMap, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/Unix_shortcuts.xml", newFolder,
-        "Unix_shortcuts.xml", variableMap, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
-        "splash_screen.png", monitor);
-    Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
-        "start_model.bat", variableMap, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
-        "start_model.command", variableMap, monitor);
-    Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
-        "installation_coordinator.xml", variableMap, monitor);
+  /**
+   * 
+   * @param input
+   * @param destinationFolder
+   * @param destinationFileName
+   * @param variableMap
+   * @param monitor
+   */
+  public static void parseAndReplaceFileVars(InputStream input, IFolder destinationFolder, 
+  		String destinationFileName, String[][] variableMap, IProgressMonitor monitor) {
+  	IFile output = destinationFolder.getFile(destinationFileName);
+
+  	try {
+
+  		InputStream filteredInput = input;
+
+  		if (variableMap != null) {
+
+  			String inputString = "";
+  			while (input.available() > 0)
+  				inputString += ((char) input.read());
+
+  			for (int i = 0; i < variableMap.length; i++) {
+  				inputString = inputString.replace(variableMap[i][0], variableMap[i][1]);
+  			}
+  			filteredInput = new ByteArrayInputStream(inputString.getBytes());
+  		}
+  		if (output.exists())
+  			output.delete(true, monitor);
+  		output.create(filteredInput, true, monitor);
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  	}
   }
+  
+  /**
+   * Copy the single template source file to the destination folder and 
+   * optionally replace variables in the template source file when copying.
+   * 
+   * @param sourceFileName
+   * @param destinationFolder
+   * @param destinationFileName
+   * @param variableMap
+   * @param monitor
+   */
+  public static void copyFileFromPluginInstallation(String sourceFileName,
+  		IFolder destinationFolder, String destinationFileName, String[][] variableMap,
+  		IProgressMonitor monitor) {
+
+  	try {
+  		File projPath = new File(RepastSimphonyPlugin.getInstance().getPluginInstallationDirectory()
+  				+ RepastSimphonyPlugin.getInstance().getPluginDirectoryName());
+
+  		InputStream input = new BufferedInputStream(new FileInputStream(projPath.getAbsolutePath()
+  				+ "/setupfiles/" + sourceFileName));
+
+  		parseAndReplaceFileVars(input, destinationFolder, destinationFileName, variableMap, monitor);
+
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  	}
+  }
+
 }

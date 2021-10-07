@@ -401,22 +401,17 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			// repast.simphony.agents.designer.ui.wizards.NewProjectCreationWizard's
 			// finishPage method
 			String[][] variableMap = { { "%MODEL_NAME%", projectName },
-					{ "%PROJECT_NAME%", projectName }, { "%SCENARIO_DIRECTORY%", scenarioDirectory },
+					{ "%PROJECT_NAME%", projectName }, 
+					{ "%SCENARIO_DIRECTORY%", scenarioDirectory },
 					{ "%PACKAGE%", packageName },
 					{ "%REPAST_SIMPHONY_INSTALL_BUILDER_PLUGIN_DIRECTORY%", mainDataSourcePluginDirectory } };
+			
 			IFolder newFolder = null;
 			newFolder = createFolderResource(project, "batch");
-
-			Utilities.copyFileFromPluginInstallation("batch/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("batch/batch_params.xml", newFolder,
-					"batch_params.xml", variableMap, subMonitor.newChild(1));
-
+			Utilities.copyFolderFromPluginInstallation("batch", newFolder,  variableMap, subMonitor.newChild(1));
+			
 			newFolder = createFolderResource(project, "docs");
-			Utilities.copyFileFromPluginInstallation("docs/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("docs/index.html", newFolder, "index.html",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("docs", newFolder,  variableMap, subMonitor.newChild(1));
 
 			// for distributed batch (see SIM-459)
 			newFolder = createFolderResource(project, "transferFiles");
@@ -425,165 +420,41 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			newFolder = createFolderResource(project, "output");
 
 			newFolder = createFolderResource(project, "freezedried_data");
-			Utilities.copyFileFromPluginInstallation("freezedried_data/ReadMe.txt", newFolder,
-					"ReadMe.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("freezedried_data", newFolder,  variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "icons");
-
-			Utilities.copyFileFromPluginInstallation("icons/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("icons/model.bmp", newFolder, "model.bmp",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("icons", newFolder,  variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "integration");
-			Utilities.copyFileFromPluginInstallation("integration/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("integration", newFolder,  variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "launchers");
-			Utilities.copyFileFromPluginInstallation("launchers/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("launchers", newFolder,  variableMap, subMonitor.newChild(1));
 
-			new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder,
-					scenarioDirectory);
-			// loadStringTemplates();
-			// exportLauncherTemplates(newFolder, projectName);
-
+			new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
+			
 			newFolder = createFolderResource(project, "lib");
-			Utilities.copyFileFromPluginInstallation("lib/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("lib", newFolder,  variableMap, subMonitor.newChild(1));
 
 			newFolder = createFolderResource(project, "data");
-			Utilities.copyFileFromPluginInstallation("data/ReadMe.txt", newFolder, "ReadMe.txt",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("data", newFolder,  variableMap, subMonitor.newChild(1));
 
+			// Copy the model installer builder IzPack config files
 			newFolder = createFolderResource(project, "installer");
-			Utilities.copyFileFromPluginInstallation("installer/installation_components.xml", newFolder,
-					"installation_components.xml", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/shortcuts.xml", newFolder,
-					"shortcuts.xml", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/Unix_shortcuts.xml", newFolder,
-					"Unix_shortcuts.xml", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/splash_screen.png", newFolder,
-					"splash_screen.png", subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/start_model.bat", newFolder,
-					"start_model.bat", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/start_model.command", newFolder,
-					"start_model.command", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("installer/installation_coordinator.xml", newFolder,
-					"installation_coordinator.xml", variableMap, subMonitor.newChild(1));
-			
+			Utilities.copyFolderFromPluginInstallation("installer", newFolder,  variableMap, subMonitor.newChild(1));
+      
 			newFolder = createFolderResource(project, "repast-licenses");
-			Utilities.copyFileFromPluginInstallation("repast-licenses/apache-license.txt", newFolder,
-					"apache-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/asm-license.txt", newFolder,
-					"asm-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/axion-license.txt", newFolder,
-					"axion-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/binding-license.txt", newFolder,
-					"binding-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/common-public-license.txt",
-					newFolder, "common-public-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/concurrent-license.pdf", newFolder,
-					"concurrent-license.pdf", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/CPL.txt", newFolder, "CPL.txt",
-					variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/forms-license.txt", newFolder,
-					"forms-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/geotools-license.txt", newFolder,
-					"geotools-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/groovy-license.txt", newFolder,
-					"groovy-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/hsqldb-license.txt", newFolder,
-					"hsqldb-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation(
-					"repast-licenses/jakarta-commons-collections-license.txt", newFolder,
-					"jakarta-commons-collections-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jaxen-license.txt", newFolder,
-					"jaxen-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jh-license.txt", newFolder,
-					"jh-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jide-oss-license.txt", newFolder,
-					"jide-oss-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jmatlink-license.txt", newFolder,
-					"jmatlink-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jmf-license.txt", newFolder,
-					"jmf-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jmock-license.txt", newFolder,
-					"jmock-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jscience-license.txt", newFolder,
-					"jscience-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jsp-servlet-api-license.txt",
-					newFolder, "jsp-servlet-api-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jts-license.txt", newFolder,
-					"jts-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/jung-license.txt", newFolder,
-					"jung-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/lgpl-2.1.txt", newFolder,
-					"lgpl-2.1.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/LICENSE-jgoodies.txt", newFolder,
-					"LICENSE-jgoodies.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/log4j-license.txt", newFolder,
-					"log4j-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation(
-					"repast-licenses/mitre-relogo-import-wizard-license.txt", newFolder,
-					"mitre-relogo-import-wizard-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/MPL-license.txt", newFolder,
-					"MPL-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/msql-connector-license.txt",
-					newFolder, "msql-connector-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/mx4j-license.txt", newFolder,
-					"mx4j-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/openforecast-license.txt",
-					newFolder, "openforecast-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/piccolo-license.txt", newFolder,
-					"piccolo-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/proactive-license.txt", newFolder,
-					"proactive-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/repast-license.txt", newFolder,
-					"repast-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/saxpath-license.txt", newFolder,
-					"saxpath-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/swingx-license.txt", newFolder,
-					"swingx-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/table-layout-license.txt",
-					newFolder, "table-layout-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/violinstrings-license.txt",
-					newFolder, "violinstrings-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/wizard-license.txt", newFolder,
-					"wizard-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/xpp3-license.txt", newFolder,
-					"xpp3-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/xstream-license.txt", newFolder,
-					"xstream-license.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache.txt", newFolder,
-					"license_apache.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/license_apache11.txt", newFolder,
-					"license_apache11.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4j.txt", newFolder,
-					"license_flow4j.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/license_flow4J-eclipse.txt",
-					newFolder, "license_flow4J-eclipse.txt", variableMap, subMonitor.newChild(1));
-			Utilities.copyFileFromPluginInstallation("repast-licenses/license_xstream.txt", newFolder,
-					"license_xstream.txt", variableMap, subMonitor.newChild(1));
+			Utilities.copyFolderFromPluginInstallation("repast-licenses", newFolder,  variableMap, subMonitor.newChild(1));
 			
 			newFolder = srcFolder.getFolder("../license.txt");
 			Utilities.copyFileFromPluginInstallation("license.txt", newFolder, "", variableMap, subMonitor.newChild(1));
 
 			newFolder = srcFolder.getFolder("../MessageCenter.log4j.properties");
-			Utilities.copyFileFromPluginInstallation("MessageCenter.log4j.properties", newFolder, "",
-					variableMap, subMonitor.newChild(1));
+			Utilities.copyFileFromPluginInstallation("MessageCenter.log4j.properties", newFolder, "", variableMap, subMonitor.newChild(1));
 
 			newFolder = srcFolder.getFolder("../model_description.txt");
-			Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,
-					subMonitor.newChild(1));
-
-			// Utilities.copyFileFromPluginInstallation("license.txt", projectFolder,
-			// "",
-			// variableMap, monitor);
-			//
-			// Utilities.copyFileFromPluginInstallation("model_description.txt",
-			// projectFolder, "", variableMap, monitor);
-
+			Utilities.copyFileFromPluginInstallation("model_description.txt", newFolder, "", variableMap,	subMonitor.newChild(1));
+		
 			// create turtleShapes.xml in project root
 			shapesFolder = createFolderResource(project, "shapes");
 			List<NLImage> imageList = pageOne.getImportShapes();
@@ -597,16 +468,8 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 				createFileResource(shapesFolder, "turtleShapes.xml",
 						new ByteArrayInputStream(xml.getBytes("UTF-8")));
 			}
-
-			// All svg default shapes
-			File templateShapesFolder = new File(RepastSimphonyPlugin.getInstance()
-					.getPluginInstallationDirectory()
-					+ RepastSimphonyPlugin.getInstance().getPluginDirectoryName() + "/setupfiles/shapes/svg");
-			List<String> shapeFiles = WizardUtilities.getFileNamesInDirectory(templateShapesFolder);
-			for (String shapeFileName : shapeFiles) {
-				Utilities.copyFileFromPluginInstallation("shapes/svg/" + shapeFileName, shapesFolder,
-						shapeFileName, null);
-			}
+			
+			Utilities.copyFolderFromPluginInstallation("shapes/svg", shapesFolder,  variableMap, subMonitor.newChild(1));
 
 			// create XML files defining model and UI
 			IFolder rsFolder = createFolderResource(project, projectName + ".rs");
