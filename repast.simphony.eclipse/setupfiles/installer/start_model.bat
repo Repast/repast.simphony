@@ -2,12 +2,9 @@
 TITLE %PROJECT_NAME%
 
 REM Repast Simphony Model Starter
-REM By Michael J. North
 REM 
 REM Please note that the paths given below use
-REM a unusual Linux-like notation. This is a
-REM unfortunate requirement of the Java Plugin
-REM framework application loader.
+REM a unusual Linux-like notation. 
 
 REM Note the Repast Simphony Directories.
 set REPAST_SIMPHONY_ROOT=../repast.simphony/repast.simphony.runtime_$REPAST_VERSION/
@@ -28,7 +25,7 @@ SET CP=%CP%;%REPAST_SIMPHONY_LIB%commons-cli-1.3.1.jar
 SET CP=%CP%;../groovylib/$Groovy_Jar
 SET CP=%CP%;lib/*
 
-REM Change to the Default Repast Simphony Directory
+REM Change to the project directory
 CD %PROJECT_NAME%
 
 REM Start the Model

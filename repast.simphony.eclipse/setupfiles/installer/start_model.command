@@ -1,12 +1,10 @@
 #!/bin/bash
 # Repast Simphony Model Starter
-# By Michael J. North and Jonathan Ozik
-# 11/12/2007
-# Note the Repast Simphony Directories.
 
 PWD="${0%/*}"
 cd $PWD
 
+# Note the Repast Simphony Directories.
 REPAST_SIMPHONY_ROOT=$PWD/repast.simphony/repast.simphony.runtime_$REPAST_VERSION
 REPAST_SIMPHONY_LIB=$REPAST_SIMPHONY_ROOT/lib
 
@@ -25,7 +23,7 @@ CP=$CP:$REPAST_SIMPHONY_LIB/commons-cli-1.3.1.jar
 CP=$CP:$PWD/groovylib/$Groovy_Jar
 CP=$CP:lib/*
 
-# Change to the Default Repast Simphony Directory
+# Change to the project directory
 cd %PROJECT_NAME%
 
 # Start the Model
