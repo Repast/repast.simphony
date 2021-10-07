@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast core
 Bundle-SymbolicName: repast.simphony.core
-Bundle-Version: 2.8.0
+Bundle-Version: 2.9.0
 Bundle-ClassPath: lib/jsr108-0.01.jar,
  lib/concurrent-1.3.4.jar,
  lib/collections-generic-4.01.jar,

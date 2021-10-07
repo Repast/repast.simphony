@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast groovy
 Bundle-SymbolicName: repast.simphony.groovy
-Bundle-Version: 2.8.0
+Bundle-Version: 2.9.0
 Export-Package: groovy.inspect.swingui,
  groovy.model,
  groovy.swing,
