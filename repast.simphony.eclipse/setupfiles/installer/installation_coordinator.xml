@@ -40,6 +40,9 @@
 			<filename name="**/groovy-3*.jar" />
 			<not>
 				<filename name="**/groovy-3*-sources.jar" />
+			</not>
+			<not>
+				<filename name="**/groovy-3*-javadoc.jar" />
 			</not>	
 		</fileset>
 		
@@ -102,7 +105,7 @@
 		<echo message="Creating the installation file..." />
 		
 		<property name="izpack-dist" value="${EclipsePluginsDirectory}/repast.simphony.eclipse_${REPAST_VERSION}/setupfiles/IzPack" />
-		<echo message="IzPack Directory = ${IzPackHomeDirectory}" />
+		<echo message="IzPack Directory = ${izpack-dist}" />
 		
 		<property name="izpack-installer" value="setup.jar"/>
 		
