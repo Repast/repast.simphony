@@ -18,10 +18,16 @@
     	<native type="izpack" name="ShellLink_x64.dll"/>
 	</natives>
 
-	<guiprefs width="800" height="600" resizable="no">
-		<modifier key="useButtonIcons" value="yes"/>
-    	<modifier key="useLabelIcons" value="yes"/>
-	</guiprefs>
+	<guiprefs height="700" resizable="yes" width="870">
+        <modifier key="langDisplayType" value="default"/>
+        <modifier key="layoutAnchor" value="CENTER"/>
+        <modifier key="headingPanelCounter" value="progressbar"/>
+        <modifier key="headingPanelCounterPos" value="inNavigationPanel"/>
+        <modifier key="allYGap" value="4"/>
+        <modifier key="paragraphYGap" value="10"/>
+        <modifier key="filler1YGap" value="5"/>
+        <modifier key="filler3XGap" value="10"/>
+    </guiprefs>
     
     <variables>
     	<!-- Repast and Groovy info is parsed by the start_model.* scripts -->
@@ -67,7 +73,7 @@
         <res src="$StagingArea/installer/splash_screen.png" id="installer.langsel.img"/>
         <res src="$StagingArea/installer/shortcuts.xml" id="shortcutSpec.xml"/>
         <res src="$StagingArea/installer/Unix_shortcuts.xml" id="Unix_shortcutSpec.xml"/>
-            
+                    
         <res src="$StagingArea/installer/border1.png" id="Installer.image.0"/>
         <res src="$StagingArea/installer/border2.png" id="Installer.image.1"/>
         <res src="$StagingArea/installer/border3.png" id="Installer.image.2"/>
