@@ -15,12 +15,12 @@
             startMenu="no"
             startup="no"
             target="$INSTALL_PATH\start_model.bat"
+     		commandLine=""
      		workingDirectory="$INSTALL_PATH"
-            commandLine=""
+            description="This runs the model"
             iconFile="$INSTALL_PATH\%PROJECT_NAME%\icons\model.bmp"
      		iconIndex="0"
-     		initialState="noShow"
-            description="This runs the model">
+     		initialState="noShow">
             
         <createForPack name="Model"/>
   </shortcut>
@@ -33,6 +33,7 @@
             startMenu="no"
             startup="no"
             target="$INSTALL_PATH\%PROJECT_NAME%\docs\index.html"
+            commandLine=""
             iconFile="%SystemRoot%\system32\SHELL32.dll"
      		iconIndex="23" 
      		workingDirectory="$INSTALL_PATH\docs"
@@ -42,21 +43,19 @@
     </shortcut>
 
     <shortcut
-            name="Model Uninstaller"
+            name="%MODEL_NAME% Uninstaller"
             programGroup="yes"
             desktop="no"
             applications="no"
             startMenu="no"
             startup="no"
             target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
-            workingDirectory="$INSTALL_PATH"
             commandLine=""
+            workingDirectory="$INSTALL_PATH"
             iconFile="%SystemRoot%\system32\SHELL32.dll"
      		iconIndex="31"
             description="This uninstalls the model">
     	<createForPack name="Model"/>
     </shortcut>
-  
-  	
     
 </izpack:shortcuts>
