@@ -109,6 +109,25 @@ public class DisplayGIS3D extends AbstractDisplay {
 	static {
 		// this seems to fix jogl canvas flicker issues on windows
 		System.setProperty("sun.awt.noerasebackground", "true");
+		
+		// Current WWJ config file name.  May be null if not specified by user model.
+		String wwjConfig = System.getProperty("gov.nasa.worldwind.app.config.document");
+
+		// Set the WWJ image layer retrieval properties to better handle slow response from
+		//   the default background layers servers as suggested in
+		//   https://github.com/NASAWorldWind/WorldWindJava/issues/219.
+		//
+		// First check if the user has specified a WWJ config XML so we don't overwrite their
+		// values properties.
+		if (wwjConfig == null) {
+			Configuration.setValue("gov.nasa.worldwind.avkey.RetrievalPoolSize", 32);
+			Configuration.setValue("gov.nasa.worldwind.avkey.RetrievalQueueSize", 400);
+			Configuration.setValue("gov.nasa.worldwind.avkey.RetrievalStaleRequestLimit", 60000);
+			Configuration.setValue("gov.nasa.worldwind.avkey.TaskPoolSize", 32);
+			Configuration.setValue("gov.nasa.worldwind.avkey.TaskQueueSize", 60);
+		}
+		else
+			msg.info( "Using WWJ configuration file: " + wwjConfig);
 	}
 
 	public static final String BACKGROUND_LAYER_NAME = "Background";
