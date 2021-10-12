@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="BuildModelArchive" default="build_archive" basedir="..">
+
+	<target name="build_archive">
+		<!-- Location of the Eclipse /plugins folder -->
+		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
+		
+		<!-- Search for the groovy-3.x-.jar -->
+		<fileset dir="${EclipsePluginsDirectory}" id="groovy_jar">
+			<filename name="**/groovy-3*.jar" />
+			<not>
+				<filename name="**/groovy-3*-sources.jar" />
+			</not>
+			<not>
+				<filename name="**/groovy-3*-javadoc.jar" />
+			</not>	
+		</fileset>
+		
+		<!-- Relative path of groovy jar in the Eclipse plugins dir-->
+		<property name="groovy_plugin_jar_path" refid="groovy_jar" />
+		
+		<!-- Absolute path of groovy jar -->
+		<property name="GroovyJarLocation" value="${EclipsePluginsDirectory}/${groovy_plugin_jar_path}" />
+		<echo message="GroovyJarLocation = ${GroovyJarLocation}" />
+
+		<!-- Base groovy jar file name -->
+		<basename property="Groovy_Jar" file="${groovy_plugin_jar_path}"/>
+		<echo message="Groovy_Jar = ${Groovy_Jar}" />
+		
+		<!-- Folder containting the Groovy jar -->
+		<property name="Groovy_Jar_Dir" location="${GroovyJarLocation}/.."/>
+	
+		<echo message="Building model archive"/>
+        <echo message="Using Repast version ${REPAST_VERSION}"/>
+    
+    	<property name="output_file" value="${outputInstallationFile}/model.zip" />
+    	<echo message="Output file: ${output_file}"/>
+        
+        <!-- A hidden staging dirctory to store the install files that will be deleted at cleanup -->
+		<property name="StagingArea" value="./.temp/%PROJECT_NAME%" />
+		<echo message="StagingArea = ${StagingArea}" />
+
+		<!-- Clear the temporary staging area -->
+		<echo message="Clearing the temporary staging area..." />
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${StagingArea}" includes="**/*" />
+		</delete>
+		
+		<!-- Copy files to the temporary staging area except those filtered-->
+		
+		
+		<copy todir="${StagingArea}" overwrite="true">
+			<fileset dir="installer">
+				<include name="start_model.bat"/>
+				<include name="start_model.command"/>
+			</fileset>
+		</copy>
+		        
+		<replace dir="${StagingArea}">
+			<include name="start_model.bat"/>
+			<include name="start_model.command"/>
+			
+			<replacefilter token="$REPAST_VERSION" value="${REPAST_VERSION}" />
+			<replacefilter token="$Groovy_Jar" value="${Groovy_Jar}" />
+		</replace>
+		        
+        <!-- Create the zip archive -->
+        <zip destfile="${output_file}">	
+        	<!-- Include the complete model folder -->
+			<zipfileset dir="." includes="**/*" prefix="%PROJECT_NAME%"/>
+			
+			<!-- Copy the run scripts to the root of the zip archive -->
+			<zipfileset dir="${StagingArea}" includes="start_model.bat"/>
+			<zipfileset dir="${StagingArea}" includes="start_model.command"/>
+			
+			<!-- Copy the Groovy jar -->
+			<zipfileset dir="${Groovy_Jar_Dir}" includes="${Groovy_Jar}" prefix="groovylib"/>
+			
+			<!-- Copy the Repast libs -->
+			<zipfileset dir="${EclipsePluginsDirectory}" includes="libs.*${REPAST_VERSION}/**" prefix="repast.simphony"/>
+			<zipfileset dir="${EclipsePluginsDirectory}" includes="repast.simphony.*${REPAST_VERSION}/**" prefix="repast.simphony"/>
+			<zipfileset dir="${EclipsePluginsDirectory}" includes="saf.core.ui*${REPAST_VERSION}/**" prefix="repast.simphony"/>	
+		</zip>
+		
+		<!-- Clear the temporary staging area -->
+		<echo message="Clearing the temporary staging area..." />
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${StagingArea}" includes="**/*" />
+		</delete>
+	
+		<!-- Note the status -->
+		<echo message="Done!" />
+    </target>
+
+</project>
