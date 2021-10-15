@@ -12,12 +12,12 @@
 <project default="generate">
     <property name="docsDirectory" value="docs/ReLogo API"/>
 	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
-    <property name="version" value="2.8"/>
+    <property name="version" value="2.9"/>
     <property name="title" value="API V${version}"/>
     <property name="docFooter" value="ReLogo ${title}"/>
     <property name="mainSourceDirectory" value="src"/>
 	<path id="sourcePath">
-					<pathelement path="../repast.simphony.core/src" />
+					<pathelement path="../repast.simphony.core/src" /> 
 					<pathelement path="../repast.simphony.data/src" />
 					<pathelement path="../repast.simphony.dataLoader/src" />
 					<pathelement path="../repast.simphony.essentials/src" />
