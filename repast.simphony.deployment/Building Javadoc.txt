@@ -19,6 +19,11 @@ Building Repast Javadoc
       These will be the "groovy-...jar" files and one or two of the other jars
       in the groovy /lib folder (see existing launch config).
       
+        * Note that building groovy docs with Groovy 3.x fails and we have used 2.5 to
+          build the docs for RS release 2.9 (Oct 2021).  Using the Groovy 2.5 SDK for
+          groovy doc building does not interfere with the groovy 3.x distributed with
+          Repast.
+      
     - The buildGroovyDocs.xml launch configuration JRE settings should be 
        "Separate JRE" not "Run in same JRE as workspace" since using the later
        causes issues (on Windows) even though they are the same JRE!

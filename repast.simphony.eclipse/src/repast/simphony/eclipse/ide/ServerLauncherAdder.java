@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 
+import repast.simphony.eclipse.RSProjectConfigurator;
 import repast.simphony.eclipse.RepastSimphonyPlugin;
 import repast.simphony.eclipse.action.FileSystemSelectionAction;
 

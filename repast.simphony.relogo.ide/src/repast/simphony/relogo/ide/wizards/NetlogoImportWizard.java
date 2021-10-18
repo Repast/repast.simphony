@@ -431,7 +431,7 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 			newFolder = createFolderResource(project, "launchers");
 			Utilities.copyFolderFromPluginInstallation("launchers", newFolder,  variableMap, subMonitor.newChild(1));
 
-			new RSProjectConfigurator().createReLogoLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
+			new RSProjectConfigurator().createLaunchConfigurations(javaProject, newFolder, scenarioDirectory);
 			
 			newFolder = createFolderResource(project, "lib");
 			Utilities.copyFolderFromPluginInstallation("lib", newFolder,  variableMap, subMonitor.newChild(1));
