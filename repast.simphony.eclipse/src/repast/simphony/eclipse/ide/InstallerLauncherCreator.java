@@ -58,7 +58,7 @@ public class InstallerLauncherCreator {
       
       // Create the launch for the build portable model archive
       launchConfigurationWorkingCopy = 
-      		launchType.newInstance(folder, "Build portable archive for " + project.getElementName() + " Model");
+      		launchType.newInstance(folder, "Build Portable Archive for " + project.getElementName() + " Model");
       
       launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
       launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.apache.tools.ant.launch.Launcher");
