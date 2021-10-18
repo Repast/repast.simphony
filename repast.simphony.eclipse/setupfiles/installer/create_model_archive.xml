@@ -56,6 +56,8 @@
 				<include name="start_model.command"/>
 			</fileset>
 		</copy>
+	    
+	    <chmod file="${StagingArea}/start_model.command" perm="u+rx"/>
 		        
 		<replace dir="${StagingArea}">
 			<include name="start_model.bat"/>
@@ -72,7 +74,7 @@
 			
 			<!-- Copy the run scripts to the root of the zip archive -->
 			<zipfileset dir="${StagingArea}" includes="start_model.bat"/>
-			<zipfileset dir="${StagingArea}" includes="start_model.command"/>
+            <zipfileset dir="${StagingArea}" includes="start_model.command" filemode="754"/>
 			
 			<!-- Copy the Groovy jar -->
 			<zipfileset dir="${Groovy_Jar_Dir}" includes="${Groovy_Jar}" prefix="groovylib"/>
