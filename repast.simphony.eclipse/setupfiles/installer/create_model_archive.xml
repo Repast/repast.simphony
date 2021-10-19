@@ -54,6 +54,7 @@
 			<fileset dir="installer">
 				<include name="start_model.bat"/>
 				<include name="start_model.command"/>
+				<include name="Readme_for_running_the_model.txt"/>
 			</fileset>
 		</copy>
 	    
@@ -62,6 +63,7 @@
 		<replace dir="${StagingArea}">
 			<include name="start_model.bat"/>
 			<include name="start_model.command"/>
+			<include name="Readme_for_running_the_model.txt"/>
 			
 			<replacefilter token="$REPAST_VERSION" value="${REPAST_VERSION}" />
 			<replacefilter token="$Groovy_Jar" value="${Groovy_Jar}" />
@@ -75,6 +77,8 @@
 			<!-- Copy the run scripts to the root of the zip archive -->
 			<zipfileset dir="${StagingArea}" includes="start_model.bat"/>
             <zipfileset dir="${StagingArea}" includes="start_model.command" filemode="754"/>
+            
+            <zipfileset dir="${StagingArea}" includes="Readme_for_running_the_model.txt"/>
 			
 			<!-- Copy the Groovy jar -->
 			<zipfileset dir="${Groovy_Jar_Dir}" includes="${Groovy_Jar}" prefix="groovylib"/>
