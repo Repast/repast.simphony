@@ -3,7 +3,7 @@
 # Repast Simphony Model run script for macOS and Linux
 
 PWD="${0%/*}"
-cd $PWD
+cd "$PWD"
 
 # Note the Repast Simphony Directories.
 REPAST_SIMPHONY_ROOT=$PWD/repast.simphony/repast.simphony.runtime_$REPAST_VERSION
@@ -19,7 +19,7 @@ CP=$CP:$PWD/groovylib/$Groovy_Jar
 CP=$CP:lib/*
 
 # Change to the project directory
-cd %PROJECT_NAME%
+cd "%PROJECT_NAME%"
 
 # Start the Model
-java -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp $CP repast.simphony.runtime.RepastMain  ./%SCENARIO_DIRECTORY%
+java -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp "$CP" repast.simphony.runtime.RepastMain  "./%SCENARIO_DIRECTORY%"

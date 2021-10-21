@@ -19,7 +19,7 @@ REM User model lib jars
 SET CP=%CP%;lib/*
 
 REM Change to the project directory
-CD %PROJECT_NAME%
+CD "%PROJECT_NAME%"
 
 REM Start the Model
-START javaw -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp %CP% repast.simphony.runtime.RepastMain ./%SCENARIO_DIRECTORY%
+START javaw -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp "%CP%" repast.simphony.runtime.RepastMain "./%SCENARIO_DIRECTORY%"
