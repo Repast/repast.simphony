@@ -16,7 +16,7 @@
 	
 	<!-- The Repast creator version variable is hard-coded against the release 
 	     version. DO NOT USE A VARIABLE HERE! -->
-	<property name="RepastCreatorVersion" value="2.8.0" />
+	<property name="RepastCreatorVersion" value="2.9.0" />
 				
 	<condition property="repast.version">
 	  <equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>
@@ -35,33 +35,32 @@
 		<!-- Location of the Eclipse /plugins folder -->
 		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
 		
-		<!-- Search for the groovy-all-.jar -->
-		<fileset dir="${EclipsePluginsDirectory}" id="gAll.jar">
-			<filename name="**/groovy-all-*.jar" />
+		<!-- Search for the groovy-3.x-.jar -->
+		<fileset dir="${EclipsePluginsDirectory}" id="groovy_jar">
+			<filename name="**/groovy-3*.jar" />
 			<not>
-				<filename name="**/groovy-all-*-sources.jar" />
+				<filename name="**/groovy-3*-sources.jar" />
 			</not>
 			<not>
-				<filename name="**/groovy-all-*-javadoc.jar" />
-			</not>
+				<filename name="**/groovy-3*-javadoc.jar" />
+			</not>	
 		</fileset>
-		<property name="Groovy_All_Jar" refid="gAll.jar" />
-		<echo message="Groovy_All_Jar = ${Groovy_All_Jar}" />
-		<property name="GroovyAllJarLocation" value="${EclipsePluginsDirectory}/${Groovy_All_Jar}" />
+		
+		<!-- Relative path of groovy jar in the Eclipse plugins dir-->
+		<property name="groovy_plugin_jar_path" refid="groovy_jar" />
+		
+		<!-- Absolute path of groovy jar -->
+		<property name="GroovyJarLocation" value="${EclipsePluginsDirectory}/${groovy_plugin_jar_path}" />
+		<echo message="GroovyJarLocation = ${GroovyJarLocation}" />
 
+		<!-- Base groovy jar file name -->
+		<basename property="Groovy_Jar" file="${groovy_plugin_jar_path}"/>
+		<echo message="Groovy_Jar = ${Groovy_Jar}" />
+			
 		<!-- A hidden staging dirctory to store the install files that will be deleted at cleanup -->
 		<property name="StagingArea" value="./.temp/%PROJECT_NAME%" />
 		<property name="StagingOptionalArea" value="./.temp" />
 		<echo message="StagingArea = ${StagingArea}" />
-		<property name="IzPackHomeDirectory" value="${EclipsePluginsDirectory}/repast.simphony.eclipse_${REPAST_VERSION}/setupfiles/IzPack" />
-		<echo message="IzPackHomeDirectory = ${IzPackHomeDirectory}" />
-
-
-		<property name="IzPackLibDirectory" value="${IzPackHomeDirectory}/lib" />
-		<echo message="IzPackLibDirectory = ${IzPackLibDirectory}" />
-		<fileset id="RawIzPackJARs" dir="${IzPackLibDirectory}">
-			<include name="*.jar" />
-		</fileset>
 
 		<!-- Clear the temporary staging area -->
 		<echo message="Clearing the temporary staging area..." />
@@ -98,27 +97,33 @@
 			<replacefilter token="$StagingOptionalArea" value="${StagingOptionalArea}" />
 			<replacefilter token="$IzPackHomeDirectory" value="${IzPackHomeDirectory}" />
 			<replacefilter token="$EclipsePluginsDirectory" value="${EclipsePluginsDirectory}" />
-			<replacefilter token="$GroovyAllJarLocation" value="${GroovyAllJarLocation}" />
-			<replacefilter token="$Groovy_All_Jar" value="${Groovy_All_Jar}" />
+			<replacefilter token="$GroovyJarLocation" value="${GroovyJarLocation}" />
+			<replacefilter token="$Groovy_Jar" value="${Groovy_Jar}" />
 		</replace>
 
 		<!-- Run IzPack -->
 		<echo message="Creating the installation file..." />
-		<java fork="true" classname="com.izforge.izpack.compiler.Compiler">
-			<classpath>
-				<fileset id="RawIzPackJARs" dir="${IzPackLibDirectory}">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-			<arg value="${StagingArea}/installation_components_temp.xml" />
-			<arg value="-b" />
-			<arg value="." />
-			<arg value="-o" />
-			<arg value="${outputInstallationFile}" />
-			<arg value="-k" />
-			<arg value="standard" />
-		</java>
-
+		
+		<property name="izpack-dist" value="${EclipsePluginsDirectory}/repast.simphony.eclipse_${REPAST_VERSION}/setupfiles/IzPack" />
+		<echo message="IzPack Directory = ${izpack-dist}" />
+		
+		<property name="izpack-installer" value="setup.jar"/>
+		
+		<path id="lib.path">
+		    <fileset dir="${izpack-dist}/lib" includes="*.jar"/>
+		</path>
+		
+		<taskdef name="izpack"
+			classname="com.izforge.izpack.ant.IzPackTask"
+			classpathref="lib.path"
+		/>
+		
+		<izpack input="${StagingArea}/installation_components_temp.xml"
+		            output="${outputInstallationFile}"  
+		            installerType="standard"              
+		            basedir="."
+		            izPackDir="${izpack-dist}"/>
+		
 		<!-- Clear the temporary staging area -->
 		<echo message="Clearing the temporary staging area..." />
 		<delete includeemptydirs="true" quiet="true">

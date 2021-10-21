@@ -106,10 +106,23 @@ public class RepastWS {
             command.add("java");
             
             // JDK 9+ module and exports needed for geotools classpath
+            command.add("-XX:+IgnoreUnrecognizedVMOptions");
             command.add("--add-modules");
             command.add("ALL-SYSTEM");
             command.add("--add-exports");
             command.add("java.base/jdk.internal.ref=ALL-UNNAMED");
+            
+            // JDK >11 necessary args
+            command.add("--add-opens");
+            command.add("java.base/java.lang=ALL-UNNAMED");
+            command.add("--add-opens");
+            command.add("java.base/java.util=ALL-UNNAMED");
+            command.add("--add-opens");
+            command.add("java.base/java.lang.reflect=ALL-UNNAMED");
+            command.add("--add-opens");
+            command.add("java.base/java.text=ALL-UNNAMED");
+            command.add("--add-opens");
+            command.add("java.desktop/java.awt.font=ALL-UNNAMED");
             
             command.add("-cp");
 

@@ -48,24 +48,24 @@ public class BundleTests {
   }
   
   @Test
-  public void testFindGroovyAllJar(){
+  public void testFindGroovyJars(){
 	  StandAloneMain sam = new StandAloneMain();
-	  File dir = Paths.get("test_data","org.codehaus.groovy_testfolder").toFile().getAbsoluteFile();
-	  File gAllJar = sam.findGroovyAllJar(dir);
-	  assertNotNull(gAllJar);
-	  assertTrue(gAllJar.exists());
-	  assertEquals("groovy-all-4.5.12.jar",gAllJar.getName());
+	  File dir = Paths.get("test_data").toFile();
+	  List<File> jars = sam.findGroovyJars(dir.getAbsolutePath());
+	  Set<String> expected = new HashSet<>();
+	  expected.add("groovy-3.0.8-indy.jar");
+	  expected.add("groovy-swing-3.0.8.jar");
+	  expected.add("groovy-templates-3.0.8.jar"); 
+	  expected.add("groovy-xml-3.0.8.jar");
+
+	  assertEquals(4, jars.size());
+	  for (File jar : jars) {
+		  String fname = jar.getName();
+		  assertTrue(expected.contains(fname));
+		  expected.remove(fname);
+	  }
   }
   
-  @Test
-  public void testFindLatestGroovyAllJar(){
-  	StandAloneMain sam = new StandAloneMain();
-  	String bundleName = "test_data";
-  	File gJar = sam.findGroovyJar(bundleName);
-  	assertTrue(gJar.exists());
-  	assertEquals("groovy-all-4.5.13.jar",gJar.getName());
-  }
-
   /*@Test
   public void testBundleDataReader() throws IOException {
     BundleDataReader reader = new BundleDataReader();

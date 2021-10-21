@@ -32,6 +32,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 
+import repast.simphony.eclipse.ide.InstallerLauncherCreator;
+import repast.simphony.eclipse.ide.ModelRunLauncherCreator;
 import repast.simphony.eclipse.ide.ServerLauncherCreator;
 import repast.simphony.eclipse.util.Utilities;
 
@@ -43,12 +45,7 @@ import repast.simphony.eclipse.util.Utilities;
  */
 public class RSProjectConfigurator {
   
-//  public final static String PREFERRED_LAUNCHERS = "org.eclipse.debug.core.preferred_launchers";
-//  public final static String RELOGO_LAUNCH_DELEGATE = "repast.simphony.relogo.ide.relogoLaunchDelegate";
-//  public final static String LOCAL_JAVA_LAUNCH_DELEGATE = "org.eclipse.jdt.launching.localJavaApplication";
-//  public final static String LAUNCH_DELEGATE_RUN = "[run]";
-//  public final static String LAUNCH_DELEGATE_DEBUG = "[debug]";
-  
+
 	// VM args that are required for Java 9+.
 	//   -XX:+IgnoreUnrecognizedVMOptions is used for cases when Java 8 is the JRE
 	//      so that the module exports don't cause an unrecognized arg error
@@ -57,6 +54,13 @@ public class RSProjectConfigurator {
 	//   --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED is used to provide access 
 	//      to jdk.internal.ref that is used by some GeoTools JAI modules
   public final static String VMARGS = "-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED";
+ 
+  //The Eclipse launch favorites list 
+  public final static List<String> favoritesList =  new ArrayList<String>() {{
+  	add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+  	add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+  }};
+  
   
   /**
    * Configures a new project for Repast Simphony. This adds the GroovyRuntime to the project,
@@ -130,431 +134,26 @@ public class RSProjectConfigurator {
 
     try {
       ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-      ILaunchConfigurationType launchType = launchManager
-          .getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-      ILaunchConfiguration[] launchConfigurations = launchManager
-          .getLaunchConfigurations(launchType);
+      ILaunchConfigurationType launchType = 
+      		launchManager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 
       // Workaround needed to add launch configurations to favorites before
       // the launch history is checked by user
-      DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-          .getLaunchHistory("org.eclipse.debug.ui.launchGroup.run");
-      DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-          .getLaunchHistory("org.eclipse.debug.ui.launchGroup.debug");
+      DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory("org.eclipse.debug.ui.launchGroup.run");
+      DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory("org.eclipse.debug.ui.launchGroup.debug");
 
-      List classpath = new ArrayList();
-
-      // ******************************************************************
-      // ******
-      // * *
-      // * Run Model *
-      // * *
-      // ******************************************************************
-      // ******
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName().equals(javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      ILaunchConfigurationWorkingCopy launchConfigurationWorkingCopy = launchType.newInstance(
-          newFolder, javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "repast.simphony.runtime.RepastMain");
-//      Map<String, String> preferredLaunchers = new HashMap<String, String>();
-//      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, LOCAL_JAVA_LAUNCH_DELEGATE);
-//      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, LOCAL_JAVA_LAUNCH_DELEGATE);
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
-              + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
-      List favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-      IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
-          IRuntimeClasspathEntry.STANDARD_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-      classpath.add(r.getMemento());
-      IPath jarPath = new Path(RepastLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-      launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
-          classpath);
-      launchConfigurationWorkingCopy.doSave();
+      // Create the launches for the model run and batch run
+      ModelRunLauncherCreator modelRunCreator = new ModelRunLauncherCreator();
+      modelRunCreator.run(javaProject, newFolder);
       
+      // Create the launch for the model server
       ServerLauncherCreator creator = new ServerLauncherCreator();
       creator.run(javaProject, newFolder);
 
-      // ******************************************************************
-      // ******
-      // * *
-      // * Build Installer *
-      // * *
-      //
-      // ******************************************************************
-      // ******
-      classpath.clear();
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName().equals(
-            "Build Installer for " + javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      launchConfigurationWorkingCopy = launchType.newInstance(newFolder, "Build Installer for "
-          + javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "org.apache.tools.ant.launch.Launcher");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      if (SystemUtils.IS_OS_MAC)
-        launchConfigurationWorkingCopy
-            .setAttribute(
-                IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "-buildfile \"${workspace_loc:"
-                    + javaProject.getElementName()
-                    + "}"
-                    + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                    + "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
-                    + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                    + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                    + " -DREPAST_VERSION=${REPAST_VERSION}");
-      else if (SystemUtils.IS_OS_WINDOWS)
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-      // for non-Windows or Mac
-      else
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
-
-      // add the ant classpath
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
-          "org.eclipse.ant.ui.AntClasspathProvider");
-
-      favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      launchConfigurationWorkingCopy.doSave();
-
-      // ******************************************************************
-      // ******
-      // * *
-      // * Batch Run *
-      // * *
-      //
-      // ******************************************************************
-      // ******
-      classpath.clear();
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName()
-            .equals("Batch " + javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      launchConfigurationWorkingCopy = launchType.newInstance(newFolder,
-          "Batch " + javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-
-          "repast.simphony.batch.standalone.StandAloneMain");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
-      
-      favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
-          IRuntimeClasspathEntry.STANDARD_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-      classpath.add(r.getMemento());
-            
-      jarPath = new Path(StandAloneBatchClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      
-      jarPath = new Path(GroovyClasspathContainer.ID);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.USER_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-      launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
-          classpath);
-      launchConfigurationWorkingCopy.doSave();
-      favoritesList = null;
-
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-  }
-  
-  /**
-   * Should be identical to above, except for the specification of the launch
-   * configuration specific to ReLogo projects.
-   * 
-   * @param javaProject
-   * @param newFolder
-   * @param scenarioDirectory
-   */
-  public void createReLogoLaunchConfigurations(IJavaProject javaProject, IFolder newFolder,
-      String scenarioDirectory) {
-
-    try {
-      ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-      ILaunchConfigurationType launchType = launchManager
-          .getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-      ILaunchConfiguration[] launchConfigurations = launchManager
-          .getLaunchConfigurations(launchType);
-
-      // Workaround needed to add launch configurations to favorites before
-      // the launch history is checked by user
-      DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-          .getLaunchHistory("org.eclipse.debug.ui.launchGroup.run");
-      DebugUIPlugin.getDefault().getLaunchConfigurationManager()
-          .getLaunchHistory("org.eclipse.debug.ui.launchGroup.debug");
-
-      List classpath = new ArrayList();
-
-      // ******************************************************************
-      // ******
-      // * *
-      // * Run Model *
-      // * *
-      // ******************************************************************
-      // ******
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName().equals(javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      ILaunchConfigurationWorkingCopy launchConfigurationWorkingCopy = launchType.newInstance(
-          newFolder, javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "repast.simphony.runtime.RepastMain");
-//      Map<String, String> preferredLaunchers = new HashMap<String, String>();
-//      preferredLaunchers.put(LAUNCH_DELEGATE_RUN, RELOGO_LAUNCH_DELEGATE);
-//      preferredLaunchers.put(LAUNCH_DELEGATE_DEBUG, RELOGO_LAUNCH_DELEGATE);
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "\"${workspace_loc:"
-              + javaProject.getElementName() + "}/" + scenarioDirectory + "\"");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
-      List favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-      IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
-          IRuntimeClasspathEntry.STANDARD_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-      classpath.add(r.getMemento());
-      IPath jarPath = new Path(RepastLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-      launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
-          classpath);
-      launchConfigurationWorkingCopy.doSave();
-
-      // ******************************************************************
-      // ******
-      // * *
-      // * Build Installer *
-      // * *
-      //
-      // ******************************************************************
-      // ******
-      classpath.clear();
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName().equals(
-            "Build Installer for " + javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      launchConfigurationWorkingCopy = launchType.newInstance(newFolder, "Build Installer for "
-          + javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-          "org.apache.tools.ant.launch.Launcher");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      if (SystemUtils.IS_OS_MAC)
-        launchConfigurationWorkingCopy
-            .setAttribute(
-                IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "-buildfile \"${workspace_loc:"
-                    + javaProject.getElementName()
-                    + "}"
-                    + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                    + "${folder_prompt:the Folder to output the installer (setup.jar) file}/setup.jar\" "
-                    + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                    + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                    + " -DREPAST_VERSION=${REPAST_VERSION}");
-      else if (SystemUtils.IS_OS_WINDOWS)
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-      // for non-Windows or Mac
-      else
-        launchConfigurationWorkingCopy.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-            "-buildfile \"${workspace_loc:" + javaProject.getElementName() + "}"
-                + "/installer/installation_coordinator.xml\" -DoutputInstallationFile=\""
-                + "${file_prompt:the Installer Output File Name:setup.jar}\" "
-                + "-DEclipsePluginsDirectory=\"${eclipse_home}plugins\""
-                + " -DGroovyHomeDirectory=\"${groovy_home}\""
-                + " -DREPAST_VERSION=${REPAST_VERSION}");
-
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, VMARGS);
-
-      // add the ant classpath
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER,
-          "org.eclipse.ant.ui.AntClasspathProvider");
-
-      favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      favoritesList.add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      launchConfigurationWorkingCopy.doSave();
-
-      // ******************************************************************
-      // ******
-      // * *
-      // * Batch Run *
-      // * *
-      //
-      // ******************************************************************
-      // ******
-      classpath.clear();
-      for (int i = 0; i < launchConfigurations.length; i++) {
-        ILaunchConfiguration launchConfiguration = launchConfigurations[i];
-        if (launchConfiguration.getName()
-            .equals("Batch " + javaProject.getElementName() + " Model")) {
-          launchConfiguration.delete();
-          break;
-        }
-      }
-      launchConfigurationWorkingCopy = launchType.newInstance(newFolder,
-          "Batch " + javaProject.getElementName() + " Model");
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, javaProject.getElementName());
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-
-          "repast.simphony.batch.standalone.StandAloneMain");
-//      launchConfigurationWorkingCopy.setAttribute(PREFERRED_LAUNCHERS, preferredLaunchers);
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"-model_dir \"${workspace_loc:" + javaProject.getElementName() + "}\"");
-      
-      favoritesList = launchConfigurationWorkingCopy.getAttribute(
-          IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List) null);
-      if (favoritesList == null)
-        favoritesList = new ArrayList();
-      
-      favoritesList.add(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
-      launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS,
-          favoritesList);
-      systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
-          IRuntimeClasspathEntry.STANDARD_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-      classpath.add(r.getMemento());
-            
-      jarPath = new Path(StandAloneBatchClasspathContainer.JAR_CLASSPATH_DEFAULT);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      
-      jarPath = new Path(GroovyClasspathContainer.ID);
-      r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.USER_CLASSES);
-      r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-      classpath.add(r.getMemento());
-      
-      launchConfigurationWorkingCopy.setAttribute(
-          IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-      launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH,
-          classpath);
-      launchConfigurationWorkingCopy.doSave();
-      favoritesList = null;
-
+      // Create the launches for the model installer builders
+      InstallerLauncherCreator installerCreator = new InstallerLauncherCreator();
+      installerCreator.run(javaProject, newFolder);
+     
     } catch (CoreException e) {
       e.printStackTrace();
     }

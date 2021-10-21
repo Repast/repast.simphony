@@ -11,6 +11,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -23,6 +24,12 @@ public class ServerLauncherCreator {
 
     private ILaunchConfigurationType launchType;
 
+    /**
+     * Creates the Eclipse launch configurations for the run model server.
+     * 
+     *
+     */
+    
     public ServerLauncherCreator() {
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         launchType = launchManager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
@@ -30,30 +37,33 @@ public class ServerLauncherCreator {
 
     public void run(IJavaProject project, IFolder folder) throws CoreException {
 
-        ILaunchConfigurationWorkingCopy launchConfigurationWorkingCopy = launchType.newInstance(folder,
-                project.getElementName() + " Server");
-        launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-                project.getElementName());
-        launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
-                "repast.simphony.ws.RepastWS");
+        ILaunchConfigurationWorkingCopy launchConfigurationWorkingCopy = 
+        		launchType.newInstance(folder, project.getElementName() + " Server");
+        
+        launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
+        launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "repast.simphony.ws.RepastWS");
         
         String scenarioDirectory = project.getProject().getName() + ".rs";
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
                 "5000 \"${workspace_loc:" + project.getElementName() + "}/" + scenarioDirectory + "\" true");
         
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, RSProjectConfigurator.VMARGS);
+        
         IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
         IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
                 IRuntimeClasspathEntry.STANDARD_CLASSES);
         r.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
         List classpath = new ArrayList();
         classpath.add(r.getMemento());
+        
         IPath jarPath = new Path(RepastServerLauncherClasspathContainer.JAR_CLASSPATH_DEFAULT);
         r = JavaRuntime.newRuntimeContainerClasspathEntry(jarPath, IRuntimeClasspathEntry.CONTAINER);
         r.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
         classpath.add(r.getMemento());
+        
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpath);
+        launchConfigurationWorkingCopy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, RSProjectConfigurator.favoritesList);
         launchConfigurationWorkingCopy.doSave();
     }
 }

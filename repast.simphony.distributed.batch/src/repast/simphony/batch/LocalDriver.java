@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -19,9 +20,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.xml.sax.SAXException;
@@ -38,276 +42,285 @@ import simphony.util.messages.MessageCenter;
  */
 public class LocalDriver {
 
-  private static MessageCenter msg = MessageCenter.getMessageCenter(LocalDriver.class);
+	private static MessageCenter msg = MessageCenter.getMessageCenter(LocalDriver.class);
 
-  private static class Instance {
+	private static class Instance {
 
-    int id;
-    File wd;
+		int id;
+		File wd;
 
-    public Instance(int id, File wd) {
-      this.id = id;
-      this.wd = wd;
-    }
-  }
+		public Instance(int id, File wd) {
+			this.id = id;
+			this.wd = wd;
+		}
+	}
 
-  private static class ProcessRunner implements Callable<Void> {
+	private static class ProcessRunner implements Callable<Void> {
 
-    ProcessOutputWriter writer;
-    ProcessBuilder builder;
+		ProcessOutputWriter writer;
+		ProcessBuilder builder;
 
-    public ProcessRunner(ProcessBuilder builder, File log) {
-      writer = new ProcessOutputWriter(log, true);
-      this.builder = builder;
-    }
+		public ProcessRunner(ProcessBuilder builder, File log) {
+			writer = new ProcessOutputWriter(log, true);
+			this.builder = builder;
+		}
 
-    public Void call() throws IOException {
-      Process process = builder.start();
-      // the writer blocks reading the output from
-      // the process.
-      writer.captureOutput(process);
-      return null;
-    }
-  }
+		public Void call() throws IOException {
+			Process process = builder.start();
+			// the writer blocks reading the output from
+			// the process.
+			writer.captureOutput(process);
+			return null;
+		}
+	}
 
-  private ExecutorService executor;
-  private List<Future<Void>> futures;
-  private List<Instance> instances = new ArrayList<Instance>();
+	private ExecutorService executor;
+	private List<Future<Void>> futures;
+	private List<Instance> instances = new ArrayList<Instance>();
 
-  private File unrollXMLParamsIntoFile(File workingDir, File batchParamFile) throws IOException {
-    ParametersToInput toInput;
-    try {
-      toInput = new ParametersToInput(batchParamFile);
-    } catch (ParserConfigurationException ex) {
-      throw new IOException(ex);
-    } catch (SAXException ex) {
-      throw new IOException(ex);
-    }
+	private File unrollXMLParamsIntoFile(File workingDir, File batchParamFile) throws IOException {
+		ParametersToInput toInput;
+		try {
+			toInput = new ParametersToInput(batchParamFile);
+		} catch (ParserConfigurationException ex) {
+			throw new IOException(ex);
+		} catch (SAXException ex) {
+			throw new IOException(ex);
+		}
 
-    File input = new File(workingDir, "batch_parameters_input.txt");
-    toInput.formatForInput(input, new File(workingDir, "parameters_for_run.csv"));
-    return input;
-  }
-  
-  private void writeInput(String input, File file) throws IOException {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-      writer.write(input);
-    }
-  }
+		File input = new File(workingDir, "batch_parameters_input.txt");
+		toInput.formatForInput(input, new File(workingDir, "parameters_for_run.csv"));
+		return input;
+	}
 
-  public void run(String propsFile) throws IOException {
-    // load the message center log4j properties.
-    Properties props = new Properties();
-    File in = new File("./MessageCenter.log4j.properties");
-    props.load(new FileInputStream(in));
-    PropertyConfigurator.configure(props);
+	private void writeInput(String input, File file) throws IOException {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			writer.write(input);
+		}
+	}
 
-    props = new Properties();
-    props.load(new FileReader(propsFile));
+	public void run(String propsFile) throws IOException {
+		// load the message center log4j properties.
+		Properties props = new Properties();
+		File in = new File("./MessageCenter.log4j.properties");
+		props.load(new FileInputStream(in));
+		PropertyConfigurator.configure(props);
 
-    File wd = new File(props.getProperty(BatchConstants.WORKING_DIRECTORY_PN));
+		props = new Properties();
+		props.load(new FileReader(propsFile));
 
-    int instanceCount = Integer.parseInt(props.getProperty(BatchConstants.INSTANCE_COUNT_PN, "1"));
-    File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN))
-        .getCanonicalFile();
+		File wd = new File(props.getProperty(BatchConstants.WORKING_DIRECTORY_PN));
 
-    List<String> inputs = null;
-    if (props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN, "").length() > 0) {
-      // unrolled input already exists so use that.
-      inputs = createInputArgs(instanceCount,
-          new File(props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN)));
-    } else {
-      File file = unrollXMLParamsIntoFile(wd, batchParamFile);
-      inputs = createInputArgs(instanceCount, file);
-    }
+		int instanceCount = Integer.parseInt(props.getProperty(BatchConstants.INSTANCE_COUNT_PN, "1"));
+		File batchParamFile = new File(props.getProperty(BatchConstants.BATCH_PARAM_FILE_PN)).getCanonicalFile();
 
-    File scenario = new File(props.getProperty(BatchConstants.SCENARIO_DIRECTORY_PN))
-        .getCanonicalFile();
-    File libDir = new File(props.getProperty(BatchConstants.REPAST_LIB_DIRECTORY_PN))
-        .getCanonicalFile();
+		List<String> inputs = null;
+		if (props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN, "").length() > 0) {
+			// unrolled input already exists so use that.
+			inputs = createInputArgs(instanceCount,
+					new File(props.getProperty(BatchConstants.UNROLLED_BATCH_PARAM_FILE_PN)));
+		} else {
+			File file = unrollXMLParamsIntoFile(wd, batchParamFile);
+			inputs = createInputArgs(instanceCount, file);
+		}
 
-    futures = new ArrayList<Future<Void>>();
-    executor = Executors.newFixedThreadPool(instanceCount);
+		File scenario = new File(props.getProperty(BatchConstants.SCENARIO_DIRECTORY_PN)).getCanonicalFile();
+		File libDir = new File(props.getProperty(BatchConstants.REPAST_LIB_DIRECTORY_PN)).getCanonicalFile();
 
-    File file = new File("./" + BatchConstants.DONE_FILE_NAME);
-    file.delete();
+		futures = new ArrayList<Future<Void>>();
+		executor = Executors.newFixedThreadPool(instanceCount);
 
-    String vmArgs = props.getProperty(BatchConstants.VM_ARGS, "");
+		File file = new File("./" + BatchConstants.DONE_FILE_NAME);
+		file.delete();
 
-    boolean mkSymLink = new File("./data").exists();
+		String vmArgs = props.getProperty(BatchConstants.VM_ARGS, "");
 
-    try {
-      for (int i = 0; i < instanceCount; i++) {
-        int id = i + 1;
-        File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + id).getCanonicalFile();
-        subwd.mkdirs();
-        if (mkSymLink && SystemUtils.IS_OS_WINDOWS_XP) {
-          // windows xp doesn't allow sim links so we copy the data
-          FileUtils.copyDirs(new File(subwd.getParentFile(), "data"), new File(subwd, "data"));
-        } else if (mkSymLink) {
-          makeSymLink(subwd);
-        }
-        instances.add(new Instance(id, subwd));
-        String input = inputs.get(i);
-        File inputFile = new File(subwd, "param_input.txt");
-        writeInput(input, inputFile);
-        runInstance(vmArgs, inputFile.getCanonicalPath(), libDir, batchParamFile, scenario, subwd, String.valueOf(id));
-      }
+		boolean mkSymLink = new File("./data").exists();
 
-      for (Future<Void> future : futures) {
-        try {
-          future.get();
-        } catch (ExecutionException ex) {
-          ex.getCause().printStackTrace();
-          msg.error("", ex);
-        } catch (InterruptedException ex) {
-          ex.printStackTrace();
-          msg.error("", ex);
-        }
-      }
-    } finally {
-      executor.shutdown();
-      createStatusOutput();
-      file.createNewFile();
-    }
-  }
+		try {
+			for (int i = 0; i < instanceCount; i++) {
+				int id = i + 1;
+				File subwd = new File(wd, BatchConstants.INSTANCE_DIR_PREFIX + id).getCanonicalFile();
+				subwd.mkdirs();
+				if (mkSymLink && SystemUtils.IS_OS_WINDOWS_XP) {
+					// windows xp doesn't allow sim links so we copy the data
+					FileUtils.copyDirs(new File(subwd.getParentFile(), "data"), new File(subwd, "data"));
+				} else if (mkSymLink) {
+					makeSymLink(subwd);
+				}
+				instances.add(new Instance(id, subwd));
+				String input = inputs.get(i);
+				File inputFile = new File(subwd, "param_input.txt");
+				writeInput(input, inputFile);
+				runInstance(vmArgs, inputFile.getCanonicalPath(), libDir, batchParamFile, scenario, subwd,
+						String.valueOf(id));
+			}
 
-  private void makeSymLink(File instanceDir) {
+			for (Future<Void> future : futures) {
+				try {
+					future.get();
+				} catch (ExecutionException ex) {
+					ex.getCause().printStackTrace();
+					msg.error("", ex);
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+					msg.error("", ex);
+				}
+			}
+		} finally {
+			executor.shutdown();
+			createStatusOutput();
+			file.createNewFile();
+		}
+	}
 
-    int exitCode = 1;
-    try {
-      ProcessBuilder builder = new ProcessBuilder();
-      builder.directory(instanceDir);
-      builder.redirectErrorStream(true);
+	private void makeSymLink(File instanceDir) {
 
-      // try mklink first,
-      builder.command("cmd", "/c", "mklink", "/D", "/J",
-          "\"" + new File(instanceDir, "data").getCanonicalPath() + "\"", "\""
-              + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
+		int exitCode = 1;
+		try {
+			ProcessBuilder builder = new ProcessBuilder();
+			builder.directory(instanceDir);
+			builder.redirectErrorStream(true);
 
-      Process p = builder.start();
-      exitCode = p.waitFor();
+			// try mklink first,
+			builder.command("cmd", "/c", "mklink", "/D", "/J",
+					"\"" + new File(instanceDir, "data").getCanonicalPath() + "\"",
+					"\"" + new File(instanceDir.getParentFile(), "data").getCanonicalPath() + "\"");
 
-    } catch (InterruptedException ex) {
-    } catch (IOException ex) {
-      // catch this with no error -- assumed tried on non-windows machine
-    }
+			Process p = builder.start();
+			exitCode = p.waitFor();
 
-    if (exitCode != 0) {
-      try {
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.directory(instanceDir);
-        builder.redirectErrorStream(true);
+		} catch (InterruptedException ex) {
+		} catch (IOException ex) {
+			// catch this with no error -- assumed tried on non-windows machine
+		}
 
-        builder.command("ln", "-s", new File(instanceDir.getParentFile(), "data")
-            .getCanonicalPath(), new File(instanceDir, "data").getCanonicalPath());
+		if (exitCode != 0) {
+			try {
+				ProcessBuilder builder = new ProcessBuilder();
+				builder.directory(instanceDir);
+				builder.redirectErrorStream(true);
 
-        Process p = builder.start();
-        exitCode = p.waitFor();
+				builder.command("ln", "-s", new File(instanceDir.getParentFile(), "data").getCanonicalPath(),
+						new File(instanceDir, "data").getCanonicalPath());
 
-        if (exitCode != 0) {
-          msg.error("Error while creating symlinks to data directory. Error = " + exitCode,
-              new RuntimeException());
-        }
+				Process p = builder.start();
+				exitCode = p.waitFor();
 
-      } catch (InterruptedException ex) {
-      } catch (IOException ex) {
-        msg.error("Error while creating symlinks to data directory", ex);
-      }
-    }
-  }
+				if (exitCode != 0) {
+					msg.error("Error while creating symlinks to data directory. Error = " + exitCode,
+							new RuntimeException());
+				}
 
-  private void createStatusOutput() throws IOException {
-    Properties props = new Properties();
-    for (Instance instance : instances) {
-      String suffix = "_" + instance.id;
-      RunningStatus status = RunningStatus.OK;
-      File file = new File(instance.wd, RunningStatus.FAILURE.toString() + suffix);
-      if (file.exists()) {
-        status = RunningStatus.FAILURE;
-      } else {
-        file = new File(instance.wd, RunningStatus.WARN.toString() + suffix);
-        if (file.exists()) {
-          status = RunningStatus.WARN;
-        }
-      }
+			} catch (InterruptedException ex) {
+			} catch (IOException ex) {
+				msg.error("Error while creating symlinks to data directory", ex);
+			}
+		}
+	}
 
-      props.put(String.valueOf(instance.id), status.toString());
-    }
-    props.store(new FileOutputStream(BatchConstants.STATUS_OUTPUT_FILE), "");
+	private void createStatusOutput() throws IOException {
+		Properties props = new Properties();
+		for (Instance instance : instances) {
+			String suffix = "_" + instance.id;
+			RunningStatus status = RunningStatus.OK;
+			File file = new File(instance.wd, RunningStatus.FAILURE.toString() + suffix);
+			if (file.exists()) {
+				status = RunningStatus.FAILURE;
+			} else {
+				file = new File(instance.wd, RunningStatus.WARN.toString() + suffix);
+				if (file.exists()) {
+					status = RunningStatus.WARN;
+				}
+			}
 
-  }
+			props.put(String.valueOf(instance.id), status.toString());
+		}
+		props.store(new FileOutputStream(BatchConstants.STATUS_OUTPUT_FILE), "");
 
-  private List<String> createInputArgs(int instances, File input) throws IOException {
-    List<String> lines = createParameterStrings(input);
-    List<StringBuilder> inputs = new ArrayList<StringBuilder>();
-    for (int i = 0; i < instances; i++) {
-      inputs.add(new StringBuilder());
-    }
+	}
 
-    int i = 0;
-    for (String line : lines) {
-      StringBuilder builder = inputs.get(i);
-      builder.append(line);
-      builder.append("\n");
-      i++;
-      if (i == instances)
-        i = 0;
-    }
+	private List<String> createInputArgs(int instances, File input) throws IOException {
+		List<String> lines = createParameterStrings(input);
+		List<StringBuilder> inputs = new ArrayList<StringBuilder>();
+		for (int i = 0; i < instances; i++) {
+			inputs.add(new StringBuilder());
+		}
 
-    List<String> list = new ArrayList<String>();
-    for (StringBuilder builder : inputs) {
-      list.add(builder.toString());
-    }
-    return list;
-  }
+		int i = 0;
+		for (String line : lines) {
+			StringBuilder builder = inputs.get(i);
+			builder.append(line);
+			builder.append("\n");
+			i++;
+			if (i == instances)
+				i = 0;
+		}
 
-  private List<String> createParameterStrings(File input) throws IOException {
-    List<String> list = new ArrayList<String>();
-    try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
-      String line = null;
-      while ((line = reader.readLine()) != null) {
-        if (line.trim().length() > 0)
-          list.add(line);
-      }
-    }
+		List<String> list = new ArrayList<String>();
+		for (StringBuilder builder : inputs) {
+			list.add(builder.toString());
+		}
+		return list;
+	}
 
-    return list;
-  }
+	private List<String> createParameterStrings(File input) throws IOException {
+		List<String> list = new ArrayList<String>();
+		try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				if (line.trim().length() > 0)
+					list.add(line);
+			}
+		}
 
-  private void runInstance(String vmArgs, String inputArg, File libDir, File batchParamFile,
-      File scenarioFile, File workingDirectory, String id) throws IOException {
-    ProcessBuilder builder = new ProcessBuilder();
-    builder.directory(workingDirectory);
+		return list;
+	}
+	
+	private void splitArgs(String vmArgs, List<String> list) {
+		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(vmArgs);
+		while (m.find()) {
+			// System.out.println(m.group(1));
+		    list.add(m.group(1));
+		}
+	}
+	
+	private void runInstance(String vmArgs, String inputArg, File libDir, File batchParamFile, File scenarioFile,
+			File workingDirectory, String id) throws IOException {
+		ProcessBuilder builder = new ProcessBuilder();
+		builder.directory(workingDirectory);
 
-    if (vmArgs.length() > 0)
-      builder.command("java", vmArgs, "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", 
-          "-pxml", batchParamFile.getCanonicalPath(),
-          "-scenario", scenarioFile.getCanonicalPath(), 
-          "-pinput", inputArg, 
-          "-id", id);
-    else
-      builder.command("java", "-cp", libDir.getCanonicalPath() + "/*",
-          "repast.simphony.batch.InstanceRunner", 
-          "-pxml", batchParamFile.getCanonicalPath(),
-          "-scenario", scenarioFile.getCanonicalPath(), 
-          "-pinput", inputArg, 
-          "-id", id);
+		if (vmArgs.length() > 0) {
+			List<String> args = new ArrayList<>();
+			args.add("java");
+			splitArgs(vmArgs, args);
+			String[] otherArgs = new String[]{"-cp", libDir.getCanonicalPath() + "/*",
+					"repast.simphony.batch.InstanceRunner", "-pxml", batchParamFile.getCanonicalPath(), "-scenario",
+					scenarioFile.getCanonicalPath(), "-pinput", inputArg, "-id", id};
+			args.addAll(Arrays.asList(otherArgs));
+			builder.command(args);
+//					"java", vmArgs, "-cp", libDir.getCanonicalPath() + "/*",
+//					"repast.simphony.batch.InstanceRunner", "-pxml", batchParamFile.getCanonicalPath(), "-scenario",
+//					scenarioFile.getCanonicalPath(), "-pinput", inputArg, "-id", id);
+		} else {
+			builder.command("java", "-cp", libDir.getCanonicalPath() + "/*", "repast.simphony.batch.InstanceRunner",
+					"-pxml", batchParamFile.getCanonicalPath(), "-scenario", scenarioFile.getCanonicalPath(), "-pinput",
+					inputArg, "-id", id);
+		}
 
-    builder.redirectErrorStream(true);
-    ProcessRunner runner = new ProcessRunner(builder, new File(workingDirectory, "instance.log"));
-    futures.add(executor.submit(runner));
-  }
+		builder.redirectErrorStream(true);
+		ProcessRunner runner = new ProcessRunner(builder, new File(workingDirectory, "instance.log"));
+		futures.add(executor.submit(runner));
+	}
 
-  // args[0] is properties file path
-  public static void main(String[] args) {
-    LocalDriver driver = new LocalDriver();
-    try {
-      driver.run(args[0]);
-    } catch (IOException e) {
-      msg.error("", e);
-    }
-  }
+	// args[0] is properties file path
+	public static void main(String[] args) {
+		LocalDriver driver = new LocalDriver();
+		try {
+			driver.run(args[0]);
+		} catch (IOException e) {
+			msg.error("", e);
+		}
+	}
 
 }

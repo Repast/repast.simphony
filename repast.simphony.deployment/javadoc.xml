@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Build the Repast JavaDoc
 
-	Working as of Release 2.8 Nov 2020
+	Working as of Release 2.9 Oct 2021
 
 	***** BEFORE RUNNING ***** 
 		- Update the version number in the document title
@@ -33,10 +33,14 @@
 	          
 	        * -frames options enables html frames which is now disabled by default
 	        
-	        * - -ignore-source-errors is needed otherwise javadoc will fail due
+	        * -ignore-source-errors is needed otherwise javadoc will fail due
 	          to the numerous source warnings for things like groovy classes.
+	          
+	        * -no-module-directories specifies not to insert the module name in the
+	          URL href path, since the Repast projects are not modularized, this would
+	          otherwise insert <undefined> in the path.
 	            
-	        * - -frames will generate frames (deprecated)
+	        * -frames will generate frames (deprecated)
 -->
 
 
@@ -48,11 +52,11 @@
 			author="true" 
 			version="true" 
 			use="true" 
-			windowtitle="Repast Simphony 2.8 API" 
+			windowtitle="Repast Simphony 2.9 API" 
 			useexternalfile="yes"
 			nohelp="false"
 			noindex="false"
-			additionalparam="--ignore-source-errors">
+			additionalparam="--ignore-source-errors --no-module-directories">
 			
 			<!-- Link to online Java API - should match JDK version used to generate javadoc -->
 			<link href="https://docs.oracle.com/en/java/javase/11/docs/api"/>

@@ -29,6 +29,12 @@ import repast.simphony.visualization.visualization3D.style.Style3D;
  */
 public abstract class AbstractLabel implements Label {
 
+	// TODO Workaround to fix a problem in jogl Font3D that uses a ServiceLoader with
+	//      the default Java classloader instead of the Repast classloader.
+	static {
+		Thread.currentThread().setContextClassLoader(AbstractLabel.class.getClassLoader());
+	}
+	
   private static final float SCALE = 3800f;
   protected String label;
   protected Style3D.LabelPosition position;

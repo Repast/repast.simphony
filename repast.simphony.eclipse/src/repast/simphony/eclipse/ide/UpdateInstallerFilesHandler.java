@@ -21,7 +21,8 @@ import repast.simphony.eclipse.util.Utilities;
 
 /**
  * Handler for updating the user model installer files to the latest version
- *   contained in the Repast plugin location.
+ *   contained in the Repast plugin location.  This will overwrite the user /installer
+ *   files with new IzPack config files
  * 
  * @author Eric Tatara
  *
@@ -85,8 +86,10 @@ public class UpdateInstallerFilesHandler extends AbstractHandler {
 					// Do the file update
 					if (doUpdate){
 						try {
-							Utilities.createModelInstallerFiles(srcFolder,  new NullProgressMonitor(), variableMap);
-							
+							// Copy the model installer builder IzPack config files
+				      IFolder destFolder = srcFolder.getFolder("../installer");
+				      Utilities.copyFolderFromPluginInstallation("installer", destFolder,  variableMap, new NullProgressMonitor());
+				      				      
 							MessageDialog.openInformation(HandlerUtil.getActiveShell(event), 
 									"Model installer update", 
 									"Installer files updated successfully.");

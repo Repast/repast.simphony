@@ -2,7 +2,35 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast groovy
 Bundle-SymbolicName: repast.simphony.groovy
-Bundle-Version: 2.8.0
-Export-Package: repast.simphony.groovy.math
+Bundle-Version: 2.9.0
+Export-Package: groovy.inspect.swingui,
+ groovy.model,
+ groovy.swing,
+ groovy.swing.binding,
+ groovy.swing.factory,
+ groovy.swing.impl,
+ groovy.swing.model,
+ groovy.swing.table,
+ groovy.text,
+ groovy.text.markup,
+ groovy.util,
+ groovy.util.slurpersupport,
+ groovy.xml,
+ groovy.xml.dom,
+ groovy.xml.markupsupport,
+ groovy.xml.slurpersupport,
+ groovy.xml.streamingmarkupsupport,
+ org.apache.groovy.swing.binding,
+ org.apache.groovy.swing.extensions,
+ org.apache.groovy.xml.extensions,
+ org.apache.groovy.xml.tools,
+ org.codehaus.groovy.binding,
+ org.codehaus.groovy.runtime,
+ org.codehaus.groovy.tools.xml,
+ repast.simphony.groovy.math
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
+Require-Bundle: org.codehaus.groovy;bundle-version="3.0.8"
+Bundle-ClassPath: lib/groovy-swing-3.0.8.jar,
+ lib/groovy-templates-3.0.8.jar,
+ lib/groovy-xml-3.0.8.jar
