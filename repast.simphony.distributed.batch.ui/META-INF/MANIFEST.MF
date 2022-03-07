@@ -10,11 +10,13 @@ Require-Bundle: repast.simphony.scenario,
  repast.simphony.distributed.batch,
  repast.simphony.runtime
 Bundle-ClassPath: .,
- lib/log4j-1.2.16.jar,
  lib/jgoodies-forms-1.7.1.jar,
  lib/jgoodies-binding-2.9.0.jar,
  lib/jgoodies-common-1.6.0.jar,
  bin/,
- bin-standalone/
+ bin-standalone/,
+ lib/log4j-1.2-api-2.17.2.jar,
+ lib/log4j-api-2.17.2.jar,
+ lib/log4j-core-2.17.2.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
