@@ -283,14 +283,23 @@ public class OneRunRunner implements RunListener {
     }
 
     private void initMessageCenter(Path root) throws ScenarioLoadException {
-        Properties props = new Properties();
         try (BufferedReader reader = Files
                 .newBufferedReader(Paths.get(root.toAbsolutePath().toString(), "MessageCenter.log4j.properties"))) {
-            props.load(reader);
+            Properties orig = new Properties();
+            orig.load(reader);
+            Properties props = new Properties(orig);
+            // replace any references to MessageCenterLayout with PatternLayout as
+            // MessageCenterLayout is incompatible with log4j-2
+            for (Map.Entry<Object, Object> entry : orig.entrySet()) {
+                if (entry.getValue().toString().trim().equals("simphony.util.messages.MessageCenterLayout")) {
+                    // System.out.println("Replacing: " + entry.getKey());
+                    props.put(entry.getKey(), "org.apache.log4j.PatternLayout");
+                }
+            }
+            PropertyConfigurator.configure(props);
         } catch (IOException e) {
             throw new ScenarioLoadException(e);
         }
-        PropertyConfigurator.configure(props);
     }
 
     private void loadParameters(Path scenario) throws ParserConfigurationException, SAXException, IOException {
