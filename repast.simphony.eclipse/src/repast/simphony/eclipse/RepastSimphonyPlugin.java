@@ -36,7 +36,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
     public static final String REPAST_SIMPHONY_PLUGIN_ID = "repast.simphony.eclipse";
     public static final String REPAST_SIMPHONY_NATURE_ID = REPAST_SIMPHONY_PLUGIN_ID + ".repast_simphony_nature";
 
-    public static final String REPAST_SIMPHONY_PLUGIN_VERSION = "2.9.0";
+    public static final String REPAST_SIMPHONY_PLUGIN_VERSION = "2.9.1";
 
     public static final String JAR_FILE = "repast.simphony.bin_and_src.jar";
     public static final String JAR_PROJECT = "repast.simphony.bin_and_src_" + REPAST_SIMPHONY_PLUGIN_VERSION;
@@ -52,7 +52,9 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javassist-3.17.1-GA.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf-boot.jar",
-            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-1.2.16.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-1.2-api-2.17.2.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-api-2.17.2.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-core-2.17.2.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.7.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
@@ -65,7 +67,9 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/javassist-3.17.1-GA.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jpf-boot.jar",
-            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-1.2.16.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-1.2-api-2.17.2.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-api-2.17.2.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/log4j-core-2.17.2.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.7.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",

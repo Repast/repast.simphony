@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultListModel;
 import javax.xml.parsers.ParserConfigurationException;
@@ -255,9 +256,18 @@ public class HeadlessMain {
 			if (propsFile.length() == 0)
 				propsFile = "../repast.simphony.distributed.batch/config/SSH.MessageCenter.log4j.properties";
 
-			Properties props = new Properties();
+			Properties orig = new Properties();
 			File in = new File(propsFile);
-			props.load(new FileInputStream(in));
+			orig.load(new FileInputStream(in));
+			Properties props = new Properties(orig);
+			// replace any references to MessageCenterLayout with PatternLayout as
+			// MessageCenterLayout is incompatible with log4j-2
+            for (Entry<Object, Object> entry : orig.entrySet()) {
+                if (entry.getValue().toString().trim().equals("simphony.util.messages.MessageCenterLayout")) {
+                    // System.out.println("Replacing: " + entry.getKey());
+                    props.put(entry.getKey(), "org.apache.log4j.PatternLayout");
+                }
+            }
 			PropertyConfigurator.configure(props);
 
 			// Create bean

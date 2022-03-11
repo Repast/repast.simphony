@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast gis visualization
 Bundle-SymbolicName: repast.simphony.gis.visualization
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Bundle-Vendor: Argonne National Laboratory
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: libs.ext,

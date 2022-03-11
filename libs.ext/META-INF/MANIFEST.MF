@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast libs ext
 Bundle-SymbolicName: libs.ext
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Bundle-ClassPath: lib/clibwrapper_jiio.jar,
  lib/gluegen-rt.jar,
  lib/jai_codec.jar,

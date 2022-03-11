@@ -19,7 +19,7 @@
     <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-11.0.12+7"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dswt.autoScale=200"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dswt.autoScale=200 -Xmx4096m"/>
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="org.eclipse.platform.ide"/>
     <setAttribute key="selected_target_bundles">
@@ -73,6 +73,7 @@
         <setEntry value="org.apache.batik.i18n@default:default"/>
         <setEntry value="org.apache.batik.parser@default:default"/>
         <setEntry value="org.apache.batik.pdf@default:default"/>
+        <setEntry value="org.apache.batik.svggen.source"/>
         <setEntry value="org.apache.batik.svggen@default:default"/>
         <setEntry value="org.apache.batik.transcoder@default:default"/>
         <setEntry value="org.apache.batik.util*1.14.0.v20210324-0332@default:default"/>

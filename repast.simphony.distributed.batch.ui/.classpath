@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.17.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.17.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.17.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -11,7 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-binding-2.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common-1.6.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-forms-1.7.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/repast.simphony.distributed.batch"/>
 	<classpathentry kind="output" path="bin"/>

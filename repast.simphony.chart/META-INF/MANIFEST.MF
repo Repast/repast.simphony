@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast chart
 Bundle-SymbolicName: repast.simphony.chart
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Bundle-ClassPath: lib/jcommon-1.0.23.jar,
  lib/jfreechart-1.0.19.jar
 Export-Package: com.keypoint,

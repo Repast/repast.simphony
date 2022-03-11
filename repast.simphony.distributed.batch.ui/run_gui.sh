@@ -1,7 +1,7 @@
 #! /bin/bash
 
 LIB=/Users/nick/Documents/repos/repast.simphony
-CLASSPATH=$LIB/repast.simphony.distributed.batch.ui/lib/log4j-1.2.16.jar
+CLASSPATH=$LIB/repast.simphony.runtime/lib/log4j-1.2-api-2.17.2.jar
 CLASSPATH=$CLASSPATH:$LIB/
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.distributed.batch.ui/bin
 CLASSPATH=$CLASSPATH:$LIBrepast.simphony.distributed.batch.ui/lib/jgoodies-forms-1.4.0.jar
@@ -20,7 +20,9 @@ CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/saf.core.runtime.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/jpf.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/jpf-boot.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/javassist-3.15.0.GA.jar
-CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/log4j-1.2.16.jar
+CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/log4j-1.2-api-2.17.2.jar
+CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/log4j-api-2.17.2.jar
+CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/log4j-core-2.17.2.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/commons-cli-1.2.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/commons-logging-1.1.1.jar
 CLASSPATH=$CLASSPATH:$LIB/repast.simphony.runtime/lib/xstream-1.4.2.jar
