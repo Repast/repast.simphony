@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast integration
 Bundle-SymbolicName: repast.simphony.integration;singleton:=true
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Bundle-ClassPath: bin/,
  lib/cglib-nodep-2.1_3.jar,
  lib/commons-exec-1.1.jar,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast weka
 Bundle-SymbolicName: repast.simphony.weka
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,
