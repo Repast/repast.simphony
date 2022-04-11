@@ -1,11 +1,15 @@
 package repast.simphony.batch;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
@@ -39,10 +43,8 @@ public class ClusterOutputCombiner {
 		this.workingDir = workingDir;
 		this.outputDir = outputDir;
 		this.configFile = configProps;
-		Properties props = new Properties();
-		File in = new File("MessageCenter.log4j.properties");
-		props.load(new FileInputStream(in));
-		PropertyConfigurator.configure(props);
+		Properties props = MessageCenter.updateProperties("MessageCenter.log4j.properties");
+        PropertyConfigurator.configure(props);
 	}
 
 	private List<OutputPattern> createPatterns() throws IOException,

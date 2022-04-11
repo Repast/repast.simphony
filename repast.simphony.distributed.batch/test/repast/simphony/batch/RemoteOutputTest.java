@@ -41,6 +41,7 @@ import repast.simphony.batch.ssh.SSHSessionFactory;
 import repast.simphony.batch.ssh.Session;
 import repast.simphony.batch.ssh.StatusException;
 import repast.simphony.data2.engine.FileSinkControllerActionIO;
+import simphony.util.messages.MessageCenter;
 
 /**
  * @author Nick Collier
@@ -56,7 +57,11 @@ public class RemoteOutputTest {
   private Set<File> expectedFiles = new HashSet<File>();
 
   static {
-    PropertyConfigurator.configure("./config/SSH.MessageCenter.log4j.properties");
+    try {
+        MessageCenter.updateProperties("./config/SSH.MessageCenter.log4j.properties");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     String home = System.getProperty("user.home");
     SSHSessionFactory.init(home + "/.ssh");
   }

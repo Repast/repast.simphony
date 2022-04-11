@@ -101,9 +101,7 @@ public class LocalDriver {
 
 	public void run(String propsFile) throws IOException {
 		// load the message center log4j properties.
-		Properties props = new Properties();
-		File in = new File("./MessageCenter.log4j.properties");
-		props.load(new FileInputStream(in));
+		Properties props = MessageCenter.updateProperties("./MessageCenter.log4j.properties");
 		PropertyConfigurator.configure(props);
 
 		props = new Properties();
