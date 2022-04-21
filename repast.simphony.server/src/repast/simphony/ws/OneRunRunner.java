@@ -283,14 +283,12 @@ public class OneRunRunner implements RunListener {
     }
 
     private void initMessageCenter(Path root) throws ScenarioLoadException {
-        Properties props = new Properties();
-        try (BufferedReader reader = Files
-                .newBufferedReader(Paths.get(root.toAbsolutePath().toString(), "MessageCenter.log4j.properties"))) {
-            props.load(reader);
+        try {
+            Properties props = MessageCenter.updateProperties(Paths.get(root.toAbsolutePath().toString(), "MessageCenter.log4j.properties").toString());
+            PropertyConfigurator.configure(props);
         } catch (IOException e) {
             throw new ScenarioLoadException(e);
         }
-        PropertyConfigurator.configure(props);
     }
 
     private void loadParameters(Path scenario) throws ParserConfigurationException, SAXException, IOException {

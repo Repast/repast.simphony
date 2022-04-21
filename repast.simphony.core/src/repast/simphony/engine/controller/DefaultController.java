@@ -33,7 +33,7 @@ import simphony.util.messages.MessageCenter;
 public class DefaultController implements Controller {
   private static final int FIRST_RUN_NUMBER = 1;
 
-  private static final long serialVersionUID = -202102336096207785L;
+  private static final long serialVersionUID = -202202336096207785L;
 
   private static final MessageCenter msgCenter = MessageCenter
       .getMessageCenter(DefaultController.class);

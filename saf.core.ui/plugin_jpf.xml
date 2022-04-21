@@ -3,7 +3,7 @@
 <plugin class="saf.core.ui.UIPlugin" id="saf.core.ui" version="">
   
   <attributes>
-    <attribute id="simphony" value="2.9.0"/>
+    <attribute id="simphony" value="2.9.1"/>
   </attributes>
 	
   <requires>

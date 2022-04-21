@@ -27,11 +27,17 @@ import repast.simphony.batch.ssh.RemoteSession;
 import repast.simphony.batch.ssh.SSHSessionFactory;
 import repast.simphony.batch.ssh.Session;
 import repast.simphony.batch.ssh.StatusException;
+import simphony.util.messages.MessageCenter;
 
 public class FindOutputTests {
 
   static {
-    PropertyConfigurator.configure("./config/SSH.MessageCenter.log4j.properties");
+      
+    try {
+        PropertyConfigurator.configure(MessageCenter.updateProperties("./config/SSH.MessageCenter.log4j.properties"));
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     String home = System.getProperty("user.home");
     SSHSessionFactory.init(home + "/.ssh");
   }

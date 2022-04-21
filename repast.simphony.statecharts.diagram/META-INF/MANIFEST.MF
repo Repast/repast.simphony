@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast statecharts diagram
 Bundle-SymbolicName: repast.simphony.statecharts.diagram; singleton:=true
-Bundle-Version: 2.9.0
+Bundle-Version: 2.9.1
 Bundle-ClassPath: bin/,
  .
 Bundle-Activator: repast.simphony.statecharts.part.StatechartDiagramEditorPlugin
@@ -51,8 +51,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.gmf.runtime.draw2d.ui.render,
  org.w3c.dom.svg,
  org.apache.batik.svggen,
- org.apache.batik.svggen.source;resolution:=optional,
- org.apache.batik.ext.awt,
  repast.simphony.eclipse,
  org.eclipse.jdt.groovy.core,
  org.junit,
