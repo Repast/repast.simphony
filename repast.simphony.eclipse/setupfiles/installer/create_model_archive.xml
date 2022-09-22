@@ -68,7 +68,9 @@
 			<replacefilter token="$REPAST_VERSION" value="${REPAST_VERSION}" />
 			<replacefilter token="$Groovy_Jar" value="${Groovy_Jar}" />
 		</replace>
-		        
+		       
+		<delete file="${output_file}"/>    
+		
         <!-- Create the zip archive -->
         <zip destfile="${output_file}">	
         	<!-- Include the complete model folder -->
