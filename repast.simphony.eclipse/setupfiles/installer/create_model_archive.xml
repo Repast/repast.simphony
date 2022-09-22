@@ -2,6 +2,8 @@
 
 <project name="BuildModelArchive" default="build_archive" basedir="..">
 
+	<record name="build_model_archive.log" loglevel="verbose" action="start"/>
+	
 	<target name="build_archive">
 		<!-- Location of the Eclipse /plugins folder -->
 		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
