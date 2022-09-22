@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast freezedry
 Bundle-SymbolicName: repast.simphony.freezedry
-Bundle-Version: 2.9.1
+Bundle-Version: 2.10.0
 Export-Package: repast.simphony.freezedry.engine,
  repast.simphony.freezedry.gui,
  repast.simphony.freezedry.wizard

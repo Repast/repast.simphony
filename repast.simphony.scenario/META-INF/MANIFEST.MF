@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast scenario
 Bundle-SymbolicName: repast.simphony.scenario;singleton:=true
-Bundle-Version: 2.9.1
+Bundle-Version: 2.10.0
 Require-Bundle: repast.simphony.runtime,
  repast.simphony.core,
  org.junit,
