@@ -39,6 +39,7 @@
                 <xs:element name="lateShortcutInstall" minOccurs="0"/>
                 <xs:element name="programGroup" type="programGroupType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="shortcut" type="shortcutType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="previousDisabled" minOccurs="0" default="false"/>
             </xs:choice>
             <xs:attribute name="version" type="xs:string" fixed="5.0" use="required"/>
         </xs:complexType>

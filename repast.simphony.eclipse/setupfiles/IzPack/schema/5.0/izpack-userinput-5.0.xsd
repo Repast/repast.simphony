@@ -284,6 +284,14 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
+                    <xs:attribute name="omitFromAuto" type="xs:boolean" use="optional">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Whether to omit the field variable's value from being written to the auto-install.xml
+                                    record initiated from the FinishPanel (if used).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="os" minOccurs="0" maxOccurs="unbounded">
