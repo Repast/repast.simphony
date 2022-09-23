@@ -398,7 +398,7 @@ public class RETest extends TestCase {
     assertEquals(2.5, RepastEssentials.GetTickCount());
     
     Quantity other_quant = RepastEssentials.GetTickCountInTimeUnits();
-  	boolean same = other_quant.isEquivalentTo(quant);
+  	boolean same = other_quant.toString().equals(quant.toString());
   	assertTrue(same);
     
   }
