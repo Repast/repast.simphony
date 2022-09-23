@@ -1147,7 +1147,7 @@ public class ScheduleTest extends TestCase {
   	double tick = schedule.getTickCount();
   	
   	Quantity other_quant = schedule.getTickCountInTimeQuantity();
-  	boolean same = other_quant.isEquivalentTo(quant);
+  	boolean same = other_quant.toString().equals(quant.toString());
   	assertTrue(same);
   	  	
   }
