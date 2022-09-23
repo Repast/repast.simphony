@@ -50,6 +50,8 @@ import simphony.settings.SettingsRegistry;
 import simphony.util.messages.MessageCenter;
 import simphony.util.messages.MessageEvent;
 import simphony.util.messages.MessageEventListener;
+import tech.units.indriya.function.Calculus;
+import tech.units.indriya.function.DefaultNumberSystem;
 
 /**
  * Main application mediator type object for Repast Simphony runtime.
@@ -58,6 +60,18 @@ import simphony.util.messages.MessageEventListener;
  */
 public class RSApplication implements TickListener, RunListener {
 
+	/*
+	 * The new java units api implementation "indriya" uses a java ServiceLoader that unfortunately
+	 * uses the default classloader instead of the java plugin classloader, so it can't find
+	 * the services.  Fortunately there is only one NumberSystem implemented, so there is no
+	 * reason to use the ServiceLoader approach and we can just mannually set it here.
+	 * 
+	 * TODO Check if this is fixed in future units release then we can remove it.
+	 */
+	static {
+		Calculus.setCurrentNumberSystem(new DefaultNumberSystem());
+	}
+	
   private static final String LAST_LOADED_SCENARIO_KEY = "LastLoadedScenario";
   private static final String DEFAULT_LAYOUT_FILE = "default_frame_layout.xml";
 
