@@ -2,7 +2,7 @@ package repast.simphony.visualization.gis3D;
 
 import java.awt.Color;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;

@@ -9,6 +9,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFilter;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.PNode;
 import org.piccolo2d.event.PDragSequenceEventHandler;
@@ -22,15 +30,6 @@ import repast.simphony.visualization.editor.EditorNotifier;
 import repast.simphony.visualization.editor.FloatingList;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import repast.simphony.visualization.gis.DisplayGIS;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.GeometryFilter;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Event handler for moving gis objects.
@@ -71,7 +70,7 @@ public class GISMoveHandler extends PDragSequenceEventHandler implements PEditor
 
 
   private List<Object> findObjects(PInputEvent event) {
-    com.vividsolutions.jts.geom.Point point = factory.createPoint(new Coordinate(event.getPosition().getX(),
+    org.locationtech.jts.geom.Point point = factory.createPoint(new Coordinate(event.getPosition().getX(),
             event.getPosition().getY()));
     Geography geog = display.getGeography();
     Geometry gEnv = point.buffer(GISEditorUtilities.calcPointPickBuffer(point.getCoordinate(),

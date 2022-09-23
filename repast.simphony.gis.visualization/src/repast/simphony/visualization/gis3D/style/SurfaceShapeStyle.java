@@ -1,8 +1,8 @@
 package repast.simphony.visualization.gis3D.style;
 
-import gov.nasa.worldwind.render.SurfaceShape;
-
 import java.awt.Color;
+
+import gov.nasa.worldwind.render.SurfaceShape;
 
 /**
  * Interface for surface shapes (lines, polygons) in the 3D GIS display.

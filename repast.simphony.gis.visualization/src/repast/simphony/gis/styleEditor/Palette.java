@@ -1,9 +1,9 @@
 package repast.simphony.gis.styleEditor;
 
+import java.awt.Color;
+
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-
-import java.awt.*;
 
 /**
  * @author Nick Collier

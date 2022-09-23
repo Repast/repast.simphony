@@ -12,14 +12,15 @@ import java.util.Map;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
+import org.geotools.map.MapBoundsEvent;
+import org.geotools.map.MapBoundsListener;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapBoundsEvent;
-import org.geotools.map.event.MapBoundsListener;
-import org.geotools.map.event.MapLayerListEvent;
-import org.geotools.map.event.MapLayerListListener;
-import org.geotools.map.event.MapLayerListener;
+import org.geotools.map.MapLayerListEvent;
+import org.geotools.map.MapLayerListListener;
+import org.geotools.map.MapLayerListener;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.datum.DefaultEllipsoid;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.PCanvas;
@@ -36,8 +37,6 @@ import repast.simphony.gis.tools.DistanceTool;
 import repast.simphony.gis.tools.MapTool;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * This will show a MapContext and adds support for various tools.
@@ -345,7 +344,7 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   @Override
   public void layerAdded(MapLayerListEvent event) {
-    addMapLayer(event.getToIndex(), event.getElement());
+    addMapLayer(event.getToIndex(), event.getLayer());
   }
 
   @Override
@@ -354,15 +353,15 @@ public class PGISCanvas extends PCanvas implements MapLayerListListener,
 
   @Override
   public void layerMoved(MapLayerListEvent event) {
-    Layer layer = event.getElement();
+    Layer layer = event.getLayer();
     int toIndex = event.getToIndex();
     removeMapLayer(layer);
-    addMapLayer(toIndex, event.getElement());
+    addMapLayer(toIndex, event.getLayer());
   }
 
   @Override
   public void layerRemoved(MapLayerListEvent event) {
-    Layer mapLayer = event.getElement();
+    Layer mapLayer = event.getLayer();
     removeMapLayer(mapLayer);
   }
 

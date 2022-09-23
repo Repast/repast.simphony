@@ -66,7 +66,7 @@ public class RuleCreator {
 		  att = feature.getAttribute(attributeName);
 		
 		Rule rule = fac.createRule();
-		rule.setTitle(attributeName);
+		rule.getDescription().setTitle(attributeName);
 
 		Expression attExp = builder.attributeExpression(attributeName);
 		Expression lit = filterFactory.literal(att);

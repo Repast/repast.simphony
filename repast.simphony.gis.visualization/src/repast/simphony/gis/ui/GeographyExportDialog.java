@@ -37,11 +37,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import repast.simphony.context.Context;
-import repast.simphony.space.gis.Geography;
-import repast.simphony.space.gis.ShapefileWriter;
-import simphony.util.messages.MessageCenter;
-
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -51,6 +46,11 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+
+import repast.simphony.context.Context;
+import repast.simphony.space.gis.Geography;
+import repast.simphony.space.gis.ShapefileWriter;
+import simphony.util.messages.MessageCenter;
 
 /**
  * @author User #2

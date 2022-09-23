@@ -1,18 +1,5 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.event.PositionListener;
-import gov.nasa.worldwind.event.RenderingEvent;
-import gov.nasa.worldwind.event.RenderingListener;
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.util.Logging;
-import gov.nasa.worldwind.util.NetworkCheckThread;
-import gov.nasa.worldwind.util.NetworkStatus;
-import gov.nasa.worldwind.util.WWMath;
-
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -26,6 +13,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.event.PositionEvent;
+import gov.nasa.worldwind.event.PositionListener;
+import gov.nasa.worldwind.event.RenderingEvent;
+import gov.nasa.worldwind.event.RenderingListener;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.NetworkCheckThread;
+import gov.nasa.worldwind.util.NetworkStatus;
+import gov.nasa.worldwind.util.WWMath;
 
 /**
  * This implementation of WW StatusBar fixes bugs relating to disposal

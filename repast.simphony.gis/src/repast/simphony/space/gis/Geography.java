@@ -4,15 +4,14 @@
 package repast.simphony.space.gis;
 
 import java.util.Collection;
-import java.util.Set;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 
 import repast.simphony.space.projection.Projection;
 
@@ -96,7 +95,6 @@ public interface Geography<T> extends Projection<T>{
    */
   Iterable<T> getObjectsWithin(Envelope envelope);
 
-
   /**
    * Queries this geography for objects that MAY intersect the
    * the specified envelope. This provides a first level
@@ -135,8 +133,7 @@ public interface Geography<T> extends Projection<T>{
    * @param angleInRadians the angle along which to move
    * @return the geometric location the object was moved to
    */
-  Geometry moveByVector(T object, double distance,
-                        double angleInRadians);
+  Geometry moveByVector(T object, double distance, double angleInRadians);
 
   /**
    * Moves the specified object the specified distance along the specified angle.
@@ -147,8 +144,7 @@ public interface Geography<T> extends Projection<T>{
    * @param angleInRadians the angle along which to move
    * @return the geometric location the object was moved to
    */
-  Geometry moveByVector(T object, double distance, Unit unit,
-                        double angleInRadians);
+  Geometry moveByVector(T object, double distance, Unit<Length> unit, double angleInRadians);
 
   /**
    * Displaces the specified object by the specified lon and lat amount.
@@ -158,8 +154,7 @@ public interface Geography<T> extends Projection<T>{
    * @param latShift the amount to move latitudinaly
    * @return the new geometry of the object
    */
-  Geometry moveByDisplacement(T object, double lonShift,
-                              double latShift);
+  Geometry moveByDisplacement(T object, double lonShift, double latShift);
 
   /**
    * Gets the current coordinate reference system for this geometry.
@@ -184,14 +179,13 @@ public interface Geography<T> extends Projection<T>{
    */
   void setAdder(GISAdder<T> adder);
 
-
   /**
    * Gets the coordinate reference system's axis units.
    *
    * @param axis the axis index.
    * @return the coordinate reference system's axis units.
    */
-  Unit getUnits(int axis);
+  Unit<?> getUnits(int axis);
 
   /**
    * Gets an iterable over all the objects within the specified envelope

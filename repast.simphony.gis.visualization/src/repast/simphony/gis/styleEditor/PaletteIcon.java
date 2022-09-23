@@ -1,9 +1,12 @@
 package repast.simphony.gis.styleEditor;
 
-import repast.simphony.gis.display.SquareIcon;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+
+import repast.simphony.gis.display.SquareIcon;
 
 /**
  * @author Nick Collier

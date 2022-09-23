@@ -44,8 +44,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 
-import simphony.util.messages.MessageCenter;
-
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -54,6 +52,8 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+
+import simphony.util.messages.MessageCenter;
 
 /**
  * The "Value Style" panel in the GisStyleEditor dialog that provides the

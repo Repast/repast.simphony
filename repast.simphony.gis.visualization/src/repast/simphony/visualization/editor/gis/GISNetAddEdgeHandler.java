@@ -9,6 +9,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.PCanvas;
 import org.piccolo2d.event.PBasicInputEventHandler;
@@ -21,10 +24,6 @@ import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.visualization.editor.FloatingList;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import repast.simphony.visualization.gis.DisplayGIS;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Event handler for adding edges to gis.
@@ -66,7 +65,7 @@ public class GISNetAddEdgeHandler extends PBasicInputEventHandler implements PEd
   }
 
   private List<Object> findObjects(PInputEvent event) {
-    com.vividsolutions.jts.geom.Point point = factory.createPoint(new Coordinate(event.getPosition().getX(), event.getPosition().getY()));
+    org.locationtech.jts.geom.Point point = factory.createPoint(new Coordinate(event.getPosition().getX(), event.getPosition().getY()));
     Geometry gEnv = point.buffer(.001);
     java.util.List<Object> objs = new ArrayList<Object>();
     Geography geog = display.getGeography();

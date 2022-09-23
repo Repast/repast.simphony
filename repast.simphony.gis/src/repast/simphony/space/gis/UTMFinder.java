@@ -9,6 +9,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.cs.DefaultCartesianCS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.geotools.referencing.operation.projection.TransverseMercator;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchIdentifierException;
@@ -19,14 +20,11 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.TransformException;
 
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Finds the UTM CRS appropriate to a specified lon, lat location.

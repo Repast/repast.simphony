@@ -10,6 +10,7 @@ import java.awt.Cursor;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
@@ -20,8 +21,6 @@ import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.visualization.editor.PEditorEventListener;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * @author Nick Collier Date: Feb 26, 2008 11:17:47 AM

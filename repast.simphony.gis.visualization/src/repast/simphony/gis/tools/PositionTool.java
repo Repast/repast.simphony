@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -15,8 +16,6 @@ import org.piccolo2d.event.PInputEvent;
 
 import repast.simphony.gis.display.PiccoloMapPanel;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class PositionTool extends PBasicInputEventHandler implements MapTool {
 

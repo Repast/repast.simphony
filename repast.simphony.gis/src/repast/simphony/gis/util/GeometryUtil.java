@@ -1,33 +1,31 @@
-package repast.simphony.gis.util;
+	package repast.simphony.gis.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.measure.unit.SI;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
 import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.shape.random.RandomPointsBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.shape.random.RandomPointsBuilder;
 
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.RandomEngine;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
+import tech.units.indriya.unit.Units;
 
 /**
  * Utilities methods for geometries
@@ -44,22 +42,22 @@ public class GeometryUtil {
   }
   
   /**
-   * Finds the geometry type of the specified com.vividsolutions.jts.geom class.
+   * Finds the geometry type of the specified org.locationtech.jts.geom class.
    *
-   * @param geom the com.vividsolutions.jts.geom class whose type we want.
-   * @return the geometry type of the specified com.vividsolutions.jts.geom class.
+   * @param geom the org.locationtech.jts.geom class whose type we want.
+   * @return the geometry type of the specified org.locationtech.jts.geom class.
    */
   public static GeometryType findGeometryType(Class geomClass) {
-    if (com.vividsolutions.jts.geom.Point.class.equals(geomClass) || 
-    		com.vividsolutions.jts.geom.MultiPoint.class.equals(geomClass))
+    if (org.locationtech.jts.geom.Point.class.equals(geomClass) || 
+    		org.locationtech.jts.geom.MultiPoint.class.equals(geomClass))
       return GeometryType.POINT;
     
-    else if (com.vividsolutions.jts.geom.Polygon.class.equals(geomClass) || 
-    		     com.vividsolutions.jts.geom.MultiPolygon.class.equals(geomClass))
+    else if (org.locationtech.jts.geom.Polygon.class.equals(geomClass) || 
+    		     org.locationtech.jts.geom.MultiPolygon.class.equals(geomClass))
       return GeometryType.POLYGON;
     
-    else if (com.vividsolutions.jts.geom.LineString.class.equals(geomClass) || 
-    		     com.vividsolutions.jts.geom.MultiLineString.class.equals(geomClass))
+    else if (org.locationtech.jts.geom.LineString.class.equals(geomClass) || 
+    		     org.locationtech.jts.geom.MultiLineString.class.equals(geomClass))
       return GeometryType.LINE;
     
     else return GeometryType.OTHER;
@@ -72,9 +70,9 @@ public class GeometryUtil {
    * @return the geometry type of the specified geometry.
    */
   public static GeometryType findGeometryType(Geometry geom) {
-  	if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
+  	if (geom instanceof org.locationtech.jts.geom.Point || geom instanceof MultiPoint)
       return GeometryType.POINT;
-    else if (geom instanceof com.vividsolutions.jts.geom.Polygon || geom instanceof MultiPolygon)
+    else if (geom instanceof org.locationtech.jts.geom.Polygon || geom instanceof MultiPolygon)
       return GeometryType.POLYGON;
     else if (geom instanceof LineString || geom instanceof MultiLineString)
       return GeometryType.LINE;
@@ -102,9 +100,9 @@ public class GeometryUtil {
    */
   public static GeometryType findGeometryType(SimpleFeature feature) {
     Object geom = feature.getDefaultGeometry();
-    if (geom instanceof com.vividsolutions.jts.geom.Point || geom instanceof MultiPoint)
+    if (geom instanceof org.locationtech.jts.geom.Point || geom instanceof MultiPoint)
       return GeometryType.POINT;
-    else if (geom instanceof com.vividsolutions.jts.geom.Polygon || geom instanceof MultiPolygon)
+    else if (geom instanceof org.locationtech.jts.geom.Polygon || geom instanceof MultiPolygon)
       return GeometryType.POLYGON;
     else if (geom instanceof LineString || geom instanceof MultiLineString)
       return GeometryType.LINE;
@@ -124,7 +122,7 @@ public class GeometryUtil {
 	 * @return the buffer geometry
 	 */
 	public static Geometry generateBuffer(Geography geography, Geometry geom, double distance){
-		boolean convert = !geography.getUnits(0).equals(SI.METER);
+		boolean convert = !geography.getUnits(0).equals(Units.METRE);
 
 		CoordinateReferenceSystem utm = null;
 		Geometry buffer = null;

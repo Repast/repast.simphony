@@ -7,14 +7,13 @@ import java.awt.Toolkit;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
+import org.locationtech.jts.geom.Envelope;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.event.PPanEventHandler;
 import org.piccolo2d.util.PBounds;
 
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * 

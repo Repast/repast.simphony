@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.RasterFactory;
 
 import org.geotools.coverage.Category;
@@ -22,9 +22,9 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.grid.io.UnknownFormat;
-import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.NumberRange;
+import org.geotools.util.factory.Hints;
 
 import simphony.util.messages.MessageCenter;
 

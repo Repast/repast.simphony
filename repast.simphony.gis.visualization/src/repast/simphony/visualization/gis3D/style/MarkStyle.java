@@ -1,12 +1,11 @@
 package repast.simphony.visualization.gis3D.style;
 
-import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.render.Offset;
-import gov.nasa.worldwind.render.WWTexture;
-
 import java.awt.Color;
 import java.awt.Font;
 
+import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.Offset;
+import gov.nasa.worldwind.render.WWTexture;
 import repast.simphony.visualization.gis3D.PlaceMark;
 
 /**

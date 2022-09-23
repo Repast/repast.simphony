@@ -65,9 +65,9 @@ public class ValueTableModel extends AbstractTableModel {
 				CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 		dsv.visit(style.featureTypeStyles().get(0).rules().get(0));
 		Rule rule = (Rule) dsv.getCopy();
-		rule.setTitle("<Default>");
+		rule.getDescription().setTitle("<Default>");
 		rule.setName("Default");
-		rule.setIsElseFilter(true);
+		rule.setElseFilter(true);
 		
 		return rule;
 	}
@@ -113,7 +113,7 @@ public class ValueTableModel extends AbstractTableModel {
 			}
 
 		} else if (columnIndex == 2) {
-			rule.setTitle(strVal);
+			rule.getDescription().setTitle(strVal);
 		}
 		fireTableRowsUpdated(rowIndex, rowIndex);
 	}

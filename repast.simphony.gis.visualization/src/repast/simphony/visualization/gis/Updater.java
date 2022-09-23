@@ -15,7 +15,9 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapLayerEvent;
+import org.geotools.map.MapLayerEvent;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateFilter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import repast.simphony.gis.display.RepastMapLayer;
@@ -24,9 +26,6 @@ import repast.simphony.space.gis.FeatureAgent;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.Geography;
 import simphony.util.ThreadUtilities;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
 
 /**
  * Handles the updating of a DisplayGIS w/r to agent adding, moving and removal.
