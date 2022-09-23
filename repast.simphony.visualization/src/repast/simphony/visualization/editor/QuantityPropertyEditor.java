@@ -1,10 +1,10 @@
 package repast.simphony.visualization.editor;
 
-import org.jscience.physics.amount.Amount;
-
-import repast.simphony.ui.probe.AmountConverter;
+import javax.measure.Quantity;
 
 import com.l2fprod.common.beans.editor.StringConverterPropertyEditor;
+
+import repast.simphony.ui.probe.QuantityConverter;
 
 /**
  * Adapts an AmountConverter into a PropertyEditor usable by the property sheet.
@@ -12,14 +12,14 @@ import com.l2fprod.common.beans.editor.StringConverterPropertyEditor;
  * @author Nick Collier
  * @deprecated 2D piccolo based code is being removed
  */
-public class AmountPropertyEditor extends StringConverterPropertyEditor {
+public class QuantityPropertyEditor extends StringConverterPropertyEditor {
 
-	AmountConverter converter = new AmountConverter();
+	QuantityConverter converter = new QuantityConverter();
 
 	@Override
 	protected String convertToString(Object o) {
-		if (o instanceof Amount) {
-			return converter.toString((Amount) o);
+		if (o instanceof Quantity) {
+			return converter.toString((Quantity) o);
 		} else {
 			return o.toString();
 		}

@@ -20,10 +20,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.measure.Quantity;
+
 import org.josql.QueryExecutionException;
 import org.josql.QueryParseException;
 import org.josql.QueryResults;
-import org.jscience.physics.amount.Amount;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.Contexts;
@@ -977,10 +978,9 @@ public class RepastEssentials {
 
 	}
 
-	public static Amount GetTickCountInTimeUnits() {
+	public static Quantity<?> GetTickCountInTimeUnits() {
 
-		return RunEnvironment.getInstance().getCurrentSchedule()
-				.getTickCountInTimeUnits();
+		return RunEnvironment.getInstance().getCurrentSchedule().getTickCountInTimeQuantity();
 
 	}
 

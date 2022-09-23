@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.measure.Quantity;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,8 +29,16 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableModel;
 
-import org.jscience.physics.amount.Amount;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
+import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
+import edu.uci.ics.jung.graph.Graph;
 import repast.simphony.context.Context;
 import repast.simphony.context.space.graph.ContextJungNetwork;
 import repast.simphony.engine.environment.RunState;
@@ -46,17 +55,6 @@ import repast.simphony.jung.tablemodels.WeightedConnectivityMatrixTableModel;
 import repast.simphony.ui.filters.FileExtensionFilter;
 import repast.simphony.ui.sparkline.SparklineJComponent;
 import repast.simphony.ui.table.TablePanel;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-
-import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
-import edu.uci.ics.jung.graph.Graph;
 
 /**
  * JPanel for displaying network anaylsis results.
@@ -264,8 +262,8 @@ public class JungWindow extends JPanel {
 					Object value = model.getValueAt(row, col);
 					if (value instanceof Number) {
 						newData[row] = ((Number) value).doubleValue();
-					} else if (value instanceof Amount) {
-						newData[row] = ((Amount) value).getEstimatedValue();
+					} else if (value instanceof Quantity) {
+						newData[row] = ((Quantity) value).getValue();
 					} else if (value instanceof String) {
 						newData[row] = Double.parseDouble((String) value);
 					} else {

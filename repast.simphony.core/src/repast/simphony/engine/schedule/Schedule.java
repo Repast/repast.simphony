@@ -1,9 +1,12 @@
 package repast.simphony.engine.schedule;
 
-import org.jscience.physics.amount.Amount;
-
-import javax.measure.unit.Unit;
 import java.util.List;
+
+import javax.measure.Quantity;
+
+import tech.units.indriya.function.Calculus;
+import tech.units.indriya.function.DefaultNumberSystem;
+import tech.units.indriya.quantity.Quantities;
 
 
 /**
@@ -24,6 +27,18 @@ import java.util.List;
  */
 public class Schedule implements ISchedule {
 
+	/*
+	 * The new java units api implementation "indriya" uses a java ServiceLoader that unfortunately
+	 * uses the default classloader instead of the java plugin classloader, so it can't find
+	 * the services.  Fortunately there is only one NumberSystem implemented, so there is no
+	 * reason to use the ServiceLoader approach and we can just mannually set it here.
+	 * 
+	 * TODO Check if this is fixed in future units release then we can remove it.
+	 */
+	static {
+		Calculus.setCurrentNumberSystem(new DefaultNumberSystem());
+	}
+	
   static final long serialVersionUID = 7686585829552316670L;
 
   protected ActionQueue actionQueue;
@@ -31,7 +46,14 @@ public class Schedule implements ISchedule {
   protected ScheduleGroup groupToExecute;
   protected ScheduleGroup endActions;
   protected ISchedulableActionFactory actionFactory;
-  protected Amount userTimeUnits;
+  
+  /**
+   * User time quantity converts some abstract quantity to a schedule tick value, and
+   * visa versa.  For example the user might want 1.0 tick to represent 2 time seconds.
+   * Java Quantity is generic, and we do not restrict the type to a *Time* quantity, so
+   * the tick can represent any quantity.
+   */
+  protected Quantity<?> userTimeQuantity;
 
   /**
    * Creates a Schedule that by default uses a DefaultSchedulableActionFactory to create its
@@ -73,11 +95,11 @@ public class Schedule implements ISchedule {
    *
    * @return the current tick count in user time units.
    */
-  public Amount getTickCountInTimeUnits() {
-    if (this.userTimeUnits == null) {
-      return Amount.valueOf(this.tickCount, Unit.ONE);
+  public Quantity<?> getTickCountInTimeQuantity() {
+    if (this.userTimeQuantity == null) {
+      return Quantities.getQuantity(this.tickCount, tech.units.indriya.AbstractUnit.ONE);
     } else {
-      return this.userTimeUnits.times(this.tickCount);
+      return this.userTimeQuantity.multiply(this.tickCount);
     }
   }
 
@@ -87,11 +109,12 @@ public class Schedule implements ISchedule {
    * @param timeUnitsToConvert the time units to convert.
    * @return the converted ticks.
    */
-  public Double convertTimeUnitsToTicks(Amount timeUnitsToConvert) {
-    if ((this.userTimeUnits == null || (this.userTimeUnits.getEstimatedValue() == 0.0))) {
-      return timeUnitsToConvert.getEstimatedValue();
-    } else {
-      return timeUnitsToConvert.divide(this.userTimeUnits).getEstimatedValue();
+  public Double convertTimeQuantityToTicks(Quantity<?> timeUnitsToConvert) {
+    if ((this.userTimeQuantity == null || (this.userTimeQuantity.getValue().doubleValue() == 0.0))) {
+      return timeUnitsToConvert.getValue().doubleValue();
+    } 
+    else {
+      return timeUnitsToConvert.divide(this.userTimeQuantity).getValue().doubleValue();
     }
   }
 
@@ -101,11 +124,11 @@ public class Schedule implements ISchedule {
    * @param ticks time units to convert.
    * @return the converted ticks.
    */
-  public Amount convertTicksToTimeUnits(double ticks) {
-    if (this.userTimeUnits == null) {
-      return Amount.valueOf(ticks, Unit.ONE);
+  public Quantity<?> convertTicksToTimeQuantity(double ticks) {
+    if (this.userTimeQuantity == null) {
+      return Quantities.getQuantity(ticks, tech.units.indriya.AbstractUnit.ONE);
     } else {
-      return this.userTimeUnits.times(ticks);
+      return this.userTimeQuantity.multiply(ticks);
     }
   }
 
@@ -114,8 +137,8 @@ public class Schedule implements ISchedule {
    *
    * @return the current user time units.
    */
-  public Amount getTimeUnits() {
-    return this.userTimeUnits;
+  public Quantity<?> getTimeQuantity() {
+    return this.userTimeQuantity;
   }
 
   /**
@@ -123,8 +146,8 @@ public class Schedule implements ISchedule {
    *
    * @param newUnits the new user time units.
    */
-  public void setTimeUnits(Amount newUnits) {
-    this.userTimeUnits = newUnits;
+  public void setTimeQuantity(Quantity<?> newUnits) {
+    this.userTimeQuantity = newUnits;
   }
 
   /**

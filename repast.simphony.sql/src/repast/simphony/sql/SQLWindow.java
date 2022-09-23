@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.measure.Quantity;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -31,15 +32,6 @@ import org.josql.QueryExecutionException;
 import org.josql.QueryParseException;
 import org.josql.QueryResults;
 import org.josql.contrib.JoSQLSwingTableModel;
-import org.jscience.physics.amount.Amount;
-
-import repast.simphony.context.Context;
-import repast.simphony.engine.environment.RunState;
-import repast.simphony.space.graph.Network;
-import repast.simphony.space.graph.RepastEdge;
-import repast.simphony.ui.filters.FileExtensionFilter;
-import repast.simphony.ui.sparkline.SparklineJComponent;
-import repast.simphony.ui.table.TablePanel;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -48,6 +40,14 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+
+import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunState;
+import repast.simphony.space.graph.Network;
+import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.ui.filters.FileExtensionFilter;
+import repast.simphony.ui.sparkline.SparklineJComponent;
+import repast.simphony.ui.table.TablePanel;
 
 /**
  * Panel for executing and displaying SQL results.
@@ -269,8 +269,8 @@ public class SQLWindow extends JPanel {
 					Object value = model.getValueAt(row, col);
 					if (value instanceof Number) {
 						newData[row] = ((Number) value).doubleValue();
-					} else if (value instanceof Amount) {
-						newData[row] = ((Amount) value).getEstimatedValue();
+					} else if (value instanceof Quantity) {
+						newData[row] = ((Quantity) value).getValue();
 					} else if (value instanceof String) {
 						newData[row] = Double.parseDouble((String) value);
 					} else {

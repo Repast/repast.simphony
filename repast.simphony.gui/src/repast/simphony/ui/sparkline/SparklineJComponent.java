@@ -5,9 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import javax.measure.Quantity;
 import javax.swing.JPanel;
-
-import org.jscience.physics.amount.Amount;
 
 import simphony.util.ThreadUtilities;
 
@@ -86,7 +85,7 @@ public class SparklineJComponent extends JPanel {
 	public void addData(Object newValue) {
 
 		if ((newValue != null)
-				&& ((newValue instanceof Number) || (newValue instanceof Amount))) {
+				&& ((newValue instanceof Number) || (newValue instanceof Quantity))) {
 
 			for (int i = 1; i < data.length; i++) {
 				data[i - 1] = data[i];
@@ -94,8 +93,8 @@ public class SparklineJComponent extends JPanel {
 			Number newValueNumber;
 			if (newValue instanceof Number) {
 				newValueNumber = (Number) newValue;
-			} else if (newValue instanceof Amount) {
-				newValueNumber = ((Amount) newValue).getEstimatedValue();
+			} else if (newValue instanceof Quantity) {
+				newValueNumber = ((Quantity) newValue).getValue();
 			} else {
 				newValueNumber = 0.0;
 			}
@@ -117,11 +116,11 @@ public class SparklineJComponent extends JPanel {
 
 	}
 
-	public void setData(Amount newAmountData[]) {
+	public void setData(Quantity newAmountData[]) {
 
 		Double[] newData = new Double[newAmountData.length];
 		for (int i = 0; i < newAmountData.length; i++) {
-			newData[i] = newAmountData[i].getEstimatedValue();
+			newData[i] = newAmountData[i].getValue().doubleValue();
 		}
 		this.setData(newData);
 

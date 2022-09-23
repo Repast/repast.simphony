@@ -5,10 +5,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.geom.Point2D;
 
-import javax.measure.converter.UnitConverter;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.map.MapContent;
@@ -50,7 +50,7 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
   private PCamera camera;
 
   // this unit mess is because geotools geodetic calculator uses the old jsr units
-  public DistanceTool(MapContent context, javax.measure.unit.Unit unit, DistanceSetter setter) {
+  public DistanceTool(MapContent context, Unit unit, DistanceSetter setter) {
     this.mapContext = context;
     this.unit = Unit.valueOf(unit.toString());
     this.setter = setter;

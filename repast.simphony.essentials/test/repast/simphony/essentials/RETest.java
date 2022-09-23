@@ -4,12 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.measure.quantity.Duration;
-import javax.measure.unit.SI;
+import javax.measure.Quantity;
 
 import junit.framework.TestCase;
-
-import org.jscience.physics.amount.Amount;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -39,6 +36,7 @@ import repast.simphony.space.projection.Projection;
 import repast.simphony.valueLayer.ContinuousValueLayer;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Tests of RepastEssentials
@@ -389,8 +387,8 @@ public class RETest extends TestCase {
 
   public void testTickCount() {
     ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
-    Amount<Duration> unitAmount = Amount.valueOf(2L, SI.SECOND);
-    schedule.setTimeUnits(unitAmount);
+    Quantity<?> quant = Quantities.getQuantity(2, tech.units.indriya.unit.Units.SECOND);
+    schedule.setTimeQuantity(quant);
     schedule.schedule(ScheduleParameters.createOneTime(2.5), new IAction() {
       public void execute() {
       }
@@ -398,7 +396,11 @@ public class RETest extends TestCase {
 
     schedule.execute();
     assertEquals(2.5, RepastEssentials.GetTickCount());
-    assertEquals(unitAmount.times(2.5), RepastEssentials.GetTickCountInTimeUnits());
+    
+    Quantity other_quant = RepastEssentials.GetTickCountInTimeUnits();
+  	boolean same = other_quant.isEquivalentTo(quant);
+  	assertTrue(same);
+    
   }
 
   class TestObject {

@@ -3,7 +3,7 @@ package repast.simphony.dataLoader.engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jscience.physics.amount.Amount;
+import javax.measure.Quantity;
 
 import repast.simphony.context.Context;
 import repast.simphony.dataLoader.ContextBuilder;
@@ -12,6 +12,7 @@ import repast.simphony.scenario.data.Attribute;
 import repast.simphony.scenario.data.ContextData;
 import repast.simphony.scenario.data.ProjectionData;
 import simphony.util.messages.MessageCenter;
+import tech.units.indriya.AbstractQuantity;
 
 /**
  * Builds a context based only the info in an SContext.
@@ -26,14 +27,14 @@ public class ContextXMLBuilder implements ContextBuilder {
 
 
   private Object id;
-  private Amount tickUnits;
+  private Quantity<?> userTimeQuantity;
 
   public ContextXMLBuilder(ContextData context) {
     for (Attribute attribute : context.attributes()) {
       if (attribute.getId().equals(AutoBuilderConstants.TIME_UNITS_ID) && attribute.getType().equals(String.class) &&
               attribute.getValue().trim().length() > 0) {
         try {
-          tickUnits = Amount.valueOf(attribute.getValue());
+        	userTimeQuantity = AbstractQuantity.parse(attribute.getValue());
         } catch (Exception ex) {
           msg.warn("Error setting time units: unit values must be parsable by Amount.valueOf()", ex);
         }
@@ -63,8 +64,8 @@ public class ContextXMLBuilder implements ContextBuilder {
     // this assumes that the context is not an agent,
     // that is that we don't have multiple contexts of this type.
 
-    if (tickUnits != null) {
-      RunEnvironment.getInstance().getCurrentSchedule().setTimeUnits(tickUnits);
+    if (userTimeQuantity != null) {
+      RunEnvironment.getInstance().getCurrentSchedule().setTimeQuantity(userTimeQuantity);
     }
     
     context.setTypeID(id);

@@ -1,16 +1,18 @@
 package repast.simphony.visualization.editedStyle;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
-import com.thoughtworks.xstream.io.xml.XppDriver;
-import org.jscience.physics.amount.Amount;
-import repast.simphony.scenario.ScenarioUtils;
-import simphony.util.messages.MessageCenter;
-
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+
+import javax.measure.Quantity;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
+
+import repast.simphony.scenario.ScenarioUtils;
+import simphony.util.messages.MessageCenter;
 
 /**
  * @author Eric tatara
@@ -131,8 +133,8 @@ public class EditedStyleUtils {
 			if (method.getReturnType().equals(String.class))
 				return (String) method.invoke(object);
 
-			else if (method.getReturnType().equals(Amount.class))
-				return ((Amount) method.invoke(object)).toString();
+			else if (method.getReturnType().equals(Quantity.class))
+				return ((Quantity) method.invoke(object)).toString();
 
 			else {
 				label = ((Number) method.invoke(object)).toString();
@@ -154,10 +156,10 @@ public class EditedStyleUtils {
 		try {
 			Method method = object.getClass().getMethod(methodName);
 
-			if (method.getReturnType().equals(Amount.class)){
-				Amount amnt = (Amount) method.invoke(object);
+			if (method.getReturnType().equals(Quantity.class)){
+				Quantity amnt = (Quantity) method.invoke(object);
 				if (amnt != null){
-					return (float) amnt.getEstimatedValue();
+					return (float) amnt.getValue().floatValue();
 				}
 				else {
 					return 0;

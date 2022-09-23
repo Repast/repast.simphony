@@ -1,29 +1,32 @@
 package repast.simphony.xml;
 
+import javax.measure.Quantity;
+
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.jscience.physics.amount.Amount;
+
+import tech.units.indriya.AbstractQuantity;
 
 /**
  * Converter for Amount classes.
  *
  * @author Nick Collier
  */
-public class AmountConverter extends AbstractConverter {
+public class QuantityConverter extends AbstractConverter {
 
   public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext marshallingContext) {
-    Amount amount = (Amount) o;
-    writeString("amount_value", amount.toString(), writer);
+    Quantity<?> quantity = (Quantity<?>) o;
+    writeString("amount_value", quantity.toString(), writer);
   }
 
   public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext unmarshallingContext) {
     String val = readNextString(reader);
-    return Amount.valueOf(val);
+    return AbstractQuantity.parse(val);
   }
 
   public boolean canConvert(Class aClass) {
-    return aClass.equals(Amount.class);
+    return aClass.equals(Quantity.class);
   }
 }

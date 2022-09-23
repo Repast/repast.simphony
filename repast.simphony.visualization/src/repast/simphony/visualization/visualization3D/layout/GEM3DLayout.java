@@ -1,12 +1,12 @@
 package repast.simphony.visualization.visualization3D.layout;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3f;
 
-import javolution.util.FastMap;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.visualization.Box;
@@ -61,7 +61,7 @@ public class GEM3DLayout implements Layout<Object, Network> {
 
   private float[] location = new float[3];
 
-  private Map<Object, VertexData> dataMap = new FastMap<Object, VertexData>();
+  private Map<Object, VertexData> dataMap = new HashMap<Object, VertexData>();
 
   class VertexData {
 

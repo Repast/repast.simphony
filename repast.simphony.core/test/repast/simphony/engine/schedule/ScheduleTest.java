@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.measure.Quantity;
 
 import org.apache.log4j.BasicConfigurator;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.random.RandomHelper;
+import tech.units.indriya.quantity.Quantities;
 
 /**
  * Unit tests for the schedule package.
@@ -1127,6 +1129,27 @@ public class ScheduleTest extends TestCase {
     SameTickTestAction action2 = action1.nextAction;
     assertEquals(1.0, action2.getExecutedAt());
     assertEquals(1.0, schedule.getTickCount());
+  }
+  
+  public void testSetTimeQuanity() {
+  	
+  	Quantity quant = Quantities.getQuantity(2.5, tech.units.indriya.unit.Units.SECOND);
+  	schedule.setTimeQuantity(quant);
+  	
+  	assertEquals(schedule.getTimeQuantity(), quant);
+  	
+  	SameTickTestAction action1 = new SameTickTestAction(schedule);
+    schedule.schedule(ScheduleParameters.createOneTime(1), action1);
+    schedule.execute();
+    assertEquals(1.0, action1.getExecutedAt());
+    assertEquals(1.0, schedule.getTickCount());
+  	
+  	double tick = schedule.getTickCount();
+  	
+  	Quantity other_quant = schedule.getTickCountInTimeQuantity();
+  	boolean same = other_quant.isEquivalentTo(quant);
+  	assertTrue(same);
+  	  	
   }
 
   public void testSameTickPriority() {

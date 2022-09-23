@@ -1,7 +1,5 @@
 package repast.simphony.freezedry.freezedryers;
 
-import org.jscience.physics.amount.Amount;
-
 import repast.simphony.freezedry.FreezeDryedObject;
 import repast.simphony.freezedry.FreezeDryer;
 import repast.simphony.freezedry.FreezeDryingException;

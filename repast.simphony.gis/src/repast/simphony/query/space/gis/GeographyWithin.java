@@ -1,7 +1,7 @@
 package repast.simphony.query.space.gis;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+
+import javax.measure.Unit;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.operation.DefaultCoordinateOperationFactory;
@@ -9,12 +9,12 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import repast.simphony.query.Query;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.UTMFinder;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Query that returns items in a geography that are some specified distance from

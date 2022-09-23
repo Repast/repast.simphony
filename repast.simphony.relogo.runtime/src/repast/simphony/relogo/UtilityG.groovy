@@ -24,7 +24,6 @@ import repast.simphony.space.grid.GridPoint;
 import javax.swing.JOptionPane
 import java.text.SimpleDateFormat
 
-import javolution.util.FastSet;
 import static repast.simphony.essentials.RepastEssentials.*
 import repast.simphony.space.graph.Networkimport repast.simphony.util.collections.FilteredIterator
 import repast.simphony.engine.environment.RunState

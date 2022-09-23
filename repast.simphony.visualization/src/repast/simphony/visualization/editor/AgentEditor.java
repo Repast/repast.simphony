@@ -4,8 +4,6 @@
 
 package repast.simphony.visualization.editor;
 
-import groovy.lang.MetaClass;
-
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.measure.Quantity;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -44,18 +43,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.jscience.physics.amount.Amount;
-
-import repast.simphony.context.Context;
-import repast.simphony.space.continuous.ContinuousSpace;
-import repast.simphony.space.graph.RepastEdge;
-import repast.simphony.space.grid.Grid;
-import repast.simphony.ui.probe.GridLocationProbe;
-import repast.simphony.ui.probe.ProbeID;
-import repast.simphony.ui.probe.SpaceLocationProbe;
-import repast.simphony.util.ClassUtilities;
-import repast.simphony.util.ContextUtils;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -66,6 +53,17 @@ import com.jgoodies.forms.layout.Sizes;
 import com.l2fprod.common.propertysheet.Property;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
+
+import groovy.lang.MetaClass;
+import repast.simphony.context.Context;
+import repast.simphony.space.continuous.ContinuousSpace;
+import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.ui.probe.GridLocationProbe;
+import repast.simphony.ui.probe.ProbeID;
+import repast.simphony.ui.probe.SpaceLocationProbe;
+import repast.simphony.util.ClassUtilities;
+import repast.simphony.util.ContextUtils;
 
 /**
  * @author User #2
@@ -423,7 +421,7 @@ public class AgentEditor extends JPanel {
       }
 
       agentProps.setProperties(pds.toArray(new PropertyDescriptor[pds.size()]));
-      agentProps.getEditorRegistry().registerEditor(Amount.class, new AmountPropertyEditor());
+      agentProps.getEditorRegistry().registerEditor(Quantity.class, new QuantityPropertyEditor());
 
       Property[] properties = agentProps.getProperties();
       for (int i = 0, c = properties.length; i < c; i++) {

@@ -85,7 +85,7 @@ public class XMLSerializer {
   	defaultConverters.add(new GridConverter());
   	defaultConverters.add(new SpaceConverter());
   	defaultConverters.add(new RootConverter());
-  	defaultConverters.add(new AmountConverter());
+  	defaultConverters.add(new QuantityConverter());
   	defaultConverters.add(new GridValueLayerConverter());
   	defaultConverters.add(new ContinuousValueLayerConverter());
   	 

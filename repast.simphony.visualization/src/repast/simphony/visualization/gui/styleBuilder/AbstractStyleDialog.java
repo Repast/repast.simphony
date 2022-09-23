@@ -13,10 +13,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.measure.Quantity;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
-
-import org.jscience.physics.amount.Amount;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
@@ -47,7 +46,7 @@ public abstract class AbstractStyleDialog extends JDialog{
 		pTypes.add(long.class);
 		pTypes.add(byte.class);
 		pTypes.add(short.class);
-		pTypes.add(Amount.class);
+		pTypes.add(Quantity.class);
 	}
 	
 	protected EditedEdgeStyleData userStyleData;

@@ -1,19 +1,16 @@
 package repast.simphony.ui.probe;
 
-import javax.measure.unit.Unit;
-
-import org.jscience.physics.amount.Amount;
+import javax.measure.Quantity;
 
 import repast.simphony.parameter.StringConverter;
+import tech.units.indriya.AbstractQuantity;
 
 /**
  * Converts an Amount to and from a String representation.
  * 
  * @author Nick Collier
  */
-public class AmountConverter implements StringConverter<Amount> {
-
-	Unit units = Unit.ONE;
+public class QuantityConverter implements StringConverter<Quantity<?>> {
 	
 	/**
 	 * Converts the specified object to a String representation and returns that
@@ -24,11 +21,8 @@ public class AmountConverter implements StringConverter<Amount> {
 	 *            the Object to convert.
 	 * @return a String representation of the Object.
 	 */
-	public String toString(Amount obj) {
-		Amount a = (Amount) obj;
-		if (units == null)
-			units = a.getUnit();
-		return Utils.getNumberFormatInstance().format(obj.getEstimatedValue());
+	public String toString(Quantity<?> quantity) {
+		return quantity.toString();
 	}
 
 	/**
@@ -38,7 +32,7 @@ public class AmountConverter implements StringConverter<Amount> {
 	 *            the string representation
 	 * @return the created Object.
 	 */
-	public Amount fromString(String strRep) {
-		return Amount.valueOf(Double.parseDouble(strRep), units);
+	public Quantity<?> fromString(String strRep) {
+		return AbstractQuantity.parse(strRep);
 	}
 }
