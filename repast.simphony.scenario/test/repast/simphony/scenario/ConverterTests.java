@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 /**
  * Tests the Repast Simphony Xstream converter.
@@ -24,6 +25,8 @@ public class ConverterTests {
       }
     };
 
+    xstream.addPermission(AnyTypePermission.ANY);
+    
     xstream.registerConverter(new FastMethodConvertor(xstream));
     xstream.registerConverter(
         new DescriptorConverter(xstream.getMapper(), xstream.getReflectionProvider(), "1.0"));

@@ -10,6 +10,7 @@ import javax.measure.Quantity;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 import repast.simphony.scenario.ScenarioUtils;
 import simphony.util.messages.MessageCenter;
@@ -36,6 +37,11 @@ public class EditedStyleUtils {
 			}
 		};
 		stream.setClassLoader(EditedStyleData.class.getClassLoader());
+		
+		// Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow loading any class.
+    // JRE classes are allowed by default.
+    stream.addPermission(AnyTypePermission.ANY);
 
 		if (userStyleFile == null)
 			return null;
@@ -60,6 +66,11 @@ public class EditedStyleUtils {
 		};
 		stream.setClassLoader(EditedValueLayerStyleData.class.getClassLoader());
 
+		// Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow loading any class.
+    // JRE classes are allowed by default.
+    stream.addPermission(AnyTypePermission.ANY);
+		
 		if (userStyleFile == null)
 			return null;
 
@@ -83,6 +94,11 @@ public class EditedStyleUtils {
 		};
 		stream.setClassLoader(EditedStyleData.class.getClassLoader());
 
+		// Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow loading any class.
+    // JRE classes are allowed by default.
+    stream.addPermission(AnyTypePermission.ANY);
+		
 		if (userStyleFile == null)
 			return null;
 

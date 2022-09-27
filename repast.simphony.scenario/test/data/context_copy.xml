@@ -2,7 +2,7 @@
 <context id="root">
 <projection id="p_1" type="network" />
 <projection id="p_2" type="grid" />
-<attribute id="a1" value="Hello" display_name="a1" type="String" />
+<attribute id="a1" value="Hello" display_name="a1" type="string" />
 <attribute id="a2" value="Foo" display_name="attribute 2" type="repast.simphony.score.TestAttributeType" converter="repast.simphony.score.TestConverter" />
 <context id="child">
 <projection id="p_3" type="network" />

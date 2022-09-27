@@ -19,6 +19,7 @@ import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider
 import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
 import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 import repast.simphony.chart2.engine.TimeSeriesChartDescriptor;
 import repast.simphony.data2.DataConstants;
@@ -75,6 +76,12 @@ public class ChartServerControllerAction extends DefaultControllerAction {
                 return true;
             }
         };
+        
+        // Xstream Security settings.  We can either allow any types to be deserialized,
+        // or filter by regex.  Here we allow loading any class.
+        // JRE classes are allowed by default.
+        xstream.addPermission(AnyTypePermission.ANY);
+        
         xstream.registerConverter(new FastMethodConvertor(xstream));
         xstream.alias("SeriesData", TimeSeriesChartDescriptor.SeriesData.class);
         // this is necessary to call the constructor of the TimeSeriesChartDescriptor.

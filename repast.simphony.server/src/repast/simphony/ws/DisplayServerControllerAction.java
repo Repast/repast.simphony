@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.DefaultControllerAction;
@@ -109,6 +110,12 @@ public class DisplayServerControllerAction extends DefaultControllerAction {
 					return true;
 				}
 			};
+			
+			// Xstream Security settings.  We can either allow any types to be deserialized,
+      // or filter by regex.  Here we allow loading any class.
+      // JRE classes are allowed by default.
+      xstream.addPermission(AnyTypePermission.ANY);
+			
 			xstream.registerConverter(new FastMethodConvertor(xstream));
 			List<ScenarioFileParser.ScenarioElement> elements = parser
 					.parseScenario(scenarioDirectory.resolve("scenario.xml"));
