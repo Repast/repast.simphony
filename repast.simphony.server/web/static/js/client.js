@@ -183,8 +183,9 @@ var runner = (function() {
 
 
 function initSocket() {
-    //var socket = io.connect('http://localhost:5000');
-    socket = new WebSocket('ws://localhost:5000/simphony/simsocket');
+    let port = window.document.location.port
+    console.log(`Using port: ${port}`)
+    socket = new WebSocket(`ws://localhost:${port}/simphony/simsocket`);
 
     socket.onmessage = function(evt) {
         if (evt.data instanceof Blob) {
