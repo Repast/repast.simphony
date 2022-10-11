@@ -26,8 +26,7 @@ Export-Package: groovy.inspect.swingui,
  org.apache.groovy.xml.tools,
  org.codehaus.groovy.binding,
  org.codehaus.groovy.runtime,
- org.codehaus.groovy.tools.xml,
- repast.simphony.groovy.math
+ org.codehaus.groovy.tools.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
 Require-Bundle: org.codehaus.groovy;bundle-version="3.0.8"
