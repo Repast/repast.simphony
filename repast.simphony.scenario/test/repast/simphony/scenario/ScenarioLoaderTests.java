@@ -30,7 +30,12 @@ public class ScenarioLoaderTests {
       }
     };
 
-    xstream.allowTypesByRegExp(new String[] { "repast.simphony.*" });
+    // Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow any since this class is used to de/serialize
+  	// user model classes. JRE classes are allowed by default.
+  	xstream.addPermission(AnyTypePermission.ANY);
+  	
+//    xstream.allowTypesByRegExp(new String[] { "repast.simphony.*" });
 //    xstream.addPermission(AnyTypePermission.ANY);
     
     BufferedReader reader = null;

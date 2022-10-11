@@ -82,6 +82,7 @@ import repast.simphony.relogo.ide.intf.NLSwitch;
 import repast.simphony.relogo.image.NLImage;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 /**
  * This is a sample new wizard. Its role is to create a new file resource in the
@@ -464,6 +465,12 @@ public class NetlogoImportWizard extends NewElementWizard implements IImportWiza
 
 			if (!imageList.isEmpty()) {
 				XStream xstream = new XStream();
+				
+		  	// Xstream Security settings.  We can either allow any types to be deserialized,
+		    // or filter by regex.  Here we allow any since this class is used to de/serialize
+		  	// user model classes. JRE classes are allowed by default.
+		  	xstream.addPermission(AnyTypePermission.ANY);
+		  	
 				String xml = xstream.toXML(imageList);
 				createFileResource(shapesFolder, "turtleShapes.xml",
 						new ByteArrayInputStream(xml.getBytes("UTF-8")));

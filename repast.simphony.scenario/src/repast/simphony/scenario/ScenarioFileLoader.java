@@ -92,7 +92,7 @@ public class ScenarioFileLoader extends DefaultHandler2 {
     
     // Here we restrict to loading repast.simphony.* classes for
     // the scenario descriptors.
-    xstream.allowTypesByRegExp(new String[] { "repast.simphony.*" });
+//    xstream.allowTypesByRegExp(new String[] { "repast.simphony.*" });
     
     
 //        xstream.alias("type", SProjectionType.class);
