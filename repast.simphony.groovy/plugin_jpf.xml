@@ -11,9 +11,7 @@
 	</requires>
 
 	<runtime>
-		<library id="groovy_bin" path="bin/" type="code">
-			<export prefix="*"/>
-		</library>
+		
 		
 		<library id="groovy-swing" path="./lib/groovy-swing-3.0.11.jar" type="code"/>
 		<library id="groovy-xml" path="./lib/groovy-xml-3.0.11.jar" type="code"/>
