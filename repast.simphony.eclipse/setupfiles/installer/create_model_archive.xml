@@ -87,9 +87,10 @@
 			<!-- Copy the Groovy jar -->
 			<zipfileset dir="${Groovy_Jar_Dir}" includes="${Groovy_Jar}" prefix="groovylib"/>
 			
-			<!-- Copy the Repast libs -->
+			<!-- Copy the Repast libs (exclude r.s.eclipse) -->
 			<zipfileset dir="${EclipsePluginsDirectory}" includes="libs.*${REPAST_VERSION}/**" prefix="repast.simphony"/>
-			<zipfileset dir="${EclipsePluginsDirectory}" includes="repast.simphony.*${REPAST_VERSION}/**" prefix="repast.simphony"/>
+        	<zipfileset dir="${EclipsePluginsDirectory}" includes="repast.simphony.*${REPAST_VERSION}/**" 
+        		excludes="repast.simphony.eclipse_*${REPAST_VERSION}/**" prefix="repast.simphony"/>
 			<zipfileset dir="${EclipsePluginsDirectory}" includes="saf.core.ui*${REPAST_VERSION}/**" prefix="repast.simphony"/>	
 		</zip>
 		
