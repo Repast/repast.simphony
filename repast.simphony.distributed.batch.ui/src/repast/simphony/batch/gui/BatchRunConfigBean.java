@@ -5,24 +5,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.jgoodies.binding.beans.ExtendedPropertyChangeSupport;
+
 import repast.simphony.batch.gui.Host.Type;
 import repast.simphony.batch.ssh.Configuration;
 import repast.simphony.batch.ssh.OutputPattern;
 import repast.simphony.batch.ssh.OutputPatternPropsParser;
 
-import com.jgoodies.binding.beans.ExtendedPropertyChangeSupport;
-
 /**
  * Contains the data used by the GUI interface. 
  * 
- * @author Nick Collier
- */
+ * @author Nick Collier */
 public class BatchRunConfigBean {
   
   private static final String MODEL_DIRECTORY = "model.directory";
@@ -41,10 +41,12 @@ public class BatchRunConfigBean {
   private static final String INSTANCES = "instances";
   private static final String KEY_FILE = "key_file";
   
-  
   private String modelDirectory = "", scenarioDirectory = "", outputDirectory = "", 
-      keyDirectory = System.getProperty("user.home") + "/.ssh",
-      vmArguments = "";
+      keyDirectory = System.getProperty("user.home") + "/.ssh";
+  
+  // Copy the VM args passed in from the launch or batch script
+  private String vmArguments = String.join(" ", ManagementFactory.getRuntimeMXBean().getInputArguments());
+  
   private String batchParameterFile = "", parameterFile = "";
   private double pollFrequency = 1;
   private List<Host> hosts = new ArrayList<Host>();
