@@ -136,7 +136,6 @@
 		<jar destfile="${working.lib}/repast.simphony.dataLoader.jar" basedir="${data.loader}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.scenario.jar" basedir="${scenario}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.essentials.jar" basedir="${essentials}/bin" />
-		<jar destfile="${working.lib}/repast.simphony.groovy.jar" basedir="${groovy}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.integration.jar" basedir="${integration}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.relogo.runtime.jar" basedir="${relogo.runtime}/bin" />
 		<jar destfile="${working.lib}/repast.simphony.visualization.jar" basedir="${visualization}/bin" />
