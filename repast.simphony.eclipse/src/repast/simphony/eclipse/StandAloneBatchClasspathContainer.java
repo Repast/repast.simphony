@@ -53,7 +53,7 @@ public class StandAloneBatchClasspathContainer extends ClasspathContainerInitial
 					"/repast.simphony.runtime_" + RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION
 							+ "/lib/commons-cli-1.3.1.jar",
 					"/repast.simphony.core_" + RepastSimphonyPlugin.REPAST_SIMPHONY_PLUGIN_VERSION
-							+ "/lib/commons-lang3-3.1.jar" };
+							+ "/lib/commons-lang3-3.8.1.jar" };
 
 			String[] standAloneClasspath = new String[baseClasspathForStandAlone.length];
 			int i = 0;

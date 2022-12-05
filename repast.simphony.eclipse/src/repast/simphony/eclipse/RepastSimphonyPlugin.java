@@ -58,7 +58,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.19.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
-            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar", };
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.3.1.jar", };
 
     private static String[] BASE_CLASSPATH_FOR_SERVER_LAUNCHER = { "${workspace_loc:project_name}/bin",
             "ECLIPSE_HOME/plugins/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/bin",
@@ -73,7 +73,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xpp3_min-1.1.4c.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xstream-1.4.19.jar",
             "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlpull-1.1.3.1.jar",
-            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.2.jar",
+            "/repast.simphony.runtime_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-cli-1.3.1.jar",
             
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/concurrent-1.3.4.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-api-2.0.1.jar",
@@ -82,7 +82,6 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-algorithms-2.0.1.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/colt-1.2.0-no_hep.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/poi-ooxml-3.9-20121203.jar",
-            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jscience-4.3.1-no_ogis.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/xmlbeans-2.3.0.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/velocity-1.4.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-io-2.5.jar",
@@ -92,7 +91,7 @@ public class RepastSimphonyPlugin extends AbstractUIPlugin {
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-collections-3.2.2.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-graph-impl-2.0.1.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/dom4j-1.6.1.jar",
-            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-lang3-3.1.jar",
+            "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/commons-lang3-3.8.1.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jung-io-2.0.1.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/jbullet.jar",
             "/repast.simphony.core_" + REPAST_SIMPHONY_PLUGIN_VERSION + "/lib/collections-generic-4.01.jar",
