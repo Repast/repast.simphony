@@ -52,11 +52,11 @@
 			author="true" 
 			version="true" 
 			use="true" 
-			windowtitle="Repast Simphony 2.9 API" 
+			windowtitle="Repast Simphony 2.10 API" 
 			useexternalfile="yes"
 			nohelp="false"
 			noindex="false"
-			additionalparam="--ignore-source-errors --no-module-directories">
+			additionalparam="--ignore-source-errors">
 			
 			<!-- Link to online Java API - should match JDK version used to generate javadoc -->
 			<link href="https://docs.oracle.com/en/java/javase/11/docs/api"/>
