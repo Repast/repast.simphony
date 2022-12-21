@@ -18,7 +18,7 @@
       </runtime>
    </extension>
    <extension point="org.eclipse.core.variables.valueVariables">
-      <variable name="REPAST_VERSION" initialValue="2.9.1">
+      <variable name="REPAST_VERSION" initialValue="2.10.0">
       </variable>
    </extension>
    

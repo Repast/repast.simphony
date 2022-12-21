@@ -48,11 +48,19 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
-import org.geotools.styling.SLDParser;
-import org.geotools.styling.SLDTransformer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryImpl;
 import org.geotools.styling.Symbolizer;
+import org.geotools.xml.styling.SLDParser;
+import org.geotools.xml.styling.SLDTransformer;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -63,14 +71,6 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 
 import repast.simphony.gis.styleEditor.StyleDialog;
 import repast.simphony.gis.styleEditor.StylePreviewFactory;
@@ -398,7 +398,7 @@ public class GISStylePanel extends JPanel {
   }
 
   private void setGeometryBox(Class<? extends Geometry> clazz) {
-    if (com.vividsolutions.jts.geom.Point.class.isAssignableFrom(clazz) || MultiPoint.class.isAssignableFrom(clazz))
+    if (org.locationtech.jts.geom.Point.class.isAssignableFrom(clazz) || MultiPoint.class.isAssignableFrom(clazz))
       geomBox.setSelectedItem(POINT);
     else if (LineString.class.isAssignableFrom(clazz) || MultiLineString.class.isAssignableFrom(clazz))
       geomBox.setSelectedItem(LINE);

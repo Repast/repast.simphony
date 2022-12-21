@@ -49,12 +49,12 @@ public class RSProjectConfigurator {
 	// VM args that are required for Java 9+.
 	//   -XX:+IgnoreUnrecognizedVMOptions is used for cases when Java 8 is the JRE
 	//      so that the module exports don't cause an unrecognized arg error
-	//
-	//   --add-modules=ALL-SYSTEM is used to export all JRE modules to the runtime classpath
-	//   --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED is used to provide access 
-	//      to jdk.internal.ref that is used by some GeoTools JAI modules
-  public final static String VMARGS = "-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED";
+	
+  public final static String VMARGS       = "-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/sun.java2d=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED";
  
+  // VM args specific to batch runs
+  public final static String BATCH_VMARGS = "-XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal.objects=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xpath.internal=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED";
+  
   //The Eclipse launch favorites list 
   public final static List<String> favoritesList =  new ArrayList<String>() {{
   	add(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);

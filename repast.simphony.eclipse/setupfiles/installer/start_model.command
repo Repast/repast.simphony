@@ -22,4 +22,4 @@ CP=$CP:lib/*
 cd "%PROJECT_NAME%"
 
 # Start the Model
-java -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED -cp "$CP" repast.simphony.runtime.RepastMain  "./%SCENARIO_DIRECTORY%"
+java -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED  --add-exports=java.base/java.lang=ALL-UNNAMED  --add-exports=java.desktop/sun.awt=ALL-UNNAMED  --add-exports=java.desktop/sun.java2d=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -cp "$CP" repast.simphony.runtime.RepastMain  "./%SCENARIO_DIRECTORY%"

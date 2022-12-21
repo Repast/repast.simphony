@@ -1,12 +1,11 @@
 package repast.simphony.gis.ui.probe;
 
+import org.locationtech.jts.geom.Envelope;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
 
 import repast.simphony.gis.tools.AbstractMarqueeHandler;
 import repast.simphony.visualization.gis.DisplayGIS;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Handler for creating probes.

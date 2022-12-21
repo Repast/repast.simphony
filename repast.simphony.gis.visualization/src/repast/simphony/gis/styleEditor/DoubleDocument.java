@@ -1,9 +1,10 @@
 package repast.simphony.gis.styleEditor;
 
+import java.text.DecimalFormat;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-import java.text.DecimalFormat;
 
 
 /**

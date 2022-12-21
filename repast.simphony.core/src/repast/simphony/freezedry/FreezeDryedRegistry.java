@@ -11,7 +11,6 @@ import java.util.UUID;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.ProjectionRegistry;
 import repast.simphony.engine.environment.ProjectionRegistryData;
-import repast.simphony.freezedry.freezedryers.AmountFreezeDryer;
 import repast.simphony.freezedry.freezedryers.ArrayFreezeDryer;
 import repast.simphony.freezedry.freezedryers.BigDecimalFreezeDryer;
 import repast.simphony.freezedry.freezedryers.ClassFreezeDryer;
@@ -20,6 +19,7 @@ import repast.simphony.freezedry.freezedryers.ContextFreezeDryer;
 import repast.simphony.freezedry.freezedryers.DefaultFreezeDryer;
 import repast.simphony.freezedry.freezedryers.MapFreezeDryer;
 import repast.simphony.freezedry.freezedryers.PrimitiveFreezeDryer;
+import repast.simphony.freezedry.freezedryers.QuantityFreezeDryer;
 import simphony.util.messages.MessageCenter;
 
 public class FreezeDryedRegistry {
@@ -59,7 +59,7 @@ public class FreezeDryedRegistry {
 		driers.add(new MapFreezeDryer(this));
 		driers.add(new CollectionFreezeDryer(this));
 		driers.add(new ClassFreezeDryer(this));
-    driers.add(new AmountFreezeDryer());
+    driers.add(new QuantityFreezeDryer());
     driers.add(new BigDecimalFreezeDryer());
     
     // Add additional driers from the projection registry.

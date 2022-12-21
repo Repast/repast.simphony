@@ -3,7 +3,7 @@ package repast.simphony.ui.sparkline;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.jscience.physics.amount.Amount;
+import javax.measure.Quantity;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.ui.probe.NumericProbedProperty;
@@ -95,7 +95,7 @@ public class PropertySourcedSparklineJComponent extends SparklineJComponent {
 
   public void addData(Object newValue) {
 
-    if ((newValue != null) && ((newValue instanceof Number) || (newValue instanceof Amount))) {
+    if ((newValue != null) && ((newValue instanceof Number) || (newValue instanceof Quantity))) {
 
       if (RunEnvironment.getInstance() != null) {
         int tempLength = RunEnvironment.getInstance().getSparklineLength();

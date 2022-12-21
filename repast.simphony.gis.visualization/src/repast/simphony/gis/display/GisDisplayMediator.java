@@ -1,17 +1,17 @@
 package repast.simphony.gis.display;
 
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
-import org.geotools.map.event.MapLayerEvent;
-import org.geotools.map.event.MapLayerListEvent;
-import org.geotools.map.event.MapLayerListListener;
-import org.geotools.map.event.MapLayerListener;
-
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapLayerEvent;
+import org.geotools.map.MapLayerListEvent;
+import org.geotools.map.MapLayerListListener;
+import org.geotools.map.MapLayerListener;
 
 /**
  * Mediator for MapLayer events.

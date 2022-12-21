@@ -8,6 +8,9 @@ The ReLogo API docs are generated in the following steps:
 
 2. Update the release version number in repast.simphony.relogo.util.ReLogoReferenceCreator 
 	   and then run it.
+	   
+	   ***** NOTE! Requires Java 11 and doesnt work with Java 17+.  Set the Java execution
+	         environment in the launch.
 
 	- ReLogoPrimitives.html document generation (files in r.s.relogo.runtime):
 		- there is an Excel file, separated into sheets for turtle, patch, link, 

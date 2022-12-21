@@ -8,14 +8,16 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.measure.unit.SI;
+import javax.measure.Quantity;
 
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.jscience.physics.amount.Amount;
 import org.junit.Before;
 import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 
 import repast.simphony.context.DefaultContext;
@@ -23,10 +25,8 @@ import repast.simphony.context.space.gis.GeographyFactoryFinder;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.space.gis.GeographyParameters;
 import repast.simphony.space.gis.ShapefileWriter;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
+import tech.units.indriya.quantity.Quantities;
+import tech.units.indriya.unit.Units;
 
 /**
  * Tests of shapefile writing.
@@ -43,17 +43,17 @@ public class WriterTest {
     private String strVal = "hello";
     private int intVal = 3;
 
-    private Amount amount = Amount.valueOf(10, SI.METER);
+    private Quantity quantity = Quantities.getQuantity(10, Units.METRE);
 
     public GisAgent() {
     }
 
-    public Amount getAmount() {
-      return amount;
+    public Quantity getAmount() {
+      return quantity;
     }
 
-    public void setAmount(Amount amount) {
-      this.amount = amount;
+    public void setAmount(Quantity quantity) {
+      this.quantity = quantity;
     }
 
     public double getWealth() {

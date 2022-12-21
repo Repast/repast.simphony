@@ -1,7 +1,10 @@
 package repast.simphony.gis.display;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+
+import javax.swing.Icon;
 
 /**
  * A square-shaped icon for use on buttons like color pickers.

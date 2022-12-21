@@ -16,6 +16,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 
 import repast.simphony.engine.environment.ProjectionRegistry;
 import repast.simphony.engine.environment.ProjectionRegistryData;
@@ -72,7 +73,7 @@ public class XMLSerializer {
 
 
   private List<Converter> nonDefaultConverter = new ArrayList<Converter>();
-  private XStream xstream = new XStream();
+  private XStream xstream;
 
   private List<AbstractConverter> defaultConverters = new ArrayList<AbstractConverter>();
 
@@ -85,10 +86,17 @@ public class XMLSerializer {
   	defaultConverters.add(new GridConverter());
   	defaultConverters.add(new SpaceConverter());
   	defaultConverters.add(new RootConverter());
-  	defaultConverters.add(new AmountConverter());
+  	defaultConverters.add(new QuantityConverter());
   	defaultConverters.add(new GridValueLayerConverter());
   	defaultConverters.add(new ContinuousValueLayerConverter());
-  	 
+  	
+  	xstream = new XStream();
+  	
+  	// Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow any since this class is used to de/serialize
+  	// user model classes. JRE classes are allowed by default.
+  	xstream.addPermission(AnyTypePermission.ANY);
+  	
     // Add additional converters from the projection registry.
     for (ProjectionRegistryData data : ProjectionRegistry.getRegistryData()){
     	defaultConverters.add(data.getProjectionXMLConverter());

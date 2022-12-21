@@ -1,6 +1,6 @@
 package repast.simphony.ui;
 
-import org.jscience.physics.amount.Amount;
+import javax.measure.Quantity;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.ui.plugin.TickCountFormatter;
@@ -26,13 +26,14 @@ public class DefaultTickCountFormatter implements TickCountFormatter {
 	 * @return a String representing the formatted tick.
 	 */
 	public String format(double tick) {
-		Amount units = RunEnvironment.getInstance().getCurrentSchedule().getTimeUnits();
-		if (units == null) {
+		Quantity<?> timeQuantity = RunEnvironment.getInstance().getCurrentSchedule().getTimeQuantity();
+		if (timeQuantity == null) {
 			return builder.delete(12, builder.length()).append(tick).toString();
-		} else {
-			Amount tickInUnits = RunEnvironment.getInstance().getCurrentSchedule().getTickCountInTimeUnits();
-			double timeValue = Math.round(tickInUnits.getEstimatedValue() * precision) / ((double) precision);
-			return ("Tick Count: " + timeValue + " " + tickInUnits.getUnit().toString());
+		} 
+		else {
+			Quantity<?> tickInQuantity = RunEnvironment.getInstance().getCurrentSchedule().getTickCountInTimeQuantity();
+			double timeValue = Math.round(tickInQuantity.getValue().doubleValue() * precision) / ((double) precision);
+			return ("Tick Count: " + timeValue + " " + timeQuantity.getUnit().toString());
 		}
 	}
 

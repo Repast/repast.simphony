@@ -23,8 +23,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import repast.simphony.batch.ssh.OutputPattern;
-
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.SpinnerAdapterFactory;
@@ -36,6 +34,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
+import repast.simphony.batch.ssh.OutputPattern;
+
 /**
  * @author Nick Collier
  */
@@ -46,7 +46,7 @@ public class ModelPanel extends JPanel implements BatchRunPanel {
   private JTextField scenarioFld = new JTextField(20);
   private JTextField outFld = new JTextField(20);
   private JTextField vmFld = new JTextField(20);
-  private JTextField keyDirFld = new JTextField(System.getProperty("user.home") + "/.ssh", 20);
+  private JTextField keyDirFld = new JTextField(20);
   private JSpinner pollSpn = new JSpinner();
   private PatternTableModel tableModel;
   

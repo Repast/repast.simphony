@@ -1,13 +1,14 @@
 package repast.simphony.gis.legend;
 
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
-import org.geotools.map.event.MapLayerEvent;
-import org.geotools.map.event.MapLayerListener;
-import simphony.util.messages.MessageCenter;
+import java.awt.Color;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+
+import org.geotools.map.Layer;
+import org.geotools.map.MapLayerEvent;
+import org.geotools.map.MapLayerListener;
+
+import simphony.util.messages.MessageCenter;
 
 /**
  * Used to keep the information about legend tree root and layer node such as

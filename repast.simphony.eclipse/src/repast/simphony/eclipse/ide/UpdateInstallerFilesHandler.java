@@ -90,6 +90,11 @@ public class UpdateInstallerFilesHandler extends AbstractHandler {
 				      IFolder destFolder = srcFolder.getFolder("../installer");
 				      Utilities.copyFolderFromPluginInstallation("installer", destFolder,  variableMap, new NullProgressMonitor());
 				      				      
+							// Create the launches for the model installer builders
+				      InstallerLauncherCreator installerCreator = new InstallerLauncherCreator();
+				      destFolder = srcFolder.getFolder("../launchers");
+				      installerCreator.run(project, destFolder);
+				      
 							MessageDialog.openInformation(HandlerUtil.getActiveShell(event), 
 									"Model installer update", 
 									"Installer files updated successfully.");

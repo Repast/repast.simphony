@@ -1,22 +1,26 @@
 package repast.simphony.scenario;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
-import com.thoughtworks.xstream.io.xml.XppDriver;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
-import repast.simphony.engine.environment.ControllerRegistry;
-import repast.simphony.plugin.ControllerActionIOExtensions;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.XStream11XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+
+import repast.simphony.engine.environment.ControllerRegistry;
+import repast.simphony.plugin.ControllerActionIOExtensions;
 
 /**
  * Parses a scenario.xml file and loads the serialized controller actions into a
@@ -78,7 +82,19 @@ public class ScenarioFileLoader extends DefaultHandler2 {
         return true;
       }
     };
+    
     xstream.registerConverter(new FastMethodConvertor(xstream));
+    
+    // Xstream Security settings.  We can either allow any types to be deserialized,
+    // or filter by regex.  Here we allow loading any class.
+    // JRE classes are allowed by default.
+    xstream.addPermission(AnyTypePermission.ANY);
+    
+    // Here we restrict to loading repast.simphony.* classes for
+    // the scenario descriptors.
+//    xstream.allowTypesByRegExp(new String[] { "repast.simphony.*" });
+    
+    
 //        xstream.alias("type", SProjectionType.class);
 //        xstream.registerConverter(new SProjectionTypeConverter());
 //    xstream.registerConverter(new SGridConverter());

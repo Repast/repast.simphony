@@ -13,28 +13,50 @@
 	     hard coded value that corresponds to the version that created the 
 	     model installer files, against the version of Repast that is actually
 	     in use in the workspace. -->
-	
+
 	<!-- The Repast creator version variable is hard-coded against the release 
 	     version. DO NOT USE A VARIABLE HERE! -->
-	<property name="RepastCreatorVersion" value="2.9.1" />
-				
+	<property name="RepastCreatorVersion" value="2.10.0" />
+
 	<condition property="repast.version">
-	  <equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>
+		<equals arg1="${RepastCreatorVersion}" arg2="${REPAST_VERSION}"/>
 	</condition>
-				
+
 	<target name="repast.version.OK" if="repast.version">
 		<echo message="Using Repast version ${REPAST_VERSION}"/>
 	</target>
-		
+
 	<target name="repast.version.check" depends="repast.version.OK" unless="repast.version">
 		<fail message="Inompatible Repast version.  The model builder configureation was built with ${RepastCreatorVersion}, but the current version is ${REPAST_VERSION}"/>
 	</target>
-		
-	<target name="BuildUserModelInstaller" if="repast.version" depends="repast.version.OK,repast.version.check">
+
+	<!-- Check for Izpack -->
+	<property name="izpack-dist-default" value="${user.home}/IzPack"/>
+
+	<!-- If the IZPACK_HOME VM arg is provided, then use it, otherwise use the default.-->
+	<condition property="izpack-dist" value="${IZPACK_HOME}" else="${izpack-dist-default}">
+		<isset property="IZPACK_HOME" />
+	</condition>
+
+	<echo message="IzPack Directory = ${izpack-dist}" />
+
+	<condition property="found.izpack">
+		<available file="${izpack-dist}" />
+	</condition>
+
+	<target name="izpack.OK" if="found.izpack">
+		<echo message="IzPack Directory = ${izpack-dist}" />
+	</target>
+
+	<target name="izpack.check" depends="izpack.OK" unless="found.izpack">
+		<fail message="IzPack not found!${line.separator} *** Please download the latest IzPack release from https://izpack.org/downloads/ and install in the User home folder or ${line.separator}provide the program argument -DIZPACK_HOME in the Build Installer launch configuration to any custom IzPack install location you use. ${line.separator} *** Please see https://repast.github.io/docs/RepastReference/RepastReference.html#distribute-model for configuration notes."/>
+	</target>
+
+	<target name="BuildUserModelInstaller" if="repast.version" depends="repast.version.OK,repast.version.check,izpack.check">
 
 		<!-- Location of the Eclipse /plugins folder -->
 		<echo message="EclipsePluginsDirectory = ${EclipsePluginsDirectory}" />
-		
+
 		<!-- Search for the groovy-3.x-.jar -->
 		<fileset dir="${EclipsePluginsDirectory}" id="groovy_jar">
 			<filename name="**/groovy-3*.jar" />
@@ -43,12 +65,12 @@
 			</not>
 			<not>
 				<filename name="**/groovy-3*-javadoc.jar" />
-			</not>	
+			</not>
 		</fileset>
-		
+
 		<!-- Relative path of groovy jar in the Eclipse plugins dir-->
 		<property name="groovy_plugin_jar_path" refid="groovy_jar" />
-		
+
 		<!-- Absolute path of groovy jar -->
 		<property name="GroovyJarLocation" value="${EclipsePluginsDirectory}/${groovy_plugin_jar_path}" />
 		<echo message="GroovyJarLocation = ${GroovyJarLocation}" />
@@ -56,7 +78,7 @@
 		<!-- Base groovy jar file name -->
 		<basename property="Groovy_Jar" file="${groovy_plugin_jar_path}"/>
 		<echo message="Groovy_Jar = ${Groovy_Jar}" />
-			
+
 		<!-- A hidden staging dirctory to store the install files that will be deleted at cleanup -->
 		<property name="StagingArea" value="./.temp/%PROJECT_NAME%" />
 		<property name="StagingOptionalArea" value="./.temp" />
@@ -88,7 +110,6 @@
 
 		<chmod perm="+x" file="${StagingArea}/installer/start_model.command" />
 
-
 		<copy file="installer/installation_components.xml" tofile="${StagingArea}/installation_components_temp.xml" />
 
 		<replace file="${StagingArea}/installation_components_temp.xml">
@@ -103,27 +124,23 @@
 
 		<!-- Run IzPack -->
 		<echo message="Creating the installation file..." />
-		
-		<property name="izpack-dist" value="${EclipsePluginsDirectory}/repast.simphony.eclipse_${REPAST_VERSION}/setupfiles/IzPack" />
-		<echo message="IzPack Directory = ${izpack-dist}" />
-		
 		<property name="izpack-installer" value="setup.jar"/>
-		
+
 		<path id="lib.path">
-		    <fileset dir="${izpack-dist}/lib" includes="*.jar"/>
+			<fileset dir="${izpack-dist}/lib" includes="*.jar"/>
 		</path>
-		
+
 		<taskdef name="izpack"
 			classname="com.izforge.izpack.ant.IzPackTask"
 			classpathref="lib.path"
 		/>
-		
+
 		<izpack input="${StagingArea}/installation_components_temp.xml"
 		            output="${outputInstallationFile}"  
 		            installerType="standard"              
 		            basedir="."
 		            izPackDir="${izpack-dist}"/>
-		
+
 		<!-- Clear the temporary staging area -->
 		<echo message="Clearing the temporary staging area..." />
 		<delete includeemptydirs="true" quiet="true">

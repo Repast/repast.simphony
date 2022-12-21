@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -34,6 +33,10 @@ import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
 import org.geotools.styling.Style;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.util.PBounds;
@@ -63,11 +66,7 @@ import repast.simphony.visualization.ProbeEvent;
 import repast.simphony.visualization.editor.gis.SelectionDecorator;
 import simphony.util.ThreadUtilities;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import tech.units.indriya.unit.Units;
 
 /**
  * Standard GIS Display
@@ -652,7 +651,7 @@ public class DisplayGIS extends AbstractDisplay implements WindowListener {
         dlSupport.fireInfoMessage(evt);
       }
     };
-    panel.addTool(new DistanceTool(mapContext, SI.METER, setter), toolParams);
+    panel.addTool(new DistanceTool(mapContext, Units.METRE, setter), toolParams);
 
     toolParams = new HashMap<String, Object>();
     toolParams.put(ToolManager.TOGGLE, true);

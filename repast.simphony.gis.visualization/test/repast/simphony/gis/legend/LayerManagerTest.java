@@ -2,10 +2,10 @@ package repast.simphony.gis.legend;
 
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
+
+import junit.framework.TestCase;
 
 public class LayerManagerTest extends TestCase {
 

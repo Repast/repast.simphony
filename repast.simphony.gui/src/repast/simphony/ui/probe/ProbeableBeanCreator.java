@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.measure.Quantity;
+
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -20,9 +22,6 @@ import javassist.CtNewMethod;
 import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
-
-import org.jscience.physics.amount.Amount;
-
 import repast.simphony.parameter.Parameter;
 import repast.simphony.parameter.StringConverter;
 import repast.simphony.util.ClassUtilities;
@@ -63,7 +62,7 @@ public class ProbeableBeanCreator {
   private Map<Class, StringConverter> converterMap = new HashMap<Class, StringConverter>();
 
   private ProbeableBeanCreator() {
-    converterMap.put(Amount.class, new AmountConverter());
+    converterMap.put(Quantity.class, new QuantityConverter());
   }
 
   public ProbeableBeanInfo createProbeableBean(Object target) throws IntrospectionException, NoSuchMethodException,
@@ -217,6 +216,9 @@ public class ProbeableBeanCreator {
     PropertyDescriptor[] pds = info.getPropertyDescriptors();
     List<Property> props = new ArrayList<Property>();
     for (PropertyDescriptor pd : pds) {
+    	
+    	// TODO Note that this class isn't used anymore!
+    	
       if (methods.length > 0) {
         // only add those properties that have a Parameter annotation
         Method readMethod = pd.getReadMethod();

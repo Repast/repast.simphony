@@ -1,9 +1,10 @@
 package repast.simphony.gis.legend;
 
-import org.geotools.styling.Rule;
+import java.awt.Color;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+
+import org.geotools.styling.Rule;
 
 /**
  * This legend element represents a rule in a style. This will hold the rule as

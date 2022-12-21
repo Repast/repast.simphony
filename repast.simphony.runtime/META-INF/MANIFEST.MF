@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast runtime
 Bundle-SymbolicName: repast.simphony.runtime
-Bundle-Version: 2.9.1
+Bundle-Version: 2.10.0
 Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  testlib/jmock-cglib-1.0.1.jar,
  lib/saf.core.runtime.jar,
@@ -14,11 +14,11 @@ Bundle-ClassPath: testlib/jmock-1.0.1.jar,
  lib/javassist-3.17.1-GA.jar,
  lib/xmlpull-1.1.3.1.jar,
  lib/xpp3_min-1.1.4c.jar,
- lib/xstream-1.4.7.jar,
  testlib/junit-addons-1.4.jar,
  lib/log4j-1.2-api-2.17.2.jar,
  lib/log4j-api-2.17.2.jar,
- lib/log4j-core-2.17.2.jar
+ lib/log4j-core-2.17.2.jar,
+ lib/xstream-1.4.19.jar
 Export-Package: 
  com.thoughtworks.xstream,
  com.thoughtworks.xstream.annotations,
@@ -29,6 +29,7 @@ Export-Package:
  com.thoughtworks.xstream.converters.extended,
  com.thoughtworks.xstream.converters.javabean,
  com.thoughtworks.xstream.converters.reflection,
+ com.thoughtworks.xstream.converters.time,
  com.thoughtworks.xstream.core,
  com.thoughtworks.xstream.core.util,
  com.thoughtworks.xstream.io,
@@ -41,6 +42,7 @@ Export-Package:
  com.thoughtworks.xstream.io.xml.xppdom,
  com.thoughtworks.xstream.mapper,
  com.thoughtworks.xstream.persistence,
+ com.thoughtworks.xstream.security,
  javassist,
  javassist.bytecode,
  javassist.bytecode.analysis,

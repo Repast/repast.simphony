@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast pajek
 Bundle-SymbolicName: repast.simphony.pajek
-Bundle-Version: 2.9.1
+Bundle-Version: 2.10.0
 Require-Bundle: repast.simphony.gui,
  repast.simphony.data,
  repast.simphony.core,

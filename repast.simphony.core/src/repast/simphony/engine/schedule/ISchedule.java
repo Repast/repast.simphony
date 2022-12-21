@@ -1,8 +1,9 @@
 package repast.simphony.engine.schedule;
 
-import org.jscience.physics.amount.Amount;
 
 import java.util.List;
+
+import javax.measure.Quantity;
 
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
  * @version $Revision: 1.1 $ $Date: 2005/12/21 22:25:34 $
  */
 public interface ISchedule extends IAction {
-  
+	
   /**
    * Schedules the specified IAction for execution according to the specified schedule parameters.
    * 
@@ -127,21 +128,21 @@ public interface ISchedule extends IAction {
    * 
    * @return the current tick count in user time units.
    */ 
-  Amount getTickCountInTimeUnits();
+  Quantity<?> getTickCountInTimeQuantity();
   
   /**
    * Gets the current user time units.
    * 
    * @return the current user time units.
    */ 
-  Amount getTimeUnits();
+  Quantity<?> getTimeQuantity();
   
   /**
    * Sets the current user time units.
    * 
    * @param newUnits the new user time units.
    */ 
-  void setTimeUnits(Amount newUnits);
+  void setTimeQuantity(Quantity<?> newUnits);
   
   /**
    * Gets the number of currently scheduled actions.

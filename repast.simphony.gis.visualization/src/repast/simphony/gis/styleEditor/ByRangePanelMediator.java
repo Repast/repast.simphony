@@ -73,7 +73,7 @@ public class ByRangePanelMediator {
 							CommonFactoryFinder.getStyleFactory(), CommonFactoryFinder.getFilterFactory2());
 		dsv.visit(rule);
 		defaultRule = (Rule) dsv.getCopy();
-		defaultRule.setTitle("<Default>");
+		defaultRule.getDescription().setTitle("<Default>");
 		defaultRule.setName("Default");
 	}
 

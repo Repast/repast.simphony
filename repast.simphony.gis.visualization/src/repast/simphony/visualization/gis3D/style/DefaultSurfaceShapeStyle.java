@@ -1,8 +1,8 @@
 package repast.simphony.visualization.gis3D.style;
 
-import gov.nasa.worldwind.render.SurfaceShape;
-
 import java.awt.Color;
+
+import gov.nasa.worldwind.render.SurfaceShape;
 
 public class DefaultSurfaceShapeStyle<T> implements SurfaceShapeStyle<T> {
 

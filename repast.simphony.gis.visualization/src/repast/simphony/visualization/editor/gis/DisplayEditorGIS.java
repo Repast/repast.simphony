@@ -13,6 +13,11 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import org.geotools.styling.Style;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
 
 import repast.simphony.gis.util.GeometryUtil;
 import repast.simphony.space.gis.Geography;
@@ -30,12 +35,6 @@ import repast.simphony.visualization.editor.PEditorEventListener;
 import repast.simphony.visualization.editor.VizEditorForm;
 import repast.simphony.visualization.gis.DisplayGIS;
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
 
 /**
  * DisplayEditor for gis displays.
@@ -470,7 +469,7 @@ public class DisplayEditorGIS implements DisplayEditor, ObjectSelectionListener,
   }
 
   private void moveEdges(Object obj) {
-    com.vividsolutions.jts.geom.Point center = geog.getGeometry(obj).getCentroid();
+    org.locationtech.jts.geom.Point center = geog.getGeometry(obj).getCentroid();
     for (Network net : networks) {
       for (RepastEdge edge : ((Iterable<RepastEdge>) net.getEdges(obj))) {
         Geometry geom = geog.getGeometry(edge);

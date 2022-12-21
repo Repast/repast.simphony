@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.iterator.WritableRandomIter;
@@ -35,15 +34,15 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.util.NumberRange;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
 import it.geosolutions.jaiext.iterators.RandomIterFactory;
 import junit.framework.TestCase;
+import tech.units.indriya.unit.Units;
 
 /**
  * Test GeoTools GridCoverage factory methods.  These tests serve several purpose:
@@ -247,7 +246,7 @@ public class GridCoverageTests extends TestCase {
     
     // Single band
     GridSampleDimension[] bands = new GridSampleDimension[] {
-    		new GridSampleDimension("Temperature", categories, SI.CELSIUS)
+    		new GridSampleDimension("Temperature", categories, Units.CELSIUS)
     };
 
     // Need to create the colormodel first, since it is used to create a compatible
@@ -426,7 +425,7 @@ public class GridCoverageTests extends TestCase {
 
 		// Single band
 		GridSampleDimension[] bands = new GridSampleDimension[] {
-				new GridSampleDimension("Temperature", categories, SI.CELSIUS)
+				new GridSampleDimension("Temperature", categories, Units.CELSIUS)
 		};
 		
     WritableRaster raster = RasterFactory.createBandedRaster(dataType, width, height, 1, null);

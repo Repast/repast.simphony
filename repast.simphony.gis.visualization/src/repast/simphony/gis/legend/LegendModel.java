@@ -13,8 +13,9 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapLayerEvent;
-import org.geotools.map.event.MapLayerListener;
+import org.geotools.map.MapLayerEvent;
+import org.geotools.map.MapLayerListener;
+import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Rule;
 import org.geotools.styling.Style;
 
@@ -73,7 +74,7 @@ public class LegendModel extends DefaultTreeModel {
     }
     Collections.sort(layers, new Comparator<Layer>() {
       public int compare(Layer o1, Layer o2) {
-        return o1.getStyle().getTitle().compareTo(o2.getStyle().getTitle());
+        return o1.getStyle().getDescription().getTitle().compareTo(o2.getStyle().getDescription().getTitle());
       }
     });
 
@@ -84,14 +85,15 @@ public class LegendModel extends DefaultTreeModel {
   }
 
   private void addRuleNodes(Style style, LegendLayerEntry layerNode) {
-    for (Rule rule : style.getFeatureTypeStyles()[0].getRules()) {
-//      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
-   // TODO Geotools [minor] - might ned to modify this to use the size.
-    	Icon icon = StylePreviewFactory.createIcon(rule);  
-      LegendRuleEntry ruleNode = new LegendRuleEntry(rule.getTitle(),
-              icon, rule);
-      insertNodeInto(ruleNode, layerNode, layerNode.getChildCount());
-    }
+  	for (FeatureTypeStyle fts: style.featureTypeStyles()) {
+  		for (Rule rule : fts.rules()) {
+  			//      Icon icon = LegendIconMaker.makeLegendIcon(iconWidth, rule, null);
+  			// TODO Geotools [minor] - might ned to modify this to use the size.
+  			Icon icon = StylePreviewFactory.createIcon(rule);  
+  			LegendRuleEntry ruleNode = new LegendRuleEntry(rule.getName(), icon, rule);
+  			insertNodeInto(ruleNode, layerNode, layerNode.getChildCount());
+  		}
+  	}
   }
 
   /**
@@ -102,7 +104,7 @@ public class LegendModel extends DefaultTreeModel {
    * @return The node created for the layer.
    */
   public LegendEntry createLayerEntry(Layer layer) {
-    LegendLayerEntry entry = new LegendLayerEntry(layer.getStyle().getTitle(), true, layer);
+    LegendLayerEntry entry = new LegendLayerEntry(layer.getStyle().getName(), true, layer);
     nodeMap.put(layer, entry);
     layer.addMapLayerListener(new LayerNodeListener(layer));
     addRuleNodes(layer.getStyle(), entry);
@@ -123,7 +125,7 @@ public class LegendModel extends DefaultTreeModel {
         this.removeNodeFromParent((LegendEntry) layerEntry.getChildAt(0));
       }
       Style style = layer.getStyle();
-      layerEntry.setName(style.getTitle());
+      layerEntry.setName(style.getName());
       addRuleNodes(style, (LegendLayerEntry) layerEntry);
     }
   }

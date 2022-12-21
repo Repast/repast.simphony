@@ -21,8 +21,6 @@ import java.util.Set;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import javolution.util.FastSet;
-
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.functors.EqualPredicate;
 import org.apache.commons.collections15.functors.InstanceofPredicate;
@@ -1480,7 +1478,7 @@ public class Utility {
 	}
 
 	public static AgentSet combineAgentSets(AgentSet a1, AgentSet a2) {
-		FastSet s = new FastSet();
+		ArrayList s = new ArrayList();
 		s.addAll(a1);
 		s.addAll(a2);
 		return new AgentSet(s);

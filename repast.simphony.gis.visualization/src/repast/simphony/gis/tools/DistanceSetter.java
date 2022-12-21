@@ -1,6 +1,6 @@
 package repast.simphony.gis.tools;
 
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 
 public interface DistanceSetter {

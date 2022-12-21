@@ -1,8 +1,9 @@
 package repast.simphony.gis.legend;
 
-import javax.swing.*;
+import java.awt.Color;
+
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
 
 /**
  * This represents a generic entry in the legend. This will be selectable and

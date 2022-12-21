@@ -1,6 +1,6 @@
 package repast.simphony.query.space.gis;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.apache.commons.collections15.Predicate;
 import repast.simphony.space.gis.Geography;
 

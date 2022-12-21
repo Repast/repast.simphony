@@ -5,15 +5,13 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.geom.Point2D;
 
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
 
 import org.geotools.geometry.DirectPosition2D;
+import org.geotools.map.MapBoundsEvent;
+import org.geotools.map.MapBoundsListener;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapBoundsEvent;
-import org.geotools.map.event.MapBoundsListener;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.operation.TransformException;
 import org.piccolo2d.PCamera;
@@ -23,7 +21,10 @@ import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.nodes.PPath;
 
 import repast.simphony.gis.display.PiccoloMapPanel;
+import si.uom.NonSI;
+import si.uom.SI;
 import simphony.util.messages.MessageCenter;
+import tech.units.indriya.unit.Units;
 
 public class DistanceTool extends PBasicInputEventHandler implements MapTool, MapBoundsListener {
 
@@ -50,9 +51,9 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
   private PCamera camera;
 
   // this unit mess is because geotools geodetic calculator uses the old jsr units
-  public DistanceTool(MapContent context, javax.measure.unit.Unit unit, DistanceSetter setter) {
+  public DistanceTool(MapContent context, Unit unit, DistanceSetter setter) {
     this.mapContext = context;
-    this.unit = Unit.valueOf(unit.toString());
+    this.unit = unit;
     this.setter = setter;
     calculator = new GeodeticCalculator(context.getCoordinateReferenceSystem());
 
@@ -130,10 +131,10 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
       }
 
       if (!calculator.getEllipsoid().getAxisUnit().equals(NonSI.DEGREE_ANGLE)) {
-        if (unit == SI.METER) {
+        if (unit == Units.METRE) {
           distance = calculator.getOrthodromicDistance();
         } else {
-          UnitConverter converter = SI.METER.getConverterTo(unit);
+          UnitConverter converter = Units.METRE.getConverterTo(unit);
           distance = converter.convert(calculator.getOrthodromicDistance());
         }
       } else if (!unit.equals(calculator.getEllipsoid().getAxisUnit())) {
@@ -146,7 +147,7 @@ public class DistanceTool extends PBasicInputEventHandler implements MapTool, Ma
       }
 
       curDistance = distance;
-      setter.setDistance(totalDistance + curDistance, javax.measure.unit.Unit.valueOf(unit.toString()));
+      setter.setDistance(totalDistance + curDistance, unit);
     }
   }
 

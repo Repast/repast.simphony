@@ -1,7 +1,8 @@
 package repast.simphony.gis.legend;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 
 
 /**

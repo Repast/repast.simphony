@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.measure.Quantity;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -32,8 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
-
-import org.jscience.physics.amount.Amount;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -106,7 +105,7 @@ public class EditedStyleDialog extends JDialog {
     pTypes.add(long.class);
     pTypes.add(byte.class);
     pTypes.add(short.class);
-    pTypes.add(Amount.class);
+    pTypes.add(Quantity.class);
     pTypes.add(java.lang.Object.class);
   }
 

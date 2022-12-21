@@ -21,8 +21,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.geotools.brewer.styling.filter.expression.ExpressionBuilder;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.filter.expression.ExpressionBuilder;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.LineSymbolizer;
@@ -39,8 +39,6 @@ import org.geotools.styling.visitor.DuplicatingStyleVisitor;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 
-import repast.simphony.gis.display.SquareIcon;
-
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -49,6 +47,8 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+
+import repast.simphony.gis.display.SquareIcon;
 
 /**
  * Editor panel for single rule GIS style that lets the user specify the style
@@ -620,7 +620,7 @@ public class RuleEditPanel extends JPanel implements IStyleEditor {
 		Style style = styleBuilder.createStyle();
 		FeatureTypeStyle fts = styleBuilder.createFeatureTypeStyle(type
 				.getName().getLocalPart(), rule);
-		rule.setTitle(" ");
+		rule.getDescription().setTitle(" ");
 		style.featureTypeStyles().clear();
 		List<FeatureTypeStyle> ftsList = new ArrayList<FeatureTypeStyle>();
 	  ftsList.add(fts);

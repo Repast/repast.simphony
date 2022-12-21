@@ -1,14 +1,13 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.layers.AirspaceLayer;
-import gov.nasa.worldwind.render.airspaces.Airspace;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import gov.nasa.worldwind.Model;
+import gov.nasa.worldwind.layers.AirspaceLayer;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 import repast.simphony.space.gis.Geography;
 import repast.simphony.visualization.IDisplayLayer;
 import repast.simphony.visualization.LayoutUpdater;

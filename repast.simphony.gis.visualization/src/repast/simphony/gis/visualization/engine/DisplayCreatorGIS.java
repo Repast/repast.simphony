@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryImpl;
+import org.geotools.xml.styling.SLDParser;
 
 import repast.simphony.context.Context;
 import repast.simphony.scenario.data.ProjectionData;

@@ -60,7 +60,7 @@ public class AbstractDescriptor implements Descriptor {
   }
   
   // required to set scs on deserialization
-  private Object readResolve() {
+  protected Object readResolve() {
     scs = new ScenarioChangedSupport();
     return this;
   }

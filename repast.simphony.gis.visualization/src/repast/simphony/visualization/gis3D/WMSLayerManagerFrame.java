@@ -1,7 +1,5 @@
 package repast.simphony.visualization.gis3D;
 
-import gov.nasa.worldwind.WorldWindow;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
@@ -14,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import gov.nasa.worldwind.WorldWindow;
 
 public class WMSLayerManagerFrame extends JFrame{
 	private static final long serialVersionUID = -6745733733859079433L;

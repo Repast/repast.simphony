@@ -11,33 +11,28 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapLayerListEvent;
-import org.geotools.map.event.MapLayerListListener;
+import org.geotools.map.MapLayerListEvent;
+import org.geotools.map.MapLayerListListener;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
-import org.geotools.styling.Mark;
-import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
-import org.geotools.styling.SLD;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
-import repast.simphony.gis.display.RepastMapLayer;
 import repast.simphony.space.gis.FeatureAgentFactoryFinder;
 import repast.simphony.space.gis.FeatureAttributeAdapter;
 import repast.simphony.space.gis.GISConstants;
-
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
 
 /**
  * Decorates selected features with a highlight. This is done
@@ -131,10 +126,10 @@ public class SelectionDecorator implements MapLayerListListener {
       Style style = layer.getStyle();
       SimpleFeatureType type = (SimpleFeatureType)layer.getFeatureSource().getSchema();
       Class geomType = type.getGeometryDescriptor().getType().getBinding();
-      if (geomType.equals(com.vividsolutions.jts.geom.Polygon.class)
+      if (geomType.equals(org.locationtech.jts.geom.Polygon.class)
               || geomType.equals(MultiPolygon.class)) {
         highlightPolygon(style);
-      } else if (geomType.equals(com.vividsolutions.jts.geom.Point.class)
+      } else if (geomType.equals(org.locationtech.jts.geom.Point.class)
               || geomType.equals(MultiPoint.class)) {
         highlightPoint(style);
       } else if (geomType.equals(LineString.class)
@@ -195,7 +190,7 @@ public class SelectionDecorator implements MapLayerListListener {
   }
 
   public void layerAdded(MapLayerListEvent event) {
-    Layer layer = event.getElement();
+    Layer layer = event.getLayer();
     if (layer instanceof FeatureLayer) {
       layers.add(layer);
     }

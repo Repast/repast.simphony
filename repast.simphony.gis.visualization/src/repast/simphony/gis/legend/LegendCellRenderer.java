@@ -1,9 +1,10 @@
 package repast.simphony.gis.legend;
 
-import javax.swing.*;
+import java.awt.Component;
+
+import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
 
 
 /**

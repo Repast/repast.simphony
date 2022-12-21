@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.gis.visualization" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.9.1"/>
+         <attribute id="simphony" value="2.10.0"/>
      </attributes>
 	
 	<requires>
@@ -18,7 +18,7 @@
 	</requires>
 	
 	<runtime>
-		<library id="gt-render" path="./lib/gt-render-19.1.jar" type="code"/>
+		<library id="gt-render" path="./lib/gt-render-26.6.jar" type="code"/>
 		
 	  <library id="gis.visualization" path="bin/" type="code">
 			<export prefix="*"/>

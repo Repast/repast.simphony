@@ -11,19 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotools.map.Layer;
+import org.geotools.map.MapBoundsEvent;
+import org.geotools.map.MapBoundsListener;
 import org.geotools.map.MapContent;
-import org.geotools.map.event.MapBoundsEvent;
-import org.geotools.map.event.MapBoundsListener;
-import org.geotools.map.event.MapLayerEvent;
-import org.geotools.map.event.MapLayerListener;
+import org.geotools.map.MapLayerEvent;
+import org.geotools.map.MapLayerListener;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
+import org.locationtech.jts.geom.Envelope;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.nodes.PImage;
 
 import simphony.util.messages.MessageCenter;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * This represents a FeatureLayer as an image. Each layer is inserted as a node into

@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.quantity.Length;
 
 import org.apache.commons.collections15.Predicate;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -24,6 +24,13 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.operation.matrix.GeneralMatrix;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.index.ItemVisitor;
+import org.locationtech.jts.index.SpatialIndex;
+import org.locationtech.jts.index.quadtree.Quadtree;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -32,14 +39,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.index.ItemVisitor;
-import com.vividsolutions.jts.index.SpatialIndex;
-import com.vividsolutions.jts.index.quadtree.Quadtree;
-
 import repast.simphony.query.space.projection.Within;
 import repast.simphony.space.projection.DefaultProjection;
 import repast.simphony.space.projection.ProjectionEvent;
@@ -47,6 +46,7 @@ import repast.simphony.space.projection.ProjectionEvent.Type;
 import repast.simphony.space.projection.ProjectionPredicate;
 import repast.simphony.util.collections.FilteredIterator;
 import simphony.util.messages.MessageCenter;
+import tech.units.indriya.unit.Units;
 
 /**
  * Default implementation of Geography, a geographic GIS type space.
@@ -461,12 +461,12 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    *          the angle along which to move
    * @return the geometric location the object was moved to
    */
-  public Geometry moveByVector(T object, double distance, Unit unit, double angleInRadians) {
-    if (!unit.isCompatible(SI.METER)) {
+  public Geometry moveByVector(T object, double distance, Unit<Length> unit, double angleInRadians) {
+    if (!unit.isCompatible(Units.METRE)) {
       msg.error("Error moving object by vector", new IllegalArgumentException("Unable to convert: "
           + unit + " into distance measure"));
     }
-    return moveByVector(object, unit.getConverterTo(SI.METER).convert(distance), angleInRadians);
+    return moveByVector(object, unit.getConverterTo(Units.METRE).convert(distance), angleInRadians);
   }
 
   /**
@@ -553,7 +553,7 @@ public class DefaultGeography<T> extends DefaultProjection<T> implements Geograp
    *          the axis index.
    * @return the coordinate reference system's axis units.
    */
-  public Unit getUnits(int axis) {
+  public Unit<?> getUnits(int axis) {
     return crs.getCoordinateSystem().getAxis(axis).getUnit();
   }
 

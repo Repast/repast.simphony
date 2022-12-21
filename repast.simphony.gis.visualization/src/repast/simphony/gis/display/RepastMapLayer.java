@@ -1,9 +1,9 @@
 package repast.simphony.gis.display;
 
-import static org.geotools.map.event.MapLayerEvent.DATA_CHANGED;
-import static org.geotools.map.event.MapLayerEvent.FILTER_CHANGED;
-import static org.geotools.map.event.MapLayerEvent.STYLE_CHANGED;
-import static org.geotools.map.event.MapLayerEvent.VISIBILITY_CHANGED;
+import static org.geotools.map.MapLayerEvent.DATA_CHANGED;
+import static org.geotools.map.MapLayerEvent.FILTER_CHANGED;
+import static org.geotools.map.MapLayerEvent.STYLE_CHANGED;
+import static org.geotools.map.MapLayerEvent.VISIBILITY_CHANGED;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ import java.util.List;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.event.MapLayerEvent;
-import org.geotools.map.event.MapLayerListener;
+import org.geotools.map.MapLayerEvent;
+import org.geotools.map.MapLayerListener;
 import org.geotools.styling.Style;
 
 /**
