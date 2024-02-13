@@ -3,6 +3,9 @@ Building Repast Javadoc
 1. Run the Ant javadoc.xml.  You may need to modify or create a launch config
    that provides the javadoc executable if not on the system path.
    
+   **** NOTE! Requires JDK 11 to generate the proper stylesheet that is compatible
+        with the groovydocs!
+   
    	- Update the javadoc title in javadoc.xml
    	- Check the link href to online Java API in javadoc.xml
    	- Make sure that links to Java base classes work in the generated javadoc.
