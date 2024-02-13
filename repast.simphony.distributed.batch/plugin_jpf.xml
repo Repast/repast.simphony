@@ -24,7 +24,7 @@
             <export prefix="*"/>
         </library>
         
-        <library id="jsch-0.1.48" path="lib/jsch-0.1.48.jar" type="code">
+        <library id="jsch-0.2.16" path="lib/jsch-0.2.16.jar" type="code">
             <export prefix="*"/>
         </library>
         

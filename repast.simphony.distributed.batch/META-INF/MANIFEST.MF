@@ -16,9 +16,9 @@ Export-Package: com.jcraft.jsch,
  repast.simphony.batch.parameter,
  repast.simphony.batch.ssh
 Bundle-ClassPath: .,
- lib/jsch-0.1.48.jar,
  lib/ant.jar,
  lib/ant-launcher.jar,
- lib/xmltask.jar
+ lib/xmltask.jar,
+ lib/jsch-0.2.16.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
