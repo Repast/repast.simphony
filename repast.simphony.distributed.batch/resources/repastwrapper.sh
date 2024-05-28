@@ -31,6 +31,7 @@ if [ "$begin" -le "$totr" ]
         --add-modules=ALL-SYSTEM \
         --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED \
         --add-exports=java.base/java.lang=ALL-UNNAMED \
+        --add-opens java.base/java.util=ALL-UNNAMED \
         --add-exports=java.xml/com.sun.org.apache.xpath.internal.objects=ALL-UNNAMED \
         --add-exports=java.xml/com.sun.org.apache.xpath.internal=ALL-UNNAMED \
         --add-opens java.base/java.lang=ALL-UNNAMED \
