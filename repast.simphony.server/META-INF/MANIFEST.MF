@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast Simphony Server
 Bundle-SymbolicName: repast.simphony.server
-Bundle-Version: 2.10.0
+Bundle-Version: 2.11.0
 Automatic-Module-Name: repast.simphony.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: repast.simphony.core;bundle-version="2.10.0",
- repast.simphony.runtime;bundle-version="2.10.0",
- repast.simphony.batch;bundle-version="2.10.0",
- repast.simphony.chart;bundle-version="2.10.0",
- repast.simphony.gis;bundle-version="2.10.0",
- repast.simphony.gis.visualization;bundle-version="2.10.0",
- repast.simphony.scenario;bundle-version="2.10.0",
- repast.simphony.data;bundle-version="2.10.0",
- repast.simphony.gui;bundle-version="2.10.0"
+Require-Bundle: repast.simphony.core;bundle-version="2.11.0",
+ repast.simphony.runtime;bundle-version="2.11.0",
+ repast.simphony.batch;bundle-version="2.11.0",
+ repast.simphony.chart;bundle-version="2.11.0",
+ repast.simphony.gis;bundle-version="2.11.0",
+ repast.simphony.gis.visualization;bundle-version="2.11.0",
+ repast.simphony.scenario;bundle-version="2.11.0",
+ repast.simphony.data;bundle-version="2.11.0",
+ repast.simphony.gui;bundle-version="2.11.0"
 Bundle-ClassPath: lib/annotations-13.0.jar,
  lib/jackson-annotations-2.9.9.jar,
  lib/jackson-core-2.9.9.jar,

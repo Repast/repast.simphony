@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast statecharts visualization
 Bundle-SymbolicName: repast.simphony.statecharts.visualization
-Bundle-Version: 2.10.0
+Bundle-Version: 2.11.0
 Bundle-ClassPath: runtime.jar
 Require-Bundle: repast.simphony.statecharts,
  org.junit,

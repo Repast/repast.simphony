@@ -3,7 +3,7 @@
 <plugin class="repast.simphony.ui.RSUIPlugin" id="repast.simphony.gui" version="">
 
 	<attributes>
-         <attribute id="simphony" value="2.10.0"/>
+         <attribute id="simphony" value="2.11.0"/>
      </attributes>
 	
   <requires>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast gis
 Bundle-SymbolicName: repast.simphony.gis
-Bundle-Version: 2.10.0
+Bundle-Version: 2.11.0
 Export-Package: com.conversantmedia.util.collection,
  com.conversantmedia.util.concurrent,
  com.conversantmedia.util.estimation,

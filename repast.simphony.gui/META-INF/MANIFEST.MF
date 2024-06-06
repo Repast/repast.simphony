@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast gui
 Bundle-SymbolicName: repast.simphony.gui
-Bundle-Version: 2.10.0
+Bundle-Version: 2.11.0
 Bundle-ClassPath: lib/jmf.jar,
  bin/,
  lib/spark-1.2.jar,

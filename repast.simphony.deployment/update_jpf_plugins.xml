@@ -1,6 +1,6 @@
 <project name="Update JPF Plugins" default="update">
 
-	<property name="rs.version" value="2.10.0" />
+	<property name="rs.version" value="2.11.0" />
  
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask"/>
 
