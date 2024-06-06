@@ -30,6 +30,6 @@ Export-Package: groovy.inspect.swingui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
 Require-Bundle: org.codehaus.groovy;bundle-version="3.0.8"
-Bundle-ClassPath: lib/groovy-swing-3.0.11.jar,
- lib/groovy-templates-3.0.11.jar,
- lib/groovy-xml-3.0.11.jar
+Bundle-ClassPath: lib/groovy-swing-3.0.21.jar,
+ lib/groovy-templates-3.0.21.jar,
+ lib/groovy-xml-3.0.21.jar
