@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Build the Repast JavaDoc
 
-	Working as of Release 2.9 Oct 2021
-
 	***** BEFORE RUNNING ***** 
 		- Update the version number in the document title
 		- Check that the link href to online API docs matches the JDK
@@ -10,10 +8,6 @@
 		  javadoc may not work otherwise.
 		  
 	Notes: 	
-			* Javadoc as of JDK 9 is a lot more sensitive to errors and options
-			  compared to JDK 8 and earlier, so pay attention to arguments.
-	
-			* Groovy files will fail and should not be included
 	
 			* The useexternalfile=yes is needed on Windows in order to avoid a
 	         problem with long paths for the javadoc.exe
@@ -48,11 +42,11 @@
 
 	<target name="javadoc">
 		<javadoc 
-			destdir="doc" 
+			destdir="RepastSimphonyAPI" 
 			author="true" 
 			version="true" 
 			use="true" 
-			windowtitle="Repast Simphony 2.10 API" 
+			windowtitle="Repast Simphony 2.11 API" 
 			useexternalfile="yes"
 			nohelp="false"
 			noindex="false"
@@ -106,10 +100,6 @@
 			</fileset>
 
 			<fileset dir="../repast.simphony.gis.visualization/src" casesensitive="no">
-				<include name="repast/simphony/**/*.java" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.groovy/src" casesensitive="no">
 				<include name="repast/simphony/**/*.java" />
 			</fileset>
 

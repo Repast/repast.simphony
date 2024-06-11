@@ -9,33 +9,40 @@
     - mainSourceDirectory (e.g., src)
     
 -->
-<project default="generate">
+<project default="all">
     <property name="docsDirectory" value="docs/ReLogo API"/>
-	<property name="javaDocsDirectory" value="${docsDirectory} Java"/>
-    <property name="version" value="2.10"/>
+	<property name="javaDocsDirectory" value="../repast.simphony.deployment/RepastSimphonyAPI"/>
+    <property name="version" value="2.11"/>
     <property name="title" value="API V${version}"/>
     <property name="docFooter" value="ReLogo ${title}"/>
     <property name="mainSourceDirectory" value="src"/>
 	<path id="sourcePath">
-					<pathelement path="../repast.simphony.core/src" /> 
-					<pathelement path="../repast.simphony.data/src" />
-					<pathelement path="../repast.simphony.dataLoader/src" />
-					<pathelement path="../repast.simphony.essentials/src" />
-					<pathelement path="../repast.simphony.gui/src" />
-					<pathelement path="../repast.simphony.relogo.ide/src" />
-					<pathelement path="../repast.simphony.relogo.runtime/src" />
-					<pathelement path="../repast.simphony.userpanel.ui/src" />
-					<pathelement path="../repast.simphony.visualization/src" />
-				</path>
+		<pathelement path="../repast.simphony.core/src" />
+        <pathelement path="../repast.simphony.data/src" />
+        <pathelement path="../repast.simphony.dataLoader/src" />
+        <pathelement path="../repast.simphony.essentials/src" />
+        <pathelement path="../repast.simphony.gui/src" />
+		<pathelement path="../repast.simphony.relogo.ide/src" />
+		<pathelement path="../repast.simphony.relogo.runtime/src" />
+        <pathelement path="../repast.simphony.userpanel.ui/src" />
+        <pathelement path="../repast.simphony.visualization/src" />
+	</path>
 	<property name="sp" refid="sourcePath"/>
     <taskdef name="groovydoc" classname="org.codehaus.groovy.ant.Groovydoc"/>
+	
+	<!-- NOTE:  Below specifiy the package names explictely by name.*  If you provide
+				a total wildcard like **.*, the groovydoc generate will throw a stack
+				overflow due to recursive dependencies in in r.s.core
+				
+		NOTE: Use one line for packagenames without spaces between entries.		
+	-->
     <target name="generate">
         <echo>Generating groovy doc</echo>
     	<echo message="sourcePath is ${sp}" />
         <groovydoc 
             destdir="${docsDirectory}"
             sourcepath="${sp}"
-            packagenames="**.*"
+            packagenames="repast.simphony.relogo.*,repast.simphony.space.*,repast.simphony.userpanel.*,repast.simphony.essentials.*,repast.simphony.data2.*,repast.simphony.dataloader.*,repast.simphony.context.*,repast.simphony.random.*,repast.simphony.query.*,repast.simphony.util.*"
             use="true"
             windowtitle="${title}"
             doctitle="${title}"
@@ -43,7 +50,7 @@
             footer="${docFooter}"
             private="false">
         	<!-- This line linking to the repast Java API doesn't appear to work -->
-        	<link packages="repast.simphony." href="https://repast.github.io/docs/api/repast_simphony/"/>
+        	
         	<link packages= "java.,org.xml.,javax.,org.xml." href="http://docs.oracle.com/en/java/javase/11/docs/api/java.base"/>
         	<link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
         	<link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
@@ -51,4 +58,34 @@
         </groovydoc>
     	
     </target>
+		
+	<!-- The GroovyDoc generation uses it's own stylesheet which is not compatible with
+		 the javadoc stylsheet, so we need to rename the groovydoc stylesheet and update
+		 references to it in all of the groovydoc HTML files.
+		 
+		 Finally, copy the relevant parts of generated GroovyDoc into the r.s.deployment 
+		 javadoc folder. 
+	-->
+	<target name = "cleanup">
+		<move file="${docsDirectory}/stylesheet.css" tofile="${docsDirectory}/groovy_stylesheet.css"/>
+		
+		
+		<!-- Replace stylesheet.css with groovy_stylesheet.css in all html files -->
+		<replace dir="${docsDirectory}" value="groovy_stylesheet.css">
+		  <include name="**/*.html"/>
+		  <replacetoken>stylesheet.css</replacetoken>
+		</replace>
+		
+		<copy file="${docsDirectory}/groovy_stylesheet.css" todir="${javaDocsDirectory}"/>
+		<copy file="${docsDirectory}/groovy.ico" todir="${javaDocsDirectory}"/>
+		<copy file="${docsDirectory}/inherit.gif" todir="${javaDocsDirectory}"/>
+		
+		<copy todir="${javaDocsDirectory}/repast/simphony/relogo">
+		  <fileset dir="${docsDirectory}/repast/simphony/relogo"/>
+		</copy>
+		
+	</target>
+	
+	<target name="all" depends="generate,cleanup"/>
+	
 </project>
