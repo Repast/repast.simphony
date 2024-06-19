@@ -45,7 +45,7 @@ public class ServerLauncherCreator {
         
         String scenarioDirectory = project.getProject().getName() + ".rs";
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-                "5000 \"${workspace_loc:" + project.getElementName() + "}/" + scenarioDirectory + "\" true");
+                "43555 \"${workspace_loc:" + project.getElementName() + "}/" + scenarioDirectory + "\" true");
         
         launchConfigurationWorkingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, RSProjectConfigurator.VMARGS);
         
