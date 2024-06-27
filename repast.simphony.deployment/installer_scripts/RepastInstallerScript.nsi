@@ -10,14 +10,16 @@
 !include "StrFunc.nsh"    ; String functions
 !include "x64.nsh"        ; Macros for x64 machines
 
-!define VERSION "2.9"     ; Repast Version
+!define VERSION "2.11.0"     ; Repast Version
 
-!define JAVA_HOME "jdk11"                          ; The included Java root dir
-!define JAVA_BIN "eclipse\${JAVA_HOME}\bin\javaw"  ; path to bundled VM
-!define VM_ARGS "-vm ${JAVA_BIN}"                  ; vm arg for eclipse to use bundled jdk
+# Note that as of RS 2.10.0, the JRE is bundled with Eclipse so
+#  the Java install page is disabled below.
+#!define JAVA_HOME "jdk11"                          ; The included Java root dir
+#!define JAVA_BIN "eclipse\${JAVA_HOME}\bin\javaw"  ; path to bundled VM
+#!define VM_ARGS "-vm ${JAVA_BIN}"                  ; vm arg for eclipse to use bundled jdk
 
-Var /GLOBAL eclipse_params
-Var /GLOBAL javabin
+#Var /GLOBAL eclipse_params
+#Var /GLOBAL javabin
 
 ; The name of the installer
 Name "Repast Simphony ${VERSION}"
@@ -28,8 +30,9 @@ OutFile "Repast-Simphony-${VERSION}-win64.exe"
 ; The default installation directory.  The $PROFILE variable is the user's home dir
 InstallDir $PROFILE\RepastSimphony-${VERSION}
 
-; Request Administrator level application privileges when copying files
-#RequestExecutionLevel admin
+; Request USER level application privileges when installing, since the default install
+; location is C:\Users and don't need admin for this.
+RequestExecutionLevel user
 
 ;--------------------------------
 
@@ -42,7 +45,7 @@ InstallDir $PROFILE\RepastSimphony-${VERSION}
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE repast-license.txt
-Page Custom JavaInfoPage
+#Page Custom JavaInfoPage
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -50,6 +53,8 @@ Page Custom JavaInfoPage
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+
+!insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
 
@@ -82,7 +87,7 @@ Section "Repast Simphony" Section_Repast
   
 SectionEnd
 
-Section "Java 11" Section_Java
+/* Section "Java 11" Section_Java
 
   ; Set output path for the JDK to the installation\eclipse directory.
   SetOutPath $INSTDIR\eclipse
@@ -96,7 +101,7 @@ Section "Java 11" Section_Java
   ; Define the Java VM bin to the bundled JDK
   StrCpy $javabin "${JAVA_BIN}"
   
-SectionEnd
+SectionEnd */
 
 Section "Documentation" Section_Doc
   ; Set output path to the installation directory.
@@ -118,16 +123,18 @@ SectionEnd
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts" Section_Shortcuts
  
-  ; Install for all users
-  SetShellVarContext all
+  ; Install for current user - does not require admin
+  SetShellVarContext current
   
   CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}"
   CreateDirectory "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation"
 
   ; CreateShortCut link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
   
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "$eclipse_params" "$INSTDIR\eclipse\eclipse.exe" 0
-  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\run_batch_runner.bat" "$javabin"
+  ;CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "$eclipse_params" "$INSTDIR\eclipse\eclipse.exe" 0
+  ;CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\run_batch_runner.bat" "$javabin"
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Repast Simphony.lnk" "$INSTDIR\eclipse\eclipse.exe" "" "$INSTDIR\eclipse\eclipse.exe" 0
+  CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Batch Runner.lnk" "$INSTDIR\run_batch_runner.bat"
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\UnInstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0  
 
   CreateShortCut "$SMPROGRAMS\RepastSimphony ${VERSION}\Documentation\ReLogo Getting Started.lnk" "$INSTDIR\docs\ReLogoGettingStarted.pdf" 
@@ -154,8 +161,8 @@ SectionEnd
 ; Uninstaller
 
 Section "Uninstall"
-  ; Install for all users
-  SetShellVarContext all
+  ; Install for current user - does not require admin
+  SetShellVarContext current
   
   ; Remove registry keys for uninstall
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\RepastSimphony ${VERSION}"
@@ -182,14 +189,14 @@ LangString DESC_Section_Shortcuts ${LANG_ENGLISH} "Installs the Repast program a
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Repast} $(DESC_Section_Repast)
-  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Java} $(DESC_Section_Java)
+#  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Java} $(DESC_Section_Java)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Doc} $(DESC_Section_Doc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Models} $(DESC_Section_Models)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Shortcuts} $(DESC_Section_Shortcuts)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Custom page for Java installation information
-LangString JAVA_PAGE_TITLE ${LANG_ENGLISH} "Java Information"
+/* LangString JAVA_PAGE_TITLE ${LANG_ENGLISH} "Java Information"
 LangString JAVA_PAGE_SUBTITLE ${LANG_ENGLISH} "Please read carefully"
 
 Var Dialog
@@ -201,8 +208,8 @@ If you are unsure if Java 8 or later is already installed on your system, use th
 default installation settings and Java will be installed for you. $\r$\n$\r$\n\
 The included Java runtime will not conflict with an existing Java installation on your system.$\r$\n$\r$\n\
 Please see the Repast Quick Start guide for more information about Java."
-
-Function JavaInfoPage
+ */
+/* Function JavaInfoPage
   !insertmacro MUI_HEADER_TEXT $(JAVA_PAGE_TITLE) $(JAVA_PAGE_SUBTITLE)
 
   ; Create a simple dialog on this page with a single lable with the Java info.  
@@ -217,7 +224,7 @@ Function JavaInfoPage
 	Pop $Text
 	
 	nsDialogs::Show
-FunctionEnd
+FunctionEnd */
 
 Function WelcomePageSetupLinkPre
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "4" ; increase counter
@@ -245,7 +252,3 @@ Function WelcomePageSetupLinkShow
   Pop $0
 FunctionEnd
  
-;--------------------------------
-;Languages
- 
-!insertmacro MUI_LANGUAGE "English"
