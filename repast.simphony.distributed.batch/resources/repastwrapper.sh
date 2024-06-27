@@ -26,7 +26,16 @@ if [ "$begin" -le "$totr" ]
     cd $instanceDir
     ln -s "../data" data
     # echo $inputArg
-    java -Xmx512m -cp "../lib/*" repast.simphony.batch.InstanceRunner \
+    java -Xmx512m -XX:+IgnoreUnrecognizedVMOptions \
+        --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
+        --add-modules=ALL-SYSTEM \
+        --add-exports=java.base/jdk.internal.ref=ALL-UNNAMED \
+        --add-exports=java.base/java.lang=ALL-UNNAMED \
+        --add-opens java.base/java.util=ALL-UNNAMED \
+        --add-exports=java.xml/com.sun.org.apache.xpath.internal.objects=ALL-UNNAMED \
+        --add-exports=java.xml/com.sun.org.apache.xpath.internal=ALL-UNNAMED \
+        --add-opens java.base/java.lang=ALL-UNNAMED \
+        -cp "../lib/*" repast.simphony.batch.InstanceRunner \
         -pxml ../scenario.rs/batch_params.xml \
         -scenario ../scenario.rs \
         -id $instance \

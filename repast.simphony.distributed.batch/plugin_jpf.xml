@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.distributed.batch" version="">
 
 	<attributes>
-		<attribute id="simphony" value="2.10.0"/>
+		<attribute id="simphony" value="2.11.0"/>
 	</attributes>
 
 	<requires>
@@ -24,7 +24,7 @@
             <export prefix="*"/>
         </library>
         
-        <library id="jsch-0.1.48" path="lib/jsch-0.1.48.jar" type="code">
+        <library id="jsch-0.2.16" path="lib/jsch-0.2.16.jar" type="code">
             <export prefix="*"/>
         </library>
         

@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.transaction.util.TransactionUtil;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -789,14 +789,14 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
         StatechartPackage.Literals.TRANSITION__TRIGGER_CODE_LANGUAGE);
 
     context.bindValue(
-        WidgetProperties.selection().observe(btnIsDefaultOut),
+        WidgetProperties.buttonSelection().observe(btnIsDefaultOut),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__DEFAULT_TRANSITION).observe(eObject));
     doOutOfChoiceCheck();
     defaultOutChanged(((Transition) eObject).isDefaultTransition());
 
     context.bindValue(
-        WidgetProperties.selection().observe(btnSelfTransition),
+        WidgetProperties.buttonSelection().observe(btnSelfTransition),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__SELF_TRANSITION).observe(eObject));
     doSelfCheck();
@@ -815,13 +815,13 @@ public class TransitionSheet extends FocusFixComposite implements BindableFocusa
     UpdateValueStrategy modelToTarget = new UpdateValueStrategy();
     modelToTarget.setConverter(new TriggerTypeToString());
     context.bindValue(
-        WidgetProperties.selection().observe(cmbTriggerType),
+        WidgetProperties.comboSelection().observe(cmbTriggerType),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__TRIGGER_TYPE).observe(eObject), targetToModel,
         modelToTarget);
 
     context.bindValue(
-        WidgetProperties.selection().observe(cmbMessageType),
+        WidgetProperties.comboSelection().observe(cmbMessageType),
         EMFEditProperties.value(TransactionUtil.getEditingDomain(eObject),
             StatechartPackage.Literals.TRANSITION__MESSAGE_CHECKER_TYPE).observe(eObject),
         createUpdateValueStrategy(new StringToMessageType()),

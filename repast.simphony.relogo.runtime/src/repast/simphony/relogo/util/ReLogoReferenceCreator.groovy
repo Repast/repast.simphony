@@ -29,7 +29,7 @@ import repast.simphony.relogo.UtilityG;
 
 class ReLogoReferenceCreator {
 	
-	static final String docTitle = "ReLogo Primitives ver. 2.10"
+	static final String docTitle = "ReLogo Primitives ver. 2.11"
 	static final String filename = "data/ReLogoPrimitives.xls"
 	static final String docLocation = "docs/ReLogo API/repast/simphony/relogo/"
 	static final String refURLbase = "repast/simphony/relogo/"
@@ -97,6 +97,9 @@ class ReLogoReferenceCreator {
 		String content = classNameContentMap.get(className)
 		if (content == null){
 				String baseURLname = docLocation + className + ".html"
+				
+				println baseURLname
+				
 				URL url = new URL("file","",baseURLname)
 				content = url.getText()
 				classNameContentMap.put(className, content)
@@ -134,6 +137,7 @@ class ReLogoReferenceCreator {
 			
 		}
 		else {// sheetName is the same as className for these
+			
 			String content = getContentText(sheetName)
 			
 			if(content.find(pat)) return sheetName
@@ -173,13 +177,13 @@ class ReLogoReferenceCreator {
 			}
 			
 			// Add a comma to separate multiple method args
-			if (resultParts.size > 1){
+			if (resultParts.size() > 1){
 				result += ","
 			}
 		}
 		
 		// drop the last "," added to the end of multi arg methods
-		if (resultParts.size > 1){
+		if (resultParts.size() > 1){
 			result = result[0..-2 ] 
 		}
 		

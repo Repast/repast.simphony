@@ -3,7 +3,7 @@
 <plugin id="repast.simphony.groovy" version="">
 	
 	<attributes>
-         <attribute id="simphony" value="2.10.0"/>
+         <attribute id="simphony" value="2.11.0"/>
      </attributes>
 
 	<requires>
@@ -13,8 +13,8 @@
 	<runtime>
 		
 		
-		<library id="groovy-swing" path="./lib/groovy-swing-3.0.11.jar" type="code"/>
-		<library id="groovy-xml" path="./lib/groovy-xml-3.0.11.jar" type="code"/>
-		<library id="groovy-templates" path="./lib/groovy-templates-3.0.11.jar" type="code"/>
+		<library id="groovy-swing" path="./lib/groovy-swing-3.0.21.jar" type="code"/>
+		<library id="groovy-xml" path="./lib/groovy-xml-3.0.21.jar" type="code"/>
+		<library id="groovy-templates" path="./lib/groovy-templates-3.0.21.jar" type="code"/>
 	</runtime>
 </plugin>

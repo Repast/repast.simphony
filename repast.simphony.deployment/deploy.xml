@@ -245,15 +245,6 @@
 				<include name="**/*.class" />
 			</fileset>
 
-			<fileset dir="../repast.simphony.groovy/src" casesensitive="no">
-				<include name="**/*.java" />
-				<include name="**/*.groovy" />
-			</fileset>
-
-			<fileset dir="../repast.simphony.groovy/bin" casesensitive="no">
-				<include name="**/*.class" />
-			</fileset>
-
 			<fileset dir="../repast.simphony.gui/src" casesensitive="no">
 				<include name="**/*.java" />
 				<include name="**/*.groovy" />
