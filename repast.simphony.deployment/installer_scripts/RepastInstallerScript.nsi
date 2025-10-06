@@ -10,7 +10,7 @@
 !include "StrFunc.nsh"    ; String functions
 !include "x64.nsh"        ; Macros for x64 machines
 
-!define VERSION "2.11.0"     ; Repast Version
+!define VERSION "2.12.0"     ; Repast Version
 
 # Note that as of RS 2.10.0, the JRE is bundled with Eclipse so
 #  the Java install page is disabled below.
