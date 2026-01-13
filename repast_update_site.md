@@ -1,4 +1,4 @@
-## Repast Simphony Eclipse Update Site
+## Installing Repast Simphony using the Eclipse Update Site
 
 Repast Simphony is provided as an Eclipse update site for users who wish to install Repast into Eclipse directly. This is also the required installation process for linux or any other system for which an automated installer is not available. The update site can also be installed into Eclipse on a Windows or macOS system. 
 
