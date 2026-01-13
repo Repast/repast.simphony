@@ -63,15 +63,19 @@ change the REPAST_SIMPHONY_PLUGIN_VERSION to the new version number.
     - Update the feature version in feature.xml in r.s.feature in the overview tab.
       - In the Included plugins tab, click the versions button and select force feature version into plugin. The listed plugins should now be updated to the correct version number.
 
-5. In r.s.deploymeny run deploy.xml as an Ant build to create the bin and src jar. You will be propmted to provide the version number of the **NEW** release version. If there is not an existing bin_and_src.jar when this is run, it will need to be run twice in order to get the bin_and_src.jar itself into the "RawClasspath".
+5. Update the license files in each project including the copyright date and any other language as may be needed.  Eclipse find and replace works great for updating the dates.
 
-6. In r.s.updatesite, open the site.xml file. Click "Build All" to create the site.
+6. In r.s.deploymeny run deploy.xml as an Ant build to create the bin and src jar. You will be propmted to provide the version number of the **NEW** release version. If there is not an existing bin_and_src.jar when this is run, it will need to be run twice in order to get the bin_and_src.jar itself into the "RawClasspath".
+
+7. In r.s.updatesite, open the site.xml file. Click "Build All" to create the site.
     - This will create the r.s.updatesite structure:
       - /plugins and contents
       - /features and content
       - artifacts.jar
       - content.jar
       - site.xml
+
+8. Sign the update site jars using the JDK jarsigner and developer sigining certificate (not documented here).
 
 #### Build javadocs and groovydocs
 
