@@ -78,7 +78,7 @@ public class RSProjectConfigurator {
     // to give other plugins (e.g. flowchart) the chance to configure their project
     Utilities.addNature(project.getProject(), RepastSimphonyPlugin.REPAST_SIMPHONY_NATURE_ID);
     
-    CompilerUtils.setCompilerLevel(project.getProject(), SpecifiedVersion.DONT_CARE);
+    CompilerUtils.setCompilerLevel(project.getProject(), SpecifiedVersion._30);
     
     project.save(monitor, true);
   }
