@@ -34,24 +34,28 @@ rm -rf $PWD/repast.simphony.updatesite
 UPDATE_SITE_ZIP=$HOME/Downloads/repast.simphony.updatesite.2.12.0.zip
 unzip $UPDATE_SITE_ZIP -d $PWD/
 
-rm -rf $PWD/xpand.mirror
-tar xf $HOME/Downloads/xpand-mirror.tgz -C $PWD/
+#rm -rf $PWD/xpand.mirror
+#tar xf $HOME/Downloads/xpand-mirror.tgz -C $PWD/
 
 
-REPOSITORIES=https://groovy.jfrog.io/artifactory/plugins-release/e4.38,
-REPOSITORIES+=https://download.eclipse.org/releases/2025-12,
+# Groovy (e4.39) and the Xpand mirror are no longer listed here; the local update
+# site's p2 repository references pull them in via -followReferences on the director
+# calls below.
+REPOSITORIES=https://download.eclipse.org/releases/2025-12,
 # REPOSITORIES+=https://download.eclipse.org/eclipse/updates/4.20,
-REPOSITORIES+=file://$PWD/repast.simphony.updatesite,
-REPOSITORIES+=file://$PWD/xpand-mirror
+REPOSITORIES+=file://$PWD/repast.simphony.updatesite
 #echo $REPOSITORIES
 
-GROOVY_FEATURES=org.codehaus.groovy30.feature.feature.group,
-GROOVY_FEATURES+=org.codehaus.groovy.eclipse.feature.feature.group
+# Groovy and Xpand are no longer installed explicitly - the Repast feature now
+# imports them and -followReferences resolves them from the update site's repository
+# references, so they are pulled in transitively when SIMPHONY_FEATURES installs.
+# GROOVY_FEATURES=org.codehaus.groovy30.feature.feature.group,
+# GROOVY_FEATURES+=org.codehaus.groovy.eclipse.feature.feature.group
 
 # org.eclipse.emf.ecore.source.feature.group
 # org.eclipse.emf.compare.ide.ui.feature.group
 
-XPAND_FEATURES=org.eclipse.xpand.sdk.feature.group/2.2.0.v201605260315
+# XPAND_FEATURES=org.eclipse.xpand.sdk.feature.group/2.2.0.v201605260315
 # v201605260315
 
 # #
@@ -74,44 +78,52 @@ M2E+=org.eclipse.m2e.lemminx.feature.feature.group
 NEWS_FEED_FEATURE=org.eclipse.recommenders.news.rcp.feature.feature.group
 
 export PATH=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin:$PATH
-export JAVA_HOME=`/usr/libexec/java_home` 
+export JAVA_HOME=`/usr/libexec/java_home`
 
 rm -f eclipse_install.log
 WORKSPACE=$HOME/eclipse-workspace-032024
 rm -rf $WORKSPACE
 # Note that without -destination arg, tries to install the plugins in .eclipse
-# -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app 
+# -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app
 # -data $HOME/eclipse-workspace-06-2022
 # Also logged to /Users/nick/eclipse-workspace-06-2022/.metadata/.log
 open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log --args -clean -purgeHistory \
+    -consoleLog \
     -application org.eclipse.equinox.p2.director -repository $REPOSITORIES \
+    -followReferences \
     -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app \
     -data $WORKSPACE \
-    -installIU $GROOVY_FEATURES,$XPAND_FEATURES,$SIMPHONY_FEATURES
+    -installIU $SIMPHONY_FEATURES
 
 rm -rf $WORKSPACE
 open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log --args -clean -purgeHistory \
+    -consoleLog \
     -application org.eclipse.equinox.p2.director -repository $REPOSITORIES \
+    -followReferences \
     -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app \
     -data $WORKSPACE \
     -uninstallIU $M2E
 
 rm -rf $WORKSPACE
 open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log --args -clean -purgeHistory \
+    -consoleLog \
     -application org.eclipse.equinox.p2.director -repository $REPOSITORIES \
+    -followReferences \
     -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app \
     -data $WORKSPACE \
     -uninstallIU $WILDWEB
 
 rm -rf $WORKSPACE
 open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log --args -clean -purgeHistory \
+    -consoleLog \
     -application org.eclipse.equinox.p2.director -repository $REPOSITORIES \
+    -followReferences \
     -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app \
     -data $WORKSPACE \
     -uninstallIU $WILDWEB_NODE
 
 # News feed doesn't seem to be a feature in 4.20
-# -uninstallIU $NEWS_FEED_FEATURE 
+# -uninstallIU $NEWS_FEED_FEATURE
 #remove references to local Repast update site
 # rm -f ./Eclipse.app/Contents/eclipse/configuration/*.log
 
@@ -127,8 +139,10 @@ if [[ -f "$PREFS" ]]; then
 fi
 
 # turn off auto updating
-# update for new eclipse
-PLUGIN_CUST_FILE=./Eclipse.app/Contents/Eclipse/plugins/org.eclipse.epp.package.committers_4.38.0.20251204-0849/plugin_customization.ini
+# The committers package folder is versioned (e.g.
+# org.eclipse.epp.package.committers_4.38.0.20251204-0849), so locate the file by
+# glob instead of hard coding the version.
+PLUGIN_CUST_FILE=$(ls ./Eclipse.app/Contents/Eclipse/plugins/org.eclipse.epp.package.*/plugin_customization.ini)
 sed -i'.temp' 's/org.eclipse.equinox.p2.ui.sdk.scheduler\/enabled=true/org.eclipse.equinox.p2.ui.sdk.scheduler\/enabled=false/g' $PLUGIN_CUST_FILE
 rm ${PLUGIN_CUST_FILE}.temp
 
@@ -170,4 +184,3 @@ codesign -f -s  "XX" --entitlements entitlements.plist --timestamp --options=run
 #
 # # to check if all repast.simphony.updatesite mentions were removed uncomment below
 # grep -Rl "repast.simphony.updatesite" .
-

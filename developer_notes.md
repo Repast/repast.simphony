@@ -10,14 +10,23 @@ Building Repast Simphony....
 - Repast Simphony feature and update site 'master' branch: https://github.com/Repast/repast.simphony.feature
   - Check this out locally to a different parent folder than the RS source code
     
-- Eclipse Committers 2025-12
+- Eclipse Committers 2026-03
 
 - The Workspace Java compiler level needs to be 1.8 to avoid Java module dependency issues. The user environment and JRE can still be compliance level 17+ and work OK even with the dev environment build using 1.8, as long as the dev JRE is 17+.
 
-- Groovy Eclipse 4.38 (2025-12) plugin
-  - https://groovy.jfrog.io/artifactory/plugins-release/e4.38
-  - Install only "Main Package (required)"
-  - The default Groovy Compiler is 3.0.X
+- Groovy Eclipse 4.39 (2026-03) plugin
+  - https://groovy.jfrog.io/artifactory/plugins-release/e4.39
+  - In the Install dialog, **uncheck "Group items by category"** to see the
+    flat feature list, then install only:
+      - Eclipse Groovy Development Tools (Compilerless)
+      - Groovy Compiler 3.0
+  - Do NOT install the "Main Package" / "Eclipse Groovy Development Tools" —
+    that feature has a hard dependency on Groovy Compiler 5.0 and will pull
+    it in, which causes a workspace/project compiler mismatch with the
+    Repast-required Groovy 3.0.
+  - With only the 3.0 compiler installed, the workspace compiler is
+    unambiguously 3.0 and no manual switch is needed.
+  - The plugin may be unsigned, so you will need to select all and Trust Selected.
 
  - Eclipse Graphical Modeling Framework (GMF) 
    - Install SDK and Runtime plugins
@@ -25,15 +34,16 @@ Building Repast Simphony....
 - Xpand SDK 2.2.0
    - Install Xpand SDK 2.2 from our update site mirror
    - https://web.cels.anl.gov/projects/Repast/xpand-mirror/
-     - Install the "-2.2.0" plugins
+     - Install `Xpand SDK` feature at version `2.2.0` (this transitively
+       installs all the Xpand/Xtend bundles Repast requires via
+       `org.eclipse.xpand.all.feature`).
+   - The plugin is unsigned, so you will need to select all and Trust Selected.
    - NOTE: The Xpand/Xtend plugins are no longer supported by Eclipse update sites which is why the Repast team provides this mirror that works with current Eclipse releases.
 
 - Eclipse XML editors and tools
 
 - Uninstall the WildWebDeveloper formatter and XML features (part of Eclipse default
   - Search for XML in "what's already installed"
-
-- In Eclipse Groovy settings, make sure compiler set to  3.0.x
 
 - In Eclipse Java Compiler Error/Warning settings, change Forbidden access to WARNING
 

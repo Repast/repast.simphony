@@ -2,6 +2,25 @@
 <?eclipse version="3.3"?>
 <plugin>
    <extension-point id="repast.simphony.project.config" name="RepastSimphonyProjectConfig" schema="schema/repast.simphony.project.config.exsd"/>
+
+<!-- =================================================================================== -->
+<!-- Extension: Repast Simphony Welcome Tab                                              -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="repast.simphony.eclipse.RepastWelcomeStartup">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            id="repast.simphony.eclipse.welcomeEditor"
+            name="Welcome to Repast Simphony"
+            icon="icons/rspersp2.gif"
+            class="repast.simphony.eclipse.RepastWelcomeEditor">
+      </editor>
+   </extension>
    <extension-point id="repast.simphony.perspective.config" name="Repast Simphonty Perspsective Configurator" schema="schema/repast.simphony.perspective.config.exsd"/>
 
 <!-- =================================================================================== -->
