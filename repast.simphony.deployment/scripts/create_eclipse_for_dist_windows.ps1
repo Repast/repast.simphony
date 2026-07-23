@@ -91,6 +91,51 @@ $UPDATE_SITE_ZIP = Join-Path $env:USERPROFILE "Downloads\repast.simphony.updates
 Remove-Tree (Join-Path $ROOT "repast.simphony.updatesite")
 Expand-Archive -Path $UPDATE_SITE_ZIP -DestinationPath $ROOT -Force
 
+# --- Verify the Repast update site jars are signed ---------------------------
+# Jar signing is performed in a separate build process, so the update site
+# unpacked above is not guaranteed to be signed. Rather than fail outright, scan
+# the site and, if any jars are unsigned, prompt the operator to cancel or to
+# proceed with the unsigned site. A jar is considered signed when its META-INF
+# holds a signature block (.RSA/.DSA/.EC) plus the matching .SF manifest.
+function Test-JarSigned {
+    param([Parameter(Mandatory)][string]$JarPath)
+    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($JarPath)
+    try {
+        $hasBlock = $false
+        $hasSf    = $false
+        foreach ($entry in $zip.Entries) {
+            if ($entry.FullName -match '^META-INF/[^/]+\.(RSA|DSA|EC)$') { $hasBlock = $true }
+            if ($entry.FullName -match '^META-INF/[^/]+\.SF$')           { $hasSf = $true }
+        }
+        return ($hasBlock -and $hasSf)
+    } finally {
+        $zip.Dispose()
+    }
+}
+
+$UPDATE_SITE_DIR = Join-Path $ROOT "repast.simphony.updatesite"
+$siteJars = @(Get-ChildItem -Path $UPDATE_SITE_DIR -Filter *.jar -Recurse -ErrorAction SilentlyContinue)
+$unsignedJars = @($siteJars | Where-Object { -not (Test-JarSigned $_.FullName) })
+
+if ($unsignedJars.Count -gt 0) {
+    Write-Warning "The Repast update site contains $($unsignedJars.Count) unsigned jar(s) of $($siteJars.Count) total:"
+    $unsignedJars | Select-Object -First 20 | ForEach-Object { Write-Host "    $($_.Name)" -ForegroundColor Yellow }
+    if ($unsignedJars.Count -gt 20) {
+        Write-Host "    ... and $($unsignedJars.Count - 20) more." -ForegroundColor Yellow
+    }
+    Write-Host ""
+    Write-Host "Jar signing is performed in a separate build process. You can cancel and sign"
+    Write-Host "the update site first, or continue installing the UNSIGNED update site."
+    $answer = Read-Host "Continue with the unsigned Repast update site? (y/N)"
+    if ($answer -notmatch '^[Yy]') {
+        throw "Install cancelled: the Repast update site is not signed."
+    }
+    Write-Host "Continuing with the unsigned Repast update site." -ForegroundColor Yellow
+} else {
+    Write-Host "All $($siteJars.Count) Repast update site jars are signed." -ForegroundColor Green
+}
+
 # p2 repositories. Build the local file:/// URI via [System.Uri] so that spaces and
 # other special characters in $ROOT (e.g. "D:\Repast Releases\...") are properly
 # percent-encoded (a raw space in a URI is invalid and breaks p2 arg parsing).
@@ -101,6 +146,21 @@ $REPOSITORIES = @(
     $UPDATE_SITE_URI
 ) -join ","
 
+
+# Extra JVM system properties for the headless p2 director runs. These are passed
+# via -vmargs so they apply ONLY to the build-time director invocations and are NOT
+# baked into the distributed eclipse.ini (mirrors stay enabled for end users).
+#
+# eclipse.p2.mirrors=false: the HTTP 429s during the build come from Eclipse's
+#   mirror-selection service (www.eclipse.org/downloads/download.php), which is
+#   heavily rate limited. Disabling mirrors makes p2 fetch straight from
+#   download.eclipse.org and skips that service entirely - this is the root-cause fix.
+# transport.ecf.retry: how many times the ecf transport retries a single failed
+#   fetch before giving up (in-process retry, below the whole-run retry loop).
+$P2_VMARGS = @(
+    "-Declipse.p2.mirrors=false",
+    "-Dorg.eclipse.equinox.p2.transport.ecf.retry=5"
+)
 
 $SIMPHONY_FEATURES = "repast.simphony.feature.feature.group"
 
@@ -162,6 +222,13 @@ function Invoke-P2Director {
         "-data", $WORKSPACE
     ) + $ExtraArgs
 
+    # Everything after -vmargs is handed to the JVM, so $P2_VMARGS (the
+    # eclipse.p2.mirrors=false / ecf retry properties) must come last. Passing them
+    # on the command line means they apply only to this director run, not to the
+    # distributed eclipse.ini. NOTE: a command-line -vmargs overrides the vmargs in
+    # eclipse.ini, but the headless director needs none of those, so this is safe.
+    $launchArgs = $baseArgs + @("-vmargs") + $P2_VMARGS
+
     # Invoke eclipsec.exe directly with the call operator. Unlike
     # Start-Process -ArgumentList <array>, the call operator quotes arguments that
     # contain spaces (e.g. paths under "D:\Repast Releases\..."), so -repository,
@@ -186,7 +253,7 @@ function Invoke-P2Director {
     # appends the same lines to the log.
     $savedEAP = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
-    & $ECLIPSEC @baseArgs 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath $INSTALL_LOG -Append
+    & $ECLIPSEC @launchArgs 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath $INSTALL_LOG -Append
     $rc = $LASTEXITCODE
     $ErrorActionPreference = $savedEAP
     if ($hadPref) { $PSNativeCommandUseErrorActionPreference = $saved }
