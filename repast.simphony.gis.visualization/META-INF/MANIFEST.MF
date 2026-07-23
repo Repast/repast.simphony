@@ -134,5 +134,4 @@ Export-Package: com.zebraimaging,
  repast.simphony.visualization.gis3D,
  repast.simphony.visualization.gis3D.style,
  repast.simphony.visualization.gui
-Import-Package: repast.simphony.gis.visualization.engine,
- repast.simphony.visualization.gis3D
+Import-Package: repast.simphony.visualization.gis3D
