@@ -1,7 +1,17 @@
 #! /bin/bash
 # Script used to build new Repast Simphony eclipse distribution
 
+
+
 set -eu
+
+if [ "$#" -ne 1 ]; then
+  script_name=$(basename $0)
+  echo "Usage: ${script_name} <env vars file with signing info>"
+  exit 1
+fi
+
+source $1
 
 VERSION=2.12.0
 TMP=$PWD/tmp
@@ -80,6 +90,8 @@ NEWS_FEED_FEATURE=org.eclipse.recommenders.news.rcp.feature.feature.group
 export PATH=/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin:$PATH
 export JAVA_HOME=`/usr/libexec/java_home`
 
+VM_ARGS="-Declipse.p2.mirrors=false -Dorg.eclipse.equinox.p2.transport.ecf.retry=5"
+
 rm -f eclipse_install.log
 WORKSPACE=$HOME/eclipse-workspace-032024
 rm -rf $WORKSPACE
@@ -93,7 +105,8 @@ open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log 
     -followReferences \
     -destination /Users/nick/Documents/SimphonyRelease/ReleaseWorkArea64/Eclipse.app \
     -data $WORKSPACE \
-    -installIU $SIMPHONY_FEATURES
+    -installIU $SIMPHONY_FEATURES \
+    -vmargs "$VM_ARGS"
 
 rm -rf $WORKSPACE
 open -W ./Eclipse.app --stderr eclipse_install.log --stdout eclipse_install.log --args -clean -purgeHistory \
@@ -148,7 +161,7 @@ rm ${PLUGIN_CUST_FILE}.temp
 
 
 # # sign the native libraries
-JARS=( "gluegen-rt-natives-macosx-aarch64" "gluegen-rt-natives-macosx-amd64" "jogl-all-natives-macosx-aarch64" "jogl-all-natives-macosx-amd64")
+JARS=( "gluegen-rt-natives-macosx-universal" "jogl-all-natives-macosx-universal")
 
 for j in ${JARS[@]}; do
     mkdir -p $TMP/$j
@@ -159,7 +172,7 @@ for j in ${JARS[@]}; do
 
     for f in **/**/*.dylib; do
         echo "Signing $f"
-        codesign -f -s  "XX"  --timestamp --options=runtime -v $f
+        codesign -f -s  "$DEV_ID"  --timestamp --options=runtime -v $f
     done
 
     jar cfm $JAR META-INF/MANIFEST.MF .
@@ -168,9 +181,7 @@ done
 cd $ROOT
 
 # https://developer.apple.com/documentation/xcode/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
-# ynhp-urdk-yhwe-gqtl
-# codesign -f -s  "Developer ID Application: Nicholson Collier (7Y7ZD85R48)"  --timestamp --options=runtime -v Eclipse.app/Contents/Eclipse/configuration/org.eclipse.equinox.app
-codesign -f -s "XX"  --entitlements entitlements.plist --timestamp --options=runtime -v Eclipse.app/
+codesign -f -s "$DEV_ID"  --entitlements entitlements.plist --timestamp --options=runtime -v Eclipse.app/
 # verify (-v) the signature
 codesign -v ./Eclipse.app
 # more verification
@@ -179,7 +190,7 @@ spctl -a -v Eclipse.app
 rm -f $ROOT/batch_runner.jar
 BATCH_RUNNER_PATH=$HOME/Downloads/batch_runner.jar
 cp  $BATCH_RUNNER_PATH  "$ROOT/batch_runner.jar"
-codesign -f -s  "XX" --entitlements entitlements.plist --timestamp --options=runtime -v "$ROOT/batch_runner.jar"
+codesign -f -s  "$DEV_ID" --entitlements entitlements.plist --timestamp --options=runtime -v "$ROOT/batch_runner.jar"
 
 #
 # # to check if all repast.simphony.updatesite mentions were removed uncomment below
