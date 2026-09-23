@@ -64,7 +64,7 @@ New-Item -ItemType Directory -Force -Path $TMP | Out-Null
 # release. Point this at an already-extracted fresh Eclipse download folder in
 # Downloads (extracting the zip once with a fast tool like WinRAR is far quicker
 # than PowerShell's Expand-Archive, and the copy below is cheap to repeat).
-$ECLIPSE_RELEASE = "2026-03-R"
+$ECLIPSE_RELEASE = "2026-06-R"
 $ECLIPSE_SRC_DIR = Join-Path $env:USERPROFILE "Downloads\eclipse-committers-$ECLIPSE_RELEASE-win32-x86_64"
 
 # The committers zip contains a top-level "eclipse" folder (with eclipse.exe /
@@ -87,7 +87,8 @@ Copy-Tree -Source $ECLIPSE_SRC -Destination (Join-Path $ROOT "eclipse")
 # look at the features in a working install to get the feature names
 
 # Unpack the local Repast update site and the xpand mirror used as p2 repositories.
-$UPDATE_SITE_ZIP = Join-Path $env:USERPROFILE "Downloads\repast.simphony.updatesite.$VERSION.zip"
+#$UPDATE_SITE_ZIP = Join-Path $env:USERPROFILE "Downloads\repast.simphony.updatesite.$VERSION.zip"
+$UPDATE_SITE_ZIP = "L:\repast.simphony.feature\repast.simphony.updatesite.$VERSION.zip"
 Remove-Tree (Join-Path $ROOT "repast.simphony.updatesite")
 Expand-Archive -Path $UPDATE_SITE_ZIP -DestinationPath $ROOT -Force
 
@@ -142,7 +143,7 @@ if ($unsignedJars.Count -gt 0) {
 $UPDATE_SITE_URI = ([System.Uri](Join-Path $ROOT "repast.simphony.updatesite")).AbsoluteUri
 
 $REPOSITORIES = @(
-    "https://download.eclipse.org/releases/2025-12",
+    "https://download.eclipse.org/releases/2026-06",
     $UPDATE_SITE_URI
 ) -join ","
 

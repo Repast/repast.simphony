@@ -29,7 +29,7 @@ Export-Package: groovy.inspect.swingui,
  org.codehaus.groovy.tools.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Argonne National Laboratory
-Require-Bundle: org.codehaus.groovy;bundle-version="3.0.8"
+Require-Bundle: org.codehaus.groovy
 Bundle-ClassPath: lib/groovy-swing-3.0.25.jar,
  lib/groovy-templates-3.0.25.jar,
  lib/groovy-xml-3.0.25.jar

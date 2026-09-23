@@ -5,7 +5,6 @@ Bundle-SymbolicName: repast.simphony.statecharts.generator; singleton:=true
 Bundle-Version: 2.12.0
 Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.xtend.profiler;resolution:=optional,
- org.apache.commons.logging,
  org.apache.log4j;resolution:=optional,
  com.ibm.icu,
  org.antlr.runtime,
@@ -24,6 +23,7 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.core.resources,
  org.junit,
  repast.simphony.eclipse
+Import-Package: org.apache.commons.logging
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: bin/,
  .

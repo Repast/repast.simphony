@@ -10,11 +10,11 @@ Building Repast Simphony....
 - Repast Simphony feature and update site 'master' branch: https://github.com/Repast/repast.simphony.feature
   - Check this out locally to a different parent folder than the RS source code
     
-- Eclipse Committers 2026-03
+- Eclipse Committers 2026-06
 
 - The Workspace Java compiler level needs to be 1.8 to avoid Java module dependency issues. The user environment and JRE can still be compliance level 17+ and work OK even with the dev environment build using 1.8, as long as the dev JRE is 17+.
 
-- Groovy Eclipse 4.39 (2026-03) plugin
+- Groovy Eclipse 4.40 (2026-06) plugin
   - https://groovy.jfrog.io/artifactory/plugins-release/e4.39
   - In the Install dialog, **uncheck "Group items by category"** to see the
     flat feature list, then install only:
@@ -86,6 +86,37 @@ change the REPAST_SIMPHONY_PLUGIN_VERSION to the new version number.
       - site.xml
 
 8. Sign the update site jars using the JDK jarsigner and developer sigining certificate (not documented here).
+
+#### Groovy Eclipse dependency handling in the update site
+
+Two files control how the Groovy Eclipse plugin is resolved when a user installs
+Repast Simphony: `site.xml` and `associateSites.xml` in `r.s.updatesite`.
+
+- The feature (`repast.simphony.feature/feature.xml`) imports the Groovy features
+  with a version range (`match="greaterOrEqual"`), not a pinned version, and does
+  not name a specific Eclipse release.
+
+- The Eclipse-release-specific selection comes entirely from the Groovy Eclipse
+  repositories referenced in these two files:
+    - `site.xml` lists each Groovy repo in a `<repository-reference>` element.
+      These are compiled into `content.jar` at build time, so the site must be
+      rebuilt (step 7) after changing them.
+    - `associateSites.xml` lists the same repos in `<associateSite>` elements.
+      This file is served as-is (not compiled) and lets p2 auto-discover the repos
+      during install.
+
+- Groovy Eclipse publishes a separate repository per Eclipse release
+  (e4.39 = 2026-03, e4.40 = 2026-06, ...). Each build pins `org.eclipse.jdt.core`
+  to one exact version, so p2 cannot install a Groovy build against the wrong
+  Eclipse release and automatically resolves to the build matching the user's
+  Eclipse. The greclipse feature versions are identical across releases (they
+  differ only by qualifier), so this selection cannot be expressed as a version
+  range in the feature — it depends only on which repos are listed here.
+
+- To support multiple Eclipse releases, list every matching Groovy repo in both
+  files. p2 prefers the newest and backtracks to an older one when the newer
+  build's exact JDT version is not present in the user's Eclipse. When dropping
+  support for an Eclipse release, remove its two entries.
 
 #### Build javadocs and groovydocs
 
