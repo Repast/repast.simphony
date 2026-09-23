@@ -1,15 +1,35 @@
 # Script used to build a new Repast Simphony Eclipse distribution for Windows (native x86_64).
 #
 # Run from the directory that should contain the resulting "eclipse" folder, e.g.:
-#   powershell -ExecutionPolicy Bypass -File .\create_eclipse_for_dist_windows.ps1
-#
-# alternatively create a new relase folder and run from there, e.g.:
-# powershell L:\Repast-Simphony\repast.simphony.deployment\scripts\create_eclipse_for_dist_windows.ps1
+#  
+#   powershell L:\Repast-Simphony\repast.simphony.deployment\scripts\create_eclipse_for_dist_windows.ps1
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+# Define release-specific variables and paths here------------------------------
 $VERSION = "2.12.0"
 $ROOT = (Get-Location).Path
+
+# Eclipse Committers release to build from. 
+# Point this at an already-extracted fresh Eclipse download folder.
+$ECLIPSE_RELEASE = "2026-06-R"
+$ECLIPSE_SRC_DIR = Join-Path $env:USERPROFILE "Downloads\eclipse-committers-$ECLIPSE_RELEASE-win32-x86_64"
+
+# Local copy of the Repast update site zip file with signed jars
+$UPDATE_SITE_ZIP = "L:\repast.simphony.feature\repast.simphony.updatesite.$VERSION.zip"
+
+# Eclipse p2 repositories. 
+$UPDATE_SITE_URI = ([System.Uri](Join-Path $ROOT "repast.simphony.updatesite")).AbsoluteUri
+
+$REPOSITORIES = @(
+    "https://download.eclipse.org/releases/2026-06",
+    $UPDATE_SITE_URI
+) -join ","
+
+# Point JAVA_HOME at a Windows Temurin 17 JDK and put it first on the PATH.
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot"
+$env:PATH = (Join-Path $env:JAVA_HOME "bin") + ";" + $env:PATH
+#-------------------------------------------------------------------------------
 
 # --- Safety guards, evaluated before any destructive operation ---------------
 # This script force-deletes directories under $ROOT and uses $env:USERPROFILE to
@@ -60,13 +80,6 @@ function Copy-Tree {
 $TMP  = Join-Path $ROOT "tmp"
 New-Item -ItemType Directory -Force -Path $TMP | Out-Null
 
-# Eclipse Committers release to build from. Update this when moving to a newer
-# release. Point this at an already-extracted fresh Eclipse download folder in
-# Downloads (extracting the zip once with a fast tool like WinRAR is far quicker
-# than PowerShell's Expand-Archive, and the copy below is cheap to repeat).
-$ECLIPSE_RELEASE = "2026-06-R"
-$ECLIPSE_SRC_DIR = Join-Path $env:USERPROFILE "Downloads\eclipse-committers-$ECLIPSE_RELEASE-win32-x86_64"
-
 # The committers zip contains a top-level "eclipse" folder (with eclipse.exe /
 # eclipsec.exe, the console launcher used for headless p2 director runs), so the
 # install is usually <download>\eclipse. Fall back to the download folder itself
@@ -83,12 +96,7 @@ if (Test-Path -LiteralPath (Join-Path $ECLIPSE_SRC_DIR "eclipse\eclipsec.exe")) 
 Remove-Tree (Join-Path $ROOT "eclipse")
 Copy-Tree -Source $ECLIPSE_SRC -Destination (Join-Path $ROOT "eclipse")
 
-# Repast plugin
-# look at the features in a working install to get the feature names
-
 # Unpack the local Repast update site and the xpand mirror used as p2 repositories.
-#$UPDATE_SITE_ZIP = Join-Path $env:USERPROFILE "Downloads\repast.simphony.updatesite.$VERSION.zip"
-$UPDATE_SITE_ZIP = "L:\repast.simphony.feature\repast.simphony.updatesite.$VERSION.zip"
 Remove-Tree (Join-Path $ROOT "repast.simphony.updatesite")
 Expand-Archive -Path $UPDATE_SITE_ZIP -DestinationPath $ROOT -Force
 
@@ -115,6 +123,7 @@ function Test-JarSigned {
     }
 }
 
+# Unpack the zipped Repast update site archive to the working dir
 $UPDATE_SITE_DIR = Join-Path $ROOT "repast.simphony.updatesite"
 $siteJars = @(Get-ChildItem -Path $UPDATE_SITE_DIR -Filter *.jar -Recurse -ErrorAction SilentlyContinue)
 $unsignedJars = @($siteJars | Where-Object { -not (Test-JarSigned $_.FullName) })
@@ -136,17 +145,6 @@ if ($unsignedJars.Count -gt 0) {
 } else {
     Write-Host "All $($siteJars.Count) Repast update site jars are signed." -ForegroundColor Green
 }
-
-# p2 repositories. Build the local file:/// URI via [System.Uri] so that spaces and
-# other special characters in $ROOT (e.g. "D:\Repast Releases\...") are properly
-# percent-encoded (a raw space in a URI is invalid and breaks p2 arg parsing).
-$UPDATE_SITE_URI = ([System.Uri](Join-Path $ROOT "repast.simphony.updatesite")).AbsoluteUri
-
-$REPOSITORIES = @(
-    "https://download.eclipse.org/releases/2026-06",
-    $UPDATE_SITE_URI
-) -join ","
-
 
 # Extra JVM system properties for the headless p2 director runs. These are passed
 # via -vmargs so they apply ONLY to the build-time director invocations and are NOT
@@ -174,10 +172,6 @@ $M2E = @(
 ) -join ","
 
 $NEWS_FEED_FEATURE = "org.eclipse.recommenders.news.rcp.feature.feature.group"
-
-# Point JAVA_HOME at a Windows Temurin 17 JDK and put it first on the PATH.
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot"
-$env:PATH = (Join-Path $env:JAVA_HOME "bin") + ";" + $env:PATH
 
 $INSTALL_LOG = Join-Path $ROOT "eclipse_install.log"
 Remove-Item -Force -ErrorAction SilentlyContinue $INSTALL_LOG
@@ -309,6 +303,4 @@ if ($PLUGIN_CUST_FILE -and (Test-Path $PLUGIN_CUST_FILE)) {
     Write-Warning "plugin_customization.ini not found under an org.eclipse.epp.package.* plugin; skipping auto-update disable."
 }
 
-
 Write-Host "Done building Windows Eclipse distribution in $DESTINATION"
-
