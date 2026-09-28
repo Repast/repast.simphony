@@ -37,8 +37,32 @@ import repast.simphony.visualization.gis3D.RepastStereoOptionSceneController;
  */
 public class GIS3DOptionsPanel extends JPanel {
 
-	// List of available WWJ layers in Basic Model
-	static LayerList DEFAULT_GLOBE_LAYERS = new BasicModel().getLayers();
+	// WWJ background layers whose remote endpoints were decommissioned and no
+	// longer resolve or return valid capabilities.  They are removed from the
+	// list of layers offered below so users can't add layers that will never
+	// draw:
+	//   USGS NAIP Plus       - services.nationalmap.gov host no longer resolves
+	//   Political Boundaries - worldwind22.arc.nasa.gov/geoserver/wms returns 404
+	//   Place Names          - worldwind22.arc.nasa.gov/geoserver/wfs returns 404
+	private static final String[] UNAVAILABLE_GLOBE_LAYERS = new String[] {
+			"USGS NAIP Plus",
+			"Political Boundaries",
+			"Place Names"
+	};
+
+	// List of available WWJ layers in the Basic Model, minus the layers whose
+	// remote endpoints are no longer reachable (see UNAVAILABLE_GLOBE_LAYERS).
+	static LayerList DEFAULT_GLOBE_LAYERS = createAvailableGlobeLayers();
+
+	private static LayerList createAvailableGlobeLayers() {
+		LayerList layers = new BasicModel().getLayers();
+		for (String layerName : UNAVAILABLE_GLOBE_LAYERS) {
+			Layer layer = layers.getLayerByName(layerName);
+			if (layer != null)
+				layers.remove(layer);
+		}
+		return layers;
+	}
 	
 	private static final long serialVersionUID = 5139522879873045768L;
 	protected GISDisplayDescriptor descriptor;
