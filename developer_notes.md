@@ -1,10 +1,10 @@
-## Repast Simphony Eclipse Develoment Environment
+# Repast Simphony Eclipse Develoment Environment
 
 Some blurb about who should be using this...
 
 Building Repast Simphony....
 
-### Required components:
+## Required components:
 
 - Repast Simphony source 'development' branch: https://github.com/Repast/repast.simphony
 - Repast Simphony feature and update site 'master' branch: https://github.com/Repast/repast.simphony.feature
@@ -50,6 +50,149 @@ Building Repast Simphony....
 - Disable check for automatic updates in preferences
 This is only on a per-workspace basis. To disable updates by default, edit the plugin_customization.ini in eclipse\plugins\org.eclipse.epp.package.committers_XXX as follows (set to false):
 org.eclipse.equinox.p2.ui.sdk.scheduler/enabled=false
+
+## Release Checklst
+
+- [ ] Update version number in code
+- [ ] Update year in license files
+- [ ] Generate update site
+- [ ] Sign the update site jars
+- [ ] Create batch_runner_win.jar and batch_runner_osx.jar
+- [ ] Create and sign Windows installer
+- [ ] Create and sign Mac installer
+- [ ] Test installers
+- [ ] Build javadoc
+- [ ] Build groovydoc
+- [ ] Build asciidoc documents
+- [ ] Stage Release on github
+- [ ] Update repast.github.io
+- [ ] Push live update site
+- [ ] Github merge and release
+- [ ] Mail list announcement
+
+### Create batch runner jar files
+- Create the batch_runner_osx.jar and batch_runner_win.jar for running the RS Batch standalone GUI from the shortcuts included with the RS installer.
+
+- The ant script in r.s.distributed.batch/ui/dist/build_dist.xml will build the jars.  Normally you only need to provide the RS release version in the ant run dialog when building the jars.
+
+### Create and sign Windows installer
+- The Windows PowerShell script in r.s.deploymeny/scripts/create_eclipse_for_dist_windows.ps1 will create a fresh
+  Eclipse + Repast Simphony and all depedencies from the update site all in one shot.
+- After the Eclipse build step is tested, use the NSIS installer in r.s.deploymeny/installer_scripts to create
+  the windows installer executable
+- Sign the windows installer executable
+
+### Building Repast Javadoc
+
+1. **Run the Ant javadoc.xml in r.s.deployment using the Eclipse launch.**
+     
+   	- Update the javadoc title in javadoc.xml
+   	- Check the link href to online Java API in javadoc.xml
+   	- Make sure that links to Java base classes work in the generated javadoc.
+
+2. **Run the buildGroovydocs ant script in r.s.relogo.runtime**
+    
+    - Groovydocs requires downloading a full Groovy SDK binary distribution. 
+      This SDK is simply an archive with groovy jars that can be stored in some
+      convienient system location, eg /libs.
+      
+    - The buildGroovyDocs.xml launch configuration Classpath settings must be
+      updated to reflect the location of the unpacked groovy /libs folder.  
+      These will be the "groovy-...jar" files and one or two of the other jars
+      in the groovy /lib folder (see existing launch config).
+      
+        * Requires building with Groovy 2.5.x SDK since the generated doc HTML
+        with version 3.x isn't compatible with the ReLogoReferenceCreator that 
+        creates the RelogoPrimiatves.html.
+      
+    - The buildGroovyDocs.xml launch configuration JRE settings should be 
+       "Separate JRE" not "Run in same JRE as workspace" since using the later
+       causes issues (on Windows) even though they are the same JRE!
+    
+    - The version number in buildGroovyDocs.xml should be updated.
+
+    - **The ReLogo API docs are generated in the following steps:**
+
+      1. Use the existing Eclipse launch config to run buildGroovyDocs.xml.  The reference
+        to specific Groovy JDK local libs is important.
+
+        - The buildGroovyDocs.xml ant build file is used to create the Groovydoc API document.
+        - This will create the docs/RelogoAPI folder with groovy doc html
+        - This will copy the relevant parts of groovydoc into the Repast javadocs folder
+          automatically. 
+
+      2. Update the release version number in repast.simphony.relogo.util.ReLogoReferenceCreator 
+          and then run it.
+          
+        - ReLogoPrimitives.html document generation (files in r.s.relogo.runtime):
+          - there is an Excel file, separated into sheets for turtle, patch, link, 
+            observer and utility primitives.
+          - ReLogoReferenceCreator.groovy is used to parse the Excel file and to 
+            create the primitives html file.
+          - the primitives html file is then placed at the top level of the Repast 
+            Simphony API documentation
+
+        - The ReLogoReferenceCreator class has a number of tests within the reference 
+          document creation:
+          - check to see that the link exists in the ReLogo API
+          - check to see which methods from the T,P,L,O,Us classes are not included 
+            in the Primitives document
+
+      3. Copy the RelogoPrimitives.html to the RepastSimphonyAPI base directory.
+
+### Stage Release on github
+- https://github.com/Repast/repast.simphony/releases
+- Draft a new Release
+- Do the github tag and release first so there is a release tag that will be associated
+  with the release and also generate release notes.
+
+### Update project website repast.github.io
+- Update the Jekyll _config.yaml release version and date
+- Update download.html with new links for installer, update sites, etc.
+
+### Push live update site
+
+- For the live update site (ANL Server) - When you commit to SVN it goes to the server, e.g. updating actually pushes the new updates site
+- The RS update site URL is https://web.cels.anl.gov/projects/Repast/update_site/
+
+  To upload a new update site, use sftp (winscp etc) to homes.cels.anl.gov (must use VPN need personal RSA key) and put the update site files in
+
+  /nfs/pub_html/gce/projects/Repast/update_site
+
+### Github Merge and Release
+The following steps apply to the Repast code repository for development and master 
+branches.  A similar process is used to tag other repository master branches. 
+The additional repositories are: "RS Feature", "RS Models", and "RS Docs."
+
+1. Branch "development" should be synchronized with the remote repository and
+   contain the code for the release version.  If the repository has new commits 
+   that should not be included in the release tag, you can simply select the 
+   proper commit point in step 4. 
+   
+2. Switch to branch "master" and pull from the remote repository.
+
+3. Merge branch "development" into master.
+
+4. Create an annotated tag on branch master (as opposed to a lightweight tag, 
+   see: http://git-scm.com/book/en/v2/Git-Basics-Tagging)
+
+	 Create the tag ID (version) and message.  The tag is associated with a 
+   particular commit which is selected in the list box here. 
+	 
+	 Note that the tag is only associated with a specific branch.  The same tag
+	 cannot be used across multiple branches within a repository.  The only branch
+	 that really needs tagging is "master."
+	 
+	 Select "Create tag and start push" to push the tag to remote.
+	 
+5. Push branch "master".
+
+6. Finally, if the local tag is not pushed to remote, the 
+   simple Git command "git push --follow-tags" will push the new tag correctly.
+   It seems that the more general "git push --tags" is not recommended as this may
+   push "lightweight"s tags not properly associated with a specific commit.
+   
+7. Switch back to branch "development"
 
 ### Building the Repast Simphony Eclipse update site
 Here we will build the Repast Simphony projects and build the update site jar files.
