@@ -311,7 +311,7 @@ public class StatechartJavaEditor extends CompilationUnitEditor implements State
   @SuppressWarnings("rawtypes")
   protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 
-    fBracketMatcher.setSourceVersion(prefStore.getString(JavaCore.COMPILER_SOURCE));
+//    fBracketMatcher.setSourceVersion(prefStore.getString(JavaCore.COMPILER_SOURCE));
     support.setCharacterPairMatcher(fBracketMatcher);
     support.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR,
         HIGHLIGHT_BRACKET_AT_CARET_LOCATION, ENCLOSING_BRACKETS);

@@ -55,12 +55,12 @@ public class StandAloneMain {
 		return options;
 	}
 
-	private static final String PLUGINS_VERSION = "2.11.0";
+	private static final String PLUGINS_VERSION = "2.12.0";
 	private static final String PLUGIN_DIR = "plugin_dir";
 	public static final String MODEL_DIR = "model_dir";
 	public static final String PROPS_FILE = "props_file";
 
-	private static final String VNUM_REGEX = "(\\d+\\.)(\\d+\\.)(\\d)";
+	private static final String VNUM_REGEX = "(\\d+\\.)(\\d+\\.)(\\d+)";
 	private static final String INDY_REGEX = "groovy-" + VNUM_REGEX + "-indy.jar";
 	private static final String SWING_REGEX = "groovy-swing-" + VNUM_REGEX + ".jar";
 	private static final String TEMPLATES_REGEX = "groovy-templates-" + VNUM_REGEX + ".jar";

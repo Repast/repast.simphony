@@ -414,7 +414,7 @@ public class NetlogoWizardPageOne extends WizardPage {
 			if (selectedJVM instanceof IVMInstall2) {
 				jvmCompliance= JavaModelUtil.getCompilerCompliance((IVMInstall2) selectedJVM, JavaCore.VERSION_1_4);
 			}
-			if (!selectedCompliance.equals(jvmCompliance) && (JavaModelUtil.is50OrHigher(selectedCompliance) || JavaModelUtil.is50OrHigher(jvmCompliance))) {
+			if (!selectedCompliance.equals(jvmCompliance) && (JavaModelUtil.is15OrHigher(selectedCompliance) || JavaModelUtil.is15OrHigher(jvmCompliance))) {
 				if (selectedCompliance.equals(JavaCore.VERSION_1_5))
 					selectedCompliance= "5.0"; //$NON-NLS-1$
 				else if (selectedCompliance.equals(JavaCore.VERSION_1_6))

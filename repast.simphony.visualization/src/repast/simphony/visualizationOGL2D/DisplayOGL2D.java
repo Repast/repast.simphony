@@ -146,6 +146,9 @@ public class DisplayOGL2D extends AbstractDisplay implements CanvasListener, Pic
 	 * @param color the new background color
 	 */
 	public void setBackgroundColor(Color color) {
+		if (color.getAlpha() != 255) {
+			color = new Color(color.getRed(), color.getGreen(), color.getBlue());
+		}
 		canvas.setBackgroundColor(color);
 	}
 

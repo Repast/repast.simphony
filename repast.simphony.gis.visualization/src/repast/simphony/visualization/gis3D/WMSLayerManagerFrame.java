@@ -18,9 +18,14 @@ import gov.nasa.worldwind.WorldWindow;
 public class WMSLayerManagerFrame extends JFrame{
 	private static final long serialVersionUID = -6745733733859079433L;
 
+	// Default WMS servers shown as tabs. The previous NASA NEO
+	// (neowms.sci.gsfc.nasa.gov) and SEDAC (sedac.ciesin.columbia.edu) endpoints
+	// were decommissioned, so those hosts no longer resolve/connect. These are
+	// current, reachable WMS GetCapabilities endpoints. Users can still add any
+	// other server at runtime via the "+" tab.
 	private static final String[] servers = new String[] {
-			"https://neowms.sci.gsfc.nasa.gov/wms/wms",
-      "https://sedac.ciesin.columbia.edu/geoserver/wcs"
+			"https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi",
+			"https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer"
 	};
 
 	private final Dimension wmsPanelSize = new Dimension(400, 600);

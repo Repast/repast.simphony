@@ -25,16 +25,20 @@ public class LinkTest extends GroovyTestCase{
 		assert(e5 == null)
 		assert(e6 == e4)
 		assert(e3 == e2)
+		
 		RepastEdge e7 = new RepastEdge("s1","s2",false)
-		assert(!e7.isDirected())
-		println e7
-		println e7.isDirected()
+		def result = e7.isDirected()
+		assert(!result)
+		println result
+		
 		network2.addEdge(e7)
-		assert(e7.isDirected())
-		println e7
-		println e7.isDirected()
+		result = e7.isDirected()
+		assert(result)
+		println result
+		
 		RepastEdge e8 = network2.getEdge("s1","s2")
-		assert(e7.isDirected())
+		result = e7.isDirected()
+		assert(result)
 	}
 	
 	

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Repast gis visualization
 Bundle-SymbolicName: repast.simphony.gis.visualization
-Bundle-Version: 2.11.0
+Bundle-Version: 2.12.0
 Bundle-Vendor: Argonne National Laboratory
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: libs.ext,
@@ -17,7 +17,7 @@ Require-Bundle: libs.ext,
  repast.simphony.plugin.util,
  org.junit
 Bundle-ClassPath: .,
- lib/worldwind-2.2.0.jar,
+ lib/worldwind-2.2.1.jar,
  lib/gt-render-26.6.jar
 Export-Package: com.zebraimaging,
  gov.nasa.worldwind,
@@ -134,5 +134,4 @@ Export-Package: com.zebraimaging,
  repast.simphony.visualization.gis3D,
  repast.simphony.visualization.gis3D.style,
  repast.simphony.visualization.gui
-Import-Package: repast.simphony.gis.visualization.engine,
- repast.simphony.visualization.gis3D
+Import-Package: repast.simphony.visualization.gis3D
